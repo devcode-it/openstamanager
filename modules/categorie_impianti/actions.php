@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 use Modules\Checklists\Check;
+use Modules\Impianti\Categoria;
 
 $modulo_impianti = (new Module())->getByField('name', 'Impianti');
 
@@ -32,13 +33,11 @@ switch (filter('op')) {
         $id_original = filter('id_original') ?: null;
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            $database->table('my_impianti_categorie')
-                ->where('id', '=', $id_record)
-                ->update([
-                    'nome' => $nome,
-                    'nota' => $nota,
-                    'colore' => $colore,
-                ]);
+            $categoria->nota = $nota;
+            $categoria->colore = $colore;
+            $categoria->parent = $id_original ?: null;
+            $categoria->setTranslation('name', $nome);
+            $categoria->save();
 
             flash()->info(tr('Salvataggio completato!'));
         } else {
@@ -61,32 +60,26 @@ switch (filter('op')) {
 
         $id_original = filter('id_original') ?: null;
 
-        // Ricerca corrispondenze con stesso nome
-        $corrispondenze = $database->table('my_impianti_categorie')
-            ->where('nome', '=', $nome);
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $nome));
         if (!empty($id_original)) {
-            $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
+            $categoria_new = $categoria_new->where('parent', '=', $id_original);
         } else {
-            $corrispondenze = $corrispondenze->whereNull('parent');
+            $categoria_new = $categoria_new->whereNull('parent');
         }
-        $corrispondenze = $corrispondenze->get();
+        $categoria_new = $categoria_new->first();
 
-        // Eventuale creazione del nuovo record
-        if ($corrispondenze->count() == 0) {
-            $id_record = $database->table('my_impianti_categorie')
-                ->insertGetId([
-                    'nome' => $nome,
-                    'nota' => $nota,
-                    'colore' => $colore,
-                    'parent' => $id_original,
-                ]);
+        if (!empty($categoria_new)) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
+        } else {
+            $categoria = Categoria::build($nota, $colore);
+            $id_record = $dbo->lastInsertedID();
+            $categoria->parent = $id_original;
+            $categoria->setTranslation('name', $nome);
+            $categoria->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
             ]));
-        } else {
-            $id_record = $corrispondenze->first()->id;
-            flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
         }
 
         if (isAjaxRequest()) {
@@ -106,7 +99,7 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT * FROM `my_impianti` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT id FROM `my_impianti_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `my_impianti` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `my_impianti_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
             $dbo->query('DELETE FROM `my_impianti_categorie` WHERE `id`='.prepare($id));
 
             flash()->info(tr('_TYPE_ eliminata con successo!', [

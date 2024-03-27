@@ -34,7 +34,7 @@ use Models\Module;
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -94,7 +94,7 @@ use Models\Module;
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `my_impianti_categorie` WHERE `parent`='.prepare($id_record).'))');
+$elementi = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT `id` FROM `my_impianti_categorie` WHERE `parent`='.prepare($id_record).'))');
 
 if (!empty($elementi)) {
     echo '

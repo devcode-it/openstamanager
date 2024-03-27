@@ -82,24 +82,29 @@ class Impianti extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT my_impianti.id,
-            my_impianti.idanagrafica AS id_cliente,
-            my_impianti.idsede AS id_sede,
-            my_impianti.matricola,
-            my_impianti.nome,
-            my_impianti.descrizione,
-            my_impianti.data AS data_installazione,
-            my_impianti.proprietario,
-            my_impianti.ubicazione,
-            my_impianti.palazzo,
-            my_impianti.scala,
-            my_impianti.piano,
-            my_impianti.interno,
-            my_impianti.occupante,
-            my_impianti_categorie.nome AS categoria
-        FROM my_impianti
-            LEFT JOIN my_impianti_categorie ON my_impianti_categorie.id = my_impianti.id_categoria
-        WHERE my_impianti.id = '.prepare($id);
+        $query = 'SELECT 
+            `my_impianti`.`id`,
+            `my_impianti`.`idanagrafica` AS id_cliente,
+            `my_impianti`.`idsede` AS id_sede,
+            `my_impianti`.`matricola`,
+            `my_impianti`.`nome`,
+            `my_impianti`.`descrizione`,
+            `my_impianti`.`data` AS data_installazione,
+            `my_impianti`.`proprietario`,
+            `my_impianti`.`ubicazione`,
+            `my_impianti`.`palazzo`,
+            `my_impianti`.`scala`,
+            `my_impianti`.`piano`,
+            `my_impianti`.`interno`,
+            `my_impianti`.`occupante`,
+            `categorie_lang`.`name` AS categoria
+            `sottocategorie_lang`.`name` AS sottocategoria
+        FROM `my_impianti`
+            LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
+            LEFT JOIN `my_impianti_categorie_lang` as categorie_lang ON (`categorie_lang`.`id_record` = `my_impianti_categorie`.`id` AND `categorie_lang`.|lang|)
+            LEFT JOIN `my_impianti_categorie` as sottocategorie ON (`sottocategorie`.`id` = `my_impianti_categorie`.`id_sottocategoria`)
+            LEFT JOIN `my_impianti_categorie_lang` as sottocategorie_lang ON (`sottocategorie_lang`.`id_record` = `sottocategorie`.`id` AND `sottocategorie_lang`.|lang|)
+        WHERE `my_impianti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

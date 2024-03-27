@@ -120,16 +120,16 @@ switch ($resource) {
         break;
 
     case 'categorie_imp':
-        $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
+        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
-            $filter[] = '`id`='.prepare($element);
+            $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
         }
 
         $where[] = '`parent` IS NULL';
 
         if (!empty($search)) {
-            $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -140,16 +140,16 @@ switch ($resource) {
          */
     case 'sottocategorie_imp':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT `id`, `nome` AS descrizione FROM `my_impianti_categorie` |where| ORDER BY `nome`';
+            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
 
             foreach ($elements as $element) {
-                $filter[] = '`id`='.prepare($element);
+                $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
-                $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

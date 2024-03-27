@@ -1364,6 +1364,62 @@ ORDER BY
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Categoria';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Sottocategoria';
 
+-- Aggiunta tabella my_impianti_categorie_lang
+CREATE TABLE IF NOT EXISTS `my_impianti_categorie_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `name` VARCHAR(255) NOT NULL
+);
+ALTER TABLE `my_impianti_categorie_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `my_impianti_categorie_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `my_impianti_categorie_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `nome` FROM `my_impianti_categorie`;
+
+ALTER TABLE `my_impianti_categorie`
+    DROP `nome`;
+
+ALTER TABLE `my_impianti_categorie_lang` ADD CONSTRAINT `my_impianti_categorie_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `my_impianti_categorie`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+-- Allineamento vista Categorie impianti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM 
+    `my_impianti_categorie`
+    LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id` = `my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.|lang|) 
+WHERE 
+    1=1 AND parent IS NULL 
+HAVING 
+    2=2" WHERE `name` = 'Categorie impianti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Categorie impianti' AND `zz_views`.`name` = 'Nome';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie`.`id`' WHERE `zz_modules`.`name` = 'Categorie impianti' AND `zz_views`.`name` = 'id';
+
+-- Allineamento vista Impianti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `my_impianti`
+    LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico` 
+    LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
+    LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id` = `my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.|lang|)
+    LEFT JOIN `my_impianti_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
+    LEFT JOIN `my_impianti_categorie_lang` as sub_lang ON (sub.`id` = sub_lang.`id_record` AND sub_lang.|lang|)
+    LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.idsede
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY
+    `matricola`" WHERE `name` = 'impianti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Impianti' AND `zz_views`.`name` = 'Categoria';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`sub_lang`.`name`' WHERE `zz_modules`.`name` = 'Impianti' AND `zz_views`.`name` = 'Sottocategoria';
+
 -- Aggiunta tabella mg_causali_movimenti_lang
 CREATE TABLE IF NOT EXISTS `mg_causali_movimenti_lang` (
     `id` int NOT NULL,

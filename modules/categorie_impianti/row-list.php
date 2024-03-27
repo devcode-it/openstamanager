@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$subcategorie = $dbo->fetchArray('SELECT * FROM `my_impianti_categorie` WHERE `parent`='.prepare($id_record).' ORDER BY nome ASC ');
+$subcategorie = $dbo->fetchArray('SELECT `my_impianti_categorie`.*, `my_impianti_categorie_lang`.`name` FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `parent`='.prepare($id_record).' ORDER BY `name` ASC ');
 
 foreach ($subcategorie as $sub) {
     $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub['id']).' AND deleted_at IS NULL');

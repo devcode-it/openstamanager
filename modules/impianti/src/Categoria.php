@@ -22,20 +22,25 @@ namespace Modules\Impianti;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
+use Traits\RecordTrait;
 
 class Categoria extends Model
 {
     use SimpleModelTrait;
     use HierarchyTrait;
-
+    use RecordTrait;
     protected $table = 'my_impianti_categorie';
     protected static $parent_identifier = 'parent';
 
-    public static function build($nome = null)
+    protected static $translated_fields = [
+        'name',
+    ];
+
+    public static function build($nota = null, $colore = null)
     {
         $model = new static();
-
-        $model->nome = $nome;
+        $model->nota = $nota;
+        $model->colore = $colore;
         $model->save();
 
         return $model;
@@ -44,5 +49,15 @@ class Categoria extends Model
     public function impianti()
     {
         return $this->hasMany(Impianto::class, 'id_categoria');
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Categorie impianti';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
     }
 }

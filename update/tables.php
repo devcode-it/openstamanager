@@ -134,6 +134,7 @@ return [
     'my_componenti_interventi',
     'my_impianti',
     'my_impianti_categorie',
+    'my_impianti_categorie_lang',
     'my_impianti_contratti',
     'my_impianti_interventi',
     'mg_articolo_attributo',

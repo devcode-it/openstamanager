@@ -18,19 +18,20 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Impianti\Categoria;
 
-$subcategorie = $dbo->fetchArray('SELECT `my_impianti_categorie`.*, `my_impianti_categorie_lang`.`name` FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `parent`='.prepare($id_record).' ORDER BY `name` ASC ');
+$subcategorie = Categoria::where('parent', '=', $id_record)->get();
 
 foreach ($subcategorie as $sub) {
-    $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub['id']).' AND deleted_at IS NULL');
+    $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub->id).' AND deleted_at IS NULL');
     echo '
 				<tr>
-					<td>'.$sub['nome'].'</td>
-					<td>'.$sub['colore'].'</td>
-					<td>'.$sub['nota'].'</td>
+					<td>'.$sub->getTranslation('name').'</td>
+					<td>'.$sub->colore.'</td>
+					<td>'.$sub->nota.'</td>
 					<td>
-						<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$sub['id'].'&id_original='.$id_record.'\');"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-sm btn-danger ask '.(($n_impianti > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub['id'].'" title="'.(($n_impianti > 0) ? 'Sottocategoria collegata a '.$n_impianti.' articoli' : '').'">
+						<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$sub->id.'&id_original='.$id_record.'\');"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-sm btn-danger ask '.(($n_impianti > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub->id.'" title="'.(($n_impianti > 0) ? 'Sottocategoria collegata a '.$n_impianti.' articoli' : '').'">
                             <i class="fa fa-trash"></i>
                         </a>
 					</td>

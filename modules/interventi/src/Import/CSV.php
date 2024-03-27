@@ -124,9 +124,9 @@ class CSV extends CSVImporter
             unset($record['tipo']);
 
             if (empty($record['stato'])) {
-                $stato = (new Stato())->getByField('name', 'Completato');
+                $stato = Stato::find((new Stato())->getByField('name', 'Completato'));
             } else {
-                $stato = (new Stato())->getByField('name', $record['stato']);
+                $stato = Stato::find((new Stato())->getByField('name', $record['stato']));
             }
             unset($record['stato']);
 
@@ -188,7 +188,7 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['00001/2024', '+39 0429 60 25 12', '07/11/2024', '03/11/2024', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Bozza'],
+            ['00001/2024', '+39 0429 60 25 12', '07/11/2024', '03/11/2024', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
             ['0002/2024', '+39 0429 60 25 12', '08/11/2024', '04/11/2024', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }

@@ -2456,3 +2456,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 ALTER TABLE `mg_categorie` CHANGE `nota` `nota` VARCHAR(1000) NULL; 
 ALTER TABLE `mg_categorie` CHANGE `colore` `colore` VARCHAR(255) NULL; 
+
+ALTER TABLE `my_impianti_categorie` CHANGE `nota` `nota` VARCHAR(1000) NULL; 
+ALTER TABLE `my_impianti_categorie` CHANGE `colore` `colore` VARCHAR(255) NULL; 

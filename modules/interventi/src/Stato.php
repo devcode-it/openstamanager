@@ -50,7 +50,7 @@ class Stato extends Model
 
     public function getModuleAttribute()
     {
-        return 'Stato dei contratti';
+        return 'Stati di attività';
     }
 
     public static function getTranslatedFields()

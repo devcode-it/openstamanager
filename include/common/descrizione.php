@@ -36,7 +36,7 @@ if ($module->getTranslation('name') == 'Preventivi' && $options['op'] == 'manage
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Utilizza come titolo del gruppo').'", "name": "is_titolo", "value": '.json_encode($result['is_titolo']).', "help": "'.tr('').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Utilizza come titolo del gruppo').'", "name": "is_titolo", "value": '.json_encode($result['is_titolo']).', "help": "'.tr(' ').'" ]}
         </div>
     </div>';
 }

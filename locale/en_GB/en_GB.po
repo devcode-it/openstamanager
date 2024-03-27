@@ -2,16 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
 "POT-Creation-Date: 2021-01-14 01:06+0100\n"
-"PO-Revision-Date: 2021-01-14 01:11+0100\n"
+"PO-Revision-Date: 2024-03-27 16:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: https://www.devcode.it/\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
-"X-Poedit-Basepath: ../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ../..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: tr\n"
 "X-Poedit-SearchPath-0: locale\n"
@@ -272,7 +272,7 @@ msgstr "Plug-in"
 
 #: editor.php:142
 msgid "Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>"
-msgstr "The record was deleted on <b>_DATE_</b> by <b>_USER_</b> "
+msgstr "The record was deleted on <b>_DATE_</b> by <b>_USER_</b>"
 
 #: editor.php:170
 msgid "Torna all'elenco"
@@ -295,7 +295,7 @@ msgstr "Save"
 
 #: editor.php:328
 msgid "Creazione"
-msgstr "Creation"
+msgstr "Create"
 
 #: editor.php:334 include/common/form.php:36
 #: modules/interventi/modals/manage_sessione.php:32 modules/listini/bulk.php:21
@@ -424,7 +424,7 @@ msgstr "Final selling price"
 
 #: include/common/barcode.php:34 modules/movimenti/add.php:91
 msgid "Nessuna corrispondenza trovata!"
-msgstr "None rows loaded"
+msgstr "No record match!"
 
 #: include/common/barcode.php:38
 msgid "Articolo con quantità non sufficiente!"
@@ -477,7 +477,7 @@ msgid ""
 "Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire "
 "un valore negativo."
 msgstr ""
-"Positive value indicate an discount: to apply a surcharge enter negative value"
+"Positive value indicate an discount: to apply a surcharge enter negative value."
 
 #: include/common/conti.php:65 include/common/importa.php:196
 #: modules/fatture/row-list.php:304
@@ -1684,7 +1684,7 @@ msgstr "Some mandatory field are not been correctly compiled"
 
 #: include/top.php:131
 msgid "Errore durante il salvataggio del record"
-msgstr "Error while saving technician!"
+msgstr "Error while saving record"
 
 #: include/top.php:135
 msgid "La password è troppo corta"
@@ -1779,7 +1779,7 @@ msgstr "Search"
 
 #: include/top.php:161
 msgid "La ricerca non ha portato alcun risultato"
-msgstr "No matching records found."
+msgstr "No matching records found"
 
 #: include/top.php:163 modules/articoli/plugins/articoli.lotti.php:50
 #: templates/riepilogo_interventi/piece.php:72
@@ -1913,7 +1913,7 @@ msgstr "Username"
 
 #: index.php:166
 msgid "Password dimenticata?"
-msgstr "Password updated!"
+msgstr "Password forgotten?"
 
 #: index.php:172
 msgid "Accedi"
@@ -1933,9 +1933,9 @@ msgstr ""
 
 #: info.php:48
 msgid ""
-"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) aperto"
-"\" ed è stato creato per gestire e archiviare l'assistenza tecnica fornita ai "
-"propri clienti"
+"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) "
+"aperto\" ed è stato creato per gestire e archiviare l'assistenza tecnica "
+"fornita ai propri clienti"
 msgstr ""
 "The name means \"Manager of STA (<b>Technical Assistance Service</b>) open\" "
 "and it was created for handle and archive the technical assistance provided to "
@@ -2101,7 +2101,7 @@ msgstr "discount _TOT_ _TYPE_"
 
 #: lib/common.php:151
 msgid "non disponibile"
-msgstr "Taxable"
+msgstr "not available"
 
 #: lib/common.php:160 templates/ddt/body.php:91
 msgid "Rif. _DOCUMENT_"
@@ -2577,7 +2577,7 @@ msgstr "Update completed!"
 
 #: modules/anagrafiche/actions.php:27
 msgid "Anagrafica _NAME_ ripristinata correttamente!"
-msgstr "Backup restored correctly!"
+msgstr "Entity _NAME_ fully restored!"
 
 #: modules/anagrafiche/actions.php:119
 msgid "Informazioni per l'anagrafica _NAME_ salvate correttamente!"
@@ -2601,7 +2601,7 @@ msgstr "Attention: VAT number_IVA_could not be valid"
 
 #: modules/anagrafiche/actions.php:182 modules/anagrafiche/actions.php:298
 msgid "Attenzione: il codice fiscale _COD_ potrebbe non essere valido."
-msgstr "Attention: fiscal code_COD_could not be valid"
+msgstr "Attention: fiscal code_COD_could not be valid."
 
 #: modules/anagrafiche/actions.php:232
 msgid "Anagrafica Azienda impostata come predefinita"
@@ -2609,8 +2609,8 @@ msgstr "Business Company set as default"
 
 #: modules/anagrafiche/actions.php:232
 msgid ""
-"Per ulteriori informazionioni, visitare \"Strumenti -> Impostazioni -> Generali"
-"\""
+"Per ulteriori informazionioni, visitare \"Strumenti -> Impostazioni -> "
+"Generali\""
 msgstr "For more information, visit \"Tools -> Settings -> Generals\""
 
 #: modules/anagrafiche/actions.php:242
@@ -2788,7 +2788,7 @@ msgstr "voice eliminated"
 
 #: modules/anagrafiche/bulk.php:42
 msgid "Anagrafiche eliminate!"
-msgstr "Business deleted!"
+msgstr "Entities deleted!"
 
 #: modules/anagrafiche/bulk.php:86 modules/articoli/bulk.php:70
 #: modules/ddt/bulk.php:141 modules/fatture/bulk.php:462 modules/iva/bulk.php:53
@@ -2797,7 +2797,7 @@ msgstr "Delete selected"
 
 #: modules/anagrafiche/bulk.php:88
 msgid "Vuoi davvero eliminare le anagrafiche selezionate?"
-msgstr "Do you really want export all the electronic invoices in an archive?"
+msgstr "Do you want to delete selected entities?"
 
 #: modules/anagrafiche/bulk.php:95 modules/fatture/bulk.php:466
 #: modules/impianti/bulk.php:43
@@ -2879,7 +2879,7 @@ msgstr "Add ddt"
 
 #: modules/anagrafiche/buttons.php:50
 msgid "Nuovo ddt in uscita"
-msgstr "delivery note on out"
+msgstr "Outgoing delivery note"
 
 #: modules/anagrafiche/buttons.php:53
 msgid "Aggiungi fattura di vendita"
@@ -2915,7 +2915,7 @@ msgstr "Add ddt"
 
 #: modules/anagrafiche/buttons.php:64
 msgid "Nuovo ddt in entrata"
-msgstr "incoming"
+msgstr "Incoming delivery note"
 
 #: modules/anagrafiche/buttons.php:67
 msgid "Aggiungi fattura di acquisto"
@@ -2951,15 +2951,15 @@ msgstr "Gender"
 
 #: modules/anagrafiche/edit.php:127
 msgid "Uomo"
-msgstr "Man "
+msgstr "Man"
 
 #: modules/anagrafiche/edit.php:127
 msgid "Donna"
-msgstr "Woman "
+msgstr "Woman"
 
 #: modules/anagrafiche/edit.php:135
 msgid "Codice anagrafica"
-msgstr "Business code"
+msgstr "Entity code"
 
 #: modules/anagrafiche/edit.php:140
 msgid ""
@@ -3058,7 +3058,7 @@ msgstr "Show the seat on Google Maps"
 
 #: modules/anagrafiche/edit.php:384
 msgid "Informazioni per tipo di anagrafica"
-msgstr "You can't modify this type of business!"
+msgstr "Informations for type of entity"
 
 #: modules/anagrafiche/edit.php:390 modules/contratti/add.php:37
 #: modules/contratti/edit.php:65 modules/ddt/add.php:29 modules/fatture/add.php:26
@@ -3090,7 +3090,7 @@ msgstr "Charge supplier document"
 #: modules/preventivi/plugins/preventivi.consuntivo.php:85
 #: templates/interventi/body.php:268
 msgid "Tecnico"
-msgstr "Technician "
+msgstr "Technician"
 
 #: modules/anagrafiche/edit.php:403
 msgid "Appoggio bancario"
@@ -3114,9 +3114,9 @@ msgstr "Enable split payment"
 
 #: modules/anagrafiche/edit.php:423
 msgid ""
-"Lo split payment è disponibile per le anagrafiche di tipologia \\\"Ente pubblico"
-"\\\" o \\\"Azienda\\\" (iscritta al Dipartimento Finanze - Scissione dei "
-"pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</"
+"Lo split payment è disponibile per le anagrafiche di tipologia \\\"Ente "
+"pubblico\\\" o \\\"Azienda\\\" (iscritta al Dipartimento Finanze - Scissione "
+"dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</"
 "li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</"
 "li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</"
 "li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli "
@@ -3145,7 +3145,7 @@ msgstr "Fixed wording in the invoice"
 
 #: modules/anagrafiche/edit.php:441
 msgid "Visualizza la banca predefinita per l'Anagrafica"
-msgstr "Business code"
+msgstr "View default bank for entity"
 
 #: modules/anagrafiche/edit.php:447
 msgid "Visualizza le banche disponibili per l'Anagrafica"
@@ -3173,7 +3173,7 @@ msgstr "Default bank"
 
 #: modules/anagrafiche/edit.php:476
 msgid "Banca predefinita dell'Azienda su cui accreditare i pagamenti"
-msgstr "Default bank to which accredit payments."
+msgstr "Default bank to which accredit payments"
 
 #: modules/anagrafiche/edit.php:482 modules/anagrafiche/edit.php:544
 msgid "Iva predefinita"
@@ -3214,7 +3214,7 @@ msgstr "Default bank"
 
 #: modules/anagrafiche/edit.php:538
 msgid "Banca predefinita dell'Azienda da cui addebitare i pagamenti"
-msgstr "Default bank to which accredit payments."
+msgstr "Default bank to which accredit payments"
 
 #: modules/anagrafiche/edit.php:562
 msgid "Piano dei conti fornitore"
@@ -3279,7 +3279,7 @@ msgstr "Jurisdiction"
 
 #: modules/anagrafiche/edit.php:638
 msgid "Capitale sociale"
-msgstr "Share capital "
+msgstr "Share capital"
 
 #: modules/anagrafiche/edit.php:644
 msgid "Settore merceologico"
@@ -3339,7 +3339,7 @@ msgstr "Linked documents: _NUM_"
 
 #: modules/anagrafiche/edit.php:740 modules/categorie_articoli/edit.php:113
 msgid "Eliminato il:"
-msgstr "Removed"
+msgstr "Removed in:"
 
 #: modules/anagrafiche/edit.php:736
 msgid "_DOC_  _NUM_ del _DATE_ _DELETED_AT_"
@@ -3432,7 +3432,7 @@ msgstr "The email entered does not have a valid format"
 
 #: modules/anagrafiche/validation.php:143
 msgid "Impossibile verificare l'origine dell'email"
-msgstr "Impossible modify the file!"
+msgstr "Impossible verify email origin"
 
 #: modules/articoli/actions.php:43 modules/articoli/actions.php:93
 msgid "Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta"
@@ -3566,7 +3566,7 @@ msgstr "If not specified, the default settings VAT will be used"
 
 #: modules/articoli/add.php:138 modules/articoli/edit.php:385
 msgid "Seleziona Iva di vendita."
-msgstr "Select sales VAT"
+msgstr "Select sales VAT."
 
 #: modules/articoli/ajax/complete.php:52
 msgid "Nessuna vendita trovata di questo articolo al cliente"
@@ -3586,7 +3586,7 @@ msgstr "No category"
 
 #: modules/articoli/bulk.php:35
 msgid "Prezzi di acquisto aggiornati!"
-msgstr "Purchase price"
+msgstr "Purchase price updated!"
 
 #: modules/articoli/bulk.php:54
 msgid "Articoli eliminati!"
@@ -3628,7 +3628,7 @@ msgstr ""
 
 #: modules/articoli/buttons.php:24 modules/articoli/buttons.php:29
 msgid "Duplica articolo"
-msgstr "Duplicate item "
+msgstr "Duplicate product"
 
 #: modules/articoli/edit.php:37 modules/impianti/edit.php:45
 #: templates/ordini/body.php:68
@@ -3751,10 +3751,8 @@ msgid ""
 msgstr ""
 
 #: modules/articoli/edit.php:194
-#, fuzzy
-#| msgid "Fatture eliminate!"
 msgid "Fattore moltiplicativo"
-msgstr "Eliminated invoices!"
+msgstr "multiplicative factor"
 
 #: modules/articoli/edit.php:194
 msgid ""
@@ -5233,8 +5231,8 @@ msgid ""
 "Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "
 "\"ore\""
 msgstr ""
-"To monitor hours consumption, add at least one row with unit of measure \"hours"
-"\""
+"To monitor hours consumption, add at least one row with unit of measure "
+"\"hours\""
 
 #: modules/contratti/plugins/contratti.consuntivo.php:331
 #: modules/preventivi/plugins/preventivi.consuntivo.php:287
@@ -10222,11 +10220,11 @@ msgstr "VAT \"_TYPE_\""
 
 #: plugins/exportFE/src/FatturaElettronica.php:500
 msgid "Anagrafica Azienda"
-msgstr "Registry eliminated!"
+msgstr "Company entity"
 
 #: plugins/exportFE/src/FatturaElettronica.php:542
 msgid "Anagrafica Cliente"
-msgstr "Registry eliminated!"
+msgstr "Customer entity"
 
 #: plugins/exportFE/src/FatturaElettronica.php:569
 msgid "Anagrafica Vettore"

@@ -113,18 +113,17 @@ class CSV extends CSVImporter
         // Individuazione articolo
         $articolo_orig = ArticoloOriginale::where('codice', $record['codice'])->first();
         if (!empty($articolo_orig)) {
-            $articolo = Articolo::build($preventivo, $articolo_orig);
-
-            $articolo->setTranslation('name', $articolo_orig->getTranslation('name'));
-            $articolo->um = $articolo_orig->um ?: null;
-            $articolo->data_evasione = new Carbon($record['data_evasione']) ?: null;
+            $riga_articolo = Articolo::build($preventivo, $articolo_orig);
+            $riga_articolo->um = $articolo_orig->um ?: null;
+            $riga_articolo->data_evasione = new Carbon($record['data_evasione']) ?: null;
 
             $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->idiva_vendite ?: setting('Iva predefinita'));
 
-            $articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
-            $articolo->qta = $record['qta'];
+            $riga_articolo->descrizione = $articolo_orig->getTranslation('name');
+            $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
+            $riga_articolo->qta = $record['qta'];
 
-            $articolo->save();
+            $riga_articolo->save();
         }
     }
 

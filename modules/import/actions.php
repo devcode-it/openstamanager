@@ -73,7 +73,8 @@ switch (filter('op')) {
         $limit = 500;
 
         // Inizializzazione del lettore CSV
-        $csv = new $import_manager($record->filepath);
+        $filepath = base_dir().'/files/'.$record->directory.'/'.$record->filename;
+        $csv = new $import_manager($filepath);
         foreach ($fields as $key => $value) {
             $csv->setColumnAssociation($key, (int) $value - 1);
         }

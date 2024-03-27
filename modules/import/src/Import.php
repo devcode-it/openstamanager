@@ -31,6 +31,10 @@ class Import extends Model
 
     protected $table = 'zz_imports';
 
+    protected static $translated_fields = [
+        'name',
+    ];
+
     // Relazioni Eloquent
     public function moduloCollegato()
     {
@@ -40,5 +44,10 @@ class Import extends Model
     public function getModuleAttribute()
     {
         return 'Import';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
     }
 }

@@ -416,6 +416,20 @@ $traduzioni = [
     // traduzione dt_tipiddt_lang
     ['dt_tipiddt_lang', 'Inbound transport document', 'Ddt in entrata'],
     ['dt_tipiddt_lang', 'Outbound transport document', 'Ddt in uscita'],
+    // traduzioni fe_stati_documento_lang
+    ['fe_stati_standard_lang', 'Trasmission attestation', 'Attestazione trasmissione'],
+    ['fe_stati_standard_lang', 'Term expiration', 'Decorrenza termini'],
+    ['fe_stati_standard_lang', 'Accepted', 'Accettata'],
+    ['fe_stati_standard_lang', 'Rejected', 'Rifiutata'],
+    ['fe_stati_standard_lang', 'Transmission failed', 'Trasmissione non riuscita'],
+    ['fe_stati_standard_lang', 'Validation error', 'Errore di validazione'],
+    ['fe_stati_standard_lang', 'Generated', 'Generata'],
+    ['fe_stati_standard_lang', 'Undelivered', 'Mancata consegna'],
+    ['fe_stati_standard_lang', 'Result notification', 'Notifica esito'],
+    ['fe_stati_standard_lang', 'Discarded', 'Scartata'],
+    ['fe_stati_standard_lang', 'Processing queue', 'In coda di elaborazione'],
+    ['fe_stati_standard_lang', 'Delivered', 'Consegnata'],
+    ['fe_stati_standard_lang', 'In process', 'In elaborazione'],
     // traduzione in_fasceorarie_lang
     ['in_fasceorarie_lang', 'Ordinary', 'Ordinario'],
     // traduzione in_statiintervento_lang
@@ -992,6 +1006,7 @@ $traduzioni = [
     ['zz_settings_lang', 'Delay in days of the invoice due date for requested payment', 'Ritardo in giorni della scadenza della fattura per invio sollecito pagamento', ''],
     ['zz_settings_lang', 'Wacom signature contract', 'Contrasto firma Wacom', ''],
     ['zz_settings_lang', 'Start date of sales invoice counter verification', 'Data inizio verifica contatore fattura di vendita', ''],
+    ['zz_settings_lang', 'Quotation default exclusions', 'Esclusioni default preventivi', ''],
 ];
 
 foreach ($traduzioni as $traduzione) {

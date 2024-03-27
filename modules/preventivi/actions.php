@@ -45,6 +45,7 @@ switch (post('op')) {
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
 
+        $preventivo->esclusioni = setting('Esclusioni default preventivi');
         $preventivo->idstato = post('idstato');
         $preventivo->save();
 

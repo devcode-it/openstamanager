@@ -106,21 +106,19 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'id_categoria',
+                'field' => 'categoria',
                 'label' => 'Categoria',
                 'names' => [
                     'Categoria',
                     'categoria',
-                    'idcategoria',
                 ],
             ],
             [
-                'field' => 'id_sottocategoria',
+                'field' => 'sottocategoria',
                 'label' => 'Sottocategoria',
                 'names' => [
                     'Sottocategoria',
                     'sottocategoria',
-                    'idsottocategoria',
                 ],
             ],
             [
@@ -277,22 +275,23 @@ class CSV extends CSVImporter
         // Gestione categoria e sottocategoria
         $categoria = null;
         $sottocategoria = null;
-        if (!empty($record['id_categoria'])) {
+        if (!empty($record['categoria'])) {
             // Categoria
-            $categoria = Categoria::where('nome', strtolower($record['id_categoria']))->first();
+            $categoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['categoria'])))->first();
 
             if (empty($categoria)) {
-                $categoria = Categoria::build($record['id_categoria']);
+                $categoria = Categoria::build();
+                $categoria->setTranslation('name', $record['categoria']);
+                $categoria->save();
             }
 
             // Sotto-categoria
-            if (!empty($record['id_sottocategoria'])) {
-                $sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
-                    ->where('parent', $categoria->id)
-                    ->first();
+            if (!empty($record['sottocategoria'])) {
+                $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['sottocategoria'])))->first();
 
                 if (empty($sottocategoria)) {
-                    $sottocategoria = Categoria::build($record['id_sottocategoria']);
+                    $sottocategoria = Categoria::build();
+                    $sottocategoria->setTranslation('name', $record['sottocategoria']);
                     $sottocategoria->parent()->associate($categoria);
                     $sottocategoria->save();
                 }
@@ -410,8 +409,8 @@ class CSV extends CSVImporter
         $articolo->fill($record);
 
         $articolo->fill([
-            'id_categoria' => $categoria->id ?: $articolo['id_categoria'],
-            'id_sottocategoria' => $sottocategoria->id ?: $articolo['id_sottocategoria'],
+            'categoria' => $categoria->id ?: $articolo['categoria'],
+            'sottocategoria' => $sottocategoria->id ?: $articolo['sottocategoria'],
         ]);
 
         // Prezzo di vendita

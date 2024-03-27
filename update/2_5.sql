@@ -2397,3 +2397,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'pagamenti', 'API\\App\\v1\\Pagamenti', '1'), 
 (NULL, 'app-v1', 'retrieve', 'pagamenti-cleanup', 'API\\App\\v1\\Pagamenti', '1'), 
 (NULL, 'app-v1', 'retrieve', 'pagamento', 'API\\App\\v1\\Pagamenti', '1');
+
+ALTER TABLE `mg_categorie` CHANGE `nota` `nota` VARCHAR(1000) NULL; 
+ALTER TABLE `mg_categorie` CHANGE `colore` `colore` VARCHAR(255) NULL; 

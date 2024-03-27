@@ -22,9 +22,9 @@ use Models\Module;
 use Models\Plugin;
 
 $plugin = Plugin::find($id_plugin);
-$id_module = (new Module())->getByField('name', 'Contratti');
+$id_module = (new Module())->getByField('name', 'Contratti', \Models\Locale::where('predefined', true)->first()->id);
 $block_edit = filter('add') ? false : true;
-$id_module_interventi = (new Module())->getByField('name', 'Interventi');
+$id_module_interventi = (new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id);
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [

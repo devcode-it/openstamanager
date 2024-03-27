@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->getByField('name', 'Interventi');
+$link_id = (new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id);
 
 $fields = [
     'Codice intervento' => 'codice',

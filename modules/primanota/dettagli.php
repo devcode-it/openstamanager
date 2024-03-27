@@ -69,7 +69,7 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-            $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita')->id_record : (new Module())->getByField('name', 'Fatture di acquisto');
+            $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id)->id_record : (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id);
 
             if (!empty($movimento['primanota'])) {
                 echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);

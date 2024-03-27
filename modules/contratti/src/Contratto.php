@@ -67,7 +67,7 @@ class Contratto extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByField('name', 'Bozza');
+        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
 
         $id_agente = $anagrafica->idagente;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);

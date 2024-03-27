@@ -367,7 +367,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
-                        'id_module' => (new Module())->getByField('name', 'Articoli'),
+                        'id_module' => (new Module())->getByField('name', 'Articoli', \Models\Locale::where('predefined', true)->first()->id),
                         'id_record' => $articolo->id,
                     ]);
 
@@ -384,7 +384,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => (new Module())->getByField('name', 'Articoli'),
+                    'id_module' => (new Module())->getByField('name', 'Articoli', \Models\Locale::where('predefined', true)->first()->id),
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,

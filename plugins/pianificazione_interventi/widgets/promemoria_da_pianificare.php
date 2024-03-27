@@ -119,7 +119,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         // Pulsanti
         echo '
                 <td>
-                    <button type="button" class="btn btn-primary btn-sm" title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByField('name', 'Interventi').'&ref=interventi_contratti&idcontratto='.$contratto->id.'&idcontratto_riga='.$promemoria->id.'\');">
+                    <button type="button" class="btn btn-primary btn-sm" title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id).'&ref=interventi_contratti&idcontratto='.$contratto->id.'&idcontratto_riga='.$promemoria->id.'\');">
                         <i class="fa fa-calendar"></i>
                     </button>
                 </td>

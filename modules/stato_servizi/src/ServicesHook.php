@@ -68,7 +68,7 @@ class ServicesHook extends Manager
                 ]).'</ul>';
             }
 
-            $id_module = (new Module())->getByField('name', 'Stato dei servizi');
+            $id_module = (new Module())->getByField('name', 'Stato dei servizi', \Models\Locale::where('predefined', true)->first()->id);
         }
 
         return [

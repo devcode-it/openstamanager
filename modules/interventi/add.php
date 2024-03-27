@@ -30,8 +30,8 @@ $descrizione = filter('descrizione');
 $id_tipo = filter('id_tipo');
 
 $origine_dashboard = get('ref') == 'dashboard' ? true : false;
-$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche');
-$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi');
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id);
+$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', \Models\Locale::where('predefined', true)->first()->id);
 
 // Calcolo dell'orario di inizio e di fine sulla base delle informazioni fornite
 $orario_inizio = filter('orario_inizio');
@@ -171,7 +171,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '""').'}, "icon-after": "add|'.(new Module())->getByField('name', 'Impianti').'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '""').'}, "icon-after": "add|'.(new Module())->getByField('name', 'Impianti', \Models\Locale::where('predefined', true)->first()->id).'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -189,7 +189,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.(new Module())->getByField('name', 'Contratti').'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.(new Module())->getByField('name', 'Contratti', \Models\Locale::where('predefined', true)->first()->id).'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -289,7 +289,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche')->id_record.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti').'&id_parent='.$id_anagrafica.'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id)->id_record.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', \Models\Locale::where('predefined', true)->first()->id).'&id_parent='.$id_anagrafica.'" ]}
                 </div>
 			</div>
 		</div>

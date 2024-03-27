@@ -72,7 +72,7 @@ if (post('action') == 'init') {
     // Azienda predefinita
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
-        $id_module = (new Module())->getByField('name', 'Anagrafiche');
+        $id_module = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id);
         include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe
@@ -172,7 +172,7 @@ if (!$has_azienda) {
 
                 <div class="panel-body" id="bs-popup">';
 
-    $idtipoanagrafica = (new Tipo())->getByField('name', 'Azienda');
+    $idtipoanagrafica = (new Tipo())->getByField('name', 'Azienda', \Models\Locale::where('predefined', true)->first()->id);
     $readonly_tipo = true;
 
     ob_start();

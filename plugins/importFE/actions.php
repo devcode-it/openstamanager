@@ -148,7 +148,7 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
-        $new_stato = (new Stato())->getByField('name', 'Pagato');
+        $new_stato = (new Stato())->getByField('name', 'Pagato', \Models\Locale::where('predefined', true)->first()->id);
 
         if ($fattura->isAutofattura() && !empty($id_autofattura)) {
             $autofattura_collegata = Fattura::find($id_autofattura);
@@ -175,7 +175,7 @@ switch (filter('op')) {
 
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT `idanagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
-        $id_tipo = (new Tipo())->getByField('name', 'Fornitore');
+        $id_tipo = (new Tipo())->getByField('name', 'Fornitore', \Models\Locale::where('predefined', true)->first()->id);
         $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `idanagrafica`='.prepare($anagrafica['idanagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore

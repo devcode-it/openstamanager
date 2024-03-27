@@ -83,7 +83,7 @@ class FatturaElettronica
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $module = Module::find((new Module())->getByField('name', 'Fatture di acquisto'));
+            $module = Module::find((new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id));
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
@@ -167,7 +167,7 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
-        $id_module = (new Module())->getByField('name', 'Fatture di acquisto');
+        $id_module = (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id);
 
         $info = [
             'category' => tr('Fattura Elettronica'),
@@ -380,7 +380,7 @@ class FatturaElettronica
         $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data;
 
-        $stato_documento = (new Stato())->getByField('name', 'Emessa');
+        $stato_documento = (new Stato())->getByField('name', 'Emessa', \Models\Locale::where('predefined', true)->first()->id);
         $fattura->stato()->associate($stato_documento);
 
         $causali = $dati_generali['Causale'];

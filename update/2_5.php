@@ -707,7 +707,7 @@ $traduzioni = [
     ['zz_views_lang', 'Type', 'Tipo'],
     ['zz_views_lang', 'Payment type', 'Tipo di pagamento'],
     ['zz_views_lang', 'Delivery type', 'Tipo spedizione'],
-    ['zz_views_lang', 'Type', 'Tipologia'],
+    ['zz_views_lang', 'Tipology', 'Tipologia'],
     ['zz_views_lang', 'Title', 'Titolo'],
     ['zz_views_lang', 'Document total', 'Totale documento'],
     ['zz_views_lang', 'Last modification', 'Ultima modifica'],

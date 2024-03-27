@@ -60,7 +60,7 @@ class DDT extends Document
         $model = new static();
         $user = \Auth::user();
 
-        $stato_documento = (new Stato())->getByField('name', 'Bozza');
+        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);

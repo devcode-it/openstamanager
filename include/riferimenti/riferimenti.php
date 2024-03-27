@@ -54,7 +54,7 @@ $direzione_richiesta = $source->getDocument()->direzione == 'entrata' ? 'uscita'
 
 // Individuazione DDT disponibili
 $ddt = DDT::whereHas('stato', function ($query) {
-    $id_stato = (new StatoDDT())->getByField('name', 'Bozza');
+    $id_stato = (new StatoDDT())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
     $query->where('id', '!=', $id_stato);
 })->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);
@@ -70,7 +70,7 @@ foreach ($ddt as $elemento) {
 // Individuazione ordini disponibili
 $tipo_ordini = $direzione_richiesta == 'entrata' ? 'cliente' : 'fornitore';
 $ordini = Ordine::whereHas('stato', function ($query) {
-    $id_stato = (new StatoOrdine())->getByField('name', 'Bozza');
+    $id_stato = (new StatoOrdine())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
     $query->where('id', '!=', $id_stato);
 })->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);

@@ -33,7 +33,7 @@ if (!empty($combinazione->id_categoria)) {
                     '.Modules::link('Categorie articoli', $combinazione->id_categoria, null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli').'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli', \Models\Locale::where('predefined', true)->first()->id).'" ]}
                 </div>
 
                 <div class="col-md-6">

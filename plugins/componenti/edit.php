@@ -67,7 +67,7 @@ $elenchi = [
     ],
 ];
 
-$plugin = (new Plugin())->getByField('name', 'Componenti');
+$plugin = (new Plugin())->getByField('name', 'Componenti', \Models\Locale::where('predefined', true)->first()->id);
 $module = $plugin->module;
 
 // Generazione elenchi HTML

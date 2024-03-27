@@ -46,11 +46,11 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli'); ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli', \Models\Locale::where('predefined', true)->first()->id); ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli'); ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli', \Models\Locale::where('predefined', true)->first()->id); ?>||hide" ]}
 		</div>
 	</div>
 
@@ -104,7 +104,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "", "ajax-source": "misure", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Unità di misura articoli'); ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "", "ajax-source": "misure", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Unità di misura articoli', \Models\Locale::where('predefined', true)->first()->id); ?>" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}

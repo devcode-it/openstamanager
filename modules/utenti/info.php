@@ -40,7 +40,7 @@ if (!empty($rs)) {
 }
 
 $api = base_url().'/api/?token='.$token;
-$module = Module::find((new Module())->getByField('name', 'Utenti e permessi'));
+$module = Module::find((new Module())->getByField('name', 'Utenti e permessi', \Models\Locale::where('predefined', true)->first()->id));
 
 echo '
 <div class="box box-widget widget-user">

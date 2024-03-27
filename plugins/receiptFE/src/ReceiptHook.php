@@ -42,7 +42,7 @@ class ReceiptHook extends Manager
         }
 
         // Lettura cache
-        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche'));
+        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche', \Models\Locale::where('predefined', true)->first()->id));
 
         return !$todo_cache->isValid() || !empty($todo_cache->content);
     }
@@ -50,8 +50,8 @@ class ReceiptHook extends Manager
     public function execute()
     {
         // Lettura cache
-        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche'));
-        $completed_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche importate'));
+        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche', \Models\Locale::where('predefined', true)->first()->id));
+        $completed_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche importate', \Models\Locale::where('predefined', true)->first()->id));
 
         // Refresh cache
         if (!$todo_cache->isValid()) {
@@ -95,8 +95,8 @@ class ReceiptHook extends Manager
     public function response()
     {
         // Lettura cache
-        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche'));
-        $completed_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche Importate'));
+        $todo_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche', \Models\Locale::where('predefined', true)->first()->id));
+        $completed_cache = Cache::find((new Cache())->getByField('name', 'Ricevute Elettroniche Importate', \Models\Locale::where('predefined', true)->first()->id));
 
         $completed_number = (is_array($completed_cache->content) ? count($completed_cache->content) : 0);
         $total_number = $completed_number + (is_array($todo_cache->content) ? count($todo_cache->content) : 0);
@@ -112,7 +112,7 @@ class ReceiptHook extends Manager
         $notify = $total_number != 0;
         $color = $total_number == $completed_number ? 'success' : 'yellow';
 
-        $id_module = (new Module())->getByField('name', 'Fatture di vendita');
+        $id_module = (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id);
 
         return [
             'icon' => 'fa fa-ticket text-'.$color,

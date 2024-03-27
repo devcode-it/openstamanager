@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie Impianti');
+$id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie Impianti', \Models\Locale::where('predefined', true)->first()->id);
 
 $img = null;
 if (!empty($record['immagine'])) {

@@ -64,7 +64,7 @@ echo '
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni", "required": 1 ]}
 		</div>
         <div class="col-md-3">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.(new Module())->getByField('name', 'Zone').'" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.(new Module())->getByField('name', 'Zone', \Models\Locale::where('predefined', true)->first()->id).'" ]}
 		</div>
 	</div>
 
@@ -97,7 +97,7 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche')->id_record.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti').'&id_parent='.$id_parent.'" ]}
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id)->id_record.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', \Models\Locale::where('predefined', true)->first()->id).'&id_parent='.$id_parent.'" ]}
 		</div>
 	</div>';
 

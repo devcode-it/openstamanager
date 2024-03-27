@@ -526,7 +526,7 @@ echo '
 </table>';
 
 if ($options['checklist']) {
-    $structure = Module::find((new Module())->getByField('name', 'Interventi'));
+    $structure = Module::find((new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id));
     $checks = $structure->mainChecks($id_record);
 
     if (!empty($checks)) {
@@ -539,7 +539,7 @@ if ($options['checklist']) {
         </th>
     </tr>';
 
-        $structure = Module::find((new Module())->getByField('name', 'Interventi'));
+        $structure = Module::find((new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id));
         $checks = $structure->mainChecks($id_record);
 
         foreach ($checks as $check) {

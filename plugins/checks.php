@@ -20,7 +20,7 @@
 include_once __DIR__.'/../core.php';
 use Models\Module;
 
-$checklist_module = Module::find((new Module())->getByField('name', 'Checklists'));
+$checklist_module = Module::find((new Module())->getByField('name', 'Checklists', \Models\Locale::where('predefined', true)->first()->id));
 $checks_id = 'checklist_'.$id_module.'_'.$id_plugin;
 
 echo '

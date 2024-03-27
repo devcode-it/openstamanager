@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Sede;
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
-$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche');
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id);
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
@@ -98,7 +98,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti').'&id_parent='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', \Models\Locale::where('predefined', true)->first()->id).'&id_parent='.$record['idanagrafica'].'" ]}
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@ if (!empty($record['idpreventivo'])) {
                             '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
 }
 echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Preventivi').'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
+                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Preventivi', \Models\Locale::where('predefined', true)->first()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
                         </div>
 
                         <div class="col-md-6">';
@@ -123,7 +123,7 @@ if (!empty($record['idcontratto'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Contratti').'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Contratti', \Models\Locale::where('predefined', true)->first()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
 
                             <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                         </div>
@@ -537,7 +537,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.(new Module())->getByField('name', 'Articoli').'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', \Models\Locale::where('predefined', true)->first()->id).'" ]}
                         </div>
 
                         <div class="col-md-4" style="margin-top: 25px">

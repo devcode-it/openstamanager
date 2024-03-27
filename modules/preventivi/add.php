@@ -25,7 +25,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 $stati = get('pianificabile') ? 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi`  LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_pianificabile`=1' : 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` as descrizione FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
 
-$stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+$stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -41,7 +41,7 @@ $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefine
 		</div>
 
 		<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('idanagrafica'))) ? 0 : 1; ?>" ]}
+				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('idanagrafica'))) ? 0 : 1; ?>" ]}
 		</div>
 	</div>
 	<div class="row">

@@ -154,7 +154,6 @@ trait RecordTrait
         } else {
             return '';
         }
-
     }
 
     public function getByField($field, $value, $id_lang = null)

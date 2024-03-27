@@ -21,7 +21,6 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
-use Models\Module;
 
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
 

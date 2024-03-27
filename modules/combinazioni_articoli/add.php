@@ -22,7 +22,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli', \Models\Locale::getPredefined()->id).'" ]}
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli', Models\Locale::getPredefined()->id).'" ]}
         </div>
 
         <div class="col-md-6">

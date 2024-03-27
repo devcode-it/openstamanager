@@ -21,7 +21,7 @@ use Modules\Anagrafiche\Nazione;
 
 include_once __DIR__.'/../../core.php';
 
-$id_nazione_italia = (new Nazione())->getByField('name', 'Italia', \Models\Locale::getPredefined()->id);
+$id_nazione_italia = (new Nazione())->getByField('name', 'Italia', Models\Locale::getPredefined()->id);
 $tipo = get('tipoanagrafica');
 if (!empty($tipo)) {
     $rs = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id`, `an_tipianagrafiche_lang`.`name` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($tipo));

@@ -20,9 +20,9 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id));
-$modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi', \Models\Locale::getPredefined()->id));
-$modulo_eventi = Module::find((new Module())->getByField('name', 'Eventi', \Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
+$modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id));
+$modulo_eventi = Module::find((new Module())->getByField('name', 'Eventi', Models\Locale::getPredefined()->id));
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';

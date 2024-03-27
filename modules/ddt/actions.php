@@ -324,8 +324,6 @@ switch (filter('op')) {
             $evadi_qta_parent = false;
         }
 
-
-   
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
@@ -472,7 +470,7 @@ switch (filter('op')) {
          */
     case 'completa_trasporto':
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
-        $stato = (new Stato())->getByField('name', 'Evaso', \Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
 
         // Duplicazione DDT
         $id_segment = post('id_segment');
@@ -520,7 +518,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto', \Models\Locale::getPredefined()->id) : (new Module())->getByField('name', 'Ddt di vendita', \Models\Locale::getPredefined()->id);
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id);
 
         break;
 
@@ -531,7 +529,7 @@ switch (filter('op')) {
         $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
-        $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato);
         $new->save();
 

@@ -35,7 +35,7 @@ if (setting('Liquidazione IVA') == 'Mensile') {
     $periodo_precedente_end = (new Carbon($date_end))->subMonths(3)->format('Y-m-d');
 }
 
-$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', \Models\Locale::getPredefined()->id);
+$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', Models\Locale::getPredefined()->id);
 $maggiorazione = 0;
 
 // calcolo IVA su fatture + vendite al banco

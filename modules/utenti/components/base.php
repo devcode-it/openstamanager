@@ -31,7 +31,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.(new Module())->getByField('name', 'Utenti e permessi', \Models\Locale::getPredefined()->id).'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
+		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.(new Module())->getByField('name', 'Utenti e permessi', Models\Locale::getPredefined()->id).'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
 		</div>
 	</div>';
 
@@ -54,7 +54,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id).(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
 		</div>
 	</div>
 

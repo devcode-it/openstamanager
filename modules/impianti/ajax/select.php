@@ -120,7 +120,7 @@ switch ($resource) {
         break;
 
     case 'categorie_imp':
-        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
 
         foreach ($elements as $element) {
             $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
@@ -140,7 +140,7 @@ switch ($resource) {
          */
     case 'sottocategorie_imp':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
 
             foreach ($elements as $element) {
                 $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);

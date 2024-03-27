@@ -113,7 +113,7 @@ switch ($op) {
             WHERE
                 `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir` = "entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id)) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id)) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -313,7 +313,7 @@ switch ($op) {
         // Elenco fatture in stato Bozza per il cliente
     case 'fatture_bozza':
         $id_anagrafica = post('id_anagrafica');
-        $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
         $fatture = Fattura::vendita()
             ->where('idanagrafica', $id_anagrafica)
@@ -332,8 +332,8 @@ switch ($op) {
         // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
-        $stato1 = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
-        $stato2 = (new Stato())->getByField('name', 'Parzialmente pagato', \Models\Locale::getPredefined()->id);
+        $stato1 = (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
+        $stato2 = (new Stato())->getByField('name', 'Parzialmente pagato', Models\Locale::getPredefined()->id);
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
@@ -406,10 +406,10 @@ switch ($op) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+            $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
             $fattura->stato()->associate($stato);
             $fattura->save();
-            $stato = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
+            $stato = (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
             $fattura->stato()->associate($stato);
             $fattura->save();
             flash()->info(tr('Fattura riaperta!'));
@@ -918,7 +918,7 @@ switch ($op) {
 
         // Aggiunta tipologia cliente se necessario
         if (!$anagrafica->isTipo('Cliente')) {
-            $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', \Models\Locale::getPredefined()->id);
+            $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id);
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo_cliente;
 
@@ -929,7 +929,7 @@ switch ($op) {
         $fattura->id_autofattura = $autofattura->id;
         $fattura->save();
 
-        $id_module = (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id);
+        $id_module = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
         $id_record = $autofattura->id;
 
         break;
@@ -1045,7 +1045,7 @@ switch ($op) {
         if (in_array($idtipodocumento, $tipologie)) {
             // Aggiunta tipologia cliente se necessario
             if (!$azienda->isTipo('Cliente')) {
-                $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', \Models\Locale::getPredefined()->id);
+                $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id);
                 $tipi = $azienda->tipi->pluck('id')->toArray();
                 $tipi[] = $tipo_cliente;
 
@@ -1168,7 +1168,7 @@ switch ($op) {
         break;
 
     case 'cambia_stato':
-        $stato = Stato::find((new Stato())->getByField('name', 'Non valida', \Models\Locale::getPredefined()->id));
+        $stato = Stato::find((new Stato())->getByField('name', 'Non valida', Models\Locale::getPredefined()->id));
         $fattura->stato()->associate($stato);
         $fattura->save();
 

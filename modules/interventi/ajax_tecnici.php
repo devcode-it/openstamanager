@@ -270,7 +270,7 @@ if (!$is_completato) {
     </div>
 
     <div class="col-md-offset-4 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id).'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
     </div>
 
     <div class="col-md-2">

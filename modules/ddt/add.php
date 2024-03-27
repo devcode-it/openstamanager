@@ -27,14 +27,14 @@ $module = Module::find($id_module);
 if ($module->getTranslation('name') == 'Ddt di vendita') {
     $dir = 'entrata';
 
-    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in uscita', \Models\Locale::getPredefined()->id);
+    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in uscita', Models\Locale::getPredefined()->id);
 
     $tipo_anagrafica = tr('Cliente');
     $label = tr('Destinatario');
 } else {
     $dir = 'uscita';
 
-    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in entrata', \Models\Locale::getPredefined()->id);
+    $id_tipoddt = (new Tipo())->getByField('name', 'Ddt in entrata', Models\Locale::getPredefined()->id);
 
     $tipo_anagrafica = tr('Fornitore');
     $label = tr('Mittente');
@@ -56,7 +56,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<!-- il campo idtipoddt può essere anche rimosso -->
@@ -67,7 +67,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Causali', \Models\Locale::getPredefined()->id); ?>|||" ]}
+			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Causali', Models\Locale::getPredefined()->id); ?>|||" ]}
 		</div>
 
 		<div class="col-md-6">

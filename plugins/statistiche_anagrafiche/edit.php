@@ -46,7 +46,7 @@ echo '
 
 </div>';
 
-$statistiche = Module::find((new Module())->getByField('name', 'Statistiche', \Models\Locale::getPredefined()->id));
+$statistiche = Module::find((new Module())->getByField('name', 'Statistiche', Models\Locale::getPredefined()->id));
 
 if ($statistiche != null) {
     echo '

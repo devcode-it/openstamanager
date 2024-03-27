@@ -29,7 +29,7 @@ $date_start = filter('date_start');
 $date_end = filter('date_end');
 
 $tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
-$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', \Models\Locale::getPredefined()->id);
+$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', Models\Locale::getPredefined()->id);
 
 $v_iva = [];
 $v_totale = [];

@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Checklists\Check;
 use Modules\Impianti\Categoria;
 
-$modulo_impianti = (new Module())->getByField('name', 'Impianti', \Models\Locale::getPredefined()->id);
+$modulo_impianti = (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id);
 
 switch (filter('op')) {
     case 'update':
@@ -114,7 +114,7 @@ switch (filter('op')) {
     case 'sync_checklist':
         // Azzeramento checklist impianti della categoria
         database()->query('DELETE FROM `zz_checks` WHERE `id_module` = '.prepare($modulo_impianti['id']).' AND `id_record` IN(SELECT `id` FROM `my_impianti` WHERE `id_categoria` = '.prepare($id_record).')');
-        
+
         $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
 
         $impianti = $dbo->select('my_impianti', '*', [], ['id_categoria' => $id_record]);

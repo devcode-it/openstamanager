@@ -34,7 +34,7 @@ echo '
     <div class="box-body">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id).'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
+                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
             </div>
 
             <div class="col-md-3">

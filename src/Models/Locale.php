@@ -45,6 +45,7 @@ class Locale extends Model
     {
         return self::$predefined;
     }
+
     public static function setPredefined()
     {
         self::$predefined = database()->table('zz_langs')->where('predefined', '=', 1)->first();

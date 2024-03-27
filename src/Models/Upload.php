@@ -380,5 +380,4 @@ class Upload extends Model
         });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
     }
-    
 }

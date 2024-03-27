@@ -24,4 +24,4 @@ if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_referenti` WHERE `id`='.prepare($id_record));
 }
 
-$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', \Models\Locale::getPredefined()->id);
+$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', Models\Locale::getPredefined()->id);

@@ -7,7 +7,7 @@ $id_record = get('idautomezzo');
 
 // Form di inserimento responsabili automezzo
 echo '
-<form action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('name', 'Automezzi', \Models\Locale::getPredefined()->id).'&id_record='.$id_record.'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('name', 'Automezzi', Models\Locale::getPredefined()->id).'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addtech">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_record" value="'.$id_record.'">

@@ -66,7 +66,7 @@ switch ($resource) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "`an_tipianagrafiche`.`id`= ".prepare($tipologia);
+        $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
         if (empty($filter)) {
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
@@ -131,7 +131,7 @@ switch ($resource) {
         }
 
         if (empty($filter)) {
-            $where[] = "`an_tipianagrafiche`.`id`= ".prepare($tipologia);
+            $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
 
@@ -155,7 +155,7 @@ switch ($resource) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "`an_tipianagrafiche`.`id`= ".prepare($tipologia);
+        $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
         if (empty($filter)) {
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
@@ -184,7 +184,7 @@ switch ($resource) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "`an_tipianagrafiche`.`id`= ".prepare($tipologia);
+        $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
         if (empty($filter)) {
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
         }
@@ -224,7 +224,7 @@ switch ($resource) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
         }
 
-        $where[] = "`an_tipianagrafiche`.`id`= ".prepare($tipologia);
+        $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
         if (empty($filter)) {
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
@@ -263,7 +263,7 @@ switch ($resource) {
         $where = [];
         if (empty($filter)) {
             $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
-            $where[] = "`an_tipianagrafiche`.`id` IN (".prepare($id_azienda).", ".prepare($id_fornitore).", ".prepare($id_cliente).")";
+            $where[] = '`an_tipianagrafiche`.`id` IN ('.prepare($id_azienda).', '.prepare($id_fornitore).', '.prepare($id_cliente).')';
         }
 
         if (!empty($search)) {

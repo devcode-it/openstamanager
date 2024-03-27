@@ -93,7 +93,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
-        $stato_predefinito = (new StatoFattura())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_predefinito = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
@@ -131,7 +131,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per i Contratti
     elseif ($final_module->getTranslation('name') == 'Contratti') {
-        $stato_predefinito = (new StatoContratto())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_predefinito = (new StatoContratto())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
         echo '
             <div class="col-md-6">
@@ -141,7 +141,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per i DDT
     elseif (in_array($final_module->getTranslation('name'), ['Ddt di vendita', 'Ddt di acquisto'])) {
-        $stato_predefinito = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_predefinito = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
         echo '
             <div class="col-md-6">
@@ -149,13 +149,13 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', \Models\Locale::getPredefined()->id).'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
+                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', Models\Locale::getPredefined()->id).'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
             </div>';
     }
 
     // Opzioni aggiuntive per gli Ordini
     elseif (in_array($final_module->getTranslation('name'), ['Ordini cliente', 'Ordini fornitore'])) {
-        $stato_predefinito = (new StatoOrdine())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_predefinito = (new StatoOrdine())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
 
         echo '
             <div class="col-md-6">
@@ -170,7 +170,7 @@ if (!empty($options['create_document'])) {
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id).'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 

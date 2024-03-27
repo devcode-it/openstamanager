@@ -388,7 +388,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
 
 echo '
 <script type="text/javascript">    

@@ -27,7 +27,7 @@ $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
 $id_print = (new PrintTemplate())->getByField('name', $nome_stampa);
-$id_module = (new Module())->getByField('name', 'Stampe contabili', \Models\Locale::getPredefined()->id);
+$id_module = (new Module())->getByField('name', 'Stampe contabili', Models\Locale::getPredefined()->id);
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 

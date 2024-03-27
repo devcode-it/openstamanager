@@ -164,7 +164,6 @@ $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans();
 $translator->addLocalePath(base_dir().'/locale');
 $translator->addLocalePath(base_dir().'/modules/*/locale');
-$translator->setLocale($lang, $formatter);
 
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
@@ -310,4 +309,5 @@ if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs'
     Models\Locale::setDefault($id_lang);
 
     $lang = Models\Locale::find($id_lang)->language_code;
+    $translator->setLocale($lang, $formatter);
 }

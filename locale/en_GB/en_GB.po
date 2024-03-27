@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
 "POT-Creation-Date: 2024-03-27 23:19+0100\n"
-"PO-Revision-Date: 2024-03-27 23:49+0100\n"
+"PO-Revision-Date: 2024-03-28 00:54+0100\n"
 "Last-Translator: \n"
 "Language-Team: https://www.devcode.it/\n"
 "Language: en\n"
@@ -1865,7 +1865,7 @@ msgstr "Uncheck all"
 
 #: include/manager.php:187
 msgid "Azioni di gruppo"
-msgstr "Group actions"
+msgstr "Bulk actions"
 
 #: include/manager.php:211
 msgid ""

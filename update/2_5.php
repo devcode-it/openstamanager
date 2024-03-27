@@ -108,7 +108,7 @@ $traduzioni = [
     ['zz_modules_lang', 'Tasks', 'Interventi'],
     ['zz_modules_lang', 'Updates', 'Aggiornamenti'],
     ['zz_modules_lang', 'Type of entities', 'Tipi di anagrafiche'],
-    ['zz_modules_lang', 'Type of Tasks', 'Tipi di intervento'],
+    ['zz_modules_lang', 'Type of tasks', 'Tipi di intervento'],
     ['zz_modules_lang', 'Tasks status', 'Stati di intervento'],
     ['zz_modules_lang', 'Accounting', 'Contabilità'],
     ['zz_modules_lang', 'Quotes', 'Preventivi'],
@@ -121,7 +121,7 @@ $traduzioni = [
     ['zz_modules_lang', 'Supplier orders', 'Ordini fornitore'],
     ['zz_modules_lang', 'Sales delivery document', 'Ddt di vendita'],
     ['zz_modules_lang', 'Suppliers delivery document', 'Ddt di acquisto'],
-    ['zz_modules_lang', 'Area', 'Zone'],
+    ['zz_modules_lang', 'Areas', 'Zone'],
     ['zz_modules_lang', 'Technicians rates', 'Tecnici e tariffe'],
     ['zz_modules_lang', 'Balances', 'Piano dei conti'],
     ['zz_modules_lang', 'Products', 'Articoli'],
@@ -142,10 +142,10 @@ $traduzioni = [
     ['zz_modules_lang', 'Payments', 'Pagamenti'],
     ['zz_modules_lang', 'Products categories', 'Categorie articoli'],
     ['zz_modules_lang', 'Movements', 'Movimenti'],
-    ['zz_modules_lang', 'Charts', 'Statistiche'],
+    ['zz_modules_lang', 'Stats', 'Statistiche'],
     ['zz_modules_lang', 'Email accounts', 'Account email'],
     ['zz_modules_lang', 'Email templates', 'Template email'],
-    ['zz_modules_lang', 'Email managements', 'Gestione email'],
+    ['zz_modules_lang', 'Email settings', 'Gestione email'],
     ['zz_modules_lang', 'Segments', 'Segmenti'],
     ['zz_modules_lang', 'Banks', 'Banche'],
     ['zz_modules_lang', 'Custom fields', 'Campi personalizzati'],
@@ -157,7 +157,7 @@ $traduzioni = [
     ['zz_modules_lang', 'Contract statuses', 'Stati dei contratti'],
     ['zz_modules_lang', 'Services status', 'Stato dei servizi'],
     ['zz_modules_lang', 'Type of deadlines', 'Tipi scadenze'],
-    ['zz_modules_lang', 'Email statuses', 'Coda di invio'],
+    ['zz_modules_lang', 'Email queue', 'Coda di invio'],
     ['zz_modules_lang', 'Lists', 'Liste'],
     ['zz_modules_lang', 'Relations', 'Relazioni'],
     ['zz_modules_lang', 'Prints', 'Stampe'],
@@ -189,7 +189,7 @@ $traduzioni = [
     ['zz_plugins_lang', 'Performed tasks', 'Interventi svolti'],
     ['zz_plugins_lang', 'Movements', 'Movimenti'],
     ['zz_plugins_lang', 'Serial', 'Serial'],
-    ['zz_plugins_lang', 'Final', 'Consuntivo'],
+    ['zz_plugins_lang', 'Final costs', 'Consuntivo'],
     ['zz_plugins_lang', 'Tasks schedulation', 'Pianificazione attività'],
     ['zz_plugins_lang', 'Customer sales delivery document', 'Ddt del cliente'],
     ['zz_plugins_lang', 'Electronic invoicing', 'Fatturazione elettronica'],
@@ -220,7 +220,7 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `title` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
@@ -261,8 +261,8 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `text` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `text` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
@@ -341,9 +341,9 @@ $traduzioni = [
     ['co_pagamenti_lang', 'Cash at treasury', 'Contanti presso Tesoreria'],
     ['co_pagamenti_lang', 'Currency exchange', 'Vaglia cambiario'],
     ['co_pagamenti_lang', 'Bank bulletin', 'Bollettino bancario'],
-    ['co_pagamenti_lang', 'Summary of Electronic Documents Inventory', 'RID'],
-    ['co_pagamenti_lang', 'Summary of Electronic Documents Inventory for Utilities', 'RID utenze'],
-    ['co_pagamenti_lang', 'Fast summary of Electronic Documents Inventory', 'RID veloce'],
+    ['co_pagamenti_lang', 'Direct Debit', 'RID'],
+    ['co_pagamenti_lang', 'Direct Debit bill', 'RID utenze'],
+    ['co_pagamenti_lang', 'Fast Direct Debit', 'RID veloce'],
     ['co_pagamenti_lang', 'Method of payment of income taxes and surtaxes', 'MAV'],
     ['co_pagamenti_lang', 'Tax waiver certificate', 'Quietanza erario'],
     ['co_pagamenti_lang', 'Transfer to special ledger accounts', 'Giroconto su conti di contabilità speciale'],
@@ -561,8 +561,8 @@ $traduzioni = [
     ['zz_views_lang', 'Mobile number', 'Cellulare'],
     ['zz_views_lang', 'City', 'Città'],
     ['zz_views_lang', 'Consumer', 'Cliente'],
-    ['zz_views_lang', 'Cod', 'Codice'],
-    ['zz_views_lang', 'Receiver code', 'Codice destinatario'],
+    ['zz_views_lang', 'Code', 'Codice'],
+    ['zz_views_lang', 'SDI code', 'Codice destinatario'],
     ['zz_views_lang', 'Electric invoice code', 'Codice FE'],
     ['zz_views_lang', 'Code Mode', 'Codice Modalità'],
     ['zz_views_lang', 'Payment Code', 'Codice pagamento'],
@@ -603,19 +603,19 @@ $traduzioni = [
     ['zz_views_lang', 'Dynamic', 'Dinamica'],
     ['zz_views_lang', 'dir', 'dir'],
     ['zz_views_lang', 'Direction', 'Direzione'],
-    ['zz_views_lang', 'Call right', 'Diritto di chiamata'],
-    ['zz_views_lang', 'Call right (technical)', 'Diritto di chiamata tecnico'],
-    ['zz_views_lang', 'Distinction', 'Distinta'],
+    ['zz_views_lang', 'Call-out fee', 'Diritto di chiamata'],
+    ['zz_views_lang', 'Call-out fee (technician)', 'Diritto di chiamata tecnico'],
+    ['zz_views_lang', 'Bill of payment', 'Distinta'],
     ['zz_views_lang', 'Sender email', 'Email mittente'],
     ['zz_views_lang', 'Debit/Credit', 'Esigibilità'],
-    ['zz_views_lang', 'Export distinta', 'Esportazione distinta'],
+    ['zz_views_lang', 'Export bill of payment', 'Esportazione distinta'],
     ['zz_views_lang', 'Expression', 'Expression'],
     ['zz_views_lang', 'Invoiceable', 'Fatturabile'],
     ['zz_views_lang', 'Festivity', 'Festività'],
     ['zz_views_lang', 'Branch', 'Filiale'],
     ['zz_views_lang', 'Supplier', 'Fornitore'],
     ['zz_views_lang', 'Days', 'Giorni'],
-    ['zz_views_lang', 'Accessible groups', 'Gruppi con accesso'],
+    ['zz_views_lang', 'Groups that can access', 'Gruppi con accesso'],
     ['zz_views_lang', 'Group', 'Gruppo'],
     ['zz_views_lang', 'IBAN', 'IBAN'],
     ['zz_views_lang', 'Icon', 'Icona'],
@@ -682,7 +682,7 @@ $traduzioni = [
     ['zz_views_lang', 'Selling price', 'Prezzo di vendita'],
     ['zz_views_lang', 'Unit price', 'Prezzo unitario'],
     ['zz_views_lang', 'VAT-included selling price', 'Prezzo vendita ivato'],
-    ['zz_views_lang', 'First note', 'Prima nota'],
+    ['zz_views_lang', 'Accounting entries', 'Prima nota'],
     ['zz_views_lang', 'Next run', 'Prossima esecuzione'],
     ['zz_views_lang', 'Quantity', 'Q.tà'],
     ['zz_views_lang', 'Available quantity', 'Q.tà disponibile'],
@@ -735,7 +735,7 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
@@ -752,8 +752,8 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `description` = "'.$traduzione[3].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `description` = '.prepare($traduzione[3]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
@@ -764,8 +764,8 @@ $traduzioni = [
     ['em_templates_lang', 'Order', 'Ordine', 'Order number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the order number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
     ['em_templates_lang', 'Invoice', 'Fattura', 'Invoice number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the invoice number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
     ['em_templates_lang', 'Document of transport', 'Ddt', 'Document number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the document of transport number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
-    ['em_templates_lang', 'Contract summary', 'Consuntivo contratto', 'Contract summary number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the contract summary number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
-    ['em_templates_lang', 'Quotation summary', 'Consuntivo preventivo', 'Quotation summary number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the quotation summary number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
+    ['em_templates_lang', 'Final cost of contract', 'Consuntivo contratto', 'Final cost of contract number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the final costs of the contract number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
+    ['em_templates_lang', 'Final costs of quotation', 'Consuntivo preventivo', 'Final cost of quotation number {numero} of {data}', '<p>Dear customer,</p><p>We are sending you the final costs about quotation number {numero} of {data} in attachment.</p><p>&nbsp;</p><p>Best regards</p>'],
     ['em_templates_lang', 'Task notification', 'Notifica intervento', 'Task notification number {numero} of {data}', '<p>Dear Technician,</p><p>A new task {numero} on {data} has been created.</p><p>&nbsp;</p><p>Best regards</p>'],
     ['em_templates_lang', 'Task removal notification', 'Notifica rimozione intervento', 'Task removal notification number {numero} of {data}', '<p>Dear Technician,</p><p>You have been removed from task {numero} on {data}.</p><p>&nbsp;</p><p>Best regards</p>'],
     ['em_templates_lang', 'Task status', 'Stato intervento', 'Task number {numero} of {data}: {stato}', '<p>Dear User,</p><p>The task {numero} on {data} has been moved to the status {stato}.</p>'],
@@ -776,22 +776,22 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `subject` = "'.$traduzione[3].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `body` = "'.$traduzione[4].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `subject` = '.prepare($traduzione[3]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `body` = '.prepare($traduzione[4]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
     // traduzione zz_prints_lang
     ['zz_prints_lang', 'Sales invoice', 'Fattura di vendita', '{tipo_documento} num. {numero} of {data}'],
     ['zz_prints_lang', 'Balance', 'Bilancio', 'Balance'],
-    ['zz_prints_lang', 'Contract summary', 'Consuntivo contratto', 'Contract summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Contract summary (without costs)', 'Consuntivo contratto (senza costi)', 'Contract summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Contract summary internal', 'Consuntivo contratto interno', 'Contract summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Order summary', 'Consuntivo ordine', 'Order summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Quotation summary', 'Consuntivo preventivo', 'Quotation summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Quotation summary (without costs)', 'Consuntivo preventivo (senza costi)', 'Quotation summary num. {numero} of {data}'],
-    ['zz_prints_lang', 'Quotation summary internal', 'Consuntivo preventivo interno', 'Quotation summary num. {numero} of {data}'],
+    ['zz_prints_lang', 'Final costs of contract', 'Consuntivo contratto', 'Final costs of contract num. {numero} of {data}'],
+    ['zz_prints_lang', 'Final costs of contract (without costs)', 'Consuntivo contratto (senza costi)', 'Final costs of contract num. {numero} of {data}'],
+    ['zz_prints_lang', 'Internal final costs of contract', 'Consuntivo contratto interno', 'Internal final costs of contract num. {numero} of {data}'],
+    ['zz_prints_lang', 'Final costs of order', 'Consuntivo ordine', 'Final costs of order num. {numero} of {data}'],
+    ['zz_prints_lang', 'Final costs of quotation', 'Consuntivo preventivo', 'Final costs of quotation num. {numero} of {data}'],
+    ['zz_prints_lang', 'Final costs of quotation (without costs)', 'Consuntivo preventivo (senza costi)', 'Final costs of quotation num. {numero} of {data}'],
+    ['zz_prints_lang', 'Internal final costs of quotation', 'Consuntivo preventivo interno', 'Internal final costs of quotation num. {numero} of {data}'],
     ['zz_prints_lang', 'Contract', 'Contratto', 'Contract num. {numero} of {data}'],
     ['zz_prints_lang', 'Contract (without costs)', 'Contratto (senza costi)', 'Contract num. {numero} of {data}'],
     ['zz_prints_lang', 'Company data', 'Dati aziendali', 'Company data {ragione_sociale}'],
@@ -833,9 +833,9 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `filename` = "'.$traduzione[3].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `name` = "'.$traduzione[1].'" WHERE `name` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `title` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `filename` = '.prepare($traduzione[3]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `name` = '.prepare($traduzione[1]).' WHERE `name` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
 
 $traduzioni = [
@@ -1012,6 +1012,6 @@ $traduzioni = [
 ];
 
 foreach ($traduzioni as $traduzione) {
-    $database->query('UPDATE '.$traduzione[0].' SET `help` = "'.$traduzione[3].'" WHERE `title` = "'.$traduzione[2].'" AND `id_lang` = 2');
-    $database->query('UPDATE '.$traduzione[0].' SET `title` = "'.$traduzione[1].'" WHERE `title` = "'.$traduzione[2].'" AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `help` = '.prepare($traduzione[3]).' WHERE `title` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
+    $database->query('UPDATE '.$traduzione[0].' SET `title` = '.prepare($traduzione[1]).' WHERE `title` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }

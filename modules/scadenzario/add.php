@@ -33,7 +33,7 @@ use Models\Module;
     </div>
 
     <div class="col-md-6">
-      {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Tipi scadenze', \Models\Locale::where('predefined', true)->first()->id); ?>" ]}
+      {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Tipi scadenze', \Models\Locale::getPredefined()->id); ?>" ]}
     </div>
   </div>
   <div class="row">

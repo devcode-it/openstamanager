@@ -23,7 +23,7 @@ use Carbon\Carbon;
 use Models\Module;
 
 // Trovo id_print della stampa
-$id_print = Prints::getModulePredefinedPrint((new Module())->getByField('name', 'Dashboard', \Models\Locale::where('predefined', true)->first()->id))['id'];
+$id_print = Prints::getModulePredefinedPrint((new Module())->getByField('name', 'Dashboard', \Models\Locale::getPredefined()->id))['id'];
 $date = new Carbon($_SESSION['dashboard']['date']);
 
 echo '

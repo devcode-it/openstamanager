@@ -31,7 +31,7 @@ class CampiPersonalizzati extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $module = (new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id);
+        $module = (new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id);
 
         $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module->id_record)." AND `content` LIKE '%text%'";
 

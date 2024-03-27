@@ -35,7 +35,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.(new Module())->getByField('name', 'Mansioni referenti', \Models\Locale::where('predefined', true)->first()->id).'" ]}
+			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.(new Module())->getByField('name', 'Mansioni referenti', \Models\Locale::getPredefined()->id).'" ]}
 		</div>
 	</div>
 

@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato;
 
-$id_module = (new Module())->getByField('name', 'Preventivi', \Models\Locale::where('predefined', true)->first()->id);
+$id_module = (new Module())->getByField('name', 'Preventivi', \Models\Locale::getPredefined()->id);
 $stati = Stato::where('is_fatturabile', 1)->pluck('id')->toArray();
 $rs = Preventivo::whereIn('idstato', $stati)->where('default_revision', 1)->get();
 

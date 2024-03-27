@@ -32,7 +32,7 @@ use Plugins\ReceiptFE\Ricevuta;
 use Util\Zip;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-$stato_emessa = (new Stato())->getByField('name', 'Emessa', \Models\Locale::where('predefined', true)->first()->id);
+$stato_emessa = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
 $is_fiscale = $dbo->selectOne('zz_segments', 'is_fiscale', ['id' => $_SESSION['module_'.$id_module]])['is_fiscale'];
 
 switch (post('op')) {
@@ -464,7 +464,7 @@ switch (post('op')) {
 
     case 'change-stato':
         $list = [];
-        $new_stato = (new Stato())->getByField('name', 'Emessa', \Models\Locale::where('predefined', true)->first()->id);
+        $new_stato = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
         $fatture = Fattura::vendita()
         ->whereIn('id', $id_records)
         ->orderBy('data')
@@ -750,7 +750,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => base_path().'/add.php?id_module='.(new Module())->getByField('name', 'Prima nota', \Models\Locale::where('predefined', true)->first()->id),
+        'url' => base_path().'/add.php?id_module='.(new Module())->getByField('name', 'Prima nota', \Models\Locale::getPredefined()->id),
     ],
 ];
 

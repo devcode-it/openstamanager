@@ -22,9 +22,9 @@ use Models\Module;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato;
 
-$id_module = (new Module())->getByField('name', 'Preventivi', \Models\Locale::where('predefined', true)->first()->id);
+$id_module = (new Module())->getByField('name', 'Preventivi', \Models\Locale::getPredefined()->id);
 
-$rs = Preventivo::where('idstato', '=', (new Stato())->getByField('name', 'In lavorazione', \Models\Locale::where('predefined', true)->first()->id))->where('default_revision', '=', 1)->get();
+$rs = Preventivo::where('idstato', '=', (new Stato())->getByField('name', 'In lavorazione', \Models\Locale::getPredefined()->id))->where('default_revision', '=', 1)->get();
 
 if (!empty($rs)) {
     echo "

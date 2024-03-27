@@ -156,7 +156,7 @@ class Anagrafica extends Model
     public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
-            $tipologie[] = (new TipoAnagrafica())->getByField('name', 'Azienda', \Models\Locale::where('predefined', true)->first()->id);
+            $tipologie[] = (new TipoAnagrafica())->getByField('name', 'Azienda', \Models\Locale::getPredefined()->id);
         }
 
         $tipologie = array_clean($tipologie);

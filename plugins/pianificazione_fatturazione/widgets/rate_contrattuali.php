@@ -181,8 +181,8 @@ echo '</tbody>
     </div>
 </div>';
 
-$id_modulo_pianificazione = (new Module())->getByField('name', 'Contratti', \Models\Locale::where('predefined', true)->first()->id);
-$plugin_pianificazione = Plugin::find((new Plugin())->getByField('name', 'Pianificazione fatturazione', \Models\Locale::where('predefined', true)->first()->id));
+$id_modulo_pianificazione = (new Module())->getByField('name', 'Contratti', \Models\Locale::getPredefined()->id);
+$plugin_pianificazione = Plugin::find((new Plugin())->getByField('name', 'Pianificazione fatturazione', \Models\Locale::getPredefined()->id));
 
 echo '
 <script>

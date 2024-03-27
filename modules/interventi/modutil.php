@@ -107,7 +107,7 @@ if (!function_exists('add_tecnico')) {
         // Notifica nuovo intervento al tecnico
         if (setting('Notifica al tecnico l\'aggiunta della sessione nell\'attività')) {
             if (!empty($anagrafica['email'])) {
-                $template = (new Template())->getByField('name', 'Notifica intervento', \Models\Locale::where('predefined', true)->first()->id);
+                $template = (new Template())->getByField('name', 'Notifica intervento', \Models\Locale::getPredefined()->id);
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_intervento);

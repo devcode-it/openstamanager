@@ -280,7 +280,7 @@ class CSV extends CSVImporter
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
-            $record['id_nazione'] = (new Nazione())->getByField('name', 'Italia', \Models\Locale::where('predefined', true)->first()->id);
+            $record['id_nazione'] = (new Nazione())->getByField('name', 'Italia', \Models\Locale::getPredefined()->id);
         } else {
             unset($record['id_nazione']);
         }

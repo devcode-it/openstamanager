@@ -32,9 +32,9 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('name', 'Sedi', \Models\Locale::where('predefined', true)->first()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Referenti', \Models\Locale::where('predefined', true)->first()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Dichiarazioni d\'intento', \Models\Locale::where('predefined', true)->first()->id))
+    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('name', 'Sedi', \Models\Locale::getPredefined()->id))
+        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Referenti', \Models\Locale::getPredefined()->id))
+        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Dichiarazioni d\'intento', \Models\Locale::getPredefined()->id))
         ->get();
 
     foreach ($ignore as $plugin) {
@@ -46,9 +46,9 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
 }
 
 if (!$is_cliente) {
-    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('name', 'Impianti del cliente', \Models\Locale::where('predefined', true)->first()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Contratti del cliente', \Models\Locale::where('predefined', true)->first()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Ddt del cliente', \Models\Locale::where('predefined', true)->first()->id))
+    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('name', 'Impianti del cliente', \Models\Locale::getPredefined()->id))
+        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Contratti del cliente', \Models\Locale::getPredefined()->id))
+        ->orWhere('id', '=', (new Plugin())->getByField('name', 'Ddt del cliente', \Models\Locale::getPredefined()->id))
         ->get();
 
     foreach ($ignore as $plugin) {
@@ -231,7 +231,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Zone', \Models\Locale::where('predefined', true)->first()->id); ?>" ]}
+                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Zone', \Models\Locale::getPredefined()->id); ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -460,7 +460,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.(new Module())->getByField('name', 'Relazioni', \Models\Locale::where('predefined', true)->first()->id).'" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.(new Module())->getByField('name', 'Relazioni', \Models\Locale::getPredefined()->id).'" ]}
                             </div>
 
                             <div class="col-md-9">
@@ -476,7 +476,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     $banca_predefinita = $banche->first(function ($item) {
         return !empty($item['predefined']);
     });
-    $modulo_banche = (new Module())->getByField('name', 'Banche', \Models\Locale::where('predefined', true)->first()->id);
+    $modulo_banche = (new Module())->getByField('name', 'Banche', \Models\Locale::getPredefined()->id);
     if (!$banche->isEmpty()) {
         echo '
                         <div class="row">
@@ -505,7 +505,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.(new Module())->getByField('name', 'Provenienze', \Models\Locale::where('predefined', true)->first()->id).'" ]}
+                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.(new Module())->getByField('name', 'Provenienze', \Models\Locale::getPredefined()->id).'" ]}
                             </div>
                         
                             <div class="col-md-6">
@@ -695,7 +695,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Settori', \Models\Locale::where('predefined', true)->first()->id); ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Settori', \Models\Locale::getPredefined()->id); ?>" ]}
                         </div>
 
                         <div class="col-md-3">

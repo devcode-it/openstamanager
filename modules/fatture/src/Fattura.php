@@ -96,7 +96,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
+        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -721,7 +721,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
+        $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato);
 
         return $new;

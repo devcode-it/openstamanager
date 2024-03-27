@@ -781,10 +781,10 @@ function aggiornaInline(id) {
 }
 init();';
 
-if (Plugin::find((new Plugin())->getByField('name', 'Distinta base', \Models\Locale::where('predefined', true)->first()->id))) {
+if (Plugin::find((new Plugin())->getByField('name', 'Distinta base', \Models\Locale::getPredefined()->id))) {
     echo '
     async function viewDistinta(id_articolo) {
-        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByField('name', 'Distinta base', \Models\Locale::where('predefined', true)->first()->id))->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
+        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByField('name', 'Distinta base', \Models\Locale::getPredefined()->id))->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
     }';
 }
 echo '

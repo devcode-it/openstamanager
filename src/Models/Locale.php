@@ -29,6 +29,7 @@ class Locale extends Model
     protected $table = 'zz_langs';
 
     protected static $lang;
+    protected static $predefined;
 
     public static function getDefault()
     {
@@ -38,5 +39,14 @@ class Locale extends Model
     public static function setDefault($value)
     {
         self::$lang = database()->table('zz_langs')->where('id', '=', $value)->first();
+    }
+
+    public static function getPredefined()
+    {
+        return self::$predefined;
+    }
+    public static function setPredefined()
+    {
+        self::$predefined = database()->table('zz_langs')->where('predefined', '=', 1)->first();
     }
 }

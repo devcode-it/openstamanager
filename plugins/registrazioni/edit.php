@@ -19,7 +19,7 @@
 
 use Models\Module;
 
-if ($id_module == (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id)) {
+if ($id_module == (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id)) {
     $conti = 'conti-acquisti';
 } else {
     $conti = 'conti-vendite';

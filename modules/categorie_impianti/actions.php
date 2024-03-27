@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Checklists\Check;
 use Modules\Impianti\Categoria;
 
-$modulo_impianti = (new Module())->getByField('name', 'Impianti', \Models\Locale::where('predefined', true)->first()->id);
+$modulo_impianti = (new Module())->getByField('name', 'Impianti', \Models\Locale::getPredefined()->id);
 
 switch (filter('op')) {
     case 'update':

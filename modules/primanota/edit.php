@@ -36,12 +36,12 @@ use Models\Module;
 if (sizeof($rs_doc) > 0) {
     if (sizeof($rs_doc) == 1) {
         $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['iddocumento']));
-        $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id)->id_record : (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id); ?>
+        $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id)->id_record : (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id); ?>
             
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByField('name', 'Preventivi', \Models\Locale::where('predefined', true)->first()->id); ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByField('name', 'Preventivi', \Models\Locale::getPredefined()->id); ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
                     <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -69,7 +69,7 @@ if (sizeof($rs_doc) > 0) {
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
-            $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id)->id_record : (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id); ?>
+            $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id)->id_record : (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id); ?>
                         <li><a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
         <?php
         } ?>

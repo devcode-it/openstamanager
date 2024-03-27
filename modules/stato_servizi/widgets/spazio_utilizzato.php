@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$id_module = (new Module())->getByField('name', 'Stato dei servizi', \Models\Locale::where('predefined', true)->first()->id);
+$id_module = (new Module())->getByField('name', 'Stato dei servizi', \Models\Locale::getPredefined()->id);
 
 echo '
 <script src="'.base_path().'/assets/dist/js/chartjs/chart.min.js"></script>';

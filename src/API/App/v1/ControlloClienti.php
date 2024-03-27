@@ -46,7 +46,7 @@ class ControlloClienti extends Resource implements RetrieveInterface
 
         // Aggiunta tipologia Cliente se non presente nell'anagrafica trovata
         if (!empty($cliente) && !$cliente->isTipo('Cliente')) {
-            $tipo_cliente = (new Tipo())->getByField('name', 'Cliente', \Models\Locale::where('predefined', true)->first()->id);
+            $tipo_cliente = (new Tipo())->getByField('name', 'Cliente', \Models\Locale::getPredefined()->id);
             $tipi = $cliente->tipi->pluck('id')->toArray();
 
             $tipi[] = $tipo_cliente;

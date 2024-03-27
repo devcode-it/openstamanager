@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Checklists\Checklist;
 
-$checklist_module = Module::find((new Module())->getByField('name', 'Checklists', \Models\Locale::where('predefined', true)->first()->id));
+$checklist_module = Module::find((new Module())->getByField('name', 'Checklists', \Models\Locale::getPredefined()->id));
 
 if (isset($id_record)) {
     $record = Checklist::find($id_record);

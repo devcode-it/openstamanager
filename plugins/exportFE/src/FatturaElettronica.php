@@ -287,7 +287,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return \Uploads::getDirectory((new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id));
+        return \Uploads::getDirectory((new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id));
     }
 
     /**
@@ -1710,7 +1710,7 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id);
+        $id_module = (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id);
         $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1857,7 +1857,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id),
+            'id_module' => (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id),
             'id_record' => $this->getDocumento()['id'],
         ];
     }

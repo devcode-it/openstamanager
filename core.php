@@ -307,7 +307,8 @@ foreach ($list as $file) {
 if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {
     $id_lang = setting('Lingua');
     Models\Locale::setDefault($id_lang);
-
+    Models\Locale::setPredefined();
+    
     $lang = Models\Locale::find($id_lang)->language_code;
     $translator->setLocale($lang, $formatter);
 }

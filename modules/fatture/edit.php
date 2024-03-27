@@ -356,9 +356,9 @@ echo '
 if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
-$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::where('predefined', true)->first()->id);
+$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id);
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', \Models\Locale::where('predefined', true)->first()->id).'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', \Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 
 echo '
@@ -366,7 +366,7 @@ echo '
             <div class="row">';
 // Conteggio numero articoli fatture
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`) WHERE `co_documenti`.`id`='.prepare($id_record));
-$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', \Models\Locale::where('predefined', true)->first()->id);
+$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', \Models\Locale::getPredefined()->id);
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">
@@ -408,7 +408,7 @@ if ($dir == 'entrata') {
                     <?php if ($record['id_banca_azienda'] != 0) {
                         echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
                     }
-$id_module_banche = (new Module())->getByField('name', 'Banche', \Models\Locale::where('predefined', true)->first()->id);
+$id_module_banche = (new Module())->getByField('name', 'Banche', \Models\Locale::getPredefined()->id);
 if ($dir == 'entrata') {
     echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
@@ -532,7 +532,7 @@ if ($dir == 'entrata') {
     }
 
     echo '
-                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Dichiarazioni d\'intento', \Models\Locale::where('predefined', true)->first()->id).'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
+                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Dichiarazioni d\'intento', \Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                 </div>';
 }
 echo '
@@ -581,11 +581,11 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         <div class="box-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('name', 'Aspetto beni', \Models\Locale::where('predefined', true)->first()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('name', 'Aspetto beni', \Models\Locale::getPredefined()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', \Models\Locale::where('predefined', true)->first()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', \Models\Locale::getPredefined()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -854,7 +854,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', \Models\Locale::where('predefined', true)->first()->id).'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', \Models\Locale::getPredefined()->id).'" ]}
                         </div>
 
                         <div class="col-md-3" style="margin-top: 25px">

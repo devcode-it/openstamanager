@@ -61,13 +61,13 @@ $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
-$ultima_esecuzione = Cache::find((new Cache())->getByField('name', 'Ultima esecuzione del cron', \Models\Locale::where('predefined', true)->first()->id));
+$ultima_esecuzione = Cache::find((new Cache())->getByField('name', 'Ultima esecuzione del cron', \Models\Locale::getPredefined()->id));
 $data = $ultima_esecuzione->content;
 
-$in_esecuzione = Cache::find((new Cache())->getByField('name', 'Cron in esecuzione', \Models\Locale::where('predefined', true)->first()->id));
-$cron_id = Cache::find((new Cache())->getByField('name', 'ID del cron', \Models\Locale::where('predefined', true)->first()->id));
+$in_esecuzione = Cache::find((new Cache())->getByField('name', 'Cron in esecuzione', \Models\Locale::getPredefined()->id));
+$cron_id = Cache::find((new Cache())->getByField('name', 'ID del cron', \Models\Locale::getPredefined()->id));
 
-$disattiva = Cache::find((new Cache())->getByField('name', 'Disabilita cron', \Models\Locale::where('predefined', true)->first()->id));
+$disattiva = Cache::find((new Cache())->getByField('name', 'Disabilita cron', \Models\Locale::getPredefined()->id));
 if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     return;
 }

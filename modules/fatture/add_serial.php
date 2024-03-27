@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\DDT\DDT;
 
 $module = Module::find($id_module);
-$id_module_articoli = (new Module())->getByField('name', 'Articoli', \Models\Locale::where('predefined', true)->first()->id);
+$id_module_articoli = (new Module())->getByField('name', 'Articoli', \Models\Locale::getPredefined()->id);
 
 // Controllo sulla direzione monetaria
 $uscite = [
@@ -195,7 +195,7 @@ if ($dir == 'entrata') {
     </div>';
     }
 
-    $module_fatture = (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::where('predefined', true)->first()->id);
+    $module_fatture = (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id);
 
     echo '
     <br>

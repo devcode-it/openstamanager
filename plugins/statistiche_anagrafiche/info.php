@@ -127,7 +127,7 @@ echo '
                     <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'aqua').'"><i class="fa fa-question"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Preventivi').'</span>
-                        '.($preventivi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Preventivi', \Models\Locale::where('predefined', true)->first()->id).'&search_Cliente='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($preventivi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Preventivi', \Models\Locale::getPredefined()->id).'&search_Cliente='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$preventivi->count().'</big><br>
@@ -142,7 +142,7 @@ echo '
                     <span class="info-box-icon bg-'.($contratti->count() == 0 ? 'gray' : 'purple').'"><i class="fa fa-refresh"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Contratti').'</span>
-                        '.($contratti->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Contratti', \Models\Locale::where('predefined', true)->first()->id).'&search_Cliente='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($contratti->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Contratti', \Models\Locale::getPredefined()->id).'&search_Cliente='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$contratti->count().'</big><br>
@@ -157,7 +157,7 @@ echo '
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ordini cliente').'</span>
-                        '.($ordini_cliente->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Ordini cliente', \Models\Locale::where('predefined', true)->first()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($ordini_cliente->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Ordini cliente', \Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ordini_cliente->count().'</big><br>
@@ -176,10 +176,10 @@ echo '
                         <span class="info-box-text pull-left">'.tr('Attività').'</span>';
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 } else {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 }
 echo '                     
                         <br class="clearfix">
@@ -196,7 +196,7 @@ echo '
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ddt in uscita').'</span>
-                        '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Ddt di vendita', \Models\Locale::where('predefined', true)->first()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Ddt di vendita', \Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ddt_uscita->count().'</big><br>
@@ -211,7 +211,7 @@ echo '
                     <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Fatture').'</span>
-                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::where('predefined', true)->first()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.($fatture_vendita->count() + $note_credito->count()).'</big><br>
@@ -230,10 +230,10 @@ echo '
                         <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 } else {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::where('predefined', true)->first()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 }
 echo '                     
                         <br class="clearfix">

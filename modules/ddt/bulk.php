@@ -55,7 +55,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByField('name', 'Bozza', \Models\Locale::where('predefined', true)->first()->id);
+        $stato_documenti_accodabili = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
         $accodare = post('accodare');
 
         $data = date('Y-m-d');

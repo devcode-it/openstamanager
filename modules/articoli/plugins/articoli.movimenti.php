@@ -49,7 +49,7 @@ echo '
         <div class="pull-right">';
 
 echo '
-        <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path().'/modules/articoli/modals/add_movimento.php?id_module='.(new Module())->getByField('name', 'Movimenti', \Models\Locale::where('predefined', true)->first()->id).'&id_articolo='.$id_record.'\');">
+        <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path().'/modules/articoli/modals/add_movimento.php?id_module='.(new Module())->getByField('name', 'Movimenti', \Models\Locale::getPredefined()->id).'&id_articolo='.$id_record.'\');">
             <i class="fa fa-truck"></i>
             '.tr('Movimenta articolo').'
         </a>';
@@ -69,7 +69,7 @@ if (empty($_GET['movimentazione_completa'])) {
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Movimenti', \Models\Locale::where('predefined', true)->first()->id).'&search_Articolo='.($articolo->codice.' - '.$articolo->getTranslation('name')).'">
+        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Movimenti', \Models\Locale::getPredefined()->id).'&search_Articolo='.($articolo->codice.' - '.$articolo->getTranslation('name')).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

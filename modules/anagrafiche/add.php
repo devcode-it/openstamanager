@@ -24,8 +24,8 @@ include_once __DIR__.'/../../core.php';
 
 $id_nazione_italia = (new Nazione())->getByField('name', 'Italia', Models\Locale::getPredefined()->id);
 $tipo = get('tipoanagrafica');
-$id_tipo = Tipo::find((new Tipo())->getByField('name', $tipo, Models\Locale::where('predefined', true)->first()->id))->id;
-$id_tipo_azienda = Tipo::find((new Tipo())->getByField('name', 'Azienda', Models\Locale::where('predefined', true)->first()->id))->id;
+$id_tipo = Tipo::find((new Tipo())->getByField('name', $tipo, Models\Locale::getPredefined()->id))->id;
+$id_tipo_azienda = Tipo::find((new Tipo())->getByField('name', 'Azienda', Models\Locale::getPredefined()->id))->id;
 
 if (!empty($tipo)) {
     $rs = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id`, `an_tipianagrafiche_lang`.`name` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id`='.prepare($id_tipo));

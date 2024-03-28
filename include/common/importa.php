@@ -21,9 +21,9 @@ use Models\Module;
 use Modules\Contratti\Stato as StatoContratto;
 use Modules\DDT\Stato;
 use Modules\Fatture\Stato as StatoFattura;
+use Modules\Fatture\Tipo as Tipofattura;
 use Modules\Ordini\Stato as StatoOrdine;
 use Plugins\ListinoFornitori\DettaglioFornitore;
-use Modules\Fatture\Tipo as Tipofattura;
 
 // Inizializzazione
 $documento = $options['documento'];
@@ -45,8 +45,8 @@ $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe_totali = $documento->getRighe();
 
-$id_module_interventi = (new Module)->getByField('name', 'Interventi', Models\Locale::getPredefined()->id);
-$id_module_ordini_f = (new Module)->getByField('name', 'Ordini fornitore', Models\Locale::getPredefined()->id);
+$id_module_interventi = (new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id);
+$id_module_ordini_f = (new Module())->getByField('name', 'Ordini fornitore', Models\Locale::getPredefined()->id);
 if ($final_module->id == $id_module_interventi) {
     $righe = $righe_totali->where('is_descrizione', '=', 0)
         ->where('qta_rimanente', '>', 0);
@@ -102,8 +102,8 @@ if (!empty($options['create_document'])) {
     $id_module_ddt_acquisto = (new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id);
     if (in_array($final_module->id, [$id_module_fatt_vendita, $id_module_fatt_acquisto])) {
         $stato_predefinito = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
-        $fatt_differita_acquisto = (new TipoFattura())->getByField('name', 'Fattura differita di acquisto', Models\Locale::getPredefined()->id);
-        $fatt_differita_vendita = (new TipoFattura())->getByField('name', 'Fattura differita di vendita', Models\Locale::getPredefined()->id);
+        $fatt_differita_acquisto = (new Tipofattura())->getByField('name', 'Fattura differita di acquisto', Models\Locale::getPredefined()->id);
+        $fatt_differita_vendita = (new Tipofattura())->getByField('name', 'Fattura differita di vendita', Models\Locale::getPredefined()->id);
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];

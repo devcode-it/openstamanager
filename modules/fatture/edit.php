@@ -21,25 +21,25 @@ use Carbon\Carbon;
 use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\DDT\Stato as StatoDDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
+use Modules\Fatture\Stato as StatoFattura;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
-use Plugins\ExportFE\Interaction;
-use Modules\Fatture\Stato as StatoFattura;
-use Modules\DDT\Stato as StatoDDT;
 use Modules\Ordini\Stato as StatoOrdine;
+use Plugins\ExportFE\Interaction;
 
 include_once __DIR__.'/../../core.php';
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-$id_stato_bozza = (new StatoFattura())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
-$id_stato_emessa = (new StatoFattura())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
-$id_stato_pagato = (new StatoFattura())->getByField('name', 'Pagato', \Models\Locale::getPredefined()->id);
-$id_stato_parz_pagato = (new StatoFattura())->getByField('name', 'Parzialmente pagato', \Models\Locale::getPredefined()->id);
-$id_stato_non_valida = (new StatoFattura())->getByField('name', 'Non valida', \Models\Locale::getPredefined()->id);
-$id_stato_annullata = (new StatoFattura())->getByField('name', 'Annullata', \Models\Locale::getPredefined()->id);
+$id_stato_bozza = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+$id_stato_emessa = (new StatoFattura())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
+$id_stato_pagato = (new StatoFattura())->getByField('name', 'Pagato', Models\Locale::getPredefined()->id);
+$id_stato_parz_pagato = (new StatoFattura())->getByField('name', 'Parzialmente pagato', Models\Locale::getPredefined()->id);
+$id_stato_non_valida = (new StatoFattura())->getByField('name', 'Non valida', Models\Locale::getPredefined()->id);
+$id_stato_annullata = (new StatoFattura())->getByField('name', 'Annullata', Models\Locale::getPredefined()->id);
 
 $block_edit = !empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || !$abilita_genera;
 
@@ -296,7 +296,7 @@ if (empty($record['is_fiscale'])) {
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($fattura->stato->id == $id_stato_bozza) {
-    $query .= " WHERE `co_statidocumento`.`id` IN (".$id_stato_emessa.", ".$id_stato_bozza.")";
+    $query .= ' WHERE `co_statidocumento`.`id` IN ('.$id_stato_emessa.', '.$id_stato_bozza.')';
 }
 
 $query .= ' ORDER BY `name`';
@@ -817,9 +817,9 @@ if (!$block_edit) {
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         }
 
-        $id_stato_evaso = (new StatoDDT())->getByField('name', 'Evaso', \Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new StatoDDT())->getByField('name', 'Parziale evaso', \Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new StatoDDT())->getByField('name', 'Parziale fatturato', \Models\Locale::getPredefined()->id);
+        $id_stato_evaso = (new StatoDDT())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new StatoDDT())->getByField('name', 'Parziale evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new StatoDDT())->getByField('name', 'Parziale fatturato', Models\Locale::getPredefined()->id);
 
         // Lettura ddt (entrata o uscita)
         $ddt_query = 'SELECT 
@@ -840,10 +840,10 @@ if (!$block_edit) {
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
         // Lettura ordini (cliente o fornitore)
-        $id_stato_accettato = (new StatoOrdine())->getByField('name', 'Accettato', \Models\Locale::getPredefined()->id);
-        $id_stato_evaso = (new StatoOrdine())->getByField('name', 'Evaso', \Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new StatoOrdine())->getByField('name', 'Parziale evaso', \Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new StatoOrdine())->getByField('name', 'Parziale fatturato', \Models\Locale::getPredefined()->id);
+        $id_stato_accettato = (new StatoOrdine())->getByField('name', 'Accettato', Models\Locale::getPredefined()->id);
+        $id_stato_evaso = (new StatoOrdine())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new StatoOrdine())->getByField('name', 'Parziale evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new StatoOrdine())->getByField('name', 'Parziale fatturato', Models\Locale::getPredefined()->id);
 
         $ordini_query = 'SELECT 
                 COUNT(*) AS tot 

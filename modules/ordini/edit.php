@@ -24,7 +24,7 @@ use Modules\Ordini\Stato;
 $block_edit = $record['flag_completato'];
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name', \Models\Locale::getPredefined()->id) == 'Ordini cliente') {
+if ($module->getTranslation('name', Models\Locale::getPredefined()->id) == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

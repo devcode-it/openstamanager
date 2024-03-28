@@ -261,7 +261,7 @@ class Preventivo extends Document
         $qta = $righe->sum('qta');
         $parziale = $qta != $qta_evasa;
         $stato = $this->stato;
-        
+
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';

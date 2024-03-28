@@ -171,13 +171,13 @@ class Ordine extends Document
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Accettato';
-            } elseif (!in_array($stato_attuale->getTranslation('name'), ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
+            } elseif (!in_array($stato_attuale->getTranslation('name', \Models\Locale::getPredefined()->id), ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByField('name', $descrizione);
+            $stato = (new Stato())->getByField('name', $descrizione, \Models\Locale::getPredefined()->id);
             $this->stato()->associate($stato);
             $this->save();
         }

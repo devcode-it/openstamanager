@@ -21,6 +21,7 @@ use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
+use Modules\DDT\Stato;
 
 include_once __DIR__.'/../../core.php';
 
@@ -112,18 +113,24 @@ if ($righe_vuote) {
                         <div class="col-md-6">
                             <?php
     if (setting('Cambia automaticamente stato ddt fatturati')) {
-        if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
+        $id_stato_fatt = (new Stato())->getByField('name', 'Fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new Stato())->getByField('name', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+
+        if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
             ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
                             <?php
         } else {
+            $id_stato_bozza = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+            $id_stato_evaso = (new Stato())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
+            $id_stato_parz_evaso = (new Stato())->getByField('name', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
             ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `name` IN('Bozza', 'Evaso', 'Parzialmente evaso') ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dt_statiddt`.`id` IN (<?php echo implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]); ?>) ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
         }
     } else {
         ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT *, `colore` AS _bgcolor_, `dt_statiddt_lang`.`name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
     }
 ?>

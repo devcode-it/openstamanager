@@ -24,7 +24,7 @@ use Modules\DDT\DDT;
 
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-$module_name = $module ? $module->getTranslation('name') : '';
+$module_name = $module ? $module->getTranslation('name', Models\Locale::getPredefined()->id) : '';
 
 if ($module_name == 'Ddt di acquisto') {
     $dir = 'uscita';
@@ -35,7 +35,8 @@ if ($module_name == 'Ddt di acquisto') {
 if (isset($id_record)) {
     $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
-    $record = $dbo->fetchOne('SELECT `dt_ddt`.*,
+    $record = $dbo->fetchOne('SELECT 
+        `dt_ddt`.*,
         `dt_ddt`.`id` AS idddt,
         `dt_statiddt_lang`.`name` AS `stato`,
         `dt_statiddt`.`completato` AS `flag_completato`,

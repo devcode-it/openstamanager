@@ -733,7 +733,7 @@ if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati
     $rs = $dbo->fetchArray('SELECT `idordine` FROM `dt_righe_ddt` WHERE `idddt`='.prepare($id_record).' AND `idordine`!=0');
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        $stato = (new StatoOrdine())->getByField('name', get_stato_ordine($rs[$i]['idordine']));
-        $dbo->query('UPDATE `or_ordini` SET `idstatoordine`='.prepare($stato).'") WHERE `id` = '.prepare($rs[$i]['idordine']));
+        $stato = StatoOrdine::find(get_stato_ordine($rs[$i]['idordine']))->id;
+        $dbo->query('UPDATE `or_ordini` SET `idstatoordine`='.prepare($stato).' WHERE `id` = '.prepare($rs[$i]['idordine']));
     }
 }

@@ -77,6 +77,7 @@ if ($righe_vuote) {
                         $id_stato_parz_evaso = (new Stato())->getByField('name', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
                         $id_stato_fatt = (new Stato())->getByField('name', 'Fatturato', Models\Locale::getPredefined()->id);
                         $id_stato_parz_fatt = (new Stato())->getByField('name', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+                        $id_stato_accettato = (new Stato())->getByField('name', 'Accettato', Models\Locale::getPredefined()->id);
 
                         if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
                             ?>
@@ -84,7 +85,7 @@ if ($righe_vuote) {
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `name` != 'Fatturato' || `name` = 'Accettato') ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {

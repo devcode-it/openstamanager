@@ -22,21 +22,23 @@ use Modules\Ordini\Ordine;
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $ordine = Ordine::with('tipo', 'stato')->find($id_record);
+    $ordine = Ordine::find($id_record);
 
-    $record = $dbo->fetchOne('SELECT *,
+    $record = $dbo->fetchOne('SELECT 
+            `or_ordini`.*,
             `or_ordini`.`note`,
             `or_ordini`.`idpagamento`,
             `or_ordini`.`id` AS idordine,
             `or_ordini`.`idagente` AS idagente,
-            `or_statiordine_lang`.`name` AS `stato`,
-            `or_tipiordine_lang`.`name` AS `descrizione_tipodoc`,
+            `or_ordini`.`idstatoordine` AS idstatoordine,
+            `or_statiordine_lang`.`name` AS stato,
+            `or_tipiordine_lang`.`name` AS descrizione_tipodoc,
             `an_anagrafiche`.`tipo` AS tipo_anagrafica,
             `or_statiordine`.`completato` AS flag_completato
         FROM 
             `or_ordini` 
-            INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
-            LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record`=`or_statiordine`.`id`
+            LEFT JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
+            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')

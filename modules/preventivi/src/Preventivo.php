@@ -260,9 +260,8 @@ class Preventivo extends Document
         $qta_evasa = $righe->sum('qta_evasa');
         $qta = $righe->sum('qta');
         $parziale = $qta != $qta_evasa;
-
-        $stato_attuale = $this->stato;
-
+        $stato = $this->stato;
+        
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
@@ -271,11 +270,11 @@ class Preventivo extends Document
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
         } else {
-            $descrizione = $this->stato->getTranslation('name');
+            $descrizione = $stato->getTranslation('name', \Models\Locale::getPredefined()->id);
             $codice_intervento = 'OK';
         }
 
-        $stato = (new Stato())->getByField('name', $descrizione);
+        $stato = (new Stato())->getByField('name', $descrizione, \Models\Locale::getPredefined()->id);
         $this->stato()->associate($stato);
         $this->save();
 

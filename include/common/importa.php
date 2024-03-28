@@ -23,6 +23,7 @@ use Modules\DDT\Stato;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Ordini\Stato as StatoOrdine;
 use Plugins\ListinoFornitori\DettaglioFornitore;
+use Modules\Fatture\Tipo as Tipofattura;
 
 // Inizializzazione
 $documento = $options['documento'];
@@ -43,12 +44,15 @@ $id_segment = $_SESSION['module_'.$final_module->id]['id_segment'];
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe_totali = $documento->getRighe();
-if ($final_module->getTranslation('name') == 'Interventi') {
+
+$id_module_interventi = (new Module)->getByField('name', 'Interventi', Models\Locale::getPredefined()->id);
+$id_module_ordini_f = (new Module)->getByField('name', 'Ordini fornitore', Models\Locale::getPredefined()->id);
+if ($final_module->id == $id_module_interventi) {
     $righe = $righe_totali->where('is_descrizione', '=', 0)
         ->where('qta_rimanente', '>', 0);
     $righe_evase = $righe_totali->where('is_descrizione', '=', 0)
         ->where('qta_rimanente', '=', 0);
-} elseif ($final_module->getTranslation('name') == 'Ordini fornitore') {
+} elseif ($final_module->id == $id_module_ordini_f) {
     $righe = $righe_totali;
     $righe_evase = collect();
 } else {
@@ -92,20 +96,28 @@ if (!empty($options['create_document'])) {
                 </div>';
 
     // Opzioni aggiuntive per le Fatture
-    if (in_array($final_module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+    $id_module_fatt_vendita = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+    $id_module_fatt_acquisto = (new Module())->getByField('name', 'Fatture di acquisto', Models\Locale::getPredefined()->id);
+    $id_module_ddt_vendita = (new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id);
+    $id_module_ddt_acquisto = (new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id);
+    if (in_array($final_module->id, [$id_module_fatt_vendita, $id_module_fatt_acquisto])) {
         $stato_predefinito = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $fatt_differita_acquisto = (new TipoFattura())->getByField('name', 'Fattura differita di acquisto', Models\Locale::getPredefined()->id);
+        $fatt_differita_vendita = (new TipoFattura())->getByField('name', 'Fattura differita di vendita', Models\Locale::getPredefined()->id);
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
-        } elseif (in_array($original_module->getTranslation('name'), ['Ddt di vendita', 'Ddt di acquisto'])) {
-            $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = '.($dir == 'uscita' ? 'Fattura differita di acquisto' : 'Fattura differita di vendita').' AND `dir` = \''.$dir.'\'')['id'];
+        } elseif (in_array($original_module->id, [$id_module_ddt_vendita, $id_module_ddt_acquisto])) {
+            $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipidocumento`.`id` = '.($dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita).' AND `dir` = \''.$dir.'\'')['id'];
         } else {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
         }
 
+        $id_bozza = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $id_emessa = (new StatoFattura())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statidocumento`.`id` as id, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito.'"]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statidocumento`.`id` as id, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`id` IN ('.$id_bozza.', '.$id_emessa.')", "value": "'.$stato_predefinito.'"]}
             </div>
 
             <div class="col-md-6">

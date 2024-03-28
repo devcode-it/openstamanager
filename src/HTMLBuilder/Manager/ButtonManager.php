@@ -55,11 +55,13 @@ class ButtonManager implements ManagerInterface
                 $print = PrintTemplate::find($options['id']);
             }
 
-            $result = [
-                'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => tr('Stampa').' '.((strtoupper($print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst($print->getTranslation('title'))),
-                'icon' => $print->icon,
-            ];
+            if (!empty($print)) {
+                $result = [
+                    'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
+                    'title' => tr('Stampa').' '.((strtoupper($print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst($print->getTranslation('title'))),
+                    'icon' => $print->icon,
+                ];
+            }
         } elseif ($options['type'] == 'email') {
             $template_email = TemplateEmail::find($options['id']);
 

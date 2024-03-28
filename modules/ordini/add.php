@@ -22,15 +22,15 @@ use Models\Module;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name') == 'Ordini cliente') {
+if ($module->getTranslation('name', \Models\Locale::getPredefined()->id) == 'Ordini cliente') {
     $dir = 'entrata';
 
-    $tipo_anagrafica = tr('Cliente');
+    $tipo_anagrafica = 'Cliente';
     $ajax = 'clienti';
 } else {
     $dir = 'uscita';
 
-    $tipo_anagrafica = tr('Fornitore');
+    $tipo_anagrafica = 'Fornitore';
     $ajax = 'fornitori';
 }
 
@@ -50,7 +50,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-4">
-            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
+            {[ "type": "select", "label": "<?php echo tr($tipo_anagrafica); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
 		</div>
 
 		<div class="col-md-4">

@@ -1687,7 +1687,7 @@ WHERE
     1=1
 HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Campi personalizzati');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_plugins_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Plugin';
 
 -- Allineamento vista Checklists
@@ -1704,7 +1704,7 @@ WHERE
     1=1
 HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Checklists');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_plugins_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Checklists' AND `zz_views`.`name` = 'Plugin';
 
 -- Allineamento vista Fatture di vendita
@@ -1896,7 +1896,7 @@ HAVING
 ORDER BY 
     `scadenza` ASC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Scadenzario');
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Stampe
 UPDATE `zz_modules` SET `options` = "
@@ -1911,7 +1911,7 @@ WHERE
     AND `zz_prints`.`enabled`=1 
 HAVING 
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Stampe');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Tecnici e tariffe
 UPDATE `zz_modules` SET `options` = "
@@ -1944,7 +1944,7 @@ HAVING
     2=2
 ORDER BY
     `zz_modules_lang`.`name`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Template email');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Utenti e Permessi
 UPDATE `zz_modules` SET `options` = 'SELECT

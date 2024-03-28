@@ -28,11 +28,13 @@ if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
 }
 
+$id_tipo_azienda = Tipo::find((new Tipo())->getByField('name', 'Azienda', Models\Locale::getPredefined()->id))->id;
+
 $has_azienda = $dbo->fetchNum('SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
     LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).")
-WHERE `an_tipianagrafiche_lang`.`name` = 'Azienda' AND `an_anagrafiche`.`deleted_at` IS NULL") != 0;
+WHERE `an_tipianagrafiche`.`id` = ".$id_tipo_azienda." AND `an_anagrafiche`.`deleted_at` IS NULL") != 0;
 $has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
 
 $settings = [

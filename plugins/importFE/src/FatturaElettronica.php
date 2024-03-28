@@ -266,7 +266,7 @@ class FatturaElettronica
         $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
-            (new TipoAnagrafica())->getByField('name', $type),
+            (new TipoAnagrafica())->getByField('name', $type, \Models\Locale::getPredefined()->id),
         ]);
 
         if (!empty($info['partita_iva'])) {

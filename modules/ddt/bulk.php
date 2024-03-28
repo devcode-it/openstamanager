@@ -35,7 +35,7 @@ if ($module->getTranslation('name') == 'Ddt di vendita') {
 }
 
 // Segmenti
-$id_fatture = (new Module())->getByField('name', $module_fatture);
+$id_fatture = (new Module())->getByField('name', $module_fatture, Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;

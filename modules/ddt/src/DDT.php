@@ -241,7 +241,7 @@ class DDT extends Document
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByField('name', $descrizione);
+            $stato = (new Stato())->getByField('name', $descrizione, \Models\Locale::getPredefined()->id);
             $this->stato()->associate($stato);
             $this->save();
         }

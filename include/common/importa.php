@@ -34,10 +34,10 @@ if (empty($documento)) {
 
 // Informazioni utili
 $dir = $documento->direzione;
-$original_module = Module::find((new Module())->getByField('name', $documento->module));
+$original_module = Module::find((new Module())->getByField('name', $documento->module, Models\Locale::getPredefined()->id));
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
-$final_module = Module::find((new Module())->getByField('name', $name));
+$final_module = Module::find((new Module())->getByField('name', $name, Models\Locale::getPredefined()->id));
 $id_segment = $_SESSION['module_'.$final_module->id]['id_segment'];
 
 // IVA predefinita

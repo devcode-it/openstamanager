@@ -248,7 +248,7 @@ class Contratto extends Document
             $codice_intervento = 'FAT';
         }
 
-        $stato = (new Stato())->getByField('name', $descrizione);
+        $stato = (new Stato())->getByField('name', $descrizione, \Models\Locale::getPredefined()->id);
         $this->stato()->associate($stato);
         $this->save();
 

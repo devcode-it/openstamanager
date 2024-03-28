@@ -96,7 +96,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_attuale_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -111,7 +111,7 @@ class Fattura extends Document
         // Informazioni di base
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
-        $model->stato()->associate($stato_documento);
+        $model->stato()->associate($id_stato_attuale_documento);
 
         $model->save();
 
@@ -573,8 +573,15 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Informazioni sul cambio dei valori
-        $stato_precedente = Stato::find($this->original['idstatodocumento']);
-        $stato_precedente = $stato_precedente ? $stato_precedente->getTranslation('name') : null;
+        $id_stato_precedente = $this->original['idstatodocumento'];
+        $id_stato_attuale = $this->stato['id'];
+
+        $id_stato_bozza = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_emessa = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
+        $id_stato_annullata = (new Stato())->getByField('name', 'Annullata', \Models\Locale::getPredefined()->id);
+        $id_stato_non_valida = (new Stato())->getByField('name', 'Non valida', \Models\Locale::getPredefined()->id);
+        $id_stato_pagato = (new Stato())->getByField('name', 'Pagato', \Models\Locale::getPredefined()->id);
+
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
 
@@ -589,9 +596,8 @@ class Fattura extends Document
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
-        $stato = Stato::find($this->stato['id']);
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        if ((($stato_precedente == 'Bozza' && $stato->getTranslation('name') == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
+        if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -601,17 +607,17 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($stato_precedente, ['Bozza', 'Annullata'])
-            && !in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida']))
+            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata])
+            && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida]))
             || $options[0] == 'forza_emissione'
         ) {
             // Registrazione scadenze
-            $this->registraScadenze($stato->getTranslation('name') == 'Pagato');
+            $this->registraScadenze($id_stato_attuale == $id_stato_pagato);
 
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();
         } // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida'])) {
+        elseif (in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])) {
             // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
@@ -622,7 +628,7 @@ class Fattura extends Document
             $this->movimentiContabili()->delete();
         }
 
-        if ($this->changes['data_competenza'] && !in_array($stato->getTranslation('name'), ['Bozza', 'Annullata', 'Non valida'])) {
+        if ($this->changes['data_competenza'] && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])) {
             $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
             foreach ($movimenti as $movimento) {
                 $movimento->data = $this->data_competenza;
@@ -645,7 +651,7 @@ class Fattura extends Document
         }
 
         // Operazioni automatiche per le Fatture Elettroniche
-        if ($this->direzione == 'entrata' && $stato_precedente == 'Bozza' && $stato->getTranslation('name') == 'Emessa') {
+        if ($this->direzione == 'entrata' && $id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) {
             $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
@@ -721,8 +727,8 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $stato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
-        $new->stato()->associate($stato);
+        $id_stato_attuale = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $new->stato()->associate($id_stato_attuale);
 
         return $new;
     }

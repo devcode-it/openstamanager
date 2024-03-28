@@ -68,6 +68,7 @@ $tables = [
     'dt_tipiddt_lang',
     'em_lists_lang',
     'em_templates_lang',
+    'fe_stati_documento_lang',
     'in_fasceorarie_lang',
     'in_statiintervento_lang',
     'in_tipiintervento_lang',

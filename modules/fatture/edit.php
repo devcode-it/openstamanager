@@ -26,12 +26,22 @@ use Modules\Fatture\Gestori\Bollo;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
+use Modules\Fatture\Stato as StatoFattura;
+use Modules\DDT\Stato as StatoDDT;
+use Modules\Ordini\Stato as StatoOrdine;
 
 include_once __DIR__.'/../../core.php';
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-$block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
+$id_stato_bozza = (new StatoFattura())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+$id_stato_emessa = (new StatoFattura())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
+$id_stato_pagato = (new StatoFattura())->getByField('name', 'Pagato', \Models\Locale::getPredefined()->id);
+$id_stato_parz_pagato = (new StatoFattura())->getByField('name', 'Parzialmente pagato', \Models\Locale::getPredefined()->id);
+$id_stato_non_valida = (new StatoFattura())->getByField('name', 'Non valida', \Models\Locale::getPredefined()->id);
+$id_stato_annullata = (new StatoFattura())->getByField('name', 'Annullata', \Models\Locale::getPredefined()->id);
+
+$block_edit = !empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || !$abilita_genera;
 
 if ($dir == 'entrata') {
     $conto = 'vendite';
@@ -155,7 +165,7 @@ if (!empty($fattura->ref_documento) && $fattura->isNota()) {
 }
 
 // Ricordo che si sta emettendo una fattura conto terzi
-if ($dir == 'entrata' && $fattura->stato->getTranslation('name') == 'Bozza') {
+if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
     if ($fattura->is_fattura_conto_terzi) {
         echo '
 <div class="alert alert-info">
@@ -189,7 +199,7 @@ if ($dir == 'entrata') {
     $data_odierna = new DateTime();
     $differenza = $data_odierna->diff($data_fattura)->days;
 
-    if ($fattura->codice_stato_fe == 'NS' && $fattura->stato->getTranslation('name') != 'Non valida' && ($differenza > setting('Giorni validità fattura scartata'))) {
+    if ($fattura->codice_stato_fe == 'NS' && $fattura->stato->id != $id_stato_non_valida && ($differenza > setting('Giorni validità fattura scartata'))) {
         echo '
 <div class="alert alert-error">
     <i class="fa fa-warning"></i> '.tr('Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.').'</b>
@@ -277,16 +287,16 @@ if ($righe_vuote) {
 
 <?php
 
-$query = 'SELECT *, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
+$query = 'SELECT `co_statidocumento`.*, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`name` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
 if (empty($record['is_fiscale'])) {
-    $query .= " WHERE `name` = 'Bozza'";
+    $query .= " WHERE `co_statidocumento`.`id` = '.$id_stato_bozza.'";
 
     $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `name`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
-elseif ($record['stato'] == 'Bozza') {
-    $query .= " WHERE `name` IN ('Emessa', 'Bozza')";
+elseif ($fattura->stato->id == $id_stato_bozza) {
+    $query .= " WHERE `co_statidocumento`.`id` IN (".$id_stato_emessa.", ".$id_stato_bozza.")";
 }
 
 $query .= ' ORDER BY `name`';
@@ -311,7 +321,7 @@ $query .= ' ORDER BY `name`';
                     ?>
 
                 <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
-                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `name`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
                 <?php
@@ -319,7 +329,7 @@ $query .= ' ORDER BY `name`';
 
 echo '
                 <div class="col-md-'.($record['is_fiscale'] ? 2 : 6).'">
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->getTranslation('name') != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>
 
@@ -395,7 +405,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
                 
 				<div class="col-md-3">
@@ -452,7 +462,7 @@ if ($dir == 'entrata') {
                 <div class="col-md-3"></div>';
     }
 
-if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
+if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata) {
     $scadenze = $fattura->scadenze;
 
     $ricalcola = true;
@@ -468,7 +478,7 @@ if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
                         '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
 
     // Ricalcola scadenze disponibile solo per fatture di acquisto
-    if ($fattura->isFE() && $ricalcola && $module->getTranslation('name') == 'Fatture di acquisto') {
+    if ($fattura->isFE() && $ricalcola && $module->getTranslation('name', \Models\Locale()->getPredefined()->id) == 'Fatture di acquisto') {
         echo '
                     <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>
@@ -581,11 +591,11 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         <div class="box-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('name', 'Aspetto beni', Models\Locale::getPredefined()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('name', 'Aspetto beni', Models\Locale::getPredefined()->id).'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', Models\Locale::getPredefined()->id).'||'.(($record['stato'] != 'Bozza') ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('name', 'Causali', Models\Locale::getPredefined()->id).'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -746,7 +756,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
         $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->getTranslation('name').'</li>';
     }
 
-    if ($fattura->stato->getTranslation('name') == 'Bozza') {
+    if ($fattura->stato->id == $id_stato_bozza) {
         echo '
     <div class="alert alert-info">
         <i class="fa fa-info"></i> '.tr("La fattura è collegata ad una dichiarazione d'intento con diponibilità residura pari a _MONEY_.", ['_MONEY_' => moneyFormat($diff)]).'<br>'.tr('Per collegare una riga alla dichiarazione è sufficiente specificare come IVA <ul>_IVA_</ul>', ['_IVA_' => $descrizione_iva_accettata]).'</b>
@@ -807,6 +817,10 @@ if (!$block_edit) {
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         }
 
+        $id_stato_evaso = (new StatoDDT())->getByField('name', 'Evaso', \Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new StatoDDT())->getByField('name', 'Parziale evaso', \Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new StatoDDT())->getByField('name', 'Parziale fatturato', \Models\Locale::getPredefined()->id);
+
         // Lettura ddt (entrata o uscita)
         $ddt_query = 'SELECT 
             COUNT(*) AS tot 
@@ -819,13 +833,18 @@ if (!$block_edit) {
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).'
-            AND `dt_statiddt_lang`.`name` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
+            AND `dt_statiddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
             AND `dt_tipiddt`.`dir` = '.prepare($dir).'
             AND `dt_causalet`.`is_importabile` = 1
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
         // Lettura ordini (cliente o fornitore)
+        $id_stato_accettato = (new StatoOrdine())->getByField('name', 'Accettato', \Models\Locale::getPredefined()->id);
+        $id_stato_evaso = (new StatoOrdine())->getByField('name', 'Evaso', \Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new StatoOrdine())->getByField('name', 'Parziale evaso', \Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new StatoOrdine())->getByField('name', 'Parziale fatturato', \Models\Locale::getPredefined()->id);
+
         $ordini_query = 'SELECT 
                 COUNT(*) AS tot 
             FROM 
@@ -836,7 +855,7 @@ if (!$block_edit) {
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
             WHERE 
                 idanagrafica='.prepare($record['idanagrafica']).' 
-                AND `name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) 
+                AND `or_statiordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).') 
                 AND `dir`='.prepare($dir).') 
                 AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];

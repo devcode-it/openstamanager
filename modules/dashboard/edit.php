@@ -19,6 +19,7 @@
 
 use Carbon\Carbon;
 use Models\Module;
+use Modules\Anagrafiche\Tipo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -30,17 +31,18 @@ $stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` a
 $tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`name` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
 
 // Tecnici disponibili
+$id_tipo_tecnico = Tipo::find((new Tipo())->getByField('name', 'Tecnico', Models\Locale::getPredefined()->id))->id;
 $tecnici_disponibili = $dbo->fetchArray('SELECT 
     `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore` 
 FROM 
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).")
+    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE 
-    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche_lang`.`name`='Tecnico' ".Modules::getAdditionalsQuery('Interventi', null, false).'
+    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery('Interventi', null, false).'
 GROUP BY 
     `an_anagrafiche`.`idanagrafica`
 ORDER BY 

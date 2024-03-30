@@ -573,77 +573,6 @@ input.small-width {
     height: auto;
 }
 
-@media (max-width: 480px) {
-    #main_loading>div>i {
-        font-size: 160px;
-        margin-top: -80px;
-    }
-}
-
-@media screen and (max-width: 767px) {
-    .navbar-left {
-        display: inline-block;
-    }
-
-    .navbar-left ul>li:last-child {
-        display: none;
-    }
-
-    .box-center,
-    .box-center-large {
-        width: 90%;
-        margin-top: 20px
-    }
-
-    .main-header .logo {
-        display: none;
-    }
-
-    /*
-    .content-wrapper,
-    .right-side,
-    .left-side,
-    .main-sidebar {
-        padding-top: 50px;
-    }*/
-}
-
-@media screen and (min-width: 768px) and (max-width: 1024px) {
-    .signature-pad {
-        margin: 10%;
-    }
-}
-
-@media screen and (max-width: 992px) {
-
-    .table-bordered>thead>tr>th,
-    .table-bordered>tbody>tr>th,
-    .table-bordered>tfoot>tr>th,
-    .table-bordered>thead>tr>td,
-    .table-bordered>tbody>tr>td,
-    .table-bordered>tfoot>tr>td {
-        word-break: break-all;
-    }
-}
-
-@media screen and (max-width: 1024px) {
-    .push {
-        position: static;
-    }
-
-    .signature-pad {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: auto;
-        height: auto;
-        min-width: 250px;
-        min-height: 140px;
-        margin: 5%;
-    }
-}
-
 .callout a {
     text-decoration: none;
 }
@@ -721,13 +650,6 @@ input.small-width {
 .btn-group-flex .btn {
     flex: 1
 }
-
-@media (min-width: 1140px) {
-    .modal-lg {
-        width: 60vw;
-    }
-}
-
 
 /* Interventi da pianificare in Dashboard */
 
@@ -1090,26 +1012,6 @@ div.tip {
     color: #888;
 }
 
-@media screen and (min-width: 1140px) {
-    .with-control-sidebar {
-        margin-right: 230px;
-    }
-
-    .control-sidebar-open {
-        right: 0;
-        display: block !important;
-    }
-
-    .control-sidebar.control-sidebar-open,
-    .control-sidebar.control-sidebar-open+.control-sidebar-bg {
-        right: 0;
-    }
-
-    .control-sidebar-toggle {
-        /*display: none !important;*/
-    }
-}
-
 /* Fix stile */
 .skin-default .nav.navbar-nav li a {
     color: #FFFFFF;
@@ -1169,27 +1071,6 @@ div.tip {
 
 .row-list .form-group {
     margin-bottom: 0px;
-}
-
-
-/*
-* Component: Sidebar Mini
-*/
-
-@media (min-width: 768px) {
-
-    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>a>span:not(.pull-right),
-    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>.treeview-menu {
-        width: 220px;
-    }
-
-    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>a>.pull-right-container {
-        left: 220px !important;
-    }
-
-    html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left {
-        font-size: 2.4em;
-    }
 }
 
 /*
@@ -1274,4 +1155,127 @@ kbd{
 
 .login-box .form-control-feedback{
     pointer-events: all;
- }
+}
+
+.login-page{
+    background: #ccc;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(229,229,229,1) 34%, rgba(204,204,204,1) 100%);
+}
+
+@media (max-width: 480px) {
+    #main_loading>div>i {
+        font-size: 160px;
+        margin-top: -80px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .navbar-left {
+        display: inline-block;
+    }
+
+    .navbar-left ul>li:last-child {
+        display: none;
+    }
+
+    .box-center,
+    .box-center-large {
+        width: 90%;
+        margin-top: 20px
+    }
+
+    .main-header .logo {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .signature-pad {
+        margin: 10%;
+    }
+}
+
+@media screen and (max-width: 992px) {
+
+    .table-bordered>thead>tr>th,
+    .table-bordered>tbody>tr>th,
+    .table-bordered>tfoot>tr>th,
+    .table-bordered>thead>tr>td,
+    .table-bordered>tbody>tr>td,
+    .table-bordered>tfoot>tr>td {
+        word-break: break-all;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .push {
+        position: static;
+    }
+
+    .signature-pad {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        min-width: 250px;
+        min-height: 140px;
+        margin: 5%;
+    }
+
+    .login-page{
+        background: #ddd;
+    }    
+}
+
+
+
+@media (min-width: 1140px) {
+    .modal-lg {
+        width: 60vw;
+    }
+}
+
+
+@media screen and (min-width: 1140px) {
+    .with-control-sidebar {
+        margin-right: 230px;
+    }
+
+    .control-sidebar-open {
+        right: 0;
+        display: block !important;
+    }
+
+    .control-sidebar.control-sidebar-open,
+    .control-sidebar.control-sidebar-open+.control-sidebar-bg {
+        right: 0;
+    }
+
+    .control-sidebar-toggle {
+        /*display: none !important;*/
+    }
+}
+
+
+
+/*
+* Component: Sidebar Mini
+*/
+
+@media (min-width: 768px) {
+
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>a>span:not(.pull-right),
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>.treeview-menu {
+        width: 220px;
+    }
+
+    .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu>li:hover>a>.pull-right-container {
+        left: 220px !important;
+    }
+
+    html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left {
+        font-size: 2.4em;
+    }
+}

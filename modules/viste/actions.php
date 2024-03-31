@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Clause;
 use Models\Module;
-use Modules\ModuleFields\ModuleField;
+use Models\View;
 
 switch (filter('op')) {
     case 'update':
@@ -76,7 +76,7 @@ switch (filter('op')) {
                 }
 
                 // Aggiornamento traduzione nome campo
-                $vista = ModuleField::find($id);
+                $vista = View::find($id);
                 $vista->setTranslation('name', $name);
                 
                 // Aggiornamento dei permessi relativi
@@ -156,7 +156,11 @@ switch (filter('op')) {
     case 'test':
         $module_query = Util\Query::getQuery(Module::find($id_record));
 
-        $dbo->fetchArray($module_query.' LIMIT 1');
+        try{
+            $dbo->fetchArray($module_query.' LIMIT 1');
+        } catch (PDOException $e) {
+            flash()->error(tr('Impossibile eseguire la query!'));
+        }
 
         break;
 

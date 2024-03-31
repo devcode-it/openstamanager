@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Clause;
 use Models\Module;
+use Modules\ModuleFields\ModuleField;
 
 switch (filter('op')) {
     case 'update':
@@ -68,15 +69,16 @@ switch (filter('op')) {
                     $id = post('id')[$c];
 
                     $dbo->update('zz_views', $array, ['id' => $id]);
-                    $dbo->update('zz_views_lang', [
-                        'name' => $name,
-                    ], ['id_record' => $id, 'id_lang' => Models\Locale::getDefault()->id]);
                 } elseif (!empty($query)) {
                     $array['order'] = orderValue('zz_views', 'id_module', $id_record);
                     $dbo->insert('zz_views', $array);
                     $id = $dbo->lastInsertedID();
                 }
 
+                // Aggiornamento traduzione nome campo
+                $vista = ModuleField::find($id);
+                $vista->setTranslation('name', $name);
+                
                 // Aggiornamento dei permessi relativi
                 $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
             } else {

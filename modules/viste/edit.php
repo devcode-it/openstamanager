@@ -59,7 +59,7 @@ echo '
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record->options)).', "readonly": "1", "class": "autosize" ]}
+					{[ "type": "textarea", "label": "'.tr('Query originale').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record->options)).', "readonly": "1", "class": "autosize" ]}
 				</div>
 
 				<div class="col-md-6">

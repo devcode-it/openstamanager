@@ -39,25 +39,15 @@ foreach ($fields as $key => $field) {
                 <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.
-                            tr('Campo in posizione _POSITION_', [
-                                '_POSITION_' => $field->order,
-                            ]).' ('.$field->getTranslation('name').') <span class="badge tip" title="'.tr('Modificato il ').Translator::timestampToLocale($field->updated_at).'" >'.Translator::timestampToLocale($field->created_at).'</span>
+                            $field->getTranslation('name').' <small class="text-muted">'.(new \Carbon\Carbon($field->created_at))->diffForHumans().'</small>
+
                         </h3>
 
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-plus"></i>
+                                <i class="fa fa-plus"></i>
                             </button>
-                        </div>';
-
-    if ($editable) {
-        echo '
-                        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field->id.'">
-                            <i class="fa fa-trash"></i> '.tr('Elimina').'
-                        </a>';
-    }
-
-    echo '
+                        </div>
                     </div>
                     <div id="field-'.$field->id.'" class="box-body collapse">
                         <div class="row">
@@ -129,7 +119,15 @@ foreach ($fields as $key => $field) {
                             <div class="col-md-6">
                                 {[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field->order_by.'", "readonly": "'.(!$editable).'", "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
-                        </div>
+                        </div>';
+
+                        if ($editable) {
+                            echo '
+                                            <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field->id.'">
+                                                <i class="fa fa-trash"></i> '.tr('Elimina').'
+                                            </a>';
+                        }
+                        echo '
                     </div>
                 </div>';
 }

@@ -154,12 +154,13 @@ switch (filter('op')) {
         break;
 
     case 'test':
-        $module_query = Util\Query::getQuery(Module::find($id_record));
+        $module_query = Util\Query::getQuery(Module::find(get('id_record')));
 
         try{
             $dbo->fetchArray($module_query.' LIMIT 1');
+            echo 'ok';
         } catch (PDOException $e) {
-            flash()->error(tr('Impossibile eseguire la query!'));
+            echo $e->getMessage();
         }
 
         break;

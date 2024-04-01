@@ -168,6 +168,7 @@ class Auth extends Util\Singleton
 
         // Salvataggio dello stato corrente
         $log['stato'] = self::getStatus()[$status]['code'];
+        $log['user_agent'] = \Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
         $this->current_status = $status;
 
         // Salvataggio del tentativo nel database

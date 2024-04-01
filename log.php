@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
+
 include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Log');
@@ -34,10 +36,11 @@ echo '
             <table class="datatables table table-hover">
                 <thead>
                     <tr>
-                        <th>'.tr('Username').'</th>
-                        <th>'.tr('Data').'</th>
-                        <th>'.tr('Stato').'</th>
-                        <th>'.tr('Indirizzo IP').'</th>
+                        <th width="200">'.tr('Username').'</th>
+                        <th width="150">'.tr('Data').'</th>
+                        <th width="100">'.tr('Indirizzo IP').'</th>
+                        <th>'.tr('Dispositivo').'</th>
+                        <th width="180">'.tr('Stato').'</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -50,25 +53,19 @@ if (Auth::admin()) {
 } else {
     $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(Auth::user()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
-$rs = $dbo->fetchArray($q);
-$n = sizeof($rs);
+$logs = $dbo->fetchArray($q);
 
-for ($i = 0; $i < $n; ++$i) {
-    $id = $rs[$i]['id'];
-    $id_utente = $rs[$i]['id_utente'];
-    $username = $rs[$i]['username'];
-    $ip = $rs[$i]['ip'];
-
-    $timestamp = Translator::timestampToLocale($rs[$i]['created_at']);
+foreach ($logs as $log) {
+    $timestamp = Translator::timestampToLocale($log['created_at']);
 
     $status = Auth::getStatus();
-    if ($rs[$i]['stato'] == $status['success']['code']) {
+    if ($log['stato'] == $status['success']['code']) {
         $type = 'success';
         $stato = $status['success']['message'];
-    } elseif ($rs[$i]['stato'] == $status['disabled']['code']) {
+    } elseif ($log['stato'] == $status['disabled']['code']) {
         $type = 'warning';
         $stato = $status['disabled']['message'];
-    } elseif ($rs[$i]['stato'] == $status['unauthorized']['code']) {
+    } elseif ($log['stato'] == $status['unauthorized']['code']) {
         $type = 'warning';
         $stato = $status['unauthorized']['message'];
     } else {
@@ -76,12 +73,15 @@ for ($i = 0; $i < $n; ++$i) {
         $stato = $status['failed']['message'];
     }
 
+    $created_at = new Carbon($log['created_at']);
+
     echo '
                     <tr class="'.$type.'">
-                        <td>'.$username.'</td>
-                        <td>'.$timestamp.'</td>
+                        <td>'.$log['username'].'</td>
+                        <td class="tip" title="'.$created_at->format('d/m/Y H:i:s').'">'.$created_at->diffForHumans().'</td>
+                        <td>'.$log['ip'].'</td>
+                        <td class="user-agent tip" title="'.strip_tags($log['user_agent']).'">'.$log['user_agent'].'</td>
                         <td><span class="label label-'.$type.'">'.$stato.'</span></td>
-                        <td>'.$ip.'</td>
                     </tr>';
 }
 
@@ -93,5 +93,27 @@ echo '
         <!-- /.box-body -->
     </div>
     <!-- /.box -->';
+?>
 
+<script>
+$(document).ready(function() {
+    var parser = new UAParser();
+
+    $('tr').each(function(){
+        user_agent_cell = $(this).find('.user-agent');
+        user_agent = user_agent_cell.text();
+
+        if (user_agent !== '') {
+            parser.setUA(user_agent);
+            device = parser.getResult();
+
+            user_agent_cell.html('<strong>' + device.browser.name + '</strong> ' + device.browser.version + ' | <strong>' + device.os.name + '</strong> ' + device.os.version);
+            
+            console.log(device);
+        }
+    })
+})
+</script>
+
+<?php
 include_once App::filepath('include|custom|', 'bottom.php');

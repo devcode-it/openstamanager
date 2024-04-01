@@ -44,7 +44,8 @@
         "smartwizard": "^4.2.2",
         "sweetalert2": "^6.11.4",
         "toastr": "^2.1.4",
-        "tooltipster": "^4.2.5"
+        "tooltipster": "^4.2.5",
+        "ua-parser-js": "^1.0.37"
     },
     "devDependencies": {
         "@babel/core": "^7.11.1",

@@ -120,7 +120,7 @@ switch (filter('op')) {
 
             $ddt->save();
 
-            $query = 'SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`idstatoddt` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
+            $query = 'SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
             $rs = $dbo->fetchArray($query);
 
             // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)

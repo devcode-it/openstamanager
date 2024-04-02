@@ -56,7 +56,7 @@ class Pagamento extends Model
 
     public function calcola($importo, $data, $id_anagrafica)
     {
-        $rate = $this->rate->sortBy('num_giorni');
+        $rate = PagamentoLang::where('name', '=', $this->getTranslation('name'))->get()->sortBy('num_giorni')->pluck('id')->toArray();
         $number = count($rate);
 
         $totale = 0.0;
@@ -65,30 +65,30 @@ class Pagamento extends Model
         $count = 0;
         foreach ($rate as $key => $rata) {
             $date = new Carbon($data);
-
+            $rata = Pagamento::find($rata);
             // X giorni esatti
-            if ($rata['giorno'] == 0) {
+            if ($rata->giorno == 0) {
                 // Offset della rata
-                if ($rata['num_giorni'] % 30 == 0) {
-                    $date->addMonthsNoOverflow(round($rata['num_giorni'] / 30));
+                if ($rata->num_giorni % 30 == 0) {
+                    $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata['num_giorni']);
+                    $date->addDay($rata->num_giorni);
                 }
             }
 
             // Ultimo del mese
-            elseif ($rata['giorno'] < 0) {
+            elseif ($rata->giorno < 0) {
                 // Offset della rata
-                if ($rata['num_giorni'] % 30 == 0) {
-                    $date->addMonthsNoOverflow(round($rata['num_giorni'] / 30));
+                if ($rata->num_giorni % 30 == 0) {
+                    $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata['num_giorni']);
+                    $date->addDay($rata->num_giorni);
                 }
 
                 $date->modify('last day of this month');
 
                 // Opzione ultimo del mese più X giorni
-                $giorni = -$rata['giorno'] - 1;
+                $giorni = -$rata->giorno - 1;
                 if ($giorni > 0) {
                     $date->modify('+'.$giorni.' day');
                 } else {
@@ -99,16 +99,16 @@ class Pagamento extends Model
             // Giorno preciso del mese
             else {
                 // Offset della rata
-                if ($rata['num_giorni'] % 30 == 0) {
-                    $date->addMonthsNoOverflow(round($rata['num_giorni'] / 30));
+                if ($rata->num_giorni % 30 == 0) {
+                    $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata['num_giorni']);
+                    $date->addDay($rata->num_giorni);
                 }
 
                 // Individuazione giorno effettivo (se il giorno indicato è eccessivamente grande, viene preso il massimo possibile)
                 $date->modify('last day of this month');
                 $last_day = $date->format('d');
-                $day = $rata['giorno'] > $last_day ? $last_day : $rata['giorno'];
+                $day = $rata->giorno > $last_day ? $last_day : $rata->giorno;
 
                 // Correzione data
                 $date->setDate($date->format('Y'), $date->format('m'), $day);
@@ -118,7 +118,7 @@ class Pagamento extends Model
             $regola_pagamento = database()->selectOne('an_pagamenti_anagrafiche', '*', ['idanagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
             if (!empty($regola_pagamento)) {
                 $date->modify('last day of this month');
-                $date->addDay($regola_pagamento['giorno_fisso']);
+                $date->addDay($regola_pagamento->giorno_fisso);
             }
 
             // Conversione della data in stringa standard
@@ -131,7 +131,7 @@ class Pagamento extends Model
 
             // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
             else {
-                $da_pagare = sum($importo / 100 * $rata['prc'], 0, 2);
+                $da_pagare = sum($importo / 100 * $rata->prc, 0, 2);
             }
 
             $totale = sum($da_pagare, $totale, 2);

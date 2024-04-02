@@ -28,7 +28,7 @@ if ($user['gruppo'] == 'Tecnici') {
 }
 
 // Stato dell'intervento
-$rss = $dbo->fetchArray('SELECT `is_completato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record).')');
+$rss = $dbo->fetchArray('SELECT `is_completato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
 $is_completato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento

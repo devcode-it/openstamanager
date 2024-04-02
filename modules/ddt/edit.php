@@ -540,10 +540,11 @@ if (!$block_edit) {
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).' 
-            AND `or_statiordine_lang`.`name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) 
-            AND `or_tipiordine`.`dir`='.prepare($dir).') 
-            AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0)
-        GROUP BY `or_ordini`.`id`';
+            AND `or_statiordine_lang`.`name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+            AND `or_tipiordine`.`dir`='.prepare($dir).'
+            AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
+        GROUP BY 
+            `or_ordini`.`id`';
     $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
     $ddt_query = 'SELECT 
@@ -556,9 +557,10 @@ if (!$block_edit) {
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
             `name` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
-            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'") AND 
+            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND 
             (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
-        GROUP BY `dt_ddt`.`id`';
+        GROUP BY 
+            `dt_ddt`.`id`';
     $tot_ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
     // Form di inserimento riga documento

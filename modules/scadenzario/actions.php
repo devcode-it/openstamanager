@@ -50,6 +50,7 @@ switch (post('op')) {
         }
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
+        $da_pagare = 0;
 
         foreach ($scadenze as $id => $scadenza) {
             $pagato = floatval(post('pagato')[$id]);
@@ -58,8 +59,7 @@ switch (post('op')) {
             $da_pagare = post('da_pagare')[$id];
 
             if (!empty($iddocumento)) {
-                $id_tipo = $dbo->selectOne('co_documenti', 'idtipodocumento', ['id' => $iddocumento])['idtipodocumento'];
-                $tipo_documento = Tipo::find($idtipo);
+                $tipo_documento = Tipo::find($documento->idtipodocumento);
 
                 if ($tipo_documento['dir'] == 'uscita') {
                     if ($pagato > 0) {

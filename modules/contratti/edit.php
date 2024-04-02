@@ -556,12 +556,35 @@ $("#link_form").bind("keypress", function(e) {
 
 // Collegamenti diretti
 // Fatture o interventi collegati a questo contratto
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')
+$elementi = $dbo->fetchArray('
+    SELECT 
+        `co_documenti`.`id`, 
+        `co_documenti`.`data`, 
+        `co_documenti`.`numero`, 
+        `co_documenti`.`numero_esterno`, 
+        `co_tipidocumento_lang`.`name` AS tipo_documento, 
+        IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
+    FROM `co_documenti` 
+    INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+    INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
+    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+    WHERE `co_righe_documenti`.`idcontratto` = '.prepare($id_record).'
 
-UNION
-SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\', \'Interventi\' FROM `in_interventi` JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)).') OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
+    UNION
 
-ORDER BY `data` ');
+    SELECT 
+        `in_interventi`.`id`, 
+        `in_interventi`.`data_richiesta`, 
+        `in_interventi`.`codice`, 
+        NULL, 
+        \'Attività\', 
+        \'Interventi\' 
+    FROM `in_interventi` 
+    JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
+    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)).') 
+    OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
+
+    ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '

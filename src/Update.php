@@ -307,7 +307,7 @@ class Update
                 }
 
                 // Permessi di default dei segmenti
-                if ($database->tableExists('zz_segments' && $database->tableExists('zz_group_segment'))) {
+                if ($database->tableExists('zz_segments') && $database->tableExists('zz_group_segment')) {
                     $gruppi = Group::get()->toArray();
                     $segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id` NOT IN (SELECT `id_segment` FROM `zz_group_segment`)');
 

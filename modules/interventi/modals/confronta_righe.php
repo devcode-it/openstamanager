@@ -88,7 +88,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
                         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idarticolo` = `mg_articoli`.`id`
                         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`lang` = '.prepare(Models\Locale::getDefault()->id).')
+                        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
                         `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 

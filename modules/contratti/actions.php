@@ -353,7 +353,7 @@ switch (post('op')) {
             FROM 
                 `co_documenti` 
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
                 INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
             WHERE 
                 `co_righe_documenti`.`idcontratto` = '.prepare($id_record).')'.'

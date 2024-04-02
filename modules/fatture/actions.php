@@ -44,7 +44,10 @@ if ($module->getTranslation('name', Models\Locale::getPredefined()->id) == 'Fatt
 }
 
 // Controllo se la fattura è già stata inviata allo SDI
-$stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+if ($fattura) {
+    $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+}
+
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
 

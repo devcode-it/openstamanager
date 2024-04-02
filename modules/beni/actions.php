@@ -23,8 +23,8 @@ switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_aspettobeni`.`id`!='.prepare($id_record)) == 0) {
-            $dbo->query('UPDATE `dt_aspettobeni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record)).' AND `lang`='.prepare(Models\Locale::getDefault()->id);
+        if ($dbo->fetchNum('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_aspettobeni`.`id`!='.prepare($id_record)) == 0) {
+            $dbo->query('UPDATE `dt_aspettobeni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record)).' AND `id_lang`='.prepare(Models\Locale::getDefault()->id);
             flash()->info(tr('Salvataggio completato.'));
         } else {
             flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));

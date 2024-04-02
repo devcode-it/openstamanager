@@ -842,8 +842,8 @@ if (!$block_edit) {
         // Lettura ordini (cliente o fornitore)
         $id_stato_accettato = (new StatoOrdine())->getByField('name', 'Accettato', Models\Locale::getPredefined()->id);
         $id_stato_evaso = (new StatoOrdine())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new StatoOrdine())->getByField('name', 'Parziale evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new StatoOrdine())->getByField('name', 'Parziale fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new StatoOrdine())->getByField('name', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new StatoOrdine())->getByField('name', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
 
         $ordini_query = 'SELECT 
                 COUNT(*) AS tot 
@@ -856,7 +856,7 @@ if (!$block_edit) {
             WHERE 
                 idanagrafica='.prepare($record['idanagrafica']).' 
                 AND `or_statiordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).') 
-                AND `dir`='.prepare($dir).') 
+                AND `dir`='.prepare($dir).'
                 AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
     }

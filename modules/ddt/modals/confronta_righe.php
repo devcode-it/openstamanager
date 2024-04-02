@@ -66,7 +66,7 @@ $righe = $dbo->fetchArray(
                         `co_preventivi`
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
                         LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`lang` = '.prepare(Models\Locale::getDefault()->id).')
+                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
                         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idarticolo` = `mg_articoli`.`id`
                     WHERE

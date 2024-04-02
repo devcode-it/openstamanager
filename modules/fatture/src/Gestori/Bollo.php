@@ -78,8 +78,12 @@ class Bollo
 
         $addebita_bollo = $this->fattura->addebita_bollo;
         $marca_da_bollo = $this->getBollo();
-        $cassa_pred = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id='.setting('Cassa previdenziale predefinita'));
 
+        $cassa_pred = [];
+        if (setting('Cassa previdenziale predefinita')) {
+            $cassa_pred = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id='.setting('Cassa previdenziale predefinita'));
+        }
+        
         // Verifico se la fattura ha righe con rivalsa applicata, esclusa la marca da bollo
         $rivalsa = ($this->fattura->rivalsainps > 0 && $this->fattura->rivalsainps != (setting('Importo marca da bollo') * $cassa_pred['percentuale'] / 100)) ? 1 : 0;
 

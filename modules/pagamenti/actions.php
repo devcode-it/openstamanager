@@ -101,8 +101,8 @@ switch (filter('op')) {
         if (!empty($id_record)) {
             $descrizione = filter('descrizione');
 
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `name` = "'.prepare($descrizione).'")');
-            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `name` = "'.prepare($descrizione).'"');
+            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `name` = '.prepare($descrizione).')');
+            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `name` = '.prepare($descrizione));
 
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
 

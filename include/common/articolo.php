@@ -30,7 +30,7 @@ $articolo = $database->fetchOne('SELECT
         IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
         IFNULL(`mg_fornitore_articolo`.`qta_minima`, 0) AS qta_minima
     FROM `mg_articoli`
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = "'.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`id` = '.prepare($result['id_dettaglio_fornitore']).'
     WHERE 
         `mg_articoli`.`id` = '.prepare($result['idarticolo']));

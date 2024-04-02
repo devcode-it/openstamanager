@@ -536,7 +536,7 @@ if (!$block_edit) {
             `or_ordini` 
             INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine` 
             INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` 
-            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine`=`or_tipiordine`.`id` 
+            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id` 
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).' 
@@ -789,10 +789,18 @@ $("#link_form").bind("keypress", function(e) {
 
 // Collegamenti diretti
 // Fatture collegate a questo ddt
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`idddt` = '.prepare($id_record).')
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
+FROM `co_documenti` 
+INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
+LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+WHERE `co_righe_documenti`.`idddt` = '.prepare($id_record).'
 
 UNION
-SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\' AS tipo_documento, \'Interventi\' as modulo FROM `in_interventi` JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_record).' AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\')
+SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice`, NULL, \'Attività\' AS tipo_documento, \'Interventi\' as modulo 
+FROM `in_interventi` 
+JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
+WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_record).' AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\')
 
 ORDER BY `data`');
 

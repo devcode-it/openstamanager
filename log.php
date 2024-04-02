@@ -107,9 +107,7 @@ $(document).ready(function() {
             parser.setUA(user_agent);
             device = parser.getResult();
 
-            user_agent_cell.html('<strong>' + device.browser.name + '</strong> ' + device.browser.version + ' | <strong>' + device.os.name + '</strong> ' + device.os.version);
-            
-            console.log(device);
+            user_agent_cell.html('<strong>' + (device.browser.name || '') + '</strong> ' + (device.browser.version || '') + ' | <strong>' + (device.os.name || '') + '</strong> ' + (device.os.version || ''));
         }
     })
 })

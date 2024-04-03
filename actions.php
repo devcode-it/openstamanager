@@ -197,10 +197,10 @@ elseif (filter('op') == 'download-zip-allegati') {
         $src = basename($allegato->filepath);
         $dst = basename($allegato->original_name);
 
-        $file = slashes($module->upload_directory.'/'.$src);
-        $dest = slashes($dir.'tmp/'.$dst);
+        $file_content = $allegato->get_contents();
 
-        $result = copy($file, $dest);
+        $dest = slashes($dir.'tmp/'.$dst);
+        file_put_contents($dest, $file_content);
     }
 
     // Creazione zip

@@ -26,7 +26,8 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` LEFT JOIN (`an_relazioni_lang` ON `an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione).' AND `an_relazioni`.`id`!='.prepare($id_record)) == 0) {
+            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione).' AND `an_relazioni`.`id` != '.prepare($id_record));
+            if (empty($esistente)) {
                 $dbo->query('UPDATE `an_relazioni` SET `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
                 $dbo->query('UPDATE `an_relazioni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
@@ -47,7 +48,8 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_relazioni` LEFT JOIN (`an_relazioni_lang` ON `an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione)) == 0) {
+            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione));
+            if (empty($esistente)) {
                 $dbo->query('INSERT INTO `an_relazioni` (`colore`, `is_bloccata`) VALUES ('.prepare($colore).', '.prepare($is_bloccata).' )');
                 $id_record = $dbo->lastInsertedID();
                 $dbo->query('INSERT INTO `an_relazioni_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');

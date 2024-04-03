@@ -25,7 +25,7 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `an_settori`.`id`!='.prepare($id_record)) == 0) {
+            if (empty($dbo->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `an_settori`.`id`!='.prepare($id_record)))) {
                 $dbo->query('UPDATE `an_settori_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
@@ -44,7 +44,7 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)) == 0) {
+            if (empty($dbo->fetchNum('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)))) {
                 $dbo->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, NOW(), NOW())');
                 $id_record = $dbo->lastInsertedID();
                 $dbo->query('INSERT INTO `an_settori_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');

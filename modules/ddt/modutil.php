@@ -165,10 +165,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
             $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
-            if ($qi) {
-                $rsi = $dbo->fetchArray($qi);
-            }
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+            $iva_rivalsainps = $rivalsainps / 100 * $qi;
 
             // Aggiorno la rivalsa inps
             $dbo->query("UPDATE dt_ddt SET rivalsainps='$rivalsainps', iva_rivalsainps='$iva_rivalsainps' WHERE id='$idddt'");

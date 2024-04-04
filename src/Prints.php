@@ -207,7 +207,7 @@ class Prints
      */
     public static function getHref($print, $id_record, $get = '')
     {
-        $infos = self::get($print);
+        $infos = PrintTemplate::find((new PrintTemplate())->getByField('name', $print));
 
         if (empty($infos)) {
             return false;

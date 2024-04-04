@@ -116,3 +116,6 @@ WHERE `zz_views`.`id` IN (
         )
     ) AS tmp
 );
+
+-- Sposto impostazione sotto sezione Aggiornamenti
+UPDATE `zz_settings` SET `sezione` = 'Aggiornamenti' WHERE `zz_settings`.`nome` = 'Abilita canale pre-release per aggiornamenti'; 

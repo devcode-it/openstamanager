@@ -25,7 +25,7 @@ switch (filter('op')) {
         $vettore = post('esterno');
         $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`idrecord` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)) == 0) {
+        if (empty($dbo->fetchArray('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)))) {
             if (!empty($predefined)) {
                 $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
             }

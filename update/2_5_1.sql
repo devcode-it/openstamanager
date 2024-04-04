@@ -57,6 +57,7 @@ HAVING
 ORDER BY
     `an_anagrafiche`.`ragione_sociale`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Listini' LIMIT 1);
 
+-- Allineamento zz_views Articoli in Listini
 UPDATE `zz_views` 
 SET `query` = 'CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`)' 
 WHERE `zz_views`.`id` IN (
@@ -76,6 +77,7 @@ WHERE `zz_views`.`id` IN (
     ) AS tmp
 );
 
+-- Allineamento zz_views Categorie in Listini
 UPDATE `zz_views` 
 SET `query` = '`categorialang`.`name`' 
 WHERE `zz_views`.`id` IN (
@@ -95,6 +97,7 @@ WHERE `zz_views`.`id` IN (
     ) AS tmp
 );
 
+-- Allineamento zz_views Sottocategorie in Listini
 UPDATE `zz_views` 
 SET `query` = '`sottocategorialang`.`name`' 
 WHERE `zz_views`.`id` IN (

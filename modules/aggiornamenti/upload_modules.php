@@ -115,6 +115,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
         // Informazioni aggiuntive per il database
         $insert = [];
+        $insert_lang = [];
 
         // Plugin
         if (basename($file->getRealPath()) == 'PLUGIN') {
@@ -135,7 +136,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $installed = Prints::getPrints()[$info['name']];
             $insert['id_module'] = (new Module())->getByField('name', $info['module']);
             $insert['is_record'] = $info['is_record'];
-            $insert['filename'] = $info['filename'];
+            $insert_lang['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];
         }
 
@@ -154,12 +155,12 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'enabled' => 1,
             ]));
             $id_record = $dbo->lastInsertedID();
-            $dbo->insert($table.'_lang', [
+            $dbo->insert($table.'_lang', array_merge($insert_lang, [
                 'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
                 'id_lang' => Models\Locale::getDefault()->id,
-            ]);
+            ]));
             flash()->error(tr('Installazione completata!'));
         } else {
             flash()->error(tr('Aggiornamento completato!'));

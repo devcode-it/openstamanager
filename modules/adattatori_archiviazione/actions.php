@@ -25,7 +25,7 @@ switch (filter('op')) {
     case 'add':
         $adapter = new FileAdapter();
 
-        $adapter->setTranslation('name', post('name'));
+        $adapter->name = post('name');
         $adapter->class = '\\Modules\\FileAdapters\\Adapters\\'.post('class');
 
         $adapter->save();
@@ -37,7 +37,7 @@ switch (filter('op')) {
         break;
 
     case 'update':
-        $adapter->setTranslation('name', post('name'));
+        $adapter->name = post('name');
         $adapter->class = '\\Modules\\FileAdapters\\Adapters\\'.post('class');
         $adapter->options = post('options');
         $adapter->is_default = post('is_default');

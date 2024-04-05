@@ -119,3 +119,14 @@ WHERE `zz_views`.`id` IN (
 
 -- Sposto impostazione sotto sezione Aggiornamenti
 UPDATE `zz_settings` SET `sezione` = 'Aggiornamenti' WHERE `zz_settings`.`nome` = 'Abilita canale pre-release per aggiornamenti'; 
+
+-- Allineamento vista Adattatori di archiviazione
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    zz_storage_adapters 
+WHERE 
+    1=1 AND `deleted_at` IS NULL
+HAVING 
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Adattatori di archiviazione' LIMIT 1);

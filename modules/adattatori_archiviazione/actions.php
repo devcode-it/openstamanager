@@ -40,7 +40,11 @@ switch (filter('op')) {
         $adapter->name = post('name');
         $adapter->class = '\\Modules\\FileAdapters\\Adapters\\'.post('class');
         $adapter->options = post('options');
-        $adapter->is_default = post('is_default');
+
+        if (post('is_default') == 1) {
+            $dbo->query('UPDATE `zz_storage_adapters` SET `is_default` = 0');
+            $adapter->is_default = post('is_default');
+        }
 
         $adapter->save();
 

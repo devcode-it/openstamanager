@@ -348,7 +348,7 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo e filigrana stampe
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') {
-    $nome = $upload->getTranslation('name');
+    $nome = $upload->name;
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
     if (in_array(strtolower($nome), $logo_stampe)) {

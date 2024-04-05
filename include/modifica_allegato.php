@@ -33,7 +33,7 @@ if (sizeof($id_allegati) == 1) {
     $allegato = Upload::find($id_allegati[0]);
     echo '
 		<div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->getTranslation('name').'" ]}
+            {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->name.'" ]}
         </div>
         <div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "'.$allegato->category.'", "disabled": "'.intval(in_array($allegato->category, ['Fattura Elettronica'])).'" ]}

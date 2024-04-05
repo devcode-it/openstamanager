@@ -154,12 +154,12 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'enabled' => 1,
             ]));
             $id_record = $dbo->lastInsertedID();
-            $dbo->insert($table.'_lang', array_merge($insert, [
+            $dbo->insert($table.'_lang', [
                 'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
                 'id_lang' => Models\Locale::getDefault()->id,
-            ]));
+            ]);
             flash()->error(tr('Installazione completata!'));
         } else {
             flash()->error(tr('Aggiornamento completato!'));

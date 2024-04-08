@@ -130,3 +130,7 @@ WHERE
     1=1 AND `deleted_at` IS NULL
 HAVING 
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Adattatori di archiviazione' LIMIT 1);
+
+
+-- Rinomino plugin Sedi in Anagrafica
+UPDATE `zz_plugins_lang` SET `title` = 'Sedi aggiuntive' WHERE `zz_plugins_lang`.`id_lang` = (SELECT id FROM zz_langs WHERE iso_code = 'it') AND `name` = 'Sedi'; 

@@ -56,7 +56,7 @@ switch (post('op')) {
                 $data_fine = post('data_fine');
             }
         }
-        $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+        $data_fine ??= '0000-00-00';
 
         // Inserisco il tecnico
         $dbo->insert('an_sedi_tecnici', [
@@ -84,7 +84,7 @@ switch (post('op')) {
                     $data_fine = post('data_fine')[$idautomezzotecnico];
                 }
             }
-            $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+            $data_fine ??= '0000-00-00';
 
             $dbo->update('an_sedi_tecnici', [
                 'idtecnico' => $idtecnico,

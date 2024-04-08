@@ -282,7 +282,7 @@ class FatturaElettronica
 
         $json = json_decode($response->getBody(), true);
 
-        return isset($json['data'][0]['OU'][0]['cod_uni_ou']) ? $json['data'][0]['OU'][0]['cod_uni_ou'] : null;
+        return $json['data'][0]['OU'][0]['cod_uni_ou'] ?? null;
     }
 
     public static function getDirectory()
@@ -1146,7 +1146,7 @@ class FatturaElettronica
      */
     protected static function getDatiOrdineAcquisto($fattura, $lista = null)
     {
-        $lista = isset($lista) ? $lista : $fattura->getOrdiniAcquisto();
+        $lista ??= $fattura->getOrdiniAcquisto();
 
         $result = [];
         foreach ($lista as $element) {
@@ -1387,9 +1387,7 @@ class FatturaElettronica
         $result = [];
 
         // Righe del documento
-        $iva_descrizioni = $righe->first(function ($item, $key) {
-            return $item->aliquota != null;
-        })->aliquota;
+        $iva_descrizioni = $righe->first(fn($item, $key) => $item->aliquota != null)->aliquota;
 
         $order = 1;
         foreach ($righe as $idx => $riga) {
@@ -1558,11 +1556,7 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per percentuale
-        $riepiloghi_percentuale = $righe->filter(function ($item, $key) {
-            return $item->aliquota != null && $item->aliquota->codice_natura_fe == null;
-        })->groupBy(function ($item, $key) {
-            return $item->aliquota->percentuale;
-        });
+        $riepiloghi_percentuale = $righe->filter(fn($item, $key) => $item->aliquota != null && $item->aliquota->codice_natura_fe == null)->groupBy(fn($item, $key) => $item->aliquota->percentuale);
         foreach ($riepiloghi_percentuale as $riepilogo) {
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
@@ -1594,11 +1588,7 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per natura
-        $riepiloghi_natura = $righe->filter(function ($item, $key) {
-            return $item->aliquota != null && $item->aliquota->codice_natura_fe != null;
-        })->groupBy(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe;
-        });
+        $riepiloghi_natura = $righe->filter(fn($item, $key) => $item->aliquota != null && $item->aliquota->codice_natura_fe != null)->groupBy(fn($item, $key) => $item->aliquota->codice_natura_fe);
         foreach ($riepiloghi_natura as $riepilogo) {
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);

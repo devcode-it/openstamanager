@@ -264,9 +264,7 @@ if (!function_exists('verifica_numero_ddt')) {
         do {
             $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-            $filtered = $documenti->reject(function ($item, $key) use ($numero) {
-                return $item->numero_esterno == $numero;
-            });
+            $filtered = $documenti->reject(fn($item, $key) => $item->numero_esterno == $numero);
 
             if ($documenti->count() == $filtered->count()) {
                 return $numero;

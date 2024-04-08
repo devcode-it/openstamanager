@@ -125,7 +125,7 @@ switch (post('op')) {
                 $fattura_elettronica = new FatturaElettronica($id);
 
                 if (!empty($fattura_elettronica) && !$fattura_elettronica->isGenerated()) {
-                    $file = $fattura_elettronica->save($upload_dir);
+                    $file = $fattura_elettronica->save();
                     $added[] = $fattura->numero_esterno;
                 }
             } catch (UnexpectedValueException $e) {
@@ -311,7 +311,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
 
-            $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
+            $id_segment = (post('id_segment') ?: $fattura->id_segment);
             $dir = $dbo->fetchOne('SELECT `dir` FROM `co_tipidocumento` WHERE `id`='.prepare($fattura->idtipodocumento))['dir'];
 
             // + 1 giorno

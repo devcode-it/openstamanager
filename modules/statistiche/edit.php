@@ -393,7 +393,7 @@ foreach ($tipi as $tipo) {
     $interventi = Stats::monthly($interventi, $start, $end);
 
     // Random color
-    $background = '#'.dechex(rand(256, 16777215));
+    $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",
@@ -449,7 +449,7 @@ foreach ($tipi as $tipo) {
     $interventi = Stats::monthly($interventi, $start, $end);
 
     // Random color
-    $background = '#'.dechex(rand(256, 16777215));
+    $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",
@@ -523,7 +523,7 @@ foreach ($tecnici as $tecnico) {
     $background = strtoupper($tecnico['colore']);
     if (empty($background) || $background == '#FFFFFF') {
         // Random color
-        $background = '#'.dechex(rand(256, 16777215));
+        $background = '#'.dechex(random_int(256, 16777215));
     }
 
     $dataset .= '{
@@ -674,7 +674,7 @@ ORDER BY
     YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Nuovi clienti').'",   
@@ -685,7 +685,7 @@ $dataset .= '{
 },';
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Clienti acquisiti').'",   
@@ -696,7 +696,7 @@ $dataset .= '{
 },';
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Nuovi fornitori').'",   

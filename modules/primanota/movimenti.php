@@ -46,8 +46,8 @@ function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
         </td>
     </tr>';
 
-    $totale_dare += ($riga['dare'] ? $riga['dare'] : 0);
-    $totale_avere += ($riga['avere'] ? $riga['avere'] : 0);
+    $totale_dare += ($riga['dare'] ?: 0);
+    $totale_avere += ($riga['avere'] ?: 0);
 }
 
 function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
@@ -78,7 +78,7 @@ function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
         <tbody>';
 
     foreach ($righe as $riga) {
-        renderRiga($counter++, $riga, $totale_dare, $totale_avere);
+        renderRiga($counter++, $riga);
     }
 
     // Totale per controllare sbilancio
@@ -169,9 +169,7 @@ renderRiga('-id-',
     [
         'iddocumento' => '-id_documento-',
         'id_scadenza' => '-id_scadenza-',
-    ],
-    $totale_dare,
-    $totale_avere
+    ]
 );
 
 echo '

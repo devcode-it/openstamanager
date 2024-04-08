@@ -213,7 +213,7 @@ class Query
                         $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
                         if ($more || $minus) {
-                            list($giorno, $mese, $anno) = explode('/', $value);
+                            [$giorno, $mese, $anno] = explode('/', $value);
                             $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
                             if ($data != "'1970-01-01'") {
                                 $search_filters[] = $search_query.' '.$sign.' '.$data.'';
@@ -225,7 +225,7 @@ class Query
                         }
                     } elseif ($equal) {
                         $value = trim(str_replace(['='], '', $value));
-                        list($giorno, $mese, $anno) = explode('/', $value);
+                        [$giorno, $mese, $anno] = explode('/', $value);
                         $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
 
                         if ($anno != '' && $giorno != '' && $mese != '') {

@@ -188,7 +188,7 @@ trait RelationTrait
      */
     public function setQtaAttribute($value)
     {
-        list($qta, $diff) = $this->parseQta($value);
+        [$qta, $diff] = $this->parseQta($value);
         parent::setQtaAttribute($value);
 
         // Individuazione fattura corrente (fix in caso di creazione diretta)

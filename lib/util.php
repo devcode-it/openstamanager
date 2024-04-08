@@ -38,9 +38,7 @@ if (!function_exists('array_column')) {
      */
     function array_column($array, $key)
     {
-        return array_map(function ($v) use ($key) {
-            return is_object($v) ? $v->$key : $v[$key];
-        }, $array);
+        return array_map(fn($v) => is_object($v) ? $v->$key : $v[$key], $array);
     }
 }
 
@@ -55,9 +53,7 @@ if (!function_exists('array_clean')) {
     function array_clean($array)
     {
         if (!empty($array)) {
-            return array_unique(array_values(array_filter($array, function ($value) {
-                return !empty($value);
-            })));
+            return array_unique(array_values(array_filter($array, fn($value) => !empty($value))));
         }
     }
 }
@@ -448,8 +444,8 @@ if (!function_exists('color_inverse')) {
             $R2 = 255;
             $G2 = 255;
             $B2 = 255;
-            $L1 = 0.2126 * pow($R1 / 255, 2.2) + 0.7152 * pow($G1 / 255, 2.2) + 0.0722 * pow($B1 / 255, 2.2);
-            $L2 = 0.2126 * pow($R2 / 255, 2.2) + 0.7152 * pow($G2 / 255, 2.2) + 0.0722 * pow($B2 / 255, 2.2);
+            $L1 = 0.2126 * ($R1 / 255) ** 2.2 + 0.7152 * ($G1 / 255) ** 2.2 + 0.0722 * ($B1 / 255) ** 2.2;
+            $L2 = 0.2126 * ($R2 / 255) ** 2.2 + 0.7152 * ($G2 / 255) ** 2.2 + 0.0722 * ($B2 / 255) ** 2.2;
             if ($L1 > $L2) {
                 $lum = ($L1 + 0.05) / ($L2 + 0.05);
             } else {
@@ -602,6 +598,6 @@ if (!function_exists('adjustBrightness')) {
             $color = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
         }
 
-        return '#'.implode($hexCode);
+        return '#'.implode('', $hexCode);
     }
 }

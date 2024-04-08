@@ -146,7 +146,7 @@ class FileSystem
         $pow = min($pow, count($units) - 1);
 
         // Uncomment one of the following alternatives
-        $bytes /= pow(1024, $pow);
+        $bytes /= 1024 ** $pow;
         // $bytes /= (1 << (10 * $pow));
 
         return round($bytes, $precision).' '.$units[$pow];
@@ -166,11 +166,11 @@ class FileSystem
         $result = 0;
         $count = count($units);
         for ($i = $count - 1; $i >= 0; --$i) {
-            $pos = strpos($bytes, $units[$i]);
+            $pos = strpos($bytes, (string) $units[$i]);
             if ($pos !== false) {
                 $value = substr($bytes, 0, $pos);
 
-                $result = floatval($value) * pow(1024, $i);
+                $result = floatval($value) * 1024 ** $i;
 
                 break;
             }

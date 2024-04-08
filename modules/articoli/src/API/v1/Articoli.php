@@ -82,7 +82,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $data = $request['data'];
 
         // Gestione categoria
-        list($categoria, $sottocategoria) = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
+        [$categoria, $sottocategoria] = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
 
         $articolo = Articolo::build($data['codice'], $categoria, $sottocategoria);
         $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
@@ -99,7 +99,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $data = $request['data'];
 
         $articolo = Articolo::find($request['id']);
-        list($categoria, $sottocategoria) = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
+        [$categoria, $sottocategoria] = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
 
         // Gestione categoria
         if (!empty($categoria)) {

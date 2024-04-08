@@ -442,7 +442,7 @@ function session_get($name, $default = null)
         $session = &$session[$piece];
     }
 
-    return isset($session) ? $session : $default;
+    return $session ?? $default;
 }
 
 /**

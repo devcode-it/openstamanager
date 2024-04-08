@@ -401,7 +401,7 @@ class HTMLBuilder
                 // Sostituzione delle variabili $nome$ col relativo valore da database
                 elseif (is_string($json[$key]) && preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
                     for ($i = 0; $i < count($m[0]); ++$i) {
-                        $record = isset(self::$record[$m[1][$i]]) ? self::$record[$m[1][$i]] : '';
+                        $record = self::$record[$m[1][$i]] ?? '';
                         $json[$key] = str_replace($m[0][$i], prepareToField($record), $json[$key]);
                     }
                 }
@@ -434,7 +434,7 @@ class HTMLBuilder
             $values['name'] = str_replace(' ', '_', $values['name']);
             $values['id'] = empty($values['id']) ? $values['name'] : $values['id'];
             $values['id'] = str_replace(['[', ']', ' '], ['', '', '_'], $values['id']);
-            $values['value'] = isset($values['value']) ? $values['value'] : '';
+            $values['value'] ??= '';
 
             // Gestione delle classi CSS
             $values['class'] = [];

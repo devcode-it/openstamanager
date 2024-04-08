@@ -99,7 +99,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     $_SESSION['module_'.$id_module]['selected'] = [];
     $selezione = array_keys($_SESSION['module_'.$id_module]['selected']);
 
-    $table_id = 'main_'.rand(0, 99);
+    $table_id = 'main_'.random_int(0, 99);
     echo '
     <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="main-records'.(!empty($id_plugin) ? '-plugins' : '').' table table-condensed table-bordered">
         <thead>

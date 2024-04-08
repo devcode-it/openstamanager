@@ -260,7 +260,7 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
                     '.$key.'
                 </td>
                 <td>
-                    '.($setting['current'] ? $setting['current'] : '⚠️ Impostazione mancante').'
+                    '.($setting['current'] ?: '⚠️ Impostazione mancante').'
                 </td>
                 <td>
                     '.$setting['expected'].'

@@ -188,9 +188,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     protected function mapModifiedRecords($records)
     {
         if ($records instanceof Collection) {
-            return $records->mapToGroups(function ($item, $key) {
-                return [$item['id'] => $item];
-            })->toArray();
+            return $records->mapToGroups(fn($item, $key) => [$item['id'] => $item])->toArray();
         }
 
         return array_reduce($records, function ($accumulator, $item) {

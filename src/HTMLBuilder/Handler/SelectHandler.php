@@ -32,9 +32,9 @@ class SelectHandler implements HandlerInterface
     {
         $values['class'][] = 'openstamanager-input';
         $values['class'][] = 'select-input';
-        $values['data-select2-id'][] = $values['id'].'_'.rand(0, 999);
+        $values['data-select2-id'][] = $values['id'].'_'.random_int(0, 999);
 
-        $source = isset($values['ajax-source']) ? $values['ajax-source'] : (isset($values['select-source']) ? $values['select-source'] : null);
+        $source = $values['ajax-source'] ?? $values['select-source'] ?? null;
 
         // Individuazione della classe per la corretta gestione JavaScript
         $values['class'][] = !empty($source) ? 'superselectajax' : 'superselect';
@@ -71,7 +71,7 @@ class SelectHandler implements HandlerInterface
             unset($values['select-source']);
 
             // Informazioni aggiuntive per il select
-            $infos = isset($values['select-options']) ? $values['select-options'] : [];
+            $infos = $values['select-options'] ?? [];
             $values['data-select-options'] = json_encode($infos);
             unset($values['select-options']);
 
@@ -106,9 +106,9 @@ class SelectHandler implements HandlerInterface
 
         // Impostazione del placeholder
         $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
-        $values['data-placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : null;
+        $values['data-placeholder'] = $values['placeholder'] ?? null;
 
-        $values['data-maximum-selection-length'] = isset($values['maximum-selection-length']) ? $values['maximum-selection-length'] : null;
+        $values['data-maximum-selection-length'] = $values['maximum-selection-length'] ?? null;
 
         unset($values['values']);
 

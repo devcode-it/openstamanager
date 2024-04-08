@@ -45,7 +45,7 @@ class Filter
         $value = null;
 
         if (empty($method)) {
-            $value = (self::post($property, $raw) !== null) ? self::post($property, $raw) : self::get($property, $raw);
+            $value = self::post($property, $raw) ?? self::get($property, $raw);
         } elseif (strtolower($method) == 'post') {
             $value = self::post($property, $raw);
         } elseif (strtolower($method) == 'get') {

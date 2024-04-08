@@ -143,7 +143,7 @@ if (in_array($dati_generali['TipoDocumento'], ['TD16', 'TD17', 'TD18', 'TD19', '
 }
 
 // Individuazione metodo di pagamento di base
-$metodi = isset($pagamenti[0]['DettaglioPagamento']) ? $pagamenti[0]['DettaglioPagamento'] : [];
+$metodi = $pagamenti[0]['DettaglioPagamento'] ?? [];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
 $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];

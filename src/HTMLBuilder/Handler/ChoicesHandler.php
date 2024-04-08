@@ -66,7 +66,7 @@ class ChoicesHandler implements HandlerInterface
         }
 
         // Gestione dei placeholder
-        $values['placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : $values['label'];
+        $values['placeholder'] ??= $values['label'];
 
         // Gestione valori custom
         if (!empty($values['values'])) {

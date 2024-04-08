@@ -360,9 +360,9 @@ switch ($resource) {
                 *
             FROM
                 (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
-            
+
             UNION
-                
+
             SELECT
                 `id`,
                 `lat`,

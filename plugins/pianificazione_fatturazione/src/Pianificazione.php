@@ -86,9 +86,7 @@ class Pianificazione extends Document
 
         $p = $this;
 
-        return $pianificazioni->search(function ($item) use ($p) {
-            return $item->id == $p->id;
-        }) + 1;
+        return $pianificazioni->search(fn($item) => $item->id == $p->id) + 1;
     }
 
     public function getRighe()
@@ -98,15 +96,11 @@ class Pianificazione extends Document
         $numero_righe = $righe->count() / $pianificazioni->count();
 
         $p = $this;
-        $index = $pianificazioni->search(function ($item) use ($p) {
-            return $item->id == $p->id;
-        });
+        $index = $pianificazioni->search(fn($item) => $item->id == $p->id);
 
         $skip = $pianificazioni->count();
 
-        return $righe->filter(function ($value, $key) use ($skip, $index) {
-            return $key % $skip == $index;
-        });
+        return $righe->filter(fn($value, $key) => $key % $skip == $index);
     }
 
     public function articoli()

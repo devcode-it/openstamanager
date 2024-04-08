@@ -46,8 +46,8 @@ class Autofill
     {
         $this->max_rows = $rows;
 
-        $this->max_additional = isset($additional) ? $additional : floor($this->max_rows - $this->max_rows / 4);
-        $this->max_rows_first_page = isset($first_page) ? $first_page : $rows;
+        $this->max_additional = $additional ?? floor($this->max_rows - $this->max_rows / 4);
+        $this->max_rows_first_page = $first_page ?? $rows;
     }
 
     public function count($text, $small = false)

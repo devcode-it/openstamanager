@@ -83,7 +83,7 @@ foreach ($results as $result) {
 }
 
 ?>
-            
+
             </div>
             <div class="pull-right">
 				<button type="button" class="btn btn-info" onclick="aggiungiData()">

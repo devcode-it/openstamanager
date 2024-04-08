@@ -38,9 +38,7 @@ if ($elenco_promemoria->isEmpty()) {
     return;
 }
 
-$raggruppamenti = $elenco_promemoria->groupBy(function ($item) {
-    return $item->data_richiesta->format('Y-m');
-});
+$raggruppamenti = $elenco_promemoria->groupBy(fn($item) => $item->data_richiesta->format('Y-m'));
 
 $counter = 0;
 foreach ($raggruppamenti as $mese => $raggruppamento) {

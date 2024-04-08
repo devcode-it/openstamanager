@@ -449,9 +449,7 @@ if (!function_exists('verifica_numero_fattura')) {
         do {
             $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-            $filtered = $documenti->reject(function ($item, $key) use ($numero) {
-                return $item->numero_esterno == $numero;
-            });
+            $filtered = $documenti->reject(fn($item, $key) => $item->numero_esterno == $numero);
 
             if ($documenti->count() == $filtered->count()) {
                 return $numero;
@@ -471,9 +469,7 @@ if (!function_exists('verifica_numero_fattura')) {
         $righe = [];
 
         // Righe documento
-        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(function ($item, $key) {
-            return $item['prezzo_unitario'].'|'.$item['idiva'].'|'.$item['sconto_unitario'];
-        });
+        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(fn($item, $key) => $item['prezzo_unitario'].'|'.$item['idiva'].'|'.$item['sconto_unitario']);
 
         if (setting('Raggruppa attività per tipologia in fattura') && !$righe_documento->isEmpty()) {
             $articoli = [];

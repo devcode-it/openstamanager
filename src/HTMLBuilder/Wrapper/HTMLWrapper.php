@@ -63,7 +63,7 @@ class HTMLWrapper implements WrapperInterface
 
     public function after(&$values, &$extras)
     {
-        $rand = rand(0, 99);
+        $rand = random_int(0, 99);
         $pseudo_id = $values['id'].$rand;
 
         $result = '';
@@ -113,8 +113,8 @@ class HTMLWrapper implements WrapperInterface
 
             $value = explode('|', $values['validation']);
             $name = $value[0];
-            $id_module = isset($value[1]) ? $value[1] : '$id_module$';
-            $id_record = isset($value[2]) ? $value[2] : '$id_record$';
+            $id_module = $value[1] ?? '$id_module$';
+            $id_record = $value[2] ?? '$id_record$';
 
             $result .= '
     <script>
@@ -293,7 +293,7 @@ class HTMLWrapper implements WrapperInterface
 
         $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? $choices[0]['id'] : $pieces[2];
 
-        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "id": "tipo_'.prepareToField($values['name']).'_'.rand(0, 99).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search tipo_icon_after", "extra": "'.$extra.'", "disabled": "'.$disabled.'" ]}';
+        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "id": "tipo_'.prepareToField($values['name']).'_'.random_int(0, 99).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search tipo_icon_after", "extra": "'.$extra.'", "disabled": "'.$disabled.'" ]}';
 
         $result = \HTMLBuilder\HTMLBuilder::replace($result);
 

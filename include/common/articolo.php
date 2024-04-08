@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
+$result['idarticolo'] ??= null;
 $qta_minima = 0;
 $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' => $options['idanagrafica']])['id_listino'];
 

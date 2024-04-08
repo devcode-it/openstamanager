@@ -47,9 +47,7 @@ class Bollo
             return $this->fattura->bollo;
         }
 
-        $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
-        });
+        $righe_bollo = $this->fattura->getRighe()->filter(fn($item, $key) => $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']));
         $importo_righe_bollo = $righe_bollo->sum('subtotale');
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
@@ -72,9 +70,7 @@ class Bollo
     public function manageRigaMarcaDaBollo()
     {
         $riga = $this->fattura->rigaBollo;
-        $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
-        })->first();
+        $righe_bollo = $this->fattura->getRighe()->filter(fn($item, $key) => $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']))->first();
 
         $addebita_bollo = $this->fattura->addebita_bollo;
         $marca_da_bollo = $this->getBollo();

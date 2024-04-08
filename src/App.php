@@ -89,7 +89,7 @@ class App
             $result = array_merge($defaultConfig, $config);
 
             // Operazioni di normalizzazione sulla configurazione
-            $result['debug'] = isset(self::$config['debug']) ? self::$config['debug'] : !empty($result['debug']);
+            $result['debug'] = self::$config['debug'] ?? !empty($result['debug']);
             $result['lang'] = $result['lang'] == 'it' ? 'it_IT' : $result['lang'];
 
             self::$config = $result;

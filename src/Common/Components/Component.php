@@ -116,7 +116,7 @@ abstract class Component extends Model
      */
     public function setQtaAttribute($value)
     {
-        list($qta, $diff) = $this->parseQta($value);
+        [$qta, $diff] = $this->parseQta($value);
         $this->attributes['qta'] = $qta;
 
         // Aggiornamento della quantità evasa di origine
@@ -227,7 +227,7 @@ abstract class Component extends Model
             $model->original_type = $this->original_type;
 
             // Aggiornamento dei riferimenti
-            list($riferimento_precedente, $nuovo_riferimento) = $model->impostaOrigine($this);
+            [$riferimento_precedente, $nuovo_riferimento] = $model->impostaOrigine($this);
 
             // Correzione della descrizione
             $attributes['descrizione'] = str_replace($riferimento_precedente, '', $attributes['descrizione']);

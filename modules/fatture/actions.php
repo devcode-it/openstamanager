@@ -302,7 +302,7 @@ switch ($op) {
             }
 
             $totale_documento = abs($totale_documento);
-            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ? $dati_generali['ImportoTotaleDocumento'] : $totale_documento;
+            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: $totale_documento;
         } catch (Exception $e) {
         }
 
@@ -760,7 +760,7 @@ switch ($op) {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $idsede = ($documento->idsede_destinazione ? $documento->idsede_destinazione : $documento->idsede);
+            $idsede = ($documento->idsede_destinazione ?: $documento->idsede);
 
             $fattura->idsede_destinazione = $idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
@@ -1000,7 +1000,7 @@ switch ($op) {
                     }
                     $id_iva = ($fattura->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    $id_iva = ($fattura->anagrafica->idiva_acquisti ? $fattura->anagrafica->idiva_acquisti : ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita')));
+                    $id_iva = ($fattura->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
                 $id_anagrafica = $fattura->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

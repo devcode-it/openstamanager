@@ -281,9 +281,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $peso_lordo = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
-        });
+        $peso_lordo = $righe->sum(fn($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
         return $peso_lordo;
     }
@@ -297,9 +295,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $volume = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
-        });
+        $volume = $righe->sum(fn($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 
         return $volume;
     }
@@ -500,9 +496,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(function ($item) use ($nome) {
-            return false !== strstr($item->getTranslation('name'), $nome);
-        })->sortBy('created_at');
+        return $this->uploads()->filter(fn($item) => false !== strstr($item->getTranslation('name'), $nome))->sortBy('created_at');
     }
 
     /**
@@ -659,7 +653,7 @@ class Fattura extends Document
             $checks = FatturaElettronica::controllaFattura($this);
             $fattura_elettronica = new FatturaElettronica($this->id);
             if ($abilita_genera && empty($checks)) {
-                $fattura_elettronica->save(base_dir().'/'.FatturaElettronica::getDirectory());
+                $fattura_elettronica->save();
 
                 if (!$fattura_elettronica->isValid()) {
                     $errors = $fattura_elettronica->getErrors();

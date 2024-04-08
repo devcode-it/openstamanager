@@ -80,7 +80,7 @@ class FieldManager implements ManagerInterface
         <div class="row">';
                 }
 
-                $field['value'] = isset($field['value']) ? $field['value'] : '';
+                $field['value'] ??= '';
 
                 // Gestione valori multipli
                 $values = json_decode((string) $field['value'], true);

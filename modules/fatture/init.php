@@ -81,9 +81,7 @@ if (isset($id_record)) {
     $fattura_acquisto_originale = null;
 
     if (!empty($fattura)) {
-        $reverse_charge = $fattura->getRighe()->first(function ($item, $key) {
-            return $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6';
-        })->id;
+        $reverse_charge = $fattura->getRighe()->first(fn($item, $key) => $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6')->id;
         $autofattura_vendita = Fattura::find($fattura->id_autofattura);
 
         $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null;

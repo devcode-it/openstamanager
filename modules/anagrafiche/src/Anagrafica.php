@@ -192,9 +192,7 @@ class Anagrafica extends Model
      */
     public function isTipo($type)
     {
-        return $this->tipi()->get()->search(function ($item, $key) use ($type) {
-            return TipoAnagrafica::find($item->id)->getTranslation('name', \Models\Locale::getPredefined()->id) == $type;
-        }) !== false;
+        return $this->tipi()->get()->search(fn($item, $key) => TipoAnagrafica::find($item->id)->getTranslation('name', \Models\Locale::getPredefined()->id) == $type) !== false;
     }
 
     public function delete()

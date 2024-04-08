@@ -72,7 +72,7 @@ class Pagamento extends Model
                 if ($rata->num_giorni % 30 == 0) {
                     $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata->num_giorni);
+                    $date->addDay();
                 }
             }
 
@@ -82,7 +82,7 @@ class Pagamento extends Model
                 if ($rata->num_giorni % 30 == 0) {
                     $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata->num_giorni);
+                    $date->addDay();
                 }
 
                 $date->modify('last day of this month');
@@ -102,7 +102,7 @@ class Pagamento extends Model
                 if ($rata->num_giorni % 30 == 0) {
                     $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay($rata->num_giorni);
+                    $date->addDay();
                 }
 
                 // Individuazione giorno effettivo (se il giorno indicato è eccessivamente grande, viene preso il massimo possibile)
@@ -118,7 +118,7 @@ class Pagamento extends Model
             $regola_pagamento = database()->selectOne('an_pagamenti_anagrafiche', '*', ['idanagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
             if (!empty($regola_pagamento)) {
                 $date->modify('last day of this month');
-                $date->addDay($regola_pagamento->giorno_fisso);
+                $date->addDay();
             }
 
             // Conversione della data in stringa standard

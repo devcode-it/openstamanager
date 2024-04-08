@@ -74,9 +74,9 @@ class Upload extends Model
         $model = new static();
 
         // Informazioni di base
-        $original_name = isset($source['name']) ? $source['name'] : basename($source);
-        $name = isset($data['name']) ? $data['name'] : $name;
-        $category = isset($data['category']) ? $data['category'] : $category;
+        $original_name = $source['name'] ?? basename($source);
+        $name = $data['name'] ?? $name;
+        $category = $data['category'] ?? $category;
 
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;

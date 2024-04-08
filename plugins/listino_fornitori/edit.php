@@ -50,9 +50,7 @@ echo '
 <h4>'.tr('Elenco fornitori').'</h4>';
 
 $dettagli_fornitori = DettaglioFornitore::where('id_articolo', $id_record)->get()
-    ->mapToGroups(function ($item, $key) {
-        return [$item->id_fornitore => $item];
-    });
+    ->mapToGroups(fn($item, $key) => [$item->id_fornitore => $item]);
 $prezzi_fornitori = DettaglioPrezzo::where('id_articolo', $id_articolo)
     ->where('dir', 'uscita')
     ->get()

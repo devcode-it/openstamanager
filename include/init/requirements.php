@@ -84,7 +84,7 @@ foreach ($modules as $name => $values) {
     $status = isset($available_modules) ? in_array($name, $available_modules) : $_SERVER[$values['server']] == 'On';
 
     if ($name == 'mod_mime' && $php_interface != 'apache') {
-        $headers = get_headers((!empty($config['redirectHTTPS']) && !isHTTPS(true)) ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], 1);
+        $headers = get_headers((!empty($config['redirectHTTPS']) && !isHTTPS(true)) ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true);
         if (isset($headers['Content-Type'])) {
             $status = 1;
         } else {
@@ -431,11 +431,11 @@ foreach ($config_to_check as $name => $values) {
     if ($type == 'value') {
         $description = tr('Valore consigliato: _SUGGESTED_ (Valore attuale: _ACTUAL_)', [
             '_SUGGESTED_' => $values['suggested_value'],
-            '_ACTUAL_' => (!empty($values['section']) ? ${$values['section']}[$name] : $$name),
+            '_ACTUAL_' => (!empty($values['section']) ? ${$values['section']}[$name] : ${$name}),
         ]);
     }
 
-    $status = ($values['operator'](!empty($values['section']) ? ${$values['section']}[$name] : $$name, $values['value_to_check']) ? 1 : 0);
+    $status = ($values['operator'](!empty($values['section']) ? ${$values['section']}[$name] : ${$name}, $values['value_to_check']) ? 1 : 0);
 
     $config[] = [
         'name' => $name,

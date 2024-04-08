@@ -75,7 +75,7 @@ class CbiSepa
         }
 
         $credtm = date('Y-m-d\TH:i:s');
-        $msgid = dechex(rand(100, 999).date('siHdmY')).'-';
+        $msgid = dechex(random_int(100, 999).date('siHdmY')).'-';
 
         $content = file_get_contents(base_dir().'/plugins/presentazioni_bancarie/template/template_CBIPaymentRequest.xml');
 

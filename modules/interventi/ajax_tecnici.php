@@ -210,7 +210,7 @@ if (!empty($sessioni)) {
             $tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
             echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "sconto_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['sconto_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto'] ? $sessione['tipo_sconto'] : $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
+                {[ "type": "number", "name": "sconto_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['sconto_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto'] ?: $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
 
@@ -218,7 +218,7 @@ if (!empty($sessioni)) {
         if ($show_costi) {
             echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "scontokm_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['scontokm_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto_km'] ? $sessione['tipo_sconto_km'] : $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
+                {[ "type": "number", "name": "scontokm_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['scontokm_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto_km'] ?: $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
 

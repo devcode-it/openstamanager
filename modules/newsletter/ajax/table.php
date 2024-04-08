@@ -25,7 +25,7 @@ if (!empty($search)) {
     include_once __DIR__.'/select.php';
 
     $results = collect($results)->mapToGroups(function ($item, $key) {
-        list($tipo, $id) = explode('_', $item['id']);
+        [$tipo, $id] = explode('_', $item['id']);
 
         return [$tipo => $id];
     });
@@ -82,7 +82,7 @@ foreach ($destinatari_filtrati as $destinatario) {
             input([
                 'type' => 'text',
                 'name' => 'email',
-                'id' => 'email_'.rand(0, 99999),
+                'id' => 'email_'.random_int(0, 99999),
                 'readonly' => '1',
                 'class' => 'email-mask',
                 'value' => $origine->email,

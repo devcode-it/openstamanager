@@ -99,7 +99,7 @@ if (post('action') == 'init') {
             'password' => Auth::hashPassword(post('admin_password')),
             'email' => post('admin_email'),
             'idgruppo' => $admin['id'],
-            'idanagrafica' => isset($id_record) ? $id_record : 0,
+            'idanagrafica' => $id_record ?? 0,
             'enabled' => 1,
         ]);
 

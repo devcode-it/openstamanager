@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$result['id'] = isset($result['id']) ? $result['id'] : null;
+$result['id'] ??= null;
 
 // Form di inserimento riga documento
 echo '

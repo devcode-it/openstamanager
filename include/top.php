@@ -47,7 +47,7 @@ echo '<!DOCTYPE html>
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_path().'/manifest.json?r='.rand().'">';
+        <link rel="manifest" href="'.base_path().'/manifest.json?r='.random_int(0, mt_getrandmax()).'">';
 }
 
 // CSS

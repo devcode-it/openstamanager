@@ -464,7 +464,7 @@ class Query
         $format = [];
 
         $query = $options['query'];
-        $views = explode(',', $options['fields']);
+        $views = $options ? explode(',', $options['fields']) : [];
         foreach ($views as $view) {
             $fields[] = trim($view);
             $order_by[] = '`'.trim($view).'`';

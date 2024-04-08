@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$format = (isset($_SESSION['stampe_contabili']['format'])) ? $_SESSION['stampe_contabili']['format'] : 'A4';
-$orientation = (isset($_SESSION['stampe_contabili']['orientation'])) ? $_SESSION['stampe_contabili']['orientation'] : 'L';
+$format = $_SESSION['stampe_contabili']['format'] ?? 'A4';
+$orientation = $_SESSION['stampe_contabili']['orientation'] ?? 'L';
 
 return [
     'format' => $format,

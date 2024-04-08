@@ -45,7 +45,7 @@ $somma_totale_imponibile[] = $totale_imponibile;
 $somma_iva[] = $iva;
 $somma_totale_ivato[] = $totale_ivato;
 
-$pricing = isset($pricing) ? $pricing : true;
+$pricing ??= true;
 
 // Informazioni intervento
 echo '

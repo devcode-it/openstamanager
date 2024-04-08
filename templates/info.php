@@ -47,8 +47,8 @@ $azienda = $dbo->fetchOne('SELECT *, (SELECT `iban` FROM `co_banche` WHERE `id` 
  * @deprecated
  */
 $replace = [
-    'c_' => isset($cliente) ? $cliente : [],
-    'f_' => isset($azienda) ? $azienda : [],
+    'c_' => $cliente ?? [],
+    'f_' => $azienda ?? [],
 ];
 
 // Rinominazione di particolari campi all'interno delle informazioni su anagrafica e azienda

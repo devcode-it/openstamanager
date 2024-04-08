@@ -74,7 +74,6 @@ switch (post('op')) {
         $errors = 0;
 
         foreach (post('data_inizio') as $idautomezzotecnico => $data) {
-            $idautomezzotecnico = $idautomezzotecnico;
             $data_inizio = post('data_inizio')[$idautomezzotecnico];
             $data_fine = null;
 

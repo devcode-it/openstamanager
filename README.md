@@ -74,8 +74,8 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | MYSQL | EOL | Supportato |
 |-----|-----|:----------:|
-| 8.3 | - | ✔️ |
-| 8.2 | - | ✔️ |
+| 8.3 | 30/04/2024 | ✔️ |
+| 8.2 | 31/01/2024 | ✔️ |
 | 8.1 | 25/10/2023 | ✔️ |
 | 8.0 | 30/04/2026 | ✔️ |
 | 5.7 | 21/10/2023 | ✔️ |

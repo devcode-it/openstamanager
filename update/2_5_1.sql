@@ -133,7 +133,7 @@ HAVING
 
 
 -- Rinomino plugin Sedi in Anagrafica
-UPDATE `zz_plugins_lang` SET `title` = 'Sedi aggiuntive' WHERE `zz_plugins_lang`.`id_lang` = (SELECT id FROM zz_langs WHERE iso_code = 'it') AND `name` = 'Sedi'; 
+UPDATE `zz_plugins_lang` SET `title` = 'Sedi aggiuntive' WHERE `zz_plugins_lang`.`id_lang` = (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1) AND `name` = 'Sedi'; 
 
 -- Aggiunte chiavi esterne con zz_langs
 ALTER TABLE `an_nazioni_lang` ADD CONSTRAINT `an_nazioni_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 

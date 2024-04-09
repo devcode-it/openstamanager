@@ -251,7 +251,7 @@ if ($database->isInstalled()) {
                 'warning' => $database->isMySQL() ? false : true,
                 'description' => $database->isMySQL() ? '5.7.x - 8.0.x' : '10.x',
                 'minimum' => $database->isMySQL() ? '5.7.0' : '10.1.0',
-                'maximum' => $database->isMySQL() ? '8.0.99' : '10.6.99',
+                'maximum' => $database->isMySQL() ? '8.3.99' : '10.6.99',
             ],
 
             'sort_buffer_size' => [

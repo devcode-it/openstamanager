@@ -45,7 +45,7 @@ class Filter
         $value = null;
 
         if (empty($method)) {
-            $value = self::post($property, $raw) ?? self::get($property, $raw);
+            $value = self::post($property, $raw) ?: self::get($property, $raw);
         } elseif (strtolower($method) == 'post') {
             $value = self::post($property, $raw);
         } elseif (strtolower($method) == 'get') {
@@ -85,6 +85,8 @@ class Filter
 
         if (isset(self::$post[$category][$property])) {
             return self::$post[$category][$property];
+        } else {
+            return '';
         }
     }
 
@@ -100,7 +102,7 @@ class Filter
             self::$get['data'] = self::parse(self::$get['raw']);
         }
 
-        return self::$get['data'];
+        return self::$get['data'] ?? [];
     }
 
     /**
@@ -118,6 +120,8 @@ class Filter
 
         if (isset(self::$get[$category][$property])) {
             return self::$get[$category][$property];
+        } else {
+            return '';
         }
     }
 

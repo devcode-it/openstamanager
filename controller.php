@@ -93,7 +93,7 @@ echo '
 			</div>
 		</div>';
 
-redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
+redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 
 // Interfaccia per la modifica dell'ordine e della visibilità delle colonne (Amministratore)
 if ($user->is_admin && string_contains($module['option'], '|select|')) {

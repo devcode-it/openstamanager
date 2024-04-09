@@ -297,7 +297,7 @@ function slashes($string)
  */
 function isAjaxRequest()
 {
-    return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
+    return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null && filter('op') !== '';
 }
 
 /**

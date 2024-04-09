@@ -1259,11 +1259,6 @@ ALTER TABLE `mg_articoli_lang`
 ALTER TABLE `mg_articoli_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-INSERT INTO `mg_articoli_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `mg_articoli`;
-
-ALTER TABLE `mg_articoli`
-    DROP `descrizione`;
-
 ALTER TABLE `mg_articoli_lang` ADD CONSTRAINT `mg_articoli_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_articoli_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Descrizione';

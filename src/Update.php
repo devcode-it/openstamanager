@@ -424,7 +424,11 @@ class Update
 
     public static function getSettings()
     {
-        $settings = Setting::get()->toArray();
+        $settings_all = Setting::all();
+
+        foreach ($settings_all as $setting) {
+            $settings[$setting->nome] = $setting->tipo;
+        }
 
         return $settings;
     }

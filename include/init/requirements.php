@@ -106,7 +106,7 @@ $settings = [
         'type' => 'version',
         'description' => '7.3.x - 8.0.x, consigliato almeno 7.4.x',
         'minimum' => '7.3.0',
-        'maximum' => '8.0.99',
+        'maximum' => '8.1.99',
     ],
 
     'zip' => [

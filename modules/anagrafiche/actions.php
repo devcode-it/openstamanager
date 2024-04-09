@@ -242,9 +242,13 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
 
-        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('name')->toArray();
+        $descrizioni_tipi = $anagrafica->tipi()->get();
+        foreach ($descrizioni_tipi as $tipo) {
+            $tipi[] = $tipo->getTranslation('name');
+        }
+
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
-            '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
+            '_TYPE_' => '"'.implode(', ', $tipi).'"',
         ]));
 
         // Controllo che il Codice Fiscale non sia già presente

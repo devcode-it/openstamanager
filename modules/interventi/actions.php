@@ -626,11 +626,11 @@ switch (post('op')) {
             $intervento->idreferente = $documento->idreferente;
             $intervento->idagente = $documento->idagente;
 
-            if ($class == \Modules\Preventivi\Preventivo::class) {
+            if ($class == Modules\Preventivi\Preventivo::class) {
                 $intervento->id_preventivo = $documento->id;
                 $intervento->richiesta = 'Attività creata da preventivo num. '.$documento->numero.'<br>'.$documento->nome;
             }
-            if ($class == \Modules\Ordini\Ordine::class) {
+            if ($class == Modules\Ordini\Ordine::class) {
                 $intervento->id_ordine = $documento->id;
                 $intervento->richiesta = 'Attività creata da ordine num. '.$documento->numero_esterno;
             }

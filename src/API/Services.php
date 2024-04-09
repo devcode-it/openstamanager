@@ -85,7 +85,7 @@ class Services
     {
         return self::getServiziAttivi()
             ->flatten(1)
-            ->filter(fn($item) => isset($item['data_conclusione']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
+            ->filter(fn ($item) => isset($item['data_conclusione']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
     }
 
     /**
@@ -97,7 +97,7 @@ class Services
     {
         return self::getServiziAttivi()
             ->flatten(1)
-            ->filter(fn($item) => isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan(Carbon::now()));
+            ->filter(fn ($item) => isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan(Carbon::now()));
     }
 
     /**
@@ -117,7 +117,7 @@ class Services
      */
     public static function verificaRisorsaAttiva($servizio)
     {
-        return self::isEnabled() && self::getRisorseAttive()->search(fn($item) => $item['name'] == $servizio) !== false;
+        return self::isEnabled() && self::getRisorseAttive()->search(fn ($item) => $item['name'] == $servizio) !== false;
     }
 
     /**
@@ -130,7 +130,7 @@ class Services
     public static function getRisorseInScadenza($limite_scadenze)
     {
         return self::getRisorseAttive()
-            ->filter(fn($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
+            ->filter(fn ($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
                 || (isset($item['credits']) && $item['credits'] < 100));
     }
 
@@ -142,7 +142,7 @@ class Services
     public static function getRisorseScadute()
     {
         return self::getRisorseAttive()
-            ->filter(fn($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()))
+            ->filter(fn ($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()))
                 || (isset($item['credits']) && $item['credits'] < 0));
     }
 

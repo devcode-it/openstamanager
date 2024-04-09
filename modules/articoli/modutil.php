@@ -32,19 +32,19 @@ if (!function_exists('aggiorna_sedi_movimenti')) {
 
             $idsede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
 
-            $dbo->query('UPDATE `mg_movimenti` SET `idsede`='.prepare($idsede).' WHERE `reference_type`='.prepare(\Modules\DDT\DDT::class).' AND `reference_id`='.prepare($id));
+            $dbo->query('UPDATE `mg_movimenti` SET `idsede`='.prepare($idsede).' WHERE `reference_type`='.prepare(Modules\DDT\DDT::class).' AND `reference_id`='.prepare($id));
         } elseif ($module == 'documenti') {
             $rs = $dbo->fetchArray('SELECT `idsede_partenza`, `idsede_destinazione`, `dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($id));
 
             $idsede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
 
-            $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare(\Modules\Fatture\Fattura::class).' AND reference_id='.prepare($id));
+            $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare(Modules\Fatture\Fattura::class).' AND reference_id='.prepare($id));
         } elseif ($module == 'interventi') {
             $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione FROM in_interventi WHERE in_interventi.id='.prepare($id));
 
             $idsede = $rs[0]['idsede_partenza'];
 
-            $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare(\Modules\Interventi\Intervento::class).' AND reference_id='.prepare($id));
+            $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare(Modules\Interventi\Intervento::class).' AND reference_id='.prepare($id));
         }
     }
 }

@@ -296,7 +296,7 @@ class Articolo extends Model
         }
 
         $movimenti = $movimenti->get()
-            ->mapToGroups(fn($item, $key) => [$item->idsede => (float) $item->attributes['qta']])
+            ->mapToGroups(fn ($item, $key) => [$item->idsede => (float) $item->attributes['qta']])
             ->toArray();
 
         return $movimenti;

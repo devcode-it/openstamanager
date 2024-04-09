@@ -67,7 +67,7 @@ trait LocalPoolTrait
         }
 
         // Ricerca
-        $result = self::$collection->first(fn($item) => $item->{self::$name} == $identifier || $item->{self::$id} == $identifier);
+        $result = self::$collection->first(fn ($item) => $item->{self::$name} == $identifier || $item->{self::$id} == $identifier);
 
         if (!empty($result)) {
             return $result;

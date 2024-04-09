@@ -281,7 +281,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $peso_lordo = $righe->sum(fn($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
+        $peso_lordo = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
         return $peso_lordo;
     }
@@ -295,7 +295,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $volume = $righe->sum(fn($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
+        $volume = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 
         return $volume;
     }
@@ -496,7 +496,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(fn($item) => false !== strstr($item->getTranslation('name'), $nome))->sortBy('created_at');
+        return $this->uploads()->filter(fn ($item) => false !== strstr($item->getTranslation('name'), $nome))->sortBy('created_at');
     }
 
     /**

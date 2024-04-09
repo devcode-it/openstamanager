@@ -78,7 +78,7 @@ switch (filter('op')) {
                 // Aggiornamento traduzione nome campo
                 $vista = View::find($id);
                 $vista->setTranslation('name', $name);
-                
+
                 // Aggiornamento dei permessi relativi
                 $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
             } else {
@@ -156,7 +156,7 @@ switch (filter('op')) {
     case 'test':
         $module_query = Util\Query::getQuery(Module::find(get('id_record')));
 
-        try{
+        try {
             $dbo->fetchArray($module_query.' LIMIT 1');
             echo 'ok';
         } catch (PDOException $e) {

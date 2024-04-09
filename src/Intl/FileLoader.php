@@ -45,7 +45,7 @@ class FileLoader extends \Symfony\Component\Translation\Loader\FileLoader
 
             if (!empty($this->include_filename)) {
                 $result = array_combine(
-                    array_map(fn($k) => basename($resource, '.'.$extension).'.'.$k, array_keys($result)),
+                    array_map(fn ($k) => basename($resource, '.'.$extension).'.'.$k, array_keys($result)),
                     $result
                 );
             }

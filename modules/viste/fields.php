@@ -39,7 +39,7 @@ foreach ($fields as $key => $field) {
                 <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.
-                            $field->getTranslation('name').' <small class="text-muted tip" title="'.(new \Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">'.(new \Carbon\Carbon($field->updated_at))->diffForHumans().'</small>
+                            $field->getTranslation('name').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">'.(new Carbon\Carbon($field->updated_at))->diffForHumans().'</small>
                         </h3>
 
                         <div class="box-tools pull-right">
@@ -60,14 +60,14 @@ foreach ($fields as $key => $field) {
                         <div class="row">
                             <div class="col-md-12">
                                 '.input([
-        'type' => 'textarea',
-        'label' => tr('Query prevista'),
-        'name' => 'query['.$key.']',
-        'required' => 1,
-        'readonly' => ''.(!$editable).'',
-        'value' => $field->query,
-        'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
-    ]).'
+                                'type' => 'textarea',
+                                'label' => tr('Query prevista'),
+                                'name' => 'query['.$key.']',
+                                'required' => 1,
+                                'readonly' => ''.(!$editable).'',
+                                'value' => $field->query,
+                                'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
+                            ]).'
                             </div>
                         </div>
 
@@ -120,13 +120,13 @@ foreach ($fields as $key => $field) {
                             </div>
                         </div>';
 
-                        if ($editable) {
-                            echo '
+    if ($editable) {
+        echo '
                                             <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field->id.'">
                                                 <i class="fa fa-trash"></i> '.tr('Elimina').'
                                             </a>';
-                        }
-                        echo '
+    }
+    echo '
                     </div>
                 </div>';
 }

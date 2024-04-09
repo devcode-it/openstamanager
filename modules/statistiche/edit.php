@@ -267,7 +267,7 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT 
+$articoli = $dbo->fetchArray('SELECT 
         SUM(IF(`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS qta,  
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
         `mg_articoli`.`id`, 
@@ -277,29 +277,29 @@ $articoli = $dbo->fetchArray("SELECT
     FROM 
         `co_documenti` 
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
         AND `co_statidocumento_lang`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start)." AND ".prepare($end)." 
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0 
     GROUP BY 
         `co_righe_documenti`.`idarticolo` 
     ORDER BY 
-        `qta` DESC LIMIT 20");
+        `qta` DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT 
+$totale = $dbo->fetchArray('SELECT 
         SUM(IF(`reversed`=1, - `co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS totale_qta,
         SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale 
     FROM 
         `co_documenti` 
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` 
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
@@ -307,8 +307,8 @@ $totale = $dbo->fetchArray("SELECT
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
         AND `co_statidocumento_lang`.name IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start)." AND ".prepare($end)." 
-        AND `zz_segments`.`autofatture`=0");
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
+        AND `zz_segments`.`autofatture`=0');
 
 echo '
     <div class="col-md-6">

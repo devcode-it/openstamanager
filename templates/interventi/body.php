@@ -547,23 +547,23 @@ if ($options['checklist']) {
             echo renderChecklistHtml($check);
         }
 
-    $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
-    foreach ($impianti_collegati as $impianto) {
-        $checks = Check::where('id_module_from', (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id))->where('id_record_from', $impianto['id'])->where('id_module', (new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id))->where('id_record', $id_record)->where('id_parent', null)->get();
-    
-        if (sizeof($checks)) {
-            echo '
+        $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
+        foreach ($impianti_collegati as $impianto) {
+            $checks = Check::where('id_module_from', (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id))->where('id_record_from', $impianto['id'])->where('id_module', (new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id))->where('id_record', $id_record)->where('id_parent', null)->get();
+
+            if (sizeof($checks)) {
+                echo '
             <tr>
                 <th class="text-center" colspan="2" style="font-size:11pt;">
                     <b>'.tr('Impianto', [], ['upper' => true]).' '.$impianto['matricola'].' - '.$impianto['nome'].'</b>
                 </th>
             </tr>';
-            foreach ($checks as $check) {
-                echo renderChecklistHtml($check);
+                foreach ($checks as $check) {
+                    echo renderChecklistHtml($check);
+                }
             }
         }
-    }
-    echo '
+        echo '
 </table>';
     }
 }

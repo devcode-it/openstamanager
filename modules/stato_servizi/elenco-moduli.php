@@ -278,7 +278,7 @@ function renderElencoModuli($elenco, $depth = 0)
                         ->where('zz_plugins_lang.id_lang', '=', Models\Locale::getDefault()->id);
                 })
                 ->where('idmodule_to', '=', $record['id'])
-                ->get()->map(fn($i) => (array) $i)->toArray();
+                ->get()->map(fn ($i) => (array) $i)->toArray();
 
             $elenco_plugin = renderElencoModuli($plugins, $depth + 1);
         }

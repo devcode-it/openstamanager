@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use PHPSQLParser\PHPSQLParser;
+
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT 
             `zz_segments`.*, 
@@ -39,10 +40,9 @@ if (isset($id_record)) {
     $table = $parsed['FROM'][0]['table'];
 
     if ($record['is_sezionale'] == 1) {
-        $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM ' . $table . ' WHERE `id_segment` = ' . prepare($id_record));
+        $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table.' WHERE `id_segment` = '.prepare($id_record));
         $tot = $righe[0]['tot'];
     } else {
         $tot = 0;
     }
-
 }

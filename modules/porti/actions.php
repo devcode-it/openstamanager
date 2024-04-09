@@ -46,7 +46,7 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
 
-            if (empty($dbo->fetchArray('SELECT `dt_porto`.`id` FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `name`='.prepare($descrizione)))) {
+        if (empty($dbo->fetchArray('SELECT `dt_porto`.`id` FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `name`='.prepare($descrizione)))) {
             $dbo->insert('dt_porto', [
                 'created_at' => 'NOW()',
             ]);

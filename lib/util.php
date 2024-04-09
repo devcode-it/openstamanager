@@ -38,7 +38,7 @@ if (!function_exists('array_column')) {
      */
     function array_column($array, $key)
     {
-        return array_map(fn($v) => is_object($v) ? $v->$key : $v[$key], $array);
+        return array_map(fn ($v) => is_object($v) ? $v->$key : $v[$key], $array);
     }
 }
 
@@ -53,7 +53,7 @@ if (!function_exists('array_clean')) {
     function array_clean($array)
     {
         if (!empty($array)) {
-            return array_unique(array_values(array_filter($array, fn($value) => !empty($value))));
+            return array_unique(array_values(array_filter($array, fn ($value) => !empty($value))));
         }
     }
 }

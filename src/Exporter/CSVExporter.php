@@ -55,7 +55,7 @@ abstract class CSVExporter implements ExporterInterface
     public function setHeader()
     {
         $fields = $this->getAvailableFields();
-        $header = array_map(fn($item) => $item['label'], $fields);
+        $header = array_map(fn ($item) => $item['label'], $fields);
 
         return $this->csv->insertOne($header);
     }

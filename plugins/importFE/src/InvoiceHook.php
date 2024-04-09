@@ -50,7 +50,7 @@ class InvoiceHook extends CachedManager
         if (!empty($plugins)) {
             $notify = !empty($count);
 
-            $plugin = $plugins->first(fn($value, $key) => $value->getTranslation('name') == 'Fatturazione Elettronica');
+            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('name') == 'Fatturazione Elettronica');
 
             $link = base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
         }

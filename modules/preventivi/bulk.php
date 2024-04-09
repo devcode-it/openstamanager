@@ -73,9 +73,9 @@ switch (post('op')) {
                 // Ricerca fattura per anagrafica tra le registrate
                 $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede : 0;
                 if ($raggruppamento == 'sede') {
-                    $fattura = $documenti->first(fn($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
+                    $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
                 } else {
-                    $fattura = $documenti->first(fn($item, $key) => $item->anagrafica->id == $id_anagrafica);
+                    $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica);
                 }
 
                 // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata

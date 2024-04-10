@@ -28,7 +28,7 @@ $block_edit = $record['flag_completato'];
 $id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id);
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
-$numero_previsto = verifica_numero_intervento($intervento);
+$numero_previsto = verifica_numero_intervento($intervento, $id_segment);
 
 if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
     echo '

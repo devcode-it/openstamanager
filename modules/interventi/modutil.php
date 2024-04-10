@@ -338,7 +338,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
  * @return bool|string
  */
 if (!function_exists('verifica_numero_intervento')) {
-    function verifica_numero_intervento(Intervento $intervento)
+    function verifica_numero_intervento(Intervento $intervento, $id_segment)
     {
         if (empty($intervento->codice)) {
             return null;
@@ -349,7 +349,7 @@ if (!function_exists('verifica_numero_intervento')) {
             ->get();
 
         // Recupero maschera per questo segmento
-        $maschera = setting('Formato codice attività');
+        $maschera = Generator::getMaschera($id_segment);
 
         if ((strpos($maschera, 'YYYY') == false) or (strpos($maschera, 'yy') == false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [

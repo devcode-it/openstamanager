@@ -210,10 +210,10 @@ switch (post('op')) {
                 $intervento->idclientefinale = post('idclientefinale');
             }
 
-            $intervento->id_preventivo = post('idpreventivo');
-            $intervento->id_contratto = post('idcontratto');
-            $intervento->id_ordine = post('idordine');
-            $intervento->idreferente = post('idreferente');
+            $intervento->id_preventivo = $idpreventivo ?: null;
+            $intervento->id_contratto = $idcontratto?: null;
+            $intervento->id_ordine = post('idordine') ?: null;
+            $intervento->idreferente = post('idreferente') ?: null;
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');
             $intervento->idsede_destinazione = $idsede_destinazione;
@@ -228,9 +228,9 @@ switch (post('op')) {
             }
 
             // Collegamenti intervento/impianti
-            $impianti = (array) post('idimpianti');
+            $impianti = post('idimpianti');
             if (!empty($impianti)) {
-                $impianti = array_unique($impianti);
+                $impianti = array_unique(array($impianti));
                 foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
                         'idintervento' => $id_record,
@@ -276,19 +276,23 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
-            $idtecnici = post('idtecnico');
+            $idtecnici = post('idtecnico') ?: null;
             foreach ($idtecnici as $idtecnico) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
             }
         }
 
         // Assegnazione dei tecnici all'intervento
-        $tecnici_assegnati = (array) post('tecnici_assegnati');
-        $dbo->sync('in_interventi_tecnici_assegnati', [
-            'id_intervento' => $id_record,
-        ], [
-            'id_tecnico' => $tecnici_assegnati,
-        ]);
+        $tecnici_assegnati = post('tecnici_assegnati');
+        if (!empty($tecnici_assegnati)) {
+            $tecnici_assegnati = array_unique($tecnici_assegnati);
+            $dbo->sync('in_interventi_tecnici_assegnati', [
+                'id_intervento' => $id_record,
+            ], [
+                'id_tecnico' => $tecnici_assegnati,
+            ]);
+        }
+        
 
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
             $tecnico = Anagrafica::find($tecnico_assegnato);

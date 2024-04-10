@@ -211,6 +211,8 @@ function delete_check(id){
             op: "delete_check",
             id: id,
             main_check: 1,
+            id_module: globals.id_module,
+            id_record: id,
         }, function(){
             location.reload();
         });

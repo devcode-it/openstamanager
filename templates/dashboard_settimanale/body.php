@@ -125,7 +125,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         $element = $list[$i + $c];
 
         echo '
-        <div class="divCell" align="center">'.ucfirst($element['date']->formatLocalized('%A %d/%m')).'</div>';
+        <div class="divCell" align="center">'.ucfirst($element['date']->isoFormat('MMMM YYYY')).'</div>';
     }
 
     echo '

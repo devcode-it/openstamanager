@@ -46,7 +46,7 @@ $plugin_impianti = (new Plugin())->getByField('name', 'Impianti', Models\Locale:
 
 switch (post('op')) {
     case 'update':
-        $idcontratto = post('idcontratto');
+        $idcontratto = post('idcontratto')?: null;
         $id_promemoria = post('idcontratto_riga');
 
         // Rimozione del collegamento al promemoria
@@ -71,9 +71,9 @@ switch (post('op')) {
         $intervento->idstatointervento = post('idstatointervento');
         $intervento->idsede_partenza = post('idsede_partenza');
         $intervento->idsede_destinazione = post('idsede_destinazione');
-        $intervento->id_preventivo = post('idpreventivo');
+        $intervento->id_preventivo = post('idpreventivo') ?: null;
         $intervento->id_contratto = $idcontratto;
-        $intervento->id_ordine = post('idordine');
+        $intervento->id_ordine = post('idordine')?: null;
         $intervento->idpagamento = post('idpagamento');
 
         $intervento->id_documento_fe = post('id_documento_fe');

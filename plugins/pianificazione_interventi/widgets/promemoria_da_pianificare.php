@@ -58,7 +58,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
     echo "
 <h4>
     <a class='clickable' onclick=\"if( $('#promemoria_pianificare_".$counter."').css('display') == 'none' ){ $(this).children('i').removeClass('fa-plus-circle'); $(this).children('i').addClass('fa-minus-circle'); }else{ $(this).children('i').addClass('fa-plus-circle'); $(this).children('i').removeClass('fa-minus-circle'); } $('#promemoria_pianificare_".$counter."').slideToggle();\">
-    <i class='fa ".$class."'></i> ".ucfirst($nome_mese->formatLocalized('%B %Y')).'
+    <i class='fa ".$class."'></i> ".ucfirst($nome_mese->isoFormat('MMMM YYYY')).'
     </a>
 </h4>';
 

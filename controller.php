@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Plugin;
+
 include_once __DIR__.'/core.php';
 
 if (!empty($id_record) && !empty($id_module)) {
@@ -51,13 +53,13 @@ echo '
 					</a>
 				</li>';
 
-$plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`,`title` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab_main' AND `enabled` = 1");
+$plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
 
 // Tab dei plugin
 foreach ($plugins as $plugin) {
     echo '
 				<li>
-					<a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">'.$plugin['title'].'</a>
+					<a data-toggle="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->title.'</a>
 				</li>';
 }
 
@@ -77,9 +79,9 @@ foreach ($plugins as $plugin) {
     $record = $module_record;
 
     echo '
-				<div id="tab_'.$plugin['id'].'" class="tab-pane">';
+				<div id="tab_'.$plugin->id.'" class="tab-pane">';
 
-    $id_plugin = $plugin['id'];
+    $id_plugin = $plugin->id;
 
     include base_dir().'/include/manager.php';
 

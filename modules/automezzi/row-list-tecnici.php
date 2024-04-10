@@ -24,7 +24,7 @@ if (!empty($rs_art)) {
         echo '
         <tr>
             <td>
-                <input type="hidden" name="idautomezzotecnico[]" value="'.$r['id'].'">
+                <input type="hidden" name="idtecnico['.$r['id'].']" value="'.$r['idtecnico'].'">
                 '.$r['ragione_sociale'].'
             </td>';
 
@@ -37,7 +37,7 @@ if (!empty($rs_art)) {
         // Data di fine
         echo '
             <td>
-                {[ "type": "date", "name": "data_fine['.$r['id'].']", "required": 1, "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
+                {[ "type": "date", "name": "data_fine['.$r['id'].']", "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
             </td>';
 
         // Pulsanti per aggiornamento date tecnici

@@ -209,7 +209,8 @@ switch (post('op')) {
         break;
 }
 if ($module->getTranslation('name') == 'Ordini cliente') {
-    $module_fatture ??= strtolower($module_fatture);
+    $module_fatture = Module::find($id_modulo_fatture)->getTranslation('name');
+    $module_fatture ? strtolower($module_fatture) : '';
     $operations['crea_fattura'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
         'data' => [

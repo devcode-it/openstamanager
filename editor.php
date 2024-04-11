@@ -438,7 +438,7 @@ if (empty($record) || !$has_access) {
 		</div>';
 }
 
-redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
+redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';

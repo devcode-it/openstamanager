@@ -21,12 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Contratti\Contratto;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $contratto = Contratto::find($id_record);
 
     $record = $dbo->fetchOne('SELECT 
-        *,
-        `co_contratti`.`nome` AS nome,
+        `co_contratti`.*,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
         `co_staticontratti`.`is_fatturabile` AS is_fatturabile,
         `co_staticontratti`.`is_pianificabile` AS is_pianificabile,

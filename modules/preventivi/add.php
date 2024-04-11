@@ -32,7 +32,7 @@ $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined
 	<input type="hidden" name="backto" value="record-edit">
 
 	<!-- Fix creazione da Anagrafica -->
-	<input type="hidden" name="id_record" value="">
+	<input type="hidden" name="id_record" value="0">
 
 	<div class="row">
 

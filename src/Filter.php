@@ -43,13 +43,15 @@ class Filter
     public static function getValue($property, $method = null, $raw = false)
     {
         $value = null;
+        $post = self::post($property, $raw);
+        $get = self::get($property, $raw);
 
         if (empty($method)) {
-            $value = self::post($property, $raw) ?: self::get($property, $raw);
+            $value = (!empty($post) || $post == '0') ? $post : $get;
         } elseif (strtolower($method) == 'post') {
-            $value = self::post($property, $raw);
+            $value = $post;
         } elseif (strtolower($method) == 'get') {
-            $value = self::get($property, $raw);
+            $value = $get;
         }
 
         return $value;

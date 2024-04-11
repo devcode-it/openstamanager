@@ -27,7 +27,7 @@ echo '
 	<input type="hidden" name="op" value="addprovvigione">
 
 	<!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
+    <input type="hidden" name="id_record" value="0">
 
 	<div class="row">
 		<div class="col-md-4">

@@ -42,7 +42,7 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
     <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
+    <input type="hidden" name="id_record" value="0">
 
 	<div class="row">
 

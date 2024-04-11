@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 $block_edit = $record['flag_completato'];
 
 if ($dir == 'entrata') {
-    $numero_previsto = verifica_numero_ddt($ddt);
+    $numero_previsto = verifica_numero_ddt($ddt, $id_segment);
     if (!empty($numero_previsto)) {
         echo '
         <div class="alert alert-warning">

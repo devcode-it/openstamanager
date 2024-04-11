@@ -234,7 +234,7 @@ if (!function_exists('get_stato_ddt')) {
 }
 
 if (!function_exists('verifica_numero_ddt')) {
-    function verifica_numero_ddt(DDT $ddt)
+    function verifica_numero_ddt(DDT $ddt, $id_segment)
     {
         global $dbo;
 
@@ -253,7 +253,7 @@ if (!function_exists('verifica_numero_ddt')) {
             ->get();
 
         // Recupero maschera per questo segmento
-        $maschera = setting('Formato numero secondario ddt');
+        $maschera = Generator::getMaschera($id_segment);
 
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', $campo, [
             'data < '.prepare(date('Y-m-d', strtotime($data))),

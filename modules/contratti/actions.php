@@ -110,8 +110,11 @@ switch (post('op')) {
             $contratto->save();
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
-            foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {
-                $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
+            $matricola = post('matricolaimpianto');
+            if ($matricola) {
+                foreach (array($matricola) as $matricolaimpianto) {
+                    $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
+                }
             }
 
             // Salvataggio costi attività unitari del contratto

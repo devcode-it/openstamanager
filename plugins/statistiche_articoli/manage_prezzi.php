@@ -34,8 +34,8 @@ $prezzo_medio = $prezzi['media'];
 $oscillazione = $prezzo_max['prezzo'] - $prezzo_min['prezzo'];
 $oscillazione_percentuale = $prezzo_medio ? $oscillazione * 100 / $prezzo_medio : 0;
 
-$data_min = strtotime($prezzo_min['data']);
-$data_max = strtotime($prezzo_max['data']);
+$data_min = $prezzo_min['data'] ? strtotime($prezzo_min['data']) : '';
+$data_max = $prezzo_max['data'] ? strtotime($prezzo_max['data']) : '';
 if ($data_min == $data_max) {
     $andamento = tr('N.D.');
 } elseif ($data_min < $data_max) {

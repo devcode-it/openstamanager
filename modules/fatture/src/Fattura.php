@@ -113,8 +113,6 @@ class Fattura extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($id_stato_attuale_documento);
 
-        $model->save();
-
         // Salvataggio delle informazioni
         $model->data = $data;
         $model->data_registrazione = $data_registrazione ?: $data;
@@ -250,7 +248,7 @@ class Fattura extends Document
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
             if ($this->stato->getTranslation('name') == 'Bozza') {
-                $this->numero_esterno = null;
+                $this->numero_esterno = '';
             } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
             }
@@ -578,9 +576,6 @@ class Fattura extends Document
 
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
-
-        // Salvataggio effettivo
-        parent::save($options);
 
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;

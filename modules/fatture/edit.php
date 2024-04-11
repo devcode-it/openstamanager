@@ -179,9 +179,10 @@ if ($dir == 'entrata') {
     if (!empty(setting('Data inizio verifica contatore fattura di vendita'))) {
         $dateFormat = 'd/m/Y';
         $carbonDate = Carbon::createFromFormat($dateFormat, setting('Data inizio verifica contatore fattura di vendita'));
-        $data_inizio_verifica_contatore = (($carbonDate !== false) ? $carbonDate->format('Y-m-d') : null);
+        $data_inizio_verifica_contatore = (($carbonDate !== false) ? strtotime($carbonDate->format('Y-m-d')) : null);
     }
-    if (strtotime($fattura->data) >= strtotime($data_inizio_verifica_contatore) || empty($data_inizio_verifica_contatore)) {
+    $data = ($fattura->data ? strtotime($fattura->data) : '');
+    if ($data >= $data_inizio_verifica_contatore || empty($data_inizio_verifica_contatore)) {
         $numero_previsto = verifica_numero_fattura($fattura);
     }
 

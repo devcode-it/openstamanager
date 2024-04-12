@@ -21,8 +21,8 @@ switch (filter('op')) {
             }
             $combinazione->setTranslation('name', $nome);
             $combinazione->codice = post('codice');
-            $combinazione->id_categoria = post('id_categoria');
-            $combinazione->id_sottocategoria = post('id_sottocategoria');
+            $combinazione->id_categoria = post('id_categoria')?: null;
+            $combinazione->id_sottocategoria = post('id_sottocategoria')?: null;
             $combinazione->save();
 
             $id_record = $combinazione->id;

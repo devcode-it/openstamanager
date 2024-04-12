@@ -69,7 +69,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $dbo->query('DELETE FROM `co_ritenuta_contributi` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

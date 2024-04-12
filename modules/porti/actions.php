@@ -74,7 +74,7 @@ switch (filter('op')) {
             UNION SELECT `id` FROM `co_documenti` WHERE `idporto`='.prepare($id_record).'
             UNION SELECT `id` FROM `co_preventivi` WHERE `idporto`='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_porto` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

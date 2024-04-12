@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT `idanagrafica`, `ragione_sociale`, `colore` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id_record));
 
     $tipi_interventi = $dbo->fetchArray('SELECT 

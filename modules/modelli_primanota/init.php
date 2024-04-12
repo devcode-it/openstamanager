@@ -17,6 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM co_movimenti_modelli WHERE idmastrino='.prepare($id_record));
 }

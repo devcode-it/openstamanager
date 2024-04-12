@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Interventi\Intervento;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $intervento = Intervento::find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,

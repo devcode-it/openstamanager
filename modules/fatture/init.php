@@ -28,7 +28,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita') {
     $dir = 'uscita';
 }
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $fattura = Fattura::with('tipo', 'stato')->find($id_record);
     $dir = $fattura->direzione;
 

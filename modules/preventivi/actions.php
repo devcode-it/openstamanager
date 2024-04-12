@@ -62,7 +62,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
             $preventivo->idanagrafica = post('idanagrafica');

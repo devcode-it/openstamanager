@@ -70,7 +70,7 @@ switch (filter('op')) {
     case 'delete':
         $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE id_settore='.prepare($id_record));
 
-        if (isset($id_record) && empty($righe)) {
+        if ((!empty($id_record)) && empty($righe)) {
             $dbo->query('DELETE FROM `an_settori` WHERE `id`='.prepare($id_record));
             flash()->info(tr('Settore merceologico _NAME_ eliminato con successo!', [
                 '_NAME_' => $descrizione,

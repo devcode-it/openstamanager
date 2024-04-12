@@ -73,7 +73,7 @@ switch (filter('op')) {
             UNION SELECT `id` FROM `mg_articoli` WHERE `um`='.prepare($record['valore']).'
             UNION SELECT `id` FROM `co_righe_preventivi` WHERE `um`='.prepare($record['valore']));
 
-        if (isset($id_record) && empty($righe)) {
+        if ((!empty($id_record)) && empty($righe)) {
             $dbo->query('DELETE FROM `mg_unitamisura` WHERE `id`='.prepare($id_record));
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'unità di misura',

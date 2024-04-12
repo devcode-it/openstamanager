@@ -236,7 +236,7 @@ function translateTemplate()
     ];
 
     $template = replace($template, $replaces);
-    $template = $template ? HTMLBuilder::replace($template) : '';
+    $template = $template ? HTMLBuilder::replace($template) : $template;
     $template = replace($template, $replaces);
 
     // Informazioni estese sulle azioni dell'utente
@@ -339,7 +339,7 @@ function redirectOperation($id_module, $id_record)
  */
 function prepareToField($string)
 {
-    return str_replace('"', '&quot;', $string);
+    return $string ? str_replace('"', '&quot;', $string) : $string;
 }
 
 /**

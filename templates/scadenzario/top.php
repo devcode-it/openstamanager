@@ -34,7 +34,7 @@ if (get('is_fornitore') == 'true') {
     $text[] = 'Solo scadenze fornitori';
 }
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     echo '
     <h4><b>'.tr('Scadenza _ANAG_', [
         '_ANAG_' => $records[0]['Anagrafica'],

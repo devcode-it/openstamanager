@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Tipo;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id`='.prepare($id_record));
 
     $tipo = Tipo::find($id_record);

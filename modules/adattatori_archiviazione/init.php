@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\FileAdapters\FileAdapter;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $adapter = FileAdapter::find($id_record);
 
     $record = $dbo->fetchOne('SELECT * FROM `zz_storage_adapters` WHERE `id`='.prepare($id_record));

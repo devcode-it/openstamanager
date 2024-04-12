@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Plugin;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_referenti` WHERE `id`='.prepare($id_record));
 }
 

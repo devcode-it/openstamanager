@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Group;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id`='.prepare($id_record));
 
     $group = Group::find($id_record);

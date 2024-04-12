@@ -62,7 +62,7 @@ switch (post('op')) {
     case 'delete':
         $referenti = $dbo->fetchNum('SELECT id FROM an_referenti WHERE idmansione='.prepare($id_record));
 
-        if (isset($id_record) && empty($referenti)) {
+        if ((!empty($id_record)) && empty($referenti)) {
             $dbo->query('DELETE FROM `an_mansioni` WHERE `id`='.prepare($id_record));
             flash()->info(tr('_TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'Mansione',

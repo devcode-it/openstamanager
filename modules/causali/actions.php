@@ -83,7 +83,7 @@ switch (filter('op')) {
     case 'delete':
         $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idcausalet`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `idcausalet`='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
         } else {
             $dbo->update('dt_causalet', [

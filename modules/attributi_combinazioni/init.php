@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\AttributiCombinazioni\Attributo;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $attributo = Attributo::find($id_record);
 
     $record = $attributo->toArray();

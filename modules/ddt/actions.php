@@ -64,7 +64,7 @@ switch (filter('op')) {
         break;
 
     case 'update':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $idstatoddt = post('idstatoddt');
             $idpagamento = post('idpagamento');
             $numero_esterno = post('numero_esterno');

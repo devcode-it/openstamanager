@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Articolo;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM co_provvigioni WHERE id='.prepare($id_record));
     $articolo = Articolo::withTrashed()->find($id_parent);
 }

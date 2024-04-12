@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\PianiSconto\PianoSconto;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM mg_piani_sconto WHERE id='.prepare($id_record));
 
     $listino = PianoSconto::find($id_record);

@@ -21,7 +21,7 @@ use Modules\Banche\Banca;
 
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $banca = Banca::find($id_record);
 
     if (!empty($banca)) {

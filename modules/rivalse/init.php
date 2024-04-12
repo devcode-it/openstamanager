@@ -19,6 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_rivalse` WHERE id='.prepare($id_record));
 }

@@ -60,7 +60,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $idstatoordine = post('idstatoordine');
             $idpagamento = post('idpagamento');
             $idsede = post('idsede');

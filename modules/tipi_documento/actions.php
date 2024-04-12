@@ -80,7 +80,7 @@ switch (filter('op')) {
     case 'delete':
         $documenti = $dbo->fetchNum('SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` ='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipidocumento` WHERE `id`='.prepare($id_record));
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'tipo documento',

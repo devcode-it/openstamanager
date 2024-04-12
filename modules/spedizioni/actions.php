@@ -76,7 +76,7 @@ switch (filter('op')) {
         $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idspedizione`='.prepare($id_record).'
             UNION SELECT `id` FROM `co_documenti` WHERE `idspedizione`='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_spedizione` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

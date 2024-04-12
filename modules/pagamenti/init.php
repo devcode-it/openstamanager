@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Pagamenti\Pagamento;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($id_record));
 
     $pagamento = Pagamento::find($id_record);

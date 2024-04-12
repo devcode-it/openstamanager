@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $files = Interaction::getFileList();
     $record = $files[$id_record - 1];
 

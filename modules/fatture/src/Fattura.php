@@ -362,7 +362,7 @@ class Fattura extends Document
      */
     public function getDatiAggiuntiviFEAttribute()
     {
-        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+        $result = ($this->attributes['dati_aggiuntivi_fe'] ? json_decode($this->attributes['dati_aggiuntivi_fe'], true) : '');
 
         return (array) $result;
     }
@@ -535,7 +535,7 @@ class Fattura extends Document
     {
         $file = $this->getFatturaElettronica();
 
-        return !empty($this->progressivo_invio) and file_exists($file->filepath);
+        return !empty($this->progressivo_invio) && $file->filepath && file_exists($file->filepath);
     }
 
     /**

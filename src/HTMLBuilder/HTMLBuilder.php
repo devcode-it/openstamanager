@@ -431,7 +431,7 @@ class HTMLBuilder
             }
 
             // Valori particolari
-            $values['name'] = str_replace(' ', '_', $values['name']);
+            $values['name'] = $values['name'] ? str_replace(' ', '_', $values['name']) : '';
             $values['id'] = empty($values['id']) ? $values['name'] : $values['id'];
             $values['id'] = str_replace(['[', ']', ' '], ['', '', '_'], $values['id']);
             $values['value'] ??= '';

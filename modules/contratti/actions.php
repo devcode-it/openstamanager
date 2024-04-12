@@ -320,7 +320,7 @@ switch (post('op')) {
 
         // Scollegamento intervento da contratto
     case 'unlink':
-        if (get('idcontratto') !== null && get('idintervento') !== null) {
+        if (!empty(get('idcontratto')) && !empty(get('idintervento'))) {
             $idcontratto = get('idcontratto');
             $idintervento = get('idintervento');
 

@@ -312,7 +312,7 @@ class FatturaElettronica
         }
 
         // Registrazione come allegato
-        \Uploads::upload($this->toXML(), array_merge($data, [
+        Uploads::upload($this->toXML(), array_merge($data, [
             'name' => $name,
             'original_name' => $filename,
         ]));

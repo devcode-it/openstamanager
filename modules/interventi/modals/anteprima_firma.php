@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-if (get('anteprima') !== null) {
+if (!empty(get('anteprima'))) {
     // Lettura dati intervento
     $query = 'SELECT codice FROM in_interventi WHERE id='.prepare($id_record);
     $rs = $dbo->fetchArray($query);

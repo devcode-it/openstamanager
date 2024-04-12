@@ -236,7 +236,7 @@ function translateTemplate()
     ];
 
     $template = replace($template, $replaces);
-    $template = HTMLBuilder::replace($template);
+    $template = $template ? HTMLBuilder::replace($template) : '';
     $template = replace($template, $replaces);
 
     // Informazioni estese sulle azioni dell'utente

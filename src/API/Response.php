@@ -180,7 +180,7 @@ class Response
 
             $flags = JSON_FORCE_OBJECT;
             // Beautify forzato dei risultati
-            if (get('beautify') !== null) {
+            if (!empty(get('beautify'))) {
                 $flags |= JSON_PRETTY_PRINT;
             }
 

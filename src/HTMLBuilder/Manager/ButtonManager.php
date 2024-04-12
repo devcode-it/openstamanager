@@ -49,6 +49,12 @@ class ButtonManager implements ManagerInterface
     protected function getInfo($options)
     {
         if ($options['type'] == 'print') {
+            $print = PrintTemplate::find((new PrintTemplate())->getByField('title', $options['id']));
+
+            if (empty($print)) {
+                $print = PrintTemplate::find($options['id']);
+            }
+
             if (!empty($print)) {
                 $result = [
                     'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),

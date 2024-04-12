@@ -460,8 +460,8 @@ switch (filter('op')) {
         FROM 
             `in_interventi`
             INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`";
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
 
         // Visualizzo solo promemoria del tecnico loggato
         if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {

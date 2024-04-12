@@ -30,7 +30,6 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
 use Modules\Pagamenti\Pagamento;
-use Uploads;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -312,7 +311,7 @@ class FatturaElettronica
         }
 
         // Registrazione come allegato
-        Uploads::upload($this->toXML(), array_merge($data, [
+        \Uploads::upload($this->toXML(), array_merge($data, [
             'name' => $name,
             'original_name' => $filename,
         ]));

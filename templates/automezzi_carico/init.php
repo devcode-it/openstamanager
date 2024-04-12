@@ -27,7 +27,7 @@ $data_carico = strtotime(str_replace('/', '-', $dt_carico));
 $startTM = date('Y-m-d', $data_carico).' 00:00:00';
 $endTM = date('Y-m-d', $data_carico).' 23:59:59';
 
-$query = "
+$query = '
     SELECT
         `mg_movimenti`.`data`,
         `an_sedi`.`targa`,
@@ -48,7 +48,7 @@ $query = "
         INNER JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
         INNER JOIN `zz_users` ON `mg_movimenti`.`idutente`=`zz_users`.`id`
         INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
-        LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_categorie` ON `mg_categorie`.`id`=`mg_articoli`.`id_sottocategoria`

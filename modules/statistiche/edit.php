@@ -514,7 +514,7 @@ ORDER BY
 
 $dataset = '';
 if ($_SESSION['superselect']['idtipiintervento']) {
-    $where = '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')'; 
+    $where = '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')';
 } else {
     $where = '1=1';
 }
@@ -548,11 +548,11 @@ echo '
 
         <div class="row">
             <div class="col-md-3 pull-right">';
-            if ($_SESSION['superselect']['idtipiintervento']) {
-                echo'
+if ($_SESSION['superselect']['idtipiintervento']) {
+    echo '
                 {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
-            }
-            echo'
+}
+echo '
             </div>
         </div>
 

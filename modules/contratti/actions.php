@@ -112,7 +112,7 @@ switch (post('op')) {
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
             $matricola = post('matricolaimpianto');
             if ($matricola) {
-                foreach (array($matricola) as $matricolaimpianto) {
+                foreach ([$matricola] as $matricolaimpianto) {
                     $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
                 }
             }

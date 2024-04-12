@@ -52,9 +52,21 @@ switch (post('op')) {
         $template->setTranslation('body', post('body'));
         $template->save();
 
-        $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
-        $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => (array) post('idmansioni')]);
+        $prints[] = post('prints');
+        
+        foreach ($prints as $print) {
+            if (!empty($print)) {
+                $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $print]);
+            }
+        }
 
+        $mansioni[] = post('idmansioni');
+        foreach ($mansioni as $mansione) {
+            if (!empty($mansione)) {
+                $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => $mansione]);
+            }
+        }
+    
         flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;

@@ -45,10 +45,10 @@ switch ($resource) {
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                 |where| 
                 ORDER BY 
-                    `id`';
+                    `co_preventivi`.`id`';
 
             foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
+                $filter[] = '`co_preventivi`.`id`='.prepare($element);
             }
 
             if (empty($elements)) {

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
+function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
 {
     // Conto
     echo '
@@ -50,7 +50,7 @@ function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
     $totale_avere += ($riga['avere'] ?: 0);
 }
 
-function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
+function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
 {
     global $counter;
 

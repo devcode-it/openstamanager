@@ -57,7 +57,7 @@ class ButtonManager implements ManagerInterface
 
             if (!empty($print)) {
                 $result = [
-                    'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
+                    'link' => \Prints::getHref($print, $options['id_record'], $options['parameters']),
                     'title' => tr('Stampa').' '.((strtoupper($print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst($print->getTranslation('title'))),
                     'icon' => $print->icon,
                 ];

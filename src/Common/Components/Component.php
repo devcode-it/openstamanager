@@ -230,9 +230,13 @@ abstract class Component extends Model
             [$riferimento_precedente, $nuovo_riferimento] = $model->impostaOrigine($this);
 
             // Correzione della descrizione
-            $attributes['descrizione'] = str_replace($riferimento_precedente, '', $attributes['descrizione']);
 
-            if (setting('Aggiungi riferimento tra documenti')) {
+            if (setting('Mantieni riferimenti tra tutti i documenti collegati')) {
+                $attributes['descrizione'] .= $nuovo_riferimento;
+            }
+
+            if (setting('Aggiungi riferimento tra documenti') && empty(setting('Mantieni riferimenti tra tutti i documenti collegati'))) {
+                $attributes['descrizione'] = $riferimento_precedente ? str_replace($riferimento_precedente, '', $attributes['descrizione']) : $attributes['descrizione'];
                 $attributes['descrizione'] .= $nuovo_riferimento;
             }
         }

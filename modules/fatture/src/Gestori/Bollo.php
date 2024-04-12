@@ -54,7 +54,7 @@ class Bollo
         $bollo = ($this->fattura->direzione == 'uscita') ? $this->fattura->bollo : setting('Importo marca da bollo');
 
         $marca_da_bollo = 0;
-        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+        if ($bollo && abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
             $marca_da_bollo = $bollo;
         }
 

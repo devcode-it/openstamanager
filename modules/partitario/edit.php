@@ -112,17 +112,19 @@ foreach ($primo_livello as $conto_primo) {
            
         </div>';
         // Somma dei totali
-        if ($conto_primo['descrizione'] == 'Patrimoniale') {
-            if ($totale_conto2 > 0) {
-                $totale_attivita[] = abs($totale_conto2);
+        if ($totale_conto2) {
+            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+                if ($totale_conto2 > 0) {
+                    $totale_attivita[] = abs($totale_conto2);
+                } else {
+                    $totale_passivita[] = abs($totale_conto2);
+                }
             } else {
-                $totale_passivita[] = abs($totale_conto2);
-            }
-        } else {
-            if ($totale_conto2 > 0) {
-                $totale_ricavi[] = abs($totale_conto2);
-            } else {
-                $totale_costi[] = abs($totale_conto2);
+                if ($totale_conto2 > 0) {
+                    $totale_ricavi[] = abs($totale_conto2);
+                } else {
+                    $totale_costi[] = abs($totale_conto2);
+                }
             }
         }
 

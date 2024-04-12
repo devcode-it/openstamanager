@@ -273,12 +273,12 @@ class Ordine extends Document
 
     public function getReferenceNumber()
     {
-        return $this->numero_cliente ?: ($this->numero_esterno ?: $this->numero);
+        return setting('Visualizza numero ordine cliente') ? ($this->numero_cliente ?: ($this->numero_esterno ?: $this->numero)) : ($this->numero_esterno ?: $this->numero);
     }
 
     public function getReferenceDate()
     {
-        return $this->data_cliente ?: $this->data;
+        return setting('Visualizza numero ordine cliente') ? ($this->data_cliente ?: $this->data) : $this->data;
     }
 
     public function getReferenceRagioneSociale()

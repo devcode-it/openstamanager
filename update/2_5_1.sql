@@ -188,3 +188,8 @@ ALTER TABLE `zz_hooks_lang` ADD CONSTRAINT `zz_hooks_lang_ibfk_2` FOREIGN KEY (`
 ALTER TABLE `zz_groups_lang` ADD CONSTRAINT `zz_groups_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 ALTER TABLE `zz_group_module_lang` ADD CONSTRAINT `zz_group_module_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+ALTER TABLE `zz_settings_lang` CHANGE `help` `help` VARCHAR(500) NULL; 
+-- Aggiunta impostazione per numero da visualizzare negli ordini
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Visualizza numero ordine cliente', '1', 'boolean', '1', 'Ordini', NULL);
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`, `help`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Visualizza numero ordine cliente'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Visualizza numero ordine cliente', 'Se abilitata, utilizza nei documenti il numero d\'ordine del cliente al posto del numero interno dell\'ordine');

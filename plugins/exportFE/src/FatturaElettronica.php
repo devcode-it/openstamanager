@@ -1419,11 +1419,13 @@ class FatturaElettronica
                     }
                 }
 
-                // $descrizione = $riga['descrizione'];
-
+                $descrizione = $riga['descrizione'];
                 // Aggiunta dei riferimenti ai documenti
-                if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
-                    $descrizione .= "\n".$riga->getOriginalComponent()->getDocument()->getReference();
+                if (setting('Riferimento dei documenti in Fattura Elettronica') == 0) {
+                    $pos = strpos($descrizione, 'Rif.');
+                    if ($pos !== false) {
+                        $descrizione = substr($descrizione, 0, $pos);
+                    }
                 }
 
                 $dettaglio['Descrizione'] = $descrizione;

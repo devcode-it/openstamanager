@@ -82,8 +82,6 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
-        $tecnici_assegnati = (array) post('tecnici_assegnati');
-
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
         $tecnici_presenti = [];
 
@@ -107,7 +105,11 @@ switch (post('op')) {
             }
         }
 
+        $tecnici_assegnati_array = post('tecnici_assegnati');
+        $tecnici_assegnati = [];
+
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
+            $tecnici_assegnati[] = $tecnico_assegnato;
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!in_array($tecnico_assegnato, $tecnici_presenti)) {

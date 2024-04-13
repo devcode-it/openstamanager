@@ -39,7 +39,7 @@ foreach ($fields as $key => $field) {
                 <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.
-                            $field->getTranslation('name').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">'.(new Carbon\Carbon($field->updated_at))->diffForHumans().'</small>
+                            $field->getTranslation('name').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">('.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().')</small>
                         </h3>
 
                         <div class="box-tools pull-right">

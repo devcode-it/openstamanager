@@ -142,7 +142,6 @@ $database->query('ALTER TABLE `in_interventi` DROP INDEX `codice`');
 
 // File e cartelle deprecate
 $files = [
-    'modules\automezzi',
     'modules\anagrafiche\plugins\statistiche.php',
     'modules\interventi\src\TipoSessione.php',
     'templates\registro_iva\body.php',

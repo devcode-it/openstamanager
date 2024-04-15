@@ -51,7 +51,7 @@ if (!empty(post('db_host'))) {
     }
 
     // Test della configurazione
-    if (post('test') !== null) {
+    if (!empty(post('test'))) {
         ob_end_clean();
 
         if ($dbo->isConnected()) {

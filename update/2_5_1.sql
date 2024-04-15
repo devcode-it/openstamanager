@@ -193,3 +193,6 @@ ALTER TABLE `zz_settings_lang` CHANGE `help` `help` VARCHAR(500) NULL;
 -- Aggiunta impostazione per numero da visualizzare negli ordini
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Visualizza numero ordine cliente', '1', 'boolean', '1', 'Ordini', NULL);
 INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`, `help`) VALUES ((SELECT `id` FROM `zz_settings` WHERE `nome` = 'Visualizza numero ordine cliente'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua"), 'Visualizza numero ordine cliente', 'Se abilitata, utilizza nei documenti il numero d\'ordine del cliente al posto del numero interno dell\'ordine');
+
+-- Allineamento impostazioni
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`name` AS descrizione FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints_lang`.`id_record` = `zz_prints`.`id` AND `zz_prints_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `name` = "Interventi") AND `is_record` = 1' WHERE `zz_settings`.`nome` = 'Stampa per anteprima e firma';

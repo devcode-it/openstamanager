@@ -196,3 +196,40 @@ INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`, `help`) VALUES 
 
 -- Allineamento impostazioni
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`name` AS descrizione FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints_lang`.`id_record` = `zz_prints`.`id` AND `zz_prints_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `name` = "Interventi") AND `is_record` = 1' WHERE `zz_settings`.`nome` = 'Stampa per anteprima e firma';
+
+-- Allineamento vista Gestione documentale
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `do_documenti`
+    INNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`
+    LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.|lang|)
+    INNER JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_documenti`.`idcategoria`
+WHERE 
+    1=1 AND 
+    `deleted_at` IS NULL AND
+    `id_gruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) 
+HAVING 
+    2=2 
+ORDER BY 
+    `data` DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Gestione documentale' LIMIT 1);
+
+-- Allineamento vista Categorie documenti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+   `do_categorie`
+   LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.|lang|)
+   INNER JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_categorie`.`id`
+WHERE 
+    1=1 AND 
+    `deleted_at` IS NULL AND
+    `id_gruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = |id_utente|)
+HAVING
+    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Categorie documenti' LIMIT 1);
+INSERT INTO `zz_views` (`id_module`, `query`, `order`) VALUES
+((SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Categorie documenti' LIMIT 1), '(SELECT GROUP_CONCAT(\' \', `nome`) FROM `zz_groups` WHERE `id` IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_categorie`.`id`))', 5);
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `name`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Gruppi abilitati');

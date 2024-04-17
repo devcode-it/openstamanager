@@ -289,7 +289,7 @@ class CSV extends CSVImporter
         $id_settore = '';
         if (!empty($record['id_settore'])) {
             $settore = $record['id_settore'];
-            $id_settore = $database->fetchOne('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN (`an_settori_lang` ON`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')')['id'];
+            $id_settore = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')');
 
             if (empty($id_settore)) {
                 $id_settore = database()->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');

@@ -86,6 +86,14 @@ class CSV extends CSVImporter
                 'field' => 'data',
                 'label' => 'Data installazione',
             ],
+            [
+                'field' => 'marca',
+                'label' => 'Marca',
+            ],
+            [
+                'field' => 'modello',
+                'label' => 'Modello',
+            ],
         ];
     }
 
@@ -128,6 +136,21 @@ class CSV extends CSVImporter
                 }
             }
 
+            // Gestione marca
+            $id_marca = null;
+            if (!empty($record['marca'])) {
+                // Marca
+                $n = $database->fetchOne('SELECT `id` FROM `my_impianti_marche` WHERE `name`='.prepare($record['marca']))['id'];
+
+                if (empty($n)) {
+                    $query = 'INSERT INTO `my_impianti_marche` (`name`) VALUES ('.prepare($record['marca']).')';
+                    $database->query($query);
+                    $id_marca = $database->lastInsertedID();
+                } else {
+                    $id_marca = $n;
+                }
+            }
+
             // Individuazione impianto e generazione
             $impianto = null;
 
@@ -145,6 +168,8 @@ class CSV extends CSVImporter
             }
 
             $impianto->idanagrafica = $anagrafica->idanagrafica;
+            $impianto->id_marca = $id_marca;
+            $impianto->modello = $record['modello'];
             $impianto->save();
 
             if (!empty($record['sede'])) {

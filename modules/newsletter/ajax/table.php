@@ -123,7 +123,7 @@ foreach ($destinatari_filtrati as $destinatario) {
             <a class="btn btn-warning btn-xs" data-type="'.get_class($origine).'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
                 <i class="fa fa-paper-plane "></i>
             </a>' : '').'
-            <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-type="'.get_class($origine).'" data-id="'.$origine->id.'">
+            <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-type="'.$destinatario->record_type.'" data-id="'.$destinatario->record_id.'">
                 <i class="fa fa-trash"></i>
             </a>
         </div>',

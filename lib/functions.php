@@ -236,7 +236,7 @@ function translateTemplate()
     ];
 
     $template = replace($template, $replaces);
-    $template = HTMLBuilder::replace($template);
+    $template = $template ? HTMLBuilder::replace($template) : $template;
     $template = replace($template, $replaces);
 
     // Informazioni estese sulle azioni dell'utente
@@ -297,7 +297,7 @@ function slashes($string)
  */
 function isAjaxRequest()
 {
-    return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
+    return Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null && filter('ajax') !== '';
 }
 
 /**
@@ -339,7 +339,7 @@ function redirectOperation($id_module, $id_record)
  */
 function prepareToField($string)
 {
-    return str_replace('"', '&quot;', $string);
+    return $string ? str_replace('"', '&quot;', $string) : $string;
 }
 
 /**
@@ -442,7 +442,7 @@ function session_get($name, $default = null)
         $session = &$session[$piece];
     }
 
-    return isset($session) ? $session : $default;
+    return $session ?? $default;
 }
 
 /**

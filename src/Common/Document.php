@@ -67,13 +67,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
                 ->get(),
         ])->flatten();
 
-        return $riferimenti->reject(function ($item) {
-            return empty($item->original_document_type);
-        })->unique(function ($item) {
-            return $item->original_document_type.'|'.$item->original_document_id;
-        })->mapToGroups(function ($item) {
-            return [$item->original_document_type => ($item->original_document_type)::find($item->original_document_id)];
-        });
+        return $riferimenti->reject(fn ($item) => empty($item->original_document_type))->unique(fn ($item) => $item->original_document_type.'|'.$item->original_document_id)->mapToGroups(fn ($item) => [$item->original_document_type => ($item->original_document_type)::find($item->original_document_id)]);
     }
 
     /**
@@ -85,9 +79,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
     {
         $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
 
-        return $results->sortBy(function ($item) {
-            return [$item->order, $item->id];
-        });
+        return $results->sortBy(fn ($item) => [$item->order, $item->id]);
     }
 
     /**
@@ -97,9 +89,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
     {
         $righe = $this->getRighe();
 
-        return $righe->first(function ($item) use ($type, $id) {
-            return $item instanceof $type && $item->id == $id;
-        });
+        return $righe->first(fn ($item) => $item instanceof $type && $item->id == $id);
     }
 
     /**

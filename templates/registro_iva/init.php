@@ -23,7 +23,7 @@ use Models\Module;
 $dir = $_GET['dir'];
 
 $id_sezionale = filter('id_sezionale');
-$sezionale = $dbo->fetchOne('SELECT `zz_segmnets_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$id_sezionale)['name'];
+$sezionale = $dbo->fetchOne('SELECT `zz_segments_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$id_sezionale)['name'];
 
 $date_start = filter('date_start');
 $date_end = filter('date_end');

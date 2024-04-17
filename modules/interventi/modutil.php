@@ -190,9 +190,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
         } else {
             $decimals = setting('Cifre decimali per quantità');
 
-            $ore_di_lavoro = $sessioni->groupBy(function ($item, $key) {
-                return $item['prezzo_orario'].'|'.$item['sconto_unitario'].'|'.$item['tipo_sconto'];
-            });
+            $ore_di_lavoro = $sessioni->groupBy(fn ($item, $key) => $item['prezzo_orario'].'|'.$item['sconto_unitario'].'|'.$item['tipo_sconto']);
             foreach ($ore_di_lavoro as $gruppo) {
                 $sessione = $gruppo->first();
                 $riga = Riga::build($fattura);
@@ -234,9 +232,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             }
 
             // Diritti di chiamata raggruppati per costo
-            $diritti_chiamata = $sessioni->where('prezzo_diritto_chiamata', '>', 0)->groupBy(function ($item, $key) {
-                return $item['prezzo_diritto_chiamata'];
-            });
+            $diritti_chiamata = $sessioni->where('prezzo_diritto_chiamata', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_diritto_chiamata']);
             foreach ($diritti_chiamata as $gruppo) {
                 $diritto_chiamata = $gruppo->first();
                 $riga = Riga::build($fattura);
@@ -267,9 +263,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             }
 
             // Viaggi raggruppati per costo
-            $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(function ($item, $key) {
-                return $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm'];
-            });
+            $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm']);
             foreach ($viaggi as $gruppo) {
                 $qta_trasferta = $gruppo->sum('km');
                 if ($qta_trasferta == 0) {
@@ -323,7 +317,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             if ($copia->isArticolo()) {
                 $copia->serials = $riga->serials;
                 $articolo = ArticoloOriginale::find($copia->idarticolo);
-                $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $id_conto);
+                $copia->id_conto = ($articolo->idconto_vendita ?: $id_conto);
             }
 
             $copia->save();
@@ -344,7 +338,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
  * @return bool|string
  */
 if (!function_exists('verifica_numero_intervento')) {
-    function verifica_numero_intervento(Intervento $intervento)
+    function verifica_numero_intervento(Intervento $intervento, $id_segment)
     {
         if (empty($intervento->codice)) {
             return null;
@@ -355,7 +349,7 @@ if (!function_exists('verifica_numero_intervento')) {
             ->get();
 
         // Recupero maschera per questo segmento
-        $maschera = setting('Formato codice attività');
+        $maschera = Generator::getMaschera($id_segment);
 
         if ((strpos($maschera, 'YYYY') == false) or (strpos($maschera, 'yy') == false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
@@ -371,9 +365,7 @@ if (!function_exists('verifica_numero_intervento')) {
         do {
             $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data), $data);
 
-            $filtered = $documenti->reject(function ($item, $key) use ($numero) {
-                return $item->codice == $numero;
-            });
+            $filtered = $documenti->reject(fn ($item, $key) => $item->codice == $numero);
 
             if ($documenti->count() == $filtered->count()) {
                 return $numero;

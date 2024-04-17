@@ -207,7 +207,11 @@ class Prints
      */
     public static function getHref($print, $id_record, $get = '')
     {
-        $infos = self::get($print);
+        $infos = PrintTemplate::find((new PrintTemplate())->getByField('title', $print));
+
+        if (empty($infos)) {
+            $infos = PrintTemplate::find($print);
+        }
 
         if (empty($infos)) {
             return false;
@@ -262,7 +266,7 @@ class Prints
     {
         $info = self::render($print, $id_record, $directory);
 
-        return self::getPDFLink($info['path'].'?'.rand());
+        return self::getPDFLink($info['path'].'?'.random_int(0, mt_getrandmax()));
     }
 
     /**
@@ -274,7 +278,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.rand()), '/');
+        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.random_int(0, mt_getrandmax())), '/');
     }
 
     /**

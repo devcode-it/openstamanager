@@ -99,7 +99,7 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT * FROM `my_impianti` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `my_impianti_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
+        if (empty($dbo->fetchArray('SELECT * FROM `my_impianti` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `my_impianti_categorie` WHERE `parent`='.prepare($id).'))'))) {
             $dbo->query('DELETE FROM `my_impianti_categorie` WHERE `id`='.prepare($id));
 
             flash()->info(tr('_TYPE_ eliminata con successo!', [

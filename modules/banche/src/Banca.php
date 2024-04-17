@@ -82,7 +82,7 @@ class Banca extends Model
 
     protected function fixPredefined()
     {
-        $predefined = isset($this->predefined) ? $this->predefined : false;
+        $predefined = $this->predefined ?? false;
 
         // Selezione automatica per primo record
         $count = self::where('id_anagrafica', $this->id_anagrafica)

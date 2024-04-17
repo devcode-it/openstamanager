@@ -81,9 +81,7 @@ switch ($action) {
             ->whereYear('co_fatturazione_contratti.data_scadenza', $year)
             ->get();
 
-        $raggruppamenti = $pianificazioni->groupBy(function ($item) {
-            return ucfirst($item->data_scadenza->format('m'));
-        });
+        $raggruppamenti = $pianificazioni->groupBy(fn ($item) => ucfirst($item->data_scadenza->format('m')));
 
         $ret = [];
         foreach ($raggruppamenti as $i => $item) {

@@ -113,8 +113,6 @@ class Fattura extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($id_stato_attuale_documento);
 
-        $model->save();
-
         // Salvataggio delle informazioni
         $model->data = $data;
         $model->data_registrazione = $data_registrazione ?: $data;
@@ -250,7 +248,7 @@ class Fattura extends Document
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
             if ($this->stato->getTranslation('name') == 'Bozza') {
-                $this->numero_esterno = null;
+                $this->numero_esterno = '';
             } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
             }
@@ -281,9 +279,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $peso_lordo = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
-        });
+        $peso_lordo = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
         return $peso_lordo;
     }
@@ -297,9 +293,7 @@ class Fattura extends Document
     {
         $righe = $this->getRighe();
 
-        $volume = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
-        });
+        $volume = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 
         return $volume;
     }
@@ -368,7 +362,7 @@ class Fattura extends Document
      */
     public function getDatiAggiuntiviFEAttribute()
     {
-        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+        $result = ($this->attributes['dati_aggiuntivi_fe'] ? json_decode($this->attributes['dati_aggiuntivi_fe'], true) : '');
 
         return (array) $result;
     }
@@ -500,9 +494,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(function ($item) use ($nome) {
-            return false !== strstr($item->getTranslation('name'), $nome);
-        })->sortBy('created_at');
+        return $this->uploads()->filter(fn ($item) => false !== strstr($item->getTranslation('name'), $nome))->sortBy('created_at');
     }
 
     /**
@@ -543,7 +535,7 @@ class Fattura extends Document
     {
         $file = $this->getFatturaElettronica();
 
-        return !empty($this->progressivo_invio) and file_exists($file->filepath);
+        return !empty($this->progressivo_invio) && $file->filepath && file_exists($file->filepath);
     }
 
     /**
@@ -584,9 +576,6 @@ class Fattura extends Document
 
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
-
-        // Salvataggio effettivo
-        parent::save($options);
 
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
@@ -659,7 +648,7 @@ class Fattura extends Document
             $checks = FatturaElettronica::controllaFattura($this);
             $fattura_elettronica = new FatturaElettronica($this->id);
             if ($abilita_genera && empty($checks)) {
-                $fattura_elettronica->save(base_dir().'/'.FatturaElettronica::getDirectory());
+                $fattura_elettronica->save();
 
                 if (!$fattura_elettronica->isValid()) {
                     $errors = $fattura_elettronica->getErrors();

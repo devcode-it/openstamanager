@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Nazione;
 
 // id_record = sede
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($id_record));
     $record['lat'] = floatval($record['lat']);
     $record['lng'] = floatval($record['lng']);

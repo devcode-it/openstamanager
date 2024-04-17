@@ -242,9 +242,13 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
 
-        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('name')->toArray();
+        $descrizioni_tipi = $anagrafica->tipi()->get();
+        foreach ($descrizioni_tipi as $tipo) {
+            $tipi[] = $tipo->getTranslation('name');
+        }
+
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
-            '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
+            '_TYPE_' => '"'.implode(', ', $tipi).'"',
         ]));
 
         // Controllo che il Codice Fiscale non sia già presente
@@ -348,7 +352,7 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo e filigrana stampe
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') {
-    $nome = $upload->getTranslation('name');
+    $nome = $upload->name;
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
     if (in_array(strtolower($nome), $logo_stampe)) {

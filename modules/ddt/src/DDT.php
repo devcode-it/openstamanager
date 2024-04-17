@@ -153,9 +153,7 @@ class DDT extends Document
     {
         $righe = $this->getRighe();
 
-        $peso_lordo = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
-        });
+        $peso_lordo = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
         return $peso_lordo;
     }
@@ -169,9 +167,7 @@ class DDT extends Document
     {
         $righe = $this->getRighe();
 
-        $volume = $righe->sum(function ($item) {
-            return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
-        });
+        $volume = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 
         return $volume;
     }

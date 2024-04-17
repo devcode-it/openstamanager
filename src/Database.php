@@ -122,7 +122,7 @@ class Database extends Util\Singleton
      */
     public static function getConnection($new = false, $data = [])
     {
-        $class = get_called_class();
+        $class = static::class;
 
         if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
             $config = App::getConfig();
@@ -345,11 +345,7 @@ class Database extends Util\Singleton
 
         $result = $this->fetchArray($query, $parameters);
 
-        if (isset($result[0])) {
-            return $result[0];
-        }
-
-        return $result;
+        return $result[0] ?? $result;
     }
 
     /**

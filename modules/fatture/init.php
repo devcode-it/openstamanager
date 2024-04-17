@@ -28,7 +28,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita') {
     $dir = 'uscita';
 }
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $fattura = Fattura::with('tipo', 'stato')->find($id_record);
     $dir = $fattura->direzione;
 
@@ -71,7 +71,7 @@ if (isset($id_record)) {
     $note_accredito = $dbo->fetchArray("SELECT `co_documenti`.`id`, IF(`numero_esterno` != '', `numero_esterno`, `numero`) AS numero, data FROM `co_documenti` JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `reversed` = 1 AND `ref_documento`=".prepare($id_record));
 
     // Blocco gestito dallo stato della Fattura Elettronica
-    $stato_fe = StatoFE::find($fattura->codice_stato_fe)->id_record;
+    $stato_fe = StatoFE::find($fattura->codice_stato_fe);
     $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
     // Controllo autofattura e gestione avvisi
@@ -81,9 +81,7 @@ if (isset($id_record)) {
     $fattura_acquisto_originale = null;
 
     if (!empty($fattura)) {
-        $reverse_charge = $fattura->getRighe()->first(function ($item, $key) {
-            return $item->aliquota != null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6';
-        })->id;
+        $reverse_charge = $fattura->getRighe()->first(fn($item, $key) => $item->aliquota != null && $item->aliquota->codice_natura_fe !== null && substr($item->aliquota->codice_natura_fe, 0, 2) == 'N6')->id;
         $autofattura_vendita = Fattura::find($fattura->id_autofattura);
 
         $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null;

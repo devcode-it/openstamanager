@@ -596,7 +596,7 @@ class Validator
             }
         } elseif (!is_null($input)) {
             $info = static::$validators[$key];
-            $size = isset($info['size']) ? $info['size'] : null;
+            $size = $info['size'] ?? null;
 
             $output = $input;
 

@@ -48,7 +48,7 @@ trait RelationTrait
      */
     public function getDatiAggiuntiviFEAttribute()
     {
-        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+        $result = $this->attributes['dati_aggiuntivi_fe'] ? json_decode($this->attributes['dati_aggiuntivi_fe'], true) : '';
 
         return (array) $result;
     }
@@ -188,7 +188,7 @@ trait RelationTrait
      */
     public function setQtaAttribute($value)
     {
-        list($qta, $diff) = $this->parseQta($value);
+        [$qta, $diff] = $this->parseQta($value);
         parent::setQtaAttribute($value);
 
         // Individuazione fattura corrente (fix in caso di creazione diretta)

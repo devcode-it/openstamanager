@@ -73,9 +73,7 @@ class Combinazione extends Model
         $result = parent::save($options);
 
         // Sincronizzazione dei campi condivisi con la Combinazione
-        $sincro = collect($this->toArray())->filter(function ($value, $key) {
-            return in_array($key, self::$campi_combinazione);
-        });
+        $sincro = collect($this->toArray())->filter(fn ($value, $key) => in_array($key, self::$campi_combinazione));
         $this->sincronizzaCampi($sincro->toArray());
 
         return $result;
@@ -178,9 +176,7 @@ class Combinazione extends Model
             return;
         }
 
-        $sincro = collect($articolo->toArray())->filter(function ($value, $key) {
-            return in_array($key, self::$campi_varianti);
-        });
+        $sincro = collect($articolo->toArray())->filter(fn ($value, $key) => in_array($key, self::$campi_varianti));
 
         $combinazione->sincronizzaCampi($sincro->toArray());
     }
@@ -219,9 +215,7 @@ class Combinazione extends Model
             ->update($values);
 
         // Filtro campi combinazioni
-        $combo = collect($values)->filter(function ($value, $key) {
-            return in_array($key, self::$campi_combinazione);
-        });
+        $combo = collect($values)->filter(fn ($value, $key) => in_array($key, self::$campi_combinazione));
 
         // Aggiornamento dati combinazioni
         database()->table('mg_combinazioni')

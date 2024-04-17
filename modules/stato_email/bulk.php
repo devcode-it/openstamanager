@@ -25,7 +25,7 @@ switch (post('op')) {
     case 'delete-bulk':
         $i = 0;
         foreach ($id_records as $id_record) {
-            if (isset($id_record)) {
+            if (!empty($id_record)) {
                 $mail = Mail::find($id_record);
                 if (empty($mail->sent_at)) {
                     $mail->delete();

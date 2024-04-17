@@ -32,7 +32,7 @@ use Modules\Ordini\Tipo;
 $id_modulo_fatture = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_modulo_fatture);
-    $_SESSION['module_'.$id_modulo_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+    $_SESSION['module_'.$id_modulo_fatture]['id_segment'] = $segments[0]['id'] ?? null;
 }
 $id_segment = $_SESSION['module_'.$id_modulo_fatture]['id_segment'];
 $id_segment_ordini = $_SESSION['module_'.$id_module]['id_segment'];
@@ -72,13 +72,9 @@ switch (post('op')) {
                     // Ricerca fattura per anagrafica tra le registrate
                     $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede : 0;
                     if ($raggruppamento == 'sede') {
-                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica, $id_sede) {
-                            return $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede;
-                        });
+                        $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
                     } else {
-                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                            return $item->anagrafica->id == $id_anagrafica;
-                        });
+                        $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica);
                     }
 
                     // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
@@ -118,7 +114,7 @@ switch (post('op')) {
 
                             // Fix per idconto righe fattura
                             $articolo = ArticoloOriginale::find($copia->idarticolo);
-                            $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
+                            $copia->id_conto = ($articolo->idconto_vendita ?: $idconto);
 
                             // Aggiornamento seriali dalla riga dell'ordine
                             if ($copia->isArticolo()) {
@@ -213,11 +209,13 @@ switch (post('op')) {
         break;
 }
 if ($module->getTranslation('name') == 'Ordini cliente') {
+    $module_fatture = Module::find($id_modulo_fatture)->getTranslation('name');
+    $module_fatture ? strtolower($module_fatture) : '';
     $operations['crea_fattura'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
-            'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
+            'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => $module_fatture]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => $module_fatture]).'</small>", "name": "accodare" ]}
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_modulo_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
             {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',

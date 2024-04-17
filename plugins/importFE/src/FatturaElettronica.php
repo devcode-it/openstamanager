@@ -87,9 +87,7 @@ class FatturaElettronica
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
-                $plugin = $plugins->first(function ($value, $key) {
-                    return $value->getTranslation('name') == 'Fatturazione Elettronica';
-                });
+                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('name') == 'Fatturazione Elettronica');
 
                 self::$directory = base_dir().'/'.$plugin->upload_directory;
             }

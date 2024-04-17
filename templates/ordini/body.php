@@ -45,9 +45,7 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
 
 $columns = 7;
 
-$has_image = $righe->search(function ($item) {
-    return !empty($item->articolo->immagine);
-}) !== false && $options['images'] == true;
+$has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !== false && $options['images'] == true;
 
 if ($has_image) {
     ++$columns;

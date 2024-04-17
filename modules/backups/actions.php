@@ -98,10 +98,11 @@ if (filter('op') == 'restore') {
         return;
     }
 
-    if (filter('number') == null) {
+    $number = filter('number');
+    if ($number === null) {
         $path = $_FILES['blob']['tmp_name'];
     } else {
-        $number = filter('number');
+        $number != '' ? $number : 0;
         $number = intval($number);
 
         $backups = Backup::getList();

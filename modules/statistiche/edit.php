@@ -267,7 +267,7 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT 
+$articoli = $dbo->fetchArray('SELECT 
         SUM(IF(`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS qta,  
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
         `mg_articoli`.`id`, 
@@ -277,29 +277,29 @@ $articoli = $dbo->fetchArray("SELECT
     FROM 
         `co_documenti` 
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
-        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
         AND `co_statidocumento_lang`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start)." AND ".prepare($end)." 
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0 
     GROUP BY 
         `co_righe_documenti`.`idarticolo` 
     ORDER BY 
-        `qta` DESC LIMIT 20");
+        `qta` DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT 
+$totale = $dbo->fetchArray('SELECT 
         SUM(IF(`reversed`=1, - `co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS totale_qta,
         SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale 
     FROM 
         `co_documenti` 
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` 
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
@@ -307,8 +307,8 @@ $totale = $dbo->fetchArray("SELECT
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
         AND `co_statidocumento_lang`.name IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start)." AND ".prepare($end)." 
-        AND `zz_segments`.`autofatture`=0");
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
+        AND `zz_segments`.`autofatture`=0');
 
 echo '
     <div class="col-md-6">
@@ -393,7 +393,7 @@ foreach ($tipi as $tipo) {
     $interventi = Stats::monthly($interventi, $start, $end);
 
     // Random color
-    $background = '#'.dechex(rand(256, 16777215));
+    $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",
@@ -449,7 +449,7 @@ foreach ($tipi as $tipo) {
     $interventi = Stats::monthly($interventi, $start, $end);
 
     // Random color
-    $background = '#'.dechex(rand(256, 16777215));
+    $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",
@@ -513,7 +513,12 @@ ORDER BY
     `ragione_sociale` ASC");
 
 $dataset = '';
-$where = implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])) != '' ? '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')' : '1=1';
+if ($_SESSION['superselect']['idtipiintervento']) {
+    $where = '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')';
+} else {
+    $where = '1=1';
+}
+
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->fetchArray('SELECT SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `in_interventi_tecnici`.`idtecnico` = '.prepare($tecnico['id']).' AND `in_interventi_tecnici`.`orario_inizio` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` AND '.$where.' GROUP BY YEAR(`in_interventi_tecnici`.`orario_inizio`), MONTH(`in_interventi_tecnici`.`orario_inizio`) ORDER BY YEAR(`in_interventi_tecnici`.`orario_inizio`) ASC, MONTH(`in_interventi_tecnici`.`orario_inizio`) ASC');
 
@@ -523,7 +528,7 @@ foreach ($tecnici as $tecnico) {
     $background = strtoupper($tecnico['colore']);
     if (empty($background) || $background == '#FFFFFF') {
         // Random color
-        $background = '#'.dechex(rand(256, 16777215));
+        $background = '#'.dechex(random_int(256, 16777215));
     }
 
     $dataset .= '{
@@ -542,8 +547,12 @@ echo '
         <h3 class="box-title">'.tr('Ore di lavoro per tecnico').'</h3>
 
         <div class="row">
-            <div class="col-md-3 pull-right">
-                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
+            <div class="col-md-3 pull-right">';
+if ($_SESSION['superselect']['idtipiintervento']) {
+    echo '
+                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
+}
+echo '
             </div>
         </div>
 
@@ -674,7 +683,7 @@ ORDER BY
     YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Nuovi clienti').'",   
@@ -685,7 +694,7 @@ $dataset .= '{
 },';
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Clienti acquisiti').'",   
@@ -696,7 +705,7 @@ $dataset .= '{
 },';
 
 // Random color
-$background = '#'.dechex(rand(256, 16777215));
+$background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
     label: "'.tr('Nuovi fornitori').'",   

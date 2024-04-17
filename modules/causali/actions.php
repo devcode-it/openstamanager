@@ -25,7 +25,7 @@ switch (filter('op')) {
         $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)) == 0) {
+            if (empty($dbo->fetchArray('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)))) {
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE dt_causalet SET predefined = 0');
                 }
@@ -55,7 +55,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione)) == 0) {
+            if (empty($dbo->fetchArray('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `name`='.prepare($descrizione)))) {
                 $dbo->insert('dt_causalet', [
                     'is_importabile' => 1,
                 ]);
@@ -83,7 +83,7 @@ switch (filter('op')) {
     case 'delete':
         $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idcausalet`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `idcausalet`='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
         } else {
             $dbo->update('dt_causalet', [

@@ -289,7 +289,7 @@ class DefaultHandler implements HandlerInterface
                 $values['decimals'] = $decimals;
 
                 // Se non è previsto un valore minimo, lo imposta a 1
-                $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : '0.'.str_repeat('0', $decimals - 1).'1';
+                $values['min-value'] ??= '0.'.str_repeat('0', $decimals - 1).'1';
             }
         }
 

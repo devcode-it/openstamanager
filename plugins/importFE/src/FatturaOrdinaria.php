@@ -263,7 +263,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $has_serial_riferimento = false;
             if (!empty($tipi_riferimenti[$key]) && is_subclass_of($tipi_riferimenti[$key], Component::class) && !empty($id_riferimenti[$key])) {
                 $riga_origine = ($tipi_riferimenti[$key])::find($id_riferimenti[$key]);
-                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($riga_origine);
+                [$riferimento_precedente, $nuovo_riferimento] = $obj->impostaOrigine($riga_origine);
 
                 // Correzione della descrizione
                 $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);

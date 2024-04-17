@@ -24,6 +24,6 @@ use Modules\Checklists\Checklist;
 
 $checklist_module = Module::find((new Module())->getByField('name', 'Checklists', Models\Locale::getPredefined()->id));
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = Checklist::find($id_record);
 }

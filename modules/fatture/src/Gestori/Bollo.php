@@ -47,16 +47,14 @@ class Bollo
             return $this->fattura->bollo;
         }
 
-        $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
-        });
+        $righe_bollo = $this->fattura->getRighe()->filter(fn ($item, $key) => $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']));
         $importo_righe_bollo = $righe_bollo->sum('subtotale');
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
         $bollo = ($this->fattura->direzione == 'uscita') ? $this->fattura->bollo : setting('Importo marca da bollo');
 
         $marca_da_bollo = 0;
-        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+        if ($bollo && abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
             $marca_da_bollo = $bollo;
         }
 
@@ -72,9 +70,7 @@ class Bollo
     public function manageRigaMarcaDaBollo()
     {
         $riga = $this->fattura->rigaBollo;
-        $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']);
-        })->first();
+        $righe_bollo = $this->fattura->getRighe()->filter(fn ($item, $key) => $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']))->first();
 
         $addebita_bollo = $this->fattura->addebita_bollo;
         $marca_da_bollo = $this->getBollo();
@@ -83,7 +79,7 @@ class Bollo
         if (setting('Cassa previdenziale predefinita')) {
             $cassa_pred = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id='.setting('Cassa previdenziale predefinita'));
         }
-        
+
         // Verifico se la fattura ha righe con rivalsa applicata, esclusa la marca da bollo
         $rivalsa = ($this->fattura->rivalsainps > 0 && $this->fattura->rivalsainps != (setting('Importo marca da bollo') * $cassa_pred['percentuale'] / 100)) ? 1 : 0;
 

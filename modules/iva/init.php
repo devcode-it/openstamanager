@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Iva\Aliquota;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_iva`.`id`='.prepare($id_record));
 
     $iva = Aliquota::find($id_record);

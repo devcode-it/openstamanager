@@ -64,11 +64,11 @@ $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Importazione della gestione dedicata
 $file = 'riga';
-if (get('is_descrizione') !== null) {
+if (!empty(get('is_descrizione'))) {
     $file = 'descrizione';
 
     $options['op'] = 'manage_descrizione';
-} elseif (get('is_sconto') !== null) {
+} elseif (!empty(get('is_sconto'))) {
     $file = 'sconto';
 
     $options['op'] = 'manage_sconto';

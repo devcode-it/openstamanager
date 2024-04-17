@@ -1016,3 +1016,7 @@ foreach ($traduzioni as $traduzione) {
     $database->query('UPDATE '.$traduzione[0].' SET `help` = '.prepare($traduzione[3]).' WHERE `title` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
     $database->query('UPDATE '.$traduzione[0].' SET `title` = '.prepare($traduzione[1]).' WHERE `title` = '.prepare($traduzione[2]).' AND `id_lang` = 2');
 }
+
+$database->query('INSERT INTO `mg_articoli_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `descrizione` FROM `mg_articoli`');
+$database->query('ALTER TABLE `mg_articoli`
+    DROP `descrizione`;');

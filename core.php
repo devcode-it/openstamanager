@@ -248,8 +248,8 @@ if (!API\Response::isAPIRequest()) {
         $plugin = Plugins::getCurrent();
         $structure = isset($plugin) ? $plugin : $module;
 
-        $id_module = $module ? $module['id'] : null;
-        $id_plugin = $plugin ? $plugin['id'] : null;
+        $id_module = $module ? $module->id : null;
+        $id_plugin = $plugin ? $plugin->id : null;
 
         $user = Auth::user();
 

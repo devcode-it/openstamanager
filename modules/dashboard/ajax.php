@@ -424,7 +424,7 @@ switch (filter('op')) {
             `co_contratti`.`data_bozza` AS data_contratto,
             DATE_FORMAT( `data_richiesta`, '%m%Y') AS mese,
             `data_richiesta` AS data_richiesta,
-            `data_scadenza` AS data_scadenza,
+            IF(`co_promemoria`.`data_scadenza` IS NULL, '', `co_promemoria`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'promemoria' AS ref,
             `in_tipiintervento_lang`.`name` AS tipo_intervento,
@@ -437,7 +437,7 @@ switch (filter('op')) {
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua)."
+            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
         WHERE 
             `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
         UNION
@@ -450,7 +450,7 @@ switch (filter('op')) {
             '' AS data_contratto,
             DATE_FORMAT(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), '%m%Y') AS mese,
             `in_interventi`.`data_richiesta` AS data_richiesta,
-            `in_interventi`.`data_scadenza` AS data_scadenza,
+            IF(`in_interventi`.`data_scadenza` IS NULL, '', `in_interventi`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'intervento' AS ref,
             `in_tipiintervento_lang`.`name` AS tipo_intervento,
@@ -460,7 +460,7 @@ switch (filter('op')) {
         FROM 
             `in_interventi`
             INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare($lingua).'
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
 
         // Visualizzo solo promemoria del tecnico loggato

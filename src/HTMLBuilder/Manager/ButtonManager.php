@@ -30,7 +30,7 @@ class ButtonManager implements ManagerInterface
 {
     public function manage($options)
     {
-        $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
+        $options['parameters'] ??= null;
 
         // Impostazione id HTML automatico
         if (empty($options['html_id'])) {
@@ -89,10 +89,10 @@ class ButtonManager implements ManagerInterface
     {
         $info = $this->getInfo($options);
 
-        $class = isset($options['class']) ? $options['class'] : 'btn-info';
+        $class = $options['class'] ?? 'btn-info';
         $class = !empty($class) ? ' class="btn '.$class.'" ' : '';
 
-        $title = isset($options['label']) ? $options['label'] : $info['title'];
+        $title = $options['label'] ?? $info['title'];
 
         $icon = !empty($options['icon']) ? $options['icon'] : $info['icon'];
         $icon = str_replace('|default|', $info['icon'], $icon);
@@ -140,7 +140,7 @@ class ButtonManager implements ManagerInterface
         $list = $this->getList($options);
         $count = count($list);
 
-        $options['class'] = isset($options['class']) ? $options['class'] : 'btn-info';
+        $options['class'] ??= 'btn-info';
 
         if ($count > 1) {
             $result = '

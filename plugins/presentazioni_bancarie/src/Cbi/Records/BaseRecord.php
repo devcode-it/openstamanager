@@ -85,7 +85,7 @@ abstract class BaseRecord implements RecordInterface
 
     public function get(string $name): ?string
     {
-        return isset($this->dati[$name]) ? $this->dati[$name] : null;
+        return $this->dati[$name] ?? null;
     }
 
     public function set(string $name, ?string $value): void
@@ -99,7 +99,7 @@ abstract class BaseRecord implements RecordInterface
 
         // Pad automatico sulla base del tipo
         if ($record['tipo'] == 'string') {
-            $value = $this->padString($value, $record['dimensione'], isset($record['forzaPadding']) ? $record['forzaPadding'] : STR_PAD_RIGHT);
+            $value = $this->padString($value, $record['dimensione'], $record['forzaPadding'] ?? STR_PAD_RIGHT);
         } elseif ($record['tipo'] == 'numeric') {
             $value = $this->padNumber($value, $record['dimensione']);
         } elseif ($record['tipo'] == 'constant') {

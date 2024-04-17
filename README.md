@@ -63,7 +63,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | PHP | EOL | Supportato |
 |-----|-----|:----------:|
-| 8.1 | 25/11/2024 | ❌ |
+| 8.1 | 25/11/2024 | ✔️ |
 | 8.0 | 26/11/2023 | ✔️ |
 | 7.4 | 28/11/2022 | ✔️ |
 | 7.3 | 06/12/2021 | ✔️ |
@@ -74,7 +74,10 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | MYSQL | EOL | Supportato |
 |-----|-----|:----------:|
-| 8.0 | 01/04/2026 | ✔️ |
+| 8.3 | 30/04/2024 | ✔️ |
+| 8.2 | 31/01/2024 | ✔️ |
+| 8.1 | 25/10/2023 | ✔️ |
+| 8.0 | 30/04/2026 | ✔️ |
 | 5.7 | 21/10/2023 | ✔️ |
 | 5.6 | 05/02/2021 | ❌ |
 

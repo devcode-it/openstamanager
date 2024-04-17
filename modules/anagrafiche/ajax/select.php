@@ -252,7 +252,7 @@ switch ($resource) {
     case 'clienti_fornitori':
         $id_cliente = Tipo::find((new Tipo())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id))->id;
         $id_fornitore = Tipo::find((new Tipo())->getByField('name', 'Fornitore', Models\Locale::getPredefined()->id))->id;
-        $id_azienda = Tipo::find((new Tipo())->getByField('name', 'Fornitore', Models\Locale::getPredefined()->id))->id;
+        $id_azienda = Tipo::find((new Tipo())->getByField('name', 'Azienda', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup, `idtipointervento_default`, `an_tipianagrafiche`.`id` as id_tipo FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
 
@@ -360,9 +360,9 @@ switch ($resource) {
                 *
             FROM
                 (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
-            
+
             UNION
-                
+
             SELECT
                 `id`,
                 `lat`,

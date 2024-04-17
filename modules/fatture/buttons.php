@@ -77,7 +77,7 @@ if (!empty($record['is_fiscale'])) {
     $registrazione_insoluto = 0;
     $pagamento = $fattura->pagamento;
     if (!empty($pagamento)) {
-        if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato']) && $differenza == 0) {
+        if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato']) && $differenza != 0) {
             $registrazione_insoluto = 1;
         }
     }

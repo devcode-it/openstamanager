@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_marca_impianti =  (new Module())->getByField('name', 'Marche Impianti', Models\Locale::getPredefined()->id);
 
 $img = null;
 if (!empty($record['immagine'])) {
@@ -50,26 +51,44 @@ if (!empty($record['immagine'])) {
 
 				<div class="col-md-9">
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Matricola'); ?>", "name": "matricola", "required": 1, "class": "text-center", "maxlength": 25, "value": "$matricola$", "validation": "matricola" ]}
 						</div>
 
 						<div class="col-md-6">
 							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 						</div>
+						<div class="col-md-2">
+							{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}
+						</div>
 						<div class="clearfix"></div>
 
-						<div class="col-md-6">
-							<?php
-                                echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-?>
+						<div class="col-md-4">
+							<?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
-						<div class="col-md-6">
+						<?php
+						echo '
+						<div class="col-md-4">
+							{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
+						</div>';
+						?>
+						<div class="col-md-4">
 							{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
 						</div>
-					</div>
+					</div>					
 					<div class ="row">
+						<div class="col-md-4">
+							{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
+						</div>
+						<div class="col-md-4">
+							{[ "type": "text", "label": "<?php echo tr('Modello'); ?>", "name": "modello", "value": "$modello$" ]}
+						</div>
+						<div class="col-md-4">
+							{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
+						</div>
+					</div>
+					<div class="row">
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
     Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
@@ -80,22 +99,6 @@ if (!empty($record['immagine'])) {
                             {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
 					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}
-				</div>
-
-                <?php
-                echo '
-				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
-				</div>';
-?>
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
 				</div>
 			</div>
 

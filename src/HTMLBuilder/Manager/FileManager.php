@@ -40,7 +40,7 @@ class FileManager implements ManagerInterface
     public function manage($options)
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
-        $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
+        $options['showpanel'] ??= true;
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 

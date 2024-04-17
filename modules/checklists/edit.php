@@ -41,7 +41,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Plugin del template').'", "name": "plugin", "values": "query=SELECT `zz_plugins`.`id`, `zz_plugins_lang`.`title` AS descrizione, `zz_modules_lang`.`name` AS optgroup FROM zz_plugins INNER JOIN `zz_modules` ON `zz_plugins`.`id_module_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1", "value": "'.$record->id_plugin.'", "disabled": "'.!empty($record->id_module).'" ]}
+                    {[ "type": "select", "label": "'.tr('Plugin del template').'", "name": "plugin", "values": "query=SELECT `zz_plugins`.`id`, `zz_plugins_lang`.`title` AS descrizione, `zz_modules_lang`.`name` AS optgroup FROM zz_plugins INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_plugins`.`enabled` = 1", "value": "'.$record->id_plugin.'", "disabled": "'.!empty($record->id_module).'" ]}
                 </div>
             </div>
         </div>
@@ -211,6 +211,8 @@ function delete_check(id){
             op: "delete_check",
             id: id,
             main_check: 1,
+            id_module: globals.id_module,
+            id_record: id,
         }, function(){
             location.reload();
         });

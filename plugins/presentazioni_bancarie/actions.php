@@ -43,9 +43,7 @@ switch (filter('op')) {
                 $descrizione = 'Fattura num. '.$documento->numero_esterno ?: $documento->numero;
                 // Individuazione altre scadenze del documento
                 $scadenze_documento = $documento->scadenze->sortBy('scadenza');
-                $pos = $scadenze_documento->search(function ($item, $key) use ($scadenza) {
-                    return $item->id == $scadenza->id;
-                });
+                $pos = $scadenze_documento->search(fn ($item, $key) => $item->id == $scadenza->id);
 
                 // Generazione della descrizione del pagamento
                 $descrizione .= tr(' pag _NUM_/_TOT_', [

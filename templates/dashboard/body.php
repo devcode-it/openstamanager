@@ -64,7 +64,7 @@ if ($calendar['format'] == 'week') {
 
     $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';
 } else {
-    $title = $date->formatLocalized('%B %Y');
+    $title = $date->isoFormat('MMMM YYYY');
 
     $min_date = $date->copy()->startOfMonth();
     $max_date = $date->copy()->endOfMonth();
@@ -154,7 +154,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         $element = $list[$i + $c];
 
         echo '
-        <th>'.ucfirst($element['date']->formatLocalized('%A %d/%m')).'</th>';
+        <th>'.ucfirst($element['date']->isoFormat('MMMM YYYY')).'</th>';
     }
 
     echo '

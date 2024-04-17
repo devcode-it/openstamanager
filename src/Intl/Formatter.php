@@ -287,7 +287,7 @@ class Formatter
             return false;
         }
         $integer = $pieces[0];
-        $decimal = (isset($pieces[1])) ? $pieces[1] : null;
+        $decimal = $pieces[1] ?? null;
 
         if (!empty($current['thousands'])) {
             $error = true;
@@ -300,7 +300,7 @@ class Formatter
                     }
                 }
 
-                $integer = strrev(implode($values));
+                $integer = strrev(implode('', $values));
 
                 $error = substr_count($integer, $current['thousands']);
             }

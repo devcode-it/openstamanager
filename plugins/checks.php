@@ -162,6 +162,8 @@ function delete_check(id){
         $.post("'.$checklist_module->fileurl('ajax.php').'", {
             op: "delete_check",
             id: id,
+            id_module: globals.id_module,
+            id_record: id,
         }, function(){
             location.reload();
         });

@@ -64,6 +64,7 @@ if ($main_check) {
 
         $.post('<?php echo $rootdir; ?>/modules/checklists/ajax.php', {
             op: "edit_check",
+            id_module: globals.id_module,
             id_record: "<?php echo $id_record; ?>",
             content: input('content_edit').get(),
             is_titolo: input('is_titolo').get(),

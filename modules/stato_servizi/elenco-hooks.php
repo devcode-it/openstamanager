@@ -64,7 +64,7 @@ foreach ($gruppi as $modulo => $hooks) {
                 </td>
              
                 <td class="text-center">
-                    '.Translator::timestampToLocale($hook->processing_at).'
+                    '.(!empty($hook->processing_at) ? Translator::timestampToLocale($hook->processing_at) : '').'
                 </td>
 
                 <td class="text-center">';

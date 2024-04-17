@@ -34,7 +34,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-2">
-			{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "is_default", "value": "$is_default$" ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "is_default", "value": "$is_default$", "extra": "<?php echo $record['is_default'] == 1 ? 'readonly' : ''; ?>" ]}
 		</div>
     </div>
 

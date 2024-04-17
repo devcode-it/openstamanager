@@ -54,7 +54,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files_module = $finder->getTranslation('name')('MODULE');
+    $files_module = $finder->name('MODULE');
 
     foreach ($files_module as $file) {
         // Informazioni dal file di configurazione
@@ -69,8 +69,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_modules';
 
             $installed = Module::find((new Module())->getByField('name', $info['name']));
-            $insert['parent'] = (new Module())->getByField('name', $info['parent']);
-            $insert['icon'] = $info['icon'];
         }
 
         // Copia dei file nella cartella relativa
@@ -86,6 +84,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'order' => 100,
                 'default' => 0,
                 'enabled' => 1,
+                'icon' => $info['icon'],
+                'parent' => (new Module())->getByField('name', $info['parent']),
             ]));
             $id_record = $dbo->lastInsertedID();
             $dbo->insert($table.'_lang', array_merge($insert, [
@@ -107,7 +107,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         ->ignoreVCS(true)
         ->in($extraction_dir);
 
-    $files_plugin_template = $finder->getTranslation('name')('PLUGIN')->getTranslation('name')('TEMPLATES');
+    $files_plugin_template = $finder->name('PLUGIN')->name('TEMPLATES');
 
     foreach ($files_plugin_template as $file) {
         // Informazioni dal file di configurazione
@@ -115,6 +115,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
         // Informazioni aggiuntive per il database
         $insert = [];
+        $insert_lang = [];
 
         // Plugin
         if (basename($file->getRealPath()) == 'PLUGIN') {
@@ -135,7 +136,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $installed = Prints::getPrints()[$info['name']];
             $insert['id_module'] = (new Module())->getByField('name', $info['module']);
             $insert['is_record'] = $info['is_record'];
-            $insert['filename'] = $info['filename'];
+            $insert_lang['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];
         }
 
@@ -154,7 +155,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'enabled' => 1,
             ]));
             $id_record = $dbo->lastInsertedID();
-            $dbo->insert($table.'_lang', array_merge($insert, [
+            $dbo->insert($table.'_lang', array_merge($insert_lang, [
                 'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,

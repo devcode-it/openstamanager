@@ -21,8 +21,10 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $block_edit = $record['is_completato'];
+$data_accettazione = $record['data_accettazione'] ? strtotime($record['data_accettazione']) : '';
+$data_conclusione = $record['data_conclusione'] ? strtotime($record['data_conclusione']) : '';
 
-if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazione']) && !empty(strtotime($record['data_accettazione'])) && !empty(strtotime($record['data_conclusione']))) {
+if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !empty($data_conclusione)) {
     echo '
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. Verificare le informazioni inserite.').'</div>';
 }
@@ -54,7 +56,7 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo $contratto->isDataConclusioneAutomatica() ? '1", "help": "'.tr('La Data di conclusione è calcolata in automatico in base al valore del campo Validità contratto, se definita') : '0'; ?>" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo $contratto ? ($contratto->isDataConclusioneAutomatica() ? '1", "help": "'.tr('La Data di conclusione è calcolata in automatico in base al valore del campo Validità contratto, se definita') : '0') : ''; ?>" ]}
                 </div>
 
                 <div class="col-md-2">
@@ -403,11 +405,11 @@ echo '
 
 <script type="text/javascript">
 function gestioneSconto(button) {
-    gestioneRiga(button, "is_sconto");
+    gestioneRiga(button, "is_sconto=1");
 }
 
 function gestioneDescrizione(button) {
-    gestioneRiga(button, "is_descrizione");
+    gestioneRiga(button, "is_descrizione=1");
 }
 
 async function gestioneRiga(button, options) {
@@ -418,7 +420,7 @@ async function gestioneRiga(button, options) {
     let title = $(button).attr("data-title");
 
     // Apertura modal
-    options = options ? options : "is_riga";
+    options = options ? options : "is_riga=1";
     openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
 }
 
@@ -581,7 +583,7 @@ $elementi = $dbo->fetchArray('
         \'Interventi\' 
     FROM `in_interventi` 
     JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
-    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)).') 
+    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' '.($contratto ? 'AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)) : '').')
     OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
 
     ORDER BY `data`');

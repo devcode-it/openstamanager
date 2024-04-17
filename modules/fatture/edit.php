@@ -179,9 +179,10 @@ if ($dir == 'entrata') {
     if (!empty(setting('Data inizio verifica contatore fattura di vendita'))) {
         $dateFormat = 'd/m/Y';
         $carbonDate = Carbon::createFromFormat($dateFormat, setting('Data inizio verifica contatore fattura di vendita'));
-        $data_inizio_verifica_contatore = (($carbonDate !== false) ? $carbonDate->format('Y-m-d') : null);
+        $data_inizio_verifica_contatore = (($carbonDate !== false) ? strtotime($carbonDate->format('Y-m-d')) : null);
     }
-    if (strtotime($fattura->data) >= strtotime($data_inizio_verifica_contatore) || empty($data_inizio_verifica_contatore)) {
+    $data = ($fattura->data ? strtotime($fattura->data) : '');
+    if ($data >= $data_inizio_verifica_contatore || empty($data_inizio_verifica_contatore)) {
         $numero_previsto = verifica_numero_fattura($fattura);
     }
 
@@ -1084,11 +1085,11 @@ async function saveForm() {
 }
 
 function gestioneSconto(button) {
-    gestioneRiga(button, "is_sconto");
+    gestioneRiga(button, "is_sconto=1");
 }
 
 function gestioneDescrizione(button) {
-    gestioneRiga(button, "is_descrizione");
+    gestioneRiga(button, "is_descrizione=1");
 }
 
 async function gestioneRiga(button, options) {
@@ -1099,7 +1100,7 @@ async function gestioneRiga(button, options) {
     let title = $(button).attr("data-title");
 
     // Apertura modal
-    options = options ? options : "is_riga";
+    options = options ? options : "is_riga=1";
     openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
 }
 

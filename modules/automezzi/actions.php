@@ -48,15 +48,15 @@ switch (post('op')) {
     case 'addtech':
         $idtecnico = post('idtecnico');
         $data_inizio = post('data_inizio');
-        $data_fine = null;
+        $data_fine = post('data_fine');
 
         // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-        if (!empty(post('data_fine'))) {
+        if (!empty($data_fine)) {
             if (new DateTime(post('data_fine')) >= new DateTime($data_inizio)) {
                 $data_fine = post('data_fine');
             }
         }
-        $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+        $data_fine ??= '0000-00-00';
 
         // Inserisco il tecnico
         $dbo->insert('an_sedi_tecnici', [
@@ -74,17 +74,17 @@ switch (post('op')) {
         $errors = 0;
 
         foreach (post('data_inizio') as $idautomezzotecnico => $data) {
-            $idautomezzotecnico = $idautomezzotecnico;
+            $idtecnico = post('idtecnico')[$idautomezzotecnico];
             $data_inizio = post('data_inizio')[$idautomezzotecnico];
-            $data_fine = null;
+            $data_fine = post('data_fine')[$idautomezzotecnico];
 
             // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-            if (!empty(post('data_fine')[$idautomezzotecnico])) {
-                if (new DateTime(post('data_fine')[$idautomezzotecnico]) >= new DateTime($data_inizio)) {
-                    $data_fine = post('data_fine')[$idautomezzotecnico];
+            if (!empty($data_fine)) {
+                if (new DateTime($data_fine) < new DateTime($data_inizio)) {
+                    $data_fine = null;
                 }
             }
-            $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+            $data_fine ??= '0000-00-00';
 
             $dbo->update('an_sedi_tecnici', [
                 'idtecnico' => $idtecnico,

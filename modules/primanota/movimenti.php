@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
+function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
 {
     // Conto
     echo '
@@ -46,11 +46,11 @@ function renderRiga($id, $riga, &$totale_dare, &$totale_avere)
         </td>
     </tr>';
 
-    $totale_dare += ($riga['dare'] ? $riga['dare'] : 0);
-    $totale_avere += ($riga['avere'] ? $riga['avere'] : 0);
+    $totale_dare += ($riga['dare'] ?: 0);
+    $totale_avere += ($riga['avere'] ?: 0);
 }
 
-function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
+function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
 {
     global $counter;
 
@@ -78,7 +78,7 @@ function renderTabella($nome, $righe, &$totale_dare, &$totale_avere)
         <tbody>';
 
     foreach ($righe as $riga) {
-        renderRiga($counter++, $riga, $totale_dare, $totale_avere);
+        renderRiga($counter++, $riga);
     }
 
     // Totale per controllare sbilancio
@@ -169,9 +169,7 @@ renderRiga('-id-',
     [
         'iddocumento' => '-id_documento-',
         'id_scadenza' => '-id_scadenza-',
-    ],
-    $totale_dare,
-    $totale_avere
+    ]
 );
 
 echo '

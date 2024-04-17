@@ -28,7 +28,7 @@ $block_edit = $record['flag_completato'];
 $id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id);
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
-$numero_previsto = verifica_numero_intervento($intervento);
+$numero_previsto = verifica_numero_intervento($intervento, $id_segment);
 
 if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
     echo '
@@ -646,11 +646,11 @@ async function saveForm() {
 }
 
 function gestioneSconto(button) {
-    gestioneRiga(button, "is_sconto");
+    gestioneRiga(button, "is_sconto=1");
 }
 
 function gestioneDescrizione(button) {
-    gestioneRiga(button, "is_descrizione");
+    gestioneRiga(button, "is_descrizione=1");
 }
 
 async function gestioneRiga(button, options) {
@@ -661,7 +661,7 @@ async function gestioneRiga(button, options) {
     let title = $(button).attr("data-title");
 
     // Apertura modal
-    options = options ? options : "is_riga";
+    options = options ? options : "is_riga=1";
     openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
 }
 

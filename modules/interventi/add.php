@@ -144,7 +144,7 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
     
     <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">';
+    <input type="hidden" name="id_record" value="0">';
 
 if (!empty($id_promemoria_contratto)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';

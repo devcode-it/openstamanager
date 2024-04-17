@@ -24,7 +24,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
         $predefined = post('predefined');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0) {
+        if (empty($dbo->fetchArray('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0)) {
             if (!empty($predefined)) {
                 $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
             }
@@ -46,7 +46,7 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` 0N (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)) == 0) {
+        if (empty($dbo->fetchArray('SELECT `dt_porto`.`id` FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `name`='.prepare($descrizione)))) {
             $dbo->insert('dt_porto', [
                 'created_at' => 'NOW()',
             ]);
@@ -74,7 +74,7 @@ switch (filter('op')) {
             UNION SELECT `id` FROM `co_documenti` WHERE `idporto`='.prepare($id_record).'
             UNION SELECT `id` FROM `co_preventivi` WHERE `idporto`='.prepare($id_record));
 
-        if (isset($id_record) && empty($documenti)) {
+        if ((!empty($id_record)) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_porto` WHERE `id`='.prepare($id_record));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

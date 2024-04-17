@@ -57,7 +57,7 @@ abstract class Singleton
      */
     public static function getInstance()
     {
-        $class = get_called_class();
+        $class = static::class;
 
         if (!isset(self::$instance[$class])) {
             self::$instance[$class] = new static();

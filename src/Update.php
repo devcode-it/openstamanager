@@ -210,7 +210,7 @@ class Update
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
 
-            if (class_exists('\Models\Cache')) {
+            if (class_exists(Cache::class)) {
                 Cache::find((new Cache())->getByField('name', 'Ultima versione di OpenSTAManager disponibile', Models\Locale::getPredefined()->id))->set(null);
             }
 
@@ -424,7 +424,11 @@ class Update
 
     public static function getSettings()
     {
-        $settings = Setting::get()->toArray();
+        $settings_all = Setting::all();
+
+        foreach ($settings_all as $setting) {
+            $settings[$setting->nome] = $setting->tipo;
+        }
 
         return $settings;
     }

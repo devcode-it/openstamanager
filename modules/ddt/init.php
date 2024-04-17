@@ -32,7 +32,7 @@ if ($module_name == 'Ddt di acquisto') {
     $dir = 'entrata';
 }
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
     $record = $dbo->fetchOne('SELECT 

@@ -54,9 +54,7 @@ if ($pagamento && $pagamento->isRiBa()) {
 // Righe documento
 $righe = $documento->getRighe();
 
-$has_image = $righe->search(function ($item) {
-    return !empty($item->articolo->immagine);
-}) !== false && $options['images'] == true;
+$has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !== false && $options['images'] == true;
 
 $columns = $options['no-iva'] ? 5 : 6;
 $columns = $options['pricing'] ? $columns : 3;

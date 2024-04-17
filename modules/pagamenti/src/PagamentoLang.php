@@ -19,10 +19,8 @@
 
 namespace Modules\Pagamenti;
 
-use Carbon\Carbon;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Fatture\Fattura;
 use Traits\RecordTrait;
 
 class PagamentoLang extends Model

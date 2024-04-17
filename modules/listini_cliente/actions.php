@@ -86,7 +86,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $listino->delete();
             $dbo->query('UPDATE `an_anagrafiche` SET id_listino=0 WHERE id_listino='.prepare($id_record));
             $dbo->query('DELETE FROM `mg_listini_articoli` WHERE id_listino='.prepare($id_record));

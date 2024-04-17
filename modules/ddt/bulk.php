@@ -38,7 +38,7 @@ if ($module->getTranslation('name') == 'Ddt di vendita') {
 $id_fatture = (new Module())->getByField('name', $module_fatture, Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
-    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+    $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 $idconto = $module_fatture == 'Fatture di vendita' ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
@@ -77,13 +77,9 @@ switch (post('op')) {
                     // Ricerca fattura per anagrafica tra le registrate
                     $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede_destinazione : 0;
                     if ($raggruppamento == 'sede') {
-                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica, $id_sede) {
-                            return $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede;
-                        });
+                        $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
                     } else {
-                        $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                            return $item->anagrafica->id == $id_anagrafica;
-                        });
+                        $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica);
                     }
 
                     // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
@@ -123,7 +119,7 @@ switch (post('op')) {
 
                             // Fix per idconto righe fattura
                             $articolo = ArticoloOriginale::find($copia->idarticolo);
-                            $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
+                            $copia->id_conto = ($articolo->idconto_vendita ?: $idconto);
 
                             // Aggiornamento seriali dalla riga dell'ordine
                             if ($copia->isArticolo()) {

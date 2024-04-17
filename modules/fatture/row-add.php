@@ -93,11 +93,11 @@ $options['id_ritenuta_acconto_predefined'] = $id_ritenuta_acconto;
 
 // Importazione della gestione dedicata
 $file = 'riga';
-if (get('is_descrizione') !== null) {
+if (!empty(get('is_descrizione'))) {
     $file = 'descrizione';
 
     $options['op'] = 'manage_descrizione';
-} elseif (get('is_articolo') !== null) {
+} elseif (!empty(get('is_articolo'))) {
     $file = 'articolo';
 
     // Aggiunta sconto di default da listino per le vendite
@@ -110,7 +110,7 @@ if (get('is_descrizione') !== null) {
     }
 
     $options['op'] = 'manage_articolo';
-} elseif (get('is_sconto') !== null) {
+} elseif (!empty(get('is_sconto'))) {
     $file = 'sconto';
 
     $options['op'] = 'manage_sconto';

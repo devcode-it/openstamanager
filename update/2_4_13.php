@@ -47,7 +47,6 @@ $files = [
     'modules\tipi_intervento\api\*',
     'modules\utenti\api\*',
     'templates\interventi_ordiniservizio\*',
-    'modules\automezzi\*',
 ];
 
 foreach ($files as $key => $value) {

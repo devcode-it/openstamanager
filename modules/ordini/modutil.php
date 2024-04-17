@@ -201,8 +201,7 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
 
             // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
             $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+            $iva_rivalsainps = $rivalsainps / 100 * $qi;
 
             $dbo->query('UPDATE or_ordini SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).', iva_rivalsainps='.prepare($iva_rivalsainps).' WHERE id='.prepare($idordine));
         } else {

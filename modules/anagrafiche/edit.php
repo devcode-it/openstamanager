@@ -473,9 +473,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>';
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
-    $banca_predefinita = $banche->first(function ($item) {
-        return !empty($item['predefined']);
-    });
+    $banca_predefinita = $banche->first(fn ($item) => !empty($item['predefined']));
     $modulo_banche = (new Module())->getByField('name', 'Banche', Models\Locale::getPredefined()->id);
     if (!$banche->isEmpty()) {
         echo '

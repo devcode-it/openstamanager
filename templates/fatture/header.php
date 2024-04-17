@@ -67,7 +67,7 @@ echo '
             <tr>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                    <p>$pagamento$</p>
+                    <p>'.$record['pagamento'].'</p>
                 </td>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>

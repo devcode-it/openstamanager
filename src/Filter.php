@@ -43,13 +43,15 @@ class Filter
     public static function getValue($property, $method = null, $raw = false)
     {
         $value = null;
+        $post = self::post($property, $raw);
+        $get = self::get($property, $raw);
 
         if (empty($method)) {
-            $value = (self::post($property, $raw) !== null) ? self::post($property, $raw) : self::get($property, $raw);
+            $value = (!empty($post) || $post == '0') ? $post : $get;
         } elseif (strtolower($method) == 'post') {
-            $value = self::post($property, $raw);
+            $value = $post;
         } elseif (strtolower($method) == 'get') {
-            $value = self::get($property, $raw);
+            $value = $get;
         }
 
         return $value;
@@ -85,6 +87,8 @@ class Filter
 
         if (isset(self::$post[$category][$property])) {
             return self::$post[$category][$property];
+        } else {
+            return '';
         }
     }
 
@@ -100,7 +104,7 @@ class Filter
             self::$get['data'] = self::parse(self::$get['raw']);
         }
 
-        return self::$get['data'];
+        return self::$get['data'] ?? [];
     }
 
     /**
@@ -118,6 +122,8 @@ class Filter
 
         if (isset(self::$get[$category][$property])) {
             return self::$get[$category][$property];
+        } else {
+            return '';
         }
     }
 

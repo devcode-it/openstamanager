@@ -254,34 +254,20 @@ switch (filter('op')) {
         }
 
         // Ricerca del tipo di documento più utilizzato
-        $tipi = $fatture->groupBy(function ($item, $key) {
-            return $item->tipo->id;
-        })->transform(function ($item, $key) {
-            return $item->count();
-        });
+        $tipi = $fatture->groupBy(fn ($item, $key) => $item->tipo->id)->transform(fn ($item, $key) => $item->count());
         $id_tipo = $tipi->sort()->keys()->last();
 
         // Ricerca del conto più utilizzato
-        $conti = $righe->groupBy(function ($item, $key) {
-            return $item->idconto;
-        })->transform(function ($item, $key) {
-            return $item->count();
-        });
+        $conti = $righe->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
         $id_conto = $conti->sort()->keys()->last();
         $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
-        $percentuali_iva = $righe->groupBy(function ($item, $key) {
-            return $item->aliquota->percentuale;
-        });
+        $percentuali_iva = $righe->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
         foreach ($percentuali_iva as $key => $values) {
-            $aliquote = $values->mapToGroups(function ($item, $key) {
-                return [$item->aliquota->id => $item->aliquota];
-            });
-            $id_aliquota = $aliquote->map(function ($item, $key) {
-                return $item->count();
-            })->sort()->keys()->last();
+            $aliquote = $values->mapToGroups(fn ($item, $key) => [$item->aliquota->id => $item->aliquota]);
+            $id_aliquota = $aliquote->map(fn ($item, $key) => $item->count())->sort()->keys()->last();
             $aliquota = $aliquote[$id_aliquota]->first();
 
             $iva[$key] = [

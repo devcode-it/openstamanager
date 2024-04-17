@@ -64,7 +64,7 @@ switch (filter('op')) {
         break;
 
     case 'update':
-        if (isset($id_record)) {
+        if (!empty($id_record)) {
             $idstatoddt = post('idstatoddt');
             $idpagamento = post('idpagamento');
             $numero_esterno = post('numero_esterno');
@@ -586,7 +586,7 @@ switch (filter('op')) {
                     }
                     $id_iva = ($ddt->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ddt->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    $id_iva = ($ddt->anagrafica->idiva_acquisti ? $ddt->anagrafica->idiva_acquisti : ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita')));
+                    $id_iva = ($ddt->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
                 $id_anagrafica = $ddt->idanagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

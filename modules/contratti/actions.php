@@ -110,8 +110,11 @@ switch (post('op')) {
             $contratto->save();
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
-            foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {
-                $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
+            $matricola = post('matricolaimpianto');
+            if ($matricola) {
+                foreach ([$matricola] as $matricolaimpianto) {
+                    $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
+                }
             }
 
             // Salvataggio costi attività unitari del contratto
@@ -317,7 +320,7 @@ switch (post('op')) {
 
         // Scollegamento intervento da contratto
     case 'unlink':
-        if (get('idcontratto') !== null && get('idintervento') !== null) {
+        if (!empty(get('idcontratto')) && !empty(get('idintervento'))) {
             $idcontratto = get('idcontratto');
             $idintervento = get('idintervento');
 

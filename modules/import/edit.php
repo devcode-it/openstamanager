@@ -73,7 +73,7 @@ if (empty($id_record)) {
     $nomi_disponibili = [];
     foreach ($fields as $key => $value) {
         $nomi_disponibili[$key] = [];
-        $names = isset($value['names']) ? $value['names'] : [$value['label']];
+        $names = $value['names'] ?? [$value['label']];
         foreach ($names as $name) {
             $nomi_disponibili[$key][] = trim(string_lowercase($name));
         }

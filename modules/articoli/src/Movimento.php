@@ -85,11 +85,7 @@ class Movimento extends Model
 
     public function getQtaAttribute()
     {
-        if (isset($this->qta_documento)) {
-            return $this->qta_documento;
-        }
-
-        return $this->qta;
+        return $this->qta_documento ?? $this->qta;
     }
 
     public function articolo()

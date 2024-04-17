@@ -107,9 +107,7 @@ class Module extends Model
 
         $group = \Auth::user()->group->id;
 
-        $pivot = $this->pivot ?: $this->groups->first(function ($item) use ($group) {
-            return $item->id == $group;
-        })->pivot;
+        $pivot = $this->pivot ?: $this->groups->first(fn ($item) => $item->id == $group)->pivot;
 
         return $pivot->permessi ?: '-';
     }

@@ -168,7 +168,7 @@ switch (filter('op')) {
         // Selezione manuale
         $id_receivers = post('receivers');
         foreach ($id_receivers as $id_receiver) {
-            list($tipo, $id) = explode('_', $id_receiver);
+            [$tipo, $id] = explode('_', $id_receiver);
             if ($tipo == 'anagrafica') {
                 $type = Anagrafica::class;
             } elseif ($tipo == 'sede') {

@@ -70,7 +70,7 @@ class AJAX
             }
         }
 
-        $results = isset($results) ? $results : [];
+        $results ??= [];
 
         $total = array_key_exists('recordsFiltered', $results) ? $results['recordsFiltered'] : count($results);
         $list = array_key_exists('results', $results) ? $results['results'] : $results;
@@ -262,7 +262,7 @@ class AJAX
             $results = self::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         }
 
-        return isset($results) ? $results : null;
+        return $results ?? null;
     }
 
     /**

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\CategorieDocumentali\Categoria;
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $categoria = Categoria::find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,

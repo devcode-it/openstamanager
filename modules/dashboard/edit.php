@@ -346,7 +346,7 @@ if (!empty($risultati_da_programmare)) {
     foreach ($mesi as $mese) {
         $data = Carbon::parse($mese['data']);
         $chiave = $data->format('mY');
-        $testo = $data->formatLocalized('%B %Y');
+        $testo = $data->isoFormat('MMMM YYYY');
 
         if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))) {
             echo '

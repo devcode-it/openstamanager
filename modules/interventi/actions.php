@@ -46,7 +46,7 @@ $plugin_impianti = (new Plugin())->getByField('name', 'Impianti', Models\Locale:
 
 switch (post('op')) {
     case 'update':
-        $idcontratto = post('idcontratto');
+        $idcontratto = post('idcontratto') ?: null;
         $id_promemoria = post('idcontratto_riga');
 
         // Rimozione del collegamento al promemoria
@@ -71,9 +71,9 @@ switch (post('op')) {
         $intervento->idstatointervento = post('idstatointervento');
         $intervento->idsede_partenza = post('idsede_partenza');
         $intervento->idsede_destinazione = post('idsede_destinazione');
-        $intervento->id_preventivo = post('idpreventivo');
+        $intervento->id_preventivo = post('idpreventivo') ?: null;
         $intervento->id_contratto = $idcontratto;
-        $intervento->id_ordine = post('idordine');
+        $intervento->id_ordine = post('idordine') ?: null;
         $intervento->idpagamento = post('idpagamento');
 
         $intervento->id_documento_fe = post('id_documento_fe');
@@ -81,8 +81,6 @@ switch (post('op')) {
         $intervento->codice_cup = post('codice_cup');
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
-
-        $tecnici_assegnati = (array) post('tecnici_assegnati');
 
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
         $tecnici_presenti = [];
@@ -107,7 +105,11 @@ switch (post('op')) {
             }
         }
 
+        $tecnici_assegnati_array = post('tecnici_assegnati');
+        $tecnici_assegnati = [];
+
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
+            $tecnici_assegnati[] = $tecnico_assegnato;
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!in_array($tecnico_assegnato, $tecnici_presenti)) {
@@ -210,10 +212,10 @@ switch (post('op')) {
                 $intervento->idclientefinale = post('idclientefinale');
             }
 
-            $intervento->id_preventivo = post('idpreventivo');
-            $intervento->id_contratto = post('idcontratto');
-            $intervento->id_ordine = post('idordine');
-            $intervento->idreferente = post('idreferente');
+            $intervento->id_preventivo = $idpreventivo ?: null;
+            $intervento->id_contratto = $idcontratto ?: null;
+            $intervento->id_ordine = post('idordine') ?: null;
+            $intervento->idreferente = post('idreferente') ?: null;
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');
             $intervento->idsede_destinazione = $idsede_destinazione;
@@ -228,9 +230,9 @@ switch (post('op')) {
             }
 
             // Collegamenti intervento/impianti
-            $impianti = (array) post('idimpianti');
+            $impianti = post('idimpianti');
             if (!empty($impianti)) {
-                $impianti = array_unique($impianti);
+                $impianti = array_unique([$impianti]);
                 foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
                         'idintervento' => $id_record,
@@ -276,19 +278,22 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
-            $idtecnici = post('idtecnico');
+            $idtecnici = post('idtecnico') ?: null;
             foreach ($idtecnici as $idtecnico) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
             }
         }
 
         // Assegnazione dei tecnici all'intervento
-        $tecnici_assegnati = (array) post('tecnici_assegnati');
-        $dbo->sync('in_interventi_tecnici_assegnati', [
-            'id_intervento' => $id_record,
-        ], [
-            'id_tecnico' => $tecnici_assegnati,
-        ]);
+        $tecnici_assegnati = post('tecnici_assegnati');
+        if (!empty($tecnici_assegnati)) {
+            $tecnici_assegnati = array_unique($tecnici_assegnati);
+            $dbo->sync('in_interventi_tecnici_assegnati', [
+                'id_intervento' => $id_record,
+            ], [
+                'id_tecnico' => $tecnici_assegnati,
+            ]);
+        }
 
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
             $tecnico = Anagrafica::find($tecnico_assegnato);
@@ -626,11 +631,11 @@ switch (post('op')) {
             $intervento->idreferente = $documento->idreferente;
             $intervento->idagente = $documento->idagente;
 
-            if ($class == 'Modules\Preventivi\Preventivo') {
+            if ($class == Modules\Preventivi\Preventivo::class) {
                 $intervento->id_preventivo = $documento->id;
                 $intervento->richiesta = 'Attività creata da preventivo num. '.$documento->numero.'<br>'.$documento->nome;
             }
-            if ($class == 'Modules\Ordini\Ordine') {
+            if ($class == Modules\Ordini\Ordine::class) {
                 $intervento->id_ordine = $documento->id;
                 $intervento->richiesta = 'Attività creata da ordine num. '.$documento->numero_esterno;
             }

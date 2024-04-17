@@ -31,7 +31,7 @@ $pageTitle = tr('Configurazione');
 include_once App::filepath('include|custom|', 'top.php');
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
-if (post('db_host') !== null) {
+if (!empty(post('db_host'))) {
     $db_host = $_POST['db_host']; // Fix per evitare la conversione in numero
     $db_name = post('db_name');
     $db_username = post('db_username');
@@ -51,7 +51,7 @@ if (post('db_host') !== null) {
     }
 
     // Test della configurazione
-    if (post('test') !== null) {
+    if (!empty(post('test'))) {
         ob_end_clean();
 
         if ($dbo->isConnected()) {

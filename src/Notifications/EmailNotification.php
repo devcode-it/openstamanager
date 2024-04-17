@@ -302,7 +302,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     protected function getTempDirectory()
     {
         if (!isset($this->directory)) {
-            $this->directory = base_dir().'/files/notifications/'.rand(0, 999);
+            $this->directory = base_dir().'/files/notifications/'.random_int(0, 999);
 
             directory($this->directory);
         }

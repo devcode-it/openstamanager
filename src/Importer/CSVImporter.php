@@ -143,7 +143,7 @@ abstract class CSVImporter implements ImporterInterface
         // Interpretazione della riga come record
         $record = [];
         foreach ($row as $key => $value) {
-            $field = isset($associations[$key]) ? $associations[$key] : null;
+            $field = $associations[$key] ?? null;
             if (!empty($field)) {
                 $record[$field] = $value;
             }

@@ -21,7 +21,7 @@ use Modules\Ordini\Ordine;
 
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $ordine = Ordine::find($id_record);
 
     $record = $dbo->fetchOne('SELECT 

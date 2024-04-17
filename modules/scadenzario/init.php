@@ -21,7 +21,7 @@ use Modules\Fatture\Fattura;
 
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
+if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT co_scadenziario.*, an_anagrafiche.ragione_sociale FROM co_scadenziario LEFT JOIN an_anagrafiche ON co_scadenziario.idanagrafica=an_anagrafiche.idanagrafica WHERE id = '.prepare($id_record));
     $documento = Fattura::find($record['iddocumento']);
 

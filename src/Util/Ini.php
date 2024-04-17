@@ -140,7 +140,7 @@ class Ini
 
         // Caricamento campi dell'eventuale componente selezionato
         if (!empty($contenuto)) {
-            $random = rand();
+            $random = random_int(0, mt_getrandmax());
             $array = self::read($contenuto);
 
             if (is_array($array)) {

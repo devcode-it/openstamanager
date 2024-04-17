@@ -90,7 +90,22 @@ class Checklists extends AppResource
             $da_interventi = array_column($records, 'id');
         }
 
-        $mancanti = $this->getMissingIDs('zz_checks', 'id', $last_sync_at);
+        $rs_mancanti = database()
+            ->table('zz_operations')
+            ->select('zz_operations.id_record')
+            ->distinct()
+            ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
+            ->leftJoin('zz_modules_lang', function ($join) {
+                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
+                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+            })
+            ->where('zz_modules_lang.name', '=', 'Interventi')
+            ->where('zz_operations.op', '=', 'delete_check')
+            ->where('zz_operations.created_at', '>', $last_sync_at)
+            ->pluck('id_record')
+            ->toArray();
+
+        $mancanti = array_column($rs_mancanti, 'id_record');
 
         $results = array_unique(array_merge($da_interventi, $mancanti));
 

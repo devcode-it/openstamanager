@@ -95,8 +95,10 @@ foreach ($righe as $riga) {
         if (in_array($riga->id, $riferimento)) {
             if ($riga->id === $riferimento[0]) {
                 $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
-                if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
-                    $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                if (!(setting('Visualizza numero ordine cliente'))) {
+                    if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
+                        $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
+                    }
                 }
                 $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
                 preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);

@@ -36,8 +36,8 @@ abstract class CSVImporter implements ImporterInterface
     public function __construct($file)
     {
         // Impostazione automatica per i caratteri di fine riga
-        if (!ini_get('auto_detect_line_endings')) {
-            ini_set('auto_detect_line_endings', '1');
+        if (!ini_get('default_socket_timeout')) {
+            ini_set('default_socket_timeout', '0');
         }
 
         // Gestione del file CSV

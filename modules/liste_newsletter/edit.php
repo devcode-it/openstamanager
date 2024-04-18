@@ -142,7 +142,7 @@ if ($lista) {
     <script>
     globals.newsletter = {
         senza_consenso: "'.$lista->getNumeroDestinatariSenzaConsenso().'",
-        table_url: "'.Module::find((new Module())->getByField('name', 'Newsletter', Models\Locale::getPredefined()->id))->fileurl('ajax/table.php').'?id_list='.$id_record.'",
+        table_url: "'.Module::find((new Module())->getByField('title', 'Newsletter', Models\Locale::getPredefined()->id))->fileurl('ajax/table.php').'?id_list='.$id_record.'",
     };
 
     $(document).ready(function() {

@@ -39,7 +39,7 @@ use Modules\Fatture\Fattura;
  * Nel caso in cui sia indicato una singola Scadenza (con o senza Fattura associata) viene permessa la gestione attraverso un Modello di Prima Nota, che prevede una compilazione di base per alcuni movimenti specificati nel relativo modulo.
  * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
  */
-$id_module = (new Module())->getByField('name', 'Prima nota', Models\Locale::getPredefined()->id);
+$id_module = (new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id);
 $movimenti = [];
 
 // Registrazione da remoto
@@ -122,7 +122,7 @@ foreach ($id_documenti as $id_documento) {
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
-    if (!in_array($fattura->stato->getTranslation('name'), ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+    if (!in_array($fattura->stato->getTranslation('title'), ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
         ++$counter;
         continue;
     }
@@ -220,7 +220,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
-    $tipo_fattura = $fattura->isNota() ? $tipo->getTranslation('name') : tr('Fattura');
+    $tipo_fattura = $fattura->isNota() ? $tipo->getTranslation('title') : tr('Fattura');
 
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');
@@ -244,7 +244,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
 if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     $descrizione_stati = [];
-    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(Models\Locale::getDefault()->id)."') WHERE `name` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `name`");
+    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(Models\Locale::getDefault()->id)."') WHERE `title` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `title`");
     foreach ($stati as $stato) {
         $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['name'].'</small>';
     }
@@ -363,7 +363,7 @@ $("#modals > div #add-form").on("submit", function(e) {
 </script>';
 
 if ($permetti_modelli) {
-    $variables = Module::find((new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id))->getPlaceholders($id_anagrafica);
+    $variables = Module::find((new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id))->getPlaceholders($id_anagrafica);
 
     echo '
 <script type="text/javascript">

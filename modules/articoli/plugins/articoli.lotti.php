@@ -154,7 +154,7 @@ if (empty(get('modal'))) {
                     $module = 'Fatture di acquisto';
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];
@@ -166,7 +166,7 @@ if (empty(get('modal'))) {
 
                     $query = 'SELECT 
                             *, 
-                            `dt_tipiddt_lang`.`name` AS tipo_documento,
+                            `dt_tipiddt_lang`.`title` AS tipo_documento,
                             `dt_tipiddt`.`dir` AS `dir`,
                             `dt_ddt`.`numero` AS numero,
                             `dt_ddt`.`data` AS data,
@@ -190,7 +190,7 @@ if (empty(get('modal'))) {
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT 
                             *, 
-                            `or_tipiordine_lang`.`name` AS tipo_documento, 
+                            `or_tipiordine_lang`.`title` AS tipo_documento, 
                             `or_tipiordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
@@ -264,7 +264,7 @@ if (empty(get('modal'))) {
                     $module = 'Fatture di vendita';
 
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['iddocumento'];
@@ -276,7 +276,7 @@ if (empty(get('modal'))) {
 
                     $query = 'SELECT 
                             *, 
-                            `dt_tipiddt_lang`.`name` AS tipo_documento,
+                            `dt_tipiddt_lang`.`title` AS tipo_documento,
                             `dt_ddt`.`dir`,
                             `dt_ddt`.`numero`,
                             `dt_ddt`.`numero_esterno`,
@@ -300,7 +300,7 @@ if (empty(get('modal'))) {
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT 
                             *, 
-                            `or_tipiordine_lang`.`name` AS tipo_ordine,
+                            `or_tipiordine_lang`.`title` AS tipo_ordine,
                             `or_ordini`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,

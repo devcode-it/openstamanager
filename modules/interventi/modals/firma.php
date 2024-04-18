@@ -24,7 +24,7 @@ use Modules\Interventi\Intervento;
 
 $id_records = explode(';', get('id_records'));
 $id_print = setting('Stampa per anteprima e firma');
-$template = PrintTemplate::find($id_print)->getTranslation('name');
+$template = PrintTemplate::find($id_print)->getTranslation('title');
 
 $interventi_completati = [];
 $interventi_firmati = [];

@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$id_module_fatture_vendita = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_module_fatture_vendita = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
 $id_segment = setting('Sezionale per autofatture di vendita');
 
 echo '
@@ -30,7 +30,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(\" - \",`codice_tipo_documento_fe`, `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\"entrata\" AND `codice_tipo_documento_fe` IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\", \"TD28\") ORDER BY `codice_tipo_documento_fe`" ]}
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(\" - \",`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\"entrata\" AND `codice_tipo_documento_fe` IN(\"TD16\", \"TD17\", \"TD18\", \"TD19\", \"TD20\", \"TD21\", \"TD28\") ORDER BY `codice_tipo_documento_fe`" ]}
         </div>
 
         <div class="col-md-6">

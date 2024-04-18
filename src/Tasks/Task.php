@@ -35,7 +35,7 @@ class Task extends Model
     protected $table = 'zz_tasks';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     protected $dates = [

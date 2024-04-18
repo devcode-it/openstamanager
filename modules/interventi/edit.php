@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Sede;
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
-$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento, $id_segment);
@@ -98,7 +98,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('name', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@ if (!empty($record['idpreventivo'])) {
                             '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
 }
 echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
+                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
                         </div>
 
                         <div class="col-md-6">';
@@ -123,7 +123,7 @@ if (!empty($record['idcontratto'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('name', 'Contratti', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
 
                             <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                         </div>
@@ -352,7 +352,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `name`", "value": "$id$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id$", "class": "unblockable" ]}
                 </div>
 <?php
 
@@ -519,7 +519,7 @@ if (!$block_edit) {
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).'
-            AND `dt_statiddt_lang`.`name` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
+            AND `dt_statiddt_lang`.`title` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
             AND `dt_tipiddt`.`dir` = '.prepare($intervento->direzione).'
             AND `dt_causalet`.`is_importabile` = 1
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
@@ -537,7 +537,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
                         </div>
 
                         <div class="col-md-4" style="margin-top: 25px">
@@ -899,7 +899,7 @@ $(document).ready(function() {
 
 // Collegamenti diretti
 // Fatture collegate a questo intervento
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_statidocumento_lang`.`name` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_statidocumento_lang`.`title` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '

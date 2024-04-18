@@ -377,6 +377,16 @@ class Database extends Util\Singleton
         return null;
     }
 
+    public function columnExists($table, $column)
+    {
+        if ($this->isConnected()) {
+            return $this->capsule->schema()->hasColumn($table, $column);
+        }
+
+        return null;
+    }
+
+
     /**
      * Restituisce l'identificativo dell'ultimo elemento inserito.
      *

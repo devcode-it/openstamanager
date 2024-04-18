@@ -37,7 +37,6 @@ class PrintTemplate extends Model
     protected $main_folder = 'templates';
 
     protected static $translated_fields = [
-        'name',
         'filename',
         'title',
     ];

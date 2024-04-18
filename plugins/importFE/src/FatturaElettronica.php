@@ -83,11 +83,11 @@ class FatturaElettronica
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $module = Module::find((new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id));
+            $module = Module::find((new Module())->getByField('title', 'Fatture di acquisto', \Models\Locale::getPredefined()->id));
 
             $plugins = $module->plugins;
             if (!empty($plugins)) {
-                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('name') == 'Fatturazione Elettronica');
+                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == 'Fatturazione Elettronica');
 
                 self::$directory = base_dir().'/'.$plugin->upload_directory;
             }
@@ -165,7 +165,7 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
-        $id_module = (new Module())->getByField('name', 'Fatture di acquisto', \Models\Locale::getPredefined()->id);
+        $id_module = (new Module())->getByField('title', 'Fatture di acquisto', \Models\Locale::getPredefined()->id);
 
         $info = [
             'category' => tr('Fattura Elettronica'),
@@ -264,7 +264,7 @@ class FatturaElettronica
         $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
-            (new TipoAnagrafica())->getByField('name', $type, \Models\Locale::getPredefined()->id),
+            (new TipoAnagrafica())->getByField('title', $type, \Models\Locale::getPredefined()->id),
         ]);
 
         if (!empty($info['partita_iva'])) {
@@ -378,7 +378,7 @@ class FatturaElettronica
         $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data;
 
-        $stato_documento = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
+        $stato_documento = (new Stato())->getByField('title', 'Emessa', \Models\Locale::getPredefined()->id);
         $fattura->stato()->associate($stato_documento);
 
         $causali = $dati_generali['Causale'];

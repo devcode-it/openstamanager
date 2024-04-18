@@ -35,13 +35,13 @@ $query = '
         `mg_articoli`.`codice`,
         `mg_articoli`.`prezzo_vendita`,
         `co_iva`.`percentuale` AS iva,
-        `mg_categorie_lang`.`name` AS subcategoria,
-        `mg_articoli_lang`.`name` AS descrizione,
+        `mg_categorie_lang`.`title` AS subcategoria,
+        `mg_articoli_lang`.`title` AS descrizione,
         `mg_movimenti`.`qta`,
         `mg_movimenti`.`idutente`,
         `zz_users`.`username`,
         `mg_articoli`.`um`,
-        `zz_groups_lang`.`name` as gruppo
+        `zz_groups_lang`.`title` as gruppo
     FROM 
         `mg_movimenti`
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id`
@@ -56,10 +56,10 @@ $query = '
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
         `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
-        ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups_lang`.`name` = 'Amministratori'))";
+        ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups_lang`.`title` = 'Amministratori'))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';
-$query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli_lang`.`name`';
+$query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli_lang`.`title`';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);

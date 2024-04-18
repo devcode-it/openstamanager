@@ -134,7 +134,7 @@ class Ricevuta
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
-            $plugin = Plugin::find((new Plugin())->getByField('name', 'Ricevute FE', \Models\Locale::getPredefined()->id));
+            $plugin = Plugin::find((new Plugin())->getByField('title', 'Ricevute FE', \Models\Locale::getPredefined()->id));
 
             self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
@@ -264,8 +264,8 @@ class Ricevuta
 
         // Correzione eventuale per lo stato della fattura in Bozza
         $fattura = $this->getFattura();
-        if ($fattura->stato->getTranslation('name') == 'Bozza') {
-            $stato_emessa = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
+        if ($fattura->stato->getTranslation('title') == 'Bozza') {
+            $stato_emessa = (new Stato())->getByField('title', 'Emessa', \Models\Locale::getPredefined()->id);
             $fattura->stato()->associate($stato_emessa);
             $fattura->save();
         }

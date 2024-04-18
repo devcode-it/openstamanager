@@ -34,7 +34,7 @@ class Categoria extends Model
     protected $table = 'do_categorie';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build()

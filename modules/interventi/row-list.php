@@ -170,7 +170,7 @@ foreach ($righe as $riga) {
 
         // Iva
         echo '
-                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->getTranslation('name').(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->getTranslation('title').(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
                 </td>';
     }
 
@@ -523,10 +523,10 @@ function aggiornaInline(id) {
 }
 init();';
 
-if (Plugin::find((new Plugin())->getByField('name', 'Distinta base', Models\Locale::getPredefined()->id))) {
+if (Plugin::find((new Plugin())->getByField('title', 'Distinta base', Models\Locale::getPredefined()->id))) {
     echo '
     async function viewDistinta(id_articolo) {
-        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByField('name', 'Distinta base', Models\Locale::getPredefined()->id))->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
+        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByField('title', 'Distinta base', Models\Locale::getPredefined()->id))->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
     }';
 }
 echo '

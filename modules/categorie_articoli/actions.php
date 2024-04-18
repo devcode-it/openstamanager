@@ -31,7 +31,7 @@ switch (filter('op')) {
             $categoria->nota = $nota;
             $categoria->colore = $colore;
             $categoria->parent = $id_original ?: null;
-            $categoria->setTranslation('name', $nome);
+            $categoria->setTranslation('title', $nome);
             $categoria->save();
 
             flash()->info(tr('Salvataggio completato!'));
@@ -54,7 +54,7 @@ switch (filter('op')) {
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
 
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $nome));
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $nome));
         if (!empty($id_original)) {
             $categoria_new = $categoria_new->where('parent', '=', $id_original);
         } else {
@@ -68,7 +68,7 @@ switch (filter('op')) {
             $categoria = Categoria::build($nota, $colore);
             $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
-            $categoria->setTranslation('name', $nome);
+            $categoria->setTranslation('title', $nome);
             $categoria->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

@@ -68,7 +68,7 @@ class Preventivo extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
 
         $id_agente = $anagrafica->idagente;
         $id_pagamento = $anagrafica->idpagamento_vendite;
@@ -270,11 +270,11 @@ class Preventivo extends Document
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
         } else {
-            $descrizione = $stato->getTranslation('name', \Models\Locale::getPredefined()->id);
+            $descrizione = $stato->getTranslation('title', \Models\Locale::getPredefined()->id);
             $codice_intervento = 'OK';
         }
 
-        $stato = (new Stato())->getByField('name', $descrizione, \Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', $descrizione, \Models\Locale::getPredefined()->id);
         $this->stato()->associate($stato);
         $this->save();
 

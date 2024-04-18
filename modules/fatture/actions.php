@@ -37,7 +37,7 @@ use Util\XML;
 
 $module = Module::find($id_module);
 $op = post('op');
-if ($module->getTranslation('name', Models\Locale::getPredefined()->id) == 'Fatture di vendita') {
+if ($module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -113,9 +113,9 @@ switch ($op) {
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
-                `co_statidocumento_lang`.`name` = "Emessa" AND `co_tipidocumento`.`dir` = "entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
+                `co_statidocumento_lang`.`title` = "Emessa" AND `co_tipidocumento`.`dir` = "entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id)) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == (new Stato())->getByField('title', 'Emessa', Models\Locale::getPredefined()->id)) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
             $fattura->data_competenza = $data_fattura_precedente['datamax'];
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -315,7 +315,7 @@ switch ($op) {
         // Elenco fatture in stato Bozza per il cliente
     case 'fatture_bozza':
         $id_anagrafica = post('id_anagrafica');
-        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
 
         $fatture = Fattura::vendita()
             ->where('idanagrafica', $id_anagrafica)
@@ -334,8 +334,8 @@ switch ($op) {
         // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
-        $stato1 = (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
-        $stato2 = (new Stato())->getByField('name', 'Parzialmente pagato', Models\Locale::getPredefined()->id);
+        $stato1 = (new Stato())->getByField('title', 'Emessa', Models\Locale::getPredefined()->id);
+        $stato2 = (new Stato())->getByField('title', 'Parzialmente pagato', Models\Locale::getPredefined()->id);
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
@@ -408,10 +408,10 @@ switch ($op) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+            $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
             $fattura->stato()->associate($stato);
             $fattura->save();
-            $stato = (new Stato())->getByField('name', 'Emessa', Models\Locale::getPredefined()->id);
+            $stato = (new Stato())->getByField('title', 'Emessa', Models\Locale::getPredefined()->id);
             $fattura->stato()->associate($stato);
             $fattura->save();
             flash()->info(tr('Fattura riaperta!'));
@@ -835,7 +835,7 @@ switch ($op) {
         $data = post('data');
 
         $anagrafica = $fattura->anagrafica;
-        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
+        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = "Nota di credito" AND `dir` = "entrata"')['id'];
         $tipo = Tipo::find($id_tipo);
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
@@ -911,7 +911,7 @@ switch ($op) {
         $autofattura->save();
 
         $riga = Riga::build($autofattura);
-        $riga->descrizione = $tipo->getTranslation('name');
+        $riga->descrizione = $tipo->getTranslation('title');
         $riga->id_iva = $iva->id;
         $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
         $riga->setPrezzoUnitario($totale_imponibile, $iva->id);
@@ -920,7 +920,7 @@ switch ($op) {
 
         // Aggiunta tipologia cliente se necessario
         if (!$anagrafica->isTipo('Cliente')) {
-            $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id);
+            $tipo_cliente = (new TipoAnagrafica())->getByField('title', 'Cliente', Models\Locale::getPredefined()->id);
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo_cliente;
 
@@ -931,7 +931,7 @@ switch ($op) {
         $fattura->id_autofattura = $autofattura->id;
         $fattura->save();
 
-        $id_module = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+        $id_module = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
         $id_record = $autofattura->id;
 
         break;
@@ -1047,7 +1047,7 @@ switch ($op) {
         if (in_array($idtipodocumento, $tipologie)) {
             // Aggiunta tipologia cliente se necessario
             if (!$azienda->isTipo('Cliente')) {
-                $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id);
+                $tipo_cliente = (new TipoAnagrafica())->getByField('title', 'Cliente', Models\Locale::getPredefined()->id);
                 $tipi = $azienda->tipi->pluck('id')->toArray();
                 $tipi[] = $tipo_cliente;
 
@@ -1170,7 +1170,7 @@ switch ($op) {
         break;
 
     case 'cambia_stato':
-        $stato = Stato::find((new Stato())->getByField('name', 'Non valida', Models\Locale::getPredefined()->id));
+        $stato = Stato::find((new Stato())->getByField('title', 'Non valida', Models\Locale::getPredefined()->id));
         $fattura->stato()->associate($stato);
         $fattura->save();
 
@@ -1187,7 +1187,7 @@ if (get('op') == 'nota_addebito') {
     }
 
     $anagrafica = $fattura->anagrafica;
-    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = "Nota di debito" AND `dir` = "entrata"')['id'];
+    $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = "Nota di debito" AND `dir` = "entrata"')['id'];
     $tipo = Tipo::find($id_tipo);
     $data = $fattura->data;
 

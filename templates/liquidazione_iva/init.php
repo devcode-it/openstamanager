@@ -35,7 +35,7 @@ if (setting('Liquidazione IVA') == 'Mensile') {
     $periodo_precedente_end = (new Carbon($date_end))->subMonths(3)->format('Y-m-d');
 }
 
-$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', Models\Locale::getPredefined()->id);
+$vendita_banco = (new Module())->getByField('title', 'Vendita al banco', Models\Locale::getPredefined()->id);
 $maggiorazione = 0;
 
 // calcolo IVA su fatture + vendite al banco
@@ -54,7 +54,7 @@ if (!empty($vendita_banco)) {
             `co_documenti`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
@@ -64,7 +64,7 @@ if (!empty($vendita_banco)) {
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
         WHERE 
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
         GROUP BY
             `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
     UNION
@@ -72,7 +72,7 @@ if (!empty($vendita_banco)) {
             `vb_venditabanco`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM(`vb_righe_venditabanco`.`iva`) AS iva,
             SUM(
                 `vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`
@@ -108,7 +108,7 @@ if (!empty($vendita_banco)) {
             `co_documenti`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
@@ -118,7 +118,7 @@ if (!empty($vendita_banco)) {
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
         WHERE 
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN(SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN(SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
         GROUP BY 
             `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
     UNION
@@ -126,7 +126,7 @@ if (!empty($vendita_banco)) {
             `vb_venditabanco`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM(`vb_righe_venditabanco`.`iva`) AS iva,
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
@@ -160,7 +160,7 @@ if (!empty($vendita_banco)) {
             `co_documenti`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
@@ -170,7 +170,7 @@ if (!empty($vendita_banco)) {
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
         WHERE 
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
         GROUP BY 
             `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
     UNION
@@ -178,7 +178,7 @@ if (!empty($vendita_banco)) {
             `vb_venditabanco`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM(`vb_righe_venditabanco`.`iva`) AS iva,
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
@@ -212,7 +212,7 @@ if (!empty($vendita_banco)) {
             `co_documenti`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
             SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
         FROM 
@@ -222,7 +222,7 @@ if (!empty($vendita_banco)) {
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
         WHERE 
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
         GROUP BY 
             `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
     UNION
@@ -230,7 +230,7 @@ if (!empty($vendita_banco)) {
             `vb_venditabanco`.`id` AS id,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
-            `co_iva_lang`.`name` AS descrizione,
+            `co_iva_lang`.`title` AS descrizione,
             SUM(`vb_righe_venditabanco`.`iva`) AS iva,
             SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`) AS subtotale
         FROM
@@ -257,7 +257,7 @@ else {
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -267,7 +267,7 @@ else {
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -276,7 +276,7 @@ else {
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -286,7 +286,7 @@ else {
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -295,7 +295,7 @@ else {
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -305,7 +305,7 @@ else {
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
+        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY aliquota desc');
@@ -314,7 +314,7 @@ else {
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -324,7 +324,7 @@ else {
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
+        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -334,7 +334,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -344,7 +344,7 @@ $iva_vendite_nonesigibile = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 1 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 1 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -353,7 +353,7 @@ $iva_acquisti_detraibile = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -363,7 +363,7 @@ $iva_acquisti_detraibile = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `co_iva`.`indetraibile` != 100
+        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `co_iva`.`indetraibile` != 100
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -372,7 +372,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -382,7 +382,7 @@ $iva_acquisti_nondetraibile = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `co_iva`.`indetraibile` != 0
+        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `co_iva`.`indetraibile` != 0
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -391,7 +391,7 @@ $iva_acquisti = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -401,7 +401,7 @@ $iva_acquisti = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
+        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -410,7 +410,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -420,7 +420,7 @@ $iva_acquisti_anno_precedente = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     WHERE 
-        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
+        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($anno_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($anno_precedente_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');
@@ -429,7 +429,7 @@ $iva_acquisti_periodo_precedente = $dbo->fetchArray('
     SELECT 
         `co_iva`.`codice_natura_fe` AS cod_iva,
         `co_iva`.`percentuale` AS aliquota,
-        `co_iva_lang`.`name` AS descrizione,
+        `co_iva_lang`.`title` AS descrizione,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS subtotale
     FROM 
@@ -439,7 +439,7 @@ $iva_acquisti_periodo_precedente = $dbo->fetchArray('
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` 
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`  
     WHERE 
-        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
+        `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `co_documenti`.`data_competenza` >= '.prepare($periodo_precedente_start).' AND `co_documenti`.`data_competenza` <= '.prepare($periodo_precedente_end).'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     ORDER BY `aliquota` desc');

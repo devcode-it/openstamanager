@@ -221,7 +221,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 if (empty($articolo)) {
                     $nome_categoria = 'Importazione automatica';
-                    $categoria = Categoria::find((new Categoria())->getByField('name', strtolower($nome_categoria)));
+                    $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
                     if (empty($categoria)) {
                         $categoria = Categoria::build();
                         $categoria->setTranslation('nome', $nome_categoria);

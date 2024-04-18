@@ -70,7 +70,6 @@ WHERE
     1=1 
 HAVING
     2=2" WHERE `name` = 'Eventi';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_nazioni_lang`.`name`' WHERE `zz_modules`.`name` = 'Eventi' AND `zz_views`.`name` = 'Nazione';
 
 -- Aggiunta tabella an_provenienze_lang
 CREATE TABLE IF NOT EXISTS `an_provenienze_lang` (
@@ -103,7 +102,6 @@ WHERE
     1=1
 HAVING
     2=2" WHERE `name` = 'Provenienze';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_provenienze_lang`.`name`' WHERE `zz_modules`.`name` = 'Provenienze' AND `zz_views`.`name` = 'descrizione';
 
 -- Aggiunta tabella an_regioni_lang
 CREATE TABLE IF NOT EXISTS `an_regioni_lang` (
@@ -158,7 +156,6 @@ HAVING
     2=2
 ORDER BY 
     `an_relazioni`.`created_at` DESC" WHERE `name` = 'Relazioni';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_relazioni_lang`.`name`' WHERE `zz_modules`.`name` = 'Relazioni' AND `zz_views`.`name` = 'descrizione';
 
 -- Aggiunta tabella an_settori_lang
 CREATE TABLE IF NOT EXISTS `an_settori_lang` (
@@ -191,7 +188,6 @@ WHERE
     1=1
 HAVING
     2=2" WHERE `name` = 'Settori';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_settori_lang`.`name`' WHERE `zz_modules`.`name` = 'Settori' AND `zz_views`.`name` = 'descrizione';
 
 ALTER TABLE `an_tipianagrafiche` CHANGE `idtipoanagrafica` `id` INT NOT NULL AUTO_INCREMENT; 
 
@@ -215,9 +211,6 @@ ALTER TABLE `an_tipianagrafiche`
 
 ALTER TABLE `an_tipianagrafiche_lang` ADD CONSTRAINT `an_tipianagrafiche_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `an_tipianagrafiche`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'GROUP_CONCAT(\' \',`an_relazioni_lang`.`name`)' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'color_title_Relazione';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'GROUP_CONCAT(\' \',`an_tipianagrafiche_lang`.`name`)' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'Tipo';
-
 -- Allineamento vista Tipi di anagrafiche
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -229,7 +222,6 @@ WHERE
     1=1
 HAVING
     2=2" WHERE `name` = 'Tipi di anagrafiche';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_tipianagrafiche_lang`.`name`' WHERE `zz_modules`.`name` = 'Tipi di anagrafiche' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_tipianagrafiche`.`id`' WHERE `zz_modules`.`name` = 'Tipi di anagrafiche' AND `zz_views`.`name` = 'id';
 
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE `idtipoanagrafica` = (SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON(`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record`) WHERE `name` = \'Azienda\') AND `deleted_at` IS NULL' WHERE `zz_settings`.`nome` = 'Azienda predefinita'; 
@@ -265,7 +257,6 @@ WHERE
     1=1 AND `deleted_at` IS NULL
 HAVING
     2=2" WHERE `name` = 'IVA';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_iva_lang`.`name`' WHERE `zz_modules`.`name` = 'IVA' AND `zz_views`.`name` = 'descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_iva`.`id`' WHERE `zz_modules`.`name` = 'IVA' AND `zz_views`.`name` = 'id';
 
 SELECT @codice := MAX(CAST(codice AS UNSIGNED))+1 FROM co_iva WHERE deleted_at IS NULL;
@@ -293,37 +284,7 @@ ALTER TABLE `co_pagamenti`
 
 ALTER TABLE `co_pagamenti_lang` ADD CONSTRAINT `co_pagamenti_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_pagamenti`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'descrizione';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'COUNT(`co_pagamenti_lang`.`name`)' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'Rate';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti`.`id`' WHERE `zz_modules`.`name` = 'Pagamenti' AND `zz_views`.`name` = 'id';
-
--- Allineamento vista Anagrafiche
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `an_anagrafiche`
-    LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id`
-    LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id` = `an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.|lang|)
-    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.|lang|)
-    LEFT JOIN (SELECT `idanagrafica`, GROUP_CONCAT(`nomesede` SEPARATOR ', ') AS nomi FROM `an_sedi` GROUP BY `idanagrafica`) AS sedi ON `an_anagrafiche`.`idanagrafica`= `sedi`.`idanagrafica`
-    LEFT JOIN (SELECT `idanagrafica`, GROUP_CONCAT(`nome` SEPARATOR ', ') AS nomi FROM `an_referenti` GROUP BY `idanagrafica`) AS referenti ON `an_anagrafiche`.`idanagrafica` =`referenti`.`idanagrafica`
-    LEFT JOIN (SELECT `co_pagamenti_lang`.`name`AS nome, `co_pagamenti`.`id` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|))AS pagvendita ON IF(`an_anagrafiche`.`idpagamento_vendite`>0,`an_anagrafiche`.`idpagamento_vendite`= `pagvendita`.`id`,'')
-    LEFT JOIN (SELECT `co_pagamenti_lang`.`name`AS nome, `co_pagamenti`.`id` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|))AS pagacquisto ON IF(`an_anagrafiche`.`idpagamento_acquisti`>0,`an_anagrafiche`.`idpagamento_acquisti`= `pagacquisto`.`id`,'')
-WHERE
-    1=1 AND `an_anagrafiche`.`deleted_at` IS NULL
-GROUP BY
-    `an_anagrafiche`.`idanagrafica`, `pagvendita`.`nome`, `pagacquisto`.`nome`
-HAVING
-    2=2
-ORDER BY
-    TRIM(`ragione_sociale`)" WHERE `name` = 'Anagrafiche';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Tipo di pagamento';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Pagamento';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_pagamenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Pagamento';
 
 -- Fix per file sql di update aggiornato dopo rilascio 2.4.35
 UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `zz_modules`.`name` = 'Causali movimenti';
@@ -374,7 +335,6 @@ WHERE
     1=1 AND deleted_at IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Stati dei contratti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_staticontratti_lang`.`name`' WHERE `zz_modules`.`name` = 'Stati dei contratti' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_staticontratti`.`id`' WHERE `zz_modules`.`name` = 'Stati dei contratti' AND `zz_views`.`name` = 'id';
 
 -- Allineamento vista Contratti
@@ -395,7 +355,6 @@ WHERE
     1=1 |segment(`co_contratti`.`id_segment`)| |date_period(custom,'|period_start|' >= `data_bozza` AND '|period_start|' <= `data_conclusione`,'|period_end|' >= `data_bozza` AND '|period_end|' <= `data_conclusione`,`data_bozza` >= '|period_start|' AND `data_bozza` <= '|period_end|',`data_conclusione` >= '|period_start|' AND `data_conclusione` <= '|period_end|',`data_bozza` >= '|period_start|' AND `data_conclusione` = NULL)|
 HAVING 
     2=2" WHERE `name` = 'Contratti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_staticontratti_lang`.`name`' WHERE `zz_modules`.`name` = 'Contratti' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Aggiunta colonna N. utenti abilitati
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Utenti e permessi'), 'N. utenti abilitati', '`utenti_abilitati`.`num`', '3', '1', '0', '0', '0', '', '', '1', '0', '0'); 
@@ -436,14 +395,7 @@ WHERE
     1=1
 HAVING 
     2=2" WHERE `name` = 'Stati fatture';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Stati fatture' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento`.`id`' WHERE `zz_modules`.`name` = 'Stati fatture' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_Stato';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'descrizione';
-
-UPDATE `zz_widgets` SET `query` = "SELECT\n    CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n    SELECT SUM(\n    (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) * IF(`co_tipidocumento`.`reversed`, -1, 1)\n    )\n    ), 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\'), \'&euro;\') AS dato\nFROM \n    `co_righe_documenti`\n    INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`\n    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\n    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\n    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)\nWHERE \n    `co_statidocumento_lang`.`name`!=\'Bozza\' AND `co_tipidocumento`.`dir`=\'entrata\' |segment(`co_documenti`.`id_segment`)| AND `data` >= \'|period_start|\' AND `data` <= \'|period_end|\' AND 1=1" WHERE `zz_widgets`.`name` = 'Fatturato';
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_anagrafiche`.`idanagrafica`' WHERE `zz_modules`.`name` = 'Tecnici e tariffe' AND `zz_views`.`name` = 'id';
 
@@ -552,10 +504,7 @@ WHERE
     1=1
 HAVING 
     2=2" WHERE `name` = 'Stati dei preventivi';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statipreventivi_lang`.`name`' WHERE `zz_modules`.`name` = 'Stati dei preventivi' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statipreventivi`.`id`' WHERE `zz_modules`.`name` = 'Stati dei preventivi' AND `zz_views`.`name` = 'id';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statipreventivi_lang`.`name`' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Aggiunta tabella co_tipidocumento_lang
 CREATE TABLE IF NOT EXISTS `co_tipidocumento_lang` (
@@ -592,10 +541,7 @@ WHERE
     1=1 AND `deleted_at` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Tipi documento';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Tipi documento' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento`.`id`' WHERE `zz_modules`.`name` = 'Tipi documento' AND `zz_views`.`name` = 'id';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'Tipo';
 
 -- Allineamento vista Fatture di acquisto
 UPDATE `zz_modules` SET `options` = "
@@ -627,7 +573,6 @@ HAVING
 ORDER BY 
     `co_documenti`.`data` DESC,
     CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = 'Tipo';
 
 -- Aggiunta tabella co_tipi_scadenze_lang
 CREATE TABLE IF NOT EXISTS `co_tipi_scadenze_lang` (
@@ -689,7 +634,6 @@ HAVING
     2=2 
 ORDER BY 
     `data` DESC" WHERE `name` = 'Gestione documentale';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Gestione documentale' AND `zz_views`.`name` = 'Categoria';
 
 -- Allineamento vista Categorie documenti
 UPDATE `zz_modules` SET `options` = "
@@ -703,7 +647,6 @@ WHERE
     (SELECT `idgruppo` FROM `zz_users` WHERE `id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_categorie`.`id`)
 HAVING
     2=2" WHERE `name` = 'Categorie documenti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Categorie documenti' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`do_categorie`.`id`' WHERE `zz_modules`.`name` = 'Categorie documenti' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella dt_aspettobeni_lang
@@ -739,7 +682,6 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `name` = 'Aspetto beni';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_aspettobeni_lang`.`name`' WHERE `zz_modules`.`name` = 'Aspetto beni' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_aspettobeni`.`id`' WHERE `zz_modules`.`name` = 'Aspetto beni' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella dt_causalet_lang
@@ -775,12 +717,7 @@ WHERE
     1=1 AND `deleted_at` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Causali';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet_lang`.`name`' WHERE `zz_modules`.`name` = 'Causali' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet`.`id`' WHERE `zz_modules`.`name` = 'Causali' AND `zz_views`.`name` = 'id';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Causale';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Causale';
 
 -- Aggiunta tabella dt_porto_lang
 CREATE TABLE IF NOT EXISTS `dt_porto_lang` (
@@ -815,7 +752,6 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `name` = 'Porto';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_porto_lang`.`name`' WHERE `zz_modules`.`name` = 'Porto' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_porto`.`id`' WHERE `zz_modules`.`name` = 'Porto' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella dt_spedizione_lang
@@ -851,12 +787,7 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `name` = 'Tipi di spedizione';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Tipi di spedizione' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione`.`id`' WHERE `zz_modules`.`name` = 'Tipi di spedizione' AND `zz_views`.`name` = 'id';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'Tipo spedizione';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_spedizione_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'Tipo spedizione';
 
 -- Aggiunta tabella dt_statiddt_lang
 CREATE TABLE IF NOT EXISTS `dt_statiddt_lang` (
@@ -879,8 +810,6 @@ ALTER TABLE `dt_statiddt`
 ALTER TABLE `dt_statiddt` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
 
 ALTER TABLE `dt_statiddt_lang` ADD CONSTRAINT `dt_statiddt_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_statiddt`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_statiddt_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di vendita' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Allineamento vista Ddt di acquisto
 UPDATE `zz_modules` SET `options` = "
@@ -909,7 +838,6 @@ ORDER BY
     `data` DESC,
     CAST(`numero_esterno` AS UNSIGNED) DESC,
     `dt_ddt`.`created_at` DESC" WHERE `name` = 'Ddt di acquisto';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_statiddt_lang`.`name`' WHERE `zz_modules`.`name` = 'Ddt di acquisto' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Aggiunta tabella dt_tipiddt_lang
 CREATE TABLE IF NOT EXISTS `dt_tipiddt_lang` (
@@ -950,8 +878,7 @@ ALTER TABLE `em_lists_lang`
 INSERT INTO `em_lists_lang` (`id`, `id_lang`, `id_record`, `name`, `description`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `description` FROM `em_lists`;
 
 ALTER TABLE `em_lists`
-    DROP `description`,
-    DROP `name`;
+    DROP `description`;
 
 ALTER TABLE `em_lists` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT; 
 
@@ -970,7 +897,6 @@ HAVING
     2=2" WHERE `name` = 'Liste newsletter';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists`.`id`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`description`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Descrizione';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_lists_lang`.`name`' WHERE `zz_modules`.`name` = 'Liste newsletter' AND `zz_views`.`name` = 'Nome';
 
 -- Aggiunta tabella em_templates_lang
 CREATE TABLE IF NOT EXISTS `em_templates_lang` (
@@ -990,14 +916,12 @@ ALTER TABLE `em_templates_lang`
 INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `name`, `subject`, `body`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `subject`, `body` FROM `em_templates`;
 
 ALTER TABLE `em_templates`
-    DROP `name`,
     DROP `subject`,
     DROP `body`;
 
 ALTER TABLE `em_templates_lang` ADD CONSTRAINT `em_templates_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`subject`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Oggetto';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`name`' WHERE `zz_modules`.`name` = 'Template email' AND `zz_views`.`name` = 'Nome';
 
 -- Allineamento vista Newsletter
 UPDATE `zz_modules` SET `options` = "
@@ -1012,7 +936,6 @@ WHERE
     1=1 AND `em_newsletters`.`deleted_at` IS NULL
 HAVING 
     2=2" WHERE `name` = 'Newsletter';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`em_templates_lang`.`name`' WHERE `zz_modules`.`name` = 'Newsletter' AND `zz_views`.`name` = 'Template';
 
 -- Aggiunta tabella fe_modalita_pagamento_lang
 CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento_lang` (
@@ -1033,21 +956,6 @@ ALTER TABLE `fe_modalita_pagamento`
     DROP `descrizione`;
 
 ALTER TABLE `fe_modalita_pagamento_lang` ADD CONSTRAINT `fe_modalita_pagamento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_modalita_pagamento`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
--- Allineamento vista Pagamenti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `co_pagamenti`
-	LEFT JOIN (SELECT `fe_modalita_pagamento`.`codice`, CONCAT(`fe_modalita_pagamento`.`codice`, ' - ', `fe_modalita_pagamento_lang`.`name`) AS tipo FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento`.`codice` = `fe_modalita_pagamento_lang`.`id_record` AND `fe_modalita_pagamento_lang`.|lang|)) AS pagamenti ON `pagamenti`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|)
-WHERE
-    1=1
-GROUP BY
-    `co_pagamenti_lang`.`name`
-HAVING
-    2=2" WHERE `name` = 'Pagamenti';
 
 -- Aggiunta tabella fe_natura_lang
 CREATE TABLE IF NOT EXISTS `fe_natura_lang` (
@@ -1109,8 +1017,6 @@ ALTER TABLE `fe_stati_documento`
 
 ALTER TABLE `fe_stati_documento_lang` ADD CONSTRAINT `fe_stati_documento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `fe_stati_documento`(`codice`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`fe_stati_documento_lang`.`name`' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'icon_title_FE';
-
 -- Aggiunta tabella fe_tipi_documento_lang
 CREATE TABLE IF NOT EXISTS `fe_tipi_documento_lang` (
     `id` int NOT NULL,
@@ -1164,7 +1070,6 @@ WHERE
     1=1 AND deleted_at IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Fasce orarie';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_fasceorarie_lang`.`name`' WHERE `zz_modules`.`name` = 'Fasce orarie' AND `zz_views`.`name` = 'Nome';
 
 -- Aggiunta tabella in_statiintervento_lang
 CREATE TABLE IF NOT EXISTS `in_statiintervento_lang` (
@@ -1188,8 +1093,6 @@ ALTER TABLE `in_statiintervento`
 
 ALTER TABLE `in_statiintervento_lang` ADD CONSTRAINT `in_statiintervento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `in_statiintervento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_statiintervento_lang`.`name`' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Stato';
-
 -- Allineamento vista Stati di intervento
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -1201,7 +1104,6 @@ WHERE
     1=1 AND `deleted_at` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Stati di intervento';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_statiintervento_lang`.`name`' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_statiintervento`.`id`' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'id';
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT id FROM in_statiintervento WHERE is_completato = 0) ' WHERE `zz_widgets`.`name` = 'Attività da pianificare'; 
@@ -1230,8 +1132,6 @@ ALTER TABLE `in_tipiintervento`
 
 ALTER TABLE `in_tipiintervento_lang` ADD CONSTRAINT `in_tipiintervento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `in_tipiintervento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_tipiintervento_lang`.`name`' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Tipo';
-
 -- Allineamento vista Tipi di intervento
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -1243,7 +1143,6 @@ WHERE
     1=1 AND `deleted_at` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Tipi di intervento';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_tipiintervento_lang`.`name`' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_tipiintervento`.`id`' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella mg_articoli_lang
@@ -1260,8 +1159,6 @@ ALTER TABLE `mg_articoli_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `mg_articoli_lang` ADD CONSTRAINT `mg_articoli_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_articoli_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Descrizione';
 
 -- Aggiunta tabella mg_attributi_lang
 CREATE TABLE IF NOT EXISTS `mg_attributi_lang` (
@@ -1297,7 +1194,6 @@ WHERE
     `mg_attributi`.`deleted_at` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Attributi Combinazioni';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_attributi_lang`.`name`' WHERE `zz_modules`.`name` = 'Attributi Combinazioni' AND `zz_views`.`name` = 'Nome';
 
 -- Aggiunta tabella mg_categorie_lang
 CREATE TABLE IF NOT EXISTS `mg_categorie_lang` (
@@ -1330,34 +1226,7 @@ WHERE
     1=1 AND `parent` IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Categorie articoli';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Categorie articoli' AND `zz_views`.`name` = 'Nome';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie`.`id`' WHERE `zz_modules`.`name` = 'Categorie articoli' AND `zz_views`.`name` = 'id';
-
--- Allineamento vista Articoli
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `mg_articoli`
-    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_impegnata, `or_righe_ordini`.`idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `idarticolo`) a ON `a`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_ordinata, `or_righe_ordini`.`idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1
-    GROUP BY `idarticolo`) ordini_fornitore ON `ordini_fornitore`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN `mg_categorie` ON `mg_articoli`.`id_categoria` = `mg_categorie`.`id`
-    LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.|lang|)
-    LEFT JOIN `mg_categorie` AS sottocategorie ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`
-    LEFT JOIN `mg_categorie_lang` AS sottocategorie_lang ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.|lang|)
-    LEFT JOIN (SELECT `co_iva`.`percentuale` AS perc, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id`=`zz_settings`.`valore`)AS iva ON `iva`.`nome`= 'Iva predefinita' 
-WHERE
-    1=1 AND(`mg_articoli`.`deleted_at`) IS NULL
-HAVING
-    2=2
-ORDER BY
-    `mg_articoli_lang`.`name`" WHERE `name` = 'Articoli';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Categoria';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Sottocategoria';
 
 -- Aggiunta tabella my_impianti_categorie_lang
 CREATE TABLE IF NOT EXISTS `my_impianti_categorie_lang` (
@@ -1390,7 +1259,6 @@ WHERE
     1=1 AND parent IS NULL 
 HAVING 
     2=2" WHERE `name` = 'Categorie impianti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Categorie impianti' AND `zz_views`.`name` = 'Nome';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie`.`id`' WHERE `zz_modules`.`name` = 'Categorie impianti' AND `zz_views`.`name` = 'id';
 
 -- Allineamento vista Impianti
@@ -1412,8 +1280,6 @@ HAVING
     2=2
 ORDER BY
     `matricola`" WHERE `name` = 'impianti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`my_impianti_categorie_lang`.`name`' WHERE `zz_modules`.`name` = 'Impianti' AND `zz_views`.`name` = 'Categoria';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`sub_lang`.`name`' WHERE `zz_modules`.`name` = 'Impianti' AND `zz_views`.`name` = 'Sottocategoria';
 
 -- Aggiunta tabella mg_causali_movimenti_lang
 CREATE TABLE IF NOT EXISTS `mg_causali_movimenti_lang` (
@@ -1448,11 +1314,8 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `name` = 'Causali movimenti';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti_lang`.`name`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'Nome';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti_lang`.`description`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'Descrizione';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_causali_movimenti`.`id`' WHERE `zz_modules`.`name` = 'Causali movimenti' AND `zz_views`.`name` = 'id';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`mg_articoli_lang`.`name` != "", CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`), `mg_articoli`.`codice`)' WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Articolo';
 
 -- Aggiunta tabella mg_combinazioni_lang
 CREATE TABLE IF NOT EXISTS `mg_combinazioni_lang` (
@@ -1488,7 +1351,6 @@ GROUP BY
     `mg_combinazioni`.`id`
 HAVING 
     2=2" WHERE `name` = 'Combinazioni';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`mg_combinazioni_lang`.`name`' WHERE `zz_modules`.`name` = 'Combinazioni' AND `zz_views`.`name` = 'Nome';
 
 -- Aggiunta tabella or_statiordine_lang
 CREATE TABLE IF NOT EXISTS `or_statiordine_lang` (
@@ -1525,11 +1387,6 @@ WHERE
 HAVING 
     2=2" WHERE `name` = 'Stati degli ordini';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine`.`id`' WHERE `zz_modules`.`name` = 'Stati degli ordini' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine_lang`.`name`' WHERE `zz_modules`.`name` = 'Stati degli ordini' AND `zz_views`.`name` = 'Descrizione';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine_lang`.`name`' WHERE `zz_modules`.`name` = 'Ordini fornitore' AND `zz_views`.`name` = 'icon_title_Stato';
-
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine_lang`.`name`' WHERE `zz_modules`.`name` = 'Ordini cliente' AND `zz_views`.`name` = 'icon_title_Stato';
 
 -- Aggiunta tabella or_tipiordine_lang
 CREATE TABLE IF NOT EXISTS `or_tipiordine_lang` (
@@ -1579,7 +1436,6 @@ ALTER TABLE `zz_currencies_lang`
 INSERT INTO `zz_currencies_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_currencies`;
 
 ALTER TABLE `zz_currencies`
-    DROP `name`,
     DROP `title`;
 
 ALTER TABLE `zz_currencies_lang` ADD CONSTRAINT `zz_currencies_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_currencies`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
@@ -1603,14 +1459,11 @@ ALTER TABLE `zz_widgets_lang`
 INSERT INTO `zz_widgets_lang` (`id`, `id_lang`, `id_record`, `name`, `text`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `text` FROM `zz_widgets`;
 
 ALTER TABLE `zz_widgets`
-    DROP `name`,
     DROP `text`;
 
 ALTER TABLE `zz_widgets_lang` ADD CONSTRAINT `zz_widgets_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_widgets`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_preventivi.id) AS dato FROM co_preventivi INNER JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id LEFT JOIN co_statipreventivi_lang ON (co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = (SELECT valore FROM zz_settings WHERE nome = "Lingua")) WHERE name =\"In lavorazione\" AND default_revision=1' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Preventivi in lavorazione'); 
-
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELECT `co_contratti`.`id`,((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = \"ore\" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_completato` = 1)),0)) AS `ore_rimanenti`, DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, `data_conclusione`, `ore_preavviso_rinnovo`, `giorni_preavviso_rinnovo`, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `co_contratti`.`idanagrafica`) AS ragione_sociale FROM `co_contratti` INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `rinnovabile` = 1 AND YEAR(`data_conclusione`) > 1970 AND `co_contratti`.`id` NOT IN (SELECT `idcontratto_prev` FROM `co_contratti` contratti) AND `co_staticontratti_lang`.`name` NOT IN (\"Concluso\", \"Rifiutato\", \"Bozza\") HAVING (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) ORDER BY `giorni_rimanenti` ASC,`ore_rimanenti` ASC) dati' WHERE `zz_widgets`.`id` = (SELECT `id_record` FROM `zz_widgets_lang` WHERE  `name` = 'Contratti in scadenza'); 
 
 -- Aggiunta tabella zz_plugins_lang
 CREATE TABLE IF NOT EXISTS `zz_plugins_lang` (
@@ -1629,7 +1482,6 @@ ALTER TABLE `zz_plugins_lang`
 INSERT INTO `zz_plugins_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_plugins`;
 
 ALTER TABLE `zz_plugins`
-    DROP `name`,
     DROP `title`;
 
 ALTER TABLE `zz_plugins_lang` ADD CONSTRAINT `zz_plugins_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
@@ -1651,19 +1503,10 @@ ALTER TABLE `zz_modules_lang`
 INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title` FROM `zz_modules`;
 
 ALTER TABLE `zz_modules`
-    DROP `name`,
     DROP `title`;
 
 ALTER TABLE `zz_modules_lang` ADD CONSTRAINT `zz_modules_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
-UPDATE `zz_modules` SET `options` = '
-SELECT 
-    |select| 
-FROM 
-    `zz_modules` 
-    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
-WHERE 
-    1=1 HAVING 2=2 ORDER BY `name`, `title` ASC' WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Viste'); 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules`.`id`' WHERE `zz_modules_lang`.`name` = 'Viste' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules`.`id`' WHERE `zz_modules_lang`.`name` = 'Viste' AND `zz_views`.`name` = 'Numero';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Viste' AND `zz_views`.`name` = 'Nome';
@@ -1683,7 +1526,6 @@ WHERE
 HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Campi personalizzati');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Modulo';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_plugins_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Campi personalizzati' AND `zz_views`.`name` = 'Plugin';
 
 -- Allineamento vista Checklists
 UPDATE `zz_modules` SET `options` = "
@@ -1700,151 +1542,6 @@ WHERE
 HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Checklists');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Checklists' AND `zz_views`.`name` = 'Modulo';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_plugins_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Checklists' AND `zz_views`.`name` = 'Plugin';
-
--- Allineamento vista Fatture di vendita
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `co_documenti`
-    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `iddocumento` FROM `co_movimenti`  WHERE `totale` > 0 AND `primanota` = 1 GROUP BY `iddocumento`) AS `primanota` ON `primanota`.`iddocumento` = `co_documenti`.`id`
-    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
-    LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsainps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` GROUP BY `iddocumento`) AS `righe` ON `co_documenti`.`id` = `righe`.`iddocumento`
-    LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`co_banche`.`nome`, ' - ', `co_banche`.`iban`) AS `descrizione` FROM `co_banche` GROUP BY `co_banche`.`id`) AS `banche` ON `banche`.`id` =`co_documenti`.`id_banca_azienda`
-	LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
-    LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
-    LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento`.`codice` = `fe_stati_documento_lang`.`id_record` AND `fe_stati_documento_lang`.|lang|)
-    LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
-    LEFT JOIN (SELECT COUNT(id) as `emails`, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id_record` FROM `zz_modules_lang` WHERE name = 'Fatture di vendita' AND |lang|) AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
-	LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND co_pagamenti_lang.|lang|)
-	LEFT JOIN (SELECT `numero_esterno`, `id_segment`, `idtipodocumento`, `data` FROM `co_documenti` WHERE `co_documenti`.`idtipodocumento` IN( SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata') AND `numero_esterno` != '' GROUP BY `id_segment`, `numero_esterno`, `idtipodocumento` HAVING COUNT(`numero_esterno`) > 1 |date_period(`co_documenti`.`data`)| ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment` AND `dup`.`idtipodocumento` = `co_documenti`.`idtipodocumento`
-WHERE
-    1=1 AND `dir` = 'entrata' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
-HAVING
-    2=2
-ORDER BY
-    `co_documenti`.`data` DESC,
-    CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Fatture di vendita');
-
--- Allineamento vista Attività
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `in_interventi`
-    LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
-    LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_intervento` = `in_interventi`.`id`
-    LEFT JOIN (SELECT `idintervento`, SUM(`prezzo_unitario`*`qta`-`sconto`) AS `ricavo_righe`, SUM(`costo_unitario`*`qta`) AS `costo_righe` FROM `in_righe_interventi` GROUP BY `idintervento`) AS `righe` ON `righe`.`idintervento` = `in_interventi`.`id`
-    INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
-    LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.|lang|)
-    LEFT JOIN `an_referenti` ON `in_interventi`.`idreferente` = `an_referenti`.`id`
-    LEFT JOIN (SELECT `an_sedi`.`id`, CONCAT(`an_sedi`.`nomesede`, '<br />',IF(`an_sedi`.`telefono`!='',CONCAT(`an_sedi`.`telefono`,'<br />'),''),IF(`an_sedi`.`cellulare`!='',CONCAT(`an_sedi`.`cellulare`,'<br />'),''),`an_sedi`.`citta`,IF(`an_sedi`.`indirizzo`!='',CONCAT(' - ',`an_sedi`.`indirizzo`),'')) AS `info` FROM `an_sedi`) AS `sede_destinazione` ON `sede_destinazione`.`id` = `in_interventi`.`idsede_destinazione`
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idintervento` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type` = 'Modules\\Interventi\\Intervento' GROUP BY `idintervento`, `original_document_id`) AS `fattura` ON `fattura`.`idintervento` = `in_interventi`.`id`
-    LEFT JOIN (SELECT `in_interventi_tecnici_assegnati`.`id_intervento`, GROUP_CONCAT( DISTINCT `ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `an_anagrafiche`.`idanagrafica` GROUP BY `id_intervento`) AS `tecnici_assegnati` ON `in_interventi`.`id` = `tecnici_assegnati`.`id_intervento`
-    LEFT JOIN (SELECT `in_interventi_tecnici`.`idintervento`, GROUP_CONCAT( DISTINCT `ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica` GROUP BY `idintervento`) AS `tecnici` ON `in_interventi`.`id` = `tecnici`.`idintervento`
-    LEFT JOIN (SELECT COUNT(`id`) as emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Interventi' AND |lang| AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS `email` ON `email`.`id_record` = `in_interventi`.`id`
-    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != '', CONCAT(' - ', `nome`), '')) SEPARATOR '<br />') AS `descrizione`, `my_impianti_interventi`.`idintervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`idimpianto` GROUP BY `my_impianti_interventi`.`idintervento`) AS `impianti` ON `impianti`.`idintervento` = `in_interventi`.`id`
-    LEFT JOIN (SELECT `co_contratti`.`id`, CONCAT(`co_contratti`.`numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y')) AS `info` FROM `co_contratti`) AS `contratto` ON `contratto`.`id` = `in_interventi`.`id_contratto`
-    LEFT JOIN (SELECT `co_preventivi`.`id`, CONCAT(`co_preventivi`.`numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y')) AS `info` FROM `co_preventivi`) AS `preventivo` ON `preventivo`.`id` = `in_interventi`.`id_preventivo`
-    LEFT JOIN (SELECT `or_ordini`.`id`, CONCAT(`or_ordini`.`numero`, ' del ', DATE_FORMAT(`data`, '%d/%m/%Y')) AS `info` FROM `or_ordini`) AS `ordine` ON `ordine`.`id` = `in_interventi`.`id_ordine`
-    INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
-    LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.|lang|)
-    LEFT JOIN (SELECT `zz_files`.* FROM `zz_files` INNER JOIN `zz_modules` ON `zz_files`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules_lang`.`name` = 'Interventi') AS zz_files ON `zz_files`.`id_record` = `in_interventi`.`id`
-WHERE 
-    1=1 |segment(`in_interventi`.`id_segment`)| |date_period(`orario_inizio`,`data_richiesta`)|
-GROUP BY 
-    `in_interventi`.`id`
-HAVING 
-    2=2
-ORDER BY 
-    IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Interventi');
-
--- Allineamento vista Listini cliente
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM 
-    `mg_listini`
-    LEFT JOIN (SELECT `mg_listini_articoli`.`id_listino`, COUNT(`id_listino`) AS num FROM `mg_listini_articoli` GROUP BY `id_listino`) AS articoli ON `mg_listini`.`id`=`articoli`.`id_listino`
-    LEFT JOIN (SELECT `an_anagrafiche`.`id_listino`, COUNT(`id_listino`) AS num FROM `an_anagrafiche` GROUP BY `id_listino`) AS anagrafiche ON `mg_listini`.`id`=`anagrafiche`.`id_listino`
-    LEFT JOIN (SELECT `zz_users`.`id`, `zz_users`.`username` FROM `zz_users` INNER JOIN (SELECT `zz_operations`.`id_utente`, `zz_operations`.`id_record` FROM `zz_operations` LEFT JOIN `zz_modules_lang` ON `zz_modules_lang`.`name` = 'Listini cliente' ORDER BY `id_utente` DESC LIMIT 0, 1) AS `id`) AS `utente` ON `utente`.`id` = `mg_listini`.`id`
-WHERE 
-    1=1 
-HAVING 
-    2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Listini cliente');
-
--- Allineamento vista Ordini cliente
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-	`or_ordini`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN (SELECT `idordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `idordine`) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-    LEFT JOIN (SELECT `idordine`, MIN(`data_evasione`) AS `data_evasione` FROM `or_righe_ordini` WHERE (`qta` - `qta_evasa`)>0 GROUP BY `idordine`) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
-    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-    LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.|lang|)
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ',`co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idordine` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\\Ordini\\Ordine' GROUP BY original_document_id) AS `fattura` ON `fattura`.`idordine` = `or_ordini`.`id`
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'DDT ', `dt_ddt`.`numero_esterno` SEPARATOR ', ') AS `info`, `dt_righe_ddt`.`original_document_id` AS `idddt` FROM `dt_ddt` INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `original_document_type`='Modules\\Ordini\\Ordine' GROUP BY original_document_id) AS `ddt` ON `ddt`.`idddt`=`or_ordini`.`id`
-    LEFT JOIN (SELECT COUNT(`id`) as emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ordini cliente' AND |lang| AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AND `zz_operations`.`op` = 'send-email' GROUP BY id_record) AS email ON `email`.`id_record` = `or_ordini`.`id`
-WHERE
-    1=1 |segment(`or_ordini`.`id_segment`)| AND `dir` = 'entrata'  |date_period(`or_ordini`.`data`)|
-HAVING
-    2=2
-ORDER BY 
-	`data` DESC, 
-    CAST(`numero_esterno` AS UNSIGNED) DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ordini cliente');
-
--- Allineamento vista Ordini fornitore
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-	`or_ordini`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN (SELECT `idordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `idordine`) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
-    LEFT JOIN (SELECT `idordine`, MIN(`data_evasione`) AS `data_evasione` FROM `or_righe_ordini` WHERE (`qta` - `qta_evasa`)>0 GROUP BY `idordine`) AS `righe_da_evadere` ON `righe`.`idordine`=`righe_da_evadere`.`idordine`
-    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-    LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.|lang|)
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR ', ') AS info, co_righe_documenti.original_document_id AS idordine FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento WHERE original_document_type='Modules\\Ordini\\Ordine' GROUP BY idordine, original_document_id) AS fattura ON fattura.idordine = or_ordini.id
-    LEFT JOIN (SELECT COUNT(`id`) as emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ordini fornitore' AND |lang|) AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS email ON `email`.`id_record` = `or_ordini`.`id`
-WHERE
-    1=1 |segment(`or_ordini`.`id_segment`)| AND `dir` = 'uscita' |date_period(`or_ordini`.`data`)|
-HAVING
-    2=2
-ORDER BY 
-	`data` DESC, 
-    CAST(`numero_esterno` AS UNSIGNED) DESC"  WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ordini fornitore');
-
--- Allineamento vista Preventivi
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM
-    `co_preventivi`
-    LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-    LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND co_statipreventivi_lang.|lang|)
-    LEFT JOIN (SELECT `idpreventivo`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_preventivi` GROUP BY `idpreventivo`) AS righe ON `co_preventivi`.`id` = `righe`.`idpreventivo`
-    LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `an_anagrafiche`.`ragione_sociale` AS nome FROM `an_anagrafiche`)AS agente ON `agente`.`idanagrafica`=`co_preventivi`.`idagente`
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idpreventivo` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\\Preventivi\\Preventivo' GROUP BY `idpreventivo`, `original_document_id`) AS `fattura` ON `fattura`.`idpreventivo` = `co_preventivi`.`id`
-    LEFT JOIN (SELECT COUNT(id) as emails, em_emails.id_record FROM em_emails INNER JOIN zz_operations ON zz_operations.id_email = em_emails.id WHERE id_module IN(SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Preventivi' AND |lang|) AND `zz_operations`.`op` = 'send-email' GROUP BY em_emails.id_record) AS `email` ON `email`.`id_record` = `co_preventivi`.`id`
-WHERE 
-    1=1 |segment(`co_preventivi`.`id_segment`)| |date_period(custom,'|period_start|' >= `data_bozza` AND '|period_start|' <= `data_conclusione`,'|period_end|' >= `data_bozza` AND '|period_end|' <= `data_conclusione`,`data_bozza` >= '|period_start|' AND `data_bozza` <= '|period_end|',`data_conclusione` >= '|period_start|' AND `data_conclusione` <= '|period_end|',`data_bozza` >= '|period_start|' AND `data_conclusione` = NULL)| AND `default_revision` = 1
-GROUP BY 
-    `co_preventivi`.`id`, `fattura`.`info`
-HAVING 
-    2=2
-ORDER BY 
-    `co_preventivi`.`id` DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Preventivi');
 
 -- Allineamento vista Prima nota
 UPDATE `zz_modules` SET `options` = "
@@ -1869,28 +1566,6 @@ HAVING
 ORDER BY
     `co_movimenti`.`data` DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Prima nota');
 
--- Allineamento vista Scadenzario
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_scadenziario`
-    LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
-    LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN `an_anagrafiche` ON `co_scadenziario`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.|lang|)
-    LEFT JOIN (SELECT COUNT(id_email) as emails, zz_operations.id_record FROM zz_operations WHERE id_module IN(SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Scadenzario' AND |lang|) AND `zz_operations`.`op` = 'send-email' GROUP BY zz_operations.id_record) AS `email` ON `email`.`id_record` = `co_scadenziario`.`id`
-WHERE 
-    1=1 AND (`co_statidocumento`.`id` IS NULL OR `co_statidocumento`.`id` IN(SELECT id_record FROM co_statidocumento_lang WHERE name IN ('Emessa', 'Parzialmente pagato', 'Pagato'))) 
-HAVING
-    2=2
-ORDER BY 
-    `scadenza` ASC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Scadenzario');
-
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Stampe
@@ -1908,37 +1583,6 @@ HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Stampe');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Stampe' AND `zz_views`.`name` = 'Modulo';
 
--- Allineamento vista Tecnici e tariffe
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND |lang|)
-WHERE 
-    1=1 AND `an_tipianagrafiche_lang`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL
-HAVING 
-    2=2 
-ORDER BY 
-    `ragione_sociale`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Tecnici e tariffe');
-
--- Allineamento vista Template email
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM
-    `em_templates`
-    LEFT JOIN `em_templates_lang` ON (`em_templates_lang`.`id_record` = `em_templates`.`id` AND `em_templates_lang`.|lang|)
-    INNER JOIN `zz_modules` on `zz_modules`.`id` = `em_templates`.`id_module`
-    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
-WHERE
-    1=1 AND `deleted_at` IS NULL
-HAVING
-    2=2
-ORDER BY
-    `zz_modules_lang`.`name`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Template email');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_modules_lang`.`title`' WHERE `zz_modules_lang`.`name` = 'Template email' AND `zz_views`.`name` = 'Modulo';
 
 -- Allineamento vista Utenti e Permessi
@@ -1964,35 +1608,6 @@ ALTER TABLE `my_impianti_interventi` ADD `note` TEXT NOT NULL AFTER `idimpianto`
 UPDATE `zz_plugins` SET `script` = '', `directory` = 'impianti_intervento', `options` = 'custom' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE  `name` = 'Impianti');
 
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ {  "type": "table", "fields": "Numero, Data inizio, Data fine, Tipo", "query": "SELECT in_interventi.id, in_interventi.codice AS Numero, DATE_FORMAT(MAX(orario_inizio), ''%d/%m/%Y'') AS ''Data inizio'', DATE_FORMAT(MAX(orario_fine), ''%d/%m/%Y'') AS ''Data fine'', (SELECT name FROM in_tipiintervento LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = (SELECT `valore` FROM `zz_settings` WHERE `nome` = ''Lingua''))WHERE in_tipiintervento.id=in_interventi.idtipointervento) AS ''Tipo'', (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = ''Interventi'' LIMIT 1) AS _link_module_, in_interventi.id AS _link_record_ FROM in_interventi LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE 1=1 AND in_interventi.deleted_at IS NULL AND idanagrafica = |id_parent| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY in_interventi.id DESC"}	]}' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE `name` = 'Storico attività');
-
--- Allineamento vista Ddt di vendita
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM
-    `dt_ddt`
-    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT JOIN (SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-    LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.|lang|)    
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ',`co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idddt` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\\DDT\\DDT' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`idddt` = `dt_ddt`.`id`
-    LEFT JOIN (SELECT COUNT(`id`) as emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ddt di vendita') AND `zz_operations`.`op` = 'send-email' GROUP BY id_record) AS `email` ON `email`.`id_record` = `dt_ddt`.`id`
-WHERE
-    1=1 |segment(`dt_ddt`.`id_segment`)| AND `dir` = 'entrata' |date_period(`data`)|
-HAVING
-    2=2
-ORDER BY
-    `data` DESC,
-    CAST(`numero_esterno` AS UNSIGNED) DESC,
-    `dt_ddt`.`created_at` DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Ddt di vendita');
 
 -- Fix plugin Ddt del cliente
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", \"fields\": \"Numero, Data, Descrizione, Qtà\", \"query\": \"SELECT dt_ddt.id, IF(dt_tipiddt.dir = \'entrata\', (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \'Ddt di vendita\' LIMIT 1), (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \'Ddt di acquisto\' LIMIT 1)) AS _link_module_, dt_ddt.id AS _link_record_, IF(dt_ddt.numero_esterno = \'\', dt_ddt.numero, dt_ddt.numero_esterno) AS Numero, DATE_FORMAT(dt_ddt.data, \'%d/%m/%Y\') AS Data, dt_righe_ddt.descrizione AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(dt_righe_ddt.qta, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM dt_ddt LEFT JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt JOIN dt_tipiddt ON dt_ddt.idtipoddt = dt_tipiddt.id WHERE dt_ddt.idanagrafica=|id_parent| HAVING 2=2 ORDER BY dt_ddt.id DESC\"} ]}' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE `name` = 'Ddt del cliente');
@@ -2024,60 +1639,7 @@ WHERE
 HAVING
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Tipi scadenze');
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze`.`id`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'id';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'Nome';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`co_tipi_scadenze_lang`.`description`' WHERE `zz_modules_lang`.`name` = 'Tipi scadenze' AND `zz_views`.`name` = 'Descrizione';
-
--- Allineamento vista Movimenti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `mg_movimenti`
-	INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo`
-    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.|lang|)
-	LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
-    LEFT JOIN `zz_modules_lang` ON `zz_modules_lang`.`name` = 'Articoli'
-	LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record`
-	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
-	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
-	LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` GROUP BY `idanagrafica`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
-    LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins_lang`.`id_record` = `zz_plugins`.`id` AND `zz_plugins_lang`.|lang|) INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules_lang`.`name` = 'Articoli' AND `zz_plugins_lang`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
-WHERE
-    1=1 AND `mg_articoli`.`deleted_at` IS NULL
-GROUP BY 
-    `mg_movimenti`.`id`
-HAVING
-    2=2
-ORDER BY
-    `mg_movimenti`.`data` DESC,
-    `mg_movimenti`.`created_at` DESC" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Movimenti');
-
--- Allineamento vista Giacenze sedi
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `mg_articoli`
-    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
-    LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.|lang|)
-    LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `idstatoordine` IN(SELECT `id` FROM `or_statiordine` WHERE `completato` = 0) GROUP BY `idarticolo`) ordini ON `ordini`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT `idarticolo`, `idsede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
-    LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id`= `mg_articoli`.`id_categoria`
-    LEFT JOIN `mg_categorie_lang` AS categoria_lang ON (`categoria_lang`.`id_record` = `categoria`.`id` AND `categoria_lang`.|lang|)
-    LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id`=`mg_articoli`.`id_sottocategoria`
-    LEFT JOIN `mg_categorie_lang` AS sottocategoria_lang ON (`sottocategoria_lang`.`id_record` = `sottocategoria`.`id` AND `sottocategoria_lang`.|lang|)
-	LEFT JOIN (SELECT `co_iva`.`percentuale` AS perc, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id`=`zz_settings`.`valore`)AS iva ON `iva`.`nome`= 'Iva predefinita' 
-WHERE 
-    1=1 AND `mg_articoli`.`deleted_at` IS NULL 
-HAVING
-    2=2 AND `qta` > 0
-ORDER BY
-    `mg_articoli_lang`.`name`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Giacenze sedi');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`mg_articoli_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Descrizione';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`categoria_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Categoria';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`sottocategoria_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Giacenze sedi' AND `zz_views`.`name` = 'Sottocategoria';
 
 -- Aggiunta tabella zz_segments_lang
 CREATE TABLE IF NOT EXISTS `zz_segments_lang` (
@@ -2094,29 +1656,7 @@ ALTER TABLE `zz_segments_lang`
 
 INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_segments`;
 
-ALTER TABLE `zz_segments`
-    DROP `name`;
-
 ALTER TABLE `zz_segments_lang` ADD CONSTRAINT `zz_segments_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_segments`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
-
--- Allineamento vista Segmenti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM
-    `zz_segments`
-    LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.|lang|)
-    INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
-    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
-    LEFT JOIN (SELECT GROUP_CONCAT(`zz_groups_lang`.`name` ORDER BY `zz_groups_lang`.`name`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` LEFT JOIN `zz_groups_lang` ON (`zz_groups_lang`.`id_record` = `zz_groups`.`id` AND `zz_groups_lang`.|lang|) GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
-WHERE
-    1=1
-HAVING
-    2=2
-ORDER BY `zz_segments_lang`.`name`,
-    `zz_segments`.`id_module`" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Segmenti');
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_segments_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Segmenti' AND `zz_views`.`name` = 'Nome';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_segments_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Tipi documento' AND `zz_views`.`name` = 'Sezionale';
 
 -- Aggiunta tabella zz_views_lang
 CREATE TABLE IF NOT EXISTS `zz_views_lang` (
@@ -2132,9 +1672,6 @@ ALTER TABLE `zz_views_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_views`;
-
-ALTER TABLE `zz_views`
-    DROP `name`;
 
 ALTER TABLE `zz_views_lang` ADD CONSTRAINT `zz_views_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_views`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2206,9 +1743,6 @@ ALTER TABLE `zz_tasks_lang`
 
 INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_tasks`;
 
-ALTER TABLE `zz_tasks`
-    DROP `name`;
-
 ALTER TABLE `zz_tasks_lang` ADD CONSTRAINT `zz_tasks_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_tasks`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 -- Allineamento vista Gestione task
@@ -2222,7 +1756,6 @@ WHERE
     1=1 
 HAVING 
     2=2" WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Gestione task');
-UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks_lang`.`name`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'Nome';
 UPDATE `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views_lang`.`id_record` = `zz_views`.`id` AND `zz_views_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) SET `zz_views`.`query` = '`zz_tasks`.`id`' WHERE `zz_modules_lang`.`name` = 'Gestione task' AND `zz_views_lang`.`name` = 'id';
 
 -- Aggiunta tabella zz_prints_lang
@@ -2244,7 +1777,6 @@ ALTER TABLE `zz_prints_lang`
 INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `name`, `title`, `filename`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name`, `title`, `filename` FROM `zz_prints`;
 
 ALTER TABLE `zz_prints`
-    DROP `name`,
     DROP `title`,
     DROP `filename`;
 
@@ -2283,9 +1815,6 @@ ALTER TABLE `zz_imports_lang`
 
 INSERT INTO `zz_imports_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_imports`;
 
-ALTER TABLE `zz_imports`
-    DROP `name`;
-
 ALTER TABLE `zz_imports_lang` ADD CONSTRAINT `zz_imports_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_imports`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 -- Aggiunta tabella zz_hooks_lang
@@ -2303,9 +1832,6 @@ ALTER TABLE `zz_hooks_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 INSERT INTO `zz_hooks_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_hooks`;
-
-ALTER TABLE `zz_hooks`
-    DROP `name`;
 
 ALTER TABLE `zz_hooks_lang` ADD CONSTRAINT `zz_hooks_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_hooks`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2343,9 +1869,6 @@ ALTER TABLE `zz_group_module_lang`
 
 INSERT INTO `zz_group_module_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_group_module`;
 
-ALTER TABLE `zz_group_module`
-    DROP `name`;
-
 ALTER TABLE `zz_group_module_lang` ADD CONSTRAINT `zz_group_module_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_group_module`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
 -- Aggiunta tabella zz_cache_lang
@@ -2363,9 +1886,6 @@ ALTER TABLE `zz_cache_lang`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 INSERT INTO `zz_cache_lang` (`id`, `id_lang`, `id_record`, `name`) SELECT NULL, (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1), `id`, `name` FROM `zz_cache`;
-
-ALTER TABLE `zz_cache`
-    DROP `name`;
 
 ALTER TABLE `zz_cache_lang` ADD CONSTRAINT `zz_cache_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_cache`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
@@ -2422,23 +1942,7 @@ INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`, `help`) VALUES 
 
 ALTER TABLE `in_interventi` ADD `idpagamento` INT NOT NULL AFTER `id_ordine`;
 
-UPDATE `zz_views` 
-SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' 
-WHERE `zz_views`.`id` IN (
-    SELECT * 
-    FROM (
-        SELECT `id_record` 
-        FROM `zz_views_lang` 
-        INNER JOIN `zz_views` ON `zz_views`.`id` = `zz_views_lang`.`id_record` 
-        WHERE `name` = 'Netto a pagare' 
-        AND `id_module` = (
-            SELECT `zz_modules`.`id` 
-            FROM `zz_modules` 
-            LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` 
-            WHERE `name` = 'Fatture di vendita'
-        )
-    ) AS tmp
-);
+UPDATE `zz_views` SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsainps` - `co_documenti`.`ritenutaacconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = 'Netto a pagare' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Risorsa api per la sincronizzazione dei pagamenti su app
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES 

@@ -42,7 +42,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Module::find($id_module)->getTranslation('name').'"',
+            '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
         ]));
     }
 
@@ -67,7 +67,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
                     'category' => filter('categoria'),
-                    'id_module' => (new Module())->getByField('name', 'Gestione documentale', Models\Locale::getPredefined()->id),
+                    'id_module' => (new Module())->getByField('title', 'Gestione documentale', Models\Locale::getPredefined()->id),
                     'id_record' => $id_record,
                 ]);
 
@@ -221,7 +221,7 @@ elseif (filter('op') == 'modifica-allegato') {
 
     if (sizeof($id_allegati) == 1) {
         $upload = Upload::find($id_allegati[0]);
-        $upload->setTranslation('name', post('nome_allegato'));
+        $upload->setTranslation('title', post('nome_allegato'));
         $upload->category = post('categoria_allegato');
         $upload->save();
     } else {
@@ -492,7 +492,7 @@ if ($structure->permission == 'rw') {
         if (post('op') != null) {
             $custom_where = !empty($id_plugin) ? '`id_plugin` = '.prepare($id_plugin) : '`id_module` = '.prepare($id_module);
 
-            $query = 'SELECT `id`, `html_name` AS `name` FROM `zz_fields` WHERE '.$custom_where;
+            $query = 'SELECT `id`, `html_name` AS `title` FROM `zz_fields` WHERE '.$custom_where;
             $customs = $dbo->fetchArray($query);
 
             if (post('op') != 'delete') {

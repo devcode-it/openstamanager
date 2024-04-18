@@ -30,7 +30,7 @@ class PagamentoLang extends Model
     protected $table = 'co_pagamenti_lang';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function getModuleAttribute()

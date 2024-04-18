@@ -35,7 +35,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name') == 'Ordini cliente') {
+if ($module->getTranslation('title') == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -79,7 +79,7 @@ switch (post('op')) {
             }
 
             // Leggo la descrizione del pagamento
-            $query = 'SELECT `name` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($idpagamento);
+            $query = 'SELECT `title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($idpagamento);
             $rs = $dbo->fetchArray($query);
             $pagamento = $rs[0]['descrizione'];
 
@@ -141,7 +141,7 @@ switch (post('op')) {
             $ordine->save();
 
             if ($dbo->query($query)) {
-                $query = 'SELECT `name` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_statiordine`.`id`='.prepare($idstatoordine);
+                $query = 'SELECT `title` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_statiordine`.`id`='.prepare($idstatoordine);
                 $rs = $dbo->fetchArray($query);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
@@ -170,7 +170,7 @@ switch (post('op')) {
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 

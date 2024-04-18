@@ -26,7 +26,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 
-if ($module->getTranslation('name') == 'Ddt di vendita') {
+if ($module->getTranslation('title') == 'Ddt di vendita') {
     $dir = 'entrata';
     $module_fatture = 'Fatture di vendita';
 } else {
@@ -35,7 +35,7 @@ if ($module->getTranslation('name') == 'Ddt di vendita') {
 }
 
 // Segmenti
-$id_fatture = (new Module())->getByField('name', $module_fatture, Models\Locale::getPredefined()->id);
+$id_fatture = (new Module())->getByField('title', $module_fatture, Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -55,7 +55,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -190,12 +190,12 @@ if (App::debug()) {
 }
 
 $operations['crea_fattura'] = [
-    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
     'data' => [
-        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `co_tipidocumento_lang`.`name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` ='.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `co_tipidocumento_lang`.`title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` ='.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
@@ -208,7 +208,7 @@ $operations['cambia_stato'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt_lang`.`name` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt_lang`.`title` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -113,24 +113,24 @@ if ($righe_vuote) {
                         <div class="col-md-6">
                             <?php
     if (setting('Cambia automaticamente stato ddt fatturati')) {
-        $id_stato_fatt = (new Stato())->getByField('name', 'Fatturato', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new Stato())->getByField('name', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
 
         if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
             ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
                             <?php
         } else {
-            $id_stato_bozza = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
-            $id_stato_evaso = (new Stato())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
-            $id_stato_parz_evaso = (new Stato())->getByField('name', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+            $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
             ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dt_statiddt`.`id` IN (<?php echo implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]); ?>) ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
+                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dt_statiddt`.`id` IN (<?php echo implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]); ?>) ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
         }
     } else {
         ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoddt$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}
                             <?php
     }
 ?>
@@ -166,8 +166,8 @@ echo '
 
 // Conteggio numero articoli ddt in uscita
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
-$id_modulo_anagrafiche = (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id);
-$id_plugin_sedi = (new Plugin())->getByField('name', 'Sedi', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);
 if ($dir == 'entrata') {
     echo '
                         <div class="col-md-6">
@@ -347,7 +347,7 @@ echo '
         <div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Aspetto beni', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Aspetto beni', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -356,11 +356,11 @@ echo '
                 echo Modules::link('Causali', $record['idcausalet'], null, null, 'class="pull-right"');
             }
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Causali', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Causali', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`name` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name` ASC", "value": "$idspedizione$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idspedizione$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -374,7 +374,7 @@ echo '
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`name` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name` ASC", "value": "$idporto$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -386,7 +386,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -540,7 +540,7 @@ if (!$block_edit) {
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         WHERE 
             `idanagrafica`='.prepare($record['idanagrafica']).' 
-            AND `or_statiordine_lang`.`name` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+            AND `or_statiordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
             AND `or_tipiordine`.`dir`='.prepare($dir).'
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         GROUP BY 
@@ -556,7 +556,7 @@ if (!$block_edit) {
             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE 
-            `name` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
+            `title` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
             `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND 
             (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
         GROUP BY 
@@ -575,7 +575,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -789,7 +789,7 @@ $("#link_form").bind("keypress", function(e) {
 
 // Collegamenti diretti
 // Fatture collegate a questo ddt
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`title` AS tipo_documento, IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
 FROM `co_documenti` 
 INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 

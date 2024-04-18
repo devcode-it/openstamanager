@@ -31,7 +31,7 @@ class Nazione extends Model
     protected $table = 'an_nazioni';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function anagrafiche()

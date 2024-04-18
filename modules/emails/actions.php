@@ -30,7 +30,7 @@ switch (post('op')) {
 
         $template = Template::build($module, $id_account);
         $id_record = $dbo->lastInsertedID();
-        $template->setTranslation('name', $name);
+        $template->setTranslation('title', $name);
         $template->setTranslation('subject', $subject);
         $template->save();
 
@@ -39,7 +39,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $template->setTranslation('name', post('name'));
+        $template->setTranslation('title', post('name'));
         $template->id_account = post('smtp');
         $template->icon = post('icon');
         $template->tipo_reply_to = post('tipo_reply_to');
@@ -89,7 +89,7 @@ switch (post('op')) {
         $database->query('INSERT INTO `em_templates_lang` SELECT NULL, id_lang, '.$id_record.',name, subject, body FROM tmp_lang');
         $database->query('DROP TEMPORARY TABLE tmp');
         $database->query('DROP TEMPORARY TABLE tmp_lang');
-        $database->query('UPDATE `em_templates_lang` SET `name` = CONCAT (`name`, " (copia)") WHERE id_record = '.prepare($id_record));
+        $database->query('UPDATE `em_templates_lang` SET `title` = CONCAT (`title`, " (copia)") WHERE id_record = '.prepare($id_record));
         $database->query('UPDATE `em_templates` SET `predefined` = 0 WHERE `id` = '.prepare($id_record));
         flash()->info(tr('Template duplicato correttamente!'));
         break;

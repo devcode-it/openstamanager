@@ -25,21 +25,21 @@ $filter_agente = Auth::user()['gruppo'] == 'Agenti';
 switch ($resource) {
     case 'clienti':
         $id_azienda = setting('Azienda predefinita');
-        $tipologia = Tipo::find((new Tipo())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id))->id;
+        $tipologia = Tipo::find((new Tipo())->getByField('title', 'Cliente', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT
                 `an_anagrafiche`.`idanagrafica` AS id,
                 `an_anagrafiche`.`lat`,
                 `an_anagrafiche`.`lng`,
                 `is_bloccata`,
-                CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`name`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
+                CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
                 `idtipointervento_default` AS idtipointervento,
-                `in_tipiintervento_lang`.`name` AS idtipointervento_descrizione,
+                `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
                 `an_anagrafiche`.`idzona`,
                 `contratto`.`id` AS id_contratto,
                 `contratto`.`descrizione` AS descrizione_contratto,
                 `co_pagamenti`.`id` AS id_pagamento,
-                `co_pagamenti_lang`.`name` AS desc_pagamento,
+                `co_pagamenti_lang`.`title` AS desc_pagamento,
                 `banca_vendite`.`id` AS id_banca_vendite,
                 CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite
             FROM
@@ -51,7 +51,7 @@ switch ($resource) {
                 LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione`=`an_relazioni`.`id`
                 LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).")
                 LEFT JOIN
-                    (SELECT `co_contratti`.`id`, `idanagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_staticontratti_lang`.`name` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato`=`co_staticontratti`.`id` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto
+                    (SELECT `co_contratti`.`id`, `idanagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_staticontratti_lang`.`title` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato`=`co_staticontratti`.`id` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto
                         ON `an_anagrafiche`.`idanagrafica`=`contratto`.`idanagrafica`
                 LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_vendite`=`co_pagamenti`.`id`
                 LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id`=`co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).')
@@ -103,14 +103,14 @@ switch ($resource) {
 
     case 'fornitori':
         $id_azienda = setting('Azienda predefinita');
-        $tipologia = Tipo::find((new Tipo())->getByField('name', 'Fornitore', Models\Locale::getPredefined()->id))->id;
+        $tipologia = Tipo::find((new Tipo())->getByField('title', 'Fornitore', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT 
             `an_anagrafiche`.`idanagrafica` AS id, 
             CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, 
             `idtipointervento_default` AS `idtipointervento`, 
             `co_pagamenti`.`id` AS id_pagamento, 
-            `co_pagamenti_lang`.`name` AS desc_pagamento, 
+            `co_pagamenti_lang`.`title` AS desc_pagamento, 
             `banca_acquisti`.`id` AS id_banca_acquisti, 
             CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti 
         FROM 
@@ -147,7 +147,7 @@ switch ($resource) {
         break;
 
     case 'vettori':
-        $tipologia = Tipo::find((new Tipo())->getByField('name', 'Vettore', Models\Locale::getPredefined()->id))->id;
+        $tipologia = Tipo::find((new Tipo())->getByField('title', 'Vettore', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` AS idtipointervento FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
@@ -176,7 +176,7 @@ switch ($resource) {
          * - idanagrafica
          */
     case 'agenti':
-        $tipologia = Tipo::find((new Tipo())->getByField('name', 'Agente', Models\Locale::getPredefined()->id))->id;
+        $tipologia = Tipo::find((new Tipo())->getByField('title', 'Agente', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
@@ -216,7 +216,7 @@ switch ($resource) {
         break;
 
     case 'tecnici':
-        $tipologia = Tipo::find((new Tipo())->getByField('name', 'Tecnico', Models\Locale::getPredefined()->id))->id;
+        $tipologia = Tipo::find((new Tipo())->getByField('title', 'Tecnico', Models\Locale::getPredefined()->id))->id;
 
         $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `ragione_sociale`';
 
@@ -250,11 +250,11 @@ switch ($resource) {
         break;
 
     case 'clienti_fornitori':
-        $id_cliente = Tipo::find((new Tipo())->getByField('name', 'Cliente', Models\Locale::getPredefined()->id))->id;
-        $id_fornitore = Tipo::find((new Tipo())->getByField('name', 'Fornitore', Models\Locale::getPredefined()->id))->id;
-        $id_azienda = Tipo::find((new Tipo())->getByField('name', 'Azienda', Models\Locale::getPredefined()->id))->id;
+        $id_cliente = Tipo::find((new Tipo())->getByField('title', 'Cliente', Models\Locale::getPredefined()->id))->id;
+        $id_fornitore = Tipo::find((new Tipo())->getByField('title', 'Fornitore', Models\Locale::getPredefined()->id))->id;
+        $id_azienda = Tipo::find((new Tipo())->getByField('title', 'Azienda', Models\Locale::getPredefined()->id))->id;
 
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup, `idtipointervento_default`, `an_tipianagrafiche`.`id` as id_tipo FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup, `idtipointervento_default`, `an_tipianagrafiche`.`id` as id_tipo FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
@@ -304,7 +304,7 @@ switch ($resource) {
 
         // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, `ragione_sociale` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
@@ -440,23 +440,23 @@ switch ($resource) {
         break;
 
     case 'nazioni':
-        $query = 'SELECT `an_nazioni`.`id` AS id, `iso2`, CONCAT_WS(\' - \', `iso2`, `an_nazioni_lang`.`name`) AS descrizione FROM `an_nazioni` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY CASE WHEN `iso2`=\'IT\' THEN -1 ELSE `iso2` END';
+        $query = 'SELECT `an_nazioni`.`id` AS id, `iso2`, CONCAT_WS(\' - \', `iso2`, `an_nazioni_lang`.`title`) AS descrizione FROM `an_nazioni` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY CASE WHEN `iso2`=\'IT\' THEN -1 ELSE `iso2` END';
 
         foreach ($elements as $element) {
             $filter[] = '`an_nazioni`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`an_nazioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_nazioni_lang`.`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`iso2` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'CONCAT_WS(\' - \', `iso2`, `name`) LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'CONCAT_WS(\' - \', `iso2`, `title`) LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'regioni':
         if (isset($superselect['id_nazione'])) {
-            $query = 'SELECT `an_regioni`.`id` AS id, `an_regioni`.`iso2`, CONCAT(CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`name`), \' (\', `an_nazioni`.`iso2`, \')\') AS descrizione FROM `an_regioni` LEFT JOIN `an_regioni_lang` ON (`an_regioni`.`id` = `an_regioni_lang`.`id_record` AND `an_regioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_nazioni` ON `an_regioni`.`id_nazione` = `an_nazioni`.`id` |where| ORDER BY `an_regioni_lang`.`name`';
+            $query = 'SELECT `an_regioni`.`id` AS id, `an_regioni`.`iso2`, CONCAT(CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`title`), \' (\', `an_nazioni`.`iso2`, \')\') AS descrizione FROM `an_regioni` LEFT JOIN `an_regioni_lang` ON (`an_regioni`.`id` = `an_regioni_lang`.`id_record` AND `an_regioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_nazioni` ON `an_regioni`.`id_nazione` = `an_nazioni`.`id` |where| ORDER BY `an_regioni_lang`.`title`';
 
             foreach ($elements as $element) {
                 $filter[] = '`an_regioni`.`id`='.prepare($element);
@@ -465,15 +465,15 @@ switch ($resource) {
             $where[] = '`an_regioni`.`id_nazione`='.prepare($superselect['id_nazione']);
 
             if (!empty($search)) {
-                $search_fields[] = '`an_regioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`an_regioni_lang`.`title` LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = '`an_regioni`.`iso2` LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`name`) LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`title`) LIKE '.prepare('%'.$search.'%');
             }
         }
         break;
 
     case 'relazioni':
-        $query = "SELECT `an_relazioni`.`id`, CONCAT(`name`, IF(`an_relazioni`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, `colore` AS _bgcolor_ FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id` = `an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') |where| ORDER BY descrizione';
+        $query = "SELECT `an_relazioni`.`id`, CONCAT(`title`, IF(`an_relazioni`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, `colore` AS _bgcolor_ FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id` = `an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') |where| ORDER BY descrizione';
 
         foreach ($elements as $element) {
             $filter[] = '`an_relazioni`.`id`='.prepare($element);
@@ -484,33 +484,33 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`an_relazioni_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_relazioni_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'provenienze':
-        $query = 'SELECT `an_provenienze`.`id`, `an_provenienze_lang`.`name` as descrizione, `colore` AS bgcolor FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `descrizione`';
+        $query = 'SELECT `an_provenienze`.`id`, `an_provenienze_lang`.`title` as descrizione, `colore` AS bgcolor FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `descrizione`';
 
         foreach ($elements as $element) {
             $filter[] = '`an_provenienze`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`an_provenienze_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_provenienze_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'settori':
-        $query = 'SELECT `an_settori`.`id`, `an_settori_lang`.`name` as descrizione FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+        $query = 'SELECT `an_settori`.`id`, `an_settori_lang`.`title` as descrizione FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
             $filter[] = '`an_settori`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

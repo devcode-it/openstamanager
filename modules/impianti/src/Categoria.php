@@ -33,7 +33,7 @@ class Categoria extends Model
     protected static $parent_identifier = 'parent';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($nota = null, $colore = null)

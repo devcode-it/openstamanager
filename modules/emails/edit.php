@@ -187,7 +187,7 @@ if (!empty($newsletters[0])) {
 
     foreach ($newsletters as $newsletter) {
         echo '
-            <li>'.Modules::link('Newsletter', $newsletter->id, $newsletter->getTranslation('name'), null, '').'</li>';
+            <li>'.Modules::link('Newsletter', $newsletter->id, $newsletter->getTranslation('title'), null, '').'</li>';
     }
 
     echo '

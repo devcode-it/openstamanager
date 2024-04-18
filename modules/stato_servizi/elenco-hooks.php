@@ -32,7 +32,7 @@ echo '
 
 $hooks = $dbo->fetchArray('SELECT 
     `zz_hooks`.*, 
-    `zz_modules_lang`.`name` AS modulo
+    `zz_modules_lang`.`title` AS modulo
     FROM `zz_hooks`
         LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_hooks`.`id_module` = `zz_modules`.`id`
@@ -57,9 +57,9 @@ foreach ($gruppi as $modulo => $hooks) {
         $nome_tipo = 'hook';
 
         echo '
-            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->getTranslation('name')).'>
+            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->getTranslation('title')).'>
                 <td>
-                    '.$hook->getTranslation('name').(!empty($hook->help) ? '
+                    '.$hook->getTranslation('title').(!empty($hook->help) ? '
                     <i class="tip fa fa-question-circle-o" title="'.$hook->help.'"</i>' : '').'
                 </td>
              

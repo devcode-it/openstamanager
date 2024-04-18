@@ -96,7 +96,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $id_stato_attuale_documento = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_attuale_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -215,7 +215,7 @@ class Fattura extends Document
 
         $model->note = implode("\n", $notes);
 
-        if ($tipo_documento->getTranslation('name') == 'Fattura accompagnatoria di vendita') {
+        if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
             $model->idporto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
             $model->idcausalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
             $model->idspedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
@@ -247,7 +247,7 @@ class Fattura extends Document
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
-            if ($this->stato->getTranslation('name') == 'Bozza') {
+            if ($this->stato->getTranslation('title') == 'Bozza') {
                 $this->numero_esterno = '';
             } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
@@ -494,7 +494,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(fn ($item) => false !== strstr($item->getTranslation('name'), $nome))->sortBy('created_at');
+        return $this->uploads()->filter(fn ($item) => false !== strstr($item->getTranslation('title'), $nome))->sortBy('created_at');
     }
 
     /**
@@ -568,11 +568,11 @@ class Fattura extends Document
         $id_stato_precedente = $this->original['idstatodocumento'];
         $id_stato_attuale = $this->stato['id'];
 
-        $id_stato_bozza = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
-        $id_stato_emessa = (new Stato())->getByField('name', 'Emessa', \Models\Locale::getPredefined()->id);
-        $id_stato_annullata = (new Stato())->getByField('name', 'Annullata', \Models\Locale::getPredefined()->id);
-        $id_stato_non_valida = (new Stato())->getByField('name', 'Non valida', \Models\Locale::getPredefined()->id);
-        $id_stato_pagato = (new Stato())->getByField('name', 'Pagato', \Models\Locale::getPredefined()->id);
+        $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_emessa = (new Stato())->getByField('title', 'Emessa', \Models\Locale::getPredefined()->id);
+        $id_stato_annullata = (new Stato())->getByField('title', 'Annullata', \Models\Locale::getPredefined()->id);
+        $id_stato_non_valida = (new Stato())->getByField('title', 'Non valida', \Models\Locale::getPredefined()->id);
+        $id_stato_pagato = (new Stato())->getByField('title', 'Pagato', \Models\Locale::getPredefined()->id);
 
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
@@ -716,7 +716,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $id_stato_attuale = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_attuale = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
         $new->stato()->associate($id_stato_attuale);
 
         return $new;
@@ -897,7 +897,7 @@ class Fattura extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->getTranslation('name');
+        return $this->tipo->getTranslation('title');
     }
 
     public function getReferenceNumber()

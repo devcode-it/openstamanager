@@ -23,12 +23,12 @@ use Tasks\Task;
 switch (post('op')) {
     case 'update':
         $name = post('name');
-        $task_new = (new Task())->getByField('name', $name);
+        $task_new = (new Task())->getByField('title', $name);
 
         if (!empty($task_new) && $task_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro task.'));
         } else {
-            $task->setTranslation('name', $name);
+            $task->setTranslation('title', $name);
             $task->class = post('class');
             $task->expression = post('expression');
             $task->save();

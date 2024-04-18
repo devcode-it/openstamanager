@@ -59,7 +59,7 @@ class Preventivi extends AppResource implements RetrieveInterface
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.\App::getLang().")
         WHERE 
-            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `co_statipreventivi`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
+            `an_tipianagrafiche_lang`.`title` = 'Cliente' AND `co_statipreventivi`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -81,7 +81,7 @@ class Preventivi extends AppResource implements RetrieveInterface
             `co_preventivi`.`nome`,
             `co_preventivi`.`numero`,
             `co_preventivi`.`data_bozza`,
-            `co_statipreventivi_lang`.`name` AS stato
+            `co_statipreventivi_lang`.`title` AS stato
         FROM 
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`

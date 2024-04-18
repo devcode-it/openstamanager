@@ -41,7 +41,7 @@ $query = 'SELECT
         `an_anagrafiche`.`ragione_sociale`,
         `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
         `in_tipiintervento`.`deleted_at` AS tipo_deleted_at,
-        `in_tipiintervento_lang`.`name` AS descrizione_tipo,
+        `in_tipiintervento_lang`.`title` AS descrizione_tipo,
         `in_interventi_tecnici`.`tipo_scontokm` AS tipo_sconto_km,
         `user`.`id` AS id_user
     FROM
@@ -270,7 +270,7 @@ if (!$is_completato) {
     </div>
 
     <div class="col-md-offset-4 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
     </div>
 
     <div class="col-md-2">

@@ -67,7 +67,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template_email->getTranslation('name')) == $template_email->getTranslation('name')) ? $template_email->getTranslation('name') : lcfirst($template_email->getTranslation('name'))),
+                'title' => tr('Invia').' '.((strtoupper($template_email->getTranslation('title')) == $template_email->getTranslation('title')) ? $template_email->getTranslation('title') : lcfirst($template_email->getTranslation('title'))),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
             ];

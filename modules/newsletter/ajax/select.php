@@ -37,7 +37,7 @@ switch ($resource) {
         // Gestione anagrafiche come destinatari
         $query = "SELECT CONCAT('anagrafica_', `an_anagrafiche`.`idanagrafica`) AS id,
            CONCAT(`an_anagrafiche`.`ragione_sociale`, IF(`an_anagrafiche`.`citta` != '' OR `an_anagrafiche`.`provincia` != '', CONCAT(' (', `an_anagrafiche`.`citta`, IF(`an_anagrafiche`.`provincia` != '', `an_anagrafiche`.`provincia`, ''), ')'), ''), ' [', `email`, ']') AS text,
-           `an_tipianagrafiche_lang`.`name` AS optgroup
+           `an_tipianagrafiche_lang`.`title` AS optgroup
         FROM 
             `an_anagrafiche`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
@@ -98,7 +98,7 @@ switch ($resource) {
         break;
 
     case 'liste_newsletter':
-        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`name`, ' (', COUNT(*), ' `destinatari`)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` WHERE 1=1 |where| ORDER BY `name` ASC';
+        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`title`, ' (', COUNT(*), ' `destinatari`)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` WHERE 1=1 |where| ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`id`='.prepare($element);
@@ -109,7 +109,7 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         // Aggiunta filtri di ricerca

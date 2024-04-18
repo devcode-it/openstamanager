@@ -39,7 +39,7 @@ foreach ($fields as $key => $field) {
                 <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.
-                            $field->getTranslation('name').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">('.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().')</small>
+                            $field->getTranslation('title').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">('.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().')</small>
                         </h3>
 
                         <div class="box-tools pull-right">
@@ -53,7 +53,7 @@ foreach ($fields as $key => $field) {
                             <input type="hidden" value="'.$field->id.'" name="id['.$key.']">
 
                             <div class="col-md-12">
-                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field->getTranslation('name').'", "readonly": "'.(!$editable).'", "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
+                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field->getTranslation('title').'", "readonly": "'.(!$editable).'", "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
                             </div>
                         </div>
 
@@ -73,7 +73,7 @@ foreach ($fields as $key => $field) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+                                {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
     $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field->id));
 
     echo $results[0]['gruppi'].'"';
@@ -163,9 +163,9 @@ foreach ($fields as $field) {
                         ';
 
     if ($field->visible) {
-        echo '<strong class="text-success">'.$field->getTranslation('name').'</strong>';
+        echo '<strong class="text-success">'.$field->getTranslation('title').'</strong>';
     } else {
-        echo '<span class="text-danger">'.$field->getTranslation('name').'</span>';
+        echo '<span class="text-danger">'.$field->getTranslation('title').'</span>';
     }
 
     echo '
@@ -201,7 +201,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
+                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC" ]}
                 </div>
 
                 <div class="col-md-6">

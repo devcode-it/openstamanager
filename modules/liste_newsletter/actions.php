@@ -27,14 +27,14 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'add':
         $name = post('name');
-        $lista_new = Lista::find((new Lista())->getByField('name', $name));
+        $lista_new = Lista::find((new Lista())->getByField('title', $name));
 
         if (!empty($lista_new) && $lista_new->id != $id_record) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             $lista = Lista::build($name);
             $id_record = $lista->id;
-            $lista->setTranslation('name', $name);
+            $lista->setTranslation('title', $name);
             $lista->save();
 
             flash()->info(tr('Nuova lista aggiunta.'));
@@ -51,12 +51,12 @@ switch (filter('op')) {
             $query = html_entity_decode($query);
         }
 
-        $lista_new = Lista::find((new Lista())->getByField('name', $name));
+        $lista_new = Lista::find((new Lista())->getByField('title', $name));
 
         if (!empty($lista_new) && $lista_new->id != $id_record) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
-            $lista->setTranslation('name', $name);
+            $lista->setTranslation('title', $name);
             $lista->setTranslation('description', $description);
             $lista->query = $query;
             $lista->save();

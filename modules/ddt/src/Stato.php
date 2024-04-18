@@ -30,7 +30,7 @@ class Stato extends Model
     protected $table = 'dt_statiddt';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function ddt()

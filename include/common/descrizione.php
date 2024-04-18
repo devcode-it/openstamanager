@@ -32,7 +32,7 @@ echo '
         </div>
     </div>';
 
-if ($module->getTranslation('name') == 'Preventivi' && $options['op'] == 'manage_descrizione') {
+if ($module->getTranslation('title') == 'Preventivi' && $options['op'] == 'manage_descrizione') {
     echo '
     <div class="row">
         <div class="col-md-6">

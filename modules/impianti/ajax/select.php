@@ -89,7 +89,7 @@ switch ($resource) {
         if (isset($superselect['matricola'])) {
             $query = 'SELECT 
                 `my_componenti`.`id`, 
-                CONCAT("#", `my_componenti`.`id`, ": ", `mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`name`) AS descrizione
+                CONCAT("#", `my_componenti`.`id`, ": ", `mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`title`) AS descrizione
             FROM 
                 `my_componenti`
                 INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `my_componenti`.`id_articolo`
@@ -120,7 +120,7 @@ switch ($resource) {
         break;
 
     case 'categorie_imp':
-        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
             $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
@@ -129,7 +129,7 @@ switch ($resource) {
         $where[] = '`parent` IS NULL';
 
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -140,7 +140,7 @@ switch ($resource) {
          */
     case 'sottocategorie_imp':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`name` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
             foreach ($elements as $element) {
                 $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
@@ -149,7 +149,7 @@ switch ($resource) {
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
-                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

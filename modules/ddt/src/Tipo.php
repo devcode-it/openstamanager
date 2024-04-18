@@ -30,7 +30,7 @@ class Tipo extends Model
     protected $table = 'dt_tipiddt';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function ddt()

@@ -153,7 +153,7 @@ class Upload extends Model
     {
         $parent = $this->plugin ?: $this->module;
 
-        return strtolower($parent ? $parent->getTranslation('name') : '');
+        return strtolower($parent ? $parent->getTranslation('title') : '');
     }
 
     /**

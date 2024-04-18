@@ -36,7 +36,7 @@ class Hook extends Model
     protected $table = 'zz_hooks';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
     protected $appends = [
         'permission',

@@ -31,7 +31,7 @@ use Modules\Fatture\Tipo;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 // Segmenti
-$id_fatture = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -42,7 +42,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
-$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`name` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_completato` = 1')['stati_completati'];
+$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_completato` = 1')['stati_completati'];
 
 switch (post('op')) {
     case 'crea_fattura':
@@ -52,7 +52,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -161,7 +161,7 @@ switch (post('op')) {
                 $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
                 $new_contratto->data_bozza = Carbon::now();
 
-                $stato = (new StatoContratto())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+                $stato = (new StatoContratto())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
                 $new_contratto->stato()->associate($stato);
 
                 $new_contratto->save();
@@ -212,14 +212,14 @@ switch (post('op')) {
                     foreach ($allegati as $allegato) {
                         $allegato->copia([
                             'id_module' => $id_module,
-                            'id_plugin' => (new Plugin())->getByField('name', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
+                            'id_plugin' => (new Plugin())->getByField('title', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
                             'id_record' => $id_promemoria,
                         ]);
                     }
                 }
 
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
-                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($contratto->id));
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($contratto->id));
 
                 ++$numero_totale;
             }
@@ -262,12 +262,12 @@ switch (post('op')) {
 }
 
 $operations['crea_fattura'] = [
-    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
     'data' => [
-        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}<br>
         {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
@@ -290,7 +290,7 @@ $operations['cambia_stato'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
         'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `name` AS descrizione, `colore` as _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `name`" ]}',
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` AS descrizione, `colore` as _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

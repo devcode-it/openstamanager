@@ -29,7 +29,7 @@ if (!empty(setting('Magazzino cespiti'))) {
 			INNER JOIN `zz_modules` ON `zz_prints`.`id_module`=`zz_modules`.`id` 
 			LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
 		WHERE 
-			`zz_modules_lang`.`name`="Articoli" AND `zz_prints_lang`.`name`="Inventario cespiti"')['id'];
+			`zz_modules_lang`.`title`="Articoli" AND `zz_prints_lang`.`title`="Inventario cespiti"')['id'];
 
     echo '
 	<form action="'.base_path().'/pdfgen.php?id_print='.$id_print.'" method="post" target="_blank">

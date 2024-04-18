@@ -22,9 +22,9 @@ use Models\Module;
 use Models\Plugin;
 
 $plugin = Plugin::find($id_plugin);
-$id_module = (new Module())->getByField('name', 'Contratti', Models\Locale::getPredefined()->id);
+$id_module = (new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id);
 $block_edit = filter('add') ? false : true;
-$id_module_interventi = (new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id);
+$id_module_interventi = (new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id);
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
@@ -47,7 +47,7 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`name` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
+$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`title` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');

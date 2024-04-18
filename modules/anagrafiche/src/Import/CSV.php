@@ -253,7 +253,7 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['tipologia']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $id_tipo = (new Tipo())->getByField('name', $tipo);
+                $id_tipo = (new Tipo())->getByField('title', $tipo);
 
                 // Creo il tipo anagrafica se non esiste
                 if (empty($id_tipo)) {
@@ -264,7 +264,7 @@ class CSV extends CSVImporter
                         'name' => $tipo,
                     ])['id'];
 
-                    $id_tipo = (new Tipo())->getByField('name', $tipo);
+                    $id_tipo = (new Tipo())->getByField('title', $tipo);
                 }
 
                 $tipologie[] = $id_tipo;
@@ -280,7 +280,7 @@ class CSV extends CSVImporter
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
-            $record['id_nazione'] = (new Nazione())->getByField('name', 'Italia', \Models\Locale::getPredefined()->id);
+            $record['id_nazione'] = (new Nazione())->getByField('title', 'Italia', \Models\Locale::getPredefined()->id);
         } else {
             unset($record['id_nazione']);
         }
@@ -289,7 +289,7 @@ class CSV extends CSVImporter
         $id_settore = '';
         if (!empty($record['id_settore'])) {
             $settore = $record['id_settore'];
-            $id_settore = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE LOWER(`name`) = LOWER('.prepare($settore).')');
+            $id_settore = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE LOWER(`title`) = LOWER('.prepare($settore).')');
 
             if (empty($id_settore)) {
                 $id_settore = database()->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');

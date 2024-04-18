@@ -24,7 +24,7 @@ $r = $dbo->fetchOne('SELECT `co_scadenziario`.*, `co_documenti`.*,
     `an_referenti`.`nome`,
     `co_scadenziario`.`da_pagare` - `co_scadenziario`.`pagato` AS totale,
 	`pec`,
-	`name` AS pagamento,
+	`title` AS pagamento,
     (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(`scadenza`,"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE `scadenza` < NOW() AND `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica` ORDER BY `scadenza`) AS scadenze_fatture_scadute
 FROM `co_scadenziario`
     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenziario`.`iddocumento`

@@ -32,7 +32,7 @@ echo '
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->getTranslation('name').'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
+                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->getTranslation('title').'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
                 </div>
 
                 <div class="col-md-6">

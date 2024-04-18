@@ -23,7 +23,7 @@ use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
-$structure = Module::find((new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id));
+$structure = Module::find((new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id));
 
 // Valori di ricerca
 $where['servizio'] = '0';
@@ -102,7 +102,7 @@ foreach ($data['results'] as $r) {
         <tr>
             <td>'.$articolo->codice.'</td>
             <td>'.$r['Categoria'].'</td>
-            <td>'.$articolo->getTranslation('name').'</td>
+            <td>'.$articolo->getTranslation('title').'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
             <td class="text-right">'.Translator::numberToLocale($articolo->qta).' '.$articolo->um.'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>

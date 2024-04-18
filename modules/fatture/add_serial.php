@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\DDT\DDT;
 
 $module = Module::find($id_module);
-$id_module_articoli = (new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id);
+$id_module_articoli = (new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id);
 
 // Controllo sulla direzione monetaria
 $uscite = [
@@ -32,7 +32,7 @@ $uscite = [
     'Ordini fornitore',
 ];
 
-if (in_array($module->getTranslation('name'), $uscite)) {
+if (in_array($module->getTranslation('title'), $uscite)) {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';
@@ -66,17 +66,17 @@ $data = [
 ];
 
 // Individuazione delle tabelle interessate
-if (in_array($module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
-} elseif (in_array($module->getTranslation('name'), ['Ddt di vendita', 'Ddt di acquisto'])) {
+} elseif (in_array($module->getTranslation('title'), ['Ddt di vendita', 'Ddt di acquisto'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
-} elseif (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornitore'])) {
+} elseif (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
-} elseif ($module->getTranslation('name') == 'Interventi') {
+} elseif ($module->getTranslation('title') == 'Interventi') {
     $modulo = 'int';
-} elseif ($module->getTranslation('name') == 'Contratti') {
+} elseif ($module->getTranslation('title') == 'Contratti') {
     $modulo = 'con';
 } else {
     $modulo = 'veb';
@@ -88,7 +88,7 @@ $riga = str_replace('id', 'id_riga_', $id);
 
 $idriga = get('idriga') ?: get('riga_id');
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`idarticolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`title`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`idarticolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
 
 echo '
 <h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
@@ -195,7 +195,7 @@ if ($dir == 'entrata') {
     </div>';
     }
 
-    $module_fatture = (new Module())->getByField('name', 'Fatture di acquisto', Models\Locale::getPredefined()->id);
+    $module_fatture = (new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id);
 
     echo '
     <br>

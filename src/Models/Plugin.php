@@ -42,7 +42,6 @@ class Plugin extends Model
     use RecordTrait;
 
     protected static $translated_fields = [
-        'name',
         'title',
     ];
 

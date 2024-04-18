@@ -39,8 +39,8 @@ $query = 'SELECT
         `an_sedi`.`targa`,
         `an_sedi`.`nome`,
         `mg_articoli`.`codice`,
-        `mg_articoli_lang`.`name` as descrizione,
-        `mg_categorie_lang`.`name` AS subcategoria,
+        `mg_articoli_lang`.`title` as descrizione,
+        `mg_categorie_lang`.`title` AS subcategoria,
         SUM(`mg_movimenti`.`qta`) AS qta,
         `mg_articoli`.`um`
     FROM 
@@ -53,7 +53,7 @@ $query = 'SELECT
     WHERE
         '.implode(' AND ', $where).'
     GROUP BY 
-        `an_sedi`.`targa`, `an_sedi`.`nome`, `an_sedi`.`descrizione`, `mg_articoli`.`codice`, `mg_articoli_lang`.`name`, `mg_categorie_lang`.`name`, `mg_articoli`.`um`
+        `an_sedi`.`targa`, `an_sedi`.`nome`, `an_sedi`.`descrizione`, `mg_articoli`.`codice`, `mg_articoli_lang`.`title`, `mg_categorie_lang`.`title`, `mg_articoli`.`um`
     ORDER BY 
         `an_sedi`.`targa`, `an_sedi`.`descrizione`';
 

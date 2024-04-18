@@ -148,7 +148,7 @@ switch (filter('op')) {
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
-        $new_stato = (new Stato())->getByField('name', 'Pagato', Models\Locale::getPredefined()->id);
+        $new_stato = (new Stato())->getByField('title', 'Pagato', Models\Locale::getPredefined()->id);
 
         if ($fattura->isAutofattura() && !empty($id_autofattura)) {
             $autofattura_collegata = Fattura::find($id_autofattura);
@@ -175,7 +175,7 @@ switch (filter('op')) {
 
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT `idanagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
-        $id_tipo = (new Tipo())->getByField('name', 'Fornitore', Models\Locale::getPredefined()->id);
+        $id_tipo = (new Tipo())->getByField('title', 'Fornitore', Models\Locale::getPredefined()->id);
         $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `idanagrafica`='.prepare($anagrafica['idanagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
@@ -272,7 +272,7 @@ switch (filter('op')) {
 
             $iva[$key] = [
                 'id' => $aliquota->id,
-                'descrizione' => $aliquota->getTranslation('name'),
+                'descrizione' => $aliquota->getTranslation('title'),
             ];
         }
 
@@ -446,7 +446,7 @@ switch (filter('op')) {
                 `dt_righe_ddt`.`is_descrizione`, 
                 `dt_righe_ddt`.`idarticolo`, 
                 `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS opzione
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
             FROM 
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -488,7 +488,7 @@ switch (filter('op')) {
                     `or_righe_ordini`.`idarticolo`, 
                     `or_righe_ordini`.`is_sconto`, 
                     'ordine' AS ref,
-                    CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`name`  , ']') AS opzione
+                    CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
                 FROM `or_righe_ordini`
                     INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                     INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
@@ -533,7 +533,7 @@ switch (filter('op')) {
                         `dt_righe_ddt`.`idarticolo`, 
                         `dt_righe_ddt`.`is_sconto`, 
                         'ddt' AS ref,
-                        CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS opzione
+                        CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
                     FROM 
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -544,7 +544,7 @@ switch (filter('op')) {
                         `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
                         |where_ddt| AND 
                         `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND 
-                        `dt_statiddt_lang`.`name` != 'Fatturato' AND
+                        `dt_statiddt_lang`.`title` != 'Fatturato' AND
                         `dt_tipiddt`.`dir` = 'uscita'
                 UNION 
                     SELECT 
@@ -565,7 +565,7 @@ switch (filter('op')) {
                         `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
                         |where_ordini| AND 
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
-                        `or_statiordine_lang` WHERE `name` != 'Fatturato' AND
+                        `or_statiordine_lang` WHERE `title` != 'Fatturato' AND
                         `or_tipiordine`.`dir` ='uscita'";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
@@ -642,7 +642,7 @@ switch (filter('op')) {
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
                         'id_articolo' => $riga->idarticolo,
-                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('name')),
+                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
                         'id_conto' => $riga->articolo->idconto_acquisto,
                         'desc_conto' => str_replace(' ', '_', $desc_conto),
                     ],

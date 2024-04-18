@@ -24,7 +24,7 @@ $stati_abilitati = Stato::where('is_revisionabile', '=', '1')->get();
 $stati = [];
 
 foreach ($stati_abilitati as $stato) {
-    $stati[] = $stato->getTranslation('name');
+    $stati[] = $stato->getTranslation('title');
 }
 
 // Crea revisione
@@ -45,7 +45,7 @@ $stati_abilitati = Stato::where('is_fatturabile', '=', '1')->orWhere('is_complet
 $stati = [];
 
 foreach ($stati_abilitati as $stato) {
-    $stati[] = $stato->getTranslation('name');
+    $stati[] = $stato->getTranslation('title');
 }
 
 // Creazione altri documenti

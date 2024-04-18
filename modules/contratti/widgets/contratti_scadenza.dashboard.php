@@ -41,7 +41,7 @@ $rs = $dbo->fetchArray('SELECT
         `co_contratti`.`rinnovabile` = 1 AND
         YEAR(`data_conclusione`) > 1970 AND
         `co_contratti`.`id` NOT IN (SELECT `idcontratto_prev` FROM `co_contratti` contratti) AND
-        `co_staticontratti_lang`.`name` NOT IN ("Concluso", "Rifiutato", "Bozza")
+        `co_staticontratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza")
     GROUP BY
         `co_contratti`.`id`
     HAVING 

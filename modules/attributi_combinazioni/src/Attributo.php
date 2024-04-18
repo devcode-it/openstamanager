@@ -16,7 +16,6 @@ class Attributo extends Model
     protected $table = 'mg_attributi';
 
     protected static $translated_fields = [
-        'name',
         'title',
     ];
 

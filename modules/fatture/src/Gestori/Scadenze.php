@@ -102,7 +102,7 @@ class Scadenze
     protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura')
     {
         $numero = $fattura->numero_esterno ?: $fattura->numero;
-        $descrizione = $fattura->tipo->getTranslation('name').' numero '.$numero;
+        $descrizione = $fattura->tipo->getTranslation('title').' numero '.$numero;
         $idanagrafica = $fattura->idanagrafica;
 
         $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);

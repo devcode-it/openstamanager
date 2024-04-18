@@ -211,7 +211,7 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists(Cache::class)) {
-                Cache::find((new Cache())->getByField('name', 'Ultima versione di OpenSTAManager disponibile', Models\Locale::getPredefined()->id))->set(null);
+                Cache::find((new Cache())->getByField('title', 'Ultima versione di OpenSTAManager disponibile', Models\Locale::getPredefined()->id))->set(null);
             }
 
             // Correzione permessi per le cartelle backup e files
@@ -391,7 +391,7 @@ class Update
 
                 // Individuazione delle chiavi esterne della tabella
                 $fk_query = 'SELECT
-                    KEY_COLUMN_USAGE.CONSTRAINT_NAME AS `name`,
+                    KEY_COLUMN_USAGE.CONSTRAINT_NAME AS `title`,
                     KEY_COLUMN_USAGE.COLUMN_NAME AS `column`,
                     KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME AS `referenced_table`,
                     KEY_COLUMN_USAGE.REFERENCED_COLUMN_NAME AS `referenced_column`,

@@ -25,14 +25,14 @@ switch ($resource) {
      * - split_payment
      */
     case 'iva':
-        $query = 'SELECT `co_iva`.`id`, IF( `codice_natura_fe` IS NULL, IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), CONCAT( IF(`codice` IS NULL, `name`, CONCAT(`codice`, " - ", `name`)), " (", `codice_natura_fe`, ")" ) ) AS descrizione, `percentuale` FROM co_iva LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `descrizione` ASC';
+        $query = 'SELECT `co_iva`.`id`, IF( `codice_natura_fe` IS NULL, IF(`codice` IS NULL, `title`, CONCAT(`codice`, " - ", `title`)), CONCAT( IF(`codice` IS NULL, `title`, CONCAT(`codice`, " - ", `title`)), " (", `codice_natura_fe`, ")" ) ) AS descrizione, `percentuale` FROM co_iva LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `descrizione` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`co_iva`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`codice` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`codice_natura_fe` LIKE '.prepare('%'.$search.'%');
         }

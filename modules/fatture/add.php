@@ -23,7 +23,7 @@ use Modules\Fatture\Tipo;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name') == 'Fatture di vendita') {
+if ($module->getTranslation('title') == 'Fatture di vendita') {
     $dir = 'entrata';
     $tipo_anagrafica = tr('Cliente');
 } else {
@@ -63,13 +63,13 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module->getTranslation('name') == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module->getTranslation('title') == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, ' - ', `co_tipidocumento_lang`.`name`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`name` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `co_tipidocumento`.`enabled` = 1 AND `co_tipidocumento`.`dir` = '<?php echo $dir; ?>' ORDER BY `co_tipidocumento`.`codice_tipo_documento_fe`", "value": "<?php echo $idtipodocumento; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, ' - ', `co_tipidocumento_lang`.`title`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`title` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `co_tipidocumento`.`enabled` = 1 AND `co_tipidocumento`.`dir` = '<?php echo $dir; ?>' ORDER BY `co_tipidocumento`.`codice_tipo_documento_fe`", "value": "<?php echo $idtipodocumento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

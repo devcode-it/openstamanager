@@ -30,7 +30,7 @@ class Stato extends Model
     protected $table = 'co_statidocumento';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function fatture()

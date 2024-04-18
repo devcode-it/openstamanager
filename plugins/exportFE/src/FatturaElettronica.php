@@ -68,7 +68,7 @@ class FatturaElettronica
         // Controllo sulla possibilità di creare la fattura elettronica
         // Posso fatturare ai privati utilizzando il codice fiscale
         if ($this->documento->stato) {
-            if ($this->documento->stato->getTranslation('name') == 'Bozza') {
+            if ($this->documento->stato->getTranslation('title') == 'Bozza') {
                 throw new \UnexpectedValueException();
             }
         }
@@ -286,7 +286,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return \Uploads::getDirectory((new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id));
+        return \Uploads::getDirectory((new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id));
     }
 
     /**
@@ -426,7 +426,7 @@ class FatturaElettronica
         $errors = [];
 
         // Controlli sulla fattura stessa
-        if ($fattura->stato->getTranslation('name') == 'Bozza') {
+        if ($fattura->stato->getTranslation('title') == 'Bozza') {
             $missing = [
                 'state' => tr('Stato ("Emessa")'),
             ];
@@ -1075,13 +1075,13 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $database = database();
 
-        $causale = $database->fetchOne('SELECT `name` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id`=`dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']))['name'];
-        $aspetto = $database->fetchOne('SELECT `name` FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']))['name'];
+        $causale = $database->fetchOne('SELECT `title` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id`=`dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']))['name'];
+        $aspetto = $database->fetchOne('SELECT `title` FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']))['name'];
 
         $result = [];
 
         // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
-        if ($documento->tipo->getTranslation('name') == 'Fattura accompagnatoria di vendita') {
+        if ($documento->tipo->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
             if ($documento['idvettore']) {
                 $vettore = Anagrafica::find($documento['idvettore']);
                 $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
@@ -1361,7 +1361,7 @@ class FatturaElettronica
             }
         }
 
-        if ($documento->tipo->getTranslation('name') == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
+        if ($documento->tipo->getTranslation('title') == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
         }
 
@@ -1623,7 +1623,7 @@ class FatturaElettronica
                 'ImponibileImporto' => 0,
                 'Imposta' => 0,
                 'EsigibilitaIVA' => $aliquota->esigibilita,
-                'RiferimentoNormativo' => $aliquota->getTranslation('name'),
+                'RiferimentoNormativo' => $aliquota->getTranslation('title'),
             ];
 
             // 2.2.2
@@ -1701,7 +1701,7 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id);
+        $id_module = (new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id);
         $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1848,7 +1848,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => (new Module())->getByField('name', 'Fatture di vendita', \Models\Locale::getPredefined()->id),
+            'id_module' => (new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id),
             'id_record' => $this->getDocumento()['id'],
         ];
     }

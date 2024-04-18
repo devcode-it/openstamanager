@@ -31,7 +31,7 @@ switch (filter('op')) {
         $esigibilita = post('esigibilita');
         $descrizione = post('descrizione');
 
-        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('name', $descrizione))->where('codice', '=', $codice)->where('id', '!=', $iva->id)->first();
+        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->where('id', '!=', $iva->id)->first();
         if (!$aliquota) {
             $iva->esente = $esente;
             $iva->percentuale = $percentuale;
@@ -40,7 +40,7 @@ switch (filter('op')) {
             $iva->codice = $codice;
             $iva->codice_natura_fe = $codice_natura_fe;
             $iva->esigibilita = $esigibilita;
-            $iva->setTranslation('name', $descrizione);
+            $iva->setTranslation('title', $descrizione);
             $iva->save();
 
             // Messaggio di avvertenza
@@ -67,11 +67,11 @@ switch (filter('op')) {
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 
-        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('name', $descrizione))->where('codice', '=', $codice)->first();
+        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->first();
         if (!$aliquota) {
             $iva = Aliquota::build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
             $id_record = $dbo->lastInsertedID();
-            $iva->setTranslation('name', $descrizione);
+            $iva->setTranslation('title', $descrizione);
             $iva->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

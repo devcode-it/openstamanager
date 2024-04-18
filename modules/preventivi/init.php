@@ -29,7 +29,7 @@ if (!empty($id_record)) {
             `co_statipreventivi`.`is_pianificabile`,
             `co_statipreventivi`.`is_completato`,
             `co_statipreventivi`.`is_revisionabile`,
-            `co_statipreventivi_lang`.`name` AS stato
+            `co_statipreventivi_lang`.`title` AS stato
         FROM 
             `co_preventivi` 
             INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`

@@ -20,9 +20,9 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
-$modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id));
-$modulo_eventi = Module::find((new Module())->getByField('name', 'Eventi', Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
+$modulo_preventivi = Module::find((new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id));
+$modulo_eventi = Module::find((new Module())->getByField('title', 'Eventi', Models\Locale::getPredefined()->id));
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';
@@ -131,7 +131,7 @@ switch (filter('op')) {
                 `co_preventivi`.`data_accettazione`,
                 `co_preventivi`.`data_conclusione`,
                 `co_statipreventivi`.`is_pianificabile`,
-                `co_statipreventivi_lang`.`name` as stato,
+                `co_statipreventivi_lang`.`title` as stato,
                 `co_statipreventivi`.`is_completato`,
                 `an_anagrafiche`. `ragione_sociale` AS cliente,
                 `zz_files`.`id` AS have_attachments
@@ -293,10 +293,10 @@ switch (filter('op')) {
                         `in_interventi`.`codice`, 
                         `an_anagrafiche`.`note` AS note_anagrafica, 
                         `in_statiintervento`.`id` AS parent_idstato, 
-                        `in_statiintervento_lang`.`name` AS stato,
+                        `in_statiintervento_lang`.`title` AS stato,
                         `in_interventi`.`idtipointervento` AS parent_idtipo, 
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti, 
-                        `in_tipiintervento_lang`.`name` AS tipo, 
+                        `in_tipiintervento_lang`.`title` AS tipo, 
                         (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona 
                     FROM 
                         `in_interventi` 
@@ -427,7 +427,7 @@ switch (filter('op')) {
             IF(`co_promemoria`.`data_scadenza` IS NULL, '', `co_promemoria`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'promemoria' AS ref,
-            `in_tipiintervento_lang`.`name` AS tipo_intervento,
+            `in_tipiintervento_lang`.`title` AS tipo_intervento,
             '' AS id_tecnico,
             '' AS ragione_sociale_tecnico,
             '' AS colore
@@ -453,7 +453,7 @@ switch (filter('op')) {
             IF(`in_interventi`.`data_scadenza` IS NULL, '', `in_interventi`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'intervento' AS ref,
-            `in_tipiintervento_lang`.`name` AS tipo_intervento,
+            `in_tipiintervento_lang`.`title` AS tipo_intervento,
             `in_interventi_tecnici_assegnati`.`id_tecnico` AS id_tecnico,
             `tecnico`.`ragione_sociale` AS ragione_sociale_tecnico,
             `tecnico`.`colore`

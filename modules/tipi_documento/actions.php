@@ -26,7 +26,7 @@ switch (filter('op')) {
         $dir = filter('dir');
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
         $predefined = post('predefined');
-        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('name', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
+        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
             if (!empty($tipo_new) && $tipo_new->id != $id_record) {
@@ -41,7 +41,7 @@ switch (filter('op')) {
                 $tipo->predefined = $predefined;
                 $tipo->enabled = post('enabled');
                 $tipo->id_segment = post('id_segment');
-                $tipo->setTranslation('name', $descrizione);
+                $tipo->setTranslation('title', $descrizione);
                 $tipo->save();
 
                 flash()->info(tr('Salvataggio completato!'));
@@ -54,7 +54,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
         $dir = filter('dir');
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
-        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('name', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
+        $tipo_new = Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('dir', '=', $dir)->where('codice_tipo_documento_fe', '=', $codice_tipo_documento_fe)->first();
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
             if (!empty($tipo_new) && $tipo_new->id != $id_record) {
@@ -62,7 +62,7 @@ switch (filter('op')) {
             } else {
                 $tipo = Tipo::build($dir, $codice_tipo_documento_fe);
                 $id_record = $dbo->lastInsertedID();
-                $tipo->setTranslation('name', $descrizione);
+                $tipo->setTranslation('title', $descrizione);
                 $tipo->save();
 
                 if (isAjaxRequest()) {

@@ -63,7 +63,7 @@ class Contratti extends AppResource implements RetrieveInterface
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).")
         WHERE 
-            `an_tipianagrafiche_lang`.`name` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL AND (SELECT COUNT(id) FROM in_interventi WHERE id_contratto=co_contratti.id AND id IN (".implode(',', $id_interventi).')) > 0';
+            `an_tipianagrafiche_lang`.`title` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL AND (SELECT COUNT(id) FROM in_interventi WHERE id_contratto=co_contratti.id AND id IN (".implode(',', $id_interventi).')) > 0';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -84,7 +84,7 @@ class Contratti extends AppResource implements RetrieveInterface
             `co_contratti`.`nome`,
             `co_contratti`.`numero`,
             `co_contratti`.`data_bozza`,
-            `co_staticontratti_lang`.`name` AS stato
+            `co_staticontratti_lang`.`title` AS stato
         FROM `co_contratti`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
             LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')

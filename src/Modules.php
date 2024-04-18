@@ -182,7 +182,7 @@ class Modules
         if (!isset(self::$segments[$module])) {
             $database = database();
 
-            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
         }
 
         return (array) self::$segments[$module];
@@ -282,7 +282,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::get((new Module())->getByField('name', $modulo, Models\Locale::getPredefined()->id));
+        $module = self::get((new Module())->getByField('title', $modulo, Models\Locale::getPredefined()->id));
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 

@@ -28,7 +28,7 @@ $fields = [
     'Righe' => '(SELECT GROUP_CONCAT(descrizione SEPARATOR \' -- \') FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id)',
 ];
 
-$query = 'SELECT *, `dt_ddt`.`id`, `dt_tipiddt_lang`.`name` AS tipologia';
+$query = 'SELECT *, `dt_ddt`.`id`, `dt_tipiddt_lang`.`title` AS tipologia';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
@@ -46,7 +46,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Ddt di acquisto' : 'Ddt di vendita';
-    $link_id = (new Module())->getByField('name', $module, Models\Locale::getPredefined()->id);
+    $link_id = (new Module())->getByField('title', $module, Models\Locale::getPredefined()->id);
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 

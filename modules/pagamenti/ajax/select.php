@@ -30,7 +30,7 @@ switch ($resource) {
 
         $query = "SELECT 
             `co_pagamenti`.`id`,
-            CONCAT_WS(' - ', `codice_modalita_pagamento_fe`, `name`) AS descrizione,
+            CONCAT_WS(' - ', `codice_modalita_pagamento_fe`, `title`) AS descrizione,
             `codice_modalita_pagamento_fe`,
             `banca_vendite`.`id` AS id_banca_vendite,
             CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite,
@@ -44,7 +44,7 @@ switch ($resource) {
             LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL
         |where| 
         GROUP BY 
-            `co_pagamenti_lang`.`name` ORDER BY `co_pagamenti_lang`.`name` ASC';
+            `co_pagamenti_lang`.`title` ORDER BY `co_pagamenti_lang`.`title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`co_pagamenti`.`id` = '.prepare($element);

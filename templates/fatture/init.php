@@ -31,14 +31,14 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT 
     `co_documenti`.*,
-    `co_statidocumento_lang`.`name` AS stato_doc,
-    `co_tipidocumento_lang`.`name` AS tipo_doc,
+    `co_statidocumento_lang`.`title` AS stato_doc,
+    `co_tipidocumento_lang`.`title` AS tipo_doc,
     `co_tipidocumento`.`dir` AS dir,
-    `co_pagamenti_lang`.`name` AS pagamento,
-    `dt_causalet_lang`.`name` AS causalet,
-    `dt_porto_lang`.`name` AS porto,
-    `dt_aspettobeni_lang`.`name` AS aspettobeni,
-    `dt_spedizione_lang`.`name` AS spedizione,
+    `co_pagamenti_lang`.`title` AS pagamento,
+    `dt_causalet_lang`.`title` AS causalet,
+    `dt_porto_lang`.`title` AS porto,
+    `dt_aspettobeni_lang`.`title` AS aspettobeni,
+    `dt_spedizione_lang`.`title` AS spedizione,
     `vettore`.`ragione_sociale` AS vettore,
     `co_banche`.`id` AS id_banca,
     `zz_segments`.`is_fiscale` AS is_fiscale,
@@ -116,7 +116,7 @@ if (!empty($record['idsede_destinazione'])) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione->getTranslation('name');
+            $destinazione .= ' - '.$nazione->getTranslation('title');
         }
     }
 }

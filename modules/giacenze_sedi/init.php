@@ -20,6 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $id_module = (new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id);
+    $id_module = (new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id);
     redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 }

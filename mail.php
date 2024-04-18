@@ -52,7 +52,7 @@ foreach ($mansioni as $mansione) {
 }
 
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
-if ($template->getTranslation('name') == 'Notifica intervento') {
+if ($template->getTranslation('title') == 'Notifica intervento') {
     $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
     foreach ($tecnici as $tecnico) {
         $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
@@ -155,7 +155,7 @@ echo '
         </div>';
 
 $uploads = [];
-if ($smtp['pec'] == 1 && $module->getTranslation('name') == 'Fatture di vendita') {
+if ($smtp['pec'] == 1 && $module->getTranslation('title') == 'Fatture di vendita') {
     $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
     $uploads = array_column($uploads, 'id');
 }
@@ -164,7 +164,7 @@ if ($smtp['pec'] == 1 && $module->getTranslation('name') == 'Fatture di vendita'
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id).' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `name` = \'Azienda predefinita\')", "link": "allegato" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `title` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`title`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.(new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id).' AND `id_record` = (SELECT `valore` FROM `zz_settings` WHERE `title` = \'Azienda predefinita\')", "link": "allegato" ]}
         </div>
     </div>';
 

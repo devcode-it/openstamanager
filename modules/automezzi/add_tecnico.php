@@ -7,7 +7,7 @@ $id_record = get('idautomezzo');
 
 // Form di inserimento responsabili automezzo
 echo '
-<form action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('name', 'Automezzi', Models\Locale::getPredefined()->id).'&id_record='.$id_record.'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('title', 'Automezzi', Models\Locale::getPredefined()->id).'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addtech">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_record" value="'.$id_record.'">
@@ -17,7 +17,7 @@ echo '
 // Tecnico
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`name`=\'Tecnico\') AND `deleted_at` IS NULL ORDER BY `ragione_sociale`", "value": "'.$idtecnico.'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Tecnico\') AND `deleted_at` IS NULL ORDER BY `ragione_sociale`", "value": "'.$idtecnico.'" ]}
         </div>';
 
 // Data di partenza

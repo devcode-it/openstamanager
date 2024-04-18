@@ -76,7 +76,7 @@ switch ($resource) {
                 for ($i = 0; $i < sizeof($documenti); ++$i) {
                     ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                    $link_id = (new Module())->getByField('name', $documenti[$i]['modulo']);
+                    $link_id = (new Module())->getByField('title', $documenti[$i]['modulo']);
                     echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].'. n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                     echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                     $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -97,7 +97,7 @@ switch ($resource) {
         $documenti = $dbo->fetchArray('
             SELECT
                 `iddocumento` AS id,
-                `co_tipidocumento_lang`.`name` AS tipo,
+                `co_tipidocumento_lang`.`title` AS tipo,
                 "Fatture di vendita" AS modulo,
                 ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
@@ -113,7 +113,7 @@ switch ($resource) {
         UNION
             SELECT
                 `idddt` AS id,
-                `dt_tipiddt_lang`.`name` AS tipo,
+                `dt_tipiddt_lang`.`title` AS tipo,
                 "Ddt di vendita" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
@@ -137,7 +137,7 @@ switch ($resource) {
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                $link_id = (new Module())->getByField('name', $documenti[$i]['modulo']);
+                $link_id = (new Module())->getByField('title', $documenti[$i]['modulo']);
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -157,7 +157,7 @@ switch ($resource) {
         $documenti = $dbo->fetchArray('
             SELECT
                 `iddocumento` AS id,
-                `co_tipidocumento_lang`.`name` AS tipo,
+                `co_tipidocumento_lang`.`title` AS tipo,
                 "Fatture di acquisto" AS modulo,
                 ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
@@ -173,7 +173,7 @@ switch ($resource) {
         UNION
             SELECT
                 `idddt` AS id,
-                `dt_tipiddt_lang`.`name` AS tipo,
+                `dt_tipiddt_lang`.`title` AS tipo,
                 "Ddt di acquisto" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
@@ -197,7 +197,7 @@ switch ($resource) {
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
-                $link_id = (new Module())->getByField('name', $documenti[$i]['modulo']);
+                $link_id = (new Module())->getByField('title', $documenti[$i]['modulo']);
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';

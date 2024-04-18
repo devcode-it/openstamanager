@@ -49,14 +49,14 @@ class Articoli extends AppResource
             `mg_articoli`.`id` AS id,
             `mg_articoli`.`codice`,
             `mg_articoli`.`barcode`,
-            `mg_articoli_lang`.`name`,
+            `mg_articoli_lang`.`title`,
             `mg_articoli`.`prezzo_vendita`,
             `mg_articoli`.`prezzo_acquisto`,
             `mg_articoli`.`qta`,
             `mg_articoli`.`um`,
             `mg_articoli`.`idiva_vendita` AS id_iva,
-            `categoria_lang`.`name` AS categoria,
-            `sottocategoria_lang`.`name` AS sottocategoria
+            `categoria_lang`.`title` AS categoria,
+            `sottocategoria_lang`.`title` AS sottocategoria
         FROM 
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')

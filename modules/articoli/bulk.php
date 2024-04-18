@@ -31,7 +31,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 include_once __DIR__.'/../../core.php';
 
 // Segmenti
-$id_preventivi = (new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id);
+$id_preventivi = (new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id);
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {
@@ -197,7 +197,7 @@ switch (post('op')) {
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
             $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
             $articolo->qta = 1;
-            $articolo->setTranslation('name', $originale->getTranslation('name'));
+            $articolo->setTranslation('title', $originale->getTranslation('title'));
             $articolo->um = $originale->um ?: null;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->prezzo_unitario = $originale->prezzo_vendita;

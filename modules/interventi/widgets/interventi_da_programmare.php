@@ -62,7 +62,7 @@ if (!empty($rs)) {
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`, `name`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_tipiintervento`.`id`='.prepare($r->idtipointervento))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`, `title`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_tipiintervento`.`id`='.prepare($r->idtipointervento))['descrizione'].'</td>
 
                 <td class="text-right">
                     <button type="button" class="btn btn-xs btn-default" onclick="toggleDettagli(this)">

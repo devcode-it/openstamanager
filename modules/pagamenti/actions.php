@@ -47,7 +47,7 @@ switch (filter('op')) {
                 }
 
                 if (!empty($id)) {
-                    $pagamento->setTranslation('name', $descrizione);
+                    $pagamento->setTranslation('title', $descrizione);
                     $pagamento->num_giorni = post('distanza')[$key];
                     $pagamento->giorno = $giorno;
                     $pagamento->prc = post('percentuale')[$key];
@@ -62,7 +62,7 @@ switch (filter('op')) {
                     $pagamento->prc = post('percentuale')[$key];
                     $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
                     $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
-                    $pagamento->setTranslation('name', $descrizione);
+                    $pagamento->setTranslation('title', $descrizione);
                     $pagamento->save();
                 }
             }
@@ -79,14 +79,14 @@ switch (filter('op')) {
         $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
 
         if (isset($descrizione)) {
-            $id_pagamento = (new Pagamento())->getByField('name', $descrizione);
+            $id_pagamento = (new Pagamento())->getByField('title', $descrizione);
 
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
                 $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
                 $id_record = $dbo->lastInsertedID();
-                $pagamento->setTranslation('name', $descrizione);
+                $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
@@ -101,8 +101,8 @@ switch (filter('op')) {
         if (!empty($id_record)) {
             $descrizione = filter('descrizione');
 
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `name` = '.prepare($descrizione).')');
-            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `name` = '.prepare($descrizione));
+            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `title` = '.prepare($descrizione).')');
+            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `title` = '.prepare($descrizione));
 
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
 
@@ -120,7 +120,7 @@ switch (filter('op')) {
             flash()->info(tr('Elemento eliminato con successo!'));
 
             if ($id_record == $id) {
-                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `name`='.prepare($record['descrizione']));
+                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `title`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
                     redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {

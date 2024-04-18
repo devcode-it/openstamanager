@@ -35,7 +35,7 @@ if (setting('Attiva notifica di presenza utenti sul record')) {
     $sessioni = $dbo->fetchArray('SELECT 
         `zz_semaphores`.*, 
         SUBSTRING_INDEX(`posizione`, ",", -1) AS id_record, 
-        `zz_modules_lang`.`name` AS modulo, 
+        `zz_modules_lang`.`title` AS modulo, 
         TIMESTAMPDIFF(SECOND, `zz_semaphores`.`created_at`, `zz_semaphores`.`updated`) AS permanenza, 
         `zz_users`.`username` AS utente
     FROM 

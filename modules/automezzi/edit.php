@@ -52,7 +52,7 @@ unset($_SESSION['superselect']['idautomezzo']);
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-12" >
-						<form action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo (new Module())->getByField('name', 'Automezzi', Models\Locale::getPredefined()->id); ?>&id_record=<?php echo $id_record; ?>" id="updatetech-form" method="post" role="form">
+						<form action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo (new Module())->getByField('title', 'Automezzi', Models\Locale::getPredefined()->id); ?>&id_record=<?php echo $id_record; ?>" id="updatetech-form" method="post" role="form">
 							<input type="hidden" name="backto" value="record-edit">
 							<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 							<input type="hidden" name="op" value="">

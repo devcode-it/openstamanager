@@ -29,7 +29,7 @@ switch ($resource) {
         $escludi_id = $superselect['escludi_id'];
 
         if (isset($id_module)) {
-            $query = 'SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `name` ASC';
+            $query = 'SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `title` ASC';
 
             $where[] = '`zz_segments`.`id_module` = '.prepare($id_module);
             $where[] = '`zz_group_segment`.`id_gruppo` = '.prepare($user->idgruppo);
@@ -55,7 +55,7 @@ switch ($resource) {
             }
 
             if (!empty($search)) {
-                $search_fields[] = '`zz_segments_lang`.`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`zz_segments_lang`.`title` LIKE '.prepare('%'.$search.'%');
             }
         }
 

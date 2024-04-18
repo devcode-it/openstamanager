@@ -41,7 +41,7 @@ class Clienti extends AppResource
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
-            `an_tipianagrafiche_lang`.`name` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`idanagrafica` IN(SELECT `in_interventi`.`idanagrafica` FROM `in_interventi`))';
+            `an_tipianagrafiche_lang`.`title` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`idanagrafica` IN(SELECT `in_interventi`.`idanagrafica` FROM `in_interventi`))';
 
         // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
@@ -90,7 +90,7 @@ class Clienti extends AppResource
             `an_anagrafiche`.`km`,
             IFNULL(`an_anagrafiche`.`lat`, 0.00) AS latitudine,
             IFNULL(`an_anagrafiche`.`lng`, 0.00) AS longitudine,
-            `an_nazioni_lang`.`name` AS nazione,
+            `an_nazioni_lang`.`title` AS nazione,
             `an_anagrafiche`.`fax`,
             `an_anagrafiche`.`telefono`,
             `an_anagrafiche`.`cellulare`,

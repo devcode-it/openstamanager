@@ -39,7 +39,7 @@ switch (filter('op')) {
         }
 
         // Salvataggio della versione nella cache
-        Cache::find((new Cache())->getByField('name', 'Ultima esecuzione del cron', Models\Locale::getPredefined()->id))->set($versione);
+        Cache::find((new Cache())->getByField('title', 'Ultima esecuzione del cron', Models\Locale::getPredefined()->id))->set($versione);
         echo $versione;
 
         break;

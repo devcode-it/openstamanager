@@ -40,7 +40,7 @@ $spedizione = $dbo->fetchOne('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spediz
 
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
 
-$tipo_doc = $documento->tipo->getTranslation('name');
+$tipo_doc = $documento->tipo->getTranslation('title');
 if (empty($documento['numero_esterno'])) {
     $numero = 'pro-forma '.$documento['numero'];
     $tipo_doc = tr('DDT pro-forma', [], ['upper' => true]);
@@ -74,7 +74,7 @@ if (!empty($documento['idsede_destinazione'])) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione->getTranslation('name').'<br />';
+            $destinazione .= ' - '.$nazione->getTranslation('title').'<br />';
         }
     }
     if (!empty($rsd[0]['telefono'])) {
@@ -111,7 +111,7 @@ if (!empty($documento['idsede_partenza'])) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $partenza .= ' - '.$nazione->getTranslation('name').'<br />';
+            $partenza .= ' - '.$nazione->getTranslation('title').'<br />';
         }
     }
     if (!empty($rsd[0]['telefono'])) {
@@ -127,7 +127,7 @@ $custom = [
     'tipo_doc' => $tipo_doc,
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
-    'pagamento' => $pagamento->getTranslation('name'),
+    'pagamento' => $pagamento->getTranslation('title'),
     'c_destinazione' => $destinazione,
     'c_partenza' => $partenza,
     'aspettobeni' => $aspetto_beni['descrizione'],

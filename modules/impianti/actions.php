@@ -24,8 +24,8 @@ use Modules\Checklists\Check;
 
 $op = post('op');
 
-$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id))->directory;
-$id_modulo_categorie_impianti = (new Module())->getByField('name', 'Categorie impianti', Models\Locale::getPredefined()->id);
+$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id))->directory;
+$id_modulo_categorie_impianti = (new Module())->getByField('title', 'Categorie impianti', Models\Locale::getPredefined()->id);
 
 switch ($op) {
     // Aggiorno informazioni di base impianto

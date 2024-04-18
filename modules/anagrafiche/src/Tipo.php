@@ -30,7 +30,7 @@ class Tipo extends Model
     protected $table = 'an_tipianagrafiche';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($descrizione = null)

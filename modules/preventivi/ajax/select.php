@@ -30,9 +30,9 @@ switch ($resource) {
             $query = 'SELECT 
                     `co_preventivi`.`id` AS id, 
                     `an_anagrafiche`.`idanagrafica`, 
-                    CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_statipreventivi_lang`.`name` , "]") AS descrizione,
+                    CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_statipreventivi_lang`.`title` , "]") AS descrizione,
                     `co_preventivi`.`idtipointervento`,
-                    `in_tipiintervento_lang`.`name` AS idtipointervento_descrizione,
+                    `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
                     `in_tipiintervento`.`tempo_standard` AS tempo_standard,
                     (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS totale,
                     (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS sconto

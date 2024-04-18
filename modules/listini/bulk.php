@@ -109,7 +109,7 @@ $segment = $dbo->selectOne('zz_segments_lang', 'name', ['id_record' => $_SESSION
 
 if ($segment != 'Tutti') {
     $operations['copy_listino'] = [
-        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
         'data' => [
             'title' => tr('Copiare i listini selezionati?'),
             'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Selezionare le anagrafiche in cui copiare i listini selezionati:').'</small>", "ajax-source":"'.strtolower($segment).'", "name": "idanagrafica[]" ]}',
@@ -120,7 +120,7 @@ if ($segment != 'Tutti') {
     ];
 } else {
     $operations['copy_listino'] = [
-        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
         'data' => [
             'title' => tr('Selezionare prima un segmento tra "Clienti" e "Fornitori"'),
             'msg' => '',

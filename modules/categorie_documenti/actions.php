@@ -24,14 +24,14 @@ use Modules\CategorieDocumentali\Categoria;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $descrizione))->where('deleted_at', '=', null)->first();
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $descrizione))->where('deleted_at', '=', null)->first();
 
         if (!empty($categoria_new) && $categoria_new->id != $id_record) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
         } else {
-            $categoria->setTranslation('name', $descrizione);
+            $categoria->setTranslation('title', $descrizione);
             $categoria->save();
 
             $categoria->syncPermessi(post('permessi') ?: []);
@@ -43,7 +43,7 @@ switch (post('op')) {
 
     case 'add':
         $descrizione = post('descrizione');
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('name', $descrizione))->where('deleted_at', '=', null)->first();
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $descrizione))->where('deleted_at', '=', null)->first();
 
         if (!empty($categoria_new) && $categoria_new->id != $id_record) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
@@ -52,7 +52,7 @@ switch (post('op')) {
         } else {
             $categoria = Categoria::build();
             $id_record = $dbo->lastInsertedID();
-            $categoria->setTranslation('name', $descrizione);
+            $categoria->setTranslation('title', $descrizione);
             $categoria->save();
 
             if (isAjaxRequest()) {

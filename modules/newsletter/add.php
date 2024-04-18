@@ -26,7 +26,7 @@ echo '
 
 	<div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name`", "required": 1 ]}
+            {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "required": 1 ]}
         </div>
 
         <div class="col-md-6">

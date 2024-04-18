@@ -23,13 +23,13 @@ use Models\Module;
 $dir = $_GET['dir'];
 
 $id_sezionale = filter('id_sezionale');
-$sezionale = $dbo->fetchOne('SELECT `zz_segments_lang`.`name` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$id_sezionale)['name'];
+$sezionale = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$id_sezionale)['name'];
 
 $date_start = filter('date_start');
 $date_end = filter('date_end');
 
 $tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
-$vendita_banco = (new Module())->getByField('name', 'Vendita al banco', Models\Locale::getPredefined()->id);
+$vendita_banco = (new Module())->getByField('title', 'Vendita al banco', Models\Locale::getPredefined()->id);
 
 $v_iva = [];
 $v_totale = [];
@@ -58,7 +58,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `co_documenti`.`data`,
         `co_tipidocumento`.`codice_tipo_documento_fe`,
         `co_iva`.`percentuale`,
-        `co_iva_lang`.`name` as descrizione,
+        `co_iva_lang`.`title` as descrizione,
         `co_documenti`.`id` AS id,
         IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
@@ -74,7 +74,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
     WHERE 
-        `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+        `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY 
         `co_iva`.`id`, `co_documenti`.`id`
     UNION
@@ -84,7 +84,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `vb_venditabanco`.`data` as data,
         "Vendita al banco" as codice_tipo_documento_fe,
         `co_iva`.`percentuale`,
-        `co_iva_lang`.`name` as descrizione,
+        `co_iva_lang`.`title` as descrizione,
         `vb_venditabanco`.`id` AS id,
         `vb_venditabanco`.`numero` AS numero,
         SUM(`vb_righe_venditabanco`.`subtotale`) as subtotale,
@@ -115,7 +115,7 @@ SELECT
     `co_documenti`.`data`,
     `co_tipidocumento`.`codice_tipo_documento_fe`,
     `co_iva`.`percentuale`,
-    `co_iva_lang`.`name` as descrizione,
+    `co_iva_lang`.`title` as descrizione,
     `co_documenti`.`id` AS id,
     IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
     SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
@@ -131,7 +131,7 @@ FROM
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
 WHERE 
-    `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+    `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY 
     `co_iva`.`id`, `co_documenti`.`id`
 ORDER BY 

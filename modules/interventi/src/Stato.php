@@ -30,7 +30,7 @@ class Stato extends Model
     protected $table = 'in_statiintervento';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function interventi()

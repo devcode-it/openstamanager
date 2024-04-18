@@ -26,7 +26,7 @@ switch ($resource) {
         $id_record = $superselect['id_record'];
 
         if (isset($id_module) || isset($id_plugin)) {
-            $query = 'SELECT `id`, `name` AS descrizione FROM zz_files |where|';
+            $query = 'SELECT `id`, `title` AS descrizione FROM zz_files |where|';
 
             if (isset($id_module)) {
                 $where[] = '`zz_files`.`id_module` = '.prepare($id_module);
@@ -53,7 +53,7 @@ switch ($resource) {
             }
 
             if (!empty($search)) {
-                $search_fields[] = '`zz_segments`.`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`zz_segments`.`title` LIKE '.prepare('%'.$search.'%');
             }
         }
 

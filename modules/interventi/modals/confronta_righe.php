@@ -30,7 +30,7 @@ $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(
     'SELECT 
-        `mg_articoli_lang`.`name`, 
+        `mg_articoli_lang`.`title`, 
         `mg_articoli`.`codice`, 
         `in_righe_interventi`.*
     FROM 
@@ -70,7 +70,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                         LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
-                        `co_preventivi`.`idanagrafica` ='.prepare($id_anagrafica).' AND `in_righe_interventi`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statipreventivi_lang`.`name` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                        `co_preventivi`.`idanagrafica` ='.prepare($id_anagrafica).' AND `in_righe_interventi`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statipreventivi_lang`.`title` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY 
                         `mg_articoli`.`id`, `co_righe_preventivi`.`id`
                     ORDER BY
@@ -90,7 +90,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
                         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`idstatodocumento` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
-                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
+                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 
                         `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY

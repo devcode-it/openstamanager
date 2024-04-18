@@ -32,7 +32,7 @@ class Categoria extends Model
 
     protected $table = 'mg_categorie';
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     protected static $parent_identifier = 'parent';

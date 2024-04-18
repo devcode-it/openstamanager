@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'causali':
-        $query = 'SELECT `dt_causalet`.`id`, `dt_causalet_lang`.`name` as descrizione FROM dt_causalet LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name` ASC';
+        $query = 'SELECT `dt_causalet`.`id`, `dt_causalet_lang`.`title` as descrizione FROM dt_causalet LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`dt_causalet`.`id`='.prepare($element);
@@ -30,7 +30,7 @@ switch ($resource) {
             $where[] = '`dt_causalet`.`deleted_at` IS NULL';
         }
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

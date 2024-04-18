@@ -184,7 +184,7 @@ echo '
 
 <?php
 // Variabili utilizzabili
-$variables = include Modules::filepath((new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id), 'variables.php');
+$variables = include Modules::filepath((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id), 'variables.php');
 
 echo '
     <!-- Istruzioni per il contenuto -->

@@ -277,21 +277,21 @@ class CSV extends CSVImporter
         $sottocategoria = null;
         if (!empty($record['categoria'])) {
             // Categoria
-            $categoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['categoria'])))->first();
+            $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['categoria'])))->first();
 
             if (empty($categoria)) {
                 $categoria = Categoria::build();
-                $categoria->setTranslation('name', $record['categoria']);
+                $categoria->setTranslation('title', $record['categoria']);
                 $categoria->save();
             }
 
             // Sotto-categoria
             if (!empty($record['sottocategoria'])) {
-                $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['sottocategoria'])))->first();
+                $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['sottocategoria'])))->first();
 
                 if (empty($sottocategoria)) {
                     $sottocategoria = Categoria::build();
-                    $sottocategoria->setTranslation('name', $record['sottocategoria']);
+                    $sottocategoria->setTranslation('title', $record['sottocategoria']);
                     $sottocategoria->parent()->associate($categoria);
                     $sottocategoria->save();
                 }
@@ -315,7 +315,7 @@ class CSV extends CSVImporter
         }
         if (empty($articolo)) {
             $articolo = Articolo::build($record['codice'], $categoria, $sottocategoria);
-            $articolo->setTranslation('name', $record['descrizione']);
+            $articolo->setTranslation('title', $record['descrizione']);
         } else {
             $articolo->restore();
         }
@@ -367,7 +367,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
-                        'id_module' => (new Module())->getByField('name', 'Articoli', \Models\Locale::getPredefined()->id),
+                        'id_module' => (new Module())->getByField('title', 'Articoli', \Models\Locale::getPredefined()->id),
                         'id_record' => $articolo->id,
                     ]);
 
@@ -384,7 +384,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => (new Module())->getByField('name', 'Articoli', \Models\Locale::getPredefined()->id),
+                    'id_module' => (new Module())->getByField('title', 'Articoli', \Models\Locale::getPredefined()->id),
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,
@@ -466,7 +466,7 @@ class CSV extends CSVImporter
         }
 
         if ($dettagli['dir']) {
-            $tipo = (new Tipo())->getByField('name', $dettagli['dir']);
+            $tipo = (new Tipo())->getByField('title', $dettagli['dir']);
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo;
 

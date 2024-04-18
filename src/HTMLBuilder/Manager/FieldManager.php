@@ -147,7 +147,7 @@ class FieldManager implements ManagerInterface
         if (isset($options['place']) && $options['place'] == 'add') {
             $query .= ' AND `on_add` = 1';
         }
-        $query .= ' AND `zz_fields`.`name` = '.prepare($name);
+        $query .= ' AND `zz_fields`.`title` = '.prepare($name);
 
         $results = $database->fetchArray($query);
 

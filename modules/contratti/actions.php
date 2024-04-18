@@ -149,7 +149,7 @@ switch (post('op')) {
         $new = $contratto->replicate(['idcontratto_prev']);
         $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
 
-        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato);
         $new->save();
 
@@ -179,7 +179,7 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 
@@ -351,7 +351,7 @@ switch (post('op')) {
                 `co_documenti`.`numero` AS `numero`, 
                 `co_documenti`.`numero_esterno` AS `numero_esterno`,  
                 `co_documenti`.`data`, 
-                `co_tipidocumento_lang`.`name` AS `tipo_documento`, 
+                `co_tipidocumento_lang`.`title` AS `tipo_documento`, 
                 `co_tipidocumento`.`dir` AS `dir` 
             FROM 
                 `co_documenti` 
@@ -404,7 +404,7 @@ switch (post('op')) {
         $new_contratto->data_bozza = Carbon::now();
         $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $new_contratto->id_segment);
 
-        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $new_contratto->stato()->associate($stato);
 
         $new_contratto->save();
@@ -455,14 +455,14 @@ switch (post('op')) {
             foreach ($allegati as $allegato) {
                 $allegato->copia([
                     'id_module' => $id_module,
-                    'id_plugin' => (new Plugin())->getByField('name', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
+                    'id_plugin' => (new Plugin())->getByField('title', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
                     'id_record' => $id_promemoria,
                 ]);
             }
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `name` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
+        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
 
         flash()->info(tr('Contratto rinnovato!'));
 

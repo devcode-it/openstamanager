@@ -101,7 +101,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>'.$sessione->anagrafica->ragione_sociale.'</td>
-                    <td>'.$sessione->tipo->getTranslation('name').'</td>
+                    <td>'.$sessione->tipo->getTranslation('title').'</td>
                     <td class="text-right">'.numberFormat($sessione->ore).'</td>
                     <td class="text-right">'.numberFormat($sessione->km).'</td>
                     <td class="text-right danger">'.moneyFormat($sessione->costo_manodopera).'</td>
@@ -113,9 +113,9 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per tipologia descrizione
-                $tipologie[$sessione->tipo->getTranslation('name')]['ore'] += $sessione->ore;
-                $tipologie[$sessione->tipo->getTranslation('name')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tipologie[$sessione->tipo->getTranslation('name')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $tipologie[$sessione->tipo->getTranslation('title')]['ore'] += $sessione->ore;
+                $tipologie[$sessione->tipo->getTranslation('title')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $tipologie[$sessione->tipo->getTranslation('title')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per tecnico
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ore'] += $sessione->ore;
@@ -124,10 +124,10 @@ if (!empty($interventi)) {
                 $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
 
                 // Raggruppamento per stato intervento
-                $stati_intervento[$intervento->stato->getTranslation('name')]['colore'] = $intervento->stato->colore;
-                $stati_intervento[$intervento->stato->getTranslation('name')]['ore'] += $sessione->ore;
-                $stati_intervento[$intervento->stato->getTranslation('name')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $stati_intervento[$intervento->stato->getTranslation('name')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->getTranslation('title')]['colore'] = $intervento->stato->colore;
+                $stati_intervento[$intervento->stato->getTranslation('title')]['ore'] += $sessione->ore;
+                $stati_intervento[$intervento->stato->getTranslation('title')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+                $stati_intervento[$intervento->stato->getTranslation('title')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
             }
 
             echo '
@@ -164,7 +164,7 @@ if (!empty($interventi)) {
                     $ricavo = ($riga_articolo->imponibile - $riga_articolo->sconto) / $riga_articolo->qta;
                     $costo = $riga_articolo->spesa / $riga_articolo->qta;
                 }
-                $descrizione = $riga_articolo->articolo->codice.' - '.$riga_articolo->articolo->getTranslation('name');
+                $descrizione = $riga_articolo->articolo->codice.' - '.$riga_articolo->articolo->getTranslation('title');
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $riga_articolo->articolo->id;
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $riga_articolo->qta;

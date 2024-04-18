@@ -23,8 +23,8 @@ switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_aspettobeni`.`id`!='.prepare($id_record)))) {
-            $dbo->query('UPDATE `dt_aspettobeni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record)).' AND `id_lang`='.prepare(Models\Locale::getDefault()->id);
+        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `dt_aspettobeni`.`id`!='.prepare($id_record)))) {
+            $dbo->query('UPDATE `dt_aspettobeni_lang` SET `title`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record)).' AND `id_lang`='.prepare(Models\Locale::getDefault()->id);
             flash()->info(tr('Salvataggio completato.'));
         } else {
             flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
@@ -34,11 +34,11 @@ switch (post('op')) {
     case 'add':
         $descrizione = post('descrizione');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione)))) {
+        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione)))) {
             $dbo->query('INSERT INTO `dt_aspettobeni` (`created_at`) VALUES (NOW())');
             $id_record = $dbo->lastInsertedID();
 
-            $dbo->query('INSERT INTO `dt_aspettobeni_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
+            $dbo->query('INSERT INTO `dt_aspettobeni_lang` (`title`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $descrizione]);

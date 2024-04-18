@@ -45,7 +45,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByField('name', 'Unità di misura', Models\Locale::getPredefined()->id).'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByField('title', 'Unità di misura', Models\Locale::getPredefined()->id).'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
         </div>';
 
 // Unità di misura
@@ -241,11 +241,11 @@ if ($options['dir'] == 'entrata') {
 
 // Data prevista evasione (per ordini)
 
-if (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
+if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
     if ($options['action'] == 'add') {
-        if ($module->getTranslation('name') == 'Ordini cliente') {
+        if ($module->getTranslation('title') == 'Ordini cliente') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
-        } elseif ($module->getTranslation('name') == 'Ordini fornitore') {
+        } elseif ($module->getTranslation('title') == 'Ordini fornitore') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
         } else {
             $confermato = setting('Conferma automaticamente le quantità nei preventivi');
@@ -279,7 +279,7 @@ if (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornito
 
                 </div>
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'", "help": "'.tr('Articolo confermato dal _ANA_ e che è possibile evadere', ['_ANA_' => $module->getTranslation('name') == 'Ordini fornitore' ? tr('fornitore') : tr('cliente')]).'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'", "help": "'.tr('Articolo confermato dal _ANA_ e che è possibile evadere', ['_ANA_' => $module->getTranslation('title') == 'Ordini fornitore' ? tr('fornitore') : tr('cliente')]).'" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
@@ -306,7 +306,7 @@ if (in_array($module->getTranslation('name'), ['Ordini cliente', 'Ordini fornito
         </script>';
 }
 
-if (in_array($module->getTranslation('name'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
     echo '
     <script>
         $(document).ready(function() {

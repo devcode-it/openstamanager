@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`name` as descrizione, `qta`, `threshold_qta`, `codice`, `um` AS unitamisura FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `qta` < `threshold_qta` AND `attivo` = 1 AND `deleted_at` IS NULL ORDER BY `qta` ASC');
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`title` as descrizione, `qta`, `threshold_qta`, `codice`, `um` AS unitamisura FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `qta` < `threshold_qta` AND `attivo` = 1 AND `deleted_at` IS NULL ORDER BY `qta` ASC');
 
 if (!empty($rs)) {
     echo '

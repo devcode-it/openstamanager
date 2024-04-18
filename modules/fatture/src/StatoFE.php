@@ -32,7 +32,7 @@ class StatoFE extends Model
     protected $primaryKey = 'codice';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function fatture()

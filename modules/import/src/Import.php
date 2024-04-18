@@ -32,7 +32,7 @@ class Import extends Model
     protected $table = 'zz_imports';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     // Relazioni Eloquent

@@ -25,7 +25,7 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT 
             `zz_segments`.*, 
             `zz_modules`.`options`, 
-            `zz_modules_lang`.`name` AS modulo, 
+            `zz_modules_lang`.`title` AS modulo, 
             (SELECT COUNT(`t`.`id`) FROM `zz_segments` t WHERE `t`.`id_module` = `zz_segments`.`id_module`) AS n_sezionali 
         FROM 
             `zz_segments` 

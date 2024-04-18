@@ -49,7 +49,7 @@ if ($options == 'menu') {
 echo '
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record->getTranslation('name').'", "readonly": "1" ]}
+					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record->getTranslation('title').'", "readonly": "1" ]}
 				</div>
 
 				<div class="col-md-6">

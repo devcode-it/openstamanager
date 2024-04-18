@@ -49,7 +49,7 @@ switch (filter('op')) {
 
         if (!empty($import_manager)) {
             // Generazione percorso
-            $file = $modulo_import->upload_directory.'/example-'.strtolower($import->getTranslation('name')).'.csv';
+            $file = $modulo_import->upload_directory.'/example-'.strtolower($import->getTranslation('title')).'.csv';
             $filepath = base_dir().'/'.$file;
 
             // Generazione del file

@@ -30,7 +30,7 @@ if (!empty($id_record)) {
         `co_staticontratti`.`is_fatturabile` AS is_fatturabile,
         `co_staticontratti`.`is_pianificabile` AS is_pianificabile,
         `co_staticontratti`.`is_completato` AS is_completato,
-        `co_staticontratti_lang`.`name` AS stato,
+        `co_staticontratti_lang`.`title` AS stato,
         GROUP_CONCAT(`my_impianti_contratti`.`idimpianto`) AS idimpianti
     FROM 
         `co_contratti`

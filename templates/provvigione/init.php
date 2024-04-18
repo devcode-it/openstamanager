@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$module = Module::find((new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id));
+$module = Module::find((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id));
 
 $module_query = '
 SELECT
@@ -59,14 +59,14 @@ if (!empty(get('date_end'))) {
     $date_end = get('date_end');
 }
 
-$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', $module_query);
+$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', $module_query);
 
 if (get('is_emessa') == 'true' && get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Emessa", "Parzialmente pagato"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Emessa", "Parzialmente pagato"))', $module_query);
 } elseif (get('is_emessa') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Emessa"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Emessa"))', $module_query);
 } elseif (get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` IN ("Pagato", "Parzialmente pagato"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Parzialmente pagato"))', $module_query);
 }
 
 $module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idagente`='.prepare($id_record), $module_query);

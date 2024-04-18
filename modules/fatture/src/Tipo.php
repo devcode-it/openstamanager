@@ -30,7 +30,7 @@ class Tipo extends Model
     protected $table = 'co_tipidocumento';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($dir = null, $codice_tipo_documento_fe = null)

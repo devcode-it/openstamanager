@@ -24,7 +24,7 @@ $r = $dbo->fetchOne('SELECT *,
         `an_referenti`.`nome`,
         `in_interventi`.`codice` AS codice,
         (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `idintervento`=`in_interventi`.`id`) AS data_fine,
-        `in_statiintervento_lang`.`name` AS stato,
+        `in_statiintervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
         `in_interventi`.`descrizione` AS descrizione
     FROM `in_interventi`

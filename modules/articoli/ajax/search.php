@@ -20,17 +20,17 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id);
+$link_id = (new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id);
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $fields = [
-    'codice' => 'mg_articoli.codice',
-    'barcode' => 'mg_articoli.barcode',
-    'descrizione' => 'mg_articoli_lang.name',
-    'categoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
-    'subcategoria' => '(SELECT `name` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
+    'codice' => '`mg_articoli`.`codice`',
+    'barcode' => '`mg_articoli`.`barcode`',
+    'descrizione' => '`mg_articoli_lang`.`title`',
+    'categoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
+    'subcategoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
 ];
 

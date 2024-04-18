@@ -203,7 +203,7 @@ switch (post('op')) {
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
         if (!empty($user['idanagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `name` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica` = '.prepare($user['idanagrafica']));
+            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica` = '.prepare($user['idanagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {
@@ -244,7 +244,7 @@ switch (post('op')) {
 
         $descrizioni_tipi = $anagrafica->tipi()->get();
         foreach ($descrizioni_tipi as $tipo) {
-            $tipi[] = $tipo->getTranslation('name');
+            $tipi[] = $tipo->getTranslation('title');
         }
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
@@ -359,7 +359,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
         $nome = 'Logo stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $logo) {
-            $logo->setTranslation('name', $nome);
+            $logo->setTranslation('title', $nome);
             $logo->save();
         }
     }
@@ -369,7 +369,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
         $nome = 'Filigrana stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $filigrana) {
-            $filigrana->setTranslation('name', $nome);
+            $filigrana->setTranslation('title', $nome);
             $filigrana->save();
         }
     }

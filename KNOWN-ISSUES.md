@@ -28,7 +28,7 @@ oppure aggiornare alla **v.2.5** di OpenSTAManager.
 ##### Soluzione 
 Eseguire a database le seguenti query di allineamento:
 ```bash
-UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `name` = 'Causali movimenti';
+UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `title` = 'Causali movimenti';
 ALTER TABLE `zz_groups` ADD `id_module_start` INT NULL AFTER `editable`;
 ```
 

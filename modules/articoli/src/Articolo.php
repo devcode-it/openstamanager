@@ -43,7 +43,7 @@ class Articolo extends Model
     protected $table = 'mg_articoli';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($codice = null, ?Categoria $categoria = null, ?Categoria $sottocategoria = null)
@@ -207,7 +207,7 @@ class Articolo extends Model
             return null;
         }
 
-        $module = Module::find((new Module())->getByField('name', $this->module, \Models\Locale::getPredefined()->id));
+        $module = Module::find((new Module())->getByField('title', $this->module, \Models\Locale::getPredefined()->id));
         $fileinfo = \Uploads::fileInfo($this->immagine);
 
         $directory = '/'.$module->upload_directory.'/';

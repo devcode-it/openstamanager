@@ -22,7 +22,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli', Models\Locale::getPredefined()->id).'" ]}
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('title', 'Categorie articoli', Models\Locale::getPredefined()->id).'" ]}
         </div>
 
         <div class="col-md-6">
@@ -32,7 +32,7 @@ echo '
 
     <div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`name` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
+			{[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`title` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
 		</div>
     </div>
 

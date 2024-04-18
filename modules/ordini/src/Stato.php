@@ -30,7 +30,7 @@ class Stato extends Model
     protected $table = 'or_statiordine';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($icona = null, $colore = null, $completato = null, $is_fatturabile = null, $impegnato = null)

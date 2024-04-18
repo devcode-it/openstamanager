@@ -25,13 +25,13 @@ include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
 // Stati interventi
-$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `name` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
+$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tipi intervento
-$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`name` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `name` ASC');
+$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tecnici disponibili
-$id_tipo_tecnico = Tipo::find((new Tipo())->getByField('name', 'Tecnico', Models\Locale::getPredefined()->id))->id;
+$id_tipo_tecnico = Tipo::find((new Tipo())->getByField('title', 'Tecnico', Models\Locale::getPredefined()->id))->id;
 $tecnici_disponibili = $dbo->fetchArray('SELECT 
     `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore` 
 FROM 
@@ -390,7 +390,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
 
 echo '
 <script type="text/javascript">    

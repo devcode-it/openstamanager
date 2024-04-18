@@ -17,7 +17,7 @@ if (!empty($idarticolo) && !empty($idautomezzo)) {
     Form di inserimento riga documento
 */
 echo '
-<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('name', 'Automezzi', Models\Locale::getPredefined()->id).'&id_record='.$idautomezzo.'" method="post">
+<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.(new Module())->getByField('title', 'Automezzi', Models\Locale::getPredefined()->id).'&id_record='.$idautomezzo.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_record" value="'.$idautomezzo.'">';

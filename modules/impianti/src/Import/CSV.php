@@ -115,21 +115,21 @@ class CSV extends CSVImporter
             $sottocategoria = null;
             if (!empty($record['categoria'])) {
                 // Categoria
-                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['categoria'])))->first();
+                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['categoria'])))->first();
 
                 if (empty($categoria)) {
                     $categoria = Categoria::build();
-                    $categoria->setTranslation('name', $record['categoria']);
+                    $categoria->setTranslation('title', $record['categoria']);
                     $categoria->save();
                 }
 
                 // Sotto-categoria
                 if (!empty($record['sottocategoria'])) {
-                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('name', strtolower($record['sottocategoria'])))->first();
+                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['sottocategoria'])))->first();
 
                     if (empty($sottocategoria)) {
                         $sottocategoria = Categoria::build();
-                        $sottocategoria->setTranslation('name', $record['sottocategoria']);
+                        $sottocategoria->setTranslation('title', $record['sottocategoria']);
                         $sottocategoria->parent()->associate($categoria);
                         $sottocategoria->save();
                     }
@@ -140,10 +140,10 @@ class CSV extends CSVImporter
             $id_marca = null;
             if (!empty($record['marca'])) {
                 // Marca
-                $n = $database->fetchOne('SELECT `id` FROM `my_impianti_marche` WHERE `name`='.prepare($record['marca']))['id'];
+                $n = $database->fetchOne('SELECT `id` FROM `my_impianti_marche` WHERE `title`='.prepare($record['marca']))['id'];
 
                 if (empty($n)) {
-                    $query = 'INSERT INTO `my_impianti_marche` (`name`) VALUES ('.prepare($record['marca']).')';
+                    $query = 'INSERT INTO `my_impianti_marche` (`title`) VALUES ('.prepare($record['marca']).')';
                     $database->query($query);
                     $id_marca = $database->lastInsertedID();
                 } else {

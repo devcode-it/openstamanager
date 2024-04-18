@@ -30,7 +30,7 @@ $fields = [
     'Righe' => 'righe.descrizione',
 ];
 
-$query = 'SELECT *, `co_documenti`.`id`, `co_tipidocumento_lang`.`name` AS tipologia';
+$query = 'SELECT *, `co_documenti`.`id`, `co_tipidocumento_lang`.`title` AS tipologia';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
@@ -50,7 +50,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Fatture di acquisto' : 'Fatture di vendita';
-    $link_id = (new Module())->getByField('name', $module, Models\Locale::getPredefined()->id);
+    $link_id = (new Module())->getByField('title', $module, Models\Locale::getPredefined()->id);
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 

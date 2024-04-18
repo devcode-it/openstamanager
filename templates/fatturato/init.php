@@ -39,7 +39,7 @@ $raggruppamenti = $dbo->fetchArray('
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     WHERE 
-        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `name` = "Bozza" OR `name` = "Annullata") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `autofatture` = 0
+        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Bozza" OR `title` = "Annullata") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `autofatture` = 0
     GROUP BY 
         `periodo`
     ORDER BY

@@ -24,7 +24,7 @@ use Models\Module;
     Anagrafiche
 */
 
-$link_id = (new Module())->getByField('name', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$link_id = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
 
 $fields = [
     'Codice' => 'codice',
@@ -108,7 +108,7 @@ foreach ($fields as $name => $value) {
 
 $rs = $dbo->fetchArray($query);
 
-$plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `name`='Referenti'");
+$plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Referenti'");
 
 foreach ($rs as $r) {
     $result = [];

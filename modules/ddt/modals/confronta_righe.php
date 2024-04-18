@@ -30,7 +30,7 @@ $righe = $_GET['righe'];
 
 $righe = $dbo->fetchArray(
     'SELECT 
-        `mg_articoli_lang`.`name`, 
+        `mg_articoli_lang`.`title`, 
         `mg_articoli`.`codice`, 
         `dt_righe_ddt`.*
     FROM 
@@ -70,7 +70,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
                         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idarticolo` = `mg_articoli`.`id`
                     WHERE
-                        `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `dt_righe_ddt`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statipreventivi_lang`.`name` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                        `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `dt_righe_ddt`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statipreventivi_lang`.`title` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY
                         `mg_articoli`.`id`, `co_righe_preventivi`.`id`
                     ORDER BY
@@ -90,7 +90,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
                         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
-                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`name` IN ("Emessa", "Pagato", "Parzialmente pagato")
+                        `co_documenti`.`idanagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 
                         `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY

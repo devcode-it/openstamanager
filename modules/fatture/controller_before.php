@@ -28,7 +28,7 @@ use Util\XML;
 
 $services_enable = Interaction::isEnabled();
 
-if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable) {
+if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable) {
     $documenti_scarto = [];
     $documenti_invio = [];
     $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];
@@ -52,7 +52,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable)
 
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
-            if ($documento->codice_stato_fe == 'NS' && ($documento->stato != (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id)) && ($documento->stato != (new Stato())->getByField('name', 'Non valida', Models\Locale::getPredefined()->id))) {
+            if ($documento->codice_stato_fe == 'NS' && ($documento->stato != (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id)) && ($documento->stato != (new Stato())->getByField('title', 'Non valida', Models\Locale::getPredefined()->id))) {
                 $ricevuta_principale = $documento->getRicevutaPrincipale();
 
                 if (!empty($ricevuta_principale)) {
@@ -79,7 +79,7 @@ if ($module->getTranslation('name') == 'Fatture di vendita' && $services_enable)
             $is_estera = false;
 
             if (setting('Rimuovi avviso fatture estere')) {
-                $is_estera = $database->fetchOne('SELECT `idanagrafica` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_nazioni_lang`.`name` != "Italia" AND `an_anagrafiche`.`idanagrafica` = '.prepare($documento->idanagrafica));
+                $is_estera = $database->fetchOne('SELECT `idanagrafica` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_nazioni_lang`.`title` != "Italia" AND `an_anagrafiche`.`idanagrafica` = '.prepare($documento->idanagrafica));
             }
 
             if ($documento->data <= $data_limite_invio && !$is_estera) {

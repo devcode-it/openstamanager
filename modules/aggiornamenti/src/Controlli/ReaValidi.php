@@ -56,7 +56,7 @@ class ReaValidi extends Controllo
             `an_anagrafiche`.`idanagrafica` AS id,
             `an_anagrafiche`.`codicerea`,
             `an_anagrafiche`.`ragione_sociale`,
-            GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS tipi_anagrafica
+            GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipi_anagrafica
         FROM `an_anagrafiche`
            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.id = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`

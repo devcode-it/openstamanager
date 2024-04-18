@@ -100,11 +100,11 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`name` AS `descrizione` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `descrizione` ORDER BY `descrizione`", "value": "$idpagamento$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `descrizione` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `descrizione` ORDER BY `descrizione`", "value": "$idpagamento$" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `name` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstato$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
                 </div>
             </div>
 
@@ -115,7 +115,7 @@ echo '
 				</div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id); ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id); ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -224,7 +224,7 @@ echo '
 $idtipiintervento = ['-1'];
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`name` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `idcontratto`='.prepare($id_record).' AND (`co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario` OR `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km` OR `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`) ORDER BY `in_tipiintervento_lang`.`name`');
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `idcontratto`='.prepare($id_record).' AND (`co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario` OR `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km` OR `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`) ORDER BY `in_tipiintervento_lang`.`title`');
 
 if (!empty($rs)) {
     echo '
@@ -275,7 +275,7 @@ echo '
 					<div class="hide">';
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', $idtipiintervento).') AND `idcontratto`='.prepare($id_record).' ORDER BY `name`');
+$rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', $idtipiintervento).') AND `idcontratto`='.prepare($id_record).' ORDER BY `title`');
 
 if (!empty($rs)) {
     echo '
@@ -349,7 +349,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -564,7 +564,7 @@ $elementi = $dbo->fetchArray('
         `co_documenti`.`data`, 
         `co_documenti`.`numero`, 
         `co_documenti`.`numero_esterno`, 
-        `co_tipidocumento_lang`.`name` AS tipo_documento, 
+        `co_tipidocumento_lang`.`title` AS tipo_documento, 
         IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
     FROM `co_documenti` 
     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 

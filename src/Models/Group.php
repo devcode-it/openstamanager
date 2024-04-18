@@ -30,7 +30,7 @@ class Group extends Model
     protected $table = 'zz_groups';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($nome = null, $theme = null, $id_module_start = null)

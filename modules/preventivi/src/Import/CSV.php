@@ -96,7 +96,7 @@ class CSV extends CSVImporter
 
             if (empty($anagrafica)) {
                 $anagrafica = Anagrafica::build($record['ragione_sociale']);
-                $tipo_cliente = (new TipoAnagrafica())->getByField('name', 'Cliente', \Models\Locale::getPredefined()->id);
+                $tipo_cliente = (new TipoAnagrafica())->getByField('title', 'Cliente', \Models\Locale::getPredefined()->id);
                 $anagrafica->tipologie = [$tipo_cliente];
                 $anagrafica->save();
             }
@@ -105,7 +105,7 @@ class CSV extends CSVImporter
 
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], new Carbon($record['data_bozza']), 0);
             $preventivo->numero = $record['numero'];
-            $preventivo->idstato = (new Stato())->getByField('name', 'Bozza', \Models\Locale::getPredefined()->id);
+            $preventivo->idstato = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
             $preventivo->descrizione = $record['descrizione'];
             $preventivo->save();
         }
@@ -119,7 +119,7 @@ class CSV extends CSVImporter
 
             $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->idiva_vendite ?: setting('Iva predefinita'));
 
-            $riga_articolo->descrizione = $articolo_orig->getTranslation('name');
+            $riga_articolo->descrizione = $articolo_orig->getTranslation('title');
             $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
             $riga_articolo->qta = $record['qta'];
 

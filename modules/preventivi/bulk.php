@@ -28,7 +28,7 @@ use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato as StatoPreventivo;
 
 // Segmenti
-$id_fatture = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -47,7 +47,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new StatoFattura())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = (new StatoFattura())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -165,11 +165,11 @@ switch (post('op')) {
 }
 
 $operations['crea_fattura'] = [
-    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
+    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
     'data' => [
-        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('name'))]),
-        'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`=\''.$id_fatture.'\' ORDER BY `zz_segments_lang`.`name`", "value": "'.$id_segment.'" ]}<br>
-        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `name`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module->getTranslation('title'))]),
+        'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`=\''.$id_fatture.'\' ORDER BY `zz_segments_lang`.`title`", "value": "'.$id_segment.'" ]}<br>
+        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
@@ -181,7 +181,7 @@ $operations['cambia_stato'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
         'title' => tr('Vuoi davvero aggiornare lo stato di questi preventivi?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` AS descrizione, `colore` as _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `name`" ]}',
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` as _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

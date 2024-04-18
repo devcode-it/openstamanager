@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-if ($module->getTranslation('name') == 'Fatture di vendita') {
+if ($module->getTranslation('title') == 'Fatture di vendita') {
     $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
 
     echo '
@@ -69,7 +69,7 @@ if (empty($record['is_fiscale'])) {
     </button>';
 }
 
-$modulo_prima_nota = (new Module())->getByField('name', 'Prima nota', Models\Locale::getPredefined()->id);
+$modulo_prima_nota = (new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id);
 $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
     $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;

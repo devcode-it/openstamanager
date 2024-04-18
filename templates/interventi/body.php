@@ -124,7 +124,7 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->getTranslation('name').'
+            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->getTranslation('title').'
         </td>
     </tr>';
 
@@ -346,7 +346,7 @@ foreach ($sessioni as $i => $sessione) {
     echo '
     	<td>
             '.$sessione->anagrafica->ragione_sociale.'
-            ('.$sessione->tipo->getTranslation('name').')
+            ('.$sessione->tipo->getTranslation('title').')
     	</td>';
 
     $inizio = new Carbon($sessione['orario_inizio']);
@@ -527,7 +527,7 @@ echo '
 </table>';
 
 if ($options['checklist']) {
-    $structure = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
+    $structure = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
     $checks = $structure->mainChecks($id_record);
 
     if (!empty($checks)) {
@@ -540,7 +540,7 @@ if ($options['checklist']) {
         </th>
     </tr>';
 
-        $structure = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
+        $structure = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
         $checks = $structure->mainChecks($id_record);
 
         foreach ($checks as $check) {
@@ -549,7 +549,7 @@ if ($options['checklist']) {
 
         $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
         foreach ($impianti_collegati as $impianto) {
-            $checks = Check::where('id_module_from', (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id))->where('id_record_from', $impianto['id'])->where('id_module', (new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id))->where('id_record', $id_record)->where('id_parent', null)->get();
+            $checks = Check::where('id_module_from', (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id))->where('id_record_from', $impianto['id'])->where('id_module', (new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id))->where('id_record', $id_record)->where('id_parent', null)->get();
 
             if (sizeof($checks)) {
                 echo '

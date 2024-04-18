@@ -31,7 +31,7 @@ echo '
         <div class="row">
             <div class="col-md-3">
                 <h4>'.tr('Template').'</h4>
-                '.Modules::link('Template email', $mail->template->id, $mail->template->getTranslation('name')).'
+                '.Modules::link('Template email', $mail->template->id, $mail->template->getTranslation('title')).'
             </div>
 
             <div class="col-md-3">
@@ -58,7 +58,7 @@ echo '
 echo '
 <h4>'.tr('Account mittente').'</h4>
 <div class="well">
-'.$mail->template->account->from_name.' &lt;'.$mail->template->account->from_address.'&gt; - '.Modules::link('Account email', $mail->template->account->id, $mail->template->account->getTranslation('name')).'
+'.$mail->template->account->from_name.' &lt;'.$mail->template->account->from_address.'&gt; - '.Modules::link('Account email', $mail->template->account->id, $mail->template->account->getTranslation('title')).'
 </div>';
 
 echo '
@@ -115,9 +115,9 @@ foreach ($prints as $print) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.Prints::getHref($print->getTranslation('name'), $mail->id_record).'" target="_blank">'.$print->getTranslation('name').'</a>
+                        <a href="'.Prints::getHref($print->getTranslation('title'), $mail->id_record).'" target="_blank">'.$print->getTranslation('title').'</a>
                     </td>
-                    <td>'.$print->pivot->getTranslation('name').'</td>
+                    <td>'.$print->pivot->getTranslation('title').'</td>
                 </tr>';
 }
 
@@ -145,9 +145,9 @@ foreach ($uploads as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->getTranslation('name').'</a>
+                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->getTranslation('title').'</a>
                     </td>
-                    <td>'.$upload->pivot->getTranslation('name').'</td>
+                    <td>'.$upload->pivot->getTranslation('title').'</td>
                 </tr>';
 }
 

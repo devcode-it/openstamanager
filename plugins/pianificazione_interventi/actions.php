@@ -215,7 +215,7 @@ switch ($operazione) {
 
         $qta = post('qta');
 
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->um = post('um') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;

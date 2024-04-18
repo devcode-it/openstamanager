@@ -43,7 +43,6 @@ class Module extends Model
     protected $table = 'zz_modules';
 
     protected static $translated_fields = [
-        'name',
         'title',
     ];
 

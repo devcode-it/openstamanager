@@ -60,53 +60,53 @@ if (empty($_GET['visualizza_allegati'])) {
     }
 
     // Interventi dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id), $permessi)) {
-        $interventi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id))." AS id_module, `id` AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(`data_richiesta`,'%d/%m/%Y')) AS descrizione FROM `in_interventi` WHERE `idanagrafica`=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id), $permessi)) {
+        $interventi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id))." AS id_module, `id` AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(`data_richiesta`,'%d/%m/%Y')) AS descrizione FROM `in_interventi` WHERE `idanagrafica`=".prepare($id_record));
         $documenti = array_merge($documenti, $interventi);
     }
 
     // Preventivi dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id), $permessi)) {
-        $preventivi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_preventivi WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id), $permessi)) {
+        $preventivi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_preventivi WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $preventivi);
     }
 
     // Contratti dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Contratti', Models\Locale::getPredefined()->id), $permessi)) {
-        $contratti = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Contratti', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_contratti WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id), $permessi)) {
+        $contratti = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_contratti WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $contratti);
     }
 
     // DDT dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id), $permessi)) {
-        $ddt_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ddt di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id), $permessi)) {
+        $ddt_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ddt di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ddt_vendita);
     }
 
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id), $permessi)) {
-        $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ddt di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id), $permessi)) {
+        $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ddt di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ddt_acquisto);
     }
 
     // Fatture dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id), $permessi)) {
-        $fatture_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Fattura di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id), $permessi)) {
+        $fatture_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Fattura di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $fatture_vendita);
     }
 
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Fatture di acquisto', Models\Locale::getPredefined()->id), $permessi)) {
-        $fatture_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Fatture di acquisto', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Fattura di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id), $permessi)) {
+        $fatture_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Fattura di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $fatture_acquisto);
     }
 
     // Ordini dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Ordini cliente', Models\Locale::getPredefined()->id), $permessi)) {
-        $ordini_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Ordini cliente', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ordine cliente num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Ordini cliente', Models\Locale::getPredefined()->id), $permessi)) {
+        $ordini_vendita = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Ordini cliente', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ordine cliente num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ordini_vendita);
     }
 
-    if ($user->is_admin || in_array((new Module())->getByField('name', 'Ordini fornitore', Models\Locale::getPredefined()->id), $permessi)) {
-        $ordini_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('name', 'Ordini fornitore', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ordine fornitore num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id), $permessi)) {
+        $ordini_acquisto = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id))." AS id_module, id AS id_record, CONCAT('Ordine fornitore num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ordini_acquisto);
     }
 
@@ -136,7 +136,7 @@ if (empty($_GET['visualizza_allegati'])) {
                 // Anteprime supportate dal browser
                 if ($file->hasPreview()) {
                     echo '
-                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->getTranslation('name')).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
+                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->getTranslation('title')).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
                                 <i class="fa fa-eye"></i>
                             </button>';
                 } else {
@@ -150,10 +150,10 @@ if (empty($_GET['visualizza_allegati'])) {
                         </td>
                         <td>
                             <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
-                                <i class="fa fa-external-link"></i> '.$file->getTranslation('name').'
+                                <i class="fa fa-external-link"></i> '.$file->getTranslation('title').'
                             </a>
                         </td>
-                        <td>'.Modules::link(Module::find($allegato['id_module']->getTranslation('name')), $file->id_record, $documento['descrizione']).'</td>
+                        <td>'.Modules::link(Module::find($allegato['id_module']->getTranslation('title')), $file->id_record, $documento['descrizione']).'</td>
                         <td class="text-center">'.Translator::dateToLocale($file->created_at).'</td>
                         </tr>';
             }

@@ -39,7 +39,7 @@ class Cache extends Model
     protected $table = 'zz_cache';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
     protected $casts = [
         'content' => 'array',
@@ -53,7 +53,7 @@ class Cache extends Model
     {
         $model = new self();
 
-        $model->setTranslation('name', $name);
+        $model->setTranslation('title', $name);
         $model->valid_time = $valid_time;
         $model->expire_at = $expire_at;
 

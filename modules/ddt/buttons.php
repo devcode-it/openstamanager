@@ -21,7 +21,7 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module_collegamento = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id);
+$id_module_collegamento = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id);
 
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {
@@ -64,12 +64,12 @@ function completaTrasporto() {
 }
 
 // Informazioni sull'importabilità del DDT
-$stati = $database->fetchArray('SELECT `name` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+$stati = $database->fetchArray('SELECT `title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }
 
-$causali = $database->fetchArray('SELECT `name` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
+$causali = $database->fetchArray('SELECT `title` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
 foreach ($causali as $causale) {
     $causali_importabili[] = $causale['name'];
 }

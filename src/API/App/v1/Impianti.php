@@ -50,7 +50,7 @@ class Impianti extends AppResource
     {
         $statement = Impianto::select('id', 'updated_at', 'idtecnico')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
-                $tipo_cliente = (new Tipo())->getByField('name', 'Cliente', \Models\Locale::getPredefined()->id);
+                $tipo_cliente = (new Tipo())->getByField('title', 'Cliente', \Models\Locale::getPredefined()->id);
                 $query->where('id', '=', $tipo_cliente);
             });
 
@@ -97,8 +97,8 @@ class Impianti extends AppResource
             `my_impianti`.`piano`,
             `my_impianti`.`interno`,
             `my_impianti`.`occupante`,
-            `categorie_lang`.`name` AS categoria
-            `sottocategorie_lang`.`name` AS sottocategoria
+            `categorie_lang`.`title` AS categoria
+            `sottocategorie_lang`.`title` AS sottocategoria
         FROM `my_impianti`
             LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
             LEFT JOIN `my_impianti_categorie_lang` as categorie_lang ON (`categorie_lang`.`id_record` = `my_impianti_categorie`.`id` AND `categorie_lang`.|lang|)

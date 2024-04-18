@@ -40,7 +40,7 @@ switch ($resource) {
 
         $query = "SELECT
             DISTINCT `mg_articoli`.`id`,
-            IF(`categoria_lang`.`name` IS NOT NULL, CONCAT(`categoria_lang`.`name`, IF(`sottocategoria_lang`.`name` IS NOT NULL, CONCAT(' (', `sottocategoria_lang`.`name`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
+            IF(`categoria_lang`.`title` IS NOT NULL, CONCAT(`categoria_lang`.`title`, IF(`sottocategoria_lang`.`title` IS NOT NULL, CONCAT(' (', `sottocategoria_lang`.`title`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
             `mg_articoli`.`barcode`,
             `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,
@@ -50,7 +50,7 @@ switch ($resource) {
         if ($usare_dettaglio_fornitore) {
             $query .= '
             IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
-            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
+            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`title`) AS descrizione,
             IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli`.`prezzo_acquisto`) AS prezzo_acquisto,
             IFNULL(`mg_fornitore_articolo`.`qta_minima`, 0) AS qta_minima,
             `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore,';
@@ -59,7 +59,7 @@ switch ($resource) {
         else {
             $query .= '
             `mg_articoli`.`codice` AS codice,
-            `mg_articoli_lang`.`name` AS descrizione,
+            `mg_articoli_lang`.`title` AS descrizione,
             `mg_articoli`.`prezzo_acquisto` AS prezzo_acquisto,
             0 AS qta_minima,
             `mg_fornitore_articolo`.`codice_fornitore` AS codice_fornitore,
@@ -69,12 +69,12 @@ switch ($resource) {
         if ($usare_iva_anagrafica) {
             $query .= '
             IFNULL(`iva_anagrafica`.`id`, IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`)) AS idiva_vendita,
-            IFNULL(`iva_anagrafica_lang`.`name`, IFNULL(`iva_articolo_lang`.`name`, `iva_predefinita_lang`.`name`)) AS iva_vendita,
+            IFNULL(`iva_anagrafica_lang`.`title`, IFNULL(`iva_articolo_lang`.`title`, `iva_predefinita_lang`.`title`)) AS iva_vendita,
             IFNULL(`iva_anagrafica`.`percentuale`, IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`)) AS percentuale,';
         } else {
             $query .= '
             IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`) AS idiva_vendita,
-            IFNULL(`iva_articolo_lang`.`name`, `iva_predefinita_lang`.`name`) AS iva_vendita,
+            IFNULL(`iva_articolo_lang`.`title`, `iva_predefinita_lang`.`title`) AS iva_vendita,
             IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`) AS percentuale,';
         }
 
@@ -92,8 +92,8 @@ switch ($resource) {
             `mg_articoli`.`abilita_serial`,
             `mg_articoli`.`idconto_vendita`,
             `mg_articoli`.`idconto_acquisto`,
-            `categoria_lang`.`name` AS categoria,
-            `sottocategoria_lang`.`name` AS sottocategoria,
+            `categoria_lang`.`title` AS categoria,
+            `sottocategoria_lang`.`title` AS sottocategoria,
             `righe`.`media_ponderata`,
             CONCAT(`conto_vendita_categoria` .`numero`, '.', `conto_vendita_sottocategoria`.`numero`, ' ', `conto_vendita_sottocategoria`.`descrizione`) AS idconto_vendita_title,
             CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS idconto_acquisto_title
@@ -155,10 +155,10 @@ switch ($resource) {
 
         $query .= '
         ORDER BY
-            `categoria_lang`.`name` ASC,
-            `sottocategoria_lang`.`name` ASC,
+            `categoria_lang`.`title` ASC,
+            `sottocategoria_lang`.`title` ASC,
             `mg_articoli`.`codice` ASC,
-            `mg_articoli_lang`.`name` ASC';
+            `mg_articoli_lang`.`title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`mg_articoli`.`id`='.prepare($element);
@@ -176,11 +176,11 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`mg_articoli_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`mg_articoli_lang`.`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`barcode` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`categoria_lang`.`name` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`sottocategoria_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`categoria_lang`.`title` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`sottocategoria_lang`.`title` LIKE '.prepare('%'.$search.'%');
 
             if ($usare_dettaglio_fornitore) {
                 $search_fields[] = '`mg_fornitore_articolo`.`descrizione` LIKE '.prepare('%'.$search.'%');
@@ -220,7 +220,7 @@ switch ($resource) {
         break;
 
     case 'categorie':
-        $query = 'SELECT `mg_categorie`.`id`, `name` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+        $query = 'SELECT `mg_categorie`.`id`, `title` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
             $filter[] = '`mg_categorie`.`id`='.prepare($element);
@@ -229,7 +229,7 @@ switch ($resource) {
         $where[] = '`parent` IS NULL';
 
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -240,7 +240,7 @@ switch ($resource) {
          */
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT `mg_categorie`.`id`, `name` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `name`';
+            $query = 'SELECT `mg_categorie`.`id`, `title` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
             foreach ($elements as $element) {
                 $filter[] = '`mg_categorie`.`id`='.prepare($element);
@@ -249,7 +249,7 @@ switch ($resource) {
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
 
             if (!empty($search)) {
-                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;
@@ -281,7 +281,7 @@ switch ($resource) {
             `mg_articoli`.`id`,
             `mg_articoli`.`id`,
             IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
-            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`name`) AS descrizione,
+            IFNULL(`mg_fornitore_articolo`.`descrizione`, `mg_articoli_lang`.`title`) AS descrizione,
             IFNULL(`mg_fornitore_articolo`.`prezzo_acquisto`, `mg_articoli`.`prezzo_acquisto`) AS prezzo_acquisto,
             `mg_articoli`.'.($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'tipi_documento':
-        $query = 'SELECT `co_tipidocumento`.`id`, `co_tipidocumento_lang`.`name` AS descrizione FROM `co_tipidocumento` |where| ORDER BY `name` ASC';
+        $query = 'SELECT `co_tipidocumento`.`id`, `co_tipidocumento_lang`.`title` AS descrizione FROM `co_tipidocumento` |where| ORDER BY `title` ASC';
 
         $where[] = '`co_tipidocumento`.`enabled` = 1';
         $where[] = '`dir`='.$superselect['dir'];
@@ -30,7 +30,7 @@ switch ($resource) {
             $filter[] = '`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

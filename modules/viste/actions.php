@@ -77,7 +77,7 @@ switch (filter('op')) {
 
                 // Aggiornamento traduzione nome campo
                 $vista = View::find($id);
-                $vista->setTranslation('name', $name);
+                $vista->setTranslation('title', $name);
 
                 // Aggiornamento dei permessi relativi
                 $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
@@ -117,7 +117,7 @@ switch (filter('op')) {
                     $clause->idmodulo = $id_record;
                     $clause->clause = $query;
                     $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->setTranslation('name', post('name')[$c]);
+                    $clause->setTranslation('title', post('name')[$c]);
                     $clause->save();
                 } elseif (!empty($query)) {
                     $clause = Clause::build();
@@ -126,7 +126,7 @@ switch (filter('op')) {
                     $clause->idmodulo = $id_record;
                     $clause->clause = $query;
                     $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->setTranslation('name', post('name')[$c]);
+                    $clause->setTranslation('title', post('name')[$c]);
                     $clause->save();
                 }
             } else {

@@ -25,7 +25,7 @@ switch (post('op')) {
         $name = post('name');
 
         // Verifico che il nome non esista già
-        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE (`name`='.prepare($name).' AND `id` !='.prepare($id_marca));
+        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE (`title`='.prepare($name).' AND `id` !='.prepare($id_marca));
 
         // Marca già esistente
         if ($n > 0) {
@@ -33,7 +33,7 @@ switch (post('op')) {
         }
         // Marca non esistente
         else {
-            $dbo->query('UPDATE `my_impianti_marche` SET `name`='.prepare($name).' WHERE `id`='.prepare($id_marca));
+            $dbo->query('UPDATE `my_impianti_marche` SET `title`='.prepare($name).' WHERE `id`='.prepare($id_marca));
             flash()->info(tr('Informazioni salvate correttamente!'));
         }
 
@@ -43,12 +43,12 @@ switch (post('op')) {
         $name = post('name');
 
         // Verifico che il nome non sia duplicato
-        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE `name`='.prepare($name));
+        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE `title`='.prepare($name));
 
         if ($n > 0) {
             flash()->error(tr('Nome già esistente!'));
         } else {
-            $query = 'INSERT INTO my_impianti_marche (`name`) VALUES ('.prepare($name).')';
+            $query = 'INSERT INTO my_impianti_marche (`title`) VALUES ('.prepare($name).')';
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();

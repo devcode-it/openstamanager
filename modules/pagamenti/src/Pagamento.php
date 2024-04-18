@@ -32,7 +32,7 @@ class Pagamento extends Model
     protected $table = 'co_pagamenti';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($codice = null)
@@ -56,7 +56,7 @@ class Pagamento extends Model
 
     public function calcola($importo, $data, $id_anagrafica)
     {
-        $rate = PagamentoLang::where('name', '=', $this->getTranslation('name'))->get()->sortBy('num_giorni')->pluck('id')->toArray();
+        $rate = PagamentoLang::where('name', '=', $this->getTranslation('title'))->get()->sortBy('num_giorni')->pluck('id')->toArray();
         $number = count($rate);
 
         $totale = 0.0;

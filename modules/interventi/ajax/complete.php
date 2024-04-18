@@ -16,7 +16,7 @@ $numero_documenti = 5;
 switch ($op) {
     case 'dettagli':
         // Informazioni sui contratti
-        $modulo_contratti = Module::find((new Module())->getByField('name', 'Contratti', Models\Locale::getPredefined()->id));
+        $modulo_contratti = Module::find((new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id));
         if ($modulo_contratti->permission != '-') {
             // Contratti attivi per l'anagrafica
             $contratti = Contratto::where('idanagrafica', '=', $id_anagrafica)
@@ -32,7 +32,7 @@ switch ($op) {
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
                     echo '
-                    <li>'.$contratto->getReference().' ['.$contratto->stato->getTranslation('name').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
+                    <li>'.$contratto->getReference().' ['.$contratto->stato->getTranslation('title').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
                 }
             } else {
                 echo '
@@ -44,7 +44,7 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_preventivi = Module::find((new Module())->getByField('name', 'Preventivi', Models\Locale::getPredefined()->id));
+        $modulo_preventivi = Module::find((new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id));
         if ($modulo_preventivi->permission != '-') {
             // Preventivi attivi
             $preventivi = Preventivo::where('idanagrafica', '=', $id_anagrafica)
@@ -58,7 +58,7 @@ switch ($op) {
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
                     echo '
-                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->getTranslation('name').']</li>';
+                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->getTranslation('title').']</li>';
                 }
             } else {
                 echo '
@@ -70,13 +70,13 @@ switch ($op) {
         }
 
         // Informazioni sui preventivi
-        $modulo_fatture_vendita = Module::find((new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id));
+        $modulo_fatture_vendita = Module::find((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id));
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
             $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
-                    $id_bozza = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
-                    $id_parz_pagato = (new Stato())->getByField('name', 'Parziale pagato', Models\Locale::getPredefined()->id);
+                    $id_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+                    $id_parz_pagato = (new Stato())->getByField('title', 'Parziale pagato', Models\Locale::getPredefined()->id);
                     $query->whereIn('id', [$id_bozza, $id_parz_pagato]);
                 })
                 ->latest()->take($numero_documenti)->get();

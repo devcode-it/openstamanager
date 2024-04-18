@@ -141,7 +141,7 @@ switch (post('op')) {
     case 'allega_fattura':
         $scadenza = Scadenza::find($id_record);
         $id_documento = post('iddocumento');
-        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id))->first();
+        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id))->first();
 
         $print = Prints::render($print_predefined->id, $id_documento, null, true);
         $upload = Uploads::upload($print['pdf'], [

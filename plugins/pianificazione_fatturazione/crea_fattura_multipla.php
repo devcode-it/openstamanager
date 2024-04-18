@@ -46,7 +46,7 @@ foreach ($records as $j => $record) {
     }
 }
 
-$id_module_fattura = (new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_module_fattura = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
 $id_conto = setting('Conto predefinito fatture di vendita');
 
 echo '<form action="" method="post">
@@ -74,7 +74,7 @@ echo '
 
 // Sezionale
 echo '<div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `name` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.$id_module_fattura.' ORDER BY `name`", "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.$id_module_fattura.' ORDER BY `title`", "value":"'.$_SESSION['module_'.$id_module_fattura]['id_segment'].'" ]}
         </div>';
 
 // Conto

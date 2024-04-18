@@ -32,7 +32,7 @@ switch ($action) {
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
                 $q->whereHas('stato', function ($q) {
-                    $stato_concluso = (new Stato())->getByField('name', 'Concluso', Models\Locale::getPredefined()->id);
+                    $stato_concluso = (new Stato())->getByField('title', 'Concluso', Models\Locale::getPredefined()->id);
                     $q
                         ->where('is_fatturabile', 1)
                         ->where('id', '!=', $stato_concluso);
@@ -72,7 +72,7 @@ switch ($action) {
         $pianificazioni = Pianificazione::doesntHave('fattura')
             ->whereHas('contratto', function ($q) {
                 $q->whereHas('stato', function ($q) {
-                    $stato_concluso = (new Stato())->getByField('name', 'Concluso', Models\Locale::getPredefined()->id);
+                    $stato_concluso = (new Stato())->getByField('title', 'Concluso', Models\Locale::getPredefined()->id);
                     $q
                         ->where('is_fatturabile', 1)
                         ->where('id', '!=', $stato_concluso);

@@ -30,7 +30,7 @@ class Clause extends Model
     protected $table = 'zz_group_module';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build()

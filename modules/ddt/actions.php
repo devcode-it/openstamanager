@@ -34,7 +34,7 @@ use Modules\Ordini\Stato as StatoOrdine;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name') == 'Ddt di vendita') {
+if ($module->getTranslation('title') == 'Ddt di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -120,7 +120,7 @@ switch (filter('op')) {
 
             $ddt->save();
 
-            $query = 'SELECT `name` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
+            $query = 'SELECT `title` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
             $rs = $dbo->fetchArray($query);
 
             // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
@@ -165,7 +165,7 @@ switch (filter('op')) {
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 
@@ -319,7 +319,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $evadi_qta_parent = true;
-        $tipo = $documento->tipo ? $documento->tipo->getTranslation('name') : null;
+        $tipo = $documento->tipo ? $documento->tipo->getTranslation('title') : null;
         if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
             $evadi_qta_parent = false;
         }
@@ -470,7 +470,7 @@ switch (filter('op')) {
          */
     case 'completa_trasporto':
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
-        $stato = (new Stato())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
 
         // Duplicazione DDT
         $id_segment = post('id_segment');
@@ -518,7 +518,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('name', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('name', 'Ddt di vendita', Models\Locale::getPredefined()->id);
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id);
 
         break;
 
@@ -529,7 +529,7 @@ switch (filter('op')) {
         $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
-        $stato = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato);
         $new->save();
 

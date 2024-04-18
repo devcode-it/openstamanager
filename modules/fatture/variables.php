@@ -25,7 +25,7 @@ $r = $dbo->fetchOne('SELECT
         `an_anagrafiche`.`idconto_fornitore`,
         `an_anagrafiche`.`ragione_sociale`,
         `an_referenti`.`nome`,
-        `co_tipidocumento_lang`.`name` AS tipo_documento,
+        `co_tipidocumento_lang`.`title` AS tipo_documento,
         (SELECT `pec` FROM `em_accounts` WHERE `em_accounts`.`id`='.prepare($template['id_account']).') AS is_pec
     FROM `co_documenti`
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`

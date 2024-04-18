@@ -31,7 +31,7 @@ class View extends Model
     protected $table = 'zz_views';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function getQueryAttribute($value)

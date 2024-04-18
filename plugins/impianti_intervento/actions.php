@@ -29,7 +29,7 @@ switch ($operazione) {
         if (post('id_impianto')) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare(post('id_impianto')).', '.prepare($id_record).')');
 
-            $id_modulo_impianti = (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id);
+            $id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
             $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare(post('id_impianto')));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
@@ -74,7 +74,7 @@ switch ($operazione) {
         break;
 
     case 'delete_impianto':
-        $id_modulo_impianti = (new Module())->getByField('name', 'Impianti', Models\Locale::getPredefined()->id);
+        $id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
         $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare(post('id')));
         Check::deleteLinked([
             'id_module' => $id_module,

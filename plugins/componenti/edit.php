@@ -67,7 +67,7 @@ $elenchi = [
     ],
 ];
 
-$plugin = (new Plugin())->getByField('name', 'Componenti', Models\Locale::getPredefined()->id);
+$plugin = (new Plugin())->getByField('title', 'Componenti', Models\Locale::getPredefined()->id);
 $module = $plugin->module;
 
 // Generazione elenchi HTML
@@ -116,7 +116,7 @@ foreach ($elenchi as $elenco) {
         echo '
                 <tr class="riga-componente" data-id="'.$componente->id.'">
                     <td class="text-center">#'.$componente->id.'</td>
-                    <td class="text-center">'.$articolo->codice.' - '.$articolo->getTranslation('name').'</td>
+                    <td class="text-center">'.$articolo->codice.' - '.$articolo->getTranslation('title').'</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
                     <td class="text-center">

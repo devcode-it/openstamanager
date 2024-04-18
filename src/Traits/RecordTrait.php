@@ -29,12 +29,12 @@ trait RecordTrait
 
     public function getModule()
     {
-        return !empty($this->module) ? Module::find((new Module())->getByField('name', $this->module)) : null;
+        return !empty($this->module) ? Module::find((new Module())->getByField('title', $this->module)) : null;
     }
 
     public function getPlugin()
     {
-        return !empty($this->plugin) ? Plugin::find((new Plugin())->getByField('name', $this->plugin)) : null;
+        return !empty($this->plugin) ? Plugin::find((new Plugin())->getByField('title', $this->plugin)) : null;
     }
 
     /**

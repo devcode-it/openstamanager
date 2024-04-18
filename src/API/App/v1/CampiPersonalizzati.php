@@ -31,7 +31,7 @@ class CampiPersonalizzati extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $module = (new Module())->getByField('name', 'Interventi', \Models\Locale::getPredefined()->id);
+        $module = (new Module())->getByField('title', 'Interventi', \Models\Locale::getPredefined()->id);
 
         $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module->id_record)." AND `content` LIKE '%text%'";
 
@@ -50,7 +50,7 @@ class CampiPersonalizzati extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT 
             `zz_fields`.`id` AS id,
-            `zz_fields`.`name`,
+            `zz_fields`.`title`,
             `zz_fields`.`html_name`,
             `zz_fields`.`order`
         FROM 

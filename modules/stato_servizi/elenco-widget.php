@@ -33,8 +33,8 @@ echo '
 
 $widgets = $dbo->fetchArray('SELECT 
         `zz_widgets`.*, 
-        `zz_widgets_lang`.`name` as name,
-        `zz_modules_lang`.`name` AS modulo
+        `zz_widgets_lang`.`title` as name,
+        `zz_modules_lang`.`title` AS modulo
     FROM zz_widgets
         LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_modules` ON `zz_widgets`.`id_module` = `zz_modules`.`id`

@@ -26,14 +26,14 @@ switch (filter('op')) {
     case 'add':
         $descrizione = post('nome');
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('name', $descrizione);
+        $attributo_new = (new Attributo())->getByField('title', $descrizione);
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
         } else {
             $attributo = Attributo::build();
             $id_record = $dbo->lastInsertedID();
-            $attributo->setTranslation('name', $descrizione);
+            $attributo->setTranslation('title', $descrizione);
             $attributo->setTranslation('title', $title);
             $attributo->save();
 
@@ -43,7 +43,7 @@ switch (filter('op')) {
 
     case 'update':
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('name', $descrizione);
+        $attributo_new = (new Attributo())->getByField('title', $descrizione);
 
         if (!empty($attributo_new) && $attributo_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));

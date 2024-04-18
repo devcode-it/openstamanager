@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'anagrafiche_utenti':
-        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
+        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
 
         $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
@@ -64,7 +64,7 @@ switch ($resource) {
         break;
 
     case 'utenti':
-        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`idanagrafica` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`name` AS optgroup
+        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`idanagrafica` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup
         FROM 
             `zz_users`
             LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
@@ -117,13 +117,13 @@ switch ($resource) {
         break;
 
     case 'gruppi':
-        $query = 'SELECT `zz_groups`.`id`, `zz_groups_lang`.`name` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' |where| ORDER BY `name`';
+        $query = 'SELECT `zz_groups`.`id`, `zz_groups_lang`.`title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
             $filter[] = '`zz_groups`.`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = '`zz_groups_lang`.`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`zz_groups_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

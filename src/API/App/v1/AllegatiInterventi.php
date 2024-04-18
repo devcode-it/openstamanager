@@ -35,7 +35,7 @@ class AllegatiInterventi extends AppResource
         // Elenco allegati degli interventi da rimuovere
         $da_interventi = [];
         if (!empty($interventi)) {
-            $query = 'SELECT `zz_files`.`id` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $interventi).')';
+            $query = 'SELECT `zz_files`.`id` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $interventi).')';
             $allegati_interventi = database()->fetchArray($query);
             $da_interventi = array_column($allegati_interventi, 'id');
         }
@@ -57,7 +57,7 @@ class AllegatiInterventi extends AppResource
         }
 
         $id_interventi = array_keys($interventi);
-        $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $id_interventi).')';
+        $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $id_interventi).')';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -77,7 +77,7 @@ class AllegatiInterventi extends AppResource
         $record = [
             'id' => $upload->id,
             'tipo' => $upload->extension,
-            'nome' => $upload->getTranslation('name'),
+            'nome' => $upload->getTranslation('title'),
             'categoria' => $upload->category,
             'size' => $upload->size,
             'id_intervento' => $upload->id_record,
@@ -89,7 +89,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = (new Module())->getByField('name', 'Anagrafiche', \Models\Locale::getPredefined()->id);
+        $module = (new Module())->getByField('title', 'Anagrafiche', \Models\Locale::getPredefined()->id);
 
         // Creazione del file temporaneo
         $content = explode(',', $data['contenuto']);

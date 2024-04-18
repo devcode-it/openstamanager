@@ -61,13 +61,13 @@ $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
-$ultima_esecuzione = Cache::find((new Cache())->getByField('name', 'Ultima esecuzione del cron', Models\Locale::getPredefined()->id));
+$ultima_esecuzione = Cache::find((new Cache())->getByField('title', 'Ultima esecuzione del cron', Models\Locale::getPredefined()->id));
 $data = $ultima_esecuzione->content;
 
-$in_esecuzione = Cache::find((new Cache())->getByField('name', 'Cron in esecuzione', Models\Locale::getPredefined()->id));
-$cron_id = Cache::find((new Cache())->getByField('name', 'ID del cron', Models\Locale::getPredefined()->id));
+$in_esecuzione = Cache::find((new Cache())->getByField('title', 'Cron in esecuzione', Models\Locale::getPredefined()->id));
+$cron_id = Cache::find((new Cache())->getByField('title', 'ID del cron', Models\Locale::getPredefined()->id));
 
-$disattiva = Cache::find((new Cache())->getByField('name', 'Disabilita cron', Models\Locale::getPredefined()->id));
+$disattiva = Cache::find((new Cache())->getByField('title', 'Disabilita cron', Models\Locale::getPredefined()->id));
 if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     return;
 }
@@ -139,7 +139,7 @@ while (true) {
             $task->registerNextExecution($inizio_iterazione);
             $task->save();
 
-            $logger->info($task->getTranslation('name').': data mancante', [
+            $logger->info($task->getTranslation('title').': data mancante', [
                 'timestamp' => $task->next_execution_at->toDateTimeString(),
             ]);
         }
@@ -147,7 +147,7 @@ while (true) {
         // Esecuzione diretta solo nel caso in cui sia prevista
         if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
             // Registrazione dell'esecuzione nei log
-            $logger->info($task->getTranslation('name').': '.$task->expression);
+            $logger->info($task->getTranslation('title').': '.$task->expression);
             try {
                 $task->execute();
             } catch (Exception $e) {
@@ -158,12 +158,12 @@ while (true) {
                     'trace' => $e->getTraceAsString(),
                 ]);
 
-                $logger->error($task->getTranslation('name').': errore');
+                $logger->error($task->getTranslation('title').': errore');
             }
         }
         // Esecuzione mancata
         elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
-            $logger->warning($task->getTranslation('name').': mancata', [
+            $logger->warning($task->getTranslation('title').': mancata', [
                 'timestamp' => $task->next_execution_at->toDateTimeString(),
             ]);
 

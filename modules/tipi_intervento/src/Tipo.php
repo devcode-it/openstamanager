@@ -31,7 +31,7 @@ class Tipo extends Model
     protected $table = 'in_tipiintervento';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     /**

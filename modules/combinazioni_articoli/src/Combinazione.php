@@ -19,7 +19,7 @@ class Combinazione extends Model
     protected $table = 'mg_combinazioni';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     /**
@@ -107,7 +107,7 @@ class Combinazione extends Model
                 $articolo_base = $articoli->first();
                 $articolo = $articolo_base->replicate();
 
-                $nome_immagine = $articolo_base->immagine_upload->getTranslation('name');
+                $nome_immagine = $articolo_base->immagine_upload->getTranslation('title');
                 $allegato = $articolo_base->uploads()->where('name', $nome_immagine)->first();
 
                 if (!empty($allegato)) {
@@ -120,7 +120,7 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `name`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".implode("', '", $variante)."')");
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".implode("', '", $variante)."')");
             $articolo->codice = $this->codice.'-'.implode('|', $variante);
             $articolo->save();
         }

@@ -37,7 +37,7 @@ class Template extends Model
     protected $table = 'em_templates';
 
     protected static $translated_fields = [
-        'name',
+        'title',
         'body',
         'subject',
     ];

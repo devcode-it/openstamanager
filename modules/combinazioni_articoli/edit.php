@@ -22,7 +22,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->getTranslation('name').'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
+                    {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$combinazione->getTranslation('title').'", "required": 1, "help": "'.tr('Nome univoco della combinazione').'" ]}
                 </div>
             </div>
 
@@ -33,7 +33,7 @@ if (!empty($combinazione->id_categoria)) {
                     '.Modules::link('Categorie articoli', $combinazione->id_categoria, null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('name', 'Categorie articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.(new Module())->getByField('title', 'Categorie articoli', Models\Locale::getPredefined()->id).'" ]}
                 </div>
 
                 <div class="col-md-6">
@@ -43,7 +43,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "value": "'.implode(',', $combinazione->attributi->pluck('id')->all()).'", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`name` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
+                    {[ "type": "select", "label": "'.tr('Attributi').'", "name": "attributi[]", "value": "'.implode(',', $combinazione->attributi->pluck('id')->all()).'", "values": "query=SELECT `mg_attributi`.`id`, `mg_attributi_lang`.`title` AS descrizione FROM `mg_attributi` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL", "required": 1, "multiple": 1, "help": "'.tr('Attributi abilitati per la combinazione corrente').'" ]}
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@ foreach ($articoli as $articolo) {
                 <tr data-id="'.$articolo->id.'">
                     <td><img class="img-thumbnail img-responsive" src="'.$articolo->image.'"></td>
                     <td>'.$articolo->nome_variante.'</td>
-                    <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->getTranslation('name')).'</td>
+                    <td>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->getTranslation('title')).'</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-warning btn-xs" onclick="modificaVariante('.$articolo->id.')">
                             <i class="fa fa-edit"></i> '.tr('Modifica').'

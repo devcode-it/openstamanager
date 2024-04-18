@@ -62,7 +62,7 @@ $codice = Aliquota::max('codice') + 1;
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `name`) AS descrizione FROM `fe_natura` LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "extra": "disabled" ]}
+			{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `title`) AS descrizione FROM `fe_natura` LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "extra": "disabled" ]}
 		</div>
 
 	</div>

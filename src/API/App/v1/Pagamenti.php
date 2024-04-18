@@ -46,7 +46,7 @@ class Pagamenti extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `co_pagamenti`.`id`,
-            `co_pagamenti_lang`.`name` AS `descrizione`
+            `co_pagamenti_lang`.`title` AS `descrizione`
         FROM `co_pagamenti`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `co_pagamenti`.`id` = '.prepare($id);

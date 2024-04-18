@@ -26,7 +26,7 @@ foreach ($subcategorie as $sub) {
     $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub->id).' AND deleted_at IS NULL');
     echo '
 				<tr>
-					<td>'.$sub->getTranslation('name').'</td>
+					<td>'.$sub->getTranslation('title').'</td>
 					<td>'.$sub->colore.'</td>
 					<td>'.$sub->nota.'</td>
 					<td>

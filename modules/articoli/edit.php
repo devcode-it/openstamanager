@@ -53,11 +53,11 @@ use Modules\Iva\Aliquota;
                         <div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
                                 Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli', Models\Locale::getPredefined()->id); ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Categorie articoli', Models\Locale::getPredefined()->id); ?>" ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie articoli', Models\Locale::getPredefined()->id); ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo (new Module())->getByField('title', 'Categorie articoli', Models\Locale::getPredefined()->id); ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ use Modules\Iva\Aliquota;
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $articolo->getTranslation('name'); ?>", "charcounter": 1 ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $articolo->getTranslation('title'); ?>", "charcounter": 1 ]}
 				</div>
 			</div>
 
@@ -86,7 +86,7 @@ use Modules\Iva\Aliquota;
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Unità di misura', Models\Locale::getPredefined()->id); ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Unità di misura', Models\Locale::getPredefined()->id); ?>" ]}
                 </div>
             </div>
 
@@ -393,9 +393,9 @@ $("#scorporaIva").click( function() {
 
 // Collegamenti diretti
 // Fatture, ddt, preventivi collegati a questo articolo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`name` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(`co_righe_documenti`.`qta`) AS qta_totale, ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale, SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY `co_documenti`.`id`
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(`co_righe_documenti`.`qta`) AS qta_totale, ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale, SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY `co_documenti`.`id`
 
-UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`name` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))*SUM(dt_righe_ddt.qta)) AS prezzo_totale, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_unitario FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY `dt_ddt`.`id`
+UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt_lang`.`title` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))*SUM(dt_righe_ddt.qta)) AS prezzo_totale, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_unitario FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY `dt_ddt`.`id`
 
 UNION SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir, SUM(co_righe_preventivi.qta) AS qta_totale, ((SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario))*SUM(co_righe_preventivi.qta)) AS prezzo_totale, SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario) AS prezzo_unitario FROM `co_preventivi` INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id`=`co_righe_preventivi`.`idpreventivo` WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_record).' GROUP BY co_preventivi.id ORDER BY `data`');
 

@@ -112,11 +112,11 @@ echo '
             }
 ?>
 
-                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `name` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `name` ORDER BY `name`", "value": "$idpagamento$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `title` ORDER BY `title`", "value": "$idpagamento$" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`name` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstato$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
                 </div>
 
             </div>
@@ -257,7 +257,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -469,7 +469,7 @@ $elementi = $dbo->fetchArray('
         `co_documenti`.`data`, 
         `co_documenti`.`numero`, 
         `co_documenti`.`numero_esterno`, 
-        `co_tipidocumento_lang`.`name` AS tipo_documento, 
+        `co_tipidocumento_lang`.`title` AS tipo_documento, 
         IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
     FROM `co_documenti` 
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
@@ -484,7 +484,7 @@ $elementi = $dbo->fetchArray('
         `or_ordini`.`data`, 
         `or_ordini`.`numero`, 
         `or_ordini`.`numero_esterno`, 
-        `or_tipiordine_lang`.`name`, 
+        `or_tipiordine_lang`.`title`, 
         IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\') 
     FROM `or_ordini` 
     JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` 
@@ -499,7 +499,7 @@ $elementi = $dbo->fetchArray('
         `dt_ddt`.`data`, 
         `dt_ddt`.`numero`, 
         `dt_ddt`.`numero_esterno`, 
-        `dt_tipiddt_lang`.`name`, 
+        `dt_tipiddt_lang`.`title`, 
         IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt di vendita\', \'Ddt di acquisto\') 
     FROM `dt_ddt` 
     JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 

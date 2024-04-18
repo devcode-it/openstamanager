@@ -18,7 +18,7 @@
  */
 
 // Informazioni aggiuntive per Fatture
-if ($module->getTranslation('name') != 'Fatture di acquisto' && $module->getTranslation('name') != 'Fatture di vendita') {
+if ($module->getTranslation('title') != 'Fatture di acquisto' && $module->getTranslation('title') != 'Fatture di vendita') {
     return;
 }
 

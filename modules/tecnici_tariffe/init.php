@@ -24,7 +24,7 @@ if (!empty($id_record)) {
 
     $tipi_interventi = $dbo->fetchArray('SELECT 
             `in_tariffe`.*,
-            `in_tipiintervento_lang`.`name`,
+            `in_tipiintervento_lang`.`title`,
             `in_tipiintervento`.`id`, 
             `in_tariffe`.`idtipointervento` AS esiste 
         FROM 
@@ -34,5 +34,5 @@ if (!empty($id_record)) {
         WHERE 
             `in_tipiintervento`.`deleted_at` IS NULL 
         ORDER BY 
-            `name`');
+            `title`');
 }

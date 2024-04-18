@@ -24,7 +24,7 @@ use Modules\Ordini\Stato;
 $block_edit = $record['flag_completato'];
 $module = Module::find($id_module);
 
-if ($module->getTranslation('name', Models\Locale::getPredefined()->id) == 'Ordini cliente') {
+if ($module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -73,24 +73,24 @@ if ($righe_vuote) {
                     <?php
 
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
-                        $id_stato_evaso = (new Stato())->getByField('name', 'Evaso', Models\Locale::getPredefined()->id);
-                        $id_stato_parz_evaso = (new Stato())->getByField('name', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-                        $id_stato_fatt = (new Stato())->getByField('name', 'Fatturato', Models\Locale::getPredefined()->id);
-                        $id_stato_parz_fatt = (new Stato())->getByField('name', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
-                        $id_stato_accettato = (new Stato())->getByField('name', 'Accettato', Models\Locale::getPredefined()->id);
+                        $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+                        $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+                        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+                        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+                        $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
 
                         if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`name` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`name` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `name`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                     }
 ?>
@@ -269,7 +269,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.(new Module())->getByField('name', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">
@@ -497,7 +497,7 @@ $elementi = $dbo->fetchArray('
         `co_documenti`.`data`, 
         `co_documenti`.`numero`, 
         `co_documenti`.`numero_esterno`, 
-        `co_tipidocumento_lang`.`name` AS tipo_documento, 
+        `co_tipidocumento_lang`.`title` AS tipo_documento, 
         `co_tipidocumento`.`dir` 
     FROM 
         `co_documenti` 
@@ -513,7 +513,7 @@ UNION
         `dt_ddt`.`data`, 
         `dt_ddt`.`numero`, 
         `dt_ddt`.`numero_esterno`, 
-        `dt_tipiddt_lang`.`name` AS tipo_documento, 
+        `dt_tipiddt_lang`.`title` AS tipo_documento, 
         `dt_tipiddt`.`dir` 
     FROM 
         `dt_ddt` 

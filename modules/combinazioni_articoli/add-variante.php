@@ -32,7 +32,7 @@ $attributi = $combinazione->attributi;
 foreach ($attributi as $key => $attributo) {
     echo '
         <div class="col-md-4">
-			{[ "type": "select", "label": "'.$attributo->getTranslation('name').'", "name": "attributo['.$key.']", "values": "query=SELECT id, nome AS descrizione FROM mg_valori_attributi WHERE id_attributo = '.prepare($attributo->id).' AND deleted_at IS NULL", "required": 1 ]}
+			{[ "type": "select", "label": "'.$attributo->getTranslation('title').'", "name": "attributo['.$key.']", "values": "query=SELECT id, nome AS descrizione FROM mg_valori_attributi WHERE id_attributo = '.prepare($attributo->id).' AND deleted_at IS NULL", "required": 1 ]}
 		</div>';
 }
 

@@ -48,7 +48,7 @@ switch ($resource) {
         // Aggiunta filtri di ricerca
         $where = empty($search_fields) ? '1=1' : '('.implode(' OR ', $search_fields).')';
 
-        $query = 'SELECT `mg_listini_articoli`.*, `mg_articoli`.`codice`, `mg_articoli_lang`.`name` as descrizione,  `mg_articoli`.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM `mg_listini_articoli` LEFT JOIN `mg_articoli` ON `mg_listini_articoli`.`id_articolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `id_listino`='.prepare($id_listino).' AND 1=1  LIMIT '.$start.', '.$length;
+        $query = 'SELECT `mg_listini_articoli`.*, `mg_articoli`.`codice`, `mg_articoli_lang`.`title` as descrizione,  `mg_articoli`.'.($prezzi_ivati ? 'minimo_vendita_ivato' : 'minimo_vendita').' AS minimo_vendita FROM `mg_listini_articoli` LEFT JOIN `mg_articoli` ON `mg_listini_articoli`.`id_articolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `id_listino`='.prepare($id_listino).' AND 1=1  LIMIT '.$start.', '.$length;
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
             '|table_listini|' => 'mg_listini_articoli',

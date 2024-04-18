@@ -26,10 +26,10 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione).' AND `an_relazioni`.`id` != '.prepare($id_record));
+            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`title`='.prepare($descrizione).' AND `an_relazioni`.`id` != '.prepare($id_record));
             if (empty($esistente)) {
                 $dbo->query('UPDATE `an_relazioni` SET `colore`='.prepare($colore).', `is_bloccata`='.prepare($is_bloccata).' WHERE `id`='.prepare($id_record));
-                $dbo->query('UPDATE `an_relazioni_lang` SET `name`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
+                $dbo->query('UPDATE `an_relazioni_lang` SET `title`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una relazione '_NAME_'.", [
@@ -48,11 +48,11 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`name`='.prepare($descrizione));
+            $esistente = $dbo->fetchArray('SELECT `an_relazioni`.`id` FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni_lang`.`title`='.prepare($descrizione));
             if (empty($esistente)) {
                 $dbo->query('INSERT INTO `an_relazioni` (`colore`, `is_bloccata`) VALUES ('.prepare($colore).', '.prepare($is_bloccata).' )');
                 $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `an_relazioni_lang` (`name`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
+                $dbo->query('INSERT INTO `an_relazioni_lang` (`title`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

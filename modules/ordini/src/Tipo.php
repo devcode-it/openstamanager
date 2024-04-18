@@ -30,7 +30,7 @@ class Tipo extends Model
     protected $table = 'or_tipiordine';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public function ordini()

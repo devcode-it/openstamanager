@@ -24,7 +24,7 @@ use Modules\Contratti\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = Stato::find((new Stato())->getByField('name', $descrizione));
+        $stato_new = Stato::find((new Stato())->getByField('title', $descrizione));
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
@@ -34,7 +34,7 @@ switch (post('op')) {
             $stato->is_completato = post('is_completato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->is_pianificabile = post('is_pianificabile');
-            $stato->setTranslation('name', $descrizione);
+            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
             flash()->info(tr('Informazioni salvate correttamente.'));
@@ -50,14 +50,14 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile');
         $is_pianificabile = post('is_pianificabile');
 
-        $stato_new = Stato::find((new Stato())->getByField('name', $descrizione));
+        $stato_new = Stato::find((new Stato())->getByField('title', $descrizione));
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
             $id_record = $dbo->lastInsertedID();
-            $stato->setTranslation('name', $descrizione);
+            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
             flash()->info(tr('Nuovo stato contratto aggiunto.'));

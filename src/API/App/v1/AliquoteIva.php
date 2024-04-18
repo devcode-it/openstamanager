@@ -46,7 +46,7 @@ class AliquoteIva extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `co_iva`.`id`,
-            `co_iva_lang`.`name` as descrizione,
+            `co_iva_lang`.`title` as descrizione,
             `co_iva`.`percentuale`
         FROM 
             `co_iva`

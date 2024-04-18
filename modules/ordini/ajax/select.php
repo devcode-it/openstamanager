@@ -28,7 +28,7 @@ switch ($resource) {
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT 
                 `or_ordini`.`id` AS id,
-                CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`name` , "]") AS descrizione
+                CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`title` , "]") AS descrizione
             FROM 
                 `or_ordini`
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`

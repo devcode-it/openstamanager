@@ -23,9 +23,9 @@ use Models\Module;
 use Modules\Fatture\Fattura;
 
 $module = Module::find($id_module);
-$module_interventi = Module::find((new Module())->getByField('name', 'Interventi', Models\Locale::getPredefined()->id));
+$module_interventi = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
 
-if ($module->getTranslation('name') == 'Fatture di vendita') {
+if ($module->getTranslation('title') == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
 } else {
@@ -67,7 +67,7 @@ echo '
 
 $rs = $dbo->fetchArray('SELECT
         `in_interventi`.`id`,
-        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`name` , "]") AS descrizione,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
         CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
         IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`

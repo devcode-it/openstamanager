@@ -199,7 +199,7 @@ $clienti = $dbo->fetchArray('SELECT
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.`name` IN('Pagato', 'Parzialmente pagato', 'Emessa') 
+        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa') 
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0 
     GROUP BY 
@@ -217,7 +217,7 @@ $totale = $dbo->fetchArray('SELECT
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
-        `co_statidocumento_lang`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
+        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
         AND `co_tipidocumento`.`dir`='entrata' 
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0');
@@ -272,7 +272,7 @@ $articoli = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
         `mg_articoli`.`id`, 
         `mg_articoli`.`codice`, 
-        `mg_articoli_lang`.`name`, 
+        `mg_articoli_lang`.`title`, 
         `mg_articoli`.`um` 
     FROM 
         `co_documenti` 
@@ -285,7 +285,7 @@ $articoli = $dbo->fetchArray('SELECT
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0 
     GROUP BY 
@@ -306,7 +306,7 @@ $totale = $dbo->fetchArray('SELECT
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
     WHERE 
         `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.name IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
         AND `zz_segments`.`autofatture`=0');
 
@@ -344,7 +344,7 @@ if (!empty($articoli)) {
     echo '
                 </table>';
 
-    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('name', 'Statistiche vendita', Models\Locale::getPredefined()->id)).'</p>';
+    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('title', 'Statistiche vendita', Models\Locale::getPredefined()->id)).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';
@@ -506,7 +506,7 @@ FROM
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE 
-    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche_lang`.`name`='Tecnico'
+    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche_lang`.`title`='Tecnico'
 GROUP BY 
     `an_anagrafiche`.`idanagrafica`
 ORDER BY 
@@ -641,7 +641,7 @@ FROM
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 
-    `an_tipianagrafiche_lang`.`name` = "Cliente" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) ORDER BY YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
+    `an_tipianagrafiche_lang`.`title` = "Cliente" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) ORDER BY YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
 $nuovi_fornitori = $dbo->fetchArray('SELECT 
     COUNT(*) AS result, 
@@ -654,7 +654,7 @@ FROM
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 
-    `an_tipianagrafiche_lang`.`name` = "Fornitore" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
+    `an_tipianagrafiche_lang`.`title` = "Fornitore" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
 GROUP BY 
     YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) 
 ORDER BY 
@@ -674,7 +674,7 @@ FROM
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 
-    `an_tipianagrafiche_lang`.`name` = "Cliente" AND 
+    `an_tipianagrafiche_lang`.`title` = "Cliente" AND 
     `co_tipidocumento`.`dir` = "entrata" AND 
     `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
 GROUP BY 

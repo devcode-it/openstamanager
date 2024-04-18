@@ -49,7 +49,7 @@ foreach ($articoli as $elenco) {
     $articolo = $elenco->first()->articolo;
 
     $codice = $articolo ? $articolo->codice : tr('Articolo eliminato');
-    $descrizione = $articolo ? $articolo->getTranslation('name') : $elenco->first()->getTranslation('name');
+    $descrizione = $articolo ? $articolo->getTranslation('title') : $elenco->first()->getTranslation('title');
 
     $qta_impegnata = $database->fetchOne('SELECT 
             SUM(`qta`) as qta
@@ -60,7 +60,7 @@ foreach ($articoli as $elenco) {
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         WHERE 
-            `or_statiordine`.`name` = 'Bozza'
+            `or_statiordine`.`title` = 'Bozza'
             AND `dir` = 'entrata'
             AND `confermato` = 1
             AND `idarticolo`=".prepare($articolo->id).'

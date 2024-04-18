@@ -22,7 +22,7 @@ use Modules\Fatture\StatoFE;
 
 include_once __DIR__.'/../../core.php';
 
-if ($module->getTranslation('name') == 'Fatture di vendita') {
+if ($module->getTranslation('title') == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
@@ -46,13 +46,13 @@ if (!empty($id_record)) {
         `co_documenti`.`idpagamento`,
         `co_documenti`.`id` AS iddocumento,
 		`co_documenti`.`split_payment` AS split_payment,
-        `co_statidocumento_lang`.`name` AS `stato`,
-        `co_tipidocumento_lang`.`name` AS `descrizione_tipo`,
+        `co_statidocumento_lang`.`title` AS `stato`,
+        `co_tipidocumento_lang`.`title` AS `descrizione_tipo`,
         `co_tipidocumento`.`id` AS `idtipodocumento`,
         `zz_segments`.`is_fiscale` AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenutaacconto` WHERE `id`=`idritenutaacconto`) AS ritenutaacconto_desc,
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`idrivalsainps`) AS rivalsainps_desc,
-        `dt_causalet_lang`.`name` AS causale_desc
+        `dt_causalet_lang`.`title` AS causale_desc
     FROM `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

@@ -30,7 +30,7 @@ class Aliquota extends Model
     protected $table = 'co_iva';
 
     protected static $translated_fields = [
-        'name',
+        'title',
     ];
 
     public static function build($esente = null, $percentuale = null, $indetraibile = null, $dicitura = null, $codice = null, $codice_natura_fe = null, $esigibilita = null)

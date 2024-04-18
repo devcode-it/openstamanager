@@ -21,13 +21,13 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'marca':
-        $query = 'SELECT `id`, `name` AS `descrizione` FROM `my_impianti_marche` |where| ORDER BY `descrizione` ASC';
+        $query = 'SELECT `id`, `title` AS `descrizione` FROM `my_impianti_marche` |where| ORDER BY `descrizione` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

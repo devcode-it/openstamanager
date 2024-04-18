@@ -26,7 +26,7 @@ switch ($resource) {
 
         $query_ordini = "SELECT 
                 `or_ordini`.`id`,
-                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`name`  , ']') AS text,
+                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS text,
                 'Ordini' AS optgroup,
                 'ordine' AS tipo,
                 'uscita' AS dir
@@ -38,7 +38,7 @@ switch ($resource) {
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
             WHERE 
                 `idanagrafica` = '.prepare($id_anagrafica)."
-                AND `name` != 'Fatturato'
+                AND `title` != 'Fatturato'
                 AND `dir` = ".prepare($direzione).'
                 AND |where|
             GROUP BY 
@@ -50,7 +50,7 @@ switch ($resource) {
 
         $query_ddt = "SELECT 
                 `dt_ddt`.`id`,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS text,
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS text,
                 'DDT' AS optgroup,
                 'ddt' AS tipo,
                 'uscita' AS dir
@@ -61,7 +61,7 @@ switch ($resource) {
                 LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 
                 `idanagrafica` = '.prepare($id_anagrafica)." AND
-                `dt_statiddt_lang`.`name` != 'Fatturato' AND
+                `dt_statiddt_lang`.`title` != 'Fatturato' AND
                 `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 
@@ -105,7 +105,7 @@ switch ($resource) {
 
         $query_ordini = "SELECT 
                 `or_ordini`.`id`,
-                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`name`, ']') AS text,
+                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`, ']') AS text,
                 'Ordini' AS optgroup,
                 'ordine' AS tipo,
                 'entrata' AS dir
@@ -116,7 +116,7 @@ switch ($resource) {
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine` = `or_tipiordine`.`id`
             WHERE 
                 `idarticolo` = '.prepare($id_articolo)."
-                AND `name` != 'Fatturato'
+                AND `title` != 'Fatturato'
                 AND `dir` = ".prepare($direzione).'
                 AND |where|
             GROUP BY 
@@ -126,7 +126,7 @@ switch ($resource) {
 
         $query_ddt = "SELECT 
                 `dt_ddt`.`id`,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`name`, ']') AS text,
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS text,
                 'DDT' AS optgroup,
                 'ddt' AS tipo,
                 'entrata' AS dir
@@ -138,7 +138,7 @@ switch ($resource) {
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
             WHERE 
                 `idarticolo` = '.prepare($id_articolo)." AND
-                `dt_stati_lang`.`name` != 'Fatturato' AND
+                `dt_stati_lang`.`title` != 'Fatturato' AND
                 `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 

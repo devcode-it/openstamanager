@@ -31,7 +31,7 @@ use Models\Module;
 	</div>
 	<div class='row'>
 		<div class="col-md-6">
-			{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "ajax-source": "categorie_documenti" , "value": "", "extra": "", "icon-after": "add|<?php echo (new Module())->getByField('name', 'Categorie documenti', Models\Locale::getPredefined()->id); ?>"  ]}
+			{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "ajax-source": "categorie_documenti" , "value": "", "extra": "", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Categorie documenti', Models\Locale::getPredefined()->id); ?>"  ]}
 		</div>
 
 		<div class="col-md-6">

@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Tipo;
 $rs = Tipo::get();
 
 foreach ($rs as $riga) {
-    ${'id_'.strtolower($riga->getTranslation('name', Models\Locale::getPredefined()->id))} = $riga->id;
+    ${'id_'.strtolower($riga->getTranslation('title', Models\Locale::getPredefined()->id))} = $riga->id;
 }
 
 if (!empty($id_record)) {
@@ -35,7 +35,7 @@ if (!empty($id_record)) {
         `an_anagrafiche`.*,
         GROUP_CONCAT(`an_tipianagrafiche`.`id`) AS idtipianagrafica,
         GROUP_CONCAT(`an_anagrafiche_agenti`.`idagente`) AS idagenti,
-        GROUP_CONCAT(`an_tipianagrafiche_lang`.`name`) AS tipianagrafica
+        GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipianagrafica
     FROM 
         `an_anagrafiche`
         INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`

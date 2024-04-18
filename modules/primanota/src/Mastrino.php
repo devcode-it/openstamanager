@@ -157,7 +157,7 @@ class Mastrino extends Model
                 $stato = 'Emessa';
             }
 
-            $database->query('UPDATE `co_documenti` SET `idstatodocumento` = (SELECT `co_statidocumento`.`id` FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `name` = '.prepare($stato).') WHERE id = '.prepare($id_documento));
+            $database->query('UPDATE `co_documenti` SET `idstatodocumento` = (SELECT `co_statidocumento`.`id` FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `title` = '.prepare($stato).') WHERE id = '.prepare($id_documento));
         }
     }
 

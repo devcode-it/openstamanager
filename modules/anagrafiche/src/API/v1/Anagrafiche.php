@@ -34,7 +34,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         $select = [
             '`an_anagrafiche`.*',
-            '`an_nazioni_lang`.`name` AS nazione',
+            '`an_nazioni_lang`.`title` AS nazione',
         ];
 
         $joins[] = [
@@ -64,7 +64,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
                 'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.\Models\Locale::getDefault()->id,
             ];
 
-            $where[] = ['`an_tipianagrafiche_lang`.`name`', '=', $type];
+            $where[] = ['`an_tipianagrafiche_lang`.`title`', '=', $type];
         }
 
         return [

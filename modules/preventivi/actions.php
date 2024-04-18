@@ -111,7 +111,7 @@ switch (post('op')) {
         $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
         $new->data_bozza = Carbon::now();
 
-        $stato_preventivo = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_preventivo = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato_preventivo);
 
         $new->save();
@@ -149,7 +149,7 @@ switch (post('op')) {
             ], ['id' => $idintervento]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
-            $dbo->query('UPDATE `co_preventivi` SET `idstato`=(SELECT `id` FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `name`='In lavorazione') WHERE `co_preventivi`.`id`=".prepare($id_record));
+            $dbo->query('UPDATE `co_preventivi` SET `idstato`=(SELECT `id` FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='In lavorazione') WHERE `co_preventivi`.`id`=".prepare($id_record));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],
@@ -195,7 +195,7 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
         $articolo->data_evasione = post('data_evasione') ?: null;
@@ -386,7 +386,7 @@ switch (post('op')) {
         // Copia del preventivo
         $new = $preventivo->replicate();
 
-        $stato_preventivo = (new Stato())->getByField('name', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_preventivo = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $new->stato()->associate($stato_preventivo);
 
         $new->save();

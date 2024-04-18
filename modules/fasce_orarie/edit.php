@@ -77,7 +77,7 @@ use Modules\Pagamenti\Pagamento;
 
             <?php
 
-                $results = (new Pagamento())->getByField('name', prepare($record['descrizione']));
+                $results = (new Pagamento())->getByField('title', prepare($record['descrizione']));
 $numero_data = 1;
 foreach ($results as $result) {
 }
@@ -140,7 +140,7 @@ function aggiungiData() {
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento_lang`.`name`, `in_tipiintervento`.`id` FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_fasceorarie_tipiintervento` ON `in_tipiintervento`.`id`=`in_fasceorarie_tipiintervento`.`idtipointervento` WHERE `in_fasceorarie_tipiintervento`.`idfasciaoraria`='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento_lang`.`title`, `in_tipiintervento`.`id` FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_fasceorarie_tipiintervento` ON `in_tipiintervento`.`id`=`in_fasceorarie_tipiintervento`.`idtipointervento` WHERE `in_fasceorarie_tipiintervento`.`idfasciaoraria`='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

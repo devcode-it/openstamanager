@@ -25,7 +25,7 @@ switch (filter('op')) {
         $vettore = post('esterno');
         $predefined = post('predefined');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `name`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)))) {
+        if (empty($dbo->fetchArray('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)))) {
             if (!empty($predefined)) {
                 $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
             }
@@ -49,7 +49,7 @@ switch (filter('op')) {
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione_lang` WHERE `name`='.prepare($descrizione)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione_lang` WHERE `title`='.prepare($descrizione)) == 0) {
             $dbo->insert('dt_spedizione', [
                 'predefined' => 0,
             ]);

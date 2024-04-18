@@ -34,7 +34,7 @@ if (empty($_GET['visualizza_movimenti'])) {
             </div>
         </div>';
 } else {
-    $modulo = Module::find($id_module)->getTranslation('name');
+    $modulo = Module::find($id_module)->getTranslation('title');
     if ($modulo == 'Anagrafiche') {
         $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_anagrafica='.prepare($id_record).' GROUP BY idmastrino, idconto ORDER BY data, idmastrino');
     } else {

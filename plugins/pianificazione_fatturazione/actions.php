@@ -170,7 +170,7 @@ switch ($operazione) {
         $tipo = Tipo::find(post('idtipodocumento'));
 
         if (!empty($accodare)) {
-            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica));
+            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`title` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica));
 
             $id_documento = $documento['id'];
         }
@@ -200,7 +200,7 @@ switch ($operazione) {
 
         flash()->info(tr('Rata fatturata correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id).'&id_record='.$fattura->id);
+        redirect(base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id).'&id_record='.$fattura->id);
         exit;
 
     case 'add_fattura_multipla':
@@ -220,7 +220,7 @@ switch ($operazione) {
             $contratto = $pianificazione->contratto;
             if (!empty($accodare)) {
                 $documento = $dbo->fetchOne(
-                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento_lang`.`name` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica)
+                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento_lang`.`title` = \'Bozza\' AND `idanagrafica` = '.prepare($contratto->idanagrafica)
                 );
 
                 $id_documento = $documento['id'];
@@ -254,6 +254,6 @@ switch ($operazione) {
 
         flash()->info(tr('Rate fatturate correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.(new Module())->getByField('name', 'Fatture di vendita', Models\Locale::getPredefined()->id));
+        redirect(base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id));
         exit;
 }

@@ -35,7 +35,7 @@ class Tecnici extends AppResource
     {
         $statement = Anagrafica::select('idanagrafica', 'updated_at')
             ->whereHas('tipi', function (Builder $query) {
-                $tipo_tecnico = (new Tipo())->getByField('name', 'Tecnico', \Models\Locale::getPredefined()->id);
+                $tipo_tecnico = (new Tipo())->getByField('title', 'Tecnico', \Models\Locale::getPredefined()->id);
                 $query->where('id', '=', $tipo_tecnico);
             });
 

@@ -47,7 +47,7 @@ class StatiIntervento extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `in_statiintervento`.`id`,
             `in_statiintervento`.`codice`,
-            `in_statiintervento_lang`.`name` AS `descrizione`,
+            `in_statiintervento_lang`.`title` AS `descrizione`,
             `in_statiintervento`.`colore`,
             `in_statiintervento`.`is_completato`
         FROM `in_statiintervento`

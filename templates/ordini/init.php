@@ -55,7 +55,7 @@ if (!empty($documento->idsede)) {
     if (!empty($rsd[0]['id_nazione'])) {
         $nazione = Nazione::find($rsd[0]['id_nazione']);
         if ($nazione['iso2'] != 'IT') {
-            $destinazione .= ' - '.$nazione->getTranslation('name');
+            $destinazione .= ' - '.$nazione->getTranslation('title');
         }
     }
 }
@@ -65,7 +65,7 @@ $pagamento = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagament
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => Stringy\Stringy::create($documento->tipo->getTranslation('name'))->toUpperCase(),
+    'tipo_doc' => Stringy\Stringy::create($documento->tipo->getTranslation('title'))->toUpperCase(),
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
     'pagamento' => $pagamento['descrizione'],

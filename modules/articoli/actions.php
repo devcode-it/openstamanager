@@ -72,7 +72,7 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->save();
 
         // Aggiornamento delle varianti per i campi comuni
@@ -94,7 +94,7 @@ switch (post('op')) {
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
-                    'iva_vendita' => $iva ? $iva->getTranslation('name') : null,
+                    'iva_vendita' => $iva ? $iva->getTranslation('title') : null,
                     'um_secondaria' => post('um_secondaria'),
                     'um' => post('um'),
                 ],
@@ -152,7 +152,7 @@ switch (post('op')) {
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;
         $articolo->attivo = post('attivo');
-        $articolo->setTranslation('name', post('descrizione'));
+        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
 
         $articolo->save();
@@ -268,7 +268,7 @@ switch (post('op')) {
         }
 
         // Salvataggio immagine relativa
-        $nome_immagine = $articolo->immagine_upload->getTranslation('name');
+        $nome_immagine = $articolo->immagine_upload->getTranslation('title');
         $new->immagine = $new->uploads()->where('name', $nome_immagine)->first()->filename;
         $new->save();
 

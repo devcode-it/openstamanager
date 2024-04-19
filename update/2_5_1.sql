@@ -65,11 +65,6 @@ ALTER TABLE `co_tipidocumento_lang` ADD `title` VARCHAR(255) NOT NULL AFTER `nam
 UPDATE `co_tipidocumento_lang` SET `title` = `name`;
 UPDATE `co_tipidocumento_lang` INNER JOIN (SELECT * FROM `co_tipidocumento_lang` WHERE `id_lang` = 1) AS `tmp` ON `tmp`.`id_record` = `co_tipidocumento_lang`.`id_record` SET `co_tipidocumento_lang`.`name` = `tmp`.`name`;
 
--- Aggiunta colonna title nella tabella co_tipi_scadenze_lang
-ALTER TABLE `co_tipi_scadenze_lang` ADD `title` VARCHAR(255) NOT NULL AFTER `name`; 
-UPDATE `co_tipi_scadenze_lang` SET `title` = `name`;
-UPDATE `co_tipi_scadenze_lang` INNER JOIN (SELECT * FROM `co_tipi_scadenze_lang` WHERE `id_lang` = 1) AS `tmp` ON `tmp`.`id_record` = `co_tipi_scadenze_lang`.`id_record` SET `co_tipi_scadenze_lang`.`name` = `tmp`.`name`;
-
 -- Aggiunta colonna title nella tabella do_categorie_lang
 ALTER TABLE `do_categorie_lang` ADD `title` VARCHAR(255) NOT NULL AFTER `name`; 
 UPDATE `do_categorie_lang` SET `title` = `name`;

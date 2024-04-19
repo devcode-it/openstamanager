@@ -267,8 +267,8 @@ if (!$has_name) {
     $database->query('ALTER TABLE `fe_stati_documento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`'); 
     $database->query('UPDATE `fe_stati_documento` SET `name` = (SELECT `name` FROM `fe_stati_documento_lang` WHERE `id_record` = `fe_stati_documento`.`codice` AND `id_lang` = 1)');
 }
-if (database()->columnExists('fe_stati_standard_lang', 'name')) {
-    $database->query('ALTER TABLE `fe_stati_standard_lang` DROP `name`');
+if (database()->columnExists('fe_stati_documento_lang', 'name')) {
+    $database->query('ALTER TABLE `fe_stati_documento_lang` DROP `name`');
 }
 
 // Controllo se è presente il campo name in fe_tipi_documento
@@ -277,8 +277,13 @@ if (!$has_name) {
     $database->query('ALTER TABLE `fe_tipi_documento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`'); 
     $database->query('UPDATE `fe_tipi_documento` SET `name` = (SELECT `name` FROM `fe_tipi_documento_lang` WHERE `id_record` = `fe_tipi_documento`.`codice` AND `id_lang` = 1)');
 }
-if (database()->columnExists('fe_tipi_standard_lang', 'name')) {
-    $database->query('ALTER TABLE `fe_tipi_standard_lang` DROP `name`');
+if (database()->columnExists('fe_tipi_documento_lang', 'name')) {
+    $database->query('ALTER TABLE `fe_tipi_documento_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in in_fasceorarie_lang
+if (database()->columnExists('in_fasceorarie_lang', 'name')) {
+    $database->query('ALTER TABLE `in_fasceorarie_lang` DROP `name`');
 }
 
 // Controllo se è presente il campo name in in_statiintervento
@@ -311,10 +316,37 @@ if (database()->columnExists('mg_articoli_lang', 'name')) {
     $database->query('ALTER TABLE `mg_articoli_lang` DROP `name`');
 }
 
+// Controllo se è presente il campo name in mg_attributi_lang
+if (database()->columnExists('mg_attributi_lang', 'name')) {
+    $database->query('ALTER TABLE `mg_attributi_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in mg_categorie_lang
+if (database()->columnExists('mg_categorie_lang', 'name')) {
+    $database->query('ALTER TABLE `mg_categorie_lang` DROP `name`');
+}
+
+
+// Rimozione categoria 'Componenti' se non collegata ad articoli
 $categoria = Categoria::find((new Categoria())->getByField('title', 'Componenti'));
 $articoli_collegati = $categoria->articoli()->count();
 if ($articoli_collegati === 0) {
     $database->query('DELETE FROM `mg_categorie` WHERE `id` = '.$categoria->id);
+}
+
+// Controllo se è presente il campo name in mg_causali_movimenti_lang
+if (database()->columnExists('mg_causali_movimenti_lang', 'name')) {
+    $database->query('ALTER TABLE `mg_causali_movimenti_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in mg_combinazioni_lang
+if (database()->columnExists('mg_combinazioni_lang', 'name')) {
+    $database->query('ALTER TABLE `mg_combinazioni_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in my_impianti_categorie_lang
+if (database()->columnExists('my_impianti_categorie_lang', 'name')) {
+    $database->query('ALTER TABLE `my_impianti_categorie_lang` DROP `name`');
 }
 
 // Controllo se è presente il campo name in or_statiordine
@@ -345,6 +377,11 @@ if (!$has_name) {
 }
 if (database()->columnExists('zz_cache_lang', 'name')) {
     $database->query('ALTER TABLE `zz_cache_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in zz_currencies_lang
+if (database()->columnExists('zz_currencies_lang', 'name')) {
+    $database->query('ALTER TABLE `zz_currencies_lang` DROP `name`');
 }
 
 // Controllo se è presente il campo name in zz_groups
@@ -405,6 +442,11 @@ if (!$has_name) {
 }
 if (database()->columnExists('zz_plugins_lang', 'name')) {
     $database->query('ALTER TABLE `zz_plugins_lang` DROP `name`');
+}
+
+// Controllo se è presente il campo name in zz_prints_lang
+if (database()->columnExists('zz_prints_lang', 'name')) {
+    $database->query('ALTER TABLE `zz_prints_lang` DROP `name`');
 }
 
 // Controllo se è presente il campo name in zz_segments

@@ -19,16 +19,25 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\CausaleMovimento as Causale;
+
 switch (filter('op')) {
     case 'update':
-        if (!empty($id_record)) {
-            $database->update('mg_causali_movimenti', [
-                'tipo_movimento' => post('tipo_movimento'),
-            ], ['id' => $id_record]);
-            $database->update('mg_causali_movimenti_lang', [
-                'name' => post('nome'),
-                'description' => post('descrizione'),
-            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
+        $nome = post('nome');
+        $descrizione = post('descrizione');
+        if (isset($descrizione)) {
+            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first();
+            if (empty($causale_new)) {
+                $causale->tipo_movimento = post('tipo_movimento');
+                $causale->setTranslation('title', $nome);
+                $causale->setTranslation('description', $descrizione);
+                $causale->save();
+                flash()->info(tr('Salvataggio completato.'));
+            } else {
+                flash()->error(tr("E' già presente una causale con nome _NAME_.", [
+                    '_NAME_' => $descrizione,
+                ]));
+            }
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
@@ -36,16 +45,28 @@ switch (filter('op')) {
         break;
 
     case 'add':
-        $database->insert('mg_causali_movimenti', [
-            'tipo_movimento' => post('tipo_movimento'),
-        ]);
-        $id_record = $database->lastInsertedID();
-        $database->insert('mg_causali_movimenti_lang', [
-            'name' => post('nome'),
-            'description' => post('descrizione'),
-            'id_record' => $id_record,
-            'id_lang' => Models\Locale::getDefault()->id,
-        ]);
+        $descrizione = post('descrizione');
+        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            $causale = Causale::build();
+            $causale->tipo_movimento = post('tipo_movimento');
+            $causale->save();
+            $id_record = $dbo->lastInsertedID();
+            $causale->setTranslation('title', post('nome'));
+            $causale->setTranslation('description', $descrizione);
+            $causale->save();
+
+            if (isAjaxRequest()) {
+                echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+            }
+
+            flash()->info(tr('Aggiunta nuova causale con nome _NAME_', [
+                '_NAME_' => $descrizione,
+            ]));
+        } else {
+            flash()->error(tr("E' già presente una causale con nome _NAME_.", [
+                '_NAME_' => $descrizione,
+            ]));
+        }
         break;
 
     case 'delete':

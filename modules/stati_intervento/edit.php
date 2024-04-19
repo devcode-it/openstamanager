@@ -43,7 +43,7 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -62,7 +62,7 @@ if ($record['can_delete']) {
 			<div class="row">
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates`  LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `id_module` = <?php echo (new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id); ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?>, "required":1 ]}
+					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `id_module` = <?php echo (new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id); ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?>, "required":1 ]}
 				</div>
 
 				<div class="col-md-6">

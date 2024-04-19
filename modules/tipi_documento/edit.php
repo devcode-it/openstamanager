@@ -27,7 +27,7 @@ use Models\Module;
    
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$" ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
         </div>
 
         <div class="col-md-3">

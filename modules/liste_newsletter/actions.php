@@ -33,6 +33,9 @@ switch (filter('op')) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             $lista = Lista::build($name);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $lista->name = $descrizione;
+            }
             $id_record = $lista->id;
             $lista->setTranslation('title', $name);
             $lista->save();
@@ -56,6 +59,9 @@ switch (filter('op')) {
         if (!empty($lista_new) && $lista_new->id != $id_record) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $lista->name = $descrizione;
+            }
             $lista->setTranslation('title', $name);
             $lista->setTranslation('description', $description);
             $lista->query = $query;

@@ -17,8 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\DDT\Causale;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id`='.prepare($id_record));
+
+    $causale = Causale::find($id_record);
 }

@@ -19,15 +19,22 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Provenienza;
+
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchArray('SELECT `an_provenienze`.`id` FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `an_provenienze`.`id`!='.prepare($id_record)))) {
-                $dbo->query('UPDATE `an_provenienze_lang` SET `title`='.prepare($descrizione).' WHERE `id_record` = '.prepare($id_record));
-                $dbo->query('UPDATE `an_provenienze` SET `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
+            $provenienza_new = Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($provenienza_new)) {
+                $provenienza->setTranslation('title', $descrizione);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $provenienza->name = $descrizione;
+                } 
+                $provenienza->colore = $colore;
+                $provenienza->save();
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una provenienza _NAME_.", [
@@ -45,10 +52,17 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchArray('SELECT `an_provenienze`.`id` FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id` = `an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione)))) {
-                $dbo->query('INSERT INTO `an_provenienze` (`colore`) VALUES ('.prepare($colore).')');
+            if (empty(Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $provenienza = Provenienza::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $provenienza->name = $descrizione;
+                }
+                $provenienza->colore = $colore;
+                $provenienza->save();
+                
                 $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `an_provenienze_lang` (`title`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
+                $provenienza->setTranslation('title', $descrizione);
+                $provenienza->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

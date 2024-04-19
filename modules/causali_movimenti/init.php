@@ -19,6 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\CausaleMovimento;
+
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_causali_movimenti`.`id`='.prepare($id_record));
+
+    $causale = CausaleMovimento::find($id_record);
 }

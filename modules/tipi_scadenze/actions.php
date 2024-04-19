@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Scadenzario\Tipo;
 
 switch (filter('op')) {
     case 'update':
@@ -27,15 +28,16 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già una tipo di scadenza con lo stesso nome
-            $nome_new = $dbo->fetchOne('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` =  '.prepare($nome).' AND `co_tipi_scadenze_lang`.`id_record` != '.prepare($id_record));
+            $nome_new = Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $nome_prev = $tipo->getTranslation('title');
             if (empty($nome_new)) {
                 // nome_prev
-                $nome_prev = $dbo->fetchOne('SELECT `title` AS nome_prev FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id`='.prepare($id_record))['nome_prev'];
-
-                $dbo->update('co_tipi_scadenze_lang', [
-                    'name' => $nome,
-                    'description' => $descrizione,
-                ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
+                $tipo->setTranslation('title', $descrizione);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $tipo->name = $nome;
+                }
+                $tipo->save();
+                flash()->info(tr('Salvataggio completato.'));
 
                 $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare((new Module())->getByField('title', 'Scadenzario', Models\Locale::getPredefined()->id)).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`title` = "Scadenzario '.$nome_prev.'"')['id'];
 
@@ -47,7 +49,7 @@ switch (filter('op')) {
                 ]);
 
                 $dbo->update('zz_segments_lang', [
-                    'name' => 'Scadenzario '.$nome,
+                    'title' => 'Scadenzario '.$nome,
                 ], [
                     'id_record' => $segmento,
                     'id_lang' => Models\Locale::getDefault()->id,
@@ -72,17 +74,16 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
-            if (empty($dbo->fetchArray('SELECT * FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($nome)))) {
-                $dbo->insert('co_tipi_scadenze', [
-                    'created_at' => 'NOW()',
-                ]);
+            if (empty(Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $tipo = tipo::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $tipo->name = $nome;
+                }
+                $tipo->save();
+                
                 $id_record = $dbo->lastInsertedID();
-                $dbo->insert('co_tipi_scadenze_lang', [
-                    'name' => $nome,
-                    'description' => $descrizione,
-                    'id_record' => $id_record,
-                    'id_lang' => Models\Locale::getDefault()->id,
-                ]);
+                $tipo->setTranslation('title', $descrizione);
+                $tipo->save();
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
@@ -92,7 +93,7 @@ switch (filter('op')) {
                 ]);
                 $id_segment = $dbo->lastInsertedID();
                 $dbo->insert('zz_segments_lang', [
-                    'name' => 'Scadenzario '.$nome,
+                    'title' => 'Scadenzario '.$nome,
                     'id_record' => $id_segment,
                     'id_lang' => Models\Locale::getDefault()->id,
                 ]);

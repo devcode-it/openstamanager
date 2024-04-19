@@ -26,7 +26,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Nome').'", "name": "name", "value": "$name$", "required": 1 ]}
+            {[ "type": "text", "label": "'.tr('Nome').'", "name": "name", "value": "$title$", "required": 1 ]}
         </div>
 
         <div class="col-md-3">

@@ -18,35 +18,55 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\DDT\AspettoBeni;
 
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `dt_aspettobeni`.`id`!='.prepare($id_record)))) {
-            $dbo->query('UPDATE `dt_aspettobeni_lang` SET `title`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record)).' AND `id_lang`='.prepare(Models\Locale::getDefault()->id);
-            flash()->info(tr('Salvataggio completato.'));
+        if (isset($descrizione)) {
+            $aspetto_new = AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($aspetto_new)) {
+                $aspetto->setTranslation('title', $descrizione);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $aspetto->name = $descrizione;
+                } 
+                $aspetto->save();
+                flash()->info(tr('Salvataggio completato.'));
+            } else {
+                flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
+            }
         } else {
-            flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
+
         break;
 
     case 'add':
         $descrizione = post('descrizione');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione)))) {
-            $dbo->query('INSERT INTO `dt_aspettobeni` (`created_at`) VALUES (NOW())');
-            $id_record = $dbo->lastInsertedID();
+        if (isset($descrizione)) {
+            if (empty(AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $aspetto = AspettoBeni::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $aspetto->name = $descrizione;
+                }
+                $aspetto->save();
+                
+                $id_record = $dbo->lastInsertedID();
+                $aspetto->setTranslation('title', $descrizione);
+                $aspetto->save();
 
-            $dbo->query('INSERT INTO `dt_aspettobeni_lang` (`title`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
 
-            if (isAjaxRequest()) {
-                echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                flash()->info(tr('Aggiunto nuovo Aspetto beni.'));
+            } else {
+                flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
             }
-
-            flash()->info(tr('Aggiunto nuovo Aspetto beni.'));
         } else {
-            flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;

@@ -34,7 +34,7 @@ use Models\Module;
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
 				</div>
 
 				<div class="col-md-4">

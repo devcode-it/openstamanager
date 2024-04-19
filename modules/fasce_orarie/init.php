@@ -19,6 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\TipiIntervento\FasciaOraria;
+
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `in_fasceorarie`.`id`='.prepare($id_record));
+
+    $fascia_oraria = FasciaOraria::find($id_record);
 }

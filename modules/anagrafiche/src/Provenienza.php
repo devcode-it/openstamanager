@@ -17,12 +17,35 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Anagrafiche\Provenienza;
+namespace Modules\Anagrafiche;
 
-include_once __DIR__.'/../../core.php';
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Traits\RecordTrait;
 
-if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id`=`an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_provenienze`.`id`='.prepare($id_record));
+class Provenienza extends Model
+{
+    use SimpleModelTrait;
+    use RecordTrait;
 
-    $provenienza = Provenienza::find($id_record);
+    protected $table = 'an_provenienze';
+
+    protected static $translated_fields = [
+        'title',
+    ];
+
+    public function anagrafiche()
+    {
+        return $this->hasMany(Anagrafica::class, 'id_provenienza');
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Provenienze clienti';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
 }

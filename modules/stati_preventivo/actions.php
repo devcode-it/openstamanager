@@ -28,6 +28,9 @@ switch (post('op')) {
         if (!empty($stato_new) && $stato_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $stato->name = $descrizione;
+            } 
             $stato->icona = post('icona');
             $stato->colore = post('colore');
             $stato->is_completato = post('is_completato');
@@ -53,6 +56,9 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $stato->name = $descrizione;
+            } 
             $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('title', $descrizione);
             $stato->save();

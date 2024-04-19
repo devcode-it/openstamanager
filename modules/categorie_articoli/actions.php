@@ -32,6 +32,9 @@ switch (filter('op')) {
             $categoria->colore = $colore;
             $categoria->parent = $id_original ?: null;
             $categoria->setTranslation('title', $nome);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $categoria->name = $descrizione;
+            }
             $categoria->save();
 
             flash()->info(tr('Salvataggio completato!'));
@@ -66,6 +69,9 @@ switch (filter('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
         } else {
             $categoria = Categoria::build($nota, $colore);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $categoria->name = $descrizione;
+            }
             $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
             $categoria->setTranslation('title', $nome);

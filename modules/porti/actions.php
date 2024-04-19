@@ -18,53 +18,62 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\DDT\Porto;
 
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $predefined = post('predefined');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `dt_porto`.`id`!='.prepare($id_record)) == 0)) {
-            if (!empty($predefined)) {
-                $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
+        if (isset($descrizione)) {
+            $porto_new = Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($porto_new)) {
+                $porto->setTranslation('title', $descrizione);
+                if (!empty($predefined)) {
+                    $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
+                }
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $porto->name = $descrizione;
+                } 
+                $porto->predefined = $predefined;
+                $porto->save();
+                flash()->info(tr('Salvataggio completato.'));
+            } else {
+                flash()->error(tr("E' già presente un porto con questo nome."));
             }
-
-            $dbo->update('dt_porto', [
-                'predefined' => $predefined,
-            ], ['id' => $id_record]);
-
-            $dbo->update('dt_porto_lang', [
-                'name' => $descrizione,
-            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
-
-            flash()->info(tr('Salvataggio completato!'));
         } else {
-            flash()->error(tr("E' già presente un Porto con questa descrizione"));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
+
         break;
 
     case 'add':
         $descrizione = filter('descrizione');
 
-        if (empty($dbo->fetchArray('SELECT `dt_porto`.`id` FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `title`='.prepare($descrizione)))) {
-            $dbo->insert('dt_porto', [
-                'created_at' => 'NOW()',
-            ]);
-            $id_record = $dbo->lastInsertedID();
+        if (isset($descrizione)) {
+            if (empty(Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $porto = Porto::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $porto->name = $descrizione;
+                }
+                $porto->save();
+                
+                $id_record = $dbo->lastInsertedID();
+                $porto->setTranslation('title', $descrizione);
+                $porto->save();
 
-            $dbo->insert('dt_porto_lang', [
-                'name' => $descrizione,
-                'id_record' => $id_record,
-                'id_lang' => Models\Locale::getDefault()->id,
-            ]);
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
 
-            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                '_TYPE_' => 'porto',
-            ]));
+                flash()->info(tr('Aggiunta nuova porto _NAME_', [
+                    '_NAME_' => $descrizione,
+                ]));
+            } else {
+                flash()->error(tr("E' già presente un porto con questo nome."));
+            }
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                '_TYPE_' => 'porto',
-            ]));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;

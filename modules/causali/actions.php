@@ -18,29 +18,24 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\DDT\Causale;
 
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
-        $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchArray('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `title`='.prepare($descrizione).' AND `dt_causalet`.`id`!='.prepare($id_record)))) {
-                if (!empty($predefined)) {
-                    $dbo->query('UPDATE dt_causalet SET predefined = 0');
-                }
-
-                $dbo->update('dt_causalet', [
-                    'is_importabile' => filter('is_importabile'),
-                    'reversed' => filter('reversed'),
-                    'predefined' => $predefined,
-                    'is_rientrabile' => filter('is_rientrabile'),
-                ], ['id' => $id_record]);
-
-                $dbo->update('dt_causalet_lang', [
-                    'name' => $descrizione,
-                ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
-
+            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($causale_new)) {
+                $causale->setTranslation('title', $descrizione);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $causale->name = $descrizione;
+                } 
+                $causale->predefined = post('predefined');
+                $causale->is_importabile = filter('is_importabile');
+                $causale->reversed = filter('reversed');
+                $causale->is_rientrabile = filter('is_rientrabile');
+                $causale->save();
                 flash()->info(tr('Salvataggio completato!'));
             } else {
                 flash()->error(tr("E' già presente una causale di trasporto con la stessa descrizione"));
@@ -55,16 +50,16 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchArray('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `title`='.prepare($descrizione)))) {
-                $dbo->insert('dt_causalet', [
-                    'is_importabile' => 1,
-                ]);
+            if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $causale = Causale::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $causale->name = $descrizione;
+                }
+                $causale->save();
+                
                 $id_record = $dbo->lastInsertedID();
-                $dbo->insert('dt_causalet_lang', [
-                    'name' => $descrizione,
-                    'id_record' => $id_record,
-                    'id_lang' => Models\Locale::getDefault()->id,
-                ]);
+                $causale->setTranslation('title', $descrizione);
+                $causale->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

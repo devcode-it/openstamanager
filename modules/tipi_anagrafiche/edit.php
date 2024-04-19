@@ -51,7 +51,7 @@ if (!empty($record['default'])) {
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$name$", "extra": "<?php echo $attr; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 	</div>

@@ -29,6 +29,9 @@ switch (post('op')) {
         $subject = post('subject');
 
         $template = Template::build($module, $id_account);
+        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+            $template->name = $descrizione;
+        }
         $id_record = $dbo->lastInsertedID();
         $template->setTranslation('title', $name);
         $template->setTranslation('subject', $subject);
@@ -40,6 +43,9 @@ switch (post('op')) {
 
     case 'update':
         $template->setTranslation('title', post('name'));
+        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+            $template->name = $descrizione;
+        }
         $template->id_account = post('smtp');
         $template->icon = post('icon');
         $template->tipo_reply_to = post('tipo_reply_to');

@@ -46,25 +46,20 @@ switch (filter('op')) {
                     $giorno = -post('giorno')[$key] - 1;
                 }
 
-                if (!empty($id)) {
-                    $pagamento->setTranslation('title', $descrizione);
-                    $pagamento->num_giorni = post('distanza')[$key];
-                    $pagamento->giorno = $giorno;
-                    $pagamento->prc = post('percentuale')[$key];
-                    $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
-                    $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
-                    $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
-                    $pagamento->save();
-                } else {
+                if (empty($id)) {
                     $pagamento = Pagamento::build(post('codice_modalita_pagamento_fe'));
-                    $pagamento->num_giorni = post('distanza')[$key];
-                    $pagamento->giorno = $giorno;
-                    $pagamento->prc = post('percentuale')[$key];
-                    $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
-                    $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
-                    $pagamento->setTranslation('title', $descrizione);
-                    $pagamento->save();
                 }
+
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $pagamento->name = $descrizione;
+                } 
+                $pagamento->num_giorni = post('distanza')[$key];
+                $pagamento->giorno = $giorno;
+                $pagamento->prc = post('percentuale')[$key];
+                $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
+                $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
+                $pagamento->setTranslation('title', $descrizione);
+                $pagamento->save();
             }
 
             flash()->info(tr('Salvataggio completato!'));
@@ -85,6 +80,9 @@ switch (filter('op')) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
                 $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $pagamento->name = $descrizione;
+                } 
                 $id_record = $dbo->lastInsertedID();
                 $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();

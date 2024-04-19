@@ -19,55 +19,63 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\Spedizione;
+
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $vettore = post('esterno');
         $predefined = post('predefined');
 
-        if (empty($dbo->fetchArray('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `dt_spedizione`.`id`!='.prepare($id_record)))) {
-            if (!empty($predefined)) {
-                $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
+        if (isset($descrizione)) {
+            $spedizione_new = Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($spedizione_new)) {
+                $spedizione->setTranslation('title', $descrizione);
+                if (!empty($predefined)) {
+                    $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
+                }
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $spedizione->name = $descrizione;
+                } 
+                $spedizione->predefined = $predefined;
+                $spedizione->esterno = $vettore;
+                $spedizione->save();
+                flash()->info(tr('Salvataggio completato.'));
+            } else {
+                flash()->error(tr("E' già presente una spedizione con questo nome."));
             }
-            $dbo->update('dt_spedizione', [
-                'predefined' => $predefined,
-                'esterno' => $vettore,
-            ], ['id' => $id_record]);
-
-            $dbo->update('dt_spedizione_lang', [
-                'name' => $descrizione,
-            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
-
-            flash()->info(tr('Salvataggio completato!'));
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                '_TYPE_' => 'spedizione',
-            ]));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
         break;
 
     case 'add':
         $descrizione = filter('descrizione');
 
-        if ($dbo->fetchNum('SELECT * FROM `dt_spedizione_lang` WHERE `title`='.prepare($descrizione)) == 0) {
-            $dbo->insert('dt_spedizione', [
-                'predefined' => 0,
-            ]);
-            $id_record = $dbo->lastInsertedID();
+        if (isset($descrizione)) {
+            if (empty(Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $spedizione = Spedizione::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $spedizione->name = $descrizione;
+                }
+                $spedizione->save();
+                
+                $id_record = $dbo->lastInsertedID();
+                $spedizione->setTranslation('title', $descrizione);
+                $spedizione->save();
 
-            $dbo->insert('dt_spedizione_lang', [
-                'id_record' => $id_record,
-                'id_lang' => Models\Locale::getDefault()->id,
-                'name' => $descrizione,
-            ]);
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
 
-            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                '_TYPE_' => 'spedizione',
-            ]));
+                flash()->info(tr('Aggiunta nuova spedizione _NAME_', [
+                    '_NAME_' => $descrizione,
+                ]));
+            } else {
+                flash()->error(tr("E' già presente un spedizione con questo nome."));
+            }
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
-                '_TYPE_' => 'spedizione',
-            ]));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;
@@ -83,7 +91,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'spedizione',
             ]));
         } else {
-            flash()->error(tr('Sono presenti dei documenti collegati a questo porto.'));
+            flash()->error(tr('Sono presenti dei documenti collegati a questo spedizione.'));
         }
 
         break;

@@ -138,6 +138,9 @@ if (!$has_name) {
 if (database()->columnExists('co_tipi_scadenze_lang', 'name')) {
     $database->query('ALTER TABLE `co_tipi_scadenze_lang` DROP `name`');
 }
+if (database()->columnExists('co_tipi_scadenze_lang', 'description')) {
+    $database->query('ALTER TABLE `co_tipi_scadenze_lang` CHANGE `description` `title` VARCHAR(255) NOT NULL');
+}
 
 // Controllo se è presente il campo name in do_categorie
 $has_name = database()->columnExists('do_categorie', 'name');

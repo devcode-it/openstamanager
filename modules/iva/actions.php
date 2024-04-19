@@ -41,6 +41,9 @@ switch (filter('op')) {
             $iva->codice_natura_fe = $codice_natura_fe;
             $iva->esigibilita = $esigibilita;
             $iva->setTranslation('title', $descrizione);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $iva->name = $descrizione;
+            } 
             $iva->save();
 
             // Messaggio di avvertenza
@@ -72,6 +75,9 @@ switch (filter('op')) {
             $iva = Aliquota::build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
             $id_record = $dbo->lastInsertedID();
             $iva->setTranslation('title', $descrizione);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $iva->name = $descrizione;
+            } 
             $iva->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

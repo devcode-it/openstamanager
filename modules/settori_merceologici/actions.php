@@ -17,19 +17,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Settore;
+
 include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
-        $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione).' AND `an_settori`.`id`!='.prepare($id_record)))) {
-                $dbo->query('UPDATE `an_settori_lang` SET `title`='.prepare($descrizione).' WHERE `id_record`='.prepare($id_record));
+            $settore_new = Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($settore_new)) {
+                $settore->setTranslation('title', $descrizione);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $settore->name = $descrizione;
+                } 
+                $settore->save();
                 flash()->info(tr('Salvataggio completato.'));
             } else {
-                flash()->error(tr("E' già presente il settore merceologico _NAME_.", [
+                flash()->error(tr("E' già presente una settore _NAME_.", [
                     '_NAME_' => $descrizione,
                 ]));
             }
@@ -38,17 +44,21 @@ switch (filter('op')) {
         }
 
         break;
-
     case 'add':
         $descrizione = filter('descrizione');
-        $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if (empty($dbo->fetchNum('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($descrizione)))) {
-                $dbo->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, NOW(), NOW())');
-                $id_record = $dbo->lastInsertedID();
-                $dbo->query('INSERT INTO `an_settori_lang` (`title`, `id_record`, `id_lang`) VALUES ('.prepare($descrizione).', '.prepare($id_record).', '.prepare(Models\Locale::getDefault()->id).')');
+            if (empty(Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $settore = Settore::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $settore->name = $descrizione;
+                }
+                $settore->save();
 
+                $id_record = $dbo->lastInsertedID();
+                $settore->setTranslation('title', $descrizione);
+                $settore->save();
+                
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }

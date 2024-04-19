@@ -38,7 +38,7 @@ use Modules\Pagamenti\Pagamento;
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
 				</div>
 
                 <div class="col-md-6">

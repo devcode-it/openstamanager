@@ -41,7 +41,7 @@ if (!$record['predefined']) {
 		<div class="panel-body">
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1, "extra": "<?php echo $attr; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$title$", "required": 1, "extra": "<?php echo $attr; ?>" ]}
                 </div>
 
                 <div class="col-md-4">

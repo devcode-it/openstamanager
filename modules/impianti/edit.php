@@ -79,10 +79,10 @@ if (!empty($record['immagine'])) {
 					</div>					
 					<div class ="row">
 						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
+							<!--{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}-->
 						</div>
 						<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Modello'); ?>", "name": "modello", "value": "$modello$" ]}
+							<!--{[ "type": "text", "label": "<?php echo tr('Modello'); ?>", "name": "modello", "value": "$modello$" ]}-->
 						</div>
 						<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}

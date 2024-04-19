@@ -28,6 +28,9 @@ switch (post('op')) {
         if (!empty($stato_new) && $stato_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
         } else {
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $stato->name = $descrizione;
+            }
             $stato->codice = post('codice');
             $stato->colore = post('colore');
             $stato->is_completato = post('is_completato');
@@ -58,6 +61,9 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
         } else {
             $stato = Stato::build($codice, $colore);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $stato->name = $descrizione;
+            }
             $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('title', $descrizione);
             $stato->save();

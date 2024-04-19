@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+use Modules\Anagrafiche\Settore;
 
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id`=`an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_settori`.`id`='.prepare($id_record));
+
+    $settore = Settore::find($id_record);
 }

@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+use Modules\Anagrafiche\Relazione;
 
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_relazioni` LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_relazioni`.`id`='.prepare($id_record));
+
+    $relazione = Relazione::find($id_record);
 }

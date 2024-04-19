@@ -17,6 +17,9 @@ switch (filter('op')) {
         } else {
             if (empty($combinazione)) {
                 $combinazione = Combinazione::build();
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $combinazione->name = $nome;
+                }
                 $id_record = $dbo->lastInsertedID();
             }
             $combinazione->setTranslation('title', $nome);

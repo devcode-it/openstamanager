@@ -57,6 +57,9 @@ switch (post('op')) {
         $sottocategoria = Categoria::find(post('subcategoria'));
         $articolo = Articolo::build($codice, $categoria, $sottocategoria);
 
+        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+            $articolo->name = $descrizione;
+        }
         $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->coefficiente = post('coefficiente');
@@ -119,6 +122,10 @@ switch (post('op')) {
                 '_CODICE_' => post('codice', true),
                 '_N_' => $numero_codice,
             ]));
+        }
+
+        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+            $articolo->name = $descrizione;
         }
 
         $articolo->codice = post('codice', true);

@@ -18,73 +18,74 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\TipiIntervento\FasciaOraria;
 
 switch (post('op')) {
     case 'update':
-        $nome = post('nome');
+        $descrizione = post('nome');
         $giorni = (array) post('giorni');
         $ora_inizio = post('ora_inizio');
         $ora_fine = post('ora_fine');
         $include_bank_holidays = post('include_bank_holidays');
         $is_predefined = post('is_predefined');
 
-        if (empty($dbo->fetchArray('SELECT `in_fasceorarie`.`id` FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($nome).' AND `in_fasceorarie`.`id`!='.prepare($id_record)))) {
-            if (!empty($is_predefined)) {
-                $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
+        if (isset($descrizione)) {
+            $fascia_oraria_new = FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            if (empty($fascia_oraria_new)) {
+                if (!empty($is_predefined)) {
+                    $dbo->query('UPDATE `in_fasceorarie` SET `predefined` = 0');
+                }
+                $fascia_oraria->setTranslation('title', $descrizione);
+                $fascia_oraria->giorni = $giorni;
+                $fascia_oraria->ora_inizio = $ora_inizio;
+                $fascia_oraria->ora_fine = $ora_fine;
+                $fascia_oraria->include_bank_holidays = $include_bank_holidays;
+                $fascia_oraria->is_predefined = $is_predefined;
+                $fascia_oraria->save();
+                flash()->info(tr('Salvataggio completato.'));
+            } else {
+                flash()->error(tr("E' già presente una fascia_oraria _NAME_.", [
+                    '_NAME_' => $descrizione,
+                ]));
             }
-
-            $dbo->update('in_fasceorarie', [
-                'giorni' => $giorni ? implode(',', $giorni) : null,
-                'ora_inizio' => $ora_inizio,
-                'ora_fine' => $ora_fine,
-                'include_bank_holidays' => $include_bank_holidays,
-                'is_predefined' => $is_predefined,
-            ], ['id' => $id_record]);
-
-            $dbo->update('in_fasceorarie_lang', [
-                'name' => $nome,
-            ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
-
-            flash()->info(tr('Salvataggio completato.'));
         } else {
-            flash()->error(tr("E' già presente una _TYPE_ con lo stesso nome", [
-                '_TYPE_' => 'fascia oraria',
-            ]));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;
 
     case 'add':
-        $nome = post('nome');
+        $descrizione = post('nome');
         $ora_inizio = post('ora_inizio');
         $ora_fine = post('ora_fine');
 
-        if (empty($dbo->fetchArray('SELECT `in_fasceorarie`.`id` FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($nome)))) {
-            $dbo->insert('in_fasceorarie', [
-                'ora_inizio' => $ora_inizio,
-                'ora_fine' => $ora_fine,
-            ]);
-            $id_record = $dbo->lastInsertedID();
-            $dbo->insert('in_fasceorarie_lang', [
-                'name' => $nome,
-                'id_record' => $id_record,
-                'id_lang' => Models\Locale::getDefault()->id,
-            ]);
+        if (isset($descrizione)) {
+            if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+                $fascia_oraria = FasciaOraria::build();
 
-            $tipi_intervento = $dbo->select('in_tipiintervento', '*');
-            foreach ($tipi_intervento as $tipo_intervento) {
-                $dbo->insert('in_fasceorarie_tipiintervento', [
-                    'idfasciaoraria' => $id_record,
-                    'idtipointervento' => $tipo_intervento['id'],
-                    'costo_orario' => $tipo_intervento['costo_orario'],
-                    'costo_km' => $tipo_intervento['costo_km'],
-                    'costo_diritto_chiamata' => $tipo_intervento['costo_diritto_chiamata'],
-                    'costo_orario_tecnico' => $tipo_intervento['costo_orario_tecnico'],
-                    'costo_km_tecnico' => $tipo_intervento['costo_km_tecnico'],
-                    'costo_diritto_chiamata_tecnico' => $tipo_intervento['costo_km_tecnico'],
-                ]);
+                $fascia_oraria->ora_inizio = $ora_inizio;
+                $fascia_oraria->ora_fine = $ora_fine;
+                $fascia_oraria->save();
+                
+                $id_record = $dbo->lastInsertedID();
+                $fascia_oraria->setTranslation('title', $descrizione);
+                $fascia_oraria->save();
+
+                $tipi_intervento = $dbo->select('in_tipiintervento', '*');
+                foreach ($tipi_intervento as $tipo_intervento) {
+                    $dbo->insert('in_fasceorarie_tipiintervento', [
+                        'idfasciaoraria' => $id_record,
+                        'idtipointervento' => $tipo_intervento['id'],
+                        'costo_orario' => $tipo_intervento['costo_orario'],
+                        'costo_km' => $tipo_intervento['costo_km'],
+                        'costo_diritto_chiamata' => $tipo_intervento['costo_diritto_chiamata'],
+                        'costo_orario_tecnico' => $tipo_intervento['costo_orario_tecnico'],
+                        'costo_km_tecnico' => $tipo_intervento['costo_km_tecnico'],
+                        'costo_diritto_chiamata_tecnico' => $tipo_intervento['costo_km_tecnico'],
+                    ]);
+                }
             }
-
+            
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }

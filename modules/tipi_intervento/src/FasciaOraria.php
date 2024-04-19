@@ -17,12 +17,29 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Anagrafiche\Provenienza;
+namespace Modules\TipiIntervento;
 
-include_once __DIR__.'/../../core.php';
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Traits\RecordTrait;
 
-if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id`=`an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_provenienze`.`id`='.prepare($id_record));
+class FasciaOraria extends Model
+{
+    use SimpleModelTrait;
+    use RecordTrait;
+    protected $table = 'in_fasceorarie';
 
-    $provenienza = Provenienza::find($id_record);
+    protected static $translated_fields = [
+        'title',
+    ];
+
+    public function getModuleAttribute()
+    {
+        return 'Fasce orarie';
+    }
+
+    public static function getTranslatedFields()
+    {
+        return self::$translated_fields;
+    }
 }

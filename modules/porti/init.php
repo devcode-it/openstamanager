@@ -17,8 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ use Modules\DDT\Porto;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id`='.prepare($id_record));
+
+    $porto = Porto::find($id_record);
 }

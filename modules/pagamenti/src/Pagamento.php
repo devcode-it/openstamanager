@@ -56,7 +56,7 @@ class Pagamento extends Model
 
     public function calcola($importo, $data, $id_anagrafica)
     {
-        $rate = PagamentoLang::where('name', '=', $this->getTranslation('title'))->get()->sortBy('num_giorni')->pluck('id')->toArray();
+        $rate = PagamentoLang::where('title', '=', $this->getTranslation('title'))->get()->sortBy('num_giorni')->pluck('id')->toArray();
         $number = count($rate);
 
         $totale = 0.0;

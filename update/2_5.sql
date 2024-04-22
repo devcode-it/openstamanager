@@ -1605,9 +1605,6 @@ ALTER TABLE `my_impianti_interventi` ADD `note` TEXT NOT NULL AFTER `idimpianto`
 -- Aggiornato plugin Impianti
 UPDATE `zz_plugins` SET `script` = '', `directory` = 'impianti_intervento', `options` = 'custom' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE  `name` = 'Impianti');
 
--- Fix plugin Ddt del cliente
-UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", \"fields\": \"Numero, Data, Descrizione, Qtà\", \"query\": \"SELECT dt_ddt.id, IF(dt_tipiddt.dir = \'entrata\', (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \'Ddt di vendita\' LIMIT 1), (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = \'Ddt di acquisto\' LIMIT 1)) AS _link_module_, dt_ddt.id AS _link_record_, IF(dt_ddt.numero_esterno = \'\', dt_ddt.numero, dt_ddt.numero_esterno) AS Numero, DATE_FORMAT(dt_ddt.data, \'%d/%m/%Y\') AS Data, dt_righe_ddt.descrizione AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(dt_righe_ddt.qta, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM dt_ddt LEFT JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt JOIN dt_tipiddt ON dt_ddt.idtipoddt = dt_tipiddt.id WHERE dt_ddt.idanagrafica=|id_parent| HAVING 2=2 ORDER BY dt_ddt.id DESC\"} ]}' WHERE `zz_plugins`.`id` = (SELECT `id_record` FROM `zz_plugins_lang` WHERE `name` = 'Ddt del cliente');
-
 DROP TABLE IF EXISTS `in_vociservizio`;
 
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Voci di servizio');

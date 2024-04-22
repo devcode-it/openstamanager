@@ -99,7 +99,7 @@ if (filter('op') == 'restore') {
     }
 
     $number = filter('number');
-    if (empty($number)) {
+    if ($number === null) {
         $path = $_FILES['blob']['tmp_name'];
     } else {
         $number != '' ? $number : 0;

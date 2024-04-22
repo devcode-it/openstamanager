@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-5">
-			{[ "type": "text", "label": "<?php echo tr('Name'); ?>", "name": "name", "value": "$title$", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Name'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
 		</div>
 
         <div class="col-md-5">

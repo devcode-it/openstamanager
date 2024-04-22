@@ -295,10 +295,10 @@ ORDER BY
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module` SET `zz_views`.`query` = 'CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`title`)' WHERE `zz_views`.`name` = 'Articolo' AND `zz_modules`.`name` = 'Listini';
 
 -- Allineamento zz_views Categorie in Listini
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module` SET `zz_views`.`query` = '`categorialang`.`name`' WHERE `zz_views`.`name` = 'Categoria' AND `zz_modules`.`name` = 'Listini';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module` SET `zz_views`.`query` = '`categorialang`.`title`' WHERE `zz_views`.`name` = 'Categoria' AND `zz_modules`.`name` = 'Listini';
 
 -- Allineamento zz_views Sottocategorie in Listini
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module` SET `zz_views`.`query` = '`sottocategorialang`.`name`' WHERE `zz_views`.`name` = 'Sottocategoria' AND `zz_modules`.`name` = 'Listini';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module` SET `zz_views`.`query` = '`sottocategorialang`.`title`' WHERE `zz_views`.`name` = 'Sottocategoria' AND `zz_modules`.`name` = 'Listini';
 
 -- Sposto impostazione sotto sezione Aggiornamenti
 UPDATE `zz_settings` SET `sezione` = 'Aggiornamenti' WHERE `zz_settings`.`nome` = 'Abilita canale pre-release per aggiornamenti'; 
@@ -308,12 +308,16 @@ UPDATE `zz_modules` SET `options` = "
 SELECT
     |select| 
 FROM 
-    zz_storage_adapters 
+    `zz_storage_adapters` 
 WHERE 
     1=1 AND `deleted_at` IS NULL
 HAVING 
     2=2" WHERE `zz_modules`.`name` = 'Adattatori di archiviazione';
 
+UPDATE `zz_modules` SET `name` = 'Adattatori di archiviazione' WHERE `zz_modules`.`directory` = 'adattatori_archiviazione';
+UPDATE `zz_views` SET `name` = 'id' WHERE `zz_views`.`query` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Adattatori di archiviazione');
+UPDATE `zz_views` SET `name` = 'Nome' WHERE `zz_views`.`query` = 'name' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Adattatori di archiviazione');
+UPDATE `zz_views` SET `name` = 'icon_Predefinito' WHERE `zz_views`.`query` = 'if(is_default=1, "fa fa-check", "")' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Adattatori di archiviazione');
 
 -- Rinomino plugin Sedi in Anagrafica
 UPDATE `zz_plugins_lang` SET `title` = 'Sedi aggiuntive' WHERE `zz_plugins_lang`.`id_lang` = (SELECT `id` FROM `zz_langs` WHERE `predefined` = 1) AND `name` = 'Sedi'; 

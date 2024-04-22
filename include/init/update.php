@@ -112,7 +112,7 @@ if (filter('action') == 'do_update') {
     exit;
 } elseif (Update::isUpdateAvailable()) {
     // Controllo se l'aggiornamento è in esecuzione
-    if (Update::isUpdateLocked() && filter('force') === null) {
+    if (Update::isUpdateLocked() && !(isset($_GET['force']))) {
         $pageTitle = tr('Aggiornamento in corso!');
 
         include_once App::filepath('include|custom|', 'top.php');

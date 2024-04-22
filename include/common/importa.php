@@ -98,8 +98,8 @@ if (!empty($options['create_document'])) {
     // Opzioni aggiuntive per le Fatture
     $id_module_fatt_vendita = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
     $id_module_fatt_acquisto = (new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id);
-    $id_module_ddt_vendita = (new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id);
-    $id_module_ddt_acquisto = (new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id);
+    $id_module_ddt_vendita = (new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id);
+    $id_module_ddt_acquisto = (new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id);
     if (in_array($final_module->id, [$id_module_fatt_vendita, $id_module_fatt_acquisto])) {
         $stato_predefinito = (new StatoFattura())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
         $fatt_differita_acquisto = (new Tipofattura())->getByField('title', 'Fattura differita di acquisto', Models\Locale::getPredefined()->id);

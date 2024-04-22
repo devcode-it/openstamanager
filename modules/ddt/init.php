@@ -24,7 +24,7 @@ use Modules\DDT\DDT;
 
 $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-$module_name = $module ? $module->getTranslation('title', Models\Locale::getPredefined()->id) : '';
+$module_name = $module ? $module->name : '';
 
 if ($module_name == 'Ddt di acquisto') {
     $dir = 'uscita';

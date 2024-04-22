@@ -50,7 +50,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine cliente').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini cliente', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i>'.tr('Nuovo ordine cliente').'
         </a></li>
 
-		<li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt uscita').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i>'.tr('Nuovo ddt in uscita').'
+		<li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt uscita').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i>'.tr('Nuovo ddt in uscita').'
         </a></li>
 
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di vendita').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i>'.tr('Nuova fattura di vendita').'
@@ -64,7 +64,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
         echo '<li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine fornitore').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i>'.tr('Nuovo ordine fornitore').'
     </a></li>
 
-    <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt entrata').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i>'.tr('Nuovo ddt in entrata').'
+    <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt entrata').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i>'.tr('Nuovo ddt in entrata').'
     </a></li>
 
     <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di acquisto').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i>'.tr('Nuova fattura di acquisto').'

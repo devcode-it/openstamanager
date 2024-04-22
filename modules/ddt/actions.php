@@ -518,7 +518,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt di acquisto', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id);
+        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id);
 
         break;
 

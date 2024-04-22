@@ -24,7 +24,7 @@ use Modules\DDT\Tipo;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Ddt di vendita') {
+if ($module->name == 'Ddt di vendita') {
     $dir = 'entrata';
 
     $id_tipoddt = (new Tipo())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id);

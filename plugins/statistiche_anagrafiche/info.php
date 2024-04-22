@@ -192,7 +192,7 @@ echo '
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ddt in uscita').'</span>
-                        '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Ddt di vendita', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ddt_uscita->count().'</big><br>

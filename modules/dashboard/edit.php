@@ -390,7 +390,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
 
 echo '
 <script type="text/javascript">    

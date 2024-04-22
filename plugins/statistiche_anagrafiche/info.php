@@ -172,10 +172,10 @@ echo '
                         <span class="info-box-text pull-left">'.tr('Attività').'</span>';
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 } else {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 }
 echo '                     
                         <br class="clearfix">
@@ -226,10 +226,10 @@ echo '
                         <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&search_Ragione-sociale='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 } else {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&search_Tecnici='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
 }
 echo '                     
                         <br class="clearfix">

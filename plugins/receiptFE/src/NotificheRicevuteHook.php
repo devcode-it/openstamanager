@@ -75,7 +75,7 @@ class NotificheRicevuteHook extends Manager
             ]);
         }
 
-        $id_module = (new Module())->getByField('title', 'Interventi', \Models\Locale::getPredefined()->id);
+        $id_module = (new Module())->getByField('title', 'Attività', \Models\Locale::getPredefined()->id);
         $id_plugin = (new Plugin())->getByField('title', 'Ricevute FE', \Models\Locale::getPredefined()->id);
 
         return [

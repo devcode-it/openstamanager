@@ -45,7 +45,7 @@ $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe_totali = $documento->getRighe();
 
-$id_module_interventi = (new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id);
+$id_module_interventi = (new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id);
 $id_module_ordini_f = (new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id);
 if ($final_module->id == $id_module_interventi) {
     $righe = $righe_totali->where('is_descrizione', '=', 0)

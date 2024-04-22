@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$modulo_interventi = Module::find((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
 $modulo_preventivi = Module::find((new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id));
 $modulo_eventi = Module::find((new Module())->getByField('title', 'Eventi', Models\Locale::getPredefined()->id));
 

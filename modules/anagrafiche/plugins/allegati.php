@@ -60,8 +60,8 @@ if (empty($_GET['visualizza_allegati'])) {
     }
 
     // Interventi dell'anagrafica
-    if ($user->is_admin || in_array((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id), $permessi)) {
-        $interventi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Interventi', Models\Locale::getPredefined()->id))." AS id_module, `id` AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(`data_richiesta`,'%d/%m/%Y')) AS descrizione FROM `in_interventi` WHERE `idanagrafica`=".prepare($id_record));
+    if ($user->is_admin || in_array((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id), $permessi)) {
+        $interventi = $dbo->fetcharray('SELECT '.prepare((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id))." AS id_module, `id` AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(`data_richiesta`,'%d/%m/%Y')) AS descrizione FROM `in_interventi` WHERE `idanagrafica`=".prepare($id_record));
         $documenti = array_merge($documenti, $interventi);
     }
 

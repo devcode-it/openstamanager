@@ -69,8 +69,8 @@ class Anagrafica extends Model
 
         $model->ragione_sociale = $ragione_sociale;
 
-        $model->nome = $nome;
-        $model->cognome = $cognome;
+        $model->nome = $nome ?: '';
+        $model->cognome = $cognome ?: '';
 
         $model->codice = static::getNextCodice();
         $model->id_ritenuta_acconto_vendite = setting("Ritenuta d'acconto predefinita");

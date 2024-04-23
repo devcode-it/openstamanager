@@ -115,7 +115,7 @@ function saveNota(id) {
         note: $("#note_" + id).val(),
         id: id
     }, function() {
-        alertPush();
+        renderMessages();
         $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
         $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
     });

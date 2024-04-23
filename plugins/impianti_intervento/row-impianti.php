@@ -111,7 +111,7 @@ foreach ($impianti_collegati as $impianto) {
     echo '
     <tr data-id="'.$impianto['id'].'">
         <td class="text-left">
-            <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
+            <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="loadChecklist('.$impianto['id'].'); toggleDettagli(this);">
                 <i class="fa fa-'.$icon.'"></i>
             </button>
             
@@ -137,11 +137,8 @@ foreach ($impianti_collegati as $impianto) {
     <tr style="display: none">
         <td colspan="7">
             <table class="table">
-                <tbody class="sort check-impianto" data-sonof="0">';
-    foreach ($checks as $check) {
-        echo renderChecklist($check);
-    }
-    echo '
+                <tbody class="sort check-impianto" data-sonof="0" id="checklist_'.$impianto['id'].'">
+                    <span class="text-muted" id="loading-checks_'.$impianto['id'].'"><i class="fa fa-spin fa-spinner"></i> '.tr('Caricamento checklist').'...</span>
                 </tbody>
             </table>
         </td>
@@ -209,88 +206,6 @@ function updateImpianto(id) {
     });
 }
 
-sortable("#tab_checks .sort", {
-    axis: "y",
-    handle: ".handle",
-    cursor: "move",
-    dropOnEmpty: true,
-    scroll: true,
-});
-
-sortable_table = sortable("#tab_checks .sort").length;
-
-for(i=0; i<sortable_table; i++){
-    sortable("#tab_checks .sort")[i].addEventListener("sortupdate", function(e) {
-
-        var sonof = $(this).data("sonof");
-
-        let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
-    
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
-            op: "update_position",
-            order: order.join(","),
-        });
-    });
-}
-
-$("textarea[name=\'note_checklist\']").keyup(function() {
-    $(this).parent().parent().parent().find(".save-nota").removeClass("btn-default");
-    $(this).parent().parent().parent().find(".save-nota").addClass("btn-success");
-});
-
-function saveNota(id) {
-    $.post("'.$checklist_module->fileurl('ajax.php').'", {
-        op: "save_note",
-        note: $("#note_" + id).val(),
-        id: id
-    }, function() {
-        alertPush();
-        $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
-        $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
-    });
-}
-
-$(".check-impianto .checkbox").click(function(){
-    if($(this).is(":checked")){
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
-            op: "save_checkbox",
-            id: $(this).attr("data-id"),
-        },function(result){
-        });
-
-        $(this).parent().parent().find(".text").css("text-decoration", "line-through");
-
-        parent = $(this).attr("data-id");
-        $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
-            if(!$(this).is(":checked")){
-                $(this).click();
-            }
-        });
-        $(this).parent().parent().find(".verificato").removeClass("hidden");
-        $(this).parent().parent().find(".verificato").text("'.tr('Verificato da _USER_ il _DATE_', [
-    '_USER_' => $user->username,
-    '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
-]).'");
-    }else{
-        $.post("'.$checklist_module->fileurl('ajax.php').'", {
-            op: "remove_checkbox",
-            id: $(this).attr("data-id"),
-        },function(result){
-        });
-
-        $(this).parent().parent().find(".text").css("text-decoration", "none");
-
-        parent = $(this).attr("data-id");
-        $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
-            if($(this).is(":checked")){
-                $(this).click();
-            }
-        });
-
-        $(this).parent().parent().find(".verificato").addClass("hidden");
-    }
-})
-
 function delete_check(id){
     if(confirm("Eliminare questa checklist?")){
         $.post("'.$checklist_module->fileurl('ajax.php').'", {
@@ -304,5 +219,109 @@ function delete_check(id){
 
 function edit_check(id){
     launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+}
+
+function saveNota(id) {
+    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        op: "save_note",
+        note: $("#note_" + id).val(),
+        id: id
+    }, function() {
+        renderMessages();
+        $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
+        $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
+    });
+}
+
+function loadChecklist(id){
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_plugin: '.$id_plugin.',
+            id_record: globals.id_record,
+            op: "load_checklist",
+            id_impianto: id,
+        },
+        success: function (response) {
+            $("#loading-checks_" + id).hide();
+            $("#checklist_" + id).html(response);
+            init();
+
+            sortable("#tab_checks .sort", {
+                axis: "y",
+                handle: ".handle",
+                cursor: "move",
+                dropOnEmpty: true,
+                scroll: true,
+            });
+
+            sortable_table = sortable("#tab_checks .sort").length;
+
+            for(i=0; i<sortable_table; i++){
+                sortable("#tab_checks .sort")[i].addEventListener("sortupdate", function(e) {
+
+                    var sonof = $(this).data("sonof");
+
+                    let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
+                
+                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+                        op: "update_position",
+                        order: order.join(","),
+                    });
+                });
+            }
+
+            $("textarea[name=\'note_checklist\']").keyup(function() {
+                $(this).parent().parent().parent().find(".save-nota").removeClass("btn-default");
+                $(this).parent().parent().parent().find(".save-nota").addClass("btn-success");
+            });
+
+            $(".check-impianto .checkbox").click(function(){
+                if($(this).is(":checked")){
+                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+                        op: "save_checkbox",
+                        id: $(this).attr("data-id"),
+                    },function(result){
+                    });
+
+                    $(this).parent().parent().find(".text").css("text-decoration", "line-through");
+
+                    parent = $(this).attr("data-id");
+                    $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
+                        if(!$(this).is(":checked")){
+                            $(this).click();
+                        }
+                    });
+                    $(this).parent().parent().find(".verificato").removeClass("hidden");
+                    $(this).parent().parent().find(".verificato").text("'.tr('Verificato da _USER_ il _DATE_', [
+                '_USER_' => $user->username,
+                '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
+            ]).'");
+                }else{
+                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+                        op: "remove_checkbox",
+                        id: $(this).attr("data-id"),
+                    },function(result){
+                    });
+
+                    $(this).parent().parent().find(".text").css("text-decoration", "none");
+
+                    parent = $(this).attr("data-id");
+                    $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
+                        if($(this).is(":checked")){
+                            $(this).click();
+                        }
+                    });
+
+                    $(this).parent().parent().find(".verificato").addClass("hidden");
+                }
+            })
+        },
+        error: function() {
+            renderMessages();
+        }
+    });
 }
 </script>';

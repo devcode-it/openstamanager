@@ -23,13 +23,13 @@ use Models\Module;
 use Modules\Checklists\Check;
 
 $operazione = filter('op');
+$id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
 
 switch ($operazione) {
     case 'add_impianto':
         if (post('id_impianto')) {
             $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare(post('id_impianto')).', '.prepare($id_record).')');
 
-            $id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
             $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare(post('id_impianto')));
             foreach ($checks_impianti as $check_impianto) {
                 $id_parent_new = null;
@@ -52,7 +52,7 @@ switch ($operazione) {
         break;
 
     case 'update_impianto':
-        $components = (array) post('componenti');
+        $components = (post('componenti') ? (array) post('componenti') : []);
         $note = post('note');
         $id_impianto = post('id_impianto');
 
@@ -74,7 +74,6 @@ switch ($operazione) {
         break;
 
     case 'delete_impianto':
-        $id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
         $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare(post('id')));
         Check::deleteLinked([
             'id_module' => $id_module,
@@ -91,6 +90,22 @@ switch ($operazione) {
         }
 
         flash()->info(tr('Impianto rimosso correttamente!'));
+
+        break;
+
+    case 'load_checklist':
+        $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', post('id_impianto'))->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
+
+        $response = '';
+        foreach ($checks as $check) {
+            $response .= renderChecklist($check);
+        }
+
+        /*echo json_encode([
+            'checklist' => $response
+        ]);*/
+
+        echo $response;
 
         break;
 }

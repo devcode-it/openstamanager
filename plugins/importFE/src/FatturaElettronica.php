@@ -196,7 +196,7 @@ class FatturaElettronica
         }
 
         // Registrazione XML come allegato
-        \Uploads::upload($this->file, array_merge($info, [
+        \Uploads::upload(file_get_contents($this->file), array_merge($info, [
             'name' => tr('Fattura Elettronica'),
             'original_name' => basename($this->file),
         ]));

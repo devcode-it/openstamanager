@@ -25,10 +25,6 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
 
     <div class="row">
-        <div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 1, "help": "'.tr("Nome univoco dell'attributo").'" ]}
-		</div>
-
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
 		</div>

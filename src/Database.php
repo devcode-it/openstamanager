@@ -386,7 +386,6 @@ class Database extends Util\Singleton
         return null;
     }
 
-
     /**
      * Restituisce l'identificativo dell'ultimo elemento inserito.
      *

@@ -156,7 +156,7 @@ function database(button) {
 }
 
 function controlli(button) {
-    openModal("'.tr('Controlli del gestionale').'", "'.$module->fileurl('controlli.php').'?id_module='.$id_module. '");
+    openModal("'.tr('Controlli del gestionale').'", "'.$module->fileurl('controlli.php').'?id_module='.$id_module.'");
 }
 
 function search(button) {
@@ -171,7 +171,7 @@ function search(button) {
         },
         success: function(data){
             if (data === "none" || !data) {
-                $("#update-search").html("<i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i> '.tr('Nessun aggiornamento disponibile'). '.");
+                $("#update-search").html("<i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i> '.tr('Nessun aggiornamento disponibile').'.");
             } else {
                 let beta_warning = data.includes("beta") ? "<br><i class=\"fa-exclamation-triangle text-danger\" aria-hidden=\"true\"></i> <b class=\"text-danger\">'.tr('Attenzione: la versione individuata è in fase sperimentale e potrebbe pertanto presentare diversi malfunzionamenti. Se ne sconsiglia l\'aggiornamento in installazioni di produzione').'.</b>" : "";
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + "." + beta_warning + "<br>'.tr('Scaricalo ora: _LINK_', [

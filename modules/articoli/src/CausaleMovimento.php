@@ -34,7 +34,6 @@ class CausaleMovimento extends Model
         'title',
     ];
 
-
     public function getModuleAttribute()
     {
         return 'Causali movimenti';

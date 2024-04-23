@@ -37,7 +37,7 @@ switch (filter('op')) {
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $descrizione;
-                } 
+                }
                 $tipo->dir = $dir;
                 $tipo->codice_tipo_documento_fe = $codice_tipo_documento_fe;
                 $tipo->help = filter('help');
@@ -66,7 +66,7 @@ switch (filter('op')) {
                 $tipo = Tipo::build($dir, $codice_tipo_documento_fe);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $descrizione;
-                } 
+                }
                 $id_record = $dbo->lastInsertedID();
                 $tipo->setTranslation('title', $descrizione);
                 $tipo->save();

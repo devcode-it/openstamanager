@@ -43,7 +43,7 @@ switch (filter('op')) {
             $iva->setTranslation('title', $descrizione);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $iva->name = $descrizione;
-            } 
+            }
             $iva->save();
 
             // Messaggio di avvertenza
@@ -77,7 +77,7 @@ switch (filter('op')) {
             $iva->setTranslation('title', $descrizione);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $iva->name = $descrizione;
-            } 
+            }
             $iva->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

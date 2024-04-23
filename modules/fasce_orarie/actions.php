@@ -66,7 +66,7 @@ switch (post('op')) {
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $fascia_oraria->setTranslation('title', $descrizione);
                 $fascia_oraria->save();
@@ -85,7 +85,7 @@ switch (post('op')) {
                     ]);
                 }
             }
-            
+
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }

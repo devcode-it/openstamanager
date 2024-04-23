@@ -54,7 +54,7 @@ switch (filter('op')) {
             $attributo->setTranslation('title', $title);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $attributo->name = $descrizione;
-            }   
+            }
             $attributo->save();
 
             flash()->info(tr('Attributo aggiornato correttamente!'));

@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Modules\DDT\Spedizione;
+use Modules\DDT\Spedizione;
 
 include_once __DIR__.'/../../core.php';
 

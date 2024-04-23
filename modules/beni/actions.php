@@ -30,7 +30,7 @@ switch (post('op')) {
                 $aspetto->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $aspetto->name = $descrizione;
-                } 
+                }
                 $aspetto->save();
                 flash()->info(tr('Salvataggio completato.'));
             } else {
@@ -52,7 +52,7 @@ switch (post('op')) {
                     $aspetto->name = $descrizione;
                 }
                 $aspetto->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $aspetto->setTranslation('title', $descrizione);
                 $aspetto->save();

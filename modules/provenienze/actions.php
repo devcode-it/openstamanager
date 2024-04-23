@@ -32,7 +32,7 @@ switch (filter('op')) {
                 $provenienza->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $provenienza->name = $descrizione;
-                } 
+                }
                 $provenienza->colore = $colore;
                 $provenienza->save();
                 flash()->info(tr('Salvataggio completato.'));
@@ -59,7 +59,7 @@ switch (filter('op')) {
                 }
                 $provenienza->colore = $colore;
                 $provenienza->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $provenienza->setTranslation('title', $descrizione);
                 $provenienza->save();

@@ -32,7 +32,7 @@ switch (post('op')) {
             $tipo->setTranslation('title', $descrizione);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $tipo->name = $descrizione;
-            } 
+            }
             $tipo->save();
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {

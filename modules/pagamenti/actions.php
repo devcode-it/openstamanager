@@ -52,7 +52,7 @@ switch (filter('op')) {
 
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $pagamento->name = $descrizione;
-                } 
+                }
                 $pagamento->num_giorni = post('distanza')[$key];
                 $pagamento->giorno = $giorno;
                 $pagamento->prc = post('percentuale')[$key];
@@ -82,7 +82,7 @@ switch (filter('op')) {
                 $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $pagamento->name = $descrizione;
-                } 
+                }
                 $id_record = $dbo->lastInsertedID();
                 $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();

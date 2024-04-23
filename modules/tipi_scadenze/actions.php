@@ -75,12 +75,12 @@ switch (filter('op')) {
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
             if (empty(Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-                $tipo = tipo::build();
+                $tipo = Tipo::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $nome;
                 }
                 $tipo->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $tipo->setTranslation('title', $descrizione);
                 $tipo->save();

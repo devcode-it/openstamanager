@@ -31,7 +31,7 @@ switch (filter('op')) {
                 $settore->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $settore->name = $descrizione;
-                } 
+                }
                 $settore->save();
                 flash()->info(tr('Salvataggio completato.'));
             } else {
@@ -58,7 +58,7 @@ switch (filter('op')) {
                 $id_record = $dbo->lastInsertedID();
                 $settore->setTranslation('title', $descrizione);
                 $settore->save();
-                
+
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }

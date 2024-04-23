@@ -30,7 +30,7 @@ switch (post('op')) {
         } else {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $stato->name = $descrizione;
-            } 
+            }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
             $stato->is_completato = post('is_completato');
@@ -58,7 +58,7 @@ switch (post('op')) {
             $stato = Stato::build($icona, $colore, $is_completato, $is_fatturabile, $is_pianificabile);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $stato->name = $descrizione;
-            } 
+            }
             $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('title', $descrizione);
             $stato->save();

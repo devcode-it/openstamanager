@@ -22,7 +22,7 @@ use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
 
-if (!empty(($id_record))) {
+if (!empty($id_record)) {
     $newsletter = Newsletter::find($id_record);
 
     $record = $newsletter->toArray();

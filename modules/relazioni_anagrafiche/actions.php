@@ -33,7 +33,7 @@ switch (filter('op')) {
                 $relazione->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $relazione->name = $descrizione;
-                } 
+                }
                 $relazione->colore = $colore;
                 $relazione->is_bloccata = $is_bloccata;
                 $relazione->save();

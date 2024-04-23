@@ -36,7 +36,7 @@ switch (filter('op')) {
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $spedizione->name = $descrizione;
-                } 
+                }
                 $spedizione->predefined = $predefined;
                 $spedizione->esterno = $vettore;
                 $spedizione->save();
@@ -59,7 +59,7 @@ switch (filter('op')) {
                     $spedizione->name = $descrizione;
                 }
                 $spedizione->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $spedizione->setTranslation('title', $descrizione);
                 $spedizione->save();

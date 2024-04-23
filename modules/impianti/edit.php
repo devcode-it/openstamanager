@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $id_modulo_categorie_impianti = (new Module())->getByField('title', 'Categorie Impianti', Models\Locale::getPredefined()->id);
-$id_modulo_marca_impianti =  (new Module())->getByField('title', 'Marche Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_marca_impianti = (new Module())->getByField('title', 'Marche Impianti', Models\Locale::getPredefined()->id);
 
 $img = null;
 if (!empty($record['immagine'])) {
@@ -64,15 +64,15 @@ if (!empty($record['immagine'])) {
 						<div class="clearfix"></div>
 
 						<div class="col-md-4">
-							<?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');?>
+							<?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
 						<?php
-						echo '
+                        echo '
 						<div class="col-md-4">
 							{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 						</div>';
-						?>
+?>
 						<div class="col-md-4">
 							{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
 						</div>

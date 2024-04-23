@@ -30,7 +30,7 @@ switch (post('op')) {
         } else {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $stato->name = $descrizione;
-            } 
+            }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
             $stato->setTranslation('title', $descrizione);

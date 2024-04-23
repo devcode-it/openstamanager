@@ -59,7 +59,7 @@ switch (post('op')) {
         $template->save();
 
         $prints[] = post('prints');
-        
+
         foreach ($prints as $print) {
             if (!empty($print)) {
                 $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $print]);
@@ -72,7 +72,7 @@ switch (post('op')) {
                 $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => $mansione]);
             }
         }
-    
+
         flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;

@@ -34,7 +34,7 @@ switch (filter('op')) {
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $porto->name = $descrizione;
-                } 
+                }
                 $porto->predefined = $predefined;
                 $porto->save();
                 flash()->info(tr('Salvataggio completato.'));
@@ -57,7 +57,7 @@ switch (filter('op')) {
                     $porto->name = $descrizione;
                 }
                 $porto->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $porto->setTranslation('title', $descrizione);
                 $porto->save();

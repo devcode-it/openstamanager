@@ -30,7 +30,7 @@ switch (filter('op')) {
                 $causale->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $causale->name = $descrizione;
-                } 
+                }
                 $causale->predefined = post('predefined');
                 $causale->is_importabile = filter('is_importabile');
                 $causale->reversed = filter('reversed');
@@ -56,7 +56,7 @@ switch (filter('op')) {
                     $causale->name = $descrizione;
                 }
                 $causale->save();
-                
+
                 $id_record = $dbo->lastInsertedID();
                 $causale->setTranslation('title', $descrizione);
                 $causale->save();

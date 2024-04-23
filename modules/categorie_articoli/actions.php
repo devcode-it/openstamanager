@@ -28,10 +28,10 @@ switch (filter('op')) {
         $id_original = filter('id_original') ?: null;
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            $categoria->nota = $nota;
             $categoria->colore = $colore;
             $categoria->parent = $id_original ?: null;
             $categoria->setTranslation('title', $nome);
+            $categoria->setTranslation('note', $nota);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $categoria->name = $descrizione;
             }
@@ -68,12 +68,13 @@ switch (filter('op')) {
         if (!empty($categoria_new)) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
         } else {
-            $categoria = Categoria::build($nota, $colore);
+            $categoria = Categoria::build($colore);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $categoria->name = $descrizione;
             }
             $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
+            $categoria->setTranslation('note', $nota);
             $categoria->setTranslation('title', $nome);
             $categoria->save();
 

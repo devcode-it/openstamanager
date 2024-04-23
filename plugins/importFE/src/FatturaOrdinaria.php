@@ -107,9 +107,9 @@ class FatturaOrdinaria extends FatturaElettronica
                         }
                     } elseif (isset($sm['Importo'])) {
                         if ($sm['Tipo'] == 'SC') {
-                            $importo -= $sm['Importo'];
+                            $importo -= $sm['Importo'] * $linea['Quantita'];
                         } else {
-                            $importo += $sm['Importo'];
+                            $importo += $sm['Importo'] * $linea['Quantita'];
                         }
                     }
                 }
@@ -119,7 +119,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $importo = $linea['PrezzoUnitario'];
             }
 
-            $imponibile[$linea['AliquotaIVA']] = ($imponibile[$linea['AliquotaIVA']] ?? 0) + round($importo, 2);
+            $imponibile[$linea['AliquotaIVA']] += round($importo, 2);
         }
 
         // Aggiunta degli arrotondamenti IVA come righe indipendenti

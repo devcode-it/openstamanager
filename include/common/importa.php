@@ -130,7 +130,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per gli Interventi
-    elseif ($final_module->getTranslation('title') == 'Interventi') {
+    elseif ($final_module->getTranslation('title') == 'Attività') {
         echo '
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_completato` = 0 ORDER BY `title`" ]}
@@ -152,7 +152,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per i DDT
-    elseif (in_array($final_module->getTranslation('title'), ['Ddt di vendita', 'Ddt di acquisto'])) {
+    elseif (in_array($final_module->getTranslation('title'), ['Ddt in uscita', 'Ddt in entrata'])) {
         $stato_predefinito = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
 
         echo '

@@ -41,7 +41,7 @@ if (get('documento') == 'fattura') {
     $op = 'add_ordine_fornitore';
     $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'ddt') {
-    $final_module = 'Ddt di vendita';
+    $final_module = 'Ddt in uscita';
     $op = 'add_documento';
     $tipo_documento_finale = DDT::class;
 } elseif (get('documento') == 'contratto') {
@@ -49,7 +49,7 @@ if (get('documento') == 'fattura') {
     $op = 'add_preventivo';
     $tipo_documento_finale = Contratto::class;
 } else {
-    $final_module = 'Interventi';
+    $final_module = 'Attività';
     $op = 'add_documento';
     $tipo_documento_finale = Intervento::class;
 }

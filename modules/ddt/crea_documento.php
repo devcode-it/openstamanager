@@ -28,7 +28,7 @@ $tipo_documento_finale = Fattura::class;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Ddt di vendita') {
+if ($module->getTranslation('title') == 'Ddt in uscita') {
     $final_module = 'Fatture di vendita';
     $dir = 'entrata';
 } else {

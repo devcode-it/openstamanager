@@ -34,7 +34,7 @@ use Modules\Ordini\Stato as StatoOrdine;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Ddt di vendita') {
+if ($module->getTranslation('title') == 'Ddt in uscita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

@@ -33,7 +33,7 @@ if ($module_name == 'Ddt di acquisto') {
 }
 
 if (!empty($id_record)) {
-    $ddt = DDT::with('tipo', 'stato')->find($id_record);
+    $ddt = DDT::find($id_record);
 
     $record = $dbo->fetchOne('SELECT 
         `dt_ddt`.*,
@@ -43,7 +43,7 @@ if (!empty($id_record)) {
         `dt_tipiddt_lang`.`title` AS `descrizione_tipodoc`,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica
     FROM `dt_ddt`
-        INNER JOIN `dt_statiddt` ON dt_ddt.idstatoddt=dt_statiddt.id
+        INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt`=`dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`

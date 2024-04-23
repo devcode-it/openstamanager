@@ -56,7 +56,7 @@ echo '
     <input type="hidden" name="blocca_minimo_vendita" value="'.setting('Bloccare i prezzi inferiori al minimo di vendita').'">';
 
 // Selezione impianto per gli Interventi
-if ($module->getTranslation('title') == 'Interventi') {
+if ($module->getTranslation('title') == 'Attività') {
     echo '
 <div class="row">
     <div class="col-md-12">

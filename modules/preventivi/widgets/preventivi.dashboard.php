@@ -39,7 +39,7 @@ if (!empty($rs)) {
         $data_accettazione = ($preventivo->data_accettazione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_accettazione) : '';
         $data_conclusione = ($preventivo->data_conclusione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_conclusione) : '';
 
-        if (strtotime($preventivo->data_conclusione) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
+        if ($data_conclusione != '' && strtotime($preventivo->data_conclusione) < strtotime(date('Y-m-d'))) {
             $attr = ' class="danger"';
         } else {
             $attr = '';

@@ -59,7 +59,7 @@ $plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main
 foreach ($plugins as $plugin) {
     echo '
 				<li>
-					<a data-toggle="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->title.'</a>
+					<a data-toggle="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
 				</li>';
 }
 

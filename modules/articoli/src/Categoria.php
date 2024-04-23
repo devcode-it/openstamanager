@@ -37,10 +37,9 @@ class Categoria extends Model
 
     protected static $parent_identifier = 'parent';
 
-    public static function build($nota = null, $colore = null)
+    public static function build($colore = null)
     {
         $model = new static();
-        $model->nota = $nota;
         $model->colore = $colore;
         $model->save();
 

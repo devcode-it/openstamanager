@@ -456,7 +456,7 @@ switch ($resource) {
 
     case 'regioni':
         if (isset($superselect['id_nazione'])) {
-            $query = 'SELECT `an_regioni`.`id` AS id, `an_regioni`.`iso2`, CONCAT(CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`title`), \' (\', `an_nazioni`.`iso2`, \')\') AS descrizione FROM `an_regioni` LEFT JOIN `an_regioni_lang` ON (`an_regioni`.`id` = `an_regioni_lang`.`id_record` AND `an_regioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_nazioni` ON `an_regioni`.`id_nazione` = `an_nazioni`.`id` |where| ORDER BY `an_regioni_lang`.`title`';
+            $query = 'SELECT `an_regioni`.`id` AS id, `an_regioni_lang`.`title` AS descrizione FROM `an_regioni` LEFT JOIN `an_regioni_lang` ON (`an_regioni`.`id` = `an_regioni_lang`.`id_record` AND `an_regioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_nazioni` ON `an_regioni`.`id_nazione` = `an_nazioni`.`id` |where| ORDER BY `an_regioni_lang`.`title`';
 
             foreach ($elements as $element) {
                 $filter[] = '`an_regioni`.`id`='.prepare($element);
@@ -466,8 +466,6 @@ switch ($resource) {
 
             if (!empty($search)) {
                 $search_fields[] = '`an_regioni_lang`.`title` LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = '`an_regioni`.`iso2` LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'CONCAT_WS(\' - \', `an_regioni`.`iso2`, `an_regioni_lang`.`title`) LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

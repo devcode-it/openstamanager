@@ -60,7 +60,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         $dbo->update('zz_segments_lang', [
-            'name' => post('name'),
+            'title' => post('name'),
         ], ['id_record' => $id_record, 'id_lang' => Models\Locale::getDefault()->id]);
 
         // Aggiornamento dei permessi relativi
@@ -95,7 +95,7 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         $dbo->insert('zz_segments_lang', [
-            'name' => post('name'),
+            'title' => post('name'),
             'id_record' => $id_record,
             'id_lang' => Models\Locale::getDefault()->id,
         ]);

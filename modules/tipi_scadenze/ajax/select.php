@@ -21,7 +21,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'tipi_scadenze':
-        $query = 'SELECT `title` AS `id`, `description` as `descrizione` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
+        $query = 'SELECT `title` AS `id`, `title` as `descrizione` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`co_tipi_scadenze`.`id`='.prepare($element);
@@ -29,7 +29,6 @@ switch ($resource) {
 
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`description` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

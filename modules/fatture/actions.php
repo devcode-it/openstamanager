@@ -135,7 +135,7 @@ switch ($op) {
         $fattura->note_aggiuntive = post('note_aggiuntive');
 
         $fattura->idanagrafica = post('idanagrafica');
-        $fattura->idagente = post('idagente');
+        $fattura->idagente = post('idagente') ?: '';
         $fattura->idreferente = post('idreferente');
         $fattura->idpagamento = post('idpagamento');
         $fattura->id_banca_azienda = post('id_banca_azienda');
@@ -764,7 +764,7 @@ switch ($op) {
             $fattura->idsede_destinazione = $idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->idreferente = $documento->idreferente;
-            $fattura->idagente = $documento->idagente;
+            $fattura->idagente = $documento->idagente ?: '';
 
             $fattura->save();
 

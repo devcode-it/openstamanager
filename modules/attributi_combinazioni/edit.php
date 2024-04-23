@@ -32,10 +32,6 @@ echo '
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "span", "label": "'.tr('Nome').'", "name": "nome", "value": "'.$attributo->getTranslation('title').'", "help": "'.tr("Nome univoco dell'attributo").'" ]}
-                </div>
-
-                <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->getTranslation('title').'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
                 </div>
             </div>

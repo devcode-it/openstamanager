@@ -30,7 +30,7 @@ switch ($operazione) {
         $assicurazione_crediti = AssicurazioneCrediti::build($anagrafica, post('fido_assicurato'), post('data_inizio'), post('data_fine'));
         $assicurazione_crediti->save();
 
-        flash()->info(tr("Assicurazione crediti aggiunta!"));
+        flash()->info(tr('Assicurazione crediti aggiunta!'));
 
         break;
 
@@ -40,14 +40,14 @@ switch ($operazione) {
         $assicurazione_crediti->fido_assicurato = post('fido_assicurato');
         $assicurazione_crediti->save();
 
-        flash()->info(tr("Assicurazione crediti aggiornata!"));
+        flash()->info(tr('Assicurazione crediti aggiornata!'));
 
         break;
 
     case 'delete':
         $assicurazione_crediti->delete();
 
-        flash()->info(tr("Assicurazione crediti eliminata!"));
+        flash()->info(tr('Assicurazione crediti eliminata!'));
 
         break;
 }

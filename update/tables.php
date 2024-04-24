@@ -3,6 +3,7 @@
 return [
     'an_anagrafiche',
     'an_anagrafiche_agenti',
+    'an_assicurazione_crediti',
     'an_nazioni',
     'an_nazioni_lang',
     'an_mansioni',

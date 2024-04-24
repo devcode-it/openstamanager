@@ -296,9 +296,9 @@ function loadChecklist(id){
                     });
                     $(this).parent().parent().find(".verificato").removeClass("hidden");
                     $(this).parent().parent().find(".verificato").text("'.tr('Verificato da _USER_ il _DATE_', [
-                '_USER_' => $user->username,
-                '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
-            ]).'");
+    '_USER_' => $user->username,
+    '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
+]).'");
                 }else{
                     $.post("'.$checklist_module->fileurl('ajax.php').'", {
                         op: "remove_checkbox",

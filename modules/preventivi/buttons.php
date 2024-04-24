@@ -30,7 +30,7 @@ foreach ($stati_abilitati as $stato) {
 // Crea revisione
 echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
-    '_STATE_LIST_' => implode(", ", $stati),
+    '_STATE_LIST_' => implode(', ', $stati),
 ]).'">
     <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="openModal(\''.tr('Crea revisione').'\', \''.$module->fileurl('crea_revisione.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
         <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'

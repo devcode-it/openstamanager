@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.5.1 (2024-04-12)](#251-2024-04-12)
+- [2.5.1 (2024-04-24)](#251-2024-04-24)
 - [2.5 (2024-03-28)](#25-2024-03-28)
 - [2.4.54 (2024-02-02)](#2454-2024-02-02)
 - [2.4.53 (2024-01-05)](#2453-2024-01-05)
@@ -67,15 +67,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.5.1 (2024-04-12)
+## 2.5.1 (2024-04-24)
 ### Aggiunto (Added)
 - Aggiunto user-agent nei log di accesso
 - Aggiunta la visualizzazione delle checklist impianti in stampa Attività
+- Aggiunta colonna Gruppi abilitati in **Categorie documenti**
 
 ### Modificato (Changed)
 - Ottimizzato il codice per renderlo compatibile con php8.1
 - Migliorata la procedura di aggiornamento
 - Rinominato il plugin **Sedi** in **Sedi aggiuntive**
+- Modificata la forzatura aggiornamento in ?force=1
 
 ### Fixed
 - Corretto il salvataggio nome in **Viste**

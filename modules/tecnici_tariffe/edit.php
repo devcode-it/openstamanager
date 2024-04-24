@@ -74,7 +74,7 @@ foreach ($tipi_interventi as $tipo_intervento) {
     echo '
         <tr>
 
-            <td>'.$tipo_intervento['name'].'</td>
+            <td>'.$tipo_intervento['title'].'</td>
 
             <td>
                 {[ "type": "number", "name": "costo_ore['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_ore'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}

@@ -841,12 +841,12 @@ if (empty($record['deleted_at'])) {
 
 <script>
     
-    var an_sdi = <?php echo ($anagrafica->tipo == 'Azienda') ? $dbo->fetchOne('SELECT JSON_ARRAYAGG(`codice`) AS `elenco_codici` FROM `an_sdi`')['elenco_codici'] : ''; ?>;
+    var an_sdi = <?php echo ($anagrafica->tipo == 'Azienda') ? $dbo->fetchOne('SELECT JSON_ARRAYAGG(`codice`) AS `elenco_codici` FROM `an_sdi`')['elenco_codici'] : []; ?>;
 
     $(document).ready(function() {
 
         // Auto-completamento codice intermediario per anagrafiche con tipologia Azienda
-        if (an_sdi){
+        if (an_sdi && an_sdi.length > 1) {
             const input = $("#codice_destinatario")[0];
             autocomplete({
                 minLength: 0,

@@ -23,6 +23,7 @@ use Models\Module;
 use Models\PrintTemplate;
 use Modules\Fatture\Tipo;
 use Modules\Scadenzario\Scadenza;
+use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 
 switch (post('op')) {
     case 'add':
@@ -36,6 +37,12 @@ switch (post('op')) {
 
         $dbo->query('INSERT INTO co_scadenziario(idanagrafica, iddocumento, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($idanagrafica).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($tipo).', '.prepare($data_emissione).', '.prepare($data).', '.prepare($da_pagare).", '0')");
         $id_record = $dbo->lastInsertedID();
+
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $data)->where('data_fine', '>=', $data)->first();
+        if (!empty($assicurazione_crediti)) {
+            $assicurazione_crediti->fixTotale();
+            $assicurazione_crediti->save();
+        }
 
         flash()->info(tr('Scadenza inserita!'));
         break;
@@ -127,6 +134,12 @@ switch (post('op')) {
             if ($pagato != $da_pagare) {
                 $id_scadenza_non_completa = $id_scadenza;
             }
+
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $scadenza)->where('data_fine', '>=', $scadenza)->first();
+            if (!empty($assicurazione_crediti)) {
+                $assicurazione_crediti->fixTotale();
+                $assicurazione_crediti->save();
+            }
         }
 
         flash()->info(tr('Scadenze aggiornate!'));
@@ -134,8 +147,18 @@ switch (post('op')) {
         break;
 
     case 'delete':
+        $scadenza = Scadenza::find($id_record);
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+
         $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
+
+        if (!empty($assicurazione_crediti)) {
+            $assicurazione_crediti->fixTotale();
+            $assicurazione_crediti->save();
+        }
+
         flash()->info(tr('Scadenza eliminata!'));
+
         break;
 
     case 'allega_fattura':

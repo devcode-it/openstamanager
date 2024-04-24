@@ -28,6 +28,7 @@ use Modules\Fatture\Stato as StatoFattura;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Modules\Ordini\Stato as StatoOrdine;
+use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 use Plugins\ExportFE\Interaction;
 
 include_once __DIR__.'/../../core.php';
@@ -171,6 +172,17 @@ if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
 <div class="alert alert-info">
     <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
 </div>';
+    }
+
+    $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $fattura->idanagrafica)->where('data_inizio', '<=', $fattura->data)->where('data_fine', '>=', $fattura->data)->first();
+    if (!empty($assicurazione_crediti)) {
+        if (($assicurazione_crediti->totale + $fattura->totale) >= $assicurazione_crediti->fido_assicurato) {
+echo '
+<div class="alert alert-warning text-center">
+    <i class="fa fa-exclamation-triangle"></i> '.tr("Attenzone! Il fido assicurato per questo cliente è stato superato!").'<br>('.moneyFormat(($assicurazione_crediti->totale + $fattura->totale), 2).' / '.moneyFormat($assicurazione_crediti->fido_assicurato, 2).')
+    '.Plugins::link('Assicurazione crediti', $fattura->idanagrafica).'
+</div>';
+        }
     }
 }
 // Verifica aggiuntive sulla sequenzialità dei numeri

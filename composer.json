@@ -114,6 +114,7 @@
             "Modules\\Partitario\\": ["modules/partitario/custom/src/", "modules/partitario/src/"],
             "Modules\\StatoEmail\\": ["modules/stato_email/custom/src/", "modules/stato_email/src/"],
             "Modules\\FileAdapters\\": ["modules/adattatori_archiviazione/custom/src/", "modules/adattatori_archiviazione/src/"],
+            "Plugins\\AssicurazioneCrediti\\": ["plugins/assicurazione_crediti/custom/src/", "plugins/assicurazione_crediti/src/"],
             "Plugins\\ExportFE\\": ["plugins/exportFE/custom/src/", "plugins/exportFE/src/"],
             "Plugins\\ImportFE\\": ["plugins/importFE/custom/src/", "plugins/importFE/src/"],
             "Plugins\\ReceiptFE\\": ["plugins/receiptFE/custom/src/", "plugins/receiptFE/src/"],

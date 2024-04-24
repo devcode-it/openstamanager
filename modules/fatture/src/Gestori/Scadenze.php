@@ -21,6 +21,7 @@ namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
+use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 use Plugins\ImportFE\FatturaElettronica as FatturaElettronicaImport;
 use Util\XML;
 
@@ -88,7 +89,20 @@ class Scadenze
      */
     public function rimuovi()
     {
+        $scadenze = $this->fattura->scadenze;
+        foreach ($scadenze as $scadenza) {
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+            if (!empty($assicurazione_crediti)) {
+                $assicurazioni[] = $assicurazione_crediti;
+            }
+        }
+
         database()->delete('co_scadenziario', ['iddocumento' => $this->fattura->id]);
+
+        foreach ($assicurazioni as $assicurazione) {
+            $assicurazione->fixTotale();
+            $assicurazione->save();
+        }
     }
 
     /**
@@ -111,6 +125,12 @@ class Scadenze
         $scadenza->data_emissione = $fattura->data;
 
         $scadenza->save();
+
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        if (!empty($assicurazione_crediti)) {
+            $assicurazione_crediti->fixTotale();
+            $assicurazione_crediti->save();
+        }
     }
 
     /**

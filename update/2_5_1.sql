@@ -422,12 +422,13 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 -- Aggiunta tabella my_impianti_marche
 CREATE TABLE IF NOT EXISTS `my_impianti_marche` (
     `id` INT NOT NULL AUTO_INCREMENT , 
-    `name` TEXT NOT NULL,
+    `nota` TEXT DEFAULT NULL,
+    `parent` int DEFAULT NULL,
     PRIMARY KEY (`id`)
 ); 
 
-ALTER TABLE `my_impianti` ADD `id_marca` INT NULL AFTER `idanagrafica`; 
-ALTER TABLE `my_impianti` ADD `modello` TEXT NULL AFTER `id_marca`; 
+ALTER TABLE `my_impianti` ADD `id_marca` INT NULL AFTER `idanagrafica`;
+ALTER TABLE `my_impianti` ADD `id_modello` INT NULL AFTER `id_marca`;
 
 -- Modulo Marche impianto
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Marche impianti', 'impianti_marche', 'SELECT |select| FROM `my_impianti_marche` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.1', '2.5.1', '2', '30', '1', '1', '0', '0');

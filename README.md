@@ -21,7 +21,6 @@
 [![Downloads](https://img.shields.io/github/downloads/devcode-it/openstamanager/total.svg)](https://github.com/devcode-it/openstamanager/releases)
 [![SourceForge](https://img.shields.io/sourceforge/dt/openstamanager.svg?label=SourceForge)](https://sourceforge.net/projects/openstamanager/)
 [![license](https://img.shields.io/github/license/devcode-it/openstamanager.svg)](https://github.com/devcode-it/openstamanager/blob/master/LICENSE)
-[![huntr](https://cdn.huntr.dev/huntr_security_badge_mono.svg)](https://huntr.dev)
 
 Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica [DevCode](https://www.devcode.it/) di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
 Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open-source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
@@ -66,7 +65,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 | 8.1 | 25/11/2024 | ✔️ |
 | 8.0 | 26/11/2023 | ✔️ |
 | 7.4 | 28/11/2022 | ✔️ |
-| 7.3 | 06/12/2021 | ✔️ |
+| 7.3 | 06/12/2021 | ❌ |
 | 7.2 | 30/11/2020 | ❌ |
     
 </td>

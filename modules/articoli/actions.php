@@ -230,7 +230,7 @@ switch (post('op')) {
         }
 
         // Eliminazione file
-        if (post('delete_immagine') !== null) {
+        if (!empty(post('delete_immagine'))) {
             Uploads::delete($record['immagine'], [
                 'id_module' => $id_module,
                 'id_record' => $id_record,

@@ -329,7 +329,7 @@ if (database()->columnExists('mg_categorie_lang', 'name')) {
 
 // Rimozione categoria 'Componenti' se non collegata ad articoli
 $categoria = Categoria::find((new Categoria())->getByField('title', 'Componenti'));
-$articoli_collegati = $categoria->articoli()->count();
+$articoli_collegati = $categoria ? $categoria->articoli()->count() : 0;
 if ($articoli_collegati === 0) {
     $database->query('DELETE FROM `mg_categorie` WHERE `id` = '.$categoria->id);
 }

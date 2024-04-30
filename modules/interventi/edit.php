@@ -26,6 +26,7 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
 $id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_segment = $record['id_segment'];
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento, $id_segment);

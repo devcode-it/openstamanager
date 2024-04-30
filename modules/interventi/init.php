@@ -25,7 +25,8 @@ use Modules\Interventi\Intervento;
 if (!empty($id_record)) {
     $intervento = Intervento::find($id_record);
 
-    $record = $dbo->fetchOne('SELECT *,
+    $record = $dbo->fetchOne('SELECT 
+        `in_interventi`.*,
         `in_interventi`.`descrizione` AS descrizione,
         `in_interventi`.`codice` AS codice,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
@@ -37,7 +38,7 @@ if (!empty($id_record)) {
         `in_interventi`.`id_contratto` as idcontratto,
         `in_interventi`.`id_ordine` as idordine
     FROM 
-        in_interventi
+        `in_interventi`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
         LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`

@@ -221,7 +221,7 @@ elseif (filter('op') == 'modifica-allegato') {
 
     if (sizeof($id_allegati) == 1) {
         $upload = Upload::find($id_allegati[0]);
-        $upload->setTranslation('title', post('nome_allegato'));
+        $upload->name = post('nome_allegato');
         $upload->category = post('categoria_allegato');
         $upload->save();
     } else {

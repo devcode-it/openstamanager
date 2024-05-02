@@ -213,10 +213,15 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
                 </div>';
 }
 
-echo '
+    echo '     
             </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id$", "class": "unblockable" ]}
+            </div>
+        </div>
+    </div>            
 </div>
 
 <script>

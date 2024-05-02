@@ -87,16 +87,15 @@ echo '
                     <div class="panel-body">
                         <!-- RIGA 1 -->
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                                 {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
                             </div>
-
-                            <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                            <div class="col-md-3">
+                                {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
                             </div>
 
-                            <div class="col-md-4">';
+                            <div class="col-md-3">';
 if (!empty($record['idclientefinale'])) {
     echo '
                                 '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
@@ -104,29 +103,26 @@ if (!empty($record['idclientefinale'])) {
 echo '
                                 {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                             </div>
+                            <div class="col-md-3">
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
+                            </div>
                         </div>
                         <!-- RIGA 2 -->
-                        <div class="row">
-                            <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
-                            </div>';
+                        <div class="row">';
 if ($record['idagente'] != 0) {
     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
                         echo '
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                             </div>
-                            <div class="col-md-4">';
+                            <div class="col-md-3">';
 echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
 echo '
                                 {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                             </div>
-                        </div>
-
-                        <!-- RIGA 3 -->
-                        <div class="row">
-                            <div class="col-md-4">';
+                            
+                            <div class="col-md-6">';
 if (!empty($record['idpreventivo'])) {
     echo '
                             '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
@@ -135,7 +131,7 @@ echo '
                                 {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
                             </div>
 
-                            <div class="col-md-4">';
+                            <div class="col-md-6">';
 
 $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
@@ -150,7 +146,7 @@ echo '
                                 <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                             </div>
 
-                            <div class="col-md-4">';
+                            <div class="col-md-6">';
 
 $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
@@ -292,39 +288,40 @@ echo'
                     {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>." ]}
+                <div class="col-md-5">
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
             </div>
 
-            <!-- RIGA 4 -->
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id$", "class": "unblockable" ]}
-                </div>
 <?php
 
 $tecnici_assegnati = $database->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_record));
 $tecnici_assegnati = array_column($tecnici_assegnati, 'id_tecnico');
 echo '
+<!-- RIGA 4 -->
+            <div class="row">
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                 </div>
+                ';
+            // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
+            $articoli = $intervento->articoli;
+            echo '
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                </div>
             </div>
-
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
@@ -334,7 +331,7 @@ echo input([
     'name' => 'richiesta',
     'required' => 1,
     'value' => $record['richiesta'],
-    'extra' => 'style=\'max-height:80px;\'',
+    'extra' => 'style=\'max-height:40px;\'',
 ]);
 echo '
                 </div>
@@ -344,7 +341,7 @@ echo input([
     'label' => tr('Descrizione'),
     'name' => 'descrizione',
     'value' => $record['descrizione'],
-    'extra' => 'style=\'max-height:80px;\'',
+    'extra' => 'style=\'max-height:40px;\'',
 ]);
 echo '
                 </div>
@@ -356,20 +353,10 @@ if ($user->gruppo != 'Clienti') {
                 <div class="col-md-12">
                     {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
                 </div>
-            </div>';
-}
-
-// Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-$articoli = $intervento->articoli;
-echo '
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
-                </div>
             </div>
         </div>
     </div>';
-
+}
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
 if (!empty($record['idcontratto'])) {
     $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));

@@ -48,17 +48,17 @@ echo '
     <div class="col-md-2">';
 if ($prev) {
     echo '
-            <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
-                <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
-            </a>';
+        <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
+            <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
+        </a>';
 } echo '
     </div>
     <div class="col-md-2 col-md-offset-8">';
 if ($next) {
     echo '
-            <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
-                '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
-            </a>';
+        <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
+            '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
+        </a>';
 }
 echo '
     </div>
@@ -70,51 +70,72 @@ echo '
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <!-- DATI CLIENTE -->
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">'.tr('Dati cliente').'</h3>
+
+            <div class="box box-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">'.tr('Dati cliente').'</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                        </button>
+                    </div>
                 </div>
+            
+                <div class="box-body">
+                    <div class="panel-body">
+                        <!-- RIGA 1 -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
+                                {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
+                            </div>
 
-                <div class="panel-body">
-                    <!-- RIGA 1 -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
-                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
-                        </div>
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                            </div>
 
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
-
-                        <div class="col-md-6">';
+                            <div class="col-md-4">';
 if (!empty($record['idclientefinale'])) {
     echo '
-                                                        '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
+                                '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
 }
 echo '
-                            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
+                            </div>
+                        </div>
+                        <!-- RIGA 2 -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
+                            </div>';
+if ($record['idagente'] != 0) {
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+}
+                        echo '
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                            </div>
+                            <div class="col-md-4">';
+echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
+echo '
+                                {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
-                        </div>
-                    </div>
-
-                    <!-- RIGA 2 -->
-                    <div class="row">
-                        <div class="col-md-6">';
+                        <!-- RIGA 3 -->
+                        <div class="row">
+                            <div class="col-md-4">';
 if (!empty($record['idpreventivo'])) {
     echo '
                             '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
 }
 echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
-                        </div>
+                                {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
+                            </div>
 
-                        <div class="col-md-6">';
+                            <div class="col-md-4">';
 
 $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
@@ -124,14 +145,12 @@ if (!empty($record['idcontratto'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
 
-                            <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
-                        </div>
-                    </div>
+                                <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
+                            </div>
 
-                    <div class="row">
-                        <div class="col-md-6">';
+                            <div class="col-md-4">';
 
 $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
@@ -141,28 +160,14 @@ if (!empty($record['idordine'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
-
-                        <div class="col-md-6">';
-if ($record['idagente'] != 0) {
-    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-}
-echo '
-                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">';
-echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
-echo '
-                            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                                {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>';
+        </div>
+    </div>';
 
 $anagrafica_cliente = $intervento->anagrafica;
 $sede_cliente = $anagrafica_cliente->sedeLegale;
@@ -173,52 +178,7 @@ if (!empty($intervento->idsede_destinazione)) {
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
-echo '
-        <div class="col-md-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
-                </div>
-                <div class="panel-body">';
-
-if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-    echo '
-                    <div id="map-edit" style="width: 100%;"></div>
-
-                    <div class="clearfix"></div>
-                        <br>';
-
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
-                        </a>';
-
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-} else {
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-
-    // Ricerca diretta su Mappa
-    echo '
-                        <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
-                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
-                        </a>';
-}
-
-echo '
-                    </div>
-                </div>
-            </div>
-        </div>
-
+echo'
         <script>
             function modificaPosizione() {
                 openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");

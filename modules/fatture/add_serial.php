@@ -68,7 +68,7 @@ $data = [
 // Individuazione delle tabelle interessate
 if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
-} elseif (in_array($module->getTranslation('title'), ['Ddt di vendita', 'Ddt di acquisto'])) {
+} elseif (in_array($module->getTranslation('title'), ['Ddt in uscita', 'Ddt in entrata'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
@@ -153,7 +153,7 @@ if ($dir == 'entrata') {
                 $modulo = 'Interventi';
                 $pos = 'int';
             } elseif (!empty($res[0]['id_riga_ddt'])) {
-                $modulo = 'Ddt di vendita';
+                $modulo = 'Ddt in uscita';
                 $pos = 'ddt';
             } elseif (!empty($res[0]['id_riga_documento'])) {
                 $modulo = 'Fatture di vendita';

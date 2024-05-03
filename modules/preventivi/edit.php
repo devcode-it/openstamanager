@@ -500,7 +500,7 @@ $elementi = $dbo->fetchArray('
         `dt_ddt`.`numero`, 
         `dt_ddt`.`numero_esterno`, 
         `dt_tipiddt_lang`.`title`, 
-        IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt di vendita\', \'Ddt di acquisto\') 
+        IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') 
     FROM `dt_ddt` 
     JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` 

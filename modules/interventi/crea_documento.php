@@ -41,7 +41,7 @@ if (get('documento') == 'fattura') {
     $op = 'add_documento';
     $tipo_documento_finale = Ordine::class;
 } else {
-    $final_module = 'Ddt di vendita';
+    $final_module = 'Ddt in uscita';
     $op = 'add_documento';
     $tipo_documento_finale = DDT::class;
 }

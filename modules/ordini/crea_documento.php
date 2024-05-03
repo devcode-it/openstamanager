@@ -42,7 +42,7 @@ if (get('documento') == 'fattura') {
     $op = $module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
 } else {
-    $final_module = $module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
+    $final_module = $module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente' ? 'Ddt in uscita' : 'Ddt in entrata';
     $op = 'add_ordine';
     $tipo_documento_finale = DDT::class;
 }

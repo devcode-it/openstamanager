@@ -45,7 +45,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $module = ($r['dir'] == 'uscita') ? 'Ddt di acquisto' : 'Ddt di vendita';
+    $module = ($r['dir'] == 'uscita') ? 'Ddt in entrata' : 'Ddt in uscita';
     $link_id = (new Module())->getByField('title', $module, Models\Locale::getPredefined()->id);
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];

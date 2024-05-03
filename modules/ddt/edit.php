@@ -27,6 +27,8 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
 
+$id_segment = $record['id_segment'];
+
 if ($dir == 'entrata') {
     $numero_previsto = verifica_numero_ddt($ddt, $id_segment);
     if (!empty($numero_previsto)) {

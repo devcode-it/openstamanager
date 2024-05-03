@@ -114,7 +114,7 @@ class DDT extends Document
      */
     public function getModuleAttribute()
     {
-        return $this->direzione == 'entrata' ? 'Ddt di vendita' : 'DDT di acquisto';
+        return $this->direzione == 'entrata' ? 'Ddt in uscita' : 'DDT in entrata';
     }
 
     public function getDirezioneAttribute()

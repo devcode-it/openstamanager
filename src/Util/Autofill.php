@@ -56,6 +56,10 @@ class Autofill
         $count += substr_count($text, PHP_EOL);
         $count += substr_count($text, '<br>');
 
+        // Ricerca dei caratteri a capo
+        preg_match_all("/(\r\n|\r|\n)/", $text, $matches);
+        $count += count($matches[0]);
+
         if ($small) {
             $count = $count / 3;
         }

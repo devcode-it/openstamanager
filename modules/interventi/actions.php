@@ -82,6 +82,27 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
+        $tags = $dbo->select('in_interventi_tags', 'id_tag', [], ['id_intervento' => $intervento->id]);
+        $tags_presenti = [];
+
+        foreach ($tags as $tag) {
+            $tags_presenti[] = $tag['id_tag'];
+        }
+
+        $tags = post('tags');
+        $tags_presenti = [];
+
+        foreach ($tags as $tag) {
+            $tags_presenti[]= $tag;
+        }
+
+        // Assegnazione dei tecnici all'intervento
+        $dbo->sync('in_interventi_tags', [
+            'id_intervento' => $id_record,
+        ], [
+            'id_tag' => $tags_presenti,
+        ]);
+
         $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
         $tecnici_presenti = [];
 

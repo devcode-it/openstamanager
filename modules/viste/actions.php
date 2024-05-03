@@ -51,6 +51,7 @@ switch (filter('op')) {
         foreach ($queries as $c => $query) {
             if (check_query($query)) {
                 $array = [
+                    'name' => post('name')[$c],
                     'query' => $query,
                     'visible' => post('visible')[$c],
                     'search' => post('search')[$c],
@@ -63,7 +64,7 @@ switch (filter('op')) {
                     'id_module' => $id_record,
                 ];
 
-                $name = post('name')[$c];
+                $title = post('name')[$c];
 
                 if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
@@ -77,7 +78,7 @@ switch (filter('op')) {
 
                 // Aggiornamento traduzione nome campo
                 $vista = View::find($id);
-                $vista->setTranslation('title', $name);
+                $vista->setTranslation('title', $title);
 
                 // Aggiornamento dei permessi relativi
                 $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);

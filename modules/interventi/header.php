@@ -26,6 +26,8 @@ use Modules\Anagrafiche\Sede;
 use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
 use Modules\Scadenzario\Scadenza;
+use Modules\Preventivi\Preventivo;
+use Modules\Ordini\Ordine;
 
 // Anagrafica
 $anagrafica = $intervento->anagrafica;
@@ -53,7 +55,7 @@ if ($intervento->id_contratto) {
     $contratto = Contratto::find($intervento->id_contratto);
     $ore_erogate = $contratto->interventi->sum('ore_totali');
     $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
-    $perc_ore = ($ore_erogate * 100) / $ore_previste;
+    $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / $ore_previste : 0;
     if ($perc_ore < 75) {
         $color = 'success';
     } elseif ($perc_ore <= 100) {
@@ -61,6 +63,17 @@ if ($intervento->id_contratto) {
     }
 }
 
+// Preventivo
+$preventivo = null;
+if ($intervento->id_preventivo) {
+    $preventivo = Preventivo::find($intervento->id_preventivo);
+}
+
+// Ordine
+$ordine = null;
+if ($intervento->id_ordine) {
+    $ordine = Ordine::find($intervento->id_ordine);
+}
 
 // Altre attività
 $interventi_programmati = Intervento::select('in_interventi.*')
@@ -89,7 +102,7 @@ echo '
 
 // Cliente
 echo '
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h4 style="margin:4px 0;"><b>'.$anagrafica->ragione_sociale.'</b></h4>
 
         <p style="margin:3px 0;">
@@ -110,42 +123,56 @@ echo '
 // Panoramica
 echo '
     <div class="col-md-4">
-        <div class="box box-default">
+        <div class="box box-info">
             <div class="box-header">
                 <h3 class="box-title"><i class="fa fa-map"></i> '.tr('Panoramica').'</h3>
             </div>
             <div class="box-body">
 
-                <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'check text-success' : 'times text-danger').'"></i> 
-                    <b>'.tr('Insoluti').'</b>
+                <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
+                    '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>
 
-                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-check text-success' : 'fa-clock-o text-warning').'"></i> <b>'.tr('Altre attività programmate').'</b>';
-if (count($interventi_programmati) == 0) {
-    echo ': <span class="text-muted">'.tr('nessuna').'</span>';
-} else {
+                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Sono presenti altre attività programmate');
+if (count($interventi_programmati) != 0) {
     foreach ($interventi_programmati as $intervento_programmato) {
         echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.'</a>';
     }
 }
 echo '
-                </p>
-
-                <p style="margin:3px 0;"><i class="fa fa-'.($contratto ? 'check text-success' : 'times text-danger').'"></i>
-                    <b>'.tr('Contratto attivo').'</b> '.($contratto ? '<a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$contratto->id.'" target="_blank">'.$contratto->numero.'</a>' : '').'
                 </p>';
+// Contratto
+if ($contratto) {
+    echo'
+                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                    '.tr('Contratto collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Contratti').'&id_record='.$contratto->id.'" target="_blank">'.$contratto->numero.'</a>';
+    if ($ore_previste > 0) {
+        echo '
+                     - '. tr('Ore erogate').':</b> '.$ore_erogate.'/'.$ore_previste.'<br>
 
-if ($ore_previste > 0) {
-    echo '
-                    <div style="margin:3px 0 6px; width:300px;">
-                        <b>'.tr('Ore erogate').':</b> '.$ore_erogate.'/'.$ore_previste.'<br>
-    
-                        <div class="progress" style="margin:0; height:8px;">
-                            <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
-                        </div>
-                    </div>';
+                    <div class="progress" style="margin:0; height:8px;">
+                        <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
+                    </div>
+                </p>';
+    }
 }
-echo '
+
+// Preventivo
+if ($preventivo) {
+    echo '
+                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                    '.tr('Preventivo collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Preventivi').'&id_record='.$preventivo->id.'" target="_blank">'.$preventivo->numero.'</a>
+                </p>';
+    }
+
+// Ordine
+if($ordine) {
+    echo '
+                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                    <b>'.tr('Ordine collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Ordini cliente').'&id_record='.$ordine->id.'" target="_blank">'.$ordine->numero.'</a>
+                </p>';
+}
+echo'                
             </div>
         </div>
     </div>';
@@ -161,8 +188,8 @@ $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
-    <div class="col-md-3">
-        <div class="box box-default">
+    <div class="col-md-4">
+        <div class="box box-info">
             <div class="box-header">
                 <h3 class="box-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>
@@ -214,11 +241,6 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
 }
 
     echo '     
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id$", "class": "unblockable" ]}
             </div>
         </div>
     </div>            

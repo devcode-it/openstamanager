@@ -26,10 +26,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill(6, 40);
-$rows_per_page = $fattura_accompagnatoria ? 13 : 18;
-if (!empty($options['last-page-footer'])) {
-    $rows_per_page += 7;
-}
+$rows_per_page = $fattura_accompagnatoria ? 13 : 25;
 $autofill->setRows($rows_per_page);
 
 // Intestazione tabella per righe
@@ -53,6 +50,13 @@ if (setting('Raggruppa attività per tipologia in fattura')) {
     $righe = get_righe_composte($documento);
 } else {
     $righe = $documento->getRighe();
+}
+
+if (count($righe) > 25) {
+    if (!empty($options['last-page-footer'])) {
+        $rows_per_page += 5;
+        $autofill->setRows($rows_per_page);
+    }
 }
 
 $num = 0;

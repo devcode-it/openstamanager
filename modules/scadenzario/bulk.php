@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\PrintTemplate;
 use Models\Module;
 use Models\OperationLog;
 use Modules\Anagrafiche\Anagrafica;

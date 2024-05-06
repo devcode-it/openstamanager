@@ -68,7 +68,7 @@ HAVING
     2=2
 ORDER BY 
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `zz_modules`.`name` = 'Interventi';
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`files`.`name` != '', `files`.`name`, 'No')' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Allegati';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`files`.`name` != \'\', `files`.`name`, \'No\')' WHERE `zz_modules`.`name` = 'Interventi' AND `zz_views`.`name` = 'Allegati';
 
 -- Aggiunta colonna Tags in Attività
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES

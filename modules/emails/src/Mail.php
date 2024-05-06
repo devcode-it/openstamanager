@@ -238,8 +238,8 @@ class Mail extends Model
         $this->read_notify = $template->read_notify;
 
         // Contentuto e oggetto
-        $this->content = $template->body;
-        $this->subject = $template->subject;
+        $this->content = $template->getTranslation('body');
+        $this->subject = $template->getTranslation('subject');
 
         // Reply To
         if (!empty($template['tipo_reply_to'])) {

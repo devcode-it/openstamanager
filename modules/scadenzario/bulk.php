@@ -74,7 +74,7 @@ switch (post('op')) {
         break;
 
     case 'send-sollecito':
-        $template = (new Template())->getByField('title', 'Sollecito di pagamento raggruppato per anagrafica', Models\Locale::getPredefined()->id);
+        $template = Template::find((new Template())->getByField('title', 'Sollecito di pagamento raggruppato per anagrafica', Models\Locale::getPredefined()->id));
 
         $list = [];
         $anagrafiche = [];

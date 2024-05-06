@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Models\Upload;
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
@@ -133,10 +134,10 @@ echo '
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>
 
-                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Sono presenti altre attività programmate');
+                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
 if (count($interventi_programmati) != 0) {
     foreach ($interventi_programmati as $intervento_programmato) {
-        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.'</a>';
+        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.( new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
     }
 }
 echo '
@@ -145,23 +146,24 @@ echo '
 if ($contratto) {
     echo'
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
-                    '.tr('Contratto collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Contratti').'&id_record='.$contratto->id.'" target="_blank">'.$contratto->numero.'</a>';
+                    '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => $contratto->numero, '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
     if ($ore_previste > 0) {
         echo '
-                     - '. tr('Ore erogate').':</b> '.$ore_erogate.'/'.$ore_previste.'<br>
+                    - '.$ore_erogate.'/'.$ore_previste.' '.tr('ore').'<br>
 
                     <div class="progress" style="margin:0; height:8px;">
                         <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
-                    </div>
-                </p>';
+                    </div>';
     }
+    echo'
+                </p>';
 }
 
 // Preventivo
 if ($preventivo) {
     echo '
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
-                    '.tr('Preventivo collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Preventivi').'&id_record='.$preventivo->id.'" target="_blank">'.$preventivo->numero.'</a>
+                '.Modules::link('Preventivi', $preventivo->id, tr('Preventivo num. _NUM_ del _DATA_', ['_NUM_' => $preventivo->numero, '_DATA_' => Translator::dateToLocale($preventivo->data_bozza)])).'
                 </p>';
     }
 
@@ -169,7 +171,7 @@ if ($preventivo) {
 if($ordine) {
     echo '
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
-                    <b>'.tr('Ordine collegato').':</b> <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.(new Module())->getByField('title', 'Ordini cliente').'&id_record='.$ordine->id.'" target="_blank">'.$ordine->numero.'</a>
+                '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
                 </p>';
 }
 echo'                

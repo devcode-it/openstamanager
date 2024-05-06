@@ -126,10 +126,10 @@ switch (post('op')) {
             }
         }
 
-        $tecnici_assegnati_array = post('tecnici_assegnati');
+        $tecnici_assegnati_array [] = post('tecnici_assegnati');
         $tecnici_assegnati = [];
 
-        foreach ($tecnici_assegnati as $tecnico_assegnato) {
+        foreach ($tecnici_assegnati_array as $tecnico_assegnato) {
             $tecnici_assegnati[] = $tecnico_assegnato;
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {

@@ -89,7 +89,7 @@ switch (post('op')) {
             $tags_presenti[] = $tag['id_tag'];
         }
 
-        $tags = post('tags');
+        $tags = post('tags') ?: [];
         $tags_presenti = [];
 
         foreach ($tags as $tag) {
@@ -126,7 +126,7 @@ switch (post('op')) {
             }
         }
 
-        $tecnici_assegnati_array [] = post('tecnici_assegnati');
+        $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
         $tecnici_assegnati = [];
 
         foreach ($tecnici_assegnati_array as $tecnico_assegnato) {
@@ -504,7 +504,7 @@ switch (post('op')) {
         break;
 
     case 'manage_articolo':
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))) {
             $articolo = Articolo::find(post('idriga'));
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
@@ -533,7 +533,7 @@ switch (post('op')) {
 
         $articolo->save();
 
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))) {
             flash()->info(tr('Articolo modificato!'));
         } else {
             flash()->info(tr('Articolo aggiunto!'));
@@ -555,7 +555,7 @@ switch (post('op')) {
         break;
 
     case 'manage_sconto':
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))) {
             $sconto = Sconto::find(post('idriga'));
         } else {
             $sconto = Sconto::build($intervento);
@@ -566,7 +566,7 @@ switch (post('op')) {
         $sconto->note = post('note');
         $sconto->save();
 
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))) {
             flash()->info(tr('Sconto/maggiorazione modificato!'));
         } else {
             flash()->info(tr('Sconto/maggiorazione aggiunto!'));
@@ -575,7 +575,7 @@ switch (post('op')) {
         break;
 
     case 'manage_riga':
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))) {
             $riga = Riga::find(post('idriga'));
         } else {
             $riga = Riga::build($intervento);
@@ -596,7 +596,7 @@ switch (post('op')) {
 
         $riga->save();
 
-        if (post('idriga') != null) {
+        if (!empty(post('idriga'))){
             flash()->info(tr('Riga modificata!'));
         } else {
             flash()->info(tr('Riga aggiunta!'));
@@ -1233,7 +1233,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
-            if ($riga['id'] != null) {
+            if (!empty($riga['id'])) {
                 $articolo = Articolo::find($riga['id']);
             }
 

@@ -489,7 +489,7 @@ if ($structure->permission == 'rw') {
         ($include_file = $structure->filepath('actions.php')) ? include $include_file : null;
 
         // Operazioni generiche per i campi personalizzati
-        if (post('op') != null) {
+        if (!empty(post('op'))) {
             $custom_where = !empty($id_plugin) ? '`id_plugin` = '.prepare($id_plugin) : '`id_module` = '.prepare($id_module);
 
             $query = 'SELECT `id`, `html_name` AS `title` FROM `zz_fields` WHERE '.$custom_where;

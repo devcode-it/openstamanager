@@ -394,6 +394,20 @@ $modulo_interventi = Module::find((new Module())->getByField('title', 'Attività
 
 echo '
 <script type="text/javascript">    
+let isCtrlPressed = false;
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Control") {
+        isCtrlPressed = true;
+    }
+});
+
+document.addEventListener("keyup", (event) => {
+    if (event.key === "Control") {
+        isCtrlPressed = false;
+    }
+});
+
 var Draggable = FullCalendar.Draggable;
 globals.dashboard = {
         load_url: "'.$structure->fileurl('ajax.php').'",
@@ -727,7 +741,12 @@ if (isMobile() && setting('Utilizzare i tooltip sul calendario')) {
             eventClick: function(info) {
                 if (info.event.extendedProps.link !== undefined) {
                     info.jsEvent.preventDefault();
-                    location.href = info.event.extendedProps.link;
+
+                    if (isCtrlPressed) {
+                        window.open(info.event.extendedProps.link);
+                    } else {
+                        location.href = info.event.extendedProps.link;
+                    }
                 }
             },';
 }

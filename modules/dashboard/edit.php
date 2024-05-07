@@ -393,20 +393,7 @@ foreach ($days as $key => $day) {
 $modulo_interventi = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
 
 echo '
-<script type="text/javascript">    
-let isCtrlPressed = false;
-
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Control") {
-        isCtrlPressed = true;
-    }
-});
-
-document.addEventListener("keyup", (event) => {
-    if (event.key === "Control") {
-        isCtrlPressed = false;
-    }
-});
+<script type="text/javascript">
 
 var Draggable = FullCalendar.Draggable;
 globals.dashboard = {
@@ -742,8 +729,8 @@ if (isMobile() && setting('Utilizzare i tooltip sul calendario')) {
                 if (info.event.extendedProps.link !== undefined) {
                     info.jsEvent.preventDefault();
 
-                    if (isCtrlPressed) {
-                        window.open(info.event.extendedProps.link);
+                    if (info.jsEvent.ctrlKey) {
+                        window.open(info.event.extendedProps.link , "_blank");
                     } else {
                         location.href = info.event.extendedProps.link;
                     }

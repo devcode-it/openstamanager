@@ -69,12 +69,12 @@ if (!empty($id_record)) {
     $module_query = Util\Query::getQuery($structure, $where, $order);
 
     // Precedente
-    $prev_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale - 1, $module_query);
-    $database->FetchArray('SET @posizione = 0;');
-    $prev = $database->FetchOne($prev_query)['id'];
+    $prev_query = str_replace('2=2', '2=2 AND `posizione` ='.prepare($posizione_attuale - 1), $module_query);
+    $database->query('SET @posizione = 0');
+    $prev = $database->fetchOne($prev_query)['id'];
 
     // Successivo
-    $next_query = str_replace('2=2', '2=2 AND `posizione` ='.$posizione_attuale + 1, $module_query);
-    $database->FetchArray('SET @posizione = 0;');
-    $next = $database->FetchOne($next_query)['id'];
+    $next_query = str_replace('2=2', '2=2 AND `posizione` ='.prepare($posizione_attuale + 1), $module_query);
+    $database->query('SET @posizione = 0');
+    $next = $database->fetchOne($next_query)['id'];
 }

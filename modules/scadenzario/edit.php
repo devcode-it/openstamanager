@@ -206,7 +206,7 @@ foreach ($scadenze as $i => $scadenza) {
                                 </td>
 
                                 <td align="center">
-                                    {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
+                                    {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'", "readonly": 1 ]}
                                 </td>
 
                                 <td align="center">

@@ -60,6 +60,10 @@ class FatturaElettronica
     /** @var array XML della fattura */
     protected $xml;
 
+    private array $fatture_collegate = [];
+    private array $errors = [];
+    private array $ddt = [];
+
     public function __construct($id_documento)
     {
         // Documento

@@ -20,8 +20,18 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Impianti\Marca;
 
-if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_marche`.`id`='.prepare($id_record));
+$modelli = Marca::where('parent', '=', $id_record)->get();
 
-    $marca = Marca::find($id_record);
+foreach ($modelli as $modello) {
+    $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_modello`='.prepare($modello->id));
+    echo '
+		<tr>
+			<td>'.$modello->getTranslation('title').'</td>
+			<td>
+				<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''.tr('Modifica modello').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$modello->id.'&id_original='.$id_record.'\');"><i class="fa fa-edit"></i></a>
+				<a class="btn btn-sm btn-danger ask '.(($n_impianti > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$modello->id.'" title="'.(($n_impianti > 0) ? 'Modello collegata a '.$n_impianti.' impianti' : '').'">
+					<i class="fa fa-trash"></i>
+				</a>
+			</td>
+		</tr>';
 }

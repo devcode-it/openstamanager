@@ -140,13 +140,44 @@ switch ($resource) {
          */
     case 'sottocategorie_imp':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT ``my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+            $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
             foreach ($elements as $element) {
                 $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
+
+            if (!empty($search)) {
+                $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+            }
+        }
+        break;
+
+    case 'marca':
+        $query = 'SELECT `my_impianti_marche`.`id`, `my_impianti_marche_lang`.`title` AS descrizione FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+
+        foreach ($elements as $element) {
+            $filter[] = '`my_impianti_marche`.`id`='.prepare($element);
+        }
+
+        $where[] = '`parent` = 0';
+
+        if (!empty($search)) {
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
+    case 'modello':
+        if (isset($superselect['id_marca'])) {
+            $query = 'SELECT `my_impianti_marche`.`id`, `my_impianti_marche_lang`.`title` AS descrizione FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+
+            foreach ($elements as $element) {
+                $filter[] = '`my_impianti_marche`.`id`='.prepare($element);
+            }
+
+            $where[] = '`parent`='.prepare($superselect['id_marca']);
 
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');

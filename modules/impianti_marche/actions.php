@@ -19,53 +19,87 @@
 
 include_once __DIR__.'/../../core.php';
 
-switch (post('op')) {
+use Models\Module;
+use Modules\Impianti\Marca;
+
+$id_modulo_marca_impianti = (new Module())->getByField('title', 'Marche Impianti', Models\Locale::getPredefined()->id);
+
+switch (filter('op')) {
     case 'update':
-        $id_marca = post('id_record');
-        $name = post('name');
+        $title = filter('title');
+        $id_original = filter('id_original') ?: 0;
 
-        // Verifico che il nome non esista già
-        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE (`title`='.prepare($name).' AND `id` !='.prepare($id_marca));
+        if (isset($title)) {
+            $marca->parent = $id_original;
+            $marca->setTranslation('title', $title);
+            $marca->save();
 
-        // Marca già esistente
-        if ($n > 0) {
-            flash()->error(tr('Marca già esistente!'));
+            flash()->info(tr('Salvataggio completato!'));
+        } else {
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
-        // Marca non esistente
-        else {
-            $dbo->query('UPDATE `my_impianti_marche` SET `title`='.prepare($name).' WHERE `id`='.prepare($id_marca));
-            flash()->info(tr('Informazioni salvate correttamente!'));
+
+        // Redirect alla marca se si sta modificando una sottomarca
+        if (!empty($id_original)) {
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit;
         }
 
         break;
 
     case 'add':
-        $name = post('name');
+        $title = filter('title');
+        $id_original = filter('id_original') ?: null;
 
-        // Verifico che il nome non sia duplicato
-        $n = $dbo->fetchNum('SELECT `id` FROM `my_impianti_marche` WHERE `title`='.prepare($name));
-
-        if ($n > 0) {
-            flash()->error(tr('Nome già esistente!'));
+        $marca_new = Marca::where('id', '=', (new Marca())->getByField('title', $title));
+        if (!empty($id_original)) {
+            $marca_new = $marca_new->where('parent', '=', $id_original);
         } else {
-            $query = 'INSERT INTO my_impianti_marche (`title`) VALUES ('.prepare($name).')';
-            $dbo->query($query);
+            $marca_new = $marca_new->whereNull('parent');
+        }
+        $marca_new = $marca_new->first();
 
+        if (!empty($marca_new)) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altra marca.'));
+        } else {
+            $marca = Marca::build();
             $id_record = $dbo->lastInsertedID();
+            $marca->parent = $id_original ?: 0;
+            $marca->setTranslation('title', $title);
+            $marca->save();
 
-            if (isAjaxRequest()) {
-                echo json_encode(['id' => $id_record, 'text' => $name]);
-            }
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                '_TYPE_' => 'marca',
+            ]));
+        }
 
-            flash()->info(tr('Aggiunta una nuova marca!'));
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $title]);
+        } else {
+            // Redirect alla marca se si sta aggiungendo un modello
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit;
         }
 
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM `my_impianti_marche` WHERE `id`='.prepare($id_record));
+        $id = filter('id');
+        if (empty($id)) {
+            $id = $id_record;
+        }
 
-        flash()->info(tr('Marca eliminata!'));
+        if (empty($dbo->fetchArray('SELECT * FROM `my_impianti` WHERE (`id_marca`='.prepare($id).' OR `id_modello`='.prepare($id).'  OR `id_modello` IN (SELECT `id` FROM `my_impianti_marche` WHERE `parent`='.prepare($id).'))'))) {
+            $dbo->query('DELETE FROM `my_impianti_marche` WHERE `id`='.prepare($id));
+
+            flash()->info(tr('_TYPE_ eliminata con successo!', [
+                '_TYPE_' => 'marca',
+            ]));
+        } else {
+            flash()->error(tr('Esistono alcuni impianti collegati a questa marca. Impossibile eliminarla.'));
+        }
 
         break;
 }

@@ -78,3 +78,27 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Aggiunta flag per calcolo media su viste
 ALTER TABLE `zz_views` ADD `avg` BOOLEAN NOT NULL DEFAULT FALSE AFTER `summable`;
+
+-- Aggiunta tabella my_impianti_marche_lang
+CREATE TABLE IF NOT EXISTS `my_impianti_marche_lang` (
+    `id` int NOT NULL,
+    `id_lang` int NOT NULL,
+    `id_record` int NOT NULL,
+    `title` VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `my_impianti_marche_lang`
+    ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `my_impianti_marche_lang`
+    MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `my_impianti_marche_lang` ADD CONSTRAINT `my_impianti_marche_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `my_impianti_marche`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+ALTER TABLE `my_impianti_marche_lang` ADD CONSTRAINT `my_impianti_marche_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
+
+ALTER TABLE `my_impianti_marche` DROP `nota`;
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (my_impianti_marche.id = my_impianti_marche_lang.id_record AND my_impianti_marche_lang.|lang|) WHERE 1=1 AND parent = 0 HAVING 2=2' WHERE `zz_modules`.`name` = 'Marche impianti'; 
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'my_impianti_marche.id' WHERE `zz_modules`.`name` = 'Marche impianti' AND `zz_views`.`name` = 'id';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'my_impianti_marche_lang.title' WHERE `zz_modules`.`name` = 'Marche impianti' AND `zz_views`.`name` = 'Nome';

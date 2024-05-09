@@ -23,17 +23,17 @@ use Modules\Impianti\Categoria;
 $subcategorie = Categoria::where('parent', '=', $id_record)->get();
 
 foreach ($subcategorie as $sub) {
-    $n_impianti = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub->id).' AND deleted_at IS NULL');
+    $impianti = $dbo->fetchArray('SELECT * FROM `my_impianti` WHERE `id_sottocategoria`='.prepare($sub->id));
     echo '
-				<tr>
-					<td>'.$sub->getTranslation('title').'</td>
-					<td>'.$sub->colore.'</td>
-					<td>'.$sub->nota.'</td>
-					<td>
-						<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$sub->id.'&id_original='.$id_record.'\');"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-sm btn-danger ask '.(($n_impianti > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub->id.'" title="'.(($n_impianti > 0) ? 'Sottocategoria collegata a '.$n_impianti.' articoli' : '').'">
-                            <i class="fa fa-trash"></i>
-                        </a>
-					</td>
-				</tr>';
-}
+		<tr>
+			<td>'.$sub->getTranslation('title').'</td>
+			<td>'.$sub->colore.'</td>
+			<td>'.$sub->nota.'</td>
+			<td>
+				<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$sub->id.'&id_original='.$id_record.'\');"><i class="fa fa-edit"></i></a>
+				<a class="btn btn-sm btn-danger ask '.((!empty($impianti)) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub->id.'" title="'.(($n_impianti > 0) ? 'Sottocategoria collegata a '.$n_impianti.' articoli' : '').'">
+					<i class="fa fa-trash"></i>
+				</a>
+			</td>
+		</tr>';
+	}

@@ -39,6 +39,8 @@ switch ($op) {
                 'matricola' => $matricola,
                 'id_categoria' => post('id_categoria') ?: null,
                 'id_sottocategoria' => post('id_sottocategoria') ?: null,
+                'id_marca' => post('id_marca') ?: null,
+                'id_modello' => post('id_modello') ?: null,
                 'descrizione' => post('descrizione'),
                 'idsede' => post('idsede'),
                 'data' => post('data') ?: null,

@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\PrintTemplate;
 use Models\Module;
 use Models\OperationLog;
+use Models\PrintTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;

@@ -124,7 +124,7 @@ echo '
 if ($record['idagente'] != 0) {
     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
-                        echo '
+echo '
                             <div class="col-md-3">
                                 {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                             </div>
@@ -186,7 +186,7 @@ if (!empty($intervento->idsede_destinazione)) {
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
-echo'
+echo '
         <script>
             function modificaPosizione() {
                 openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
@@ -324,9 +324,9 @@ echo '
                     {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                 </div>
                 ';
-            // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-            $articoli = $intervento->articoli;
-            echo '
+// Conteggio numero articoli intervento per eventuale blocco della sede di partenza
+$articoli = $intervento->articoli;
+echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>

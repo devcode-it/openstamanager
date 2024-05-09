@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 if (!empty($id_record)) {
-
     $record = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`id`='.prepare($id_record));
 }

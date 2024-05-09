@@ -259,11 +259,11 @@ if (empty($record) || !$has_access) {
 
                     <div class="clearfix"></div>
                     <br>';
-                    // Eventuale header personalizzato
-                    $header = $structure->filepath('header.php');
-                    if ($header) {
-                        include_once $header;
-                    }
+        // Eventuale header personalizzato
+        $header = $structure->filepath('header.php');
+        if ($header) {
+            include_once $header;
+        }
     }
 
     // Contenuti del modulo

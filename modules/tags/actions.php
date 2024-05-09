@@ -53,7 +53,7 @@ switch (post('op')) {
 
             flash()->info(tr('Nuovo tag aggiunto!'));
         }
-       
+
         break;
 
     case 'delete':

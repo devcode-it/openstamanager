@@ -20,15 +20,15 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
-use Models\Upload;
 use Models\Module;
+use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
-use Modules\Scadenzario\Scadenza;
-use Modules\Preventivi\Preventivo;
 use Modules\Ordini\Ordine;
+use Modules\Preventivi\Preventivo;
+use Modules\Scadenzario\Scadenza;
 
 // Anagrafica
 $anagrafica = $intervento->anagrafica;
@@ -139,14 +139,14 @@ echo '
                 <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
 if (count($interventi_programmati) != 0) {
     foreach ($interventi_programmati as $intervento_programmato) {
-        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.( new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
+        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
     }
 }
 echo '
                 </p>';
 // Contratto
 if ($contratto) {
-    echo'
+    echo '
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
                     '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => $contratto->numero, '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
     if ($ore_previste > 0) {
@@ -157,7 +157,7 @@ if ($contratto) {
                         <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
                     </div>';
     }
-    echo'
+    echo '
                 </p>';
 }
 
@@ -167,16 +167,16 @@ if ($preventivo) {
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
                 '.Modules::link('Preventivi', $preventivo->id, tr('Preventivo num. _NUM_ del _DATA_', ['_NUM_' => $preventivo->numero, '_DATA_' => Translator::dateToLocale($preventivo->data_bozza)])).'
                 </p>';
-    }
+}
 
 // Ordine
-if($ordine) {
+if ($ordine) {
     echo '
                 <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
                 '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
                 </p>';
 }
-echo'                
+echo '                
             </div>
         </div>
     </div>';
@@ -244,7 +244,7 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
                 </div>';
 }
 
-    echo '     
+echo '     
             </div>
         </div>
     </div>            

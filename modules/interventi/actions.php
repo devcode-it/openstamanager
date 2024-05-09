@@ -93,7 +93,7 @@ switch (post('op')) {
         $tags_presenti = [];
 
         foreach ($tags as $tag) {
-            $tags_presenti[]= $tag;
+            $tags_presenti[] = $tag;
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -596,7 +596,7 @@ switch (post('op')) {
 
         $riga->save();
 
-        if (!empty(post('idriga'))){
+        if (!empty(post('idriga'))) {
             flash()->info(tr('Riga modificata!'));
         } else {
             flash()->info(tr('Riga aggiunta!'));

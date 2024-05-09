@@ -52,6 +52,7 @@ $results = [
     'recordsTotal' => 0,
     'recordsFiltered' => 0,
     'summable' => [],
+    'avg' => [],
     'draw' => $draw_numer,
 ];
 
@@ -75,6 +76,9 @@ if (!empty($query)) {
 
     // SOMME
     $results['summable'] = Query::getSums($structure, $search);
+
+    // MEDIE
+    $results['avg'] = Query::getAverages($structure, $search);
 
     // Allineamento delle righe
     $align = [];

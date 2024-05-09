@@ -351,6 +351,46 @@ class Query
     }
 
     /**
+     * Restituisce la media dei valori dalla query prevista dalla struttura.
+     *
+     * @param array $search
+     *
+     * @throws \Exception
+     *
+     * @return array
+     */
+    public static function getAverages($structure, $search = [])
+    {
+        $total = self::readQuery($structure);
+
+        // Calcolo di eventuali somme
+        if (empty($total['avg'])) {
+            return [];
+        }
+
+        $result_query = self::getQuery($structure, $search);
+
+        // Filtri derivanti dai permessi (eventuali)
+        if (empty($structure->originalModule)) {
+            $result_query = \Modules::replaceAdditionals($structure->id, $result_query);
+        }
+
+        $query = self::str_replace_once('SELECT', 'SELECT '.implode(', ', $total['avg']).' FROM(SELECT ', $result_query).') AS `z`';
+        $avgs = database()->fetchOne($query);
+
+        $results = [];
+        if (!empty($avgs)) {
+            foreach ($avgs as $key => $avg) {
+                if (string_contains($key, 'avg_')) {
+                    $results[str_replace('avg_', '', $key)] = \Translator::numberToLocale($avg);
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Sostituisce la prima occorenza di una determinata stringa.
      *
      * @param string $str_pattern
@@ -383,6 +423,7 @@ class Query
     {
         $fields = [];
         $summable = [];
+        $avg = [];
         $search_inside = [];
         $search = [];
         $format = [];
@@ -423,6 +464,10 @@ class Query
                 if ($view['summable']) {
                     $summable[] = 'SUM(`'.trim($view['name']."`) AS 'sum_".(count($fields) - 1)."'");
                 }
+
+                if ($view['avg']) {
+                    $avg[] = 'AVG(`'.trim($view['name']."`) AS 'avg_".(count($fields) - 1)."'");
+                }
             }
         }
 
@@ -440,6 +485,7 @@ class Query
             'format' => $format,
             'html_format' => $html_format,
             'summable' => $summable,
+            'avg' => $avg,
         ];
     }
 

@@ -96,7 +96,7 @@ foreach ($fields as $key => $field) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field->summable.'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
+                                {[ "type": "select", "label": "'.tr('Calcolo a fine colonna').'", "name": "sum-avg['.$key.']", "values": "list=\"0\":\"'.tr('Nessuno').'\",\"sum\":\"'.tr('Somma').'\",\"avg\":\"'.tr('Media').'\"", "value": "'.( $field->summable ? 'sum' : ($field->avg ? 'avg' : '' )).'", "help": "'.tr('Scegli quale tipo di totale valori vuoi calcolare a fine tabella').'" ]}
                             </div>
                         </div>
 
@@ -210,16 +210,20 @@ echo '
             </div>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search[-id-]" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow[-id-]" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum[-id-]" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Media').'", "name": "avg[-id-]" ]}
                 </div>
             </div>
 

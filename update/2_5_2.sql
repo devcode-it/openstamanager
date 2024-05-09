@@ -75,3 +75,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tags', 'tags.nomi', 10);
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views` ), 'Tags');
+
+-- Aggiunta flag per calcolo media su viste
+ALTER TABLE `zz_views` ADD `avg` BOOLEAN NOT NULL DEFAULT FALSE AFTER `summable`;

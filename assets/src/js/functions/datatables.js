@@ -423,9 +423,15 @@ function footerCallback(row, data, start, end, display) {
 
     this.api().columns().every(function () {
         if (json.summable[i] !== undefined) {
-            $(this.footer()).addClass("text-right")
+            $(this.footer()).css("text-align", "right")
                 .attr("id", "summable")
                 .html(json.summable[i]);
+        }
+
+        if (json.avg[i] !== undefined) {
+            $(this.footer()).css("text-align", "right")
+                .attr("id", "avg")
+                .html(json.avg[i]);
         }
 
         i++;
@@ -532,7 +538,11 @@ function getTable(selector) {
         getSelectedRowsFooter: function () {
             let ids = this.getSelectedRows();
 
-            return $.ajax({
+            let summable_results = [];
+            let avg_results = [];
+            let results = [];
+            
+            summable_results = $.ajax({
                 url: globals.rootdir + "/ajax.php",
                 type: "POST",
                 dataType: "json",
@@ -543,10 +553,25 @@ function getTable(selector) {
                     ids: ids,
                 }
             });
+
+            avg_results = $.ajax({
+                url: globals.rootdir + "/ajax.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: this.id_module,
+                    id_plugin: this.id_plugin,
+                    op: "avg-results",
+                    ids: ids,
+                }
+            });
+
+            results = $.when(summable_results, avg_results);
+            return results;
         },
 
         /**
-         * Aggiornamento dei campi summable
+         * Aggiornamento dei campi summable e avg
          */
         updateFooterForSelectedRows: function () {
             let datatable = this.datatable;
@@ -555,8 +580,11 @@ function getTable(selector) {
                 for (let [column, value] of Object.entries(response)) {
                     let index = parseInt(column) + 1;
                     let sel = datatable.column(index).footer();
-                    $(sel).addClass("text-right")
+                    $(sel).css("text-align", "right")
                         .attr("id", "summable")
+                        .html(value);
+                    $(sel).css("text-align", "right")
+                        .attr("id", "avg")
                         .html(value);
                 }
             });

@@ -168,4 +168,14 @@ switch (filter('op')) {
         echo json_encode($results);
 
         break;
+
+    case 'avg-results':
+        $ids = post('ids') ?: [];
+        $results = Util\Query::getAverages($structure, [
+            'id' => $ids,
+        ]);
+
+        echo json_encode($results);
+
+        break;
 }

@@ -53,6 +53,13 @@ switch (post('op')) {
             flash()->info(tr('Nuovo tag aggiunto!'));
         }
 
+        if (isAjaxRequest()) {
+            echo json_encode([
+                'id' => $id_record,
+                'text' => $nome,
+            ]);
+        }
+
         break;
 
     case 'delete':

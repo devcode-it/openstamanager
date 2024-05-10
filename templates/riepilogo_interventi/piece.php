@@ -68,7 +68,7 @@ echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->getTranslation('title').'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
-        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</p>';
+        <p><small><b>'.tr('Richiesta').':</b> '.strip_tags($intervento->richiesta).'</p>';
 if ($intervento->descrizione) {
     echo '
         <p><b>'.tr('Descrizione').':</b> '.$intervento->descrizione.'</small></p>';

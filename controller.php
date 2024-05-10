@@ -35,6 +35,16 @@ include_once base_dir().'/actions.php';
 // Widget in alto
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "place": "controller" )}';
 
+$segmenti = $dbo->FetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module` = '.prepare($id_module));
+if ($segmenti) {
+	$segmenti = Modules::getSegments($id_module);
+	if (empty($segmenti)) {
+		echo '<div class="alert alert-warning">
+		<i class="fa fa-warning-circle"></i> '.tr("Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di questo modulo").'.
+	</div>';
+	}
+}
+
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
 		<div class="nav-tabs-custom">

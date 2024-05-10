@@ -29,8 +29,7 @@ switch (post('op')) {
                 '_NAME_' => $nome,
             ]));
         } else {
-            $record->nome = $nome;
-            $record->save();
+            $dbo->query('UPDATE `in_tags` SET `name`='.prepare($nome).' WHERE `in_tags`.`id`='.prepare($id_record));
 
             flash()->info(tr('Informazioni salvate correttamente!'));
         }
@@ -57,7 +56,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE `in_tags` WHERE `in_tags`.`id`='.prepare($id_record));
+        $dbo->query('DELETE FROM `in_tags` WHERE `in_tags`.`id`='.prepare($id_record));
 
         flash()->info(tr('Tag eliminato!'));
 

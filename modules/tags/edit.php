@@ -29,3 +29,44 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
+
+
+<?php
+
+$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` FROM `in_interventi_tags` INNER JOIN `in_interventi` ON `in_interventi_tags`.`id_intervento`=`in_interventi`.`id` WHERE `id_tag`='.prepare($id_record));
+
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attività collegate: _NUM_', [
+        '_NUM_' => count($elementi),
+    ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('Attività _CODICE_', [
+            '_CODICE_' => $elemento['codice'],
+        ]);
+        $modulo = 'Attività';
+        $id = $elemento['id'];
+
+        echo '
+		<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+	</ul>
+</div>
+</div>';
+} else {
+    echo '
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
+}

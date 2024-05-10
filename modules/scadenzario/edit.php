@@ -159,7 +159,7 @@ echo '
                             <tr>
                                 <th style="width:20%;">'.tr('Banca accredito').'</th> 
                                 <th style="width:20%;">'.tr('Banca addebito').'</th> 
-                                <th style="width:20%;">'.tr('Tipologia').'</th>
+                                <th style="width:20%;">'.tr('Metodo di pagamento').'</th>
                                 <th style="width:10%;">'.tr('Data').'</th>
                                 <th style="width:10%;">'.tr('Data concordata').'</th>
                                 <th style="width:10%;">'.tr('Importo').'</th>

@@ -90,16 +90,16 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
+        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>
                                     <small>'.Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
-                                <td style='width:15%;' class='text-right'>
+                                <td style='width:15%;'>
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."
                                 </td>
-                                <td style='width:15%;' class='text-right'>
+                                <td style='width:15%;'>
                                     <small>".moneyFormat($rs2[$i]['da_pagare'], $d_totali).'</small>
                                 </td>
                                 <td style=\'width:15%;\'>

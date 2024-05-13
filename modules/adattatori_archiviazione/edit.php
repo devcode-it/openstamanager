@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-5">
-			{[ "type": "text", "label": "<?php echo tr('Name'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
 		</div>
 
         <div class="col-md-5">
@@ -40,7 +40,7 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "<?php echo tr('Options'); ?>", "name": "options", "value": "$options$", "required": 0, "help": "Specifica le opzioni per il tipo di archiviazione in formato JSON" ]}
+            {[ "type": "textarea", "label": "<?php echo tr('Opzioni'); ?>", "name": "options", "value": "$options$", "required": 0, "help": "Specifica le opzioni per il tipo di archiviazione in formato JSON" ]}
         </div>
     </div>
 

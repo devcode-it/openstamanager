@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Pagamenti\Pagamento;
 
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
@@ -182,6 +183,9 @@ foreach ($scadenze as $i => $scadenza) {
         $class = 'danger';
     }
 
+    $id_pagamento = Pagamento::find($scadenza['id_pagamento']);
+
+    $pagamento = $dbo->fetchOne('SELECT `co_pagamenti`.`id` FROM `fe_modalita_pagamento` INNER JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record` = `fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.') INNER JOIN `co_pagamenti` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` WHERE `fe_modalita_pagamento`.`codice` LIKE '.prepare($id_pagamento->codice_modalita_pagamento_fe).'')['id'];
     echo '
                             <tr class="'.$class.'">
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
@@ -202,7 +206,7 @@ foreach ($scadenze as $i => $scadenza) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "select", "name": "id_pagamento['.$i.']", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_pagamento'].'" ]}
+                                    {[ "type": "select", "name": "id_pagamento['.$i.']", "values": "query=SELECT `co_pagamenti`.`id`, `fe_modalita_pagamento_lang`.`title` as descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record` = `fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.') INNER JOIN `co_pagamenti` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` GROUP BY title", "value": "'.$pagamento.'" ]}
                                 </td>
 
                                 <td align="center">
@@ -293,7 +297,7 @@ echo '
                 </td>
 
                 <td>
-                    {[ "type": "select", "name": "id_pagamento[-id-]", "ajax-source": "pagamenti", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).']}
+                    {[ "type": "select", "name": "id_pagamento[-id-]", "values": "query=SELECT `co_pagamenti`.`id`, `fe_modalita_pagamento_lang`.`title` as descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record` = `fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.') INNER JOIN `co_pagamenti` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` GROUP BY title"]}
                 </td>
 
                 <td align="center">

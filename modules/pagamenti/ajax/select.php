@@ -55,7 +55,7 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = '`descrizione` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         $data = AJAX::selectResults($query, $where,

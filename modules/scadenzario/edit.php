@@ -323,9 +323,9 @@ echo '
 </table>
 
 <script>
-    var i = '.$i.';
     
 	$(document).on("click", "#add-scadenza", function() {
+        var i = '.$i.';
         cleanup_inputs();
 
         i++;

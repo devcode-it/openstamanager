@@ -20,7 +20,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tags'), 'Nome','name', 1);
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`)-1 FROM `zz_views` ), 'id'),
-(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Nome');
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Nome'),
+(2, (SELECT MAX(`id`)-1 FROM `zz_views` ), 'id'),
+(2, (SELECT MAX(`id`) FROM `zz_views` ), 'Name');
 
 -- Aggiunta tabella in_interventi_tags
 CREATE TABLE `in_interventi_tags` (
@@ -74,7 +76,8 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tags', 'tags.nomi', 10);
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Tags');
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Tags'),
+(2, (SELECT MAX(`id`) FROM `zz_views` ), 'Tags');
 
 -- Aggiunta flag per calcolo media su viste
 ALTER TABLE `zz_views` ADD `avg` BOOLEAN NOT NULL DEFAULT FALSE AFTER `summable`;
@@ -109,4 +112,5 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Data concordata', 'IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', data_concordata, \'\')', 21);
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Data concordata');
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Data concordata'),
+(2, (SELECT MAX(`id`) FROM `zz_views` ), 'Agreed date');

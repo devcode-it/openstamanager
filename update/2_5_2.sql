@@ -122,3 +122,41 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`d`.`conteggio`>1, \'#ec5353\', co_statidocumento.colore)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_';
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(threshold_qta!=0, IF(mg_articoli.qta>=threshold_qta, \'#CCFFCC\', \'#ec5353\'), \'\')' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = '_bg_';
+
+-- Aggiunta colonna Marca in Impianti
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Marca', '`marca_lang`.`title`', 11, 0);
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Marca'),
+(2, (SELECT MAX(`id`) FROM `zz_views` ), 'Brand');
+
+-- Aggiunta colonna Modello in Impianti
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Modello', '`modello_lang`.`title`', 12, 0);
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views` ), 'Modello'),
+(2, (SELECT MAX(`id`) FROM `zz_views` ), 'Model');
+
+-- Allineamento vista Impianti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `my_impianti`
+    LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico` 
+    LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
+    LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id` = `my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.|lang|)
+    LEFT JOIN `my_impianti_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
+    LEFT JOIN `my_impianti_categorie_lang` as sub_lang ON (sub.`id` = sub_lang.`id_record` AND sub_lang.|lang|)
+    LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.idsede
+    LEFT JOIN `my_impianti_marche` as marca ON `marca`.`id` = `my_impianti`.`id_marca`
+    LEFT JOIN `my_impianti_marche_lang` as marca_lang ON (`marca`.`id` = `marca_lang`.`id_record` AND `marca_lang`.|lang|)
+    LEFT JOIN `my_impianti_marche` as modello ON `modello`.`id` = `my_impianti`.`id_modello`
+    LEFT JOIN `my_impianti_marche_lang` as modello_lang ON (`modello`.`id` = `modello_lang`.`id_record` AND `modello_lang`.|lang|)
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY
+    `matricola`" WHERE `name` = 'Impianti';

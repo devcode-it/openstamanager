@@ -106,11 +106,19 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `my_impianti_marche` L
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'my_impianti_marche.id' WHERE `zz_modules`.`name` = 'Marche impianti' AND `zz_views`.`name` = 'id';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'my_impianti_marche_lang.title' WHERE `zz_modules`.`name` = 'Marche impianti' AND `zz_views`.`name` = 'Nome';
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(pagato = da_pagare, \'#77dd77\', IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', IF(data_concordata < NOW(), \'#b22222\', \'#b3d2e3\'), IF(scadenza < NOW(), \'#ce3018\', IF(DATEDIFF(co_scadenziario.scadenza,NOW()) < 10, \'#f9f9c6\', \'\'))))' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = '_bg_';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(pagato = da_pagare, \'#CCFFCC\', IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', IF(data_concordata < NOW(), \'#ec5353\', \'#b3d2e3\'), IF(scadenza < NOW(), \'#f08080\', IF(DATEDIFF(co_scadenziario.scadenza,NOW()) < 10, \'#f9f9c6\', \'\'))))' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = '_bg_';
 
 -- Aggiunta colonna Data concordata in Scadenzario
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Data concordata', 'IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', data_concordata, \'\')', 21);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `format`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Data concordata', 'IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', data_concordata, \'\')', 21, 1);
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views` ), 'Data concordata'),
 (2, (SELECT MAX(`id`) FROM `zz_views` ), 'Agreed date');
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`dup`.`numero_esterno` IS NOT NULL, \'#ec5353\', co_statidocumento.colore)' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = '_bg_';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(em_emails.sent_at IS NULL, IF(em_emails.failed_at IS NULL, \'#f9f9c6\', \'#ec5353\'), \'#CCFFCC\')' WHERE `zz_modules`.`name` = 'Stato email' AND `zz_views`.`name` = '_bg_';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(`d`.`conteggio`>1, \'#ec5353\', co_statidocumento.colore)' WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(threshold_qta!=0, IF(mg_articoli.qta>=threshold_qta, \'#CCFFCC\', \'#ec5353\'), \'\')' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = '_bg_';

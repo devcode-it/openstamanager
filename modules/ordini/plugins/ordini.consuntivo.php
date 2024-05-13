@@ -317,7 +317,7 @@ echo '
 ksort($tecnici);
 foreach ($tecnici as $key => $tecnico) {
     $margine = $tecnico['ricavo'] - $tecnico['costo'];
-    $margine_prc = (int) (1 - ($tecnico['costo'] / $tecnico['ricavo'])) * 100;
+    $margine_prc = (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] ?: 1))) * 100;
     $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
     echo '
                 <tr>

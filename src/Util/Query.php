@@ -439,11 +439,11 @@ class Query
         $select = [];
 
         foreach ($views as $view) {
-            $select[] = $view['query'].(!empty($view['name']) ? " AS '".$view['name']."'" : '');
+            $select[] = $view['query'].(!empty($view['title']) ? " AS '".$view['title']."'" : '');
 
             if (!empty($view['visible'])) {
-                if (!empty($view['name'])) {
-                    $view['name'] = trim($view['name']);
+                if (!empty($view['title'])) {
+                    $view['title'] = trim($view['title']);
                 }
                 if (!empty($view['search_inside'])) {
                     $view['search_inside'] = trim($view['search_inside']);
@@ -452,21 +452,21 @@ class Query
                     $view['order_by'] = trim($view['order_by']);
                 }
 
-                $fields[] = trim($view['name']);
+                $fields[] = $view['title'] ? trim($view['title']) : $view['name'];
 
-                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : '`'.$view['name'].'`';
-                $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['name'].'`';
+                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : '`'.$view['title'].'`';
+                $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['title'].'`';
                 $search[] = $view['search'];
                 $slow[] = $view['slow'];
                 $format[] = $view['format'];
                 $html_format[] = $view['html_format'];
 
                 if ($view['summable']) {
-                    $summable[] = 'SUM(`'.trim($view['name']."`) AS 'sum_".(count($fields) - 1)."'");
+                    $summable[] = 'SUM(`'.trim($view['title']."`) AS 'sum_".(count($fields) - 1)."'");
                 }
 
                 if ($view['avg']) {
-                    $avg[] = 'AVG(`'.trim($view['name']."`) AS 'avg_".(count($fields) - 1)."'");
+                    $avg[] = 'AVG(`'.trim($view['title']."`) AS 'avg_".(count($fields) - 1)."'");
                 }
             }
         }

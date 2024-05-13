@@ -62,11 +62,12 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | PHP | EOL | Supportato |
 |-----|-----|:----------:|
+| 8.3 | 23/11/2026 | ✔️ |
+| 8.2 | 08/12/2025 | ✔️ |
 | 8.1 | 25/11/2024 | ✔️ |
-| 8.0 | 26/11/2023 | ✔️ |
-| 7.4 | 28/11/2022 | ✔️ |
+| 8.0 | 26/11/2023 | ❗ |
+| 7.4 | 28/11/2022 | ❗ |
 | 7.3 | 06/12/2021 | ❌ |
-| 7.2 | 30/11/2020 | ❌ |
     
 </td>
 <td valign="top">
@@ -84,6 +85,12 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 </td>
 </tr>
 </table>
+
+❗Alcune dipendenze presenti dalla versione 2.5 non sono più compatibili con PHP 7.4 e PHP 8.0. Per continuare a utilizzare tali versioni di PHP, sarà necessario ricompilare utilizzando il file composer_74.json.
+
+Per semplificarne l'installazione, la versione 2.5.2 sarà disponibile in un doppio zip con entrambe le versioni (compatibile con php < 8.1 e compatibile con php > 8.1).
+
+Dalla prossima versione (2.5.3) la versione minima di php richiesta sarà la 8.1, non sarà quindi disponibile al download il secondo file zip.
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
 

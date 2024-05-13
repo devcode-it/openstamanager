@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": "^8.1|^8.3",
+        "php": "^7.4|^8.0",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -52,7 +52,7 @@
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",
         "respect/validation": "^2.0",
-        "servo/fluidxml": "^2.0",
+        "servo/fluidxml": "^1.21",
         "slim/flash": "^0.4.0",
         "spipu/html2pdf": "^5.0.0",
         "symfony/filesystem": "^5.0",
@@ -149,7 +149,7 @@
         "prefer-stable": true,
         "platform-check": false,
         "platform": {
-            "php": "8.3.6"
+            "php": "8.0.29"
         },
         "allow-plugins": {
             "kylekatarnls/update-helper": true

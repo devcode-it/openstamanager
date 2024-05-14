@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!empty($options['last-page-footer']) && !$is_last_page) {
+if (!empty($options['last-page-footer'])) {
     return;
 }
 

@@ -419,6 +419,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
                 <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
+            
             <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
                 <b>'.moneyFormat($totale, $d_totali).'</b>
             </th>

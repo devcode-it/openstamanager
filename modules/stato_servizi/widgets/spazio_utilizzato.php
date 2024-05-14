@@ -36,7 +36,7 @@ $(document).ready(function() {
         url: globals.rootdir + "/actions.php",
         type: "get",
         data: {
-            id_module: '.$id_module.',
+            id_module: '.$id_module. ',
             op: "sizes",
         },
         success: function(data) {
@@ -90,17 +90,16 @@ function crea_grafico(values){
 
         }
 
-
-
         $labels.push(element.description + " (" + element.formattedSize + ")" + " [" + element.count + "]" )
-
-
+    
     });
 
 	options = {
+        responsive: true,
+        maintainAspectRatio: false,
 		legend: {
 			display: true,
-			position: "right"
+			position: "right",
 		},
 		animation:{
 			animateScale: true,
@@ -164,6 +163,6 @@ function crea_grafico(values){
 }
 </script>
 <div id="message" class="pull-right"></div>
-<div class="chart-container" style="width:35em;">
+<div class="chart-container">
     <canvas id="chart"></canvas>
 </div>';

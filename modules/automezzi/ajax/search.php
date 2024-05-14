@@ -11,16 +11,10 @@ $fields = [
     'Targa' => 'targa',
 ];
 
-$query = 'SELECT *';
+$query = 'SELECT * FROM an_sedi WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
-    $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
-}
-
-$query .= ' FROM dt_automezzi WHERE 1=0 ';
-
-foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 $query .= Modules::getAdditionalsQuery('Automezzi');
@@ -32,7 +26,7 @@ foreach ($rs as $r) {
 
     $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['nome'];
-    $result['category'] = 'Automezzi';
+    $result['category'] = tr('Automezzi');
 
     // Campi da evidenziare
     $result['labels'] = [];

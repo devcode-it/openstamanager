@@ -164,7 +164,7 @@ echo '
         </td>
 
         <td class="cell-padded">
-            '.Translator::TimestampToLocale($documento['data_ora_trasporto']).' &nbsp;
+            '.(!empty($documento['data_ora_trasporto']) ? Translator::TimestampToLocale($documento['data_ora_trasporto']) : '').' &nbsp;
         </td>
 
         <td class="cell-padded">

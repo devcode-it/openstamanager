@@ -93,5 +93,5 @@ if (setting('Attiva notifica di presenza utenti sul record')) {
     </tbody>
 </table>';
 } else {
-    echo '<span>Non è possibile monitorare la presenta degli utenti.</span>';
+    echo '<span>'.tr('Non è possibile monitorare la presenta degli utenti, attiva l\'impostazione di notifica di presenza utenti sul record').'.</span>';
 }

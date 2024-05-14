@@ -55,7 +55,7 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
 				</div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('File da accodare'); ?>", "name": "id_files[]", "value": "<?php echo implode(',', array_column($id_files, 'id_file')); ?>", "ajax-source": "allegati", "select-options": <?php echo json_encode(['id_module' => $id_module, 'id_record' => $id_record]); ?>, "link": "allegato" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('File da accodare'); ?>", "name": "id_files[]", "value": "<?php echo implode(',', array_column($id_files, 'id_file')); ?>", "help": "<?php echo tr('I file selezionati saranno accodati in fase di generazione della stampa'); ?>", "ajax-source": "allegati", "select-options": <?php echo json_encode(['id_module' => $id_module, 'id_record' => $id_record]); ?>, "link": "allegato" ]}
 				</div>
 
             </div>

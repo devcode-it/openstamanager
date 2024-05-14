@@ -33,7 +33,7 @@ function duplicaOrdine() {
 
 $stati = $dbo->fetchArray('SELECT `title` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 foreach ($stati as $stato) {
-    $stati_importabili[] = $stato['name'];
+    $stati_importabili[] = $stato['title'];
 }
 
 echo '

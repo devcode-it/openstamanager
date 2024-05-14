@@ -246,7 +246,7 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     $descrizione_stati = [];
     $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '".prepare(Models\Locale::getDefault()->id)."') WHERE `title` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `title`");
     foreach ($stati as $stato) {
-        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['name'].'</small>';
+        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['title'].'</small>';
     }
 
     echo '

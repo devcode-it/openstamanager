@@ -62,10 +62,10 @@ include_once __DIR__.'/../../core.php';
 foreach ($rs_stati as $stato) {
     ?>
             <div class="col-md-4">
-                <label><?php echo $stato['name']; ?></label>
+                <label><?php echo $stato['title']; ?></label>
                 <div class="material-switch">
-                    <input id="<?php echo $stato['name']; ?>" name="<?php echo $stato['name']; ?>" type="checkbox" checked/>
-                    <label for="<?php echo $stato['name']; ?>" class="label-success"></label>
+                    <input id="<?php echo $stato['title']; ?>" name="<?php echo $stato['title']; ?>" type="checkbox" checked/>
+                    <label for="<?php echo $stato['title']; ?>" class="label-success"></label>
                 </div>
 			</div>
 <?php

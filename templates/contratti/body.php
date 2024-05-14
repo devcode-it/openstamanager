@@ -271,15 +271,15 @@ $netto_a_pagare = $documento->netto;
 $show_sconto = $sconto > 0;
 
 // TOTALE COSTI FINALI
-if ($options['pricing']) {
+if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-only-total']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+        <td colspan="' . ($options['show-only-total'] ? (($has_image) ? 3 : 2) : 4) . '" class="text-right border-top">
+            <b>'.tr('Imponibile', [], ['upper' => true]). ':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="' . ($options['show-only-total'] ? (($has_image) ? ($options['no-iva'] ? 1 : 2) : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
             <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
@@ -288,11 +288,11 @@ if ($options['pricing']) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+        <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+            <b>'.tr('Sconto', [], ['upper' => true]). ':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="' . ($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
             <b>'.moneyFormat($sconto, $d_totali).'</b>
         </th>
     </tr>';
@@ -300,65 +300,76 @@ if ($options['pricing']) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+        <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+            <b>'.tr('Totale imponibile', [], ['upper' => true]). ':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="' . ($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
             <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
     }
-
-    // IVA
-    echo '
-    <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
-        </td>
-
-        <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
-        </th>
-    </tr>';
-
-    // TOTALE
-    echo '
-    <tr>
-    	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
-    	</td>
-    	<th colspan="2" class="text-right">
-    		<b>'.moneyFormat($totale, $d_totali).'</b>
-    	</th>
-    </tr>';
-
-    if ($sconto_finale) {
-        // SCONTO IN FATTURA
+    if (!$options['no-iva']) {
+        // IVA
         echo '
         <tr>
-            <td colspan="3" class="text-right border-top">
-                <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
+            <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+                <b>'.tr('Totale IVA', [], ['upper' => true]). ':</b>
             </td>
-            <th colspan="2" class="text-right">
-                <b>'.moneyFormat($sconto_finale, $d_totali).'</b>
+
+            <th colspan="' . ($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
+                <b>'.moneyFormat($totale_iva, $d_totali).'</b>
             </th>
         </tr>';
 
-        // NETTO A PAGARE
+        // TOTALE
         echo '
         <tr>
-            <td colspan="3" class="text-right border-top">
-                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+                <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
+
             <th colspan="2" class="text-right">
-                <b>'.moneyFormat($netto_a_pagare, $d_totali).'</b>
+                <b>'.moneyFormat($totale, $d_totali).'</b>
             </th>
         </tr>';
+
+        if ($sconto_finale) {
+            // SCONTO IN FATTURA
+            echo '
+            <tr>
+                 <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+                    <b>'.tr('Sconto in fattura', [], ['upper' => true]). ':</b>
+                </td>
+               <th colspan="' . ($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
+                    <b>'.moneyFormat($sconto_finale, $d_totali).'</b>
+                </th>
+            </tr>';
+
+            // NETTO A PAGARE
+            echo '
+            <tr>
+                <td colspan="' . ($options['show-only-total'] ? 2 : 4) . '" class="text-right border-top">
+                    <b>'.tr('Netto a pagare', [], ['upper' => true]). ':</b>
+                </td>
+                <th colspan="' . ($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)) . '" class="text-right">
+                    <b>'.moneyFormat($netto_a_pagare, $d_totali).'</b>
+                </th>
+            </tr>';
+        }
     }
 }
 echo '
 </table>';
+
+if ($options['no-iva']) {
+    echo '
+    <p colspan="3" class="text-right text-muted">
+        <small>Importo IVA esclusa</small>
+    </p>
+';
+}
+
 
 // CONDIZIONI GENERALI DI FORNITURA
 $pagamento = Pagamento::find($documento['idpagamento']);

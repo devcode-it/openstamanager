@@ -1,31 +1,31 @@
 <?php
 
 echo '
-    <div class="pull-left">
-        <h5>'.tr('Legenda').':</h5>
+    <div class=" pull-left">
+        <h5>'.tr('Legenda'). ':</h5>
 
-        <div class="legend">
-            <div class="icon" style="background-color:#CCFFCC;"></div>
-            <div class="text">Scadenza pagata</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#CCFFCC;"></span>
+            <span class="text">&nbsp;'.tr('Scadenza pagata'). '</span>
         </div>
-        <div class="legend">
-            <div class="icon" style="background-color:#ec5353;"></div>
-            <div class="text">Data concordata superata</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#ec5353;"></span>
+            <span class="text">&nbsp;' . tr('Data concordata superata') . '</span>
         </div>
-        <div class="legend">
-            <div class="icon" style="background-color:#b3d2e3;"></div>
-            <div class="text">Data concordata</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#b3d2e3;"></span>
+            <span class="text">&nbsp;' . tr('Data concordata') . '</span>
         </div>
-        <div class="legend">
-            <div class="icon" style="background-color:#f08080;"></div>
-            <div class="text">Scaduta</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#f08080;"></span>
+            <span class="text">&nbsp;' . tr('Scaduta') . '</span>
         </div>
-        <div class="legend">
-            <div class="icon" style="background-color:#f9f9c6;"></div>
-            <div class="text">Scadenza entro 10 giorni</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#f9f9c6;"></span>
+            <span class="text">&nbsp;' . tr('Scadenza entro 10 giorni') . '</span>
         </div>
-        <div class="legend">
-            <div class="icon" style="background-color:#ffffff;"></div>
-            <div class="text">Scadenza futura</div>
+        <div class="col-md-6">
+            <span class="pull-left icon" style="background-color:#ffffff;"></span>
+            <span class="text">&nbsp;Scadenza futura</span>
         </div>
     </div>';

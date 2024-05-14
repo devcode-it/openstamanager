@@ -653,8 +653,6 @@ class Prints
 
             // Footer per l'ultima pagina
             if (!empty($options['last-page-footer'])) {
-                $is_last_page = true;
-
                 // Generazione dei contenuti del footer
                 ob_start();
                 $print_footer = self::filepath($id_print, 'footer.php');

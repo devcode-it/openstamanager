@@ -88,9 +88,9 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 
 ❗Alcune dipendenze presenti dalla versione 2.5 non sono più compatibili con PHP 7.4 e PHP 8.0. Per continuare a utilizzare tali versioni di PHP, sarà necessario ricompilare utilizzando il file composer_74.json.
 
-Per semplificarne l'installazione, la versione 2.5.2 sarà disponibile in un doppio zip con entrambe le versioni (compatibile con php < 8.1 e compatibile con php > 8.1).
+Per semplificarne l'installazione, la versione 2.5.2 sarà disponibile in un doppio zip con entrambe le versioni (compatibile con php < 8.1 e compatibile con php >= 8.1).
 
-Dalla prossima versione (2.5.3) la versione minima di php richiesta sarà la 8.1, non sarà quindi disponibile al download il secondo file zip.
+Dalla versione 2.5.3 sarà richiesta una versione di php >= 8.1, non sarà quindi disponibile al download il secondo file zip.
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
 

@@ -149,7 +149,7 @@
         "prefer-stable": true,
         "platform-check": false,
         "platform": {
-            "php": "8.3.6"
+            "php": "8.3.7"
         },
         "allow-plugins": {
             "kylekatarnls/update-helper": true

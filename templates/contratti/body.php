@@ -24,8 +24,20 @@ include_once __DIR__.'/../../core.php';
 
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
+// Righe documento
+$righe = $documento->getRighe();
+
+$has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !== false && $options['images'] == true;
+
+$columns = $options['no-iva'] ? 5 : 6;
+$columns = $options['pricing'] ? $columns : 3;
+
+if ($has_image) {
+    ++$columns;
+}
+
 // Creazione righe fantasma
-$autofill = new Util\Autofill($options['pricing'] ? 4 : 2);
+$autofill = new Util\Autofill($columns);
 $autofill->setRows(20, 10);
 
 echo '
@@ -111,13 +123,26 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
+            <th class='text-center' width='35' >#</th>";
+
+if ($has_image) {
+    echo "
+            <th class='text-center' width='95' >Foto</th>";
+}
+
+echo "
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
     echo "
-            <th class='text-center' style='width:20%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:20%'>".tr('Imponibile', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:15%'>" . tr('Prezzo unitario', [], ['upper' => true]) . '</th>';
+    if (!$options['no-iva']) {
+        echo "
+                <th class='text-center' style='width:10%'>" . tr('IVA', [], ['upper' => true]) . ' (%)</th>';
+    }
+    echo "
+            <th class='text-center' style='width:15%'>" . ($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])) . '</th>';
 }
 
 echo '
@@ -126,8 +151,8 @@ echo '
 
     <tbody>';
 
-// Righe documento
-$righe = $documento->getRighe();
+
+
 
 if (!setting('Visualizza riferimento su ogni riga in stampa')) {
     $riferimenti = [];
@@ -147,15 +172,37 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
         }
     }
 }
-
+$num = 0;
 foreach ($righe as $riga) {
+    ++$num;
     $r = $riga->toArray();
 
     $autofill->count($r['descrizione']);
 
-    echo '
+    echo
+    '
     <tr>
+        <td class="text-center" nowrap="nowrap" style="vertical-align: middle" width="25">
+                ' . $num . '
+        </td>';
+
+        if ($has_image) {
+            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+                echo '
+                <td align="center">
+                    <img src="'.$riga->articolo->image.'" style="max-height: 60px; max-width:80px">
+                </td>';
+
+                $autofill->set(5);
+            } else {
+                echo '
+                <td></td>';
+            }
+        }
+
+echo '
         <td>';
+
     $text = '';
 
     foreach ($riferimenti as $key => $riferimento) {

@@ -451,7 +451,7 @@ $requirements = [
     ]) => $apache,
     tr('PHP (_VERSION_ _SUPPORTED_)', [
         '_VERSION_' => phpversion(),
-        '_SUPPORTED_' => ((version_compare(phpversion(), $settings['php_version']['minimum'], '>=') && version_compare(phpversion(), $settings['php_version']['maximum'], '<=')) ? '' : '<small><small class="label label-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>'),
+        '_SUPPORTED_' => ((version_compare(phpversion(), $settings['php_version']['minimum'], '>=') && version_compare(phpversion(), $settings['php_version']['maximum'], '<=')) ? '' : '<small> <span class="right badge badge-danger" ><i class="fa fa-warning"></i> '.tr('versioni supportate:').' '.$settings['php_version']['description'].'</small></small>'),
     ]) => $php,
     tr('DBMS (_TYPE_)', [
         '_TYPE_' => method_exists($database, 'getType') ? $database->getType() : '',
@@ -476,14 +476,14 @@ foreach ($requirements as $key => $values) {
     }
 
     echo '
-<div class="box box-'.($general_status ? 'success collapsed-box' : 'danger').'">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.$key.'</h3>';
+<div class="card card-'.($general_status ? 'success collapsed-card' : 'danger').'">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.$key.'</h3>';
 
     if ($general_status) {
         echo '
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-widget="collapse">
                 <i class="fa fa-plus"></i>
             </button>
         </div>';
@@ -491,7 +491,7 @@ foreach ($requirements as $key => $values) {
 
     echo '
     </div>
-    <div class="box-body no-padding">
+    <div class="card-body no-padding">
         <table class="table">';
 
     foreach ($values as $value) {

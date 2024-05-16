@@ -24,7 +24,7 @@ if ($module->getTranslation('title') == 'Fatture di vendita') {
     $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
 
     echo '
-<a class="btn btn-info '.($attributi_visibili ? '' : 'disabled').'" data-toggle="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'" '.($attributi_visibili ? '' : 'disabled').'>
+<a class="btn btn-info '.($attributi_visibili ? '' : 'disabled').'" data-widget="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'" '.($attributi_visibili ? '' : 'disabled').'>
     <i class="fa fa-file-code-o"></i> '.tr('Attributi avanzati').'
 </a>';
 }
@@ -32,7 +32,7 @@ if ($module->getTranslation('title') == 'Fatture di vendita') {
 if ($dir == 'entrata' || !empty($abilita_autofattura)) {
     echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-widget="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>
     </button>';

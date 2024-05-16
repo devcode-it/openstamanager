@@ -54,16 +54,16 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 	</div>
 
-    <div class="box box-info collapsed-box">
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "icon-after": "<?php echo currency(); ?>", "value": "<?php echo htmlentities(filter('prezzo_acquisto')) ?: 0; ?>" ]}

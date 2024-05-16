@@ -34,41 +34,37 @@ $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
 echo '
-<div class="box box-warning">
-    <div class="box-header">
-        <h4 class="box-title">
-            '.tr('Periodi temporali').'
-        </h4>
-        <div class="box-tools pull-right">
-            <button class="btn btn-warning btn-xs" onclick="add_calendar()">
+<div class="card card-warning">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Periodi temporali').'</h4>
+        <div class="card-tools">
+            <button class="btn btn-warning btn-sm" onclick="add_calendar()">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
 
-    <div class="box-body collapse in" id="calendars">
+    <div class="card-body" id="calendars">
 
     </div>
 </div>';
 
 // Fatturato
 echo '
-<div class="box box-success">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Vendite e acquisti').'</h3>
-
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+<div class="card card-success">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Vendite e acquisti').'</h4>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="fatturato" height="100"></canvas>
+    <canvas class="card-body" id="fatturato" height="500"></canvas>
 </div>';
-
 // Script per il grafico del fatturato
 echo '
 <script>
@@ -100,6 +96,7 @@ var chart_options = {
                     return label;
                 }
             }
+            
         },
         elements: {
             line: {
@@ -124,16 +121,16 @@ var chart_options = {
         scales: {
             x: {
                 display: true,
-                scaleLabel: {
+                title: {
                     display: true,
-                    labelString: "'.tr('Periodo').'"
+                    text: "'.tr('Periodo').'"
                 }
             },
             y: {
                 display: true,
-                scaleLabel: {
+                title: {
                     display: true,
-                    labelString: "'.tr('Andamento').'"
+                    text: "'.tr('Andamento').'"
                 },
                 ticks: {
                     // Include a dollar sign in the ticks
@@ -146,7 +143,6 @@ var chart_options = {
     }
 };
 
-// Inzializzazione manager
 var info = {
     url: "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'",
     id_module: globals.id_module,
@@ -159,10 +155,8 @@ var manager = new Manager(info);
 var chart_fatturato, chart_acquisti;
 $(document).ready(function() {
     var fatturato_canvas = document.getElementById("fatturato").getContext("2d");
-    //var acquisti_canvas = document.getElementById("acquisti").getContext("2d");
 
     chart_fatturato = new Chart(fatturato_canvas, chart_options);
-    //chart_acquisti = new Chart(fatturato_canvas, chart_options);
 
     add_calendar();
 });
@@ -225,17 +219,17 @@ $totale = $dbo->fetchArray('SELECT
 echo '
 <div class="row">
     <div class="col-md-6">
-        <div class="box box-warning">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3>
+        <div class="card card-warning">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fa fa-minus"></i>
                     </button>
                 </div>
             </div>
-            <div class="box-body collapse in">';
+            <div class="card-body" height="500">';
 if (!empty($clienti)) {
     echo '
                 <table class="table table-striped">
@@ -312,23 +306,23 @@ $totale = $dbo->fetchArray('SELECT
 
 echo '
     <div class="col-md-6">
-        <div class="box box-danger">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h3>
+        <div class="card card-danger">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fa fa-minus"></i>
                     </button>
                 </div>
             </div>
-            <div class="box-body collapse in">';
+            <div class="card-body" height="500">';
 if (!empty($articoli)) {
     echo '
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Articolo').'</th>
-                        <th class="text-right" width="100">'.tr('N. articoli').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="100">'.tr('N. articoli').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle" aria-hidden="true"></i></span></th>
                         <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                         <th class="text-right" width="120">'.tr('Totale').'<span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
@@ -344,7 +338,7 @@ if (!empty($articoli)) {
     echo '
                 </table>';
 
-    echo "<br><p class='pull-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('title', 'Statistiche vendita', Models\Locale::getPredefined()->id)).'</p>';
+    echo "<br><p class='float-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('title', 'Statistiche vendita', Models\Locale::getPredefined()->id)).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';
@@ -357,7 +351,7 @@ echo '
 </div>';
 
 // Numero interventi per tipologia
-$tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
+$tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
 
 $dataset = '';
 foreach ($tipi as $tipo) {
@@ -370,7 +364,7 @@ foreach ($tipi as $tipo) {
         `in_interventi`
         LEFT JOIN(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni ON `in_interventi`.`id` = `sessioni`.`idintervento`
     WHERE
-        `in_interventi`.`idtipointervento` = '.prepare($tipo['idtipointervento']).' 
+        `in_interventi`.`idtipointervento` = '.prepare($tipo['id']).' 
         AND `sessioni`.`orario_fine` BETWEEN '.prepare($start).' AND '.prepare($end).'
     GROUP BY
         YEAR(`sessioni`.`orario_fine`),
@@ -385,7 +379,7 @@ foreach ($tipi as $tipo) {
     $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
-        label: "'.$tipo['descrizione'].'",
+        label: "'.$tipo['title'].'",
         backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($interventi, 'result')).'
@@ -394,20 +388,22 @@ foreach ($tipi as $tipo) {
 }
 
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Numero interventi per tipologia').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Numero interventi per tipologia').'</h4>
 
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="interventi_n_tipologia" height="100"></canvas>
+    <div class="card-body">
+        <canvas id="interventi_n_tipologia" height="100"></canvas>
+    </div>
 </div>';
 
-// Script per il grafico del numero interventi per tipologia
+// Script for the chart displaying the number of interventions by type
 echo '
 <script>
 $(document).ready(function() {
@@ -432,7 +428,7 @@ $(document).ready(function() {
 // Ore interventi per tipologia
 $dataset = '';
 foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('SELECT ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' AND in_interventi_tecnici.orario_fine BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi_tecnici.orario_fine), MONTH(in_interventi_tecnici.orario_fine) ORDER BY YEAR(in_interventi_tecnici.orario_fine) ASC, MONTH(in_interventi_tecnici.orario_fine) ASC');
+    $interventi = $dbo->fetchArray('SELECT ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.idtipointervento = '.prepare($tipo['id']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' AND in_interventi_tecnici.orario_fine BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi_tecnici.orario_fine), MONTH(in_interventi_tecnici.orario_fine) ORDER BY YEAR(in_interventi_tecnici.orario_fine) ASC, MONTH(in_interventi_tecnici.orario_fine) ASC');
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
@@ -440,7 +436,7 @@ foreach ($tipi as $tipo) {
     $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
-        label: "'.$tipo['descrizione'].'",
+        label: "'.$tipo['title'].'",
         backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($interventi, 'result')).'
@@ -449,17 +445,19 @@ foreach ($tipi as $tipo) {
 }
 
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Ore interventi per tipologia').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Ore interventi per tipologia').'</h4>
 
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="interventi_ore_tipologia" height="100"></canvas>
+    <div class="card-body">
+        <canvas id="interventi_ore_tipologia" height="100"></canvas>
+    </div>
 </div>';
 
 // Script per il grafico delle ore interventi per tipologia
@@ -502,7 +500,7 @@ ORDER BY
 
 $dataset = '';
 if ($_SESSION['superselect']['idtipiintervento']) {
-    $where = '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')';
+    $where = '`in_interventi_tecnici`.`id` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')';
 } else {
     $where = '1=1';
 }
@@ -530,12 +528,12 @@ foreach ($tecnici as $tecnico) {
 }
 
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Ore di lavoro per tecnico').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Ore di lavoro per tecnico').'</h4>
 
         <div class="row">
-            <div class="col-md-3 pull-right">';
+            <div class="col-md-3 float-right">';
 if ($_SESSION['superselect']['idtipiintervento']) {
     echo '
                 {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
@@ -544,13 +542,15 @@ echo '
             </div>
         </div>
 
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="sessioni" height="100"></canvas>
+    <div class="card-body">
+        <canvas id="sessioni" height="100"></canvas>
+    </div>
 </div>';
 
 // Script per il grafico ore interventi per tecnico
@@ -702,19 +702,20 @@ $dataset .= '{
         '.implode(',', array_column($nuovi_fornitori, 'result')).'
     ]
 },';
-
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Nuove anagrafiche').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h4 class="card-title">'.tr('Nuove anagrafiche').'</h4>
 
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="n_anagrafiche" height="100"></canvas>
+    <div class="card-body">
+        <canvas id="n_anagrafiche" height="100"></canvas>
+    </div>
 </div>';
 
 // Script per il grafico dei nuovi clienti per mese

@@ -501,7 +501,7 @@ function verificaScontoArticolo() {
     }
 
     div.css("margin-top", "-13px");
-    div.html(`<small class="label label-info">'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(` <span class="right badge badge-info">'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -609,7 +609,7 @@ function verificaMinimoVendita() {
     div.css("margin-top", "-13px");
     if (prezzo_unitario < minimo_vendita) {
         if (input("blocca_minimo_vendita").get() == "0") {
-            div.html(`<p class="label-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
         }
     } else {
         div.html("");
@@ -617,7 +617,7 @@ function verificaMinimoVendita() {
     if (prezzo_unitario <= minimo_vendita) {
         if (input("blocca_minimo_vendita").get() == "1") {
             prezzo_unitario_input.val(minimo_vendita);
-            div.html(`<p class="label-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
         } 
     }
 }

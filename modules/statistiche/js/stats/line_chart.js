@@ -32,7 +32,7 @@ class LineChart extends Stat {
         this.getData(start, end, function(response) {
             var data = JSON.parse(response);
 
-            var label = data.label;
+            var label = data.badge;
 
             var dataset = [];
             var labels = [];
@@ -44,8 +44,8 @@ class LineChart extends Stat {
                 labels.push(date.format("MMMM YYYY"));
             });
 
-            while (chart.data.labels.length < data.results.length) {
-                chart.data.labels.push("");
+            while (chart.data.badges.length < data.results.length) {
+                chart.data.badges.push("");
             }
 
             chart.data.datasets.push({
@@ -100,11 +100,11 @@ class LineChart extends Stat {
             color = color.substr(0, 7);
 
             chart.data.datasets.splice(dataset_index, 1);
-            chart.data.labels.splice(dataset_index, 1);
+            chart.data.badges.splice(dataset_index, 1);
         }
 
-        while (chart.data.labels.length > max_length) {
-            chart.data.labels.pop("");
+        while (chart.data.badges.length > max_length) {
+            chart.data.badges.pop("");
         }
 
         chart.update();

@@ -18,13 +18,13 @@
  */
 
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
+<div class="tip" data-widget="tooltip" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
     <button type="button" class="btn btn-primary" '.(!empty($anagrafica) ? '' : 'disabled').' id="compilazione_automatica" onclick="compile(this)" >
         <i class="fa fa-address-book"></i> '.tr('Compila automaticamente').'
     </button>
 </div>
 
-<div class="tip" data-toggle="tooltip" title="'.tr('Tenta il completamento automatico dei riferimenti per le righe delle fattura elettronica sulla base di Ordini e DDT registrati nel gestionale per il Fornitore').'.">
+<div class="tip" data-widget="tooltip" title="'.tr('Tenta il completamento automatico dei riferimenti per le righe delle fattura elettronica sulla base di Ordini e DDT registrati nel gestionale per il Fornitore').'.">
     <button type="button" class="btn btn-primary" '.(!empty($anagrafica) ? '' : 'disabled').' onclick="compilaRiferimenti(this)" >
         <i class="fa fa-list"></i> '.tr('Cerca riferimenti').'
     </button>

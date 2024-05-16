@@ -129,18 +129,18 @@ echo '
 if ($nome_stampa != 'Liquidazione IVA') {
     $elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
     echo '
-	<div class="box box-primary collapsable collapsed-box">
-		<div class="box-header with-border">
-			<h3 class="box-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
+	<div class="card card-primary collapsable collapsed-card">
+		<div class="card-header with-border">
+			<h3 class="card-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
         '_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
         '_START_' => dateFormat($_SESSION['period_start']),
         '_END_' => dateFormat($_SESSION['period_end']),
     ]).'</h3>
-			<div class="box-tools pull-right">
-				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+			<div class="card-tools pull-right">
+				<button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
-		<div class="box-body">
+		<div class="card-body">
 			<ul>';
 
     foreach ($elementi as $elemento) {

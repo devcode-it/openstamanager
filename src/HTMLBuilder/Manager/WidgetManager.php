@@ -145,41 +145,31 @@ class WidgetManager implements ManagerInterface
 
     protected function render($widget, $title, $number = null)
     {
-        $result = '
-        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.base_path().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disabilita-widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
-            <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
-        </button>';
+        $result = '';
 
+        // Link aggiuntivo per ulteriori dettagli
         if (!empty($widget['more_link'])) {
             $result .= '
-<a class="clickable" ';
+            <a class="clickable" ';
 
-            // Link diretto
+            // Aggiungi attributi in base al tipo di link
             if ($widget['more_link_type'] == 'link') {
-                $result .= 'href="'.$widget['more_link'].'"';
-            }
-
-            // Modal
-            elseif ($widget['more_link_type'] == 'popup') {
-                $result .= 'data-href="'.$widget['more_link'].'" data-toggle="modal" data-title="'.$widget['text'].'"';
-            }
-
-            // Codice JavaScript
-            elseif ($widget['more_link_type'] == 'javascript') {
+                $result .= ' href="'.$widget['more_link'].'"';
+            } elseif ($widget['more_link_type'] == 'popup') {
+                $result .= 'data-href="'.$widget['more_link'].'" data-widget="modal" data-title="'.$widget['text'].'"';
+            } elseif ($widget['more_link_type'] == 'javascript') {
                 $link = $widget['more_link'];
-
                 $link = Query::replacePlaceholder($link);
-
-                $result .= 'onclick="'.$link.'"';
+                $result .= ' onclick="'.$link.'"';
             }
 
             $result .= '>';
         }
 
+        // Box delle informazioni
         $result .= '
-
         <div class="info-box">
-            <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
+            <span class="info-box-icon bg-'.$widget['bgcolor'].'">';
 
         if (!empty($widget['icon'])) {
             $result .= '
@@ -191,9 +181,14 @@ class WidgetManager implements ManagerInterface
 
             <div class="info-box-content">
                 <span class="info-box-text'.(!empty($widget['help']) ? ' tip' : '').'"'.(!empty($widget['help']) ? ' title="'.prepareToField($widget['help']).'" data-position="bottom"' : '').'>
-                    '.$title.'
+                                '.$title.'
 
                     '.(!empty($widget['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
+                    <button type="button" class="btn close pull-right" onclick="if(confirm(\'Disabilitare questo widget?\')) { 
+                        $.post(\''.base_path().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disabilita-widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); }">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">'.tr('Chiudi').'</span>
+                    </button>
                 </span>';
 
         if (isset($number)) {
@@ -202,11 +197,8 @@ class WidgetManager implements ManagerInterface
         }
 
         $result .= '
-            </div>';
-
-        $result .= '
+            </div>
         </div>';
-
         if (!empty($widget['more_link'])) {
             $result .= '
             </a>';
@@ -249,7 +241,7 @@ class WidgetManager implements ManagerInterface
         // Generazione del codice HTML
         if (!empty($widgets)) {
             $result = '
-<ul class="row widget" id="widget-'.$options['position'].'" data-class="">';
+            <ul class="row widget" id="widget-'.$options['position'].'" data-class="">';
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
@@ -258,7 +250,7 @@ class WidgetManager implements ManagerInterface
                     <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
                 } else {
                     $result .= '
-                    <li class= "col-sm-6 '.($widget['class'] ?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    <li class="col-sm-6 '.($widget['class'] ?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 }
                 $info = array_merge($options, [
                     'id' => $widget['id'],
@@ -266,11 +258,11 @@ class WidgetManager implements ManagerInterface
                 $result .= $this->widget($info);
 
                 $result .= '
-    </li>';
+                </li>';
             }
 
             $result .= '
-</ul>';
+            </ul>';
         }
 
         return $result;

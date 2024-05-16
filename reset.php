@@ -86,12 +86,12 @@ include_once App::filepath('include|custom|', 'top.php');
 // Controllo se è una beta e in caso mostro un warning
 if (Auth::isBrute()) {
     echo '
-    <div class="box box-danger box-center" id="brute">
-        <div class="box-header with-border text-center">
-            <h3 class="box-title">'.tr('Attenzione').'</h3>
+    <div class="card card-danger card-center" id="brute">
+        <div class="card-header with-border text-center">
+            <h3 class="card-title">'.tr('Attenzione').'</h3>
         </div>
 
-        <div class="box-body text-center">
+        <div class="card-body text-center">
         <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
         <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
         </div>
@@ -117,13 +117,13 @@ if (Auth::isBrute()) {
 }
 
 echo '
-    <form action="" method="post" class="box box-center-large box-warning" id="reset">
-        <div class="box-header with-border text-center">
+    <form action="" method="post" class="card card-center-large card-warning" id="reset">
+        <div class="card-header with-border text-center">
             <a href="'.base_path().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
-            <h3 class="box-title">'.$pageTitle.'</h3>
+            <h3 class="card-title">'.$pageTitle.'</h3>
         </div>
 
-        <div class="box-body">';
+        <div class="card-body">';
 
 if (empty($token)) {
     echo '
@@ -147,7 +147,7 @@ if (empty($token)) {
 echo '
             </div>
 
-            <div class="box-footer">
+            <div class="card-footer">
                     <button type="submit" id="submit-button" class="btn btn-success btn-block">
                         <i class="fa fa-arrow-right"></i> '.tr('Invia richiesta').'
             </button>

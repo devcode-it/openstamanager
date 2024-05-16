@@ -36,8 +36,8 @@ echo '
 echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a href="#generazione" data-toggle="tab">'.tr('Generazione multipla').'</a></li>
-        <li><a href="#inserimento" data-toggle="tab">'.tr('Inserimento singolo').'</a></li>
+        <li class="active"><a class="nav-link" href="#generazione" data-widget="tab">'.tr('Generazione multipla').'</a></li>
+        <li><a class="nav-link" href="#inserimento" data-widget="tab">'.tr('Inserimento singolo').'</a></li>
     </ul>
 
     <div class="tab-content">
@@ -100,11 +100,11 @@ echo '
 // Elenco
 if (empty(get('modal'))) {
     echo '
-<div class="box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Elenco seriali').'</h3>
+<div class="card">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.tr('Elenco seriali').'</h3>
     </div>
-    <div class="box-body">';
+    <div class="card-body">';
 
     // Conteggio totale prodotti
     $rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE id_articolo='.prepare($id_record));

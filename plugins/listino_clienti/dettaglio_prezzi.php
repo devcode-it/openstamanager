@@ -111,9 +111,9 @@ echo '
         </div>
     </div>
 
-    <div class="box" id="prezzi">
-        <div class="box-header">
-            <h3 class="box-title">
+    <div class="card" id="prezzi">
+        <div class="card-header">
+            <h3 class="card-title">
                 '.tr('Prezzi per quantità').'
             </h3>
 
@@ -122,7 +122,7 @@ echo '
             </button>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <p>'.tr("Inserire i prezzi da associare all'articolo e all'anagrafica in relazione alla quantità di acquisto").'.</p>
             <p>'.tr('Per impostare un prezzo generale per quantità non incluse in questi limiti, utilizzare il campo sopra indicato').'.</p>
 

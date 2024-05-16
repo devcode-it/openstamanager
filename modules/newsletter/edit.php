@@ -50,12 +50,12 @@ echo '
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dati campagna').'</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Dati campagna').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     '.Modules::link('Template email', $record['id_template'], null, null, 'class="pull-right"').'
@@ -105,12 +105,12 @@ echo '
 	<input type="hidden" name="op" value="add_receivers">
 
 	<!-- Destinatari -->
-    <div class="box box-primary">
-        <div class="box-header">
-            <h3 class="box-title">'.tr('Aggiunta destinatari').'</h3>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Aggiunta destinatari').'</h3>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "destinatari_newsletter", "multiple": 1 ]}
@@ -156,19 +156,19 @@ $destinatari_senza_mail = $newsletter->getNumeroDestinatariSenzaEmail();
 
 echo '
 <!-- Destinatari -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">
             '.tr('Destinatari').'
             <span> ('.$numero_destinatari.')</span>
-            <div class="pull-right">
-                '.(($destinatari_senza_mail > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-danger clickable">'.$destinatari_senza_mail.'</span>' : '')
-                .'<span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-warning clickable" id="numero_consenso_disabilitato"></span>
+            <div class="float-right d-none d-sm-inline">
+                '.(($destinatari_senza_mail > 0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip badge badge-danger clickable">'.$destinatari_senza_mail.'</span>' : '')
+                .'<span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip badge badge-warning clickable" id="numero_consenso_disabilitato"></span>
             </div>
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <table class="table table-hover table-condensed table-bordered" id="destinatari">
             <thead>
                 <tr>

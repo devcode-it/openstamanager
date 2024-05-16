@@ -372,108 +372,110 @@ if (Auth::check()) {
 			<!-- Loader senza overlay -->
 			<div id="tiny-loader" style="display:none;"></div>
 
-			<header class="main-header">
-				<a href="'.tr('https://www.openstamanager.com').'" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
-					<!-- mini logo for sidebar mini 50x50 pixels -->
-					<span class="logo-mini">'.tr('OSM').'</span>
-					<!-- logo for regular state and mobile devices -->
-					<span class="logo-lg">'.tr('OpenSTAManager').'</span>
-				</a>
+			<nav class="main-header navbar navbar-expand">
+            <a href="'.tr('https://www.openstamanager.com').'" class="navbar-brand brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="brand-link-mini">'.tr('OSM').'</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="brand-link-lg">'.tr('OpenSTAManager').'</span>
+            </a>
 				<!-- Header Navbar: style can be found in header.less -->
-                <nav class="navbar navbar-static-top" role="navigation">
 
 					<!-- Sidebar toggle button-->
-					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-
+                    <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a></li></ul>
+				
                     <!-- Navbar Left Menu -->
-                     <div class="navbar-left">
-                        <ul class="nav navbar-nav">
-                            <li><a href="#" id="daterange" role="button" >
-                                <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
-                            </a></li>
-
-                            <li><a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="label label-'.$calendar_color_label.'">
-                                '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
-                            </a></li>
+                    <div class="navbar-left">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a href="#" id="daterange" class="nav-link" role="button">
+                                    <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="badge bg-'.$calendar_color_label.'">
+                                    <'.Translator::dateToLocale($_SESSION['period_start']) . ' - ' . Translator::dateToLocale($_SESSION['period_end']).'>
+                                </a>
+                            </li>
                         </ul>
-                     </div>
+                    </div>
 
                      <!-- Navbar Right Menu -->
-                     <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">
-
-                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
-                                <i class="fa fa-bug"></i>
-                            </a></li>
-
-                            <li class="nav-button" >
-                                <p style="padding:10px 15px;">&nbsp;</p>
-                            </li>';
+                     <ul class="navbar-nav ml-auto">';
     // Visualizzo gli hooks solo se non sono stati disabilitati
     if (!$config['disable_hooks']) {
         echo '
-                            <li class="dropdown notifications-menu nav-button">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
-                                    <span id="hooks-label" class="label label-warning">
+                                    <span id="hooks-badge" class="badge badge-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
                                         <span id="hooks-notified"></span>
-                                        <span id="hooks-counter" class="hide">0</span>
-                                        <span id="hooks-number" class="hide">0</span>
+                                        <span id="hooks-counter" class="d-none">0</span>
+                                        <span id="hooks-number" class="d-none">0</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu">
-									<li class="header"><span class="small" id="hooks-header"></span></li>
-                                    <li><ul class="menu" id="hooks">
-
-                                    </ul></li>
+                                    <li class="nav-item">
+                                        <ul class="menu" id="hooks">
+                                            <li class="nav-item">
+                                                <a href="#" class="nav-link">
+                                                    <span class="small" id="hooks-header"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>';
     }
 
     echo '
-                            <li class="nav-button"><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
-                                <i class="fa fa-print"></i>
-                            </a></li>
+                            <li class="nav-item">
+                                <a href="#" onclick="window.print()" class="nav-link" title="'.tr('Stampa').'">
+                                    <i class="fa fa-print nav-icon"></i>
+                                </a>
+                            </li>
 
-                            <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
-                                <i class="fa fa-book"></i>
-                            </a></li>
+                            <li class="nav-item">
+                                <a href="'.base_path().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
+                                    <i class="fa fa-book nav-icon"></i>
+                                </a>
+                            </li>
 
-                            <li class="nav-button"><a data-href="'.base_path().'/shortcuts.php" data-title="'.tr('Scorciatoie da tastiera').'" class="tip nav-button" title="'.tr('Scorciatoie').'">
-                                <i class="fa fa-keyboard-o"></i>
-                            </a></li>
+                            <li class="nav-item">
+                                <a href="'.base_path().'/shortcuts.php" class="nav-link" title="'.tr('Scorciatoie').'">
+                                    <i class="fa fa-keyboard-o nav-icon"></i>
+                                </a>
+                            </li>
 
-                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
-                                <i class="fa fa-info"></i>
-                            </a></li>
+                            <li class="nav-item">
+                                <a href="'.base_path().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
+                                    <i class="fa fa-info nav-icon"></i>
+                                </a>
+                            </li>
 
-                            <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
-                                <i class="fa fa-power-off"></i>
-                            </a></li>
+                            <li class="nav-item">
+                                <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
+                                    <i class="fa fa-power-off nav-icon"></i>
+                                </a>
+                            </li>
                         </ul>
                      </div>
 				</nav>
 			</header>
 
-            <aside class="main-sidebar">
-                <section class="sidebar">
+            <aside class="main-sidebar sidebar-dark-primary">
+                <div class="sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-transition os-host-scrollbar-horizontal-hidden">
 
-                    <!-- Sidebar user panel -->
-                    <div class="user-panel text-center info" style="height: 60px">
-                        <div class="info">
-                            <p><a href="'.base_path().'/modules/utenti/info.php">
-                                '.$user['username'].'
-                            </a></p>
-                            <p id="datetime"></p>
-                        </div>
-
-                        <a class="image" href="'.base_path().'/modules/utenti/info.php">';
+                <!-- Sidebar user panel -->
+                <div class="user-panel mt-3 pb-3 mb-3 text-center info">
+                    <div class="info">
+                        <p><a href="'.base_path().'/modules/utenti/info.php">
+                            '.$user['username'].'
+                        </a></p>
+                        <p id="datetime"></p>
+                    </div>
+                   <a class="image" href="'.base_path().'/modules/utenti/info.php">';
 
     $user_photo = $user->photo;
     if ($user_photo) {
@@ -491,18 +493,17 @@ if (Auth::check()) {
                     <!-- search form -->
                     <div class="sidebar-form">
                         <div class="input-group">
-                            <input type="text" name="q" class="form-control" id="supersearch" placeholder="'.tr('Cerca').'..."/>
-							<span class="input-group-btn">
-								<button class="btn btn-flat" id="search-btn" name="search" type="submit">
-								    <i class="fa fa-search"></i>
-								</button>
-							</span>
-
+                            <input type="text" name="q" class="form-control" id="supersearch" placeholder="'.tr('Cerca').'"/>
+                            <div class="input-group-append">
+                                <button class="btn btn-flat" id="search-btn" name="search" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <!-- /.search form -->
 
-                    <ul class="sidebar-menu">';
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
     echo Modules::getMainMenu();
     echo '
                     </ul>
@@ -516,79 +517,77 @@ if (Auth::check()) {
         <aside class="control-sidebar control-sidebar-light">
             <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
-                <li data-toggle="control-sidebar" class="active btn-default">
-                    <a data-toggle="tab" href="#tab_0">
+            <li data-toggle="control-sidebar" class="active btn-default nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab_0">
                         '.$structure->getTranslation('title').'
                     </a>
                 </li>';
 
-        // Tab dei plugin
-        if (!empty($id_record)) {
-            $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
-            foreach ($plugins as $plugin) {
-                // Badge count per record plugin
-                $count = 0;
-                $opt = '';
-                if (!empty($plugin['options2'])) {
-                    $opt = json_decode($plugin['options2'], true);
-                } elseif (!empty($plugin['options'])) {
-                    $opt = json_decode($plugin['options'], true);
+                // Tab dei plugin
+                    if (!empty($id_record)) {
+                    $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
+                    foreach ($plugins as $plugin) {
+                        // Badge count per record plugin
+                        $count = 0;
+                        $opt = '';
+                        if (!empty($plugin['options2'])) {
+                            $opt = json_decode($plugin['options2'], true);
+                        } elseif (!empty($plugin['options'])) {
+                            $opt = json_decode($plugin['options'], true);
+                        }
+        
+                        if (!empty($opt)) {
+                            $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
+                            $count = $dbo->fetchNum($q);
+                        }
+        
+                        echo '
+                            <li data-widget="control-sidebar" class="btn-default nav-item" >
+                                <a class="nav-link" data-widget="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                                    '.$plugin['title'].'
+                                    <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
+                                </a>
+                            </li>';
+                    }
                 }
-
-                if (!empty($opt)) {
-                    $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
-                    $count = $dbo->fetchNum($q);
+        
+                // Tab per le note interne
+                if ($structure->permission != '-' && $structure->use_notes) {
+                    $notes = $structure->recordNotes($id_record);
+        
+                    echo '
+                        <li data-widget="control-sidebar" class="btn-default">
+                            <a class="bg-info" data-widget="tab" href="#tab_note" id="link-tab_note">
+                                <'.tr('Note interne').'
+                                <span class="badge pull-right">'.($notes->count() ?: '').'</span>
+                            </a>
+                        </li>';
                 }
-
-                echo '
-                    <li data-toggle="control-sidebar" class="btn-default" >
-                        <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
-                            '.$plugin['title'].'
-                            <span class="badge pull-right">'.($count > 0 ? $count : '').'</span>
-                        </a>
-                    </li>';
-            }
-        }
-
-        // Tab per le note interne
-        if ($structure->permission != '-' && $structure->use_notes) {
-            $notes = $structure->recordNotes($id_record);
-
-            echo '
-                <li data-toggle="control-sidebar" class="btn-default">
-                    <a class="bg-info" data-toggle="tab" href="#tab_note" id="link-tab_note">
-                        '.tr('Note interne').'
-                        <span class="badge pull-right">'.($notes->count() ?: '').'</span>
-                    </a>
-                </li>';
-        }
-
-        // Tab per le checklist
-        if ($structure->permission != '-' && $structure->use_checklists) {
-            $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
-            $checklists_total = $structure->recordChecks($id_record);
-
-            echo '
-                <li data-toggle="control-sidebar" class="btn-default">
-                    <a class="bg-info" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
-                        '.tr('Checklist').'
-                        '.(($checklists_total->count() > 0) ?
-                        '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '').'                                         
-                    </a>
-                </li>';
-        }
-
-        // Tab per le informazioni sulle operazioni
-        if (Auth::admin()) {
-            echo '
-                <li data-toggle="control-sidebar" class="btn-default">
-                    <a class="bg-info" data-toggle="tab" href="#tab_info" id="link-tab_info">
-                        '.tr('Info').'
-                    </a>
-                </li>';
-        }
-
-        echo '
+        
+                // Tab per le checklist
+                if ($structure->permission != '-' && $structure->use_checklists) {
+                    $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
+                    $checklists_total = $structure->recordChecks($id_record);
+        
+                    echo '
+                        <li data-widget="control-sidebar" class="btn-default">
+                            <a class="bg-info" data-widget="tab" href="#tab_checks" id="link-tab_checks">
+                                <'.tr('Checklist').'
+                                <'.($checklists_total->count() > 0) ? '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : ''.'
+                            </a>
+                        </li>';
+                }
+        
+                // Tab per le informazioni sulle operazioni
+                if (Auth::admin()) {
+                    echo '
+                        <li data-widget="control-sidebar" class="btn-default">
+                            <a class="bg-info" data-widget="tab" href="#tab_info" id="link-tab_info">
+                                <'.tr('Info').'
+                            </a>
+                        </li>';
+                }
+                echo'
             </ul>
         </aside>
 
@@ -626,12 +625,12 @@ if (Auth::check()) {
 
     if (!empty($messages['warning']) || !empty($messages['error'])) {
         echo '
-            <div class="box box-warning box-center">
-                <div class="box-header with-border text-center">
-                    <h3 class="box-title">'.tr('Informazioni').'</h3>
+            <div class="card card-warning card-center">
+                <div class="card-header with-border text-center">
+                    <h3 class="card-title">'.tr('Informazioni').'</h3>
                 </div>
 
-                <div class="box-body">';
+                <div class="card-body">';
     }
 }
 

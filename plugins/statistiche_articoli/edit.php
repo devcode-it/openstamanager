@@ -22,35 +22,35 @@ use Models\Module;
 
 echo '
 <hr>
-<div class="box box-warning">
-    <div class="box-header">
-        <h4 class="box-title">
+<div class="card card-warning">
+    <div class="card-header">
+        <h4 class="card-title">
             '.tr('Periodi temporali').'
         </h4>
-        <div class="box-tools pull-right">
+        <div class="card-tools pull-right">
             <button class="btn btn-warning btn-xs" onclick="add_calendar()">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <button type="button" class="btn btn-card-tool" data-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
 
-    <div class="box-body collapse in" id="calendars">
+    <div class="card-body collapse in" id="calendars">
 
     </div>
 </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">
             <span class="tip" title="'.tr('La statistica considera le fatture di acquisto nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio acquisto').'
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <table class="table table-striped table-condensed table-bordered">
             <thead>
                 <tr>
@@ -71,15 +71,15 @@ echo '
     </div>
 </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">
             <span class="tip" title="'.tr('La statistica considera le fatture di vendita nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio vendita').'
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <table class="table table-striped table-condensed table-bordered">
             <thead>
                 <tr>

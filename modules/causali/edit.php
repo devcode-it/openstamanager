@@ -35,11 +35,11 @@ include_once __DIR__.'/../../core.php';
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><?php echo tr('Flags'); ?></h3>
+            <div class="card card-primary">
+                <div class="card-heading">
+                    <h3 class="card-title"><?php echo tr('Flags'); ?></h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="col-md-3">
                         {[ "type": "checkbox", "label": "<?php echo tr('Causale predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questa causale di trasporto come predefinita per i ddt'); ?>." ]}
                     </div>

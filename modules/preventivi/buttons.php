@@ -29,7 +29,7 @@ foreach ($stati_abilitati as $stato) {
 
 // Crea revisione
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
     '_STATE_LIST_' => implode(', ', $stati),
 ]).'">
     <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="openModal(\''.tr('Crea revisione').'\', \''.$module->fileurl('crea_revisione.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
@@ -50,46 +50,46 @@ foreach ($stati_abilitati as $stato) {
 
 // Creazione altri documenti
 echo '
-<div class="btn-group tip" data-toggle="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
+<div class="btn-group tip" data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
     '_STATE_LIST_' => implode(', ', $stati),
 ]).'">
-    <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-widget="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=contratto" data-toggle="modal" data-title="'.tr('Crea contratto').'">
+		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=contratto" data-widget="modal" data-title="'.tr('Crea contratto').'">
                 <i class="fa fa-file-o"></i> '.tr('Contratto').'
             </a>
 		</li>
 
 		<li>
-		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-toggle="modal" data-title="'.tr('Crea ordine cliente').'">
+		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
                 <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
             </a>
         </li>
 
         <li>
-            <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-toggle="modal" data-title="'.tr('Crea ordine fornitore').'">
+            <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-widget="modal" data-title="'.tr('Crea ordine fornitore').'">
                 <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
             </a>
         </li>
 
         <li>
-		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-toggle="modal" data-title="'.tr('Crea attività').'">
+		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-widget="modal" data-title="'.tr('Crea attività').'">
                 <i class="fa fa-file-o"></i> '.tr('Attività').'
             </a>
         </li>
 
 		<li>
-		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ordine cliente').'">
+		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
                 <i class="fa fa-truck"></i> '.tr('DDT in uscita').'
             </a>
 		</li>
 
 		<li>
-            <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+            <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
                 <i class="fa fa-file"></i> '.tr('Fattura').'
             </a>
         </li>

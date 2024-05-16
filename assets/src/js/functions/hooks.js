@@ -173,11 +173,11 @@ function updateHook(hook) {
             if (number == 0) {
                 $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
                 $("#hooks-label").removeClass();
-                $("#hooks-label").addClass('label').addClass('label-success');
+                $("#hooks-label").addClass('badge').addClass('badge-success');
             } else {
                 $("#hooks-notified").text(number);
                 $("#hooks-label").removeClass();
-                $("#hooks-label").addClass('label').addClass('label-danger');
+                $("#hooks-label").addClass('badge').addClass('badge-danger');
             }
 
             if (counter == $("#hooks-number").text()) {

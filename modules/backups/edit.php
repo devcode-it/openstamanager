@@ -171,13 +171,13 @@ $max_execution_time = ini_get('max_execution_time');
 if (setting('Permetti il ripristino di backup da file esterni')) {
     echo '
     <div class="col-md-4">
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+        <div class="card card-success">
+            <div class="card-header with-border">
+                <h3 class="card-title">
                     '.tr('Ripristina backup').' <small>(upload_max_filesize: '.$upload_max_filesize.')</small> <small>(max_execution_time: '.$max_execution_time.')</small>
                 </h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
                 <form action="" method="post" enctype="multipart/form-data" id="restore">
                     <input type="hidden" name="op" value="restore">
 
@@ -246,7 +246,7 @@ if (file_exists($backup_dir)) {
 
             <a class="btn btn-primary" href="'.base_path().'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
-            <div class="pull-right">
+            <div class="float-right d-none d-sm-inline">
                 <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Clicca su Ripristina per ripristinare questo backup').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
                     <i class="fa fa-upload"></i> '.tr('Ripristina').'
                 </a>
@@ -296,7 +296,7 @@ if (file_exists($backup_dir)) {
 
             <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>
 
-            <div class="pull-right">
+            <div class="float-right d-none d-sm-inline">
                 <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
                     <i class="fa fa-upload"></i>
                 </a>

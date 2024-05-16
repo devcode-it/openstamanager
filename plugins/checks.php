@@ -25,11 +25,11 @@ $checks_id = 'checklist_'.$id_module.'_'.$id_plugin;
 
 echo '
 <div id="'.$checks_id.'">
-    <div class="box box-primary">
-        <div class="box-header">
-            <h3 class="box-title">'.tr('Checklist').'</h3>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Checklist').'</h3>
         </div>
-        <div class="box-body" style="position:relative">
+        <div class="card-body" style="position:relative">
             <div id="loading_'.$checks_id.'" class="text-center hide component-loader">
                 <div>
                     <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
@@ -42,11 +42,11 @@ if ($structure->permission == 'rw') {
     echo '
             <div class="row">
                 <div class="col-md-12">
-                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-check.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-check.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-widget="tooltip" data-title="'.tr('Aggiungi check').'">
                         <i class="fa fa-plus"></i> '.tr('Nuova').'
                     </a>
 
-                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-checklist.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-checklist.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-widget="tooltip" data-title="'.tr('Aggiungi check').'">
                         <i class="fa fa-plus"></i> '.tr('Checklist predefinite').'
                     </a>
                 </div>

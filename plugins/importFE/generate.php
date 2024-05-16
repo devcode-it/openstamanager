@@ -516,7 +516,7 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
-                '.(empty($codice_principale) ? '<div style="padding:7px;" class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="label label-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
+                '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
                 <small class="pull-right text-muted">'.$riferimento_fe.'</small>
 
@@ -538,7 +538,7 @@ if (!empty($righe)) {
         if (abs($sconto_unitario) > 0) {
             $text = ($prezzo_unitario >= 0 && $sconto_unitario > 0) || ($prezzo_unitario < 0 && $sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]) : tr('maggiorazione _TOT__TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]);
             echo '
-                        <br><small class="label label-danger">'.$text.'</small>';
+                        <br> <span class="right badge badge-danger">'.$text.'</small>';
         }
         echo '
                 <span id="riferimento_'.$key.'_prezzo"></span>
@@ -570,8 +570,8 @@ if (!empty($righe)) {
                 <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
                 <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
 
-                <div class="box collapsed-box" style="background:#eeeeee;">
-                    <div class="box-header">
+                <div class="card collapsed-card" style="background:#eeeeee;">
+                    <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">
                                 {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'|codice='.($codice_principale ? urlencode($codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode($riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode($riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
@@ -585,15 +585,15 @@ if (!empty($righe)) {
                                 {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
                             </div>
 
-                            <div class="col-md-1 box-tools">
+                            <div class="col-md-1 card-tools">
                                 <br>
-                                <button type="button" class="btn btn-box-tool no-padding-left" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                                <button type="button" class="btn btn-card-tool no-padding-left" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
                                 <i class="fa fa-plus"></i> '.tr('Altro').'
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="box-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
                                 {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento acquisto').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-danger disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini o DDT del Fornitore').'" ]}

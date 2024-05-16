@@ -100,7 +100,7 @@ class ButtonManager implements ManagerInterface
         // Modal
         if (isset($info['type']) && $info['type'] == 'modal') {
             $result = '
-<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" id="'.$options['html_id'].'">';
+<a '.$class.' data-href="'.$info['link'].'" data-widget="modal" data-title="'.$title.'" id="'.$options['html_id'].'">';
         }
 
         // Link normale
@@ -164,7 +164,7 @@ class ButtonManager implements ManagerInterface
             }
 
             $result .= '
-    <button type="button" class="btn '.$options['class'].' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn '.$options['class'].' dropdown-toggle" data-widget="dropdown" aria-haspopup="true" aria-expanded="false">
         '.($predefined === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>

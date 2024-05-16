@@ -120,7 +120,7 @@ echo '
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
-                    <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'aqua').'"><i class="fa fa-question"></i></span>
+                    <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'info').'"><i class="fa fa-question"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Preventivi').'</span>
                         '.($preventivi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'&search_Cliente='.rawurlencode($anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
@@ -221,7 +221,7 @@ echo '
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
-                    <span class="info-box-icon bg-'.(!empty($sessioni) ? 'gray' : 'yellow').'"><i class="fa fa-wrench"></i></span>
+                    <span class="info-box-icon bg-'.(!empty($sessioni) ? 'warning' : 'gray').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
 if ($anagrafica->isTipo('Cliente')) {

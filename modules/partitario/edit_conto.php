@@ -60,7 +60,7 @@ $info = $dbo->fetchOne($query);
     </div>
     <br>
 
-    <div class="pull-right">
+    <div class="float-right d-none d-sm-inline">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-edit"></i> <?php echo tr('Modifica'); ?>
         </button>

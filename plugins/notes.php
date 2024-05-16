@@ -21,12 +21,12 @@ include_once __DIR__.'/../core.php';
 
 if (!empty($notes) && !$notes->isEmpty()) {
     echo '
-        <div class="box box-info direct-chat direct-chat-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Note interne').'</h3>
+        <div class="card card-info direct-chat direct-chat-info">
+            <div class="card-header with-border">
+                <h3 class="card-title">'.tr('Note interne').'</h3>
             </div>
 
-            <div class="box-body">
+            <div class="card-body">
                 <div class="direct-chat-messages" style="height: 50vh">';
 
     foreach ($notes as $nota) {
@@ -53,11 +53,11 @@ if (!empty($notes) && !$notes->isEmpty()) {
 
         echo '
                         <div class="direct-chat-text">
-                            <div class="pull-right">';
+                            <div class="float-right d-none d-sm-inline">';
 
         if (!empty($nota->notification_date)) {
             echo '
-                                <span class="label label-default tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
+                                <span class="badge badge-default tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
                                     <i class="fa fa-bell"></i> '.dateFormat($nota->notification_date).'
                                 </span>
 

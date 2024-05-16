@@ -58,16 +58,16 @@ echo '
 	</div>';
 
 echo '
-    <div class="box box-info collapsed-box">
-	    <div class="box-header with-border">
-	        <h3 class="box-title">'.tr('Dati anagrafici').'</h3>
-	        <div class="box-tools pull-right">
-	            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-	                <i class="fa fa-plus"></i>
-	            </button>
-	        </div>
-	    </div>
-	    <div class="box-body">
+    <div class="card card-info collapsed-card">
+		<div class="card-header">
+			<h3 class="card-title">'.tr('Dati anagrafici').'</h3>
+			<div class="card-tools pull-right">
+				<button type="button" class="btn btn-tool" data-card-widget="collapse">
+					<i class="fa fa-plus"></i>
+				</button>
+			</div>
+		</div>
+		<div class="card-body collapse">
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "piva", "id": "piva_add", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}

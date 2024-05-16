@@ -57,7 +57,7 @@ echo '
 
 </div>
 
-<div class="alert alert-info" id="box-loading">
+<div class="alert alert-info" id="card-loading">
     <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento in corso').'...
 </div>';
 
@@ -67,7 +67,7 @@ echo '
 
 <script>
     var content = $("#righe_documento");
-    var loader = $("#box-loading");
+    var loader = $("#card-loading");
 
     $(document).ready(function() {
         loader.hide();

@@ -23,11 +23,11 @@ include_once __DIR__.'/../../../core.php';
 
 // INTERVENTI ESEGUITI SU QUESTO IMPIANTO
 echo '
-<div class="box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Interventi eseguiti su questo impianto').'</h3>
+<div class="card">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.tr('Interventi eseguiti su questo impianto').'</h3>
     </div>
-    <div class="box-body">';
+    <div class="card-body">';
 
 $results = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, descrizione, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=my_impianti_interventi.idintervento) AS data FROM my_impianti_interventi INNER JOIN in_interventi ON my_impianti_interventi.idintervento=in_interventi.id WHERE idimpianto='.prepare($id_record).' ORDER BY data DESC');
 $totale_interventi = 0;

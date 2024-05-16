@@ -47,11 +47,11 @@ foreach ($id_records as $id) {
 echo '
 <div class="row">
     <div class="col-md-4">
-        <div class="box box-success">
-            <div class="box-header">
-                <h3 class="box-title">'.tr('Interventi da firmare').'</h3>
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Interventi da firmare').'</h3>
             </div>
-            <div class="box-body">';
+            <div class="card-body">';
 if ($interventi_da_firmare) {
     echo '
                 <table class="table table-hover table-bordered table-condensed">
@@ -89,11 +89,11 @@ echo '
     </div>
     
     <div class="col-md-4">
-        <div class="box box-warning">
-            <div class="box-header">
-                <h3 class="box-title">'.tr('Interventi firmati non completati').'</h3>
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Interventi firmati non completati').'</h3>
             </div>
-            <div class="box-body">';
+            <div class="card-body">';
 if ($interventi_firmati) {
     echo '
                 <table class="table table-hover table-bordered table-condensed">
@@ -131,11 +131,11 @@ echo '
     </div>
 
     <div class="col-md-4">
-        <div class="box box-danger">
-            <div class="box-header">
-                <h3 class="box-title">'.tr('Interventi completati').'</h3>
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Interventi completati').'</h3>
             </div>
-            <div class="box-body">';
+            <div class="card-body">';
 if ($interventi_completati) {
     echo '
                 <table class="table table-hover table-bordered table-condensed">

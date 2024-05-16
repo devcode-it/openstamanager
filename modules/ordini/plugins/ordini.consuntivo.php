@@ -95,8 +95,8 @@ if (!empty($interventi)) {
 
             foreach ($sessioni as $sessione) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto_ore = !empty($sessione->sconto_totale_manodopera) ? '<br><span class="label label-danger">'.moneyFormat(-$sessione->sconto_totale_manodopera).'</span>' : '';
-                $sconto_km = !empty($sessione->sconto_totale_viaggio) ? '<br><span class="label label-danger">'.moneyFormat(-$sessione->sconto_totale_viaggio).'</span>' : '';
+                $sconto_ore = !empty($sessione->sconto_totale_manodopera) ? '<br><span class="badge badge-danger">'.moneyFormat(-$sessione->sconto_totale_manodopera).'</span>' : '';
+                $sconto_km = !empty($sessione->sconto_totale_viaggio) ? '<br><span class="badge badge-danger">'.moneyFormat(-$sessione->sconto_totale_viaggio).'</span>' : '';
 
                 echo '
                 <tr>
@@ -147,7 +147,7 @@ if (!empty($interventi)) {
                 </tr>';
 
             foreach ($articoli as $articolo) {
-                $sconto = !empty($articolo->sconto) ? '<br><span class="label label-danger">'.moneyFormat(-$articolo->sconto).'</span>' : '';
+                $sconto = !empty($articolo->sconto) ? '<br><span class="badge badge-danger">'.moneyFormat(-$articolo->sconto).'</span>' : '';
 
                 echo '
                 <tr>
@@ -160,8 +160,8 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per articolo con lo stesso prezzo
-                $ricavo = ($articolo->imponibile - $articolo->sconto) / $articolo->qta;
-                $costo = $articolo->spesa / $articolo->qta;
+                $ricavo = ($articolo->imponibile - $articolo->sconto) / ($articolo->qta>0 ? $articolo->qta : 1);
+                $costo = $articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1);
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->getTranslation('title');
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
@@ -187,7 +187,7 @@ if (!empty($interventi)) {
                 </tr>';
 
             foreach ($righe as $riga) {
-                $sconto = !empty($riga->sconto) ? '<br><span class="label label-danger">'.moneyFormat(-$riga->sconto).'</span>' : '';
+                $sconto = !empty($riga->sconto) ? '<br><span class="badge badge-danger">'.moneyFormat(-$riga->sconto).'</span>' : '';
 
                 echo '
                 <tr>
@@ -287,8 +287,8 @@ echo '
 ksort($tipologie);
 foreach ($tipologie as $key => $tipologia) {
     $margine = $tipologia['ricavo'] - $tipologia['costo'];
-    $margine_prc = (int) (1 - ($tipologia['costo'] / $tipologia['ricavo'])) * 100;
-    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / $tipologia['costo']) - 1) * 100) : 100;
+    $margine_prc = (int) (1 - ($tipologia['costo'] / ($tipologia['ricavo'] > 0 ? $tipologia['ricavo'] : 1))) * 100;
+    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / ($tipologia['costo']>0 ? $tipologia['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td>'.$key.'</td>
@@ -317,8 +317,8 @@ echo '
 ksort($tecnici);
 foreach ($tecnici as $key => $tecnico) {
     $margine = $tecnico['ricavo'] - $tecnico['costo'];
-    $margine_prc = (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] ?: 1))) * 100;
-    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / $tecnico['costo']) - 1) * 100) : 100;
+    $margine_prc = (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] > 0 ? $tecnico['ricavo'] : 1))) * 100;
+    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / ($tecnico['costo'] > 0 ? $tecnico['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td>'.$key.'</td>
@@ -349,8 +349,8 @@ echo '
 ksort($stati_intervento);
 foreach ($stati_intervento as $key => $stato) {
     $margine = $stato['ricavo'] - $stato['costo'];
-    $margine_prc = (int) (1 - ($stato['costo'] / $stato['ricavo'])) * 100;
-    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / $stato['costo']) - 1) * 100) : 100;
+    $margine_prc = (int) (1 - ($stato['costo'] / ($stato['ricavo']>0 ? $stato['ricavo'] : 1))) * 100;
+    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / ($stato['costo']>0 ? $stato['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
@@ -380,8 +380,8 @@ foreach ($materiali_art as $key => $materiali_array1) {
     foreach ($materiali_array1 as $materiali_array2) {
         foreach ($materiali_array2 as $materiale) {
             $margine = $materiale['ricavo'] - $materiale['costo'];
-            $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ?: 1))) * 100;
-            $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ?: 1)) - 1) * 100) : 100;
+            $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ? $materiale['ricavo']: 1))) * 100;
+            $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ? $materiale['costo'] : 1)) - 1) * 100) : 100;
             echo '
                 <tr>
                     <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
@@ -398,8 +398,8 @@ foreach ($materiali_art as $key => $materiali_array1) {
 ksort($materiali_righe);
 foreach ($materiali_righe as $key => $materiale) {
     $margine = $materiale['ricavo'] - $materiale['costo'];
-    $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ?: 1))) * 100;
-    $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ?: 1)) - 1) * 100) : 100;
+    $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] ? $materiale['ricavo'] : 1))) * 100;
+    $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] ? $materiale['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td>'.$key.'</td>

@@ -265,12 +265,12 @@ if ($righe_vuote) {
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- INTESTAZIONE -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
                 
                 <!-- id_segment -->
@@ -596,12 +596,12 @@ if ($dir == 'entrata') {
 <?php
 if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
     echo '
-    <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-edit"></i> '.tr('Dati Fattura accompagnatoria').'</h3>
+    <div class="card card-info">
+        <div class="card-header with-border">
+            <h3 class="card-title"><i class="fa fa-edit"></i> '.tr('Dati Fattura accompagnatoria').'</h3>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('title', 'Aspetto beni', Models\Locale::getPredefined()->id).'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
@@ -779,12 +779,12 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
 
 echo '
 <!-- RIGHE -->
-<div class="panel panel-primary">
-	<div class="panel-heading">
-		<h3 class="panel-title">'.tr('Righe').'</h3>
+<div class="card card-primary">
+	<div class="card-header">
+		<h3 class="card-title">'.tr('Righe').'</h3>
 	</div>
 
-	<div class="panel-body">
+	<div class="card-body">
 		<div class="row">
 			<div class="col-md-12">';
 
@@ -898,8 +898,8 @@ if (!$block_edit) {
                                 <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
                             
-                            <div class="btn-group tip" data-toggle="tooltip">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <div class="btn-group tip" data-card-widget="tooltip">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
                                     <span class="caret"></span>
                                 </button>
@@ -919,32 +919,32 @@ if (!$block_edit) {
         if ($dir == 'entrata') {
             echo '
                                     <li>
-                                        <a class="'.(!empty($interventi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Attività').'" onclick="saveForm()">
+                                        <a class="'.(!empty($interventi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Attività').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Attività').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
+                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Contratto').'
                                         </a>
                                     </li>';
         }
         echo '
                                     <li>
-                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ddt').'
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                        <a class="'.(!empty($ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ordine').'
                                         </a>
                                     </li>';

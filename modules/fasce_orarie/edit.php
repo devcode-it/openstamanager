@@ -30,12 +30,12 @@ use Modules\Pagamenti\Pagamento;
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
@@ -67,12 +67,12 @@ use Modules\Pagamenti\Pagamento;
 	</div>
 
     <!-- Date aggiuntive -->
-    <div class="panel panel-primary hide">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Date aggiuntive'); ?></h3>
+    <div class="card card-primary hide">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Date aggiuntive'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div id="elenco-date">
 
             <?php
@@ -85,7 +85,7 @@ foreach ($results as $result) {
 ?>
 
             </div>
-            <div class="pull-right">
+            <div class="float-right d-none d-sm-inline">
 				<button type="button" class="btn btn-info" onclick="aggiungiData()">
                     <i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?>
                 </button>
@@ -103,11 +103,11 @@ foreach ($results as $result) {
 <?php
 echo '
 <form class="hide" id="template">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Nuova data').'</h3>
+    <div class="card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Nuova data').'</h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <input type="hidden" value="" name="id[-id-]">
 
             <div class="row">
@@ -144,16 +144,16 @@ $elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiinter
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Tipi interventi collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Tipi interventi collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

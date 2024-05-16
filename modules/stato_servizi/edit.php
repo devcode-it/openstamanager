@@ -31,19 +31,19 @@ if (Services::isEnabled()) {
     echo '
     <!-- Informazioni sui Servizi attivi -->
     <div class="col-md-12 col-lg-6">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Servizi').'
                 </h3>
             </div>
 
-            <div class="box-body">';
+            <div class="card-body">';
 
     $servizi = Services::getServiziAttivi()->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
-                <table class="box-body table table-striped table-hover table-condensed">
+                <table class="card-body table table-striped table-hover table-condensed">
                     <thead>
                         <tr>
                             <th width="50%">'.tr('Nome').'</th>
@@ -98,14 +98,14 @@ if (Services::isEnabled()) {
 
     <!-- Informazioni sulle Risorse API -->
     <div class="col-md-12 col-lg-6">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Risorse').'
                 </h3>
             </div>
 
-            <div class="box-body">';
+            <div class="card-body">';
 
     // Elaborazione delle risorse API in scadenza
     $risorse_attive = Services::getRisorseAttive();
@@ -135,7 +135,7 @@ if (Services::isEnabled()) {
         }
 
         echo '
-            <table class="box-body table table-striped table-hover table-condensed">
+            <table class="card-body table table-striped table-hover table-condensed">
                 <thead>
                     <tr>
                         <th width="50%">'.tr('Nome').'</th>
@@ -164,10 +164,10 @@ if (Services::isEnabled()) {
         if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
             echo '
 
-                <div class="panel panel-primary">
-                    <div class="panel-heading" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
+                <div class="card card-primary">
+                    <div class="card-heading" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
 
-                    <div class="panel-body">
+                    <div class="card-body">
                                 
                         <div class="alert hidden" role="alert" id="spazio-fe">
                             <i id="spazio-fe-icon" class=""></i> <span>'.tr('Attenzione, spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ disponibili', [
@@ -187,7 +187,7 @@ if (Services::isEnabled()) {
                         </div>
 
 
-                        <table class="box-body table table-striped table-hover table-condensed">
+                        <table class="card-body table table-striped table-hover table-condensed">
                             <thead>
                                 <tr>
                                     <th>'.tr('Anno').'</th>
@@ -248,14 +248,14 @@ echo '
 
 <div class="row">
     <div class="col-md-12 col-lg-6">
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Moduli disponibili').'
                 </h3>
             </div>
 
-            <div class="box-body" id="moduli">
+            <div class="card-body" id="moduli">
             </div>
         </div>
     </div>';
@@ -263,36 +263,36 @@ echo '
 // Widgets + Hooks + Sessioni
 echo '
     <div class="col-md-12 col-lg-6">
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Widget disponibili').'
                 </h3>
             </div>
 
-            <div class="box-body" id="widget">
+            <div class="card-body" id="widget">
             </div>
         </div>
 
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Hooks disponibili').'
                 </h3>
             </div>
 
-            <div class="box-body" id="hook">
+            <div class="card-body" id="hook">
             </div>
         </div>
 
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">
                     '.tr('Sessioni attive durante ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
                 </h3>
             </div>
 
-            <div class="box-body" id="sessioni">
+            <div class="card-body" id="sessioni">
             </div>
         </div>
 

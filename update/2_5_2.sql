@@ -164,3 +164,32 @@ ORDER BY
 
 -- Opzioni possibili per stampa del Contratto
 UPDATE `zz_prints` SET `available_options` = '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"hide-item-number\": \"Nascondere i codici degli articoli\"}' WHERE `zz_prints`.`name` = 'Contratto';
+
+-- Aggiornamento icone per AdminLTE 3
+UPDATE `zz_modules` SET `icon` = "nav-icon fa fa-circle-o" WHERE `icon` = "fa fa-angle-right";
+
+-- Modifica valore colori
+ALTER TABLE `zz_widgets` CHANGE `bgcolor` `bgcolor` VARCHAR(100) NULL DEFAULT NULL; 
+
+UPDATE `zz_widgets` SET `bgcolor` = 
+  CASE
+    WHEN `bgcolor` = "#ff7e00" OR `bgcolor` = "#f2bd00" THEN "warning"
+    WHEN `bgcolor` = "#c62f2a" OR `bgcolor` = "#c2464c" OR `bgcolor` = "#a15d2d" THEN "danger"
+    WHEN `bgcolor` = "#f4af1b" THEN "warning"
+    WHEN `bgcolor` = "#f2bd00" THEN "primary"
+    WHEN `bgcolor` = "#37a02d" OR `bgcolor` = "#4ccc4c" OR `bgcolor` = "#4dc347" OR `bgcolor` = "#6dab3c" THEN "success"
+    WHEN `bgcolor` = "#2d70a1" OR `bgcolor` = "#44aae4" THEN "maroon"
+    WHEN `bgcolor` = "#45a9f1" OR `bgcolor` = "#00c0ef" OR `bgcolor` = "#2deded" THEN "info"
+    WHEN `bgcolor` = "#cccccc" THEN "gray"
+    ELSE `bgcolor`
+  END
+WHERE `bgcolor` IN ("#ff7e00", "#f2bd00", "#c62f2a", "#c2464c", "#a15d2d", "#f4af1b", "#f2bd00", "#37a02d", "#4ccc4c", "#4dc347", "#6dab3c", "#2d70a1", "#44aae4", "#45a9f1", "#00c0ef", "#2deded", "#cccccc");
+
+UPDATE `zz_widgets` set `bgcolor` = 'info' WHERE `name` = 'Note interne';
+UPDATE `zz_widgets` set `bgcolor` = 'info' WHERE `name` = 'Rate contrattuali';
+UPDATE `zz_widgets` set `bgcolor` = 'gray' WHERE `name` = 'Stampa calendario';
+UPDATE `zz_widgets` set `bgcolor` = 'gray' WHERE `name` = 'Stampa calendario settimanale';
+UPDATE `zz_widgets` set `bgcolor` = 'success' WHERE `name` = 'Attività confermate';
+UPDATE `zz_widgets` set `bgcolor` = 'success' WHERE `name` = 'Preventivi in lavorazione';
+UPDATE `zz_widgets` set `bgcolor` = 'warning' WHERE `name` = 'Attività da pianificare';
+UPDATE `zz_widgets` set `bgcolor` = 'warning' WHERE `name` = 'Attività nello stato da programmare';

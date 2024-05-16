@@ -65,7 +65,7 @@ foreach ($rs_stati as $stato) {
                 <label><?php echo $stato['title']; ?></label>
                 <div class="material-switch">
                     <input id="<?php echo $stato['title']; ?>" name="<?php echo $stato['title']; ?>" type="checkbox" checked/>
-                    <label for="<?php echo $stato['title']; ?>" class="label-success"></label>
+                    <label for="<?php echo $stato['title']; ?>" class="badge-success"></label>
                 </div>
 			</div>
 <?php

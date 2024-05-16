@@ -37,16 +37,16 @@ $elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` FROM `in_int
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attività collegate: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Attività collegate: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

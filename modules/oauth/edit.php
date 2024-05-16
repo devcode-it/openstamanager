@@ -24,12 +24,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('OAuth2'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('OAuth2'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "value": "$nome$", "disabled": "1" ]}

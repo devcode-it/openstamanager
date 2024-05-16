@@ -24,16 +24,16 @@ echo '
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 
-	<div class="box box-info collapsable" style="'.((strtolower($record['colore']) == '#ffffff' or empty($record['colore'])) ? '' : 'border-color: '.$record['colore']).'">
+	<div class="card card-info collapsable" style="'.((strtolower($record['colore']) == '#ffffff' or empty($record['colore'])) ? '' : 'border-color: '.$record['colore']).'">
 
-        <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-user"></i> '.$record['ragione_sociale'].'</h3>
-            <div class="box-tools pull-right">
+        <div class="card-header with-border">
+            <h3 class="card-title"><i class="fa fa-user"></i> '.$record['ragione_sociale'].'</h3>
+            <div class="card-tools pull-right">
                 '.Modules::link('Anagrafiche', $record['idanagrafica']).'
             </div>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
 
         <table class="table table-striped table-condensed">
 

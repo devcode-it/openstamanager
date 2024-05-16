@@ -141,11 +141,11 @@ if (!empty(post('db_host'))) {
         $creation = file_put_contents('config.inc.php', $new_config);
         if (!$creation) {
             echo '
-		<div class="box box-center box-danger box-solid text-center">
-			<div class="box-header with-border">
-				<h3 class="box-title">'.tr('Permessi di scrittura mancanti').'</h3>
+		<div class="card card-center card-danger card-solid text-center">
+			<div class="card-header with-border">
+				<h3 class="card-title">'.tr('Permessi di scrittura mancanti').'</h3>
 			</div>
-			<div class="box-body">
+			<div class="card-body">
 				<p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</p>
@@ -160,14 +160,14 @@ if (!empty(post('db_host'))) {
 					<button class="btn btn-info"><i class="fa fa-repeat"></i> '.tr('Riprova').'</button>
 				</form>
 				<hr>
-				<div class="box box-default collapsed-box">
-					<div class="box-header with-border">
-						<h4 class="box-title"><a class="clickable" data-widget="collapse">'.tr('Creazione manuale').'...</a></h4>
-						<div class="box-tools pull-right">
-							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+				<div class="card card-default collapsed-card">
+					<div class="card-header with-border">
+						<h4 class="card-title"><a class="clickable" data-widget="collapse">'.tr('Creazione manuale').'...</a></h4>
+						<div class="card-tools pull-right">
+							<button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 						</div>
 					</div>
-					<div class="box-body">
+					<div class="card-body">
 						<p>'.tr('Inserire il seguente testo nel file _FILE_', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</p>
@@ -190,11 +190,11 @@ if (!empty(post('db_host'))) {
 // Controlla che i parametri di configurazione permettano l'accesso al database
 if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
     echo '
-    <div class="box box-center box-danger box-solid text-center">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Impossibile connettersi al database').'</h3>
+    <div class="card card-center card-danger card-solid text-center">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Impossibile connettersi al database').'</h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <p>'.tr('Si è verificato un errore durante la connessione al database').'.</p>
             <p>'.tr('Controllare di aver inserito correttamente i dati di accesso, e che il database atto ad ospitare i dati del gestionale sia esistente').'.</p>
             <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
@@ -208,11 +208,11 @@ $img = App::getPaths()['img'];
 if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     if (file_exists('config.inc.php')) {
         echo '
-		<div class="box box-center box-danger box-solid text-center">
-			<div class="box-header with-border">
-				<h3 class="box-title">'.tr('Parametri non sufficienti!').'</h3>
+		<div class="card card-center card-danger card-solid text-center">
+			<div class="card-header with-border">
+				<h3 class="card-title">'.tr('Parametri non sufficienti!').'</h3>
 			</div>
-			<div class="box-body">
+			<div class="card-body">
 				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni parametri nella configurazione di base").'.</p>
 				<p>'.tr("Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)", [
             '_FILE_' => '<b>config.inc.php</b>',
@@ -305,12 +305,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         </script>';
 
     echo '
-        <div class="box box-center-large box-warning">
-            <div class="box-header with-border text-center">
+        <div class="card card-center-large card-warning">
+            <div class="card-header with-border text-center">
                 <img src="'.$img.'/logo_completo.png" width="300" alt="'.tr('OSM Logo').'">
             </div>
 
-            <div class="box-body" id="smartwizard">
+            <div class="card-body" id="smartwizard">
                 <span class="pull-right col-md-4">
                     <select class="form-control hide" id="language" required="1">';
 

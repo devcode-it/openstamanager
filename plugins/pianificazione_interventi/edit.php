@@ -51,7 +51,7 @@ echo '
     </div>
 
     <div class="col-md-3">
-        <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary btn-block tip" id="add_promemoria">
+        <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="Aggiungi un nuovo promemoria da pianificare." data-widget="tooltip" class="btn btn-primary btn-block tip" id="add_promemoria">
             <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
         </button>
     </div>
@@ -150,11 +150,11 @@ if (!$elenco_promemoria->isEmpty()) {
                 <td>'.$info_allegati.'</td>
                 <td class="text-right">
 
-                <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$structure->fileurl('pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record='.$promemoria['id'].'\');"'.((!empty($is_pianificabile)) ? '' : ' disabled').'>
+                <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-widget="tooltip" onclick="launch_modal(\'Pianifica\', \''.$structure->fileurl('pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record='.$promemoria['id'].'\');"'.((!empty($is_pianificabile)) ? '' : ' disabled').'>
                     <i class="fa fa-clock-o"></i>
                 </button>
 
-                <button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$promemoria['id'].'\');"'.(!empty($is_pianificabile) ? '' : ' disabled').'>
+                <button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-widget="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$promemoria['id'].'\');"'.(!empty($is_pianificabile) ? '' : ' disabled').'>
                     <i class="fa fa-calendar"></i>
                 </button>
 
@@ -171,7 +171,7 @@ if (!$elenco_promemoria->isEmpty()) {
     if (!empty($promemorias)) {
         echo '
 <br>
-<div class="pull-right">
+<div class="float-right d-none d-sm-inline">
     <button type="button" title="Elimina tutti i promemoria non associati ad intervento" class="btn btn-danger ask tip" data-op="delete-non-associati" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
         <i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
     </button>

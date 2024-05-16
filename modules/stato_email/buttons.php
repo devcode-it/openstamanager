@@ -19,7 +19,7 @@
 
 if (!empty($record['failed_at'])) {
     echo '
-        <span class="label label-danger">
+        <span class="badge badge-danger">
             <i class="fa fa-times"></i> '.tr('Email fallita il: ').Translator::timestampToLocale($record['failed_at']).'
         </span> &nbsp;';
 
@@ -34,7 +34,7 @@ if (!empty($record['failed_at'])) {
         </a>';
 } elseif (!empty($record['sent_at'])) {
     echo '
-    <span class="label label-success">
+    <span class="badge badge-success">
         <i class="fa fa-success"></i> '.tr('Email inviata il: ').Translator::timestampToLocale($record['sent_at']).'
     </span>';
 }

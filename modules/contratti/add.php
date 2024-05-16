@@ -70,17 +70,17 @@ echo '
     </div>
 
     <!-- Informazioni rinnovo -->
-    <div class="box box-primary collapsable collapsed-box">
-        <div class="box-header">
-            <h3 class="box-title">'.tr('Informazioni per rinnovo').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-primary collapsable collapsed-card">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Informazioni per rinnovo').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "value": "'.setting('Crea contratto rinnovabile di default').'", "id": "rinnovabile_add", "help": "'.tr('Il contratto è rinnovabile?').'" ]}

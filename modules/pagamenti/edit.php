@@ -24,12 +24,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-8">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$title$", "required": 1 ]}
@@ -52,12 +52,12 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Rate'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Rate'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div id="elenco-rate">
 <?php
 $giorni_pagamento = [];
@@ -122,9 +122,9 @@ SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`nume
 ORDER BY `data`');
 
     echo '
-				<div class="box box-success">
-					<div class="box-header with-border">
-						<h3 class="box-title">'.tr('Rata _NUMBER_', [
+				<div class="card card-success">
+					<div class="card-header with-border">
+						<h3 class="card-title">'.tr('Rata _NUMBER_', [
         '_NUMBER_' => $numero_rata,
     ]).'</h3>';
     if (empty($elementi)) {
@@ -135,7 +135,7 @@ ORDER BY `data`');
     }
     echo '
 					</div>
-					<div class="box-body">
+					<div class="card-body">
 						<input type="hidden" value="'.$result['id'].'" name="id['.$numero_rata.']">
 
 						<div class="row">
@@ -170,7 +170,7 @@ if (empty($elementi)) {
     ?>
 			</div>
 
-			<div class="pull-right">
+			<div class="float-right d-none d-sm-inline">
 				<button type="button" class="btn btn-info" onclick="aggiungiRata()">
                     <i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?>
                 </button>
@@ -183,13 +183,13 @@ if (empty($elementi)) {
 	</div>
 </form>
 
-<div class="box box-warning box-solid text-center hide" id="wait">
-	<div class="box-header with-border">
-		<h3 class="box-title">
+<div class="card card-warning card-solid text-center hide" id="wait">
+	<div class="card-header with-border">
+		<h3 class="card-title">
             <i class="fa fa-warning"></i> <?php echo tr('Attenzione!'); ?>
         </h3>
 	</div>
-	<div class="box-body">
+	<div class="card-body">
 		<p><?php echo tr('Prima di poter continuare con il salvataggio è necessario che i valori percentuali raggiungano in totale il 100%'); ?>.</p>
 	</div>
 </div>
@@ -198,11 +198,11 @@ if (empty($elementi)) {
 <?php
 echo '
 <form class="hide" id="template">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Nuova rata').'</h3>
+    <div class="card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Nuova rata').'</h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <input type="hidden" value="" name="id[-id-]">
 
             <div class="row">
@@ -233,16 +233,16 @@ echo '
         </div>
 	</div>
 </form>
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

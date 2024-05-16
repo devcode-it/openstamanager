@@ -322,7 +322,7 @@ function impostaCategorieAllegatiDisponibili(gestione, categorie) {
             update(results);
         },
         onSelect: function (item) {
-            input.value = item.label;
+            input.value = item.badge;
         },
     });
 }

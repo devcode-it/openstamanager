@@ -17,31 +17,9 @@
  */
 
 $(document).ready(function () {
-    // Fix per il menu principale
-    $('.sidebar-menu').tree({
-        followLink: true,
-    });
-
-    $('.sidebar-menu > li.treeview i.fa-angle-left').click(function (e) {
-        e.preventDefault();
-        $(this).find('ul').stop().slideDown();
-    });
-
-    $('.sidebar-menu > li.treeview i.fa-angle-down').click(function (e) {
-        e.preventDefault();
-        $(this).find('ul').stop().slideUp();
-    });
-
-    const elenco_menu = $('.treeview-menu > li.active');
-    for (i = 0; i < elenco_menu.length; i++) {
-        const elemento = $(elenco_menu[i]);
-        elemento.parent().show().parent().addClass('active');
-        elemento.parent().parent().find('i.fa-angle-left').removeClass('fa-angle-left').addClass('fa-angle-down');
-    }
-
     // Menu ordinabile
     if (!globals.is_mobile) {
-        const menu = sortable(".sidebar-menu", {
+        const menu = sortable(".nav-sidebar", {
             axis: "y",
             cursor: "move",
             dropOnEmpty: true,
@@ -50,7 +28,7 @@ $(document).ready(function () {
 
         if (menu) {
             menu.addEventListener("sortupdate", function (e) {
-                let order = $(".sidebar-menu > .treeview[data-id]").toArray().map(a => $(a).data("id"))
+                let order = $(".nav-sidebar > .nav-item[data-id]").toArray().map(a => $(a).data("id"))
 
                 $.post(globals.rootdir + "/actions.php", {
                     id_module: globals.order_manager_id,

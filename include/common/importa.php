@@ -82,11 +82,11 @@ echo '
 // Creazione fattura dal documento
 if (!empty($options['create_document'])) {
     echo '
-    <div class="box box-warning">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Nuovo documento').'</h3>
+    <div class="card card-warning">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Nuovo documento').'</h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
 
             <div class="row">
                 <input type="hidden" name="create_document" value="on" />
@@ -213,11 +213,11 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
     }
 
     echo '
-    <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Opzioni generali delle righe').'</h3>
+    <div class="card card-info">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Opzioni generali delle righe').'</h3>
         </div>
-        <div class="box-body">';
+        <div class="card-body">';
 
     echo '
             <div class="row">';
@@ -281,12 +281,12 @@ if (!empty($options['serials'])) {
 
 // Righe del documento
 echo '
-    <div class="box box-success">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Righe da importare').'</h3>
+    <div class="card card-success">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Righe da importare').'</h3>
         </div>
 
-        <table class="box-body table table-striped table-hover table-condensed">
+        <table class="card-body table table-striped table-hover table-condensed">
             <thead>
                 <tr>
                     <th width="2%"><input id="import_all" type="checkbox" checked/></th>
@@ -428,15 +428,15 @@ echo '
 // Elenco righe evase completametne
 if (!$righe_evase->isEmpty()) {
     echo '
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Righe evase completamente').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Righe evase completamente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
             </div>
         </div>
 
-        <table class="box-body table table-striped table-hover table-condensed">
+        <table class="card-body table table-striped table-hover table-condensed">
             <thead>
                 <tr>
                     <th>'.tr('Descrizione').'</th>

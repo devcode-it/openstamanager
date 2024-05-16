@@ -107,52 +107,50 @@ include_once App::filepath('include|custom|', 'top.php');
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
     echo '
-			<div class="clearfix">&nbsp;</div>
-			<div class="alert alert-warning alert-dismissable col-md-6 col-md-push-3 text-center fade in">
-				<i class="fa fa-warning"></i> <b>'.tr('Attenzione!').'</b> '.tr('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
-
+			<div class="clearfix"></div>
+            <div class="alert alert-warning alert-dismissible col-md-6 offset-md-3 text-center show">
+                <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Attenzione!').'</strong> '.tr('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
                 <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-			</div>';
+            </div>';
 }
 
 // Controllo se è una beta e in caso mostro un warning
 if (Auth::isBrute()) {
-    echo '
-            <div class="box box-danger box-center" id="brute">
-                <div class="box-header with-border text-center">
-                    <h3 class="box-title">'.tr('Attenzione').'</h3>
-                </div>
+    echo'
+    <div class="box box-danger" id="brute">
+        <div class="box-header with-border text-center">
+            <h3 class="box-title">'.tr('Attenzione').'</h3>
+        </div>
+        <div class="box-body text-center">
+            <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
+            <p>'. tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+        </div>
+    </div>
 
-                <div class="box-body text-center">
-                <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-                <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
-                </div>
-            </div>
-            <script>
-            $(document).ready(function(){
-                $(".login-box").fadeOut();
-                brute();
-            });
+    <script>
+    $(document).ready(function(){
+        $(".login-box").hide();
+        brute();
+    });
 
-            function brute() {
-                var value = parseFloat($("#brute-timeout").html()) - 1;
-                $("#brute-timeout").html(value);
+    function brute() {
+        var value = parseFloat($("#brute-timeout").text()) - 1;
+        $("#brute-timeout").text(value);
 
-                if(value > 0){
-                    setTimeout("brute()", 1000);
-                } else{
-                    $("#brute").fadeOut();
-                    $(".login-box").fadeIn();
-                }
-            }
-            </script>';
+        if(value > 0){
+            setTimeout(brute, 1000);
+        } else {
+            $("#brute").fadeOut();
+            $(".login-box").fadeIn();
+        }
+    }
+    </script>';
 }
-
 if (!empty(flash()->getMessage('error'))) {
     echo '
             <script>
-			$(document).ready(function(){
-                $(".login-box").effect("shake");
+            $(document).ready(function(){
+                $(".login-box").addClass("animated shake");
             });
             </script>';
 }
@@ -161,7 +159,7 @@ echo '
 			<form action="?op=login" method="post" autocomplete="off">
 				<div class="login-box">
                     <div class="login-logo">
-					    <img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'">
+					    <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" style="max-width: 100%; max-height: 100%;">
                     </div>
 
                     <div class="login-box-body">

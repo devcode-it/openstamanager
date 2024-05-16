@@ -124,6 +124,7 @@ const JS = gulp.parallel(() => {
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
         'ismobilejs/dist/isMobile.min.js',
         'ua-parser-js/dist/ua-parser.min.js',
+        'popper.js/dist/umd/popper.js',
     ];
 
     for (const i in vendor) {
@@ -225,15 +226,15 @@ function srcCSS() {
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
     const themes = gulp.src([
-        config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
-        config.nodeDirectory + '/admin-lte/dist/css/skins/_all-skins.min.css',
-    ])
-        .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
-        .pipe(autoprefixer())
-        .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
-        .pipe(concat('themes.min.css'))
-        .pipe(flatten())
-        .pipe(gulp.dest(config.production + '/' + config.paths.css));
+            config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
+            config.nodeDirectory + '/admin-lte/dist/css/adminlte.min.css',
+        ])
+            .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
+            .pipe(autoprefixer())
+            .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
+            .pipe(concat('themes.min.css'))
+            .pipe(flatten())
+            .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
     return merge(css, print, themes);
 }
@@ -307,11 +308,11 @@ const fonts = gulp.parallel(() => {
         'font-awesome/fonts/fontawesome-webfont.woff',
         'font-awesome/fonts/fontawesome-webfont.woff2',
         'font-awesome/fonts/FontAwesome.otf',
-        'bootstrap/dist/fonts/glyphicons-halflings-regular.eot',
-        'bootstrap/dist/fonts/glyphicons-halflings-regular.svg',
-        'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf',
-        'bootstrap/dist/fonts/glyphicons-halflings-regular.woff',
-        'bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
+        'select2-bootstrap-theme/docs/fonts/glyphicons-halflings-regular.eot',
+        'select2-bootstrap-theme/docs/fonts/glyphicons-halflings-regular.svg',
+        'select2-bootstrap-theme/docs/fonts/glyphicons-halflings-regular.ttf',
+        'select2-bootstrap-theme/docs/fonts/glyphicons-halflings-regular.woff',
+        'select2-bootstrap-theme/docs/fonts/glyphicons-halflings-regular.woff2',
         '../assets/src/css/fonts/sourcesanspro-regular-webfont.eot',
         '../assets/src/css/fonts/sourcesanspro-regular-webfont.svg',
         '../assets/src/css/fonts/sourcesanspro-regular-webfont.ttf',

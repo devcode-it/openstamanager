@@ -30,12 +30,12 @@ echo '
 	<input type="hidden" name="op" value="update_rinnovo">
     <input type="hidden" name="id_record" value="'.$id_record.'">
 
-    <div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Informazioni per rinnovo').'</h3>
+    <div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Informazioni per rinnovo').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "help": "'.tr('Il contratto è rinnovabile?').'", "value": "$rinnovabile$" ]}

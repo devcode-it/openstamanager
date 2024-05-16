@@ -26,13 +26,13 @@ $pageTitle = tr('Log');
 include_once App::filepath('include|custom|', 'top.php');
 
 echo '
-    <div class="box">
-        <div class="box-header">
-            <h3 class="box-title"><i class="fa fa-book"></i> '.tr('Ultimi 100 accessi').'</h3>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fa fa-book"></i> '.tr('Ultimi 100 accessi').'</h3>
         </div>
 
-        <!-- /.box-header -->
-        <div class="box-body table-responsive no-padding">
+        <!-- /.card-header -->
+        <div class="card-body table-responsive no-padding">
             <table class="datatables table table-hover">
                 <thead>
                     <tr>
@@ -81,7 +81,7 @@ foreach ($logs as $log) {
                         <td class="tip" title="'.$created_at->format('d/m/Y H:i:s').'">'.$created_at->diffForHumans().'</td>
                         <td>'.$log['ip'].'</td>
                         <td class="user-agent tip" title="'.strip_tags($log['user_agent']).'">'.$log['user_agent'].'</td>
-                        <td><span class="label label-'.$type.'">'.$stato.'</span></td>
+                        <td><span class="badge badge-'.$type.'">'.$stato.'</span></td>
                     </tr>';
 }
 
@@ -90,9 +90,9 @@ echo '
                 </tbody>
             </table>
         </div>
-        <!-- /.box-body -->
+        <!-- /.card-body -->
     </div>
-    <!-- /.box -->';
+    <!-- /.card -->';
 ?>
 
 <script>

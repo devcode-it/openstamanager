@@ -33,99 +33,99 @@ if (filter('action') == 'do_update') {
         $result = Update::doUpdate($updateRate);
 
         if (!empty($result)) {
-            // Aggiunta del messaggio generico riguardante l'aggiornamento
+            // Adding a generic message regarding the update
             echo '
-        <script>
-            addVersion("'.$update['name'].'");
-        </script>';
-
+                <script>
+                    addVersion("'.$update['name'].'");
+                </script>';
+        
             if (is_array($result)) {
-                // Aggiunta del messaggio riguardante la conclusione dell'aggiornamento del database
+                // Adding a message about the completion of the database update
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
-        <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
-                        '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
-                    ]).'</p>");
-        </script>';
+                <script>
+                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
+                                '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+                            ]).'</p>");
+                </script>';
                 }
-
+        
                 $rate = $result[1] - $result[0];
             } elseif (!empty($update['script'])) {
-                // Aggiunta del messaggio riguardante la conclusione dello script
+                // Adding a message about the completion of the script
                 echo '
-        <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
-                    '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
-                ]).'</p>");
-        </script>';
-
+                <script>
+                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
+                            '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
+                        ]).'</p>");
+                </script>';
+        
                 $rate = $scriptValue;
             }
-
-            // Aumento della percentuale di completamento totale
+        
+            // Increasing the total completion percentage
             if (!empty($rate)) {
                 echo '
-        <script>
-            addProgress('.$rate.');
-        </script>';
+                <script>
+                    addProgress('.$rate.');
+                </script>';
             }
-
+        
             echo '
-        <script>
-            $("#result").load("index.php?action=do_update&firstuse='.$_GET['firstuse'].'");
-        </script>';
+                <script>
+                    $("#result").load("index.php?action=do_update&firstuse='.$_GET['firstuse'].'");
+                </script>';
         } else {
-            // Fallimento
+            // Failure
             echo '
-            <div class="alert alert-danger">
-                <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
-                '_VERSION_' => $update['version'],
-            ]).'
-            </div>';
+                    <div class="alert alert-danger">
+                        <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
+                        '_VERSION_' => $update['version'],
+                    ]).'
+                    </div>';
         }
     }
-    // Aggiornamento completato
+    // Update completed
     elseif (Update::isUpdateCompleted()) {
         Update::updateCleanup();
-
+    
         echo '
-        <p><strong>'.tr('Aggiornamento completato').'</strong> 😃</p>
-        <script>
-            setPercent(100);
-        </script>';
-
-        // Istruzioni per la prima installazione
+            <p><strong>'.tr('Aggiornamento completato').'</strong> 😃</p>
+            <script>
+                setPercent(100);
+            </script>';
+    
+        // Instructions for the first installation
         if ($_GET['firstuse'] == 'true') {
             echo '
-        <p class="text-danger">'.tr('Si consiglia di rimuovere i permessi di scrittura dal file _FILE_', [
-                '_FILE_' => '<b>config.inc.php</b>',
-            ]).'.</p>';
+            <p class="text-danger">'.tr('Si consiglia di rimuovere i permessi di scrittura dal file _FILE_', [
+                    '_FILE_' => '<b>config.inc.php</b>',
+                ]).'.</p>';
         }
-
+    
         echo '
-        <a class="btn btn-success btn-block" href="'.base_path().'">
-            <i class="fa fa-check"></i> '.tr('Continua').'
-        </a>';
+            <a class="btn btn-success btn-block" href="'.base_path().'">
+                <i class="fa fa-check"></i> '.tr('Continua').'
+            </a>';
     }
 
     exit;
 } elseif (Update::isUpdateAvailable()) {
-    // Controllo se l'aggiornamento è in esecuzione
+    // Check if the update is in progress
     if (Update::isUpdateLocked() && filter('force') != '1') {
         $pageTitle = tr('Aggiornamento in corso!');
 
         include_once App::filepath('include|custom|', 'top.php');
 
         echo '
-        <div class="box box-center box-danger box-solid text-center">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Aggiornamento in corso!').'</h3>
+        <div class="card card-danger card-outline text-center">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Aggiornamento in corso!').'</h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
                 <p>'.tr('Il software si trova attualmente nella fase di aggiornamento, potrebbero volerci fino a 10 minuti, siete pregati di attendere sino alla sua conclusione').'.</p>
                 <p>'.tr("In caso di problemi rivolgersi all'amministratore di sistema o all'assistenza del gestionale").'.</p>
-                <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+                <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-redo"></i> '.tr('Riprova').'</a>
             </div>
         </div>';
 
@@ -142,11 +142,11 @@ if (filter('action') == 'do_update') {
     include_once App::filepath('include|custom|', 'top.php');
 
     echo '
-        <div class="box box-center-large box-warning text-center">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
+        <div class="card card-warning card-center-large text-center">
+            <div class="card-header">
+                <h3 class="card-title">'.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
             </div>
-            <div class="box-body">';
+            <div class="card-body">';
     if (!$dbo->isInstalled()) {
         echo '
                 <p><strong>'.tr("E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database").'.</strong></p>';
@@ -158,7 +158,7 @@ if (filter('action') == 'do_update') {
                 <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')).'!', [
         '_BUTTON_' => '<b>"'.$button.'"</b>',
     ]).'</p>
-                <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">
+                <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="continue_button">
 
                 <script>
                 function continue_update(){
@@ -173,7 +173,7 @@ if (filter('action') == 'do_update') {
                     function(){
                         $("#progress").show();
                         $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
-                        $("#contine_button").remove();
+                        $("#continue_button").remove();
                     }, function(){});
                 }
                 </script>
@@ -185,21 +185,20 @@ if (filter('action') == 'do_update') {
                         </div>
                     </div>
                     <hr>
-                    <div class="box box-info text-center collapsed-box">
-                        <div class="box-header with-border">
-                            <h3 class="box-title"><a class="clickable" data-widget="collapse">'.tr('Log').'</a></h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    <div class="card card-info text-center collapsed-card">
+                        <div class="card-header with-border">
+                            <h3 class="card-title"><a class="clickable" data-card-widget="collapse">'.tr('Log').'</a></h3>
+                            <div class="card-tools pull-right">
+                                <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
                             </div>
                         </div>
-                        <div class="box-body info text-left"></div>
+                        <div class="card-body info text-left"></div>
                     </div>
                 </div>
                 <div id="result"></div>';
 
     $total = 0;
     $updates = Update::getTodoUpdates();
-
     foreach ($updates as $update) {
         if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {
             $queries = readSQLFile(base_dir().'/'.$update['directory'].$update['filename'].'.sql', ';');
@@ -216,45 +215,46 @@ if (filter('action') == 'do_update') {
     }
 
     echo '
-                <script>
-                    $(document).ready(function(){
-                        $(".login-box").fadeOut();
+        <script>
+        $(document).ready(function(){
+            $(".login-card").fadeOut();
 
-                        count = '.count($updates).';
-                        current = 0;
-                        versions = [];
+            count = '.count($updates).';
+            current = 0;
+            versions = [];
 
-                        progress = 0;
-                        total = '.$total.';
-                    });
+            progress = 0;
+            total = '.$total.';
+        });
 
-                    function addProgress(rate){
-                        progress += rate;
-                        percent = progress / total * 100;
-                        percent = Math.round(percent);
-                        percent = percent > 100 ? 100 : percent;
+        function addProgress(rate){
+            progress += rate;
+            percent = progress / total * 100;
+            percent = Math.round(percent);
+            percent = percent > 100 ? 100 : percent;
 
-                        setPercent(percent);
-                    }
+            setPercent(percent);
+        }
 
-                    function setPercent(percent){
-                        $("#progress .progress-bar").width(percent + "%");
-                        $("#progress .progress-bar span").text(percent + "%");
-                    }
+        function setPercent(percent){
+            $("#progress .progress-bar").width(percent + "%");
+            $("#progress .progress-bar span").text(percent + "%");
+        }
 
-                    function addVersion(version){
-                        if(versions.indexOf(version) === -1){
-                            versions.push(version);
-                            current += 1;
+        function addVersion(version){
+            if(versions.indexOf(version) === -1){
+                versions.push(version);
+                current += 1;
 
-                            $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
-        '_DONE_' => '" + current + "',
-        '_TODO_' => '" + count + "',
-        '_VERSION_' => '" + version.trim() + "',
-    ]).'</strong></p>");
-                        }
-                    }
-                </script>
-            </div>
-        </div>';
+                $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
+                    '_DONE_' => '" + current + "',
+                    '_TODO_' => '" + count + "',
+                    '_VERSION_' => '" + version.trim() + "',
+                ]).'</strong></p>");
+            }
+        }
+        </script>
+    </div>
+
+    </div>';
 }

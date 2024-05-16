@@ -19,14 +19,14 @@
 
 echo '
 <!-- Istruzioni per il contenuto -->
-<div class="box box-info">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Istruzioni per il campo _FIELD_', [
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Istruzioni per il campo _FIELD_', [
     '_FIELD_' => tr('Codice'),
 ]).'</h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <p>'.tr('Le seguenti sequenze di testo vengono sostituite nel seguente modo').':</p>
         <ul>';
 

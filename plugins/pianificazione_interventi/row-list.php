@@ -111,7 +111,7 @@ if (!$righe->isEmpty()) {
                 $text = discountInfo($riga);
 
                 echo '
-                    <br><small class="label label-danger">'.$text.'</small>';
+                    <br> <span class="right badge badge-danger">'.$text.'</small>';
             }
 
             echo '
@@ -138,17 +138,17 @@ if (!$righe->isEmpty()) {
 
             if ($riga->abilita_serial) {
                 echo '
-                <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.base_path().'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$riga->id.'&idriga='.$riga->id.'\');">
+                <button type="button" class="btn btn-info btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.base_path().'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$riga->id.'&idriga='.$riga->id.'\');">
                     <i class="fa fa-barcode"></i>
                 </button>';
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga)).'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga)).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="elimina_riga(\''.addslashes(get_class($riga)).'\', \''.$riga->id.'\');">
+                <button type="button" class="btn btn-danger btn-xs" data-widget="tooltip" onclick="elimina_riga(\''.addslashes(get_class($riga)).'\', \''.$riga->id.'\');">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';

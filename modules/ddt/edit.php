@@ -88,12 +88,12 @@ if ($righe_vuote) {
     <div class="row">
         <div class="col-md-8">
             <!-- INTESTAZIONE -->
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
+            <div class="card card-primary">
+                <div class="card-heading">
+                    <h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
                 </div>
 
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="row">
                         <?php
                             if ($dir == 'uscita') {
@@ -212,11 +212,11 @@ if (!empty($id_sede_azienda)) {
 ?>
 
             <!-- GEOLOCALIZZAZIONE -->
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-map"></i> <?php echo tr('Geolocalizzazione'); ?></h3>
+            <div class="card card-primary">
+                <div class="card-heading">
+                    <h3 class="card-title"><i class="fa fa-map"></i> <?php echo tr('Geolocalizzazione'); ?></h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                 <?php
     if (!empty($sede_anagrafica->gaddress) || (!empty($sede_anagrafica->lat) && !empty($sede_anagrafica->lng))) {
         echo '
@@ -341,12 +341,12 @@ echo '
     </div>
 
      <!-- DATI DDT -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati ddt'); ?></h3>
+    <div class="card card-primary">
+        <div class="card-heading">
+            <h3 class="card-title"><?php echo tr('Dati ddt'); ?></h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Aspetto beni', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
@@ -479,26 +479,26 @@ if ($dir == 'entrata') {
     if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
         $collapsed = '';
     } else {
-        $collapsed = ' collapsed-box';
+        $collapsed = ' collapsed-card';
     }
 ?>
 
     <!-- Fatturazione Elettronica PA-->
 
-    <div class="box box-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
-        <div class=" box-header">
-            <h4 class=" box-title">
+    <div class="card card-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
+        <div class=" card-header">
+            <h4 class=" card-title">
                 
                 <?php echo tr('Dati appalto'); ?></h4>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <div class="card-tools pull-right">
+                    <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>
             
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
@@ -522,12 +522,12 @@ if ($dir == 'entrata') {
 </form>
 
 <!-- RIGHE -->
-<div class="panel panel-primary">
-	<div class="panel-heading">
-		<h3 class="panel-title"><?php echo tr('Righe'); ?></h3>
+<div class="card card-primary">
+	<div class="card-heading">
+		<h3 class="card-title"><?php echo tr('Righe'); ?></h3>
 	</div>
 
-	<div class="panel-body">
+	<div class="card-body">
 <?php
 
 if (!$block_edit) {
@@ -589,8 +589,8 @@ if (!$block_edit) {
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
                     
-                    <div class="btn-group tip" data-toggle="tooltip">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <div class="btn-group tip" data-card-widget="tooltip">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-list"></i> '.tr('Altro').'
                             <span class="caret"></span>
                         </button>
@@ -608,13 +608,13 @@ if (!$block_edit) {
                             </li>
 
                             <li>
-                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Ddt').'
                                 </a>
                             </li>
 
                             <li>
-                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Ordine').'
                                 </a>
                             </li>
@@ -808,16 +808,16 @@ ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

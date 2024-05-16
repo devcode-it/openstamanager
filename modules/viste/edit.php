@@ -31,12 +31,12 @@ echo '
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Opzioni generali').'</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Opzioni generali').'</h3>
 		</div>
 
-		<div class="panel-body">';
+		<div class="card-body">';
 $options = ($record->options2 == '') ? $record->options : $record->options2;
 if ($options == 'menu') {
     echo '
@@ -103,8 +103,8 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
-        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
+        <li class="active nav-item"><a class="nav-link" data-card-widget="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
+        <li class="nav-item"><a class="nav-link" data-card-widget="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
     </ul>
 
     <div class="tab-content">

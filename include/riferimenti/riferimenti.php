@@ -45,7 +45,7 @@ include_once __DIR__.'/righe_riferimenti.php';
 echo '
 </div>
 
-<div class="alert alert-info" id="box-loading-riferimenti">
+<div class="alert alert-info" id="card-loading-riferimenti">
     <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento in corso').'...
 </div>';
 
@@ -84,12 +84,12 @@ foreach ($ordini as $elemento) {
 }
 
 echo '
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Nuovo riferimento').'</h3>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Nuovo riferimento').'</h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-12">
                 {[ "type": "select", "label": "'.tr('Documento').'", "name": "documento_riferimento", "required": 1, "values": '.$documenti_disponibili->toJson().' ]}
@@ -98,7 +98,7 @@ echo '
 
         <div id="righe_documento"></div>
 
-        <div class="alert alert-info" id="box-loading">
+        <div class="alert alert-info" id="card-loading">
             <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento in corso').'...
         </div>
     </div>
@@ -110,8 +110,8 @@ echo '
 
 <script>
     $(document).ready(function(){
-        $("#box-loading").hide();
-        $("#box-loading-riferimenti").hide();
+        $("#card-loading").hide();
+        $("#card-loading-riferimenti").hide();
     });
 
     var riferimenti = JSON.parse(\''.json_encode($elenco_riferimenti).'\');
@@ -130,7 +130,7 @@ echo '
     });
 
     function caricaRiferimenti() {
-        let loader = $("#box-loading-riferimenti");
+        let loader = $("#card-loading-riferimenti");
         let content = $("#righe_riferimenti");
 
         loader.show();
@@ -158,7 +158,7 @@ echo '
 
     function caricaRighe(tipo_documento, id_documento){
         let content = $("#righe_documento");
-        let loader = $("#box-loading");
+        let loader = $("#card-loading");
 
         loader.show();
         content.html("");

@@ -26,15 +26,15 @@ $paths = App::getPaths();
 include_once App::filepath('include|custom|', 'top.php');
 
 echo '
-<div class="box">
-    <div class="box-header">
+<div class="card">
+    <div class="card-header">
         <img src="'.$paths['img'].'/logo_completo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
-        <div class="pull-right">
+        <div class="float-right d-none d-sm-inline">
             <i class="fa fa-info"></i> '.tr('Informazioni').'
         </div>
     </div>
 
-    <div class="box-body">';
+    <div class="card-body">';
 
 if (file_exists(base_dir().'/assistenza.php')) {
     include base_dir().'/assistenza.php';
@@ -60,12 +60,12 @@ if (file_exists(base_dir().'/assistenza.php')) {
 
         <div class="row">
             <div class="col-md-6">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-globe"></i> '.tr('Perchè software libero').'</h3>
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title text-uppercase"><i class="fa fa-globe"></i> '.tr('Perchè software libero').'</h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <p>'.tr("Il progetto è software libero perchè permette a tutti di conoscere come funziona avendo il codice sorgente del programma e fornisce così la possibilità di studiare come funziona, modificarlo, adattarlo alle proprie esigenze e, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza").'.</p>
 
                         <p>'.tr("E' altrettanto importante sapere come funziona per conoscere come vengono trattati i VOSTRI dati, proteggendo così la vostra <b>privacy</b>").'.</p>
@@ -83,23 +83,23 @@ if (file_exists(base_dir().'/assistenza.php')) {
             </div>
 
             <div class="col-md-6">
-                <div class="box box-warning">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
+                <div class="card card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
                         <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
                     </div>
                 </div>
 
-                <div class="box box-default">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-book"></i> '.tr('Guida e documentazione tecnica').'</h3>
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title text-uppercase"><i class="fa fa-book"></i> '.tr('Guida e documentazione tecnica').'</h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <p>'.tr("La guida all'utilizzo di <strong>OpenSTAManager</strong> e la documentazione tecnica sono consultabili all'indirizzo").':</p>
                         <a href="https://docs.openstamanager.com/" target="_blank"><i class="fa fa-external-link"></i> docs.openstamanager.com/</a>
                     </div>
@@ -109,12 +109,12 @@ if (file_exists(base_dir().'/assistenza.php')) {
 
         <div class="row">
             <div class="col-md-6">
-                <div class="box box-danger">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-group"></i> '.tr('Community').'</h3>
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title text-uppercase"><i class="fa fa-group"></i> '.tr('Community').'</h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <p>'.tr('La community è un componente importante in un progetto open-source perchè mette in contatto le persone tra di loro, utenti e programmatori').'.</p>
 
                         <p>'.tr('Con OpenSTAManager siamo presenti su').':</p>
@@ -164,12 +164,12 @@ if (file_exists(base_dir().'/assistenza.php')) {
             </div>
 
             <div class="col-md-6">
-                <div class="box box-success">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-euro"></i> '.tr('Servizi a pagamento').'</h3>
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title text-uppercase"><i class="fa fa-euro"></i> '.tr('Servizi a pagamento').'</h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <p>'.tr('Per le aziende che hanno necessità di essere seguite da <b>supporto professionale</b> è disponibile un servizio di assistenza e supporto a pagamento').'.</p>
 
                         <p>'.tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup, aggiornamenti e gestione dei dati").'.</p>

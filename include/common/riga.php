@@ -181,10 +181,10 @@ if ($options['dir'] == 'entrata') {
                     
             if (guadagno < 0) {
                 parent.addClass("has-error");
-                $(".table-margine").addClass("label-danger").removeClass("label-success");
+                $(".table-margine").addClass("badge-danger").removeClass("badge-success");
             } else {
                 parent.removeClass("has-error");
-                $(".table-margine").removeClass("label-danger").addClass("label-success");
+                $(".table-margine").removeClass("badge-danger").addClass("badge-success");
             }
         }
 
@@ -254,15 +254,15 @@ if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornit
         $confermato = $result['confermato'];
     }
     echo '
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Informazioni aggiuntive').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
             </div>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
@@ -341,15 +341,15 @@ if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture d
             if (prezzo_unitario < 0) {
                 if (input("is_nota").get() == true) {
                     if (input("dir").get() == "entrata") {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                        div.html(`<span class="right badge badge-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
                     } else {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                        div.html(`<span class="right badge badge-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
                     }
                 } else {
                     if (input("dir").get() == "entrata") {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
+                        div.html(`<span class="right badge badge-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a debito').'</small>`);
                     } else {
-                        div.html(`<small class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
+                        div.html(`<span class="right badge badge-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Importo a credito').'</small>`);
                     }
                 }
             } else {
@@ -368,12 +368,12 @@ if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture d
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
                 div_prezzi.css("margin-bottom", "20px");
-                div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
+                div.html(`<span class="right badge badge-default" >'.tr('Sconto').'</small>`);
             } else if (sconto < 0) {
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
                 div_prezzi.css("margin-bottom", "20px");
-                div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
+                div.html(`<span class="right badge badge-default" >'.tr('Maggiorazione').'</small>`);
             } else {
                 div_margine.css("margin-top", "0px");
                 div_prezzi.css("margin-top", "0px");

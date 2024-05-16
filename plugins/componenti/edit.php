@@ -91,8 +91,8 @@ foreach ($elenchi as $elenco) {
 <hr>';
 
     echo '
-<div class="box collapsed-box box-'.$type.'">
-    <div class="box-header with-border mini">
+<div class="card collapsed-card card-'.$type.'">
+    <div class="card-header with-border mini">
         <table class="table" style="margin:0; padding:0;">
             <thead>
                 <tr>
@@ -122,8 +122,8 @@ foreach ($elenchi as $elenco) {
                     <td class="text-center">
                         <i class="'.$icona_allegati.' fa-lg"></i>
 
-                        <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" onclick="toggleDettagli(this)">
+                        <div class="card-tools pull-right">
+                        <button type="button" class="btn btn-card-tool" onclick="toggleDettagli(this)">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -132,12 +132,12 @@ foreach ($elenchi as $elenco) {
 
                 <tr class="dettagli-componente" data-id="'.$componente->id.'" style="display: none">
                     <td colspan="5">
-                        <div class="panel panel-'.$type.'">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">'.tr('Dati').'</h3>
+                        <div class="card card-'.$type.'">
+                            <div class="card-heading">
+                                <h3 class="card-title">'.tr('Dati').'</h3>
                             </div>
 
-                            <div class="panel-body">
+                            <div class="card-body">
                                 <form action="'.base_path().'/editor.php" method="post" role="form">
                                     <input type="hidden" name="id_module" value="'.$module->id.'">
                                     <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">

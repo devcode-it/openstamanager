@@ -302,11 +302,11 @@ function renderElencoModuli($elenco, $depth = 0)
             <td>
                 '.str_repeat('&nbsp;', $depth * 4).'- '.$record['title'].'
                 '.($compatibile ? '' :
-                    '<div class="tip pull-right" data-toggle="tooltip" title="'.tr('Non compatibile!').' '.tr('Questo _TYPE_ è compatibile solo con le versioni: _LIST_', [
+                    '<div class="tip pull-right" data-widget="tooltip" title="'.tr('Non compatibile!').' '.tr('Questo _TYPE_ è compatibile solo con le versioni: _LIST_', [
                         '_TYPE_' => $nome_tipo,
                         '_LIST_' => $record['compatibility'],
                     ]).'">
-                        <span class="label label-danger">
+                        <span class="badge badge-danger">
                             <i class="fa fa-warning" title="'.tr('Non compatibile!').'"></i>
                         </span>
                     </div>'
@@ -321,7 +321,7 @@ function renderElencoModuli($elenco, $depth = 0)
         if (!$record_bloccato) {
             if ($record['enabled']) {
                 $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                     '_TYPE_' => $nome_tipo,
                 ]).'">
                     <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaModulo(this)">
@@ -333,7 +333,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 $sotto_moduli_disabilitato = strpos($sotto_moduli, 'fa fa-plug') !== false;
                 if ($sotto_moduli_disabilitato) {
                     $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Abilita tutti i sotto-moduli').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Abilita tutti i sotto-moduli').'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaSottoModuli(this)">
                         <i class="fa fa-recycle" title="'.tr('Abilita sotto-moduli').'"></i>
                     </button>
@@ -341,7 +341,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 }
             } else {
                 $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                     '_TYPE_' => $nome_tipo,
                 ]).'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaModulo(this)">
@@ -351,7 +351,7 @@ function renderElencoModuli($elenco, $depth = 0)
             }
         } else {
             $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ non può essere disabilitato', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ non può essere disabilitato', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <i class="fa fa-eye" title="'.tr('Modulo sempre abilitato').'"></i>
@@ -365,14 +365,14 @@ function renderElencoModuli($elenco, $depth = 0)
         // Possibilità di disinstallare solo se il modulo/plugin non è tra quelli predefiniti
         if (empty($record['default'])) {
             $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Puoi disintallare questo modulo: clicca qui per procedere').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Puoi disintallare questo modulo: clicca qui per procedere').'">
                     <button type="button" class="btn btn-danger btn-xs" onclick="rimuoviModulo(this)">
                         <i class="fa fa-trash" title="'.tr('Disinstalla').'"></i>
                     </button>
                 </div>';
         } else {
             $result .= '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ non può essere disinstallato', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ non può essere disinstallato', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <i class="fa fa-trash text-muted" title="'.tr('Modulo non disinstallabile').'"></i>

@@ -37,11 +37,16 @@ echo '
     <i class="fa fa-copy"></i> '.tr('Duplica attività').'
 </button>
 
-
-
 <button type="button" class="btn btn-primary '.(!empty($info_firma) ? 'tip' : '').'" title="'.$info_firma.'" onclick="anteprimaFirma()" '.($record['flag_completato'] ? 'disabled' : '').'>
     <i class="fa fa-'.(!empty($info_firma) ? 'refresh' : 'desktop').'"></i> '.$frase.'...
 </button>
+
+<a class="btn btn-info'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
+    <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
+</a>
+<a class="btn btn-info'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
+    '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
+</a>
 
 <script>
 function duplicaIntervento() {
@@ -58,13 +63,13 @@ function anteprimaFirma() {
 /*
 echo '
 <div class="btn-group">
-    <button class="btn btn-info dropdown-toggle '.(!$record['flag_completato'] ? 'disabled' : '').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-info dropdown-toggle '.(!$record['flag_completato'] ? 'disabled' : '').'" type="button" data-widget="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
                 <i class="fa fa-file"></i> '.tr('Fattura').'
             </a>
         </li>

@@ -328,7 +328,7 @@ class Modules
 
         $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
-        $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
+        $target = '_self';
         $active = ($actual == $title);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 
@@ -348,29 +348,21 @@ class Modules
 
         $result = '';
         if ($show) {
-            $result .= '<li class="treeview';
-            if ($active) {
-                $result .= ' active actual';
-            }
-            $result .= '" id="'.$element['id'].'" data-id="'.$element['id'].'">
-                <a href="'.$link.'" target="'.$target.'" >
-                    <i class="'.$element['icon'].'"></i>
-                    <span>'.$title.'</span>';
+            $result .= '<li class="nav-item'.($active ? ' menu-open' : '').'" id="'.$element['id'].'" data-id="'.$element['id'].'" '.($link != 'javascript:;' ? 'onclick="location.href=\''.$link.'\';"' : '').'>
+                <a href="'.$link.'" class="nav-link'.($active ? ' active' : '').'" target="'.$target.'">
+                    <i class="'.$element['icon'].'">&nbsp;</i>
+                    <p>'.$title.'</p>';
             if (!empty($submenus) && !empty($temp)) {
                 $result .= '
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
+                    <i class="right fa fa-angle-left"></i>
                 </a>
-                <ul class="treeview-menu">
+                <ul class="nav nav-treeview">
                     '.$temp.'
                 </ul>';
             } else {
-                $result .= '
-                </a>';
+                $result .= '</a>';
             }
-            $result .= '
-            </li>';
+            $result .= '</li>';
         }
 
         return [$result, $active, $show];

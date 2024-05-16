@@ -104,13 +104,13 @@ echo '
 
 // Righe
 echo '
-    <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title">
+    <div class="card card-info">
+        <div class="card-header with-border">
+            <h3 class="card-title">
                 '.tr('Righe previste').'
             </h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <table class="table table-bordered table-striped table-hover table-condensed">
                 <thead>
                     <tr>

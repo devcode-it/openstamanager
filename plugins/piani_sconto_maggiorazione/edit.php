@@ -20,12 +20,12 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Prezzo articolo secondo i piani di sconto/magg.').'</h3>
+<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Prezzo articolo secondo i piani di sconto/magg.').'</h3>
 		</div>
 
-		<div class="panel-body">';
+		<div class="card-body">';
 
 $listini = $dbo->fetchArray('SELECT * FROM mg_piani_sconto ORDER BY id ASC');
 

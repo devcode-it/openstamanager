@@ -274,7 +274,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-toggle="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
+            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-card-widget="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
         </div>
 
 		<div class="col-md-10 text-right">

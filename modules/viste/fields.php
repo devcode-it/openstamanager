@@ -36,19 +36,19 @@ foreach ($fields as $key => $field) {
     $editable = !($field->default && $enable_readonly);
 
     echo '
-                <div class="box collapsed-box box-'.($field->visible ? 'success' : 'danger').'">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">'.
+                <div class="card collapsed-card card-'.($field->visible ? 'success' : 'danger').'">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">'.
                             $field->getTranslation('title').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">('.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().')</small>
                         </h3>
 
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <div class="card-tools pull-right">
+                            <button type="button" class="btn btn-card-tool" data-widget="collapse">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
                     </div>
-                    <div id="field-'.$field->id.'" class="box-body collapse">
+                    <div id="field-'.$field->id.'" class="card-body collapse">
                         <div class="row">
                             <input type="hidden" value="'.$field->id.'" name="id['.$key.']">
 
@@ -149,12 +149,12 @@ echo '
         </div>
 
         <div class="col-md-3">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
+            <div class="card card-primary">
+                <div class="card-heading">
+                    <h3 class="card-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
                 </div>
 
-                <div class="panel-body sortable">';
+                <div class="card-body sortable">';
 
 foreach ($fields as $field) {
     echo '
@@ -181,11 +181,11 @@ echo '
 
 echo '
 <form class="hide" id="template">
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Nuovo campo').'</h3>
+    <div class="card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Nuovo campo').'</h3>
         </div>
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <input type="hidden" value="" name="id[-id-]">
                 <div class="col-md-12">

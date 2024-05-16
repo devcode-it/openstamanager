@@ -70,10 +70,9 @@ a.disabled {
 
 #progress .progress-bar span {
     position: absolute;
-    top: 2px;
-    left: 47%;
-    color: #a20;
-    font-weight: bold;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 input[type=file] {
@@ -149,7 +148,7 @@ input[type=file] {
 }
 
 .navbar a:hover,
-.logo:hover,
+.brand-link:hover,
 .alert a,
 .alert a:hover,
 a:hover,
@@ -172,6 +171,11 @@ a:focus {
 
 .box-center-large {
     width: 850px;
+    margin: 7% auto
+}
+
+.card-center-large {
+    width: 1000px;
     margin: 7% auto
 }
 
@@ -246,7 +250,7 @@ a:focus {
     background: transparent url(../img/ajax-loader.gif) top left no-repeat;
 }
 
-body .header .logo {
+body .header .brand-link {
     font-family: inherit;
 }
 
@@ -312,20 +316,18 @@ span.form-control {
 }
 
 .input-group-addon {
-    padding: 0px 12px;
+    padding: 3px 12px;
 }
 
 .colorpicker {
     margin-top: 0;
 }
 
-#pulsanti.affix {
+#pulsanti {
     top: 0;
-    padding: 10px 0;
-    width: 100%;
-    z-index: 800;
-    background: #fff;
-    border-bottom: 3px solid #ddd;
+    padding: 6px;
+    z-index: 1;
+    background: #f6f6f6;
 }
 
 
@@ -333,6 +335,7 @@ span.form-control {
 
 .widget li {
     margin-left: 0;
+    padding-top:10px;
     list-style-type: none;
     height: 106px;
 }
@@ -411,8 +414,8 @@ span.form-control {
     height: 30px;
     position: absolute;
     margin-left: -30px;
-    bottom: 7px;
-    right: 17px;
+    bottom: 1px;
+    right: 15px;
     float: right;
     display: block;
     overflow: hidden;
@@ -427,12 +430,10 @@ span.form-control {
 .info-box-icon i {
     color: #fff;
 }
-
-.progress-description,
-.info-box-text {
+.progress-description {
     white-space: normal;
     overflow: auto;
-    font-size: 12px;
+    font-size: 1rem;
 }
 
 .colorpicker,
@@ -484,14 +485,6 @@ span.form-control {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
 }
 
-/*.sidebar-menu li > a > .pull-right-container {
-    position: absolute;
-    padding: 12px;
-    right: 10px;
-    top: 50%;
-    margin-top: -19px;
-}*/
-
 .sidebar-form {
     border-radius: 3px;
     margin: 10px 10px;
@@ -534,14 +527,6 @@ span.form-control {
 
 .select2-results__option[aria-selected=true] {
     display: none
-}
-
-.select2-container--bootstrap .select2-selection--multiple .select2-selection__choice {
-    margin: 2px 0 0 2px;
-}
-
-.select2-container--bootstrap .select2-selection--single .select2-selection__rendered {
-    padding: 4px;
 }
 
 .input-group-addon.no-padding {
@@ -915,9 +900,9 @@ input.small-width {
     max-height: 20px;
 }
 
-.logo-image {
-    max-width: 320px;
-    max-height: 60px;
+.brand-link {
+    max-width: 150px;
+    max-height: 100px;
 }
 
 .has-feedback .form-control {
@@ -967,10 +952,6 @@ div.tip {
     display: none;
 }
 
-.checkbox-group input[type="checkbox"]+.btn-group>label span {
-    /*width: 20px;*/
-}
-
 .checkbox-group input[type="checkbox"]+.btn-group {
     width: 100%;
     display: flex;
@@ -1010,6 +991,15 @@ div.tip {
     padding-left: 14px;
     text-transform: uppercase;
     color: #888;
+}
+
+
+.control-sidebar > ul {
+    display: block;
+}
+
+.hide {
+    display: none;
 }
 
 /* Fix stile */
@@ -1065,6 +1055,14 @@ div.tip {
     padding: 2px;
 }
 
+.table {
+    padding: .5 rem !important;
+}
+
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
 .alert-warning {
     background-color: #EC971F !important;
 }
@@ -1097,14 +1095,6 @@ div.tip {
     padding: 3px 12px;
     margin-top: 4px;
 }
-
-/*
-* Spunta checkbox viste
-*/
-/*table.dataTable>tbody>tr.selected>td.select-checkbox::after,
-table.dataTable>tbody>tr.selected>th.select-checkbox::after {
-    margin-top: -25px;
-}*/
 
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {
     margin: 2px 0px;
@@ -1203,7 +1193,7 @@ kbd{
         margin-top: 20px
     }
 
-    .main-header .logo {
+    .main-header .brand-link {
         display: none;
     }
 }
@@ -1259,12 +1249,14 @@ kbd{
 
 @media screen and (min-width: 1140px) {
     .with-control-sidebar {
-        margin-right: 230px;
+        margin-right: 150px;
     }
 
     .control-sidebar-open {
         right: 0;
         display: block !important;
+        width: 150px !important;
+        top: calc(5rem) !important;
     }
 
     .control-sidebar.control-sidebar-open,
@@ -1272,12 +1264,7 @@ kbd{
         right: 0;
     }
 
-    .control-sidebar-toggle {
-        /*display: none !important;*/
-    }
 }
-
-
 
 /*
 * Component: Sidebar Mini

@@ -79,9 +79,9 @@ echo '
     }
 </script>
 
-<div class="box box-success">
-    <div class="box-header with-border">
-        <h3 class="box-title">
+<div class="card card-success">
+    <div class="card-header with-border">
+        <h3 class="card-title">
             '.tr('Carica un XML').'
 
             <span class="tip" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
@@ -90,7 +90,7 @@ echo '
 
         </h3>
     </div>
-    <div class="box-body" id="upload">
+    <div class="card-body" id="upload">
         <div class="row">
             <div class="col-md-9">
                 {[ "type": "file", "name": "blob", "required": 1 ]}
@@ -106,13 +106,13 @@ echo '
 </div>';
 
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">
+<div class="card card-info">
+    <div class="card-header with-border">
+        <h3 class="card-title">
             '.tr('Fatture da importare').'</span>
         </h3>
 
-        <div class="pull-right">
+        <div class="float-right d-none d-sm-inline">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
                 <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
             </button>';
@@ -128,7 +128,7 @@ if (Interaction::isEnabled()) {
 echo '
         </div>
     </div>
-    <div class="box-body" id="list">';
+    <div class="card-body" id="list">';
 
 if (Interaction::isEnabled()) {
     echo '

@@ -100,7 +100,7 @@ if (!empty($fattura)) {
                 $text = discountInfo($riga);
 
                 echo '
-                        <br><small class="label label-danger">'.$text.'</small>';
+                        <br> <span class="right badge badge-danger">'.$text.'</small>';
             }
 
             echo '

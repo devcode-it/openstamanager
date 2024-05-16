@@ -101,11 +101,11 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     $table_id = 'main_'.random_int(0, 99);
     echo '
-    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="main-records'.(!empty($id_plugin) ? '-plugins' : '').' table table-condensed table-bordered">
-        <thead>
-            <tr>
-                <th id="th_selector"></th>';
-
+    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="table main-records table-hover table-striped '.(!empty($id_plugin) ? '-plugins' : '').'">
+            <thead>
+                <tr>
+                    <th id="th_selector"></th>';
+    
     foreach ($total['fields'] as $key => $field) {
         $attr_td = '';
         $name = trim($field);

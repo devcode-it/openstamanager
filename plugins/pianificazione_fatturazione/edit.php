@@ -120,7 +120,7 @@ if (!$pianificazioni->isEmpty()) {
         <i class="fa fa-info-circle"></i> '.tr('Nessuna pianificazione della fatturazione impostata per questo contratto').'.
     </div>
 
-    <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-toggle="tooltip" class="btn btn-primary pull-right tip" id="pianifica">
+    <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-widget="tooltip" class="btn btn-primary pull-right tip" id="pianifica">
         <i class="fa fa-plus"></i> '.tr('Pianifica').'
     </button>
     <div class="clearfix"></div>';

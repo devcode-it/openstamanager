@@ -40,7 +40,7 @@ class FileManager implements ManagerInterface
     public function manage($options)
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
-        $options['showpanel'] ??= true;
+        $options['showcard'] ??= true;
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
@@ -63,13 +63,13 @@ class FileManager implements ManagerInterface
         $result = '
 <div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'">';
 
-        if (!empty($options['showpanel'])) {
+        if (!empty($options['showcard'])) {
             $result .= '
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Allegati').'</h3>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Allegati').'</h3>
         </div>
-        <div class="panel-body">';
+        <div class="card-body">';
         }
 
         $count = 0;
@@ -244,7 +244,7 @@ class FileManager implements ManagerInterface
         </div>';
         }
 
-        if (!empty($options['showpanel'])) {
+        if (!empty($options['showcard'])) {
             $result .= '
     </div>
 </div>

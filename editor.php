@@ -109,15 +109,15 @@ if (empty($record) || !$has_access) {
     echo '
 
         <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
+            <ul class="nav nav-tabs nav-item" id="tabs" role="tablist">
                 <li class="pull-left active header">
-                    <a data-toggle="tab" href="#tab_0">
-                        <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
+                    <a data-widget="tab" href="#tab_0" class="nav-link">
+                    <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
     if ($structure->hasAddFile() && $structure->permission == 'rw') {
         echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
     }
 
     echo '
@@ -126,13 +126,13 @@ if (empty($record) || !$has_access) {
 
     echo '
 
-				<li class="control-sidebar-toggle">
-                    <a style="cursor: pointer">'.tr('Plugin').'</a>
+				<li class="control-sidebar-toggle nav-item">
+                    <a class="nav-link" style="cursor: pointer">'.tr('Plugin').'</a>
                 </li>
 			</ul>
 
 			<div class="tab-content">
-                <div id="tab_0" class="tab-pane active">';
+                <div id="tab_0" class="tab-pane active nav-item">';
 
     if (!empty($record['deleted_at'])) {
         $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
@@ -162,88 +162,65 @@ if (empty($record) || !$has_access) {
     }
 
     // Pulsanti di default
-    echo '
-                    <div id="pulsanti">
-                        <a class="btn btn-warning" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
-                            <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
-                        </a>
+    echo '              
 
-                        <div class="pull-right">
-                            {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
+                <div id="pulsanti">
+                    <a class="btn btn-default" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+                        <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
+                    </a>
 
-                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
+                    <div class="float-right d-none d-sm-inline">
+                        {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
+
+                        {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
 
     if (Module::find((new Module())->getByField('title', 'Account SMS', Models\Locale::getPredefined()->id))) {
-        echo '
-                            {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
+            echo '
+                        {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
     }
 
     echo '
 
-                            <div class="btn-group" id="save-buttons">
-                                <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
-                                    <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e ripristina') : tr('Salva')).'
+                        <div class="btn-group" id="save-buttons">
+                            <button type="button" class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
+                                <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e ripristina') : tr('Salva')).'
+                            </button>
+                            <button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item" href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
+                                    <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
+                                    '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
                                 </a>
-                                <a type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li><a href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
-                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
-                                         '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
-                                    </a></li>
-                                </ul>
                             </div>
                         </div>
                     </div>
+                </div>
+                    
 
-                    <script>
-                    $(document).ready(function(){
-                        var form = $("#module-edit").find("form").first();
+                <script>
+                $(document).ready(function(){
+                    var form = $("#module-edit").find("form").first();
 
-                        // Aggiunta del submit
-                        form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
+                    // Aggiunta del submit
+                    form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
 
-                        $("#save").click(function(){
-                            //submitAjax(form);
+                    $("#save").click(function(){
+                        //submitAjax(form);
 
-                            $("#submit").trigger("click");
-                        });
-
-                        $("#save-close").on("click", function (){
-                            form.find("[name=backto]").val("record-list");
-                            $("#submit").trigger("click");
-                        });';
-
-    // Pulsanti dinamici
-    if (!isMobile()) {
-        echo '
-                        $("#pulsanti").affix({
-                            offset: {
-                                top: 200
-                            }
-                        });
-
-                        if ($("#pulsanti").hasClass("affix")) {
-                            $("#pulsanti").css("width", $("#tab_0").css("width"));
-                        }
-
-                        $("#pulsanti").on("affix.bs.affix", function(){
-                            $("#pulsanti").css("width", $("#tab_0").css("width"));
-                        });
-
-                        $("#pulsanti").on("affix-top.bs.affix", function(){
-                            $("#pulsanti").css("width", "100%");
-                        });';
-    }
-
-    echo '
+                        $("#submit").trigger("click");
                     });
-                    </script>
 
-                    <div class="clearfix"></div>
-                    <br>';
+                    $("#save-close").on("click", function (){
+                        form.find("[name=backto]").val("record-list");
+                        $("#submit").trigger("click");
+                    });
+                });
+                </script>
+
+                <div class="clearfix"></div>
+                <br>';
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');
@@ -253,12 +230,12 @@ if (empty($record) || !$has_access) {
         $buttons = ob_get_clean();
 
         echo '
-                    <div class="pull-right" id="pulsanti-modulo">
-                        '.$buttons.'
-                    </div>
+                <div class="float-right d-none d-sm-inline" id="pulsanti-modulo">
+                    '.$buttons.'
+                </div>
 
-                    <div class="clearfix"></div>
-                    <br>';
+                <div class="clearfix"></div>
+                <br>';
         // Eventuale header personalizzato
         $header = $structure->filepath('header.php');
         if ($header) {
@@ -269,7 +246,7 @@ if (empty($record) || !$has_access) {
     // Contenuti del modulo
     echo '
 
-                    <div id="module-edit">';
+                <div id="module-edit">';
 
     $path = $structure->getEditFile();
     if (!empty($path)) {
@@ -277,73 +254,73 @@ if (empty($record) || !$has_access) {
     }
 
     echo '
-                    </div>
-                </div>';
+                </div>
+            </div>';
 
     // Campi personalizzati
     echo '
 
-                <div class="hide" id="custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'">
-                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
-                </div>
+            <div class="hide" id="custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'">
+                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
+            </div>
 
-                <div class="hide" id="custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'">
-                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
-                </div>
+            <div class="hide" id="custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'">
+                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+            </div>
 
-                <script>
-                $(document).ready(function(){
-                    let form = $("#edit-form").first();
+            <script>
+            $(document).ready(function(){
+                let form = $("#edit-form").first();
 
-                    // Ultima sezione/campo del form
-                    let last = form.find(".panel").last();
+                // Ultima sezione/campo del form
+                let last = form.find(".panel").last();
 
-                    if (!last.length) {
-                        last = form.find(".box").last();
-                    }
+                if (!last.length) {
+                    last = form.find(".box").last();
+                }
 
-                    if (!last.length) {
-                        last = form.find(".row").eq(-2);
-                    }
+                if (!last.length) {
+                    last = form.find(".row").eq(-2);
+                }
 
-                    // Campi a inizio form
-                    aggiungiContenuto(form, "#custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'", {}, true);
+                // Campi a inizio form
+                aggiungiContenuto(form, "#custom_fields_top-edit_'.$id_module.'-'.$id_plugin.'", {}, true);
 
-                    // Campi a fine form
-                    aggiungiContenuto(last, "#custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'", {});
-                });
-                </script>';
+                // Campi a fine form
+                aggiungiContenuto(last, "#custom_fields_bottom-edit_'.$id_module.'-'.$id_plugin.'", {});
+            });
+            </script>';
 
     if ($structure->permission != '-' && $structure->use_notes && $user->gruppo != 'Clienti') {
         echo '
-                <div id="tab_note" class="tab-pane">';
+            <div id="tab_note" class="tab-pane">';
 
         include base_dir().'/plugins/notes.php';
 
         echo '
-                </div>';
+            </div>';
     }
 
     if ($structure->permission != '-' && $structure->use_checklists) {
         echo '
-                <div id="tab_checks" class="tab-pane">';
+            <div id="tab_checks" class="tab-pane">';
 
         include base_dir().'/plugins/checks.php';
 
         echo '
-                </div>';
+            </div>';
     }
 
     // Informazioni sulle operazioni
     if (Auth::admin()) {
         echo '
-                <div id="tab_info" class="tab-pane">';
+            <div id="tab_info" class="tab-pane">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
 
         if (!empty($operations)) {
             echo '
-                    <ul class="timeline">';
+                <ul class="timeline">';
 
             foreach ($operations as $operation) {
                 $description = $operation['op'];
@@ -382,42 +359,42 @@ if (empty($record) || !$has_access) {
                 }
 
                 echo '
-                        <li '.$timeline_class.'>
-                            <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <h4 class="timeline-title">'.$description.'</h4>
-                                        </div>
-                                        <div class="col-md-4 text-right">
-                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
-                                            <p><small class="label label-default"><i class="fa fa-user"></i> '.$operation['username'].'</small></p>
-                                        </div>
+                    <li '.$timeline_class.'>
+                        <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h4 class="timeline-title">'.$description.'</h4>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <p><span class="right badge badge-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
+                                        <p><span class="right badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'</small></p>
                                     </div>
                                 </div>
-                                <div class="timeline-body">
-
-                                </div>
-                                <div class="timeline-footer">
-
-                                </div>
                             </div>
-                        </li>';
+                            <div class="timeline-body">
+
+                            </div>
+                            <div class="timeline-footer">
+
+                            </div>
+                        </div>
+                    </li>';
             }
 
             echo '
-                    </ul>';
+                </ul>';
         } else {
             echo '
-                    <div class="alert alert-info">
-                        <i class="fa fa-info-circle"></i>
-                        <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
-                    </div>';
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
+                </div>';
         }
 
         echo '
-                </div>';
+            </div>';
     }
 
     // Plugin
@@ -426,21 +403,21 @@ if (empty($record) || !$has_access) {
         $record = $module_record;
 
         echo '
-				<div id="tab_'.$plugin['id'].'" class="tab-pane">';
+            <div id="tab_'.$plugin['id'].'" class="tab-pane">';
 
         $id_plugin = $plugin['id'];
 
         include base_dir().'/include/manager.php';
 
         echo '
-				</div>';
+            </div>';
     }
 
     $record = $module_record;
 
     echo '
-			</div>
-		</div>';
+        </div>
+    </div>';
 }
 
 redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
@@ -450,10 +427,10 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 
 if (!empty($record)) {
     echo '
-    		<hr>
-            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
-                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
-            </a>';
+        <hr>
+        <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+            <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+        </a>';
 }
 
 echo '
@@ -467,7 +444,7 @@ if ($read_only || !empty($block_edit)) {
 			$(document).ready(function(){
 				$("input, textarea, select", "section.content")'.$not.'.attr("readonly", "true");
                 $("select, input[type=checkbox]", "section.content")'.$not.'.prop("disabled", true);
-                $(".checkbox-buttons label", "section.content")'.$not.'.addClass("disabled");
+                $(".checkbox-buttons badge", "section.content")'.$not.'.addClass("disabled");
                 ';
 
     // Nascondo il plugin Note interne ai clienti

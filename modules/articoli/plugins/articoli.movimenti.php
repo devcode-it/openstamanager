@@ -23,12 +23,12 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 
 echo '
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Articolo').'</h3>
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">'.tr('Articolo').'</h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-6">
                 <span><b>'.tr('Codice: ').'</b>'.$articolo->codice.'</span>
@@ -43,10 +43,10 @@ echo '
 
 // Movimentazione degli articoli
 echo '
-<div class="box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Movimenti').'</h3>
-        <div class="pull-right">';
+<div class="card">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.tr('Movimenti').'</h3>
+        <div class="float-right d-none d-sm-inline">';
 
 echo '
         <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path().'/modules/articoli/modals/add_movimento.php?id_module='.(new Module())->getByField('title', 'Movimenti', Models\Locale::getPredefined()->id).'&id_articolo='.$id_record.'\');">
@@ -77,7 +77,7 @@ echo '
 echo '
         </div>
     </div>
-    <div class="box-body">';
+    <div class="card-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
 $qta_totale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record))['qta'];

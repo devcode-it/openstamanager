@@ -238,33 +238,33 @@ echo '
     </div>
 
 	<!-- DETTAGLI CLIENTE -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Dettagli cliente').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+			<h3 class="card-title">'.tr('Dettagli cliente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
 		</div>
 
-        <div class="box-body" id="dettagli_cliente">
+        <div class="card-body" id="dettagli_cliente">
             '.tr('Seleziona prima un cliente').'...
         </div>
     </div>
 
     <!-- POSIZIONE -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Posizione').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Posizione').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div id="map-add" style="height: 300px;width: 100%;display: flex;align-items: center;justify-content: center;"></div>
         </div>
     </div>';
@@ -272,17 +272,17 @@ echo '
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
 echo '
     <!-- DATI AGGIUNTIVI -->
-    <div class="box box-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
-        <div class="box-header with-border">
-            <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Dettagli aggiuntivi').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
         </div>
 
-		<div class="box-body">
+		<div class="card-body">
 			<div class="row">
                 <div class="col-md-4">
                     {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
@@ -298,17 +298,17 @@ echo '
 // if (empty($id_intervento)) {
 echo '
 	<!-- ASSEGNAZIONE TECNICI -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Assegnazione tecnici').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+			<h3 class="card-title">'.tr('Assegnazione tecnici').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
 		</div>
 
-		<div class="box-body">
+		<div class="card-body">
 	        <div class="row">
                 <div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.$tecnici_assegnati.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1", "readonly": '.intval($id_intervento).'  ]}
@@ -333,17 +333,17 @@ echo '
 
 echo '
 	<!-- ORE LAVORO -->
-    <div class="box box-info collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
-        <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Sessioni di lavoro').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsable '.($origine_dashboard ? '' : 'collapsed-card').'">
+        <div class="card-header with-border">
+			<h3 class="card-title">'.tr('Sessioni di lavoro').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-'.($origine_dashboard ? 'minus' : 'plus').'"></i>
                 </button>
             </div>
 		</div>
 
-		<div class="box-body">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
@@ -370,17 +370,17 @@ echo '
 	</div>
 
     <!-- RICORRENZA -->
-    <div class="box box-info collapsable collapsed-box">
-        <div class="box-header with-border">
-			<h3 class="box-title">'.tr('Ricorrenza').'</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+			<h3 class="card-title">'.tr('Ricorrenza').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
 		</div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva", "value": "" ]}
@@ -488,7 +488,7 @@ echo '
            updateSelectOption("idanagrafica", value);
            session_set("superselect,idanagrafica",value, 0);
 
-            // Carico nel panel i dettagli del cliente
+            // Carico nel card i dettagli del cliente
             $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
@@ -571,7 +571,7 @@ echo '
 		}
 
         if (data !== undefined) {
-            // Carico nel panel i dettagli del cliente
+            // Carico nel card i dettagli del cliente
             $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });

@@ -76,7 +76,7 @@ foreach ($gruppi as $modulo => $widgets) {
         // Possibilità di disabilitare o abilitare il widget
         if ($widget['enabled']) {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaWidget(this)">
@@ -85,7 +85,7 @@ foreach ($gruppi as $modulo => $widgets) {
                 </div>';
         } else {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaWidget(this)">
@@ -101,24 +101,24 @@ foreach ($gruppi as $modulo => $widgets) {
         // Possibilità di spostare il widget
         if (string_ends_with($widget['location'], 'top')) {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo widget è posizionato nella parte superiore della pagina').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo widget è posizionato nella parte superiore della pagina').'">
                     <i class="fa fa-arrow-up" title="'.tr('Parte superiore').'"></i>
                 </div>
 
-                <div class="tip" data-toggle="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte laterale').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte laterale').'">
                     <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
                         <i class="fa fa-arrow-right" title="'.tr('Sposta').'"></i>
                     </button>
                 </div>';
         } else {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte superiore').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte superiore').'">
                     <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
                         <i class="fa fa-arrow-up" title="'.tr('Sposta').'"></i>
                     </button>
                 </div>
 
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo widget è posizionato nella parte laterale della pagina').'">
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo widget è posizionato nella parte laterale della pagina').'">
                     <i class="fa fa-arrow-right" title="'.tr('Parte laterale').'"></i>
                 </div>';
         }

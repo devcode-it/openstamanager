@@ -45,12 +45,12 @@ $query = 'SELECT
         `qta_ordinata` > 0";
 
 echo '
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Articolo').'</h3>
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">'.tr('Articolo').'</h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-6">
                 <span><b>'.tr('Codice: ').'</b>'.$articolo->codice.'</span>
@@ -69,12 +69,12 @@ echo '
 echo '
 <div class="row">
 	<div class="col-md-3">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi.').'">
+		<div class="card card-primary">
+			<div class="card-heading">
+                <h3 class="card-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body" style="min-height:98px;">';
+			<div class="card-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
 $impegnato = sum(array_column($ordini, 'qta_impegnata'));
@@ -135,12 +135,12 @@ echo '
  */
 echo '
 	<div class="col-md-3">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('In ordine').'<span class="tip pull-right" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
+		<div class="card card-primary">
+			<div class="card-heading">
+				<h3 class="card-title">'.tr('In ordine').'<span class="tip pull-right" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body" style="min-height:98px;">';
+			<div class="card-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
 
@@ -207,12 +207,12 @@ $da_ordinare = (($diff <= 0) ? 0 : $diff);
 
 echo '
 	<div class="col-md-3">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Da ordinare').'<span class="tip pull-right" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
+		<div class="card card-primary">
+			<div class="card-heading">
+				<h3 class="card-title">'.tr('Da ordinare').'<span class="tip pull-right" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
                        '.numberFormat($da_ordinare, 'qta').' '.$articolo->um.'
@@ -228,12 +228,12 @@ echo '
 $disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Disponibile').'<span class="tip pull-right" title="'.tr('Quantità disponibili nel magazzino.').'">
+		<div class="card card-primary">
+			<div class="card-heading">
+				<h3 class="card-title">'.tr('Disponibile').'<span class="tip pull-right" title="'.tr('Quantità disponibili nel magazzino.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
@@ -252,12 +252,12 @@ $giacenze = $articolo->getGiacenze();
 echo '
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Giacenze').'</h3>
+        <div class="card card-primary">
+            <div class="card-heading">
+                <h3 class="card-title">'.tr('Giacenze').'</h3>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <table class="table table-striped table-condensed table-bordered">
                     <thead>
                         <tr>

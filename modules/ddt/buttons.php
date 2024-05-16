@@ -26,14 +26,14 @@ $id_module_collegamento = $ddt->direzione == 'entrata' ? (new Module())->getByFi
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {
     echo '
-<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: il movimento tra sedi distinte è necessario completato tramite un DDT in direzione opposta").'.">
+<div class="tip" data-widget="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasporto interno di merce: il movimento tra sedi distinte è necessario completato tramite un DDT in direzione opposta").'.">
     <a class="btn btn-info" href="'.base_url().'/editor.php?id_module='.$id_module_collegamento.'&id_record='.$ddt->id_ddt_trasporto_interno.'">
         <i class="fa fa-truck"></i> '.tr('DDT di completamento trasporto').'
     </a>
 </div>';
 } elseif ($azienda->id == $ddt->anagrafica->id) {
     echo '
-<div class="tip" data-toggle="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasferimento interno di merci tra sedi distinte dell'Azienda: per completare la movimentazione, è necessario generare un DDT in direzione opposta tramite questo pulsante").'.">
+<div class="tip" data-widget="tooltip" title="'.tr("Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un trasferimento interno di merci tra sedi distinte dell'Azienda: per completare la movimentazione, è necessario generare un DDT in direzione opposta tramite questo pulsante").'.">
     <button class="btn btn-warning '.($ddt->isImportabile() ? '' : 'disabled').'" onclick="completaTrasporto()">
         <i class="fa fa-truck"></i> '.tr('Completa trasferimento tra sedi ').'
     </button>
@@ -75,11 +75,11 @@ foreach ($causali as $causale) {
 }
 
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_', [
     '_STATE_LIST_' => implode(', ', $stati_importabili),
     '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
 ]).'">
-    <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
+    <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
     </button>
 </div>';
 

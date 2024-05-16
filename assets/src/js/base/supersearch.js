@@ -52,7 +52,7 @@ $(document).ready(function () {
                     // Trasformazione risultati in formato leggibile
                     const results = data.map(function (result) {
                         return {
-                            label: result.label ? result.label : '<h4>' + result.title + '</h4>' + result.labels
+                            label: result.badge ? result.badge : '<h4>' + result.title + '</h4>' + result.badges
                                 .join('').split('<br/>,').join('<br/>'),
                             group: result.category,
                             link: result.link,
@@ -87,8 +87,8 @@ $(document).ready(function () {
         },
         render: function(item, currentValue){
             const itemElement = document.createElement("div");
-            itemElement.innerHTML = item.label;
-            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.label + "</a>
+            itemElement.innerHTML = item.badge;
+            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.badge + "</a>
             return itemElement;
         }
     });

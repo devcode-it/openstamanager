@@ -21,12 +21,12 @@ include_once __DIR__.'/../../core.php';
 
 echo '
 <!-- DATI -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Informazioni').'</h3>
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">'.tr('Informazioni').'</h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <div class="row">
             <div class="col-md-3">

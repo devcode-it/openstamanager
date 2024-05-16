@@ -512,7 +512,7 @@ switch (filter('op')) {
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
                         <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.strip_tags($sessione['richiesta']) : '').'</div>
-                        '.(!empty($sessione['numero_contratto']) ? '<span class="label label-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="label label-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="label" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
+                        '.(!empty($sessione['numero_contratto']) ? '<span class="badge badge-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="badge badge-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="badge" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
                     </div>';
                 }
             }

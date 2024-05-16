@@ -42,9 +42,9 @@ echo '
 
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-toggle="tab">'.tr('Periodi').'</a></li>
+            <li class="active nav-item"><a class="nav-link" href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-widget="tab">'.tr('Periodi').'</a></li>
 
-            <li><a href="#div_righe" data-tab="righe" data-toggle="tab">'.tr('Righe').'</a></li>
+            <li class="nav-item"><a class="nav-link" href="#div_righe" data-tab="righe" data-widget="tab">'.tr('Righe').'</a></li>
         </ul>
 
         <div class="tab-content">
@@ -137,7 +137,7 @@ foreach ($righe as $riga) {
                     </div>
                 </div>';
 
-    echo '          <div class="label label-warning alert_rate hide">
+    echo '          <div class="badge badge-warning alert_rate hide">
                     <i class="fa fa-warning"></i> <span>'.tr('Attenzione, sono previste _RATE_ rate su _TOT_ quantità totali', [
         '_RATE_' => '<span class="num_rate"></span>',
         '_TOT_' => '<span class="qta_disponibili">'.Translator::numberToLocale($riga->qta - $riga->qta_evasa).'</span>',

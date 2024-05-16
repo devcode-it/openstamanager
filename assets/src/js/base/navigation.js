@@ -62,7 +62,7 @@ $(document).ready(function () {
     });
 
     // Fix per la visualizzazione di Datatables all'interno dei tab Bootstrap
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    $('a[data-widget="tab"]').on('shown.bs.tab', function (e) {
         $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         $($.fn.dataTable.tables(true)).DataTable().scroller.measure();
     });

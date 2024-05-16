@@ -83,47 +83,47 @@ if ($dir == 'entrata') {
             <div id="info" class="hidden">
                 <div  class="row">
                     <div class="col-md-6 ">
-                        <div id="info-title-bozza" class="box">
+                        <div id="info-title-bozza" class="card">
                     
-                            <div class="box-header with-border">
-                                <h3 class="box-title">'.tr('Fatture in stato Bozza del cliente').'</h3>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <div class="card-header with-border">
+                                <h3 class="card-title">'.tr('Fatture in stato Bozza del cliente').'</h3>
+                                <div class="card-tools pull-right">
+                                    <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="box-body" id="info-content-bozza"></div>
+                            <div class="card-body" id="info-content-bozza"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div id="info-title-scadute" class="box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">'.tr('Fatture con termini di pagamento trascorsi').'</h3>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <div id="info-title-scadute" class="card">
+                            <div class="card-header with-border">
+                                <h3 class="card-title">'.tr('Fatture con termini di pagamento trascorsi').'</h3>
+                                <div class="card-tools pull-right">
+                                    <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="box-body" id="info-content-scadute"></div>
+                            <div class="card-body" id="info-content-scadute"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- DETTAGLI CLIENTE -->
-            <div class="box box-info collapsable collapsed-box">
-                <div class="box-header with-border">
-                    <h3 class="box-title">'.tr('Dettagli cliente').'</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <div class="card card-info collapsable collapsed-card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">'.tr('Dettagli cliente').'</h3>
+                    <div class="card-tools pull-right">
+                        <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="box-body" id="dettagli_cliente">
+                <div class="card-body" id="dettagli_cliente">
                     '.tr('Seleziona prima un cliente').'...
                 </div>
             </div>';
@@ -145,7 +145,7 @@ if ($dir == 'entrata') {
 <script>
 $(document).ready(function () {
     if($("#idanagrafica_add").val()){
-        // Carico nel panel i dettagli del cliente
+        // Carico nel card i dettagli del cliente
         $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#idanagrafica_add").val(), function(data){
             $("#dettagli_cliente").html(data);
         });
@@ -169,11 +169,11 @@ $(document).ready(function () {
                 },
                 success: function (results) {
                     
-                    $("#info").removeClass("box-info");
-                    $("#info").removeClass("box-warning");
+                    $("#info").removeClass("card-info");
+                    $("#info").removeClass("card-warning");
                     if (results.length === 0){
-                        $("#info-title-bozza").addClass("box-info");
-                        $("#info-title-bozza").removeClass("box-warning");
+                        $("#info-title-bozza").addClass("card-info");
+                        $("#info-title-bozza").removeClass("card-warning");
                         $("#info-content-bozza").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura in stato Bozza').'</p>")
                     } else {
                         let content = "";
@@ -181,8 +181,8 @@ $(document).ready(function () {
                         results.forEach(function(item) {
                             content += "<li>" + item + "</li>";
                         });
-                        $("#info-title-bozza").addClass("box-warning");
-                        $("#info-title-bozza").removeClass("box-info");
+                        $("#info-title-bozza").addClass("card-warning");
+                        $("#info-title-bozza").removeClass("card-info");
                         $("#info-content-bozza").html("<p>'.tr('Attenzione: per il cliente selezionato sono presenti le seguenti fatture in stato Bozza').':</p><ul>" + content + "</ul>")
                     }
                 }
@@ -199,11 +199,11 @@ $(document).ready(function () {
                     op: "fatture_scadute",
                 },
                 success: function (results) {
-                    $("#info").removeClass("box-info");
-                    $("#info").removeClass("box-warning");
+                    $("#info").removeClass("card-info");
+                    $("#info").removeClass("card-warning");
                     if (results.length === 0){
-                        $("#info-title-scadute").addClass("box-info");
-                        $("#info-title-scadute").removeClass("box-warning");
+                        $("#info-title-scadute").addClass("card-info");
+                        $("#info-title-scadute").removeClass("card-warning");
                         $("#info-content-scadute").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura Scaduta').'</p>")
                     } else {
                         let content = "";
@@ -211,14 +211,14 @@ $(document).ready(function () {
                         results.forEach(function(item) {
                             content += "<li>" + item + "</li>";
                         });
-                        $("#info-title-scadute").addClass("box-warning");
-                        $("#info-title-scadute").removeClass("box-info");
+                        $("#info-title-scadute").addClass("card-warning");
+                        $("#info-title-scadute").removeClass("card-info");
                         $("#info-content-scadute").html("<p>'.tr('Attenzione: per il cliente selezionato le seguenti fatture presentamento una o più rate scadute').':</p><ul>" + content + "</ul>")
                     }
                 }
             });
 
-            // Carico nel panel i dettagli del cliente
+            // Carico nel card i dettagli del cliente
             $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + data.id, function(data){
                 $("#dettagli_cliente").html(data);
             });

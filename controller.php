@@ -49,14 +49,14 @@ if ($segmenti) {
 echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-				<li class="pull-left active header">
-					<a data-toggle="tab" href="#tab_0">
+				<li class="pull-left active header nav-item">
+					<a class="nav-link" data-widget="tab" href="#tab_0" >
                         <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+						<br><button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }
 
 echo '
@@ -68,8 +68,8 @@ $plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main
 // Tab dei plugin
 foreach ($plugins as $plugin) {
     echo '
-				<li>
-					<a data-toggle="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
+				<li class="nav-item">
+					<a class="nav-link" data-widget="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
 				</li>';
 }
 

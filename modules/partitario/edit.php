@@ -63,17 +63,17 @@ foreach ($primo_livello as $conto_primo) {
 
     echo '
 <hr>
-<div class="box conto1">
-    <div class="box-header">
-        <h3 class="box-title">
+<div class="card conto1">
+    <div class="card-header">
+        <h3 class="card-title">
             '.$titolo.' 
-            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo['id'].', 2)">
+            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo['id'].', 2)">
                 <i class="fa fa-plus-circle"></i>
             </button>
         </h3>
     </div>
 
-    <div class="box-body">';
+    <div class="card-body">';
 
     // Livello 2
     $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
@@ -89,7 +89,7 @@ foreach ($primo_livello as $conto_primo) {
 
         echo '
         <div class="conto2" id="conto2-'.$conto_secondo['id'].'">
-            <div class="pull-right">
+            <div class="float-right d-none d-sm-inline">
                 <b>'.moneyFormat($totale_conto2, 2).'</b>&ensp;&ensp;
                 '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
@@ -97,7 +97,7 @@ foreach ($primo_livello as $conto_primo) {
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+                <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
                 <i class="fa fa-plus-circle"></i>
                 </button>
             </div>

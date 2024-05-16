@@ -56,17 +56,17 @@ echo '
 foreach ($gruppi as $key => $gruppo) {
     echo '
 <!-- Impostazioni della singola sezione -->
-<div class="box box-primary collapsed-box" title="'.$gruppo['nome'].'">
-    <div class="box-header clickable" id="impostazioni-'.$key.'">
-        <div class="box-title">'.tr('_SEZIONE_', [
+<div class="card card-primary collapsed-card" title="'.$gruppo['nome'].'">
+    <div class="card-header clickable" id="impostazioni-'.$key.'">
+        <div class="card-title">'.tr('_SEZIONE_', [
         '_SEZIONE_' => $gruppo['nome'],
     ]).'</div>
-        <div class="box-tools pull-right">
+        <div class="card-tools pull-right">
             <div class="badge">'.$gruppo['numero'].'</div>
         </div>
     </div>
 
-    <div class="box-body""></div>
+    <div class="card-body""></div>
 </div>';
 }
 
@@ -117,10 +117,10 @@ $("#ricerca_impostazioni").change(function (){
 
 function caricaSezione(header) {
     let box = $(header).closest(".box");
-    box.toggleClass("collapsed-box");
+    box.toggleClass("collapsed-card");
 
     // Controllo sul caricamento già effettuato
-    let container = box.find(".box-body");
+    let container = box.find(".card-body");
     if (container.html()){
         return ;
     }

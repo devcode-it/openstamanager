@@ -117,7 +117,7 @@ if (!empty($terzo_livello)) {
         // Possibilità di eliminare il conto se non ci sono movimenti collegati
         if ($numero_movimenti <= 0) {
             echo '
-                            <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                            <a class="btn btn-danger btn-xs ask" data-widget="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
                                 <i class="fa fa-trash"></i>
                             </a>';
         }

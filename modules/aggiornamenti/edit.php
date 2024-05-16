@@ -25,13 +25,13 @@ if (function_exists('customComponents')) {
     $tables = customTables();
     if (!empty($custom) || !empty($tables)) {
         echo '
-	<div class="box box-warning">
-		<div class="box-header with-border">
-			<h3 class="box-title"><span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'.">
+	<div class="card card-warning">
+		<div class="card-header with-border">
+			<h3 class="card-title"><span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'.">
 				<i class="fa fa-edit"></i> '.tr('Personalizzazioni').'
 			</span></h3>
 		</div>
-		<div class="box-body">';
+		<div class="card-body">';
 
         if (!empty($custom)) {
             echo '
@@ -188,13 +188,13 @@ function search(button) {
 // Verifiche di integrità
 echo '
     <div class="col-md-4">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+        <div class="card card-primary">
+            <div class="card-header with-border">
+                <h3 class="card-title">
                     '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
                 <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
                     <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
                 </button>
@@ -214,13 +214,13 @@ echo '
 echo '
 
     <div class="col-md-4">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+        <div class="card card-primary">
+            <div class="card-header with-border">
+                <h3 class="card-title">
                     '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body" id="update-search">';
+            <div class="card-body" id="update-search">';
 if (extension_loaded('curl')) {
     echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
                     <i class="fa fa-search"></i> '.tr('Ricerca').'
@@ -238,13 +238,13 @@ echo '   </div>
 // Form di caricamento aggiornamenti gestionale o moduli
 echo '
     <div class="col-md-4">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+        <div class="card card-primary">
+            <div class="card-header with-border">
+                <h3 class="card-title">
                     '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
                 <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 

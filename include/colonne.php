@@ -30,8 +30,8 @@ echo '
 $fields = $dbo->fetchArray('SELECT `zz_views`.*, (SELECT GROUP_CONCAT(`zz_groups_lang`.`title`) FROM `zz_group_view` INNER JOIN `zz_groups` ON `zz_group_view`.`id_gruppo` = `zz_groups`.`id` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_group_view`.`id_vista` = `zz_views`.`id`) AS gruppi_con_accesso FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
 foreach ($fields as $field) {
     echo '
-    <div class="panel panel-default clickable col-md-4" data-id="'.$field['id'].'">
-        <div class="panel-body no-selection">
+    <div class="card card-default clickable col-md-4" data-id="'.$field['id'].'">
+        <div class="card-body no-selection">
             <input type="checkbox" name="visibile" '.($field['visible'] ? 'checked' : '').'>
 
             <span class="text-'.($field['visible'] ? 'success' : 'danger').'">'.$field['name'].'<br><small>( '.$field['gruppi_con_accesso'].')</small></span>
@@ -48,8 +48,8 @@ echo '
 <script>
     // Abilitazione dinamica delle colonne
     $("input[name=visibile]").change(function() {
-        let panel = $(this).closest(".panel[data-id]");
-        let id = panel.data("id");
+        let card = $(this).closest(".card[data-id]");
+        let id = card.data("id");
 
         // Aggiornamento effettivo
         $.post(globals.rootdir + "/actions.php", {
@@ -60,7 +60,7 @@ echo '
         });
 
         // Aggiornamento grafico
-        let text = panel.find("span");
+        let text = card.find("span");
         if ($(this).is(":checked")) {
             text.removeClass("text-danger")
                 .addClass("text-success");
@@ -83,7 +83,7 @@ echo '
             dropOnEmpty: true,
             scroll: true,
         })[0].addEventListener("sortupdate", function(e) {
-            let order = $(".panel[data-id]").toArray().map(a => $(a).data("id"))
+            let order = $(".card[data-id]").toArray().map(a => $(a).data("id"))
             console.log(order);
 
             $.post(globals.rootdir + "/actions.php", {

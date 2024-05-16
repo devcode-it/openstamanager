@@ -65,7 +65,7 @@ if (!empty($rs2)) {
         // Pulsanti
         echo '
             <td class="text-center">
-                <a class="btn btn-warning btn-xs" data-href="'.$structure->fileurl('add_articolo.php').'?idautomezzo='.$id_record.'&idarticolo='.$r['idarticolo'].'" data-toggle="modal" data-title="'.tr('Aggiungi articoli').'">
+                <a class="btn btn-warning btn-xs" data-href="'.$structure->fileurl('add_articolo.php').'?idautomezzo='.$id_record.'&idarticolo='.$r['idarticolo'].'" data-widget="modal" data-title="'.tr('Aggiungi articoli').'">
                     <i class="fa fa-edit"></i>
                 </a>
                 <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="moverow" data-idautomezzotecnico="'.$r['id'].'", data-idarticolo="'.$r['idarticolo'].'" data-msg="'.tr("Rimuovere articolo dell'automezzo?").'">

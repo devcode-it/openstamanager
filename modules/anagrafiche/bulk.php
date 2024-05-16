@@ -139,7 +139,7 @@ $operations = [];
 
 if (App::debug()) {
     $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
         'data' => [
             'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
             'button' => tr('Procedi'),

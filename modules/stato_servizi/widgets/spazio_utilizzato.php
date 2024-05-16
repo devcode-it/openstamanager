@@ -62,7 +62,7 @@ function crea_grafico(values){
                 var diff = (element.dbSize-element.size);
 
                 if (diff>1000){
-                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
+                    $("#message").append("<div class=\"badge badge-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
                 }
             }
         }
@@ -73,7 +73,7 @@ function crea_grafico(values){
            if (element.count<element.dbCount){
                 var diff = (element.dbCount-element.count);
 
-                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
+                $("#message").append("<div class=\"badge badge-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
 
             }
         }
@@ -84,7 +84,7 @@ function crea_grafico(values){
             $("#message").append("<br><p><b>Top 10 allegati:</b></p>");
 
             element.dbExtensions.forEach(function(ext) {
-                $("#message").append("<div class=\"label label-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext["num"]+"</b> files con estensione <b>"+ext["extension"]+"</b>.</div><br>");
+                $("#message").append("<div class=\"badge badge-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext["num"]+"</b> files con estensione <b>"+ext["extension"]+"</b>.</div><br>");
 
             });
 

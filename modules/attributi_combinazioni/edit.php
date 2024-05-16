@@ -24,12 +24,12 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Dati').'</h3>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Dati').'</h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->getTranslation('title').'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
@@ -39,12 +39,12 @@ echo '
     </div>
 </form>
 
-<div class="box box-primary">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Valori attributo').'</h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Valori attributo').'</h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <button type="button" class="btn btn-primary pull-right" onclick="aggiungiValore(this)">
             <i class="fa fa-plus"></i> '.tr('Aggiungi valore').'
         </button>

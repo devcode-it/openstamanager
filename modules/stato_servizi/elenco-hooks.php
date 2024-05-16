@@ -72,7 +72,7 @@ foreach ($gruppi as $modulo => $hooks) {
         // Possibilità di disabilitare o abilitare il hook
         if ($hook->enabled) {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaHook(this)">
@@ -81,7 +81,7 @@ foreach ($gruppi as $modulo => $hooks) {
                 </div>';
         } else {
             echo '
-                <div class="tip" data-toggle="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
+                <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
                     <button type="button" class="btn btn-success btn-xs" onclick="abilitaHook(this)">

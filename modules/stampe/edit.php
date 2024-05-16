@@ -30,12 +30,12 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI SEGMENTO -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Informazioni della stampa'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Informazioni della stampa'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 
 				<div class="col-md-6">
@@ -113,12 +113,12 @@ if (!empty($stampa_predefinita)) {
 
 echo '
 <!-- Istruzioni per il contenuto -->
-<div class="box box-info">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Opzioni').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Opzioni').'</h3>
     </div>
 
-    <div class="box-body">';
+    <div class="card-body">';
 
 if (!empty($record['available_options'])) {
     $available_options = json_decode($record['available_options']);
@@ -128,7 +128,7 @@ if (!empty($record['available_options'])) {
 
     foreach ($available_options as $option => $value) {
         echo '
-            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="label label-default" >'.$value.'</span>' : '').'</li>';
+            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="badge badge-default" >'.$value.'</span>' : '').'</li>';
     }
 
     echo '
@@ -148,12 +148,12 @@ $variables = $module->getPlaceholders($id_record);
 
 echo '
 <!-- Istruzioni per il contenuto -->
-<div class="box box-info">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Variabili').'</h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Variabili').'</h3>
     </div>
 
-    <div class="box-body">';
+    <div class="card-body">';
 
 if (!empty($variables)) {
     echo '

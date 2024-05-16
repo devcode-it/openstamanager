@@ -43,30 +43,11 @@ if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
 </div>';
 }
 
-echo '
-<div class="row">
-    <div class="col-md-2">';
-if ($prev) {
-    echo '
-        <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
-            <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
-        </a>';
-} echo '
-    </div>
-    <div class="col-md-2 col-md-offset-8">';
-if ($next) {
-    echo '
-        <a class="btn btn-info btn-block" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
-            '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
-        </a>';
-}
-
 $tags = $database->fetchArray('SELECT `id_tag` FROM `in_interventi_tags` WHERE id_intervento = '.prepare($id_record));
 $tags = $tags ? array_column($tags, 'id_tag') : [];
 
 echo '
-    </div>
-</div>
+    
 <br>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -85,18 +66,18 @@ echo '
         <div class="col-md-12">
             <!-- DATI CLIENTE -->
 
-            <div class="box box-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
-                <div class="box-header with-border">
-                    <h3 class="box-title">'.tr('Dati cliente').'</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+                <div class="card-header with-border">
+                    <h3 class="card-title">'.tr('Dati cliente').'</h3>
+                    <div class="card-tools pull-right">
+                        <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                             <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                         </button>
                     </div>
                 </div>
             
-                <div class="box-body">
-                    <div class="panel-body">
+                <div class="card-body">
+                    <div class="card-body">
                         <!-- RIGA 1 -->
                         <div class="row">
                             <div class="col-md-3">
@@ -288,12 +269,12 @@ echo '
 
 ?>
     <!-- DATI INTERVENTO -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"><?php echo tr('Dati intervento'); ?></h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <!-- RIGA 3 -->
             <div class="row">
                 <div class="col-md-3">
@@ -380,9 +361,9 @@ if (!empty($record['idcontratto'])) {
 
 ?>
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
+    <div class="card card-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
+        <div class="card-header">
+            <h3 class="card-title"><?php echo tr('Dati appalto'); ?>
 			<?php if (!empty($record['idcontratto'])) {
 			    ?>
 			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' o \'Azienda\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
@@ -391,7 +372,7 @@ if (!empty($record['idcontratto'])) {
 			} ?>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
@@ -415,12 +396,12 @@ if (!empty($record['idcontratto'])) {
 </form>
 
 <!-- ORE LAVORO -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title"><?php echo tr('Sessioni di lavoro'); ?></h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title"><?php echo tr('Sessioni di lavoro'); ?></h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
     <?php
 			if ($show_prezzi) {
 			    echo "
@@ -440,12 +421,12 @@ if (!empty($record['idcontratto'])) {
 </div>
 
 <!-- RIGHE -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title"><?php echo tr('Righe'); ?></h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title"><?php echo tr('Righe'); ?></h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-12">
 
@@ -509,8 +490,8 @@ if (!$block_edit) {
                                 <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
 
-                            <div class="btn-group tip" data-toggle="tooltip">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <div class="btn-group tip" data-card-widget="tooltip">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
                                     <span class="caret"></span>
                                 </button>
@@ -528,19 +509,19 @@ if (!$block_edit) {
                                     </li>
 
                                     <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                         </a>
                                     </li>
 
                                     <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
+                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Contratto').'
                                         </a>
                                     </li>
                                     
                                     <li title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                             <i class="fa fa-plus"></i> '.tr('Ddt').'
                                         </a>
                                     </li>
@@ -562,12 +543,12 @@ if (!$block_edit) {
 </div>
 
 <!-- COSTI TOTALI -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title"><?php echo tr('Costi totali'); ?></h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title"><?php echo tr('Costi totali'); ?></h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-12" id="costi"></div>
         </div>
@@ -863,16 +844,16 @@ $elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $fattura) {

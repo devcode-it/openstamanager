@@ -46,11 +46,11 @@ if (!$creation) {
     file_put_contents('manifest.json', $manifest);
 } else {
     echo '
-    <div class="box box-center box-danger box-solid text-center">
-			<div class="box-header with-border">
-				<h3 class="box-title">'.tr('Permessi di scrittura mancanti').'</h3>
+    <div class="card card-center card-danger card-solid text-center">
+			<div class="card-header with-border">
+				<h3 class="card-title">'.tr('Permessi di scrittura mancanti').'</h3>
 			</div>
-			<div class="box-body">
+			<div class="card-body">
                 <p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
         '_FILE_' => '<b>manifest.json</b>',
     ]).'</p>

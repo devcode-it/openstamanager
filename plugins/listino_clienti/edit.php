@@ -26,12 +26,12 @@ include_once __DIR__.'/../../core.php';
 $id_articolo = $id_record;
 
 echo '
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Informazioni specifiche per cliente').'</h3>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Informazioni specifiche per cliente').'</h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-9">
                 {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti", "icon-after": "add|'.(new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Cliente&readonly_tipo=1" ]}
@@ -96,7 +96,7 @@ if (!$clienti->isEmpty()) {
 
             <td class="text-right">
                 '.moneyFormat($dettaglio->prezzo_unitario).'
-                <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
+                <p><span class="right badge badge-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
             </td>
 
             <td class="text-right">
@@ -141,10 +141,10 @@ function gestionePrezzi(id_anagrafica, direzione) {
 }
 
 function aggiungiPrezzi(button, is_uscita) {
-    let panel = $(button).closest(".box");
+    let card = $(button).closest(".box");
 
     let direzione = is_uscita ? "uscita" : "entrata";
-    let id_anagrafica = panel.find("select").val();
+    let id_anagrafica = card.find("select").val();
 
     if (id_anagrafica) {
         gestionePrezzi(id_anagrafica, direzione);

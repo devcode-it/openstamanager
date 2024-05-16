@@ -100,7 +100,7 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-1">
-        <img src="'.$logo.'" class="img-responsive">
+        <img src="'.$logo.'" class="brand-link">
     </div>';
 
 // Cliente
@@ -126,11 +126,11 @@ echo '
 // Panoramica
 echo '
     <div class="col-md-4">
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title"><i class="fa fa-map"></i> '.tr('Panoramica').'</h3>
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Panoramica').'</h3>
             </div>
-            <div class="box-body">
+            <div class="card-body">
 
                 <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
@@ -193,11 +193,11 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>
-            <div class="box-body">';
+            <div class="card-body">';
 
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '

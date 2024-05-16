@@ -45,7 +45,7 @@ echo '
         </div>
     </div>
 
-    <div class="pull-right">
+    <div class="float-right d-none d-sm-inline">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-refresh"></i> '.tr('Aggiorna').'
         </button>

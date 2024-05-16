@@ -27,10 +27,10 @@ $stati_fatturabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ")
 
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del contratto deve essere tra: _STATE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del contratto deve essere tra: _STATE_LIST_', [
     '_STATE_LIST_' => $stati_fatturabili,
 ]).'">
-    <button type="button" class="btn btn-info '.($is_fatturabile ? '' : 'disabled').' " data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+    <button type="button" class="btn btn-info '.($is_fatturabile ? '' : 'disabled').' " data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
         <i class="fa fa-magic"></i> '.tr('Crea fattura').'
     </button>
 </div>';
@@ -40,7 +40,7 @@ $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusi
 $stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_completato` = 1')['stati_completati'];
 
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', [
     '_STATE_LIST_' => $stati_completati,
 ]).'" id="rinnova">
     <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr('Rinnovare questo contratto?').'" data-button="'.tr('Rinnova').'" data-class="btn btn-lg btn-warning">

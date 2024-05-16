@@ -126,7 +126,7 @@ if ($fattura !== null) {
     if (!empty($ricevuta_principale)) {
         echo '
     <div class="alert alert-'.$stato_fe['tipo'].'">
-        <div class="pull-right">
+        <div class="float-right d-none d-sm-inline">
             <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
 
         if (!empty($ultima_ricevuta)) {

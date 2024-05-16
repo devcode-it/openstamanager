@@ -25,11 +25,11 @@ include_once __DIR__.'/../../../core.php';
 
 // Allegati dell'anagrafica
 echo '
-<div class="box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Allegati dell\'anagrafica').'</h3>
+<div class="card">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.tr('Allegati dell\'anagrafica').'</h3>
     </div>
-    <div class="box-body">';
+    <div class="card-body">';
 
 if (empty($_GET['visualizza_allegati'])) {
     echo '

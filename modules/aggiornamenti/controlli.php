@@ -37,7 +37,7 @@ echo '
     <p class="text-center">'.tr('Operazione in corso').': <span id="operazione"></span></p>
 </div>
 
-<div class="alert alert-info" id="box-loading">
+<div class="alert alert-info" id="card-loading">
     <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento in corso').'...
 </div>
 
@@ -48,7 +48,7 @@ echo '
 <script>
 var content = $("#controlli");
 var loader = $("#progress");
-var progress = $("#box-loading");
+var progress = $("#card-loading");
 
 $(document).ready(function () {
     loader.hide();
@@ -134,13 +134,13 @@ function avviaControllo(controllo) {
             }
 
             // Creazione pannello informativo e aggiunta righe
-            let panel = initPanel(controllo, success);
+            let card = initcard(controllo, success);
             for(const record of records) {
-                addRiga(controllo, panel, record);
+                addRiga(controllo, card, record);
             }
 
             // Visualizzazione delle informazioni
-            $("#controlli").append(panel);
+            $("#controlli").append(card);
         },
         error: function(xhr, r, error) {
             alert("'.tr('Errore').': " + error);
@@ -190,27 +190,27 @@ function setPercentage(percent) {
 * @param success
 * @returns {*|jQuery|HTMLElement}
 */
-function initPanel(controllo, success) {
+function initcard(controllo, success) {
     let cssClass = "";
     let icon = "minus";
     if (success) {
-        cssClass = "box-success";
+        cssClass = "card-success";
         icon = "check text-success";
     }
 
-    let panel = `<div class="box ` + cssClass + `" id="controllo-` + controllo["id"] + `">
-    <div class="box-header with-border">
-        <h3 class="box-title">` + controllo["name"] + `</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+    let card = `<div class="card ` + cssClass + `" id="controllo-` + controllo["id"] + `">
+    <div class="card-header with-border">
+        <h3 class="card-title">` + controllo["name"] + `</h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-widget="collapse">
                 <i class="fa fa-` + icon + `"></i>
             </button>
         </div>
     </div>`
 
     if (!success) {
-        panel += `
-    <div class="box-body">
+        card += `
+    <div class="card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover table-condensed table-bordered">
                 <thead>
@@ -226,20 +226,20 @@ function initPanel(controllo, success) {
     </div>`
     }
 
-        panel += `
+        card += `
 </div>`;
 
-    return $(panel);
+    return $(card);
 }
 
 /**
 *
 * @param controllo
-* @param panel
+* @param card
 * @param record
 */
-function addRiga(controllo, panel, record) {
-    let body = panel.find("tbody");
+function addRiga(controllo, card, record) {
+    let body = card.find("tbody");
 
     // Generazione riga
     let riga = `<tr class="` + record.type + `" id="controllo-` + controllo["id"] + `-` + record.id + `">

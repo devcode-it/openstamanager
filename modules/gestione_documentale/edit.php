@@ -24,12 +24,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<!-- SCHEDA FILE -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"> Scheda file</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"> Scheda file</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 
 			<div class="row">
 

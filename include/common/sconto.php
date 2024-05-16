@@ -74,9 +74,9 @@ echo '
         }
 
         if (sconto > 0) {
-            div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
+            div.html(`<span class="right badge badge-default" >'.tr('Sconto').'</small>`);
         } else if (sconto < 0) {
-            div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
+            div.html(`<span class="right badge badge-default" >'.tr('Maggiorazione').'</small>`);
         } else {
             div.html("");
         }
@@ -94,9 +94,9 @@ echo '
         }
 
         if (sconto > 0) {
-            div.html(`<small class="label label-default" >'.tr('Sconto').'</small>`);
+            div.html(`<span class="right badge badge-default" >'.tr('Sconto').'</small>`);
         } else if (sconto < 0) {
-            div.html(`<small class="label label-default" >'.tr('Maggiorazione').'</small>`);
+            div.html(`<span class="right badge badge-default" >'.tr('Maggiorazione').'</small>`);
         } else {
             div.html("");
         }

@@ -103,9 +103,9 @@ if (!empty($fatture_generate->count())) {
     </div>';
 }
 echo '
-<div class="box box-success">
-    <div class="box-header with-border">
-        <h3 class="box-title">
+<div class="card card-success">
+    <div class="card-header with-border">
+        <h3 class="card-title">
             '.tr('Carica un XML').'
 
             <span class="tip" title="'.tr('Formati supportati: XML e P7M').'.">
@@ -114,7 +114,7 @@ echo '
 
         </h3>
     </div>
-    <div class="box-body" id="upload">
+    <div class="card-body" id="upload">
         <div class="row">
             <div class="col-md-9">
                 {[ "type": "file", "name": "blob", "required": 1 ]}
@@ -130,16 +130,16 @@ echo '
 </div>';
 
 echo '
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">
+<div class="card card-info">
+    <div class="card-header with-border">
+        <h3 class="card-title">
             '.tr('Ricevute da importare').'</span>
         </h3>';
 
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-        <div class="pull-right">
+        <div class="float-right d-none d-sm-inline">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
                 <i class="fa fa-cloud-download"></i> '.tr('Importa tutte le ricevute').'
             </button>
@@ -152,7 +152,7 @@ if (Interaction::isEnabled()) {
 
 echo '
     </div>
-    <div class="box-body" id="list">';
+    <div class="card-body" id="list">';
 
 if (Interaction::isEnabled()) {
     echo '

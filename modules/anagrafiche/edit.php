@@ -85,12 +85,12 @@ if (sizeof($problemi_anagrafica) > 0) {
         <input type="hidden" name="op" value="update">
 
         <!-- DATI ANAGRAFICI -->
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title"><?php echo tr('Dati anagrafici'); ?></h3>
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><?php echo tr('Dati anagrafici'); ?></h3>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         {[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "" ]}
@@ -121,32 +121,30 @@ if (sizeof($problemi_anagrafica) > 0) {
 
                 </div>
 
-                <!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
-                <?php if ($record['tipo'] == 'Privato') {
-                    ?>
-                    <div class="row">
-                        <div class="col-md-4">
-                            {[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
-                        </div>
-                    </div>
-                <?php
-                } ?>
-
-                <div class="row">
-                    <div class="col-md-2">
-                        {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
-                    </div>
-
-                    <div class="col-md-2">
-                        <?php
+               <!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
+               <?php if ($record['tipo'] == 'Privato') { ?>
+               <div class="row">
+                   <div class="col-md-4">
+                       {[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
+                   </div>
+               
+                   <div class="col-md-4">
+                       {[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
+                   </div>
+               
+                   <div class="col-md-4">
+                       {[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
+                   </div>
+               </div>
+               <?php } ?>
+               
+               <div class="row">
+                   <div class="col-md-2">
+                       {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
+                   </div>
+               
+                   <div class="col-md-2">
+                       <?php
                                         $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
                                             '_NATION_' => '<b>Nazione</b>',
                                         ]).':<br><br><ul>
@@ -176,11 +174,11 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
 
         <div class="row">
             <div class="col-md-8">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"> <?php echo tr('Sede legale'); ?></h3>
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title"><?php echo tr('Sede legale'); ?></h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
 
                         <div class="row">
                             <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '10' : '8'; ?>">
@@ -194,7 +192,6 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             <div class="col-md-2">
                                 {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 6, "class": "text-center", "value": "$cap$" ]}
                             </div>
-
                         </div>
 
                         <div class="row">
@@ -257,11 +254,11 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
             <div class="col-md-4">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"> '.tr('Geolocalizzazione').'</h3>
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title"> '.tr('Geolocalizzazione').'</h3>
                     </div>
-                    <div class="panel-body">';
+                    <div class="card-body">';
 
 // Area caricamento mappa
 echo '
@@ -435,21 +432,21 @@ echo '
 if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Informazioni per tipo di anagrafica').'</h3>
+    <div class="panel card-primary">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('Informazioni per tipo di anagrafica').'</h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs nav-justified">
-                    <li '.($is_cliente ? 'class="active"' : '').'><a href="#cliente" data-toggle="tab" class="'.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
+                    <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class=" nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
 
-                    <li '.(!$is_cliente && $is_fornitore ? 'class="active"' : '').'><a href="#fornitore" data-toggle="tab" class="'.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
+                    <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
 
-                    <li><a href="#cliente_fornitore" data-toggle="tab" class="'.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
+                    <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link'.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
 
-                    <li '.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'class="active"' : '').'><a href="#tecnico" data-toggle="tab" class="'.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
+                    <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link'.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
                 </ul>
 
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
@@ -642,12 +639,12 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 }
 ?>
 
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
                 </div>
 
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
@@ -710,7 +707,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
                             <?php
     if (in_array($id_azienda, $tipi_anagrafica)) {
@@ -719,10 +716,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     }
 ?>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "charcounter": 1 ]}
                         </div>
                     </div>
@@ -766,16 +760,16 @@ ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {
@@ -867,7 +861,7 @@ if (empty($record['deleted_at'])) {
                     update(results);
                 },
                 onSelect: function (item) {
-                    input.value = item.label;
+                    input.value = item.badge;
                 },
             });
         }

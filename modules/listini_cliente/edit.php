@@ -26,12 +26,12 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Listino').'</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Listino').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type":"text", "label":"'.tr('Nome').'", "name":"nome", "value":"$nome$", "required":"1" ]}
@@ -109,8 +109,8 @@ echo '
 
 <script>
 	function aggiungiArticolo(button) {
-		let panel = $(button).closest(".panel");
-		let id_articolo = panel.find("select").val();
+		let card = $(button).closest(".card");
+		let id_articolo = card.find("select").val();
 
 		if (id_articolo) {
 			openModal("'.tr('Listino articolo').'", "'.$structure->fileurl('modals/manage_articolo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_articolo=" + id_articolo);

@@ -25,12 +25,12 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
 
     <!-- DATI -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Dati').'</h3>
+    <div class="card card-primary">
+        <div class="card-heading">
+            <h3 class="card-title">'.tr('Dati').'</h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Nome').'", "name": "name", "value": "$name$", "required": 1 ]}
@@ -80,12 +80,12 @@ foreach ($checks as $check) {
 
 echo '
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Checklist').'</h3>
+<div class="card card-primary">
+    <div class="card-heading">
+        <h3 class="card-title">'.tr('Checklist').'</h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <form action="" method="post" id="checklist-form" class="row">
             <input type="hidden" name="op" value="add_item">
             <input type="hidden" name="backto" value="record-edit">

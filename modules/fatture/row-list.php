@@ -101,7 +101,7 @@ foreach ($righe as $riga) {
             '_RIVALSA_' => $riga->rivalsa_inps ? '<br>'.tr('Cassa previdenziale').': '.moneyFormat(abs($riga->rivalsa_inps)) : null,
             '_RITENUTA_ACCONTO_' => $riga->ritenuta_acconto ? '<br>Ritenuta acconto: '.moneyFormat(abs($riga->ritenuta_acconto)) : null,
             '_RITENUTA_CONTRIBUTI_' => $riga->ritenuta_contributi ? '<br>Ritenuta previdenziale: '.moneyFormat(abs($riga->ritenuta_contributi)) : null,
-            '_DESCRIZIONE_CONTO_' => $descrizione_conto ?: '<span class="label label-danger" ><i class="fa fa-exclamation-triangle"></i>
+            '_DESCRIZIONE_CONTO_' => $descrizione_conto ?: '<span class="badge badge-danger" ><i class="fa fa-exclamation-triangle"></i>
             '.tr('Conto mancante').'</span>',
             '_ID_DOCUMENTO_' => $id_documento_fe ? ' - DOC: '.$id_documento_fe : null,
             '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
@@ -186,10 +186,10 @@ foreach ($righe as $riga) {
         if (strlen($riga->note) > 50) {
             $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
             $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
-            $stringa_modificata = '<small class="label label-default">'.$prima_parte.'</small>
-                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><small class="label label-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
+            $stringa_modificata = '<span class="right badge badge-default">'.$prima_parte.'</small>
+                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="right badge badge-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {
-            $stringa_modificata = '<small class="label label-default">'.$riga->note.'</small>';
+            $stringa_modificata = '<span class="right badge badge-default">'.$riga->note.'</small>';
         }
 
         echo '

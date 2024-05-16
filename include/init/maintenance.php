@@ -24,17 +24,17 @@ if ($config['maintenance_ip'] != $_SERVER['REMOTE_ADDR']) {
     $img = App::getPaths()['img'];
 
     echo '
-    <div class="box box-center-large box-danger">
-        <div class="box-header with-border text-center">
+    <div class="card card-center-large card-danger">
+        <div class="card-header with-border text-center">
             <img src="'.$img.'/logo_completo.png" width="300" alt="'.tr('OSM Logo').'">
         </div>
 
-        <div class="box-body">
-            <div class="box box-center box-danger box-solid text-center">
-                <div class="box-header with-border">
-                    <h3 class="box-title">'.tr('Manutenzione in corso!').'</h3>
+        <div class="card-body">
+            <div class="card card-center card-danger card-solid text-center">
+                <div class="card-header with-border">
+                    <h3 class="card-title">'.tr('Manutenzione in corso!').'</h3>
                 </div>
-                <div class="box-body">
+                <div class="card-body">
                     <p>'.tr('Il software si trova attualmente in modalità manutenzione, siete pregati di attendere sino alla conclusione dell\'intervento').'.</p>
                 </div>
             </div>

@@ -24,12 +24,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
                 <div class="col-md-3">
                     <?php echo Modules::link('Anagrafiche', $record['id_anagrafica'], null, null, 'class="pull-right"'); ?>
@@ -85,12 +85,12 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <!-- Composizione IBAN -->
-<div class="box box-info">
-    <div class="box-header">
-        <h3 class="box-title"><?php echo tr('Composizione IBAN'); ?></h3>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title"><?php echo tr('Composizione IBAN'); ?></h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-4">
                 {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}

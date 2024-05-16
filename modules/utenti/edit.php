@@ -22,14 +22,14 @@ include_once __DIR__.'/../../core.php';
 $utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`title` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
 
 echo '
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Utenti del gruppo: _GROUP_', [
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Utenti del gruppo: _GROUP_', [
     '_GROUP_' => $group->getTranslation('title'),
 ]).'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
             <div class="row">
                 <div class="col-md-3 pull-right">
                     {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$group->id_module_start.'" ]}
@@ -89,7 +89,7 @@ if (!empty($utenti)) {
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-toggle="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
+            <div data-card-widget="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-eye-slash"></i>
                 </span></div>';
         } elseif ($utente['enabled'] == 1) {
@@ -106,14 +106,14 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-                <a href="" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" class="btn btn-xs btn-warning tip" data-toggle="modal" title="'.tr('Aggiorna dati utente').'"  data-msg="" data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'"><i class="fa fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" class="btn btn-xs btn-warning tip" data-card-widget="modal" title="'.tr('Aggiorna dati utente').'"  data-msg="" data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'"><i class="fa fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
 
         if ($utente['id'] == '1') {
             echo '
-                <div data-toggle="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-danger disabled">
+                <div data-card-widget="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-key "></i>
                 </span></div>';
         } elseif (!empty($token)) {
@@ -131,7 +131,7 @@ if (!empty($utenti)) {
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-toggle="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
+            <div data-card-widget="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-trash"></i>
                 </span></div>';
         } else {
@@ -157,7 +157,7 @@ if (!empty($utenti)) {
 }
 
 echo '
-			<a data-toggle="modal" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-msg="" data-backto="record-edit" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary">
+			<a data-card-widget="modal" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-msg="" data-backto="record-edit" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi utente').'
             </a>
 		</div>
@@ -168,14 +168,14 @@ echo '
 	<hr>';
 
 echo '
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-            <h3 class="panel-title">'.tr('Permessi del gruppo: _GROUP_', [
+	<div class="card card-primary">
+		<div class="card-heading">
+            <h3 class="card-title">'.tr('Permessi del gruppo: _GROUP_', [
     '_GROUP_' => $record['nome'],
 ]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
 		</div>
 
-		<div class="panel-body">';
+		<div class="card-body">';
 if ($record['nome'] != 'Amministratori') {
     echo '
 			<div class="table-responsive">

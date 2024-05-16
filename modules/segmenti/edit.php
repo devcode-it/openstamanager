@@ -26,12 +26,12 @@ use Models\Module;
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI SEGMENTO -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Segmento'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Segmento'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 
 				<div class="col-md-3">
@@ -119,12 +119,12 @@ echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo segmento
 if ($record['is_sezionale']) {
     ?>
 	<!-- Campi extra -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Sezionale'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Sezionale'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
                 <div class="col-md-6">
                     {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0 || ($record['modulo'] != 'Fatture di vendita' && $record['modulo'] != 'Fatture di acquisto')) ? 'readonly' : ''; ?>"  ]}
@@ -150,14 +150,14 @@ if ($record['is_sezionale']) {
 			</div>
 
 			<!-- Istruzioni per il contenuto -->
-            <div class="box box-info">
-                <div class="box-header">
-                    <h3 class="box-title"><?php echo tr('Istruzioni per il campo _FIELD_', [
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><?php echo tr('Istruzioni per il campo _FIELD_', [
                         '_FIELD_' => tr('Maschera'),
                     ]); ?></h3>
                 </div>
 
-                <div class="box-body">
+                <div class="card-body">
                     <p><?php echo tr('Le seguenti sequenze di testo vengono sostituite nel seguente modo'); ?>:</p>
                     <ul>
 <?php

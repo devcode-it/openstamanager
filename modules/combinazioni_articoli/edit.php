@@ -10,12 +10,12 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Dati').'</h3>
+    <div class="card card-primary">
+        <div class="card-heading">
+            <h3 class="card-title">'.tr('Dati').'</h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Codice').'", "name": "codice", "value": "'.$combinazione->codice.'", "required": 1, "help": "'.tr('Codice di base per la combinazione: alla generazione variante vengono aggiunti i valore degli Attributi relativi').'" ]}
@@ -50,17 +50,17 @@ echo '
     </div>
 </form>
 
-<div class="box box-primary">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Varianti disponibili (Articoli)').'</h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Varianti disponibili (Articoli)').'</h3>
     </div>
 
-    <div class="box-body">
+    <div class="card-body">
         <button type="button" class="btn btn-primary" onclick="aggiungiVariante(this)">
             <i class="fa fa-plus"></i> '.tr('Aggiungi variante').'
         </button>
 
-        <div class="tip pull-right " data-toggle="tooltip" title="'.tr('Genera tutte le varianti sulla base degli Attributi associati alla Combinazione corrente').'. '.tr('Disponibile solo se non sono giò presenti delle varianti').'.">
+        <div class="tip pull-right " data-card-widget="tooltip" title="'.tr('Genera tutte le varianti sulla base degli Attributi associati alla Combinazione corrente').'. '.tr('Disponibile solo se non sono giò presenti delle varianti').'.">
              <button type="button" class="btn btn-warning '.($numero_varianti === 0 ? '' : 'disabled').'" onclick="generaVarianti(this)">
                 <i class="fa fa-refresh"></i> '.tr('Genera tutte le varianti').'
             </button>

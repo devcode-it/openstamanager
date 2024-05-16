@@ -27,12 +27,12 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 
 	<!-- DATI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dati').'</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Dati').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Nome account').'", "name": "name", "value": "$name$", "required": 1 ]}
@@ -115,15 +115,15 @@ foreach ($providers as $key => $provider) {
 $oauth2 = $account->oauth2;
 echo '
     <!-- OAuth2 -->
-    <div class="box box-info">
-        <div class="box-header">
-            <h3 class="box-title">'.tr('OAuth2').'</h3>
+    <div class="card card-info">
+        <div class="card-header">
+            <h3 class="card-title">'.tr('OAuth2').'</h3>
         </div>
 
-        <div class="box-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <span class="label label-warning pull-right hidden" id="guida-configurazione"></span>
+                    <span class="badge badge-warning pull-right hidden" id="guida-configurazione"></span>
                     {[ "type": "select", "label": "'.tr('Provider account').'", "name": "provider", "value": '.json_encode($oauth2->class).', "values": '.json_encode($elenco_provider).', "disabled": "'.intval(empty($oauth2)).'" ]}
                 </div>
 
@@ -220,16 +220,16 @@ $elementi = $dbo->fetchArray('SELECT `em_templates`.`id`, `em_templates_lang`.`t
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Template email collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Template email collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

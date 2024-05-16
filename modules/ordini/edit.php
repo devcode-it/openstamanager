@@ -49,12 +49,12 @@ if ($righe_vuote) {
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 	<!-- INTESTAZIONE -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 			<div class="row">
 
 				<div class="col-md-3" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
@@ -196,19 +196,19 @@ if ($dir == 'entrata') {
 ?>
 
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel-group">
-        <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
-            <div class="panel-heading">
-                <h4 class="panel-title">
+    <div class="card-group">
+        <div class="card card-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
+            <div class="card-heading">
+                <h4 class="card-title">
                     <?php echo tr('Dati appalto'); ?>
 
-                    <div class="box-tools pull-right">
-                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
+                    <div class="card-tools pull-right">
+                        <a data-card-widget="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
                     </div>
                 </h4>
             </div>
-            <div id="dati_appalto" class="panel-collapse collapse <?php echo $collapsed; ?>">
-                <div class="panel-body">
+            <div id="dati_appalto" class="card-collapse collapse <?php echo $collapsed; ?>">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             {[ "type": "text", "label": "<?php echo tr('Codice Commessa'); ?>", "name": "codice_commessa", "required": 0, "value": "$codice_commessa$", "maxlength": 100 ]}
@@ -237,12 +237,12 @@ if ($dir == 'entrata') {
 
 echo '
 <!-- RIGHE -->
-<div class="panel panel-primary">
-	<div class="panel-heading">
-		<h3 class="panel-title">'.tr('Righe').'</h3>
+<div class="card card-primary">
+	<div class="card-heading">
+		<h3 class="card-title">'.tr('Righe').'</h3>
 	</div>
 
-	<div class="panel-body">';
+	<div class="card-body">';
 
 if (!$block_edit) {
     $prev_query = 'SELECT 
@@ -281,8 +281,8 @@ if (!$block_edit) {
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
 
-                    <div class="btn-group tip" data-toggle="tooltip">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <div class="btn-group tip" data-card-widget="tooltip">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-list"></i> '.tr('Altro').'
                             <span class="caret"></span>
                         </button>
@@ -301,7 +301,7 @@ if (!$block_edit) {
     if ($dir == 'entrata') {
         echo '
                             <li>
-                                <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                     <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                 </a>
                             </li>';
@@ -311,8 +311,8 @@ if (!$block_edit) {
                     </div>';
     if ($dir == 'entrata') {
         echo '
-                    <div class="pull-right">
-                        <a class="btn btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'" onclick="saveForm()">
+                    <div class="float-right d-none d-sm-inline">
+                        <a class="btn btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'" onclick="saveForm()">
                             <i class="fa fa-question-circle"></i> '.tr('Disponibilità').'
                         </a>
                     </div>';
@@ -527,16 +527,16 @@ UNION
 
 if (!empty($elementi)) {
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
         '_NUM_' => count($elementi),
     ]).'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="box-body">
+    <div class="card-body">
         <ul>';
 
     foreach ($elementi as $elemento) {

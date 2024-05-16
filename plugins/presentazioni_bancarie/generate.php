@@ -135,16 +135,16 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if ($is_rid) {
             if (!$rs_mandato) {
                 echo '
-                <span class="label label-danger">'.tr('Id mandato mancante').'</span>';
+                <span class="badge badge-danger">'.tr('Id mandato mancante').'</span>';
             }
 
             if (!$banca_azienda->creditor_id) {
                 echo '
-                <span class="label label-danger">'.tr('Id creditore mancante').'</span>';
+                <span class="badge badge-danger">'.tr('Id creditore mancante').'</span>';
             }
         } elseif (($is_riba && empty($banca_azienda->codice_sia)) || ($is_bonifico && empty($banca_azienda->codice_sia))) {
             echo '
-                <span class="label label-danger">'.tr('Codice SIA banca emittente mancante').'</span>';
+                <span class="badge badge-danger">'.tr('Codice SIA banca emittente mancante').'</span>';
         }
 
         if ($is_sepa) {

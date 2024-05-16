@@ -89,12 +89,12 @@ echo '
 
 echo '
 	<!-- DATI PROMEMORIA -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dati').'</h3>
+	<div class="card card-primary">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Dati').'</h3>
 		</div>
 
-        <div class="panel-body">
+        <div class="card-body">
 
 			<div class="row">
 				<div class="col-md-4">
@@ -149,23 +149,23 @@ echo '
 
 echo '
     <!-- RIGHE -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Righe').'</h3>
+    <div class="card card-primary">
+        <div class="card-heading">
+            <h3 class="card-title">'.tr('Righe').'</h3>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="row">
                 <div class="col-md-12">';
 
 if (!$block_edit) {
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo" data-widget="tooltip" data-title="'.tr('Aggiungi articolo').'">
                         <i class="fa fa-plus"></i> '.tr('Articolo').'
                     </a>';
 
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga" data-widget="tooltip" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>';
 }
@@ -190,12 +190,12 @@ echo '{( "name": "filelist_and_upload", "id_record": "'.$id_record.'", "id_modul
 
 echo '
 	<!-- PIANIFICAZIONE CICLICA -->
-	<div class="panel panel-primary '.(!$block_edit ? 'hide' : '').'">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Promemoria ciclico?').'</h3>
+	<div class="card card-primary '.(!$block_edit ? 'hide' : '').'">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Promemoria ciclico?').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 
             <!--div class="col-md-8">
                 {[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
@@ -225,12 +225,12 @@ echo '
 
 echo '
 	<!-- PIANIFICARE INTERVENTI -->
-	<div class="panel panel-primary '.(!$block_edit ? 'hide' : '').'">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Pianificare interventi?').'</h3>
+	<div class="card card-primary '.(!$block_edit ? 'hide' : '').'">
+		<div class="card-heading">
+			<h3 class="card-title">'.tr('Pianificare interventi?').'</h3>
 		</div>
 
-		<div class="panel-body">
+		<div class="card-body">
 
             <div class="row">
                 <div class="col-md-4">
@@ -272,16 +272,16 @@ echo '
     $(document).ready(function() {
 
         if ($("#idtipointervento_").val()==null){
-            $("#add_form .panel-primary .panel-primary").hide();
+            $("#add_form .card-primary .card-primary").hide();
             $("#modals > div .btn-primary").hide();
         };
 
         $("#idtipointervento_").change(function(){
             if (($(this).val()!="")){
-                $("#add_form .panel-primary .panel-primary").show();
+                $("#add_form .card-primary .card-primary").show();
                 $("#modals > div .btn-primary").show();
             } else {
-                $("#add_form .panel-primary .panel-primary").hide();
+                $("#add_form .card-primary .card-primary").hide();
                 $("#modals > div .btn-primary").hide();
             }
         });

@@ -205,9 +205,10 @@ a:focus {
 }
 
 #mini-loader>div {
-    position: absolute;
-    bottom: 10%;
-    right: 10%;
+    position: fixed;
+    bottom: 20px;
+    left: auto;
+    right: 20px;
     width: 100px;
     height: 100px;
     margin-top: -50px;

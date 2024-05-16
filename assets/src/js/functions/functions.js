@@ -58,13 +58,13 @@ function openModal(title, href) {
 
     const content = '<div class="modal-dialog modal-lg">\
     <div class="modal-content">\
-        <div class="modal-header bg-light-blue">\
-            <button type="button" class="close" data-dismiss="modal">\
-                <span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span>\
-            </button>\
+        <div class="modal-header">\
             <h4 class="modal-title">\
                 <i class="fa fa-pencil"></i> ' + title + '\
             </h4>\
+            <button type="button" class="close" data-dismiss="modal">\
+                <span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span>\
+            </button>\
         </div>\
         <div class="modal-body">|data|</div>\
     </div>\

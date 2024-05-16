@@ -241,16 +241,16 @@ class WidgetManager implements ManagerInterface
         // Generazione del codice HTML
         if (!empty($widgets)) {
             $result = '
-            <ul class="row widget" id="widget-'.$options['position'].'" data-class="">';
+            <div class="row widget" id="widget-'.$options['position'].'" data-class="">';
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
                 if ($widget['id_module'] == $database->fetchOne('SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Stato dei servizi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).'')['id']) {
                     $result .= '
-                    <li class="col-sm-6 col-md-4 li-widget" id="widget_'.$widget['id'].'" style="height:100% !important;" data-id="'.$widget['id'].'">';
+                    <div class="col-md-3 col-sm-6 col-12 li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 } else {
                     $result .= '
-                    <li class="col-sm-6 '.($widget['class'] ?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
+                    <div class="col-sm-6 '.($widget['class'] ?: setting('Dimensione widget predefinita')).' li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 }
                 $info = array_merge($options, [
                     'id' => $widget['id'],
@@ -258,11 +258,11 @@ class WidgetManager implements ManagerInterface
                 $result .= $this->widget($info);
 
                 $result .= '
-                </li>';
+                </div>';
             }
 
             $result .= '
-            </ul>';
+            </div>';
         }
 
         return $result;

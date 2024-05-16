@@ -20,7 +20,7 @@
 use Models\Module;
 use Util\FileSystem;
 
-include_once __DIR__.'/../core.php';
+include_once __DIR__ . '/../core.php';
 
 $paths = App::getPaths();
 $user = Auth::user();
@@ -35,31 +35,31 @@ echo '<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>'.$pageTitle.' - '.tr('OpenSTAManager').'</title>
+        <title>' . $pageTitle . ' - ' . tr('OpenSTAManager') . '</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
         <meta name="robots" content="noindex,nofollow">
-        <meta name="description" content="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica.').'">
+        <meta name="description" content="' . tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica.') . '">
         <meta name="author" content="DevCode s.r.l.">
 
-		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
+		<link href="' . $paths['img'] . '/favicon.png" rel="icon" type="image/x-icon" />';
 
-if (file_exists(base_dir().'/manifest.json')) {
+if (file_exists(base_dir() . '/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_path().'/manifest.json?r='.random_int(0, mt_getrandmax()).'">';
+        <link rel="manifest" href="' . base_path() . '/manifest.json?r=' . random_int(0, mt_getrandmax()) . '">';
 }
 
 // CSS
 foreach (App::getAssets()['css'] as $style) {
     echo '
-        <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
+        <link rel="stylesheet" type="text/css" media="all" href="' . $style . '"/>';
 }
 
 // Print CSS
 foreach (App::getAssets()['print'] as $style) {
     echo '
-        <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
+        <link rel="stylesheet" type="text/css" media="print" href="' . $style . '"/>';
 }
 
 if (Auth::check()) {
@@ -67,15 +67,15 @@ if (Auth::check()) {
 		<script>
             search = []';
 
-    $array = $_SESSION['module_'.$id_module];
+    $array = $_SESSION['module_' . $id_module];
     if (!empty($array)) {
         foreach ($array as $field => $value) {
             if (!empty($value) && string_starts_with($field, 'search_')) {
                 $field_name = str_replace('search_', '', $field);
 
                 echo '
-            search.push("search_'.$field_name.'");
-            search["search_'.$field_name.'"] = "'.addslashes($value).'";';
+            search.push("search_' . $field_name . '");
+            search["search_' . $field_name . '"] = "' . addslashes($value) . '";';
             }
         }
     }
@@ -127,95 +127,95 @@ if (Auth::check()) {
     ];
     foreach ($translations as $key => $value) {
         echo '
-                '.$key.': "'.addslashes($value).'",';
+                ' . $key . ': "' . addslashes($value) . '",';
     }
     echo '
                 allegati: {
-                    messaggio: "'.tr('Clicca o trascina qui per caricare uno o più file').'",
-                    maxFilesize: "'.tr('Dimensione massima: _SIZE_ MB').'",
-                    errore: "'.tr('Errore').'",
-                    modifica: "'.tr('Modifica allegato').'",
-                    elimina: "'.tr('Vuoi eliminare questo file?').'",
-                    procedi: "'.tr('Procedi').'",
+                    messaggio: "' . tr('Clicca o trascina qui per caricare uno o più file') . '",
+                    maxFilesize: "' . tr('Dimensione massima: _SIZE_ MB') . '",
+                    errore: "' . tr('Errore') . '",
+                    modifica: "' . tr('Modifica allegato') . '",
+                    elimina: "' . tr('Vuoi eliminare questo file?') . '",
+                    procedi: "' . tr('Procedi') . '",
                 },
                 ajax: {
                     "missing": {
-                        "title": "'.tr('Errore').'",
-                        "text": "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'",
+                        "title": "' . tr('Errore') . '",
+                        "text": "' . tr('Alcuni campi obbligatori non sono stati compilati correttamente') . '",
                     },
                     "error": {
-                        "title": "'.tr('Errore').'",
-                        "text": "'.tr('Errore durante il salvataggio del record').'",
+                        "title": "' . tr('Errore') . '",
+                        "text": "' . tr('Errore durante il salvataggio del record') . '",
                     }
                 },
                 password: {
-                    "wordMinLength": "'.tr('La password è troppo corta').'",
-                    "wordMaxLength": "'.tr('La password è troppo lunga').'",
-                    "wordInvalidChar": "'.tr('La password contiene un carattere non valido').'",
-                    "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
-                    "wordSimilarToUsername": "'.tr('La password non può contenere il tuo nome').'",
-                    "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
-                    "wordRepetitions": "'.tr('La password contiene ripetizioni').'",
-                    "wordSequences": "'.tr('La password contiene sequenze').'",
-                    "errorList": "'.tr('Attenzione').':",
-                    "veryWeak": "'.tr('Molto debole').'",
-                    "weak": "'.tr('Debole').'",
-                    "normal": "'.tr('Normale').'",
-                    "medium": "'.tr('Media').'",
-                    "strong": "'.tr('Forte').'",
-                    "veryStrong": "'.tr('Molto forte').'",
+                    "wordMinLength": "' . tr('La password è troppo corta') . '",
+                    "wordMaxLength": "' . tr('La password è troppo lunga') . '",
+                    "wordInvalidChar": "' . tr('La password contiene un carattere non valido') . '",
+                    "wordNotEmail": "' . tr('Non usare la tua e-mail come password') . '",
+                    "wordSimilarToUsername": "' . tr('La password non può contenere il tuo nome') . '",
+                    "wordTwoCharacterClasses": "' . tr('Usa classi di caratteri diversi') . '",
+                    "wordRepetitions": "' . tr('La password contiene ripetizioni') . '",
+                    "wordSequences": "' . tr('La password contiene sequenze') . '",
+                    "errorList": "' . tr('Attenzione') . ':",
+                    "veryWeak": "' . tr('Molto debole') . '",
+                    "weak": "' . tr('Debole') . '",
+                    "normal": "' . tr('Normale') . '",
+                    "medium": "' . tr('Media') . '",
+                    "strong": "' . tr('Forte') . '",
+                    "veryStrong": "' . tr('Molto forte') . '",
                 },
                 datatables: {
-                    "emptyTable": "'.tr('Nessun dato presente nella tabella').'",
-                    "info": "'.tr('Vista da _START_ a _END_ di _TOTAL_ elementi').'",
-                    "infoEmpty": "'.tr('Vista da 0 a 0 di 0 elementi').'",
-                    "infoFiltered": "('.tr('filtrati da _MAX_ elementi totali').')",
+                    "emptyTable": "' . tr('Nessun dato presente nella tabella') . '",
+                    "info": "' . tr('Vista da _START_ a _END_ di _TOTAL_ elementi') . '",
+                    "infoEmpty": "' . tr('Vista da 0 a 0 di 0 elementi') . '",
+                    "infoFiltered": "(' . tr('filtrati da _MAX_ elementi totali') . ')",
                     "infoPostFix": "",
-                    "lengthMenu": "'.tr('Visualizza _MENU_ elementi').'",
+                    "lengthMenu": "' . tr('Visualizza _MENU_ elementi') . '",
                     "loadingRecords": " ",
-                    "processing": "'.tr('Elaborazione').'...",
-                    "search": "'.tr('Cerca').':",
-                    "zeroRecords": "'.tr('La ricerca non ha portato alcun risultato').'.",
+                    "processing": "' . tr('Elaborazione') . '...",
+                    "search": "' . tr('Cerca') . ':",
+                    "zeroRecords": "' . tr('La ricerca non ha portato alcun risultato') . '.",
                     "paginate": {
-                        "first": "'.tr('Inizio').'",
-                        "previous": "'.tr('Precedente').'",
-                        "next": "'.tr('Successivo').'",
-                        "last": "'.tr('Fine').'"
+                        "first": "' . tr('Inizio') . '",
+                        "previous": "' . tr('Precedente') . '",
+                        "next": "' . tr('Successivo') . '",
+                        "last": "' . tr('Fine') . '"
                     },
                 },
             };
 			globals = {
-                rootdir: "'.base_path().'",
-                js: "'.$paths['js'].'",
-                css: "'.$paths['css'].'",
-                img: "'.$paths['img'].'",
+                rootdir: "' . base_path() . '",
+                js: "' . $paths['js'] . '",
+                css: "' . $paths['css'] . '",
+                img: "' . $paths['img'] . '",
 
-                id_module: "'.$id_module.'",
-                id_record: "'.$id_record.'",
+                id_module: "' . $id_module . '",
+                id_record: "' . $id_record . '",
 
-                is_mobile: '.isMobile().',
+                is_mobile: ' . isMobile() . ',
 
-                cifre_decimali: '.setting('Cifre decimali per importi').',
+                cifre_decimali: ' . setting('Cifre decimali per importi') . ',
 
-                timestamp_format: "'.formatter()->getTimestampPattern().'",
-                date_format: "'.formatter()->getDatePattern().'",
-                time_format: "'.formatter()->getTimePattern().'",
-                decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
-                thousands: "'.formatter()->getNumberSeparators()['thousands'].'",
-                currency: "'.currency().'",
+                timestamp_format: "' . formatter()->getTimestampPattern() . '",
+                date_format: "' . formatter()->getDatePattern() . '",
+                time_format: "' . formatter()->getTimePattern() . '",
+                decimals: "' . formatter()->getNumberSeparators()['decimals'] . '",
+                thousands: "' . formatter()->getNumberSeparators()['thousands'] . '",
+                currency: "' . currency() . '",
 
                 search: search,
                 translations: translations,
-                locale: "'.explode('_', $lang)[0].'",
-				full_locale: "'.$lang.'",
+                locale: "' . explode('_', $lang)[0] . '",
+				full_locale: "' . $lang . '",
 
-                start_date: "'.$_SESSION['period_start'].'",
-                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
-                end_date: "'.$_SESSION['period_end'].'",
-                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
-                minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
+                start_date: "' . $_SESSION['period_start'] . '",
+                start_date_formatted: "' . Translator::dateToLocale($_SESSION['period_start']) . '",
+                end_date: "' . $_SESSION['period_end'] . '",
+                end_date_formatted: "' . Translator::dateToLocale($_SESSION['period_end']) . '",
+                minute_stepping: ' . setting('Numero di minuti di avanzamento delle sessioni delle attività') . ',
 
-                collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
+                collapse_plugin_sidebar: ' . intval(setting('Nascondere la barra dei plugin di default')) . ',
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor", "EmojiPanel" ],
@@ -238,46 +238,46 @@ if (Auth::check()) {
                     { name: "tools", items : [ "Maximize", "ShowBlocks" ] },
                     { name: "about", items: [ "About" ] }
                 ],
-                order_manager_id: "'.($dbo->isInstalled() ? (new Module())->getByField('title', 'Stato dei servizi', Models\Locale::getPredefined()->id) : '').'",
-                dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
-                tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
-                restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
-                snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'"
+                order_manager_id: "' . ($dbo->isInstalled() ? (new Module())->getByField('title', 'Stato dei servizi', Models\Locale::getPredefined()->id) : '') . '",
+                dataload_page_buffer: ' . setting('Lunghezza in pagine del buffer Datatables') . ',
+                tempo_attesa_ricerche: ' . setting('Tempo di attesa ricerche in secondi') . ',
+                restrict_summables_to_selected: ' . setting('Totali delle tabelle ristretti alla selezione') . ',
+                snapDuration: "' . setting('Tempo predefinito di snap attività sul calendario') . '"
             };
 		</script>';
 } else {
     echo '
         <script>
             globals = {
-                rootdir: "'.base_path().'",
+                rootdir: "' . base_path() . '",
 
                 search: {},
                 translations: {
                     password: {
-                        "wordMinLength": "'.tr('La tua password è troppo corta').'",
-                        "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
-                        "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
-                        "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
-                        "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
-                        "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
-                        "wordRepetitions": "'.tr('Troppe ripetizioni').'",
-                        "wordSequences": "'.tr('La tua password contiene sequenze').'",
-                        "errorList": "'.tr('Errori').':",
-                        "veryWeak": "'.tr('Molto debole').'",
-                        "weak": "'.tr('Debole').'",
-                        "normal": "'.tr('Normale').'",
-                        "medium": "'.tr('Media').'",
-                        "strong": "'.tr('Forte').'",
-                        "veryStrong": "'.tr('Molto forte').'",
+                        "wordMinLength": "' . tr('La tua password è troppo corta') . '",
+                        "wordMaxLength": "' . tr('La tua password è troppo lunga') . '",
+                        "wordInvalidChar": "' . tr('La tua password contiene un carattere non valido') . '",
+                        "wordNotEmail": "' . tr('Non usare la tua e-mail come password') . '",
+                        "wordSimilarToUsername": "' . tr('La tua password non può contenere il tuo nome') . '",
+                        "wordTwoCharacterClasses": "' . tr('Usa classi di caratteri diversi') . '",
+                        "wordRepetitions": "' . tr('Troppe ripetizioni') . '",
+                        "wordSequences": "' . tr('La tua password contiene sequenze') . '",
+                        "errorList": "' . tr('Errori') . ':",
+                        "veryWeak": "' . tr('Molto debole') . '",
+                        "weak": "' . tr('Debole') . '",
+                        "normal": "' . tr('Normale') . '",
+                        "medium": "' . tr('Media') . '",
+                        "strong": "' . tr('Forte') . '",
+                        "veryStrong": "' . tr('Molto forte') . '",
                     },
                 },
 
-                timestamp_format: "'.formatter()->getTimestampPattern().'",
-                date_format: "'.formatter()->getDatePattern().'",
-                time_format: "'.formatter()->getTimePattern().'",
+                timestamp_format: "' . formatter()->getTimestampPattern() . '",
+                date_format: "' . formatter()->getDatePattern() . '",
+                time_format: "' . formatter()->getTimePattern() . '",
 
-                locale: "'.explode('_', $lang)[0].'",
-				full_locale: "'.$lang.'",
+                locale: "' . explode('_', $lang)[0] . '",
+				full_locale: "' . $lang . '",
             };
         </script>';
 }
@@ -285,7 +285,7 @@ if (Auth::check()) {
 // JS
 foreach (App::getAssets()['js'] as $js) {
     echo '
-        <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
+        <script type="text/javascript" charset="utf-8" src="' . $js . '"></script>';
 }
 
 // Impostazioni di default per gli alert
@@ -295,7 +295,7 @@ echo '
                 buttonsStyling: false,
                 confirmButtonClass: "btn btn-lg btn-primary",
                 cancelButtonClass: "btn btn-lg",
-                cancelButtonText: "'.tr('Annulla').'",
+                cancelButtonText: "' . tr('Annulla') . '",
             });
         </script>';
 
@@ -308,7 +308,7 @@ if (Auth::check()) {
     }
 
     if (setting('Attiva scorciatoie da tastiera')) {
-        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js?v='.$version.'"></script>';
+        echo '<script type="text/javascript" charset="utf-8" src="' . App::getPaths()['js'] . '/hotkeys-js/hotkeys.min.js?v=' . $version . '"></script>';
         echo '
         <script>
 
@@ -350,19 +350,18 @@ $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di defau
 echo '
     </head>
 
-	<body class="sidebar-mini skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
+	<body class="sidebar-mini layout-fixed skin-' . $theme . (!empty($hide_sidebar) ? ' sidebar-collapse' : '') . (!Auth::check() ? ' hold-transition login-page' : '') . '">
+		<div class="' . (!Auth::check() ? '' : 'wrapper') . '">';
 
 if (Auth::check()) {
-    $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'default';
+    $calendar_color_label = ($_SESSION['period_start'] != date('Y') . '-01-01' || $_SESSION['period_end'] != date('Y') . '-12-31') ? 'danger' : 'secondary';
 
     echo '
             <!-- Loader principale -->
-			<div id="main_loading">
-				<div>
-					<i class="fa fa-cog fa-spin text-danger"></i>
-				</div>
-			</div>
+			<!-- Preloader -->
+            <div id="main_loading" class="preloader flex-column justify-content-center align-items-center">
+                <img class="animation__shake" src="'.$rootdir.'/assets/dist/img/logo.png" alt="OSM" height="60" width="60">
+            </div>
 
             <!-- Loader secondario -->
             <div id="mini-loader" style="display:none;">
@@ -372,137 +371,131 @@ if (Auth::check()) {
 			<!-- Loader senza overlay -->
 			<div id="tiny-loader" style="display:none;"></div>
 
-			<nav class="main-header navbar navbar-expand">
-            <a href="'.tr('https://www.openstamanager.com').'" class="navbar-brand brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="brand-link-mini">'.tr('OSM').'</span>
-                <!-- logo for regular state and mobile devices -->
-                <span class="brand-link-lg">'.tr('OpenSTAManager').'</span>
-            </a>
-				<!-- Header Navbar: style can be found in header.less -->
+            <!-- Navbar -->
+            <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fa fa-bars"></i></a>
+                    </li>
 
-					<!-- Sidebar toggle button-->
-                    <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a></li></ul>
-				
-                    <!-- Navbar Left Menu -->
-                    <div class="navbar-left">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a href="#" id="daterange" class="nav-link" role="button">
-                                    <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="badge bg-'.$calendar_color_label.'">
-                                    <'.Translator::dateToLocale($_SESSION['period_start']) . ' - ' . Translator::dateToLocale($_SESSION['period_end']).'>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <li class="nav-item">
+                        <a href="#" id="daterange" class="nav-link" role="button">
+                            <i class="fa fa-calendar"></i> <i class="fa fa-caret-down"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-sm-inline-block">
+                        <a class="nav-link text-' . $calendar_color_label . '">
+                            ' . Translator::dateToLocale($_SESSION['period_start']) . ' - ' . Translator::dateToLocale($_SESSION['period_end']) . '
+                        </a>
+                    </li>
+                </ul>
+            
 
-                     <!-- Navbar Right Menu -->
-                     <ul class="navbar-nav ml-auto">';
+                    <!-- Navbar Right Menu -->
+                    <ul class="navbar-nav ml-auto">';
     // Visualizzo gli hooks solo se non sono stati disabilitati
     if (!$config['disable_hooks']) {
         echo '
-                            <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-bell-o"></i>
-                                    <span id="hooks-badge" class="badge badge-warning">
-                                        <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
-                                        <span id="hooks-notified"></span>
-                                        <span id="hooks-counter" class="d-none">0</span>
-                                        <span id="hooks-number" class="d-none">0</span>
-                                    </span>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+                                <span id="hooks-badge" class="badge badge-warning">
+                                    <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                    <span id="hooks-notified"></span>
+                                    <span id="hooks-counter" class="d-none">0</span>
+                                    <span id="hooks-number" class="d-none">0</span>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                <a href="#" class="dropdown-item">
+                                    <span class="small" id="hooks-header"></span>
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item">
-                                        <ul class="menu" id="hooks">
-                                            <li class="nav-item">
-                                                <a href="#" class="nav-link">
-                                                    <span class="small" id="hooks-header"></span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>';
+                                <div id="hooks"></div>
+                            </div>
+                        </div>';
     }
 
     echo '
-                            <li class="nav-item">
-                                <a href="#" onclick="window.print()" class="nav-link" title="'.tr('Stampa').'">
-                                    <i class="fa fa-print nav-icon"></i>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a href="#" onclick="window.print()" class="nav-link" title="' . tr('Stampa') . '">
+                                <i class="fa fa-print nav-icon"></i>
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a href="'.base_path().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
-                                    <i class="fa fa-book nav-icon"></i>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a href="' . base_path() . '/log.php" class="nav-link" title="' . tr('Log accessi') . '">
+                                <i class="fa fa-book nav-icon"></i>
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a href="'.base_path().'/shortcuts.php" class="nav-link" title="'.tr('Scorciatoie').'">
-                                    <i class="fa fa-keyboard-o nav-icon"></i>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a href="' . base_path() . '/shortcuts.php" class="nav-link" title="' . tr('Scorciatoie') . '">
+                                <i class="fa fa-keyboard-o nav-icon"></i>
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a href="'.base_path().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
-                                    <i class="fa fa-info nav-icon"></i>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a href="' . base_path() . '/info.php" class="nav-link" title="' . tr('Informazioni') . '">
+                                <i class="fa fa-info nav-icon"></i>
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
-                                    <i class="fa fa-power-off nav-icon"></i>
-                                </a>
-                            </li>
-                        </ul>
-                     </div>
-				</nav>
-			</header>
+                        <li class="nav-item">
+                            <a href="' . base_path() . '/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="' . tr('Esci') . '">
+                                <i class="fa fa-power-off nav-icon"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- /.navbar -->
 
-            <aside class="main-sidebar sidebar-dark-primary">
-                <div class="sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-transition os-host-scrollbar-horizontal-hidden">
+                <!-- Main Sidebar Container -->
+                <aside class="main-sidebar sidebar-dark-primary elevation-4">
+                    <a href="' . tr('https://www.openstamanager.com') . '" class="brand-link" title="' . tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") . '" target="_blank">
+                        <img src="' . $rootdir . '/assets/dist/img/logo_completo.png" alt="' . tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") . '" class="img-fluid">
+                        <span class="brand-text font-weight-light">&nbsp;</span>
+                    </a>
 
-                <!-- Sidebar user panel -->
-                <div class="user-panel mt-3 pb-3 mb-3 text-center info">
-                    <div class="info">
-                        <p><a href="'.base_path().'/modules/utenti/info.php">
-                            '.$user['username'].'
-                        </a></p>
-                        <p id="datetime"></p>
-                    </div>
-                   <a class="image" href="'.base_path().'/modules/utenti/info.php">';
+                    <!-- Sidebar -->
+                    <div class="sidebar">
+
+                    <!-- Sidebar user panel (optional) -->
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                        <div class="image">';
 
     $user_photo = $user->photo;
     if ($user_photo) {
         echo '
-                            <img src="'.$user_photo.'" class="img-circle pull-left" alt="'.$user['username'].'" />';
+                            <img src="' . $user_photo . '" class="img-circle elevation-2" alt="' . $user['username'] . '" />';
     } else {
         echo '
-                            <i class="fa fa-user-circle-o fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+                            <i class="fa fa-user-circle-o fa-2x text-light" alt="' . tr('Utente') . '"></i>';
     }
-
     echo '
-                        </a>
+                        </div>
+
+                        <div class="info">
+                        <a href="' . base_path() . '/modules/utenti/info.php" class="d-block">
+                                ' . $user['username'] . '
+                            </a>
+                        </div>
                     </div>
 
-                    <!-- search form -->
-                    <div class="sidebar-form">
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control" id="supersearch" placeholder="'.tr('Cerca').'"/>
+                        
+                    <!-- SidebarSearch Form -->
+                    <div class="form-inline">
+                        <div class="input-group" data-widget="sidebar-search">
+                            <input class="form-control form-control-sidebar" id="supersearch" type="search" placeholder="' . tr('Cerca') . '" aria-label="' . tr('Cerca') . '">
                             <div class="input-group-append">
-                                <button class="btn btn-flat" id="search-btn" name="search" type="submit">
-                                    <i class="fa fa-search"></i>
+                                <button class="btn btn-sidebar">
+                                    <i class="fa fa-search fa-fw"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <!-- /.search form -->
 
+                    <!-- Sidebar Menu -->
+                    <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
     echo Modules::getMainMenu();
     echo '
@@ -515,79 +508,79 @@ if (Auth::check()) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <aside class="control-sidebar control-sidebar-light">
-            <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
+            <h4><i class="fa fa-plug"></i> ' . tr('Plugin') . '</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
             <li data-toggle="control-sidebar" class="active btn-default nav-item">
                     <a class="nav-link" data-toggle="tab" href="#tab_0">
-                        '.$structure->getTranslation('title').'
+                        ' . $structure->getTranslation('title') . '
                     </a>
                 </li>';
 
-                // Tab dei plugin
-                    if (!empty($id_record)) {
-                    $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
-                    foreach ($plugins as $plugin) {
-                        // Badge count per record plugin
-                        $count = 0;
-                        $opt = '';
-                        if (!empty($plugin['options2'])) {
-                            $opt = json_decode($plugin['options2'], true);
-                        } elseif (!empty($plugin['options'])) {
-                            $opt = json_decode($plugin['options'], true);
-                        }
-        
-                        if (!empty($opt)) {
-                            $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
-                            $count = $dbo->fetchNum($q);
-                        }
-        
-                        echo '
+        // Tab dei plugin
+        if (!empty($id_record)) {
+            $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = ' . prepare(Models\Locale::getDefault()->id) . ') WHERE `idmodule_to`=' . prepare($id_module) . " AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
+            foreach ($plugins as $plugin) {
+                // Badge count per record plugin
+                $count = 0;
+                $opt = '';
+                if (!empty($plugin['options2'])) {
+                    $opt = json_decode($plugin['options2'], true);
+                } elseif (!empty($plugin['options'])) {
+                    $opt = json_decode($plugin['options'], true);
+                }
+
+                if (!empty($opt)) {
+                    $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
+                    $count = $dbo->fetchNum($q);
+                }
+
+                echo '
                             <li data-widget="control-sidebar" class="btn-default nav-item" >
-                                <a class="nav-link" data-widget="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
-                                    '.$plugin['title'].'
-                                    <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
+                                <a class="nav-link" data-widget="tab" href="#tab_' . $plugin['id'] . '" id="link-tab_' . $plugin['id'] . '">
+                                    ' . $plugin['title'] . '
+                                    <span class="right badge badge-danger">' . ($count > 0 ? $count : '') . '</span>
                                 </a>
                             </li>';
-                    }
-                }
-        
-                // Tab per le note interne
-                if ($structure->permission != '-' && $structure->use_notes) {
-                    $notes = $structure->recordNotes($id_record);
-        
-                    echo '
+            }
+        }
+
+        // Tab per le note interne
+        if ($structure->permission != '-' && $structure->use_notes) {
+            $notes = $structure->recordNotes($id_record);
+
+            echo '
                         <li data-widget="control-sidebar" class="btn-default">
                             <a class="bg-info" data-widget="tab" href="#tab_note" id="link-tab_note">
-                                <'.tr('Note interne').'
-                                <span class="badge pull-right">'.($notes->count() ?: '').'</span>
+                                <' . tr('Note interne') . '
+                                <span class="badge pull-right">' . ($notes->count() ?: '') . '</span>
                             </a>
                         </li>';
-                }
-        
-                // Tab per le checklist
-                if ($structure->permission != '-' && $structure->use_checklists) {
-                    $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
-                    $checklists_total = $structure->recordChecks($id_record);
-        
-                    echo '
+        }
+
+        // Tab per le checklist
+        if ($structure->permission != '-' && $structure->use_checklists) {
+            $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
+            $checklists_total = $structure->recordChecks($id_record);
+
+            echo '
                         <li data-widget="control-sidebar" class="btn-default">
                             <a class="bg-info" data-widget="tab" href="#tab_checks" id="link-tab_checks">
-                                <'.tr('Checklist').'
-                                <'.($checklists_total->count() > 0) ? '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : ''.'
+                                <' . tr('Checklist') . '
+                                <' . ($checklists_total->count() > 0) ? '<span class="badge pull-right">' . $checklists_unchecked->count() . tr(' / ') . $checklists_total->count() . '</span>' : '' . '
                             </a>
                         </li>';
-                }
-        
-                // Tab per le informazioni sulle operazioni
-                if (Auth::admin()) {
-                    echo '
+        }
+
+        // Tab per le informazioni sulle operazioni
+        if (Auth::admin()) {
+            echo '
                         <li data-widget="control-sidebar" class="btn-default">
                             <a class="bg-info" data-widget="tab" href="#tab_info" id="link-tab_info">
-                                <'.tr('Info').'
+                                <' . tr('Info') . '
                             </a>
                         </li>';
-                }
-                echo'
+        }
+        echo '
             </ul>
         </aside>
 
@@ -595,21 +588,15 @@ if (Auth::check()) {
     }
 
     echo '
-            <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="content-wrapper">
-
-                <!-- Main content -->
-                <section class="content">
-                    <div class="row">';
+    <!-- Main content -->
+    <div class="content-wrapper">
+        <section class="content">';
 
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';
     } elseif (string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
         $location = 'controller_right';
     }
-
-    echo '
-                        <div class="col-md-12">';
 
     // Eventuale messaggio personalizzato per l'installazione corrente
     $extra_file = App::filepath('include/custom/extra', 'extra.php');
@@ -627,7 +614,7 @@ if (Auth::check()) {
         echo '
             <div class="card card-warning card-center">
                 <div class="card-header with-border text-center">
-                    <h3 class="card-title">'.tr('Informazioni').'</h3>
+                    <h3 class="card-title">' . tr('Informazioni') . '</h3>
                 </div>
 
                 <div class="card-body">';
@@ -640,7 +627,7 @@ if (!empty($messages['info'])) {
         echo ' 
             <script>
                 $(document).ready( function(){
-                    window.parent.toastr.success("'.$value.'", toastr.options);
+                    window.parent.toastr.success("' . $value . '", toastr.options);
                 });
             </script>';
     }
@@ -651,8 +638,8 @@ if (!empty($messages['error'])) {
     foreach ($messages['error'] as $value) {
         echo '
 							<div class="alert alert-danger push">
-                                <h4><i class="icon fa fa fa-ban"></i> '.tr('Errore').'</h4>
-                                '.$value.'
+                                <h4><i class="icon fa fa fa-ban"></i> ' . tr('Errore') . '</h4>
+                                ' . $value . '
                             </div>';
     }
 }
@@ -662,8 +649,8 @@ if (!empty($messages['warning'])) {
     foreach ($messages['warning'] as $value) {
         echo '
 							<div class="alert alert-warning push">
-                                <h4><i class="icon fa fa-warning"></i> '.tr('Attenzione').'</h4>
-                                '.$value.'
+                                <h4><i class="icon fa fa-warning"></i> ' . tr('Attenzione') . '</h4>
+                                ' . $value . '
                             </div>';
     }
 }
@@ -681,12 +668,12 @@ if ($free_space < ($space_limit * (1024 ** 3))) {
     echo '
     <div class="callout callout-warning">
         <h4>
-            <i class="fa fa-warning"></i> '.tr('Spazio in esaurimento').'
+            <i class="fa fa-warning"></i> ' . tr('Spazio in esaurimento') . '
         </h4>
-         <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: sono al momento disponibili _TOT_', [
+         <p>' . tr('Lo spazio a disposizione del gestionale è in esaurimento: sono al momento disponibili _TOT_', [
         '_TOT_' => FileSystem::formatBytes($free_space),
-    ]).'.</p>
-         <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poiché le operazioni più espansive che richiedono spazio di archiviazione possono causare malfunzionamenti imprevisti').'. '.tr('Ad esempio, le attività di backup, caricamento di allegati o anche l\'utilizzo normale del gestionale potrebbero rendere i dati inaffidabili, provocando pertanto una perdita delle informazioni salvate').'.</p>
-        <p>'.tr('Contatta gli amministratori di sistema per risolvere al più presto il problema').'.</p>
+    ]) . '.</p>
+         <p>' . tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poiché le operazioni più espansive che richiedono spazio di archiviazione possono causare malfunzionamenti imprevisti') . '. ' . tr('Ad esempio, le attività di backup, caricamento di allegati o anche l\'utilizzo normale del gestionale potrebbero rendere i dati inaffidabili, provocando pertanto una perdita delle informazioni salvate') . '.</p>
+        <p>' . tr('Contatta gli amministratori di sistema per risolvere al più presto il problema') . '.</p>
     </div>';
 }

@@ -21,10 +21,8 @@ include_once __DIR__.'/../core.php';
 
 if (Auth::check()) {
     echo '
-                        </div>
-                    </div><!-- /.row -->
                 </section><!-- /.content -->
-            </aside><!-- /.content-wrapper -->
+            </div><!-- /.content-wrapper -->
 
 			<footer class="main-footer">
                 <a class="hidden-xs" href="'.tr('https://www.openstamanager.com').'" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'." target="_blank"><strong>'.tr('OpenSTAManager').'</strong></a>

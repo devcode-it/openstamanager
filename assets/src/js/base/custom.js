@@ -16,16 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Aggiunta dell'ingranaggio all'unload della pagina
-$(window).on("beforeunload", function () {
-    $("#main_loading").show();
-});
-
-// Rimozione dell'ingranaggio al caricamento completo della pagina
-$(window).on("load", function () {
-    $("#main_loading").fadeOut();
-});
-
 // Fix multi-modal
 $(document).on('hidden.bs.modal', '.modal', function () {
     $(this).remove();

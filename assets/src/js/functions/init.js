@@ -17,8 +17,6 @@
  */
 
 function init() {
-    // Inizializzazzione dei box AdminLTE
-    $('.box').boxWidget();
     // Modal di default
     $('[data-href]').not('.ask, .bound').click(function () {
         launch_modal($(this).data('title'), $(this).data('href'), 1);

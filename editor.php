@@ -491,14 +491,9 @@ if ($read_only || !empty($block_edit)) {
                 if(content_was_modified) {
 					var dialogText = "Uscire senza salvare?";
 					e.returnValue = dialogText;
-					$("#main_loading").fadeOut();
 					return dialogText;
                 }
             });
-
-			 window.addEventListener("unload", function(e) {
-				$("#main_loading").show();
-			});
 
 
 <?php

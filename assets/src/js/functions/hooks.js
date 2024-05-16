@@ -228,7 +228,7 @@ function renderHook(hook, result) {
     // Inizializzazione
     var element = $("#" + element_id);
     if (element.length == 0) {
-        $("#hooks").append('<li class="hook-element" id="' + element_id + '"></li>');
+        $("#hooks").append('<div class="dropdown-item hook-element" id="' + element_id + '"></div>');
 
         element = $("#" + element_id);
     }
@@ -241,7 +241,16 @@ function renderHook(hook, result) {
     }
 
     // Contenuto
-    var content = '<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small"> ' + result.message + '</span>';
+    var content = '';
+
+    if (result.link) {
+        content += '<a href="' + result.link + '">';
+    } else {
+        content += '<div class="hooks-header">';
+    }
+
+
+    content += '<i class="' + result.icon + '"></i> <span class="small"> ' + result.message + '</span>';
 
     if (result.progress) {
         var current = result.progress.current;
@@ -254,7 +263,11 @@ function renderHook(hook, result) {
         content += '<div class="progress" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width:' + percentage + '%">' + percentage + '% (' + current + '/' + total + ')</div></div>';
     }
 
-    content += '</a>';
+    if (result.link) {
+        content += '</a>';
+    } else {
+        content += '</div>';
+    }
 
     element.html(content);
 }

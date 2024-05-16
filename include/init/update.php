@@ -144,7 +144,7 @@ if (filter('action') == 'do_update') {
     echo '
         <div class="card card-warning card-center-large text-center">
             <div class="card-header">
-                <h3 class="card-title">'.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
+                <h3 class="card-title"><i class="fa fa-refresh"></i> '.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
             </div>
             <div class="card-body">';
     if (!$dbo->isInstalled()) {
@@ -217,7 +217,7 @@ if (filter('action') == 'do_update') {
     echo '
         <script>
         $(document).ready(function(){
-            $(".login-card").fadeOut();
+            $(".login-box").fadeOut();
 
             count = '.count($updates).';
             current = 0;

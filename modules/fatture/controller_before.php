@@ -114,7 +114,7 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
     if (sizeof($documenti_invio) > 0) {
         echo '
         <div class="alert push alert-warning">
-        <h4><i class="icon fa fa-clock-o"></i>'.tr('Attenzione').'</h4>'.tr('Le seguenti fatture sono in attesa di essere inviate').':<ul>';
+        <h4><i class="fa fa-clock-o"></i>'.tr('Attenzione').'</h4>'.tr('Le seguenti fatture sono in attesa di essere inviate').':<ul>';
         foreach ($documenti_invio as $documento) {
             echo '
                 <li><b>'.$documento.'</b></li>';

@@ -30,7 +30,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice anagrafica è disponibile.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice anagrafica è già utilizzato in un'altra anagrafica.");
+        $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Il codice anagrafica è disponibile.') : '<i class="fa fa-warning text-yellow"></i> '.tr("Il codice anagrafica è già utilizzato in un'altra anagrafica.");
 
         $response = [
             'result' => $disponibile,
@@ -46,7 +46,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
+        $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="fa fa-warning text-yellow"></i> '.tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
 
         // Validazione del Codice Fiscale
         // Se anagrafica non ancora definita OPPURE Se il codice fiscale è diverso dalla partita iva ma solo per anagrafiche Private e Aziende.
@@ -54,7 +54,7 @@ switch ($name) {
             $check = Validate::isValidTaxCode($value);
             if (empty($check)) {
                 $disponibile = false;
-                $message .= '<br><i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice fiscale _COD_ non possiede un formato valido.', [
+                $message .= '<br><i class="fa fa-warning text-yellow"></i> '.tr('Il codice fiscale _COD_ non possiede un formato valido.', [
                     '_COD_' => $value,
                 ]);
             }
@@ -106,7 +106,7 @@ switch ($name) {
             }
         }
 
-        $message = $valido ? '<i class="icon fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="icon fa fa-warning text-yellow"></i> '.tr('Il codice intermediario non sembra essere valido. Lunghezza attesa _LENGTH_ caratteri.', ['_LENGTH_' => $length]);
+        $message = $valido ? '<i class="fa fa-check text-green"></i> '.tr('Il codice intermediario è valido.') : '<i class="fa fa-warning text-yellow"></i> '.tr('Il codice intermediario non sembra essere valido. Lunghezza attesa _LENGTH_ caratteri.', ['_LENGTH_' => $length]);
 
         $response = [
             'result' => $valido,
@@ -122,7 +122,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata') : '<i class="fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica");
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
@@ -146,7 +146,7 @@ switch ($name) {
 
         $message .= '. ';
         if (!empty($errors)) {
-            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
+            $message .= '<br><i class="fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
             foreach ($errors as $error) {
                 $message .= '<li>'.$error.'</li>';
             }
@@ -169,7 +169,7 @@ switch ($name) {
         ])->count() == 0;
         $result = $disponibile;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
 
         $errors = [];
         $check = Validate::isValidEmail($value);
@@ -188,7 +188,7 @@ switch ($name) {
 
         $message .= '. ';
         if (!empty($errors)) {
-            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
+            $message .= '<br><i class="fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
             foreach ($errors as $error) {
                 $message .= '<li>'.$error.'</li>';
             }

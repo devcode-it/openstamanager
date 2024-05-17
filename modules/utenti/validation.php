@@ -73,7 +73,7 @@ switch ($name) {
         ])->count() == 0;
         $result = $disponibile;
 
-        $message = $disponibile ? '<i class="icon fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="icon fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questa email non è ancora stata utilizzata') : '<i class="fa fa-warning text-yellow"></i> '.tr("L'email è già utilizzata in un'altra anagrafica");
 
         $errors = [];
         $check = Validate::isValidEmail($value);
@@ -92,7 +92,7 @@ switch ($name) {
 
         $message .= '. ';
         if (!empty($errors)) {
-            $message .= '<br><i class="icon fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
+            $message .= '<br><i class="fa fa-times text-red"></i> '.tr('_NUM_ errori', ['_NUM_' => count($errors)]).':<ul>';
             foreach ($errors as $error) {
                 $message .= '<li>'.$error.'</li>';
             }

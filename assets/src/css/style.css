@@ -1006,6 +1006,10 @@ table.dataTable {
     color: dodgerblue;
 }
 
+.tooltipster-box ul{
+    list-style: none;
+}
+
 /*
 * Colore testo btn-box-tool
 */

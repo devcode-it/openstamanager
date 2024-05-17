@@ -147,6 +147,10 @@ input[type=file] {
     padding-top: 10px;
 }
 
+.content {
+    padding: 0 20px !important;
+}
+
 .navbar a:hover,
 .brand-link:hover,
 .alert a,

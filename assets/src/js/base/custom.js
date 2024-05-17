@@ -16,6 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Aggiunta dell'ingranaggio all'unload della pagina
+$(window).on("beforeunload", function () {
+    $("#main_loading").css('height', '100vh').find('img').show().removeClass('animation__shake').addClass('animation__shake');
+});
+
 // Fix multi-modal
 $(document).on('hidden.bs.modal', '.modal', function () {
     $(this).remove();

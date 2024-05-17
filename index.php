@@ -158,29 +158,34 @@ if (!empty(flash()->getMessage('error'))) {
 echo '
 			<form action="?op=login" method="post" autocomplete="off">
 				<div class="login-box">
-                    <div class="login-logo">
-					    <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" style="max-width: 100%; max-height: 100%;">
-                    </div>
+                    <div class="card card-outline card-orange">
+                        <div class="card-header text-center">
+                            <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid">
+                        </div>
 
-                    <div class="login-box-body">
-                        <p class="login-box-msg">'.tr('Accedi con le tue credenziali').'</p>
-                        <div class="form-group has-feedback">
-                            <input type="text" name="username" autocomplete="username" class="form-control" placeholder="'.tr('Nome utente').'"';
+                        <div class="card-body">
+                            <p class="login-box-msg">'.tr('Accedi con le tue credenziali').'</p>
+                            <div class="input-group mb-3">
+                                <input type="text" name="username" autocomplete="username" class="form-control" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
 
 echo ' required>
-                            <span class="form-control-feedback"><i class="fa fa-user"></i> </span>
-					    </div>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="form-group has-feedback">
-					        {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'" ]}
-                        </div>
+                            <div class="input-group mb-3">
+                                {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'" ]}
+                            </div>
 
-                        <button type="submit" class="btn btn-danger btn-block btn-flat">'.tr('Accedi').'</button>
-                        <br>
-                        <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>';
+                            <button type="submit" class="btn btn-danger btn-block btn-flat">'.tr('Accedi').'</button>
+                            <br>
+                            <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>';
 if ($microsoft) {
     echo '
                         <div class="social-auth-links text-center">

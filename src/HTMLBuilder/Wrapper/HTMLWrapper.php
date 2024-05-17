@@ -39,8 +39,10 @@ class HTMLWrapper implements WrapperInterface
         $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $extras, $values['icon-before']) : null;
         $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $extras, $values['icon-after']) : null;
 
-        $result .= '
-<div class="form-group '.$extra_class.'">';
+        if (!empty($extra_class)) {
+            $result .= '
+<div class="'.$extra_class.'">';
+        }
 
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
@@ -71,14 +73,14 @@ class HTMLWrapper implements WrapperInterface
         if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             if (!empty($values['icon-after'])) {
                 $result .= '
-                <span class="input-group-addon after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
+                <span class="input-group-append after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
             }
 
             if (!empty($values['validation'])) {
                 $result .= '
-                <span class="input-group-addon after" id="'.$pseudo_id.'_validation">
+                <div class="input-group-append after" id="'.$pseudo_id.'_validation">
                     <span class="tip" title="'.tr('Validazione').'"><i class="fa fa-question-circle "></i></span>
-                </span>';
+                </div>';
             }
 
             $result .= '
@@ -102,8 +104,11 @@ class HTMLWrapper implements WrapperInterface
         $result .= '
         <div id="'.$values['id'].$rand.'-errors"></div>';
 
-        $result .= '
+        if ($values['type'] == 'checkbox') {
+            $result .= '
     </div>';
+        }
+        
         if (!empty($values['label'])) {
             unset($values['label']);
         }

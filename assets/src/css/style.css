@@ -30,6 +30,10 @@
         url('../fonts/sourcesanspro-regular-webfont.svg') format('svg');
 }
 
+.preloader{
+    background-color: #f4f6f9de !important;
+}
+
 html {
     font-size: 13px;
     height: 100%;

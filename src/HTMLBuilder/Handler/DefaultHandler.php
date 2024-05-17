@@ -101,6 +101,7 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
+
         $result = '
     <script>
         const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";
@@ -197,6 +198,10 @@ class DefaultHandler implements HandlerInterface
         }
 
         // Delega al metodo "text", per la generazione del codice HTML
+        $values['icon-after'] = '
+<div class="input-group-text">
+    <span class="fa fa-eye-slash clickable" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>
+</div>';
         $result .= $this->text($values, $extras);
 
         return $result;

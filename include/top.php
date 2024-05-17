@@ -345,12 +345,18 @@ if (isset($user)) {
     }
 }
 
+if ($theme == 'default') {
+    $theme = 'sidebar-dark-secondary';
+} else {
+    $theme = 'bg-'.$theme;
+}
+
 $settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
 $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
     </head>
 
-	<body class="sidebar-mini layout-fixed skin-' . $theme . (!empty($hide_sidebar) ? ' sidebar-collapse' : '') . (!Auth::check() ? ' hold-transition login-page' : '') . '">
+	<body class="sidebar-mini layout-fixed '. (!empty($hide_sidebar) ? ' sidebar-collapse' : '') . (!Auth::check() ? ' hold-transition login-page' : '') . '">
 		<div class="' . (!Auth::check() ? '' : 'wrapper') . '">';
 
 if (Auth::check()) {
@@ -450,7 +456,7 @@ if (Auth::check()) {
                 <!-- /.navbar -->
 
                 <!-- Main Sidebar Container -->
-                <aside class="main-sidebar sidebar-dark-primary elevation-4">
+                <aside class="main-sidebar ' . $theme .' elevation-4">
                     <a href="' . tr('https://www.openstamanager.com') . '" class="brand-link" title="' . tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") . '" target="_blank">
                         <img src="' . $rootdir . '/assets/dist/img/logo_completo.png" alt="' . tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") . '" class="img-fluid">
                         <span class="brand-text font-weight-light">&nbsp;</span>
@@ -469,7 +475,7 @@ if (Auth::check()) {
                             <img src="' . $user_photo . '" class="img-circle elevation-2" alt="' . $user['username'] . '" />';
     } else {
         echo '
-                            <i class="fa fa-user-circle-o fa-2x text-light" alt="' . tr('Utente') . '"></i>';
+                            <i class="fa fa-user-circle-o fa-2x" alt="' . tr('Utente') . '"></i>';
     }
     echo '
                         </div>

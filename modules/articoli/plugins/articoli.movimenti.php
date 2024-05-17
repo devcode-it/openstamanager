@@ -24,7 +24,7 @@ use Modules\Anagrafiche\Anagrafica;
 
 echo '
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">'.tr('Articolo').'</h3>
     </div>
 

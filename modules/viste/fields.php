@@ -43,7 +43,7 @@ foreach ($fields as $key => $field) {
                         </h3>
 
                         <div class="card-tools pull-right">
-                            <button type="button" class="btn btn-card-tool" data-widget="collapse">
+                            <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
@@ -150,7 +150,7 @@ echo '
 
         <div class="col-md-3">
             <div class="card card-primary">
-                <div class="card-heading">
+                <div class="card-header">
                     <h3 class="card-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
                 </div>
 

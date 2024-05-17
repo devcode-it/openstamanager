@@ -89,7 +89,7 @@ if ($righe_vuote) {
         <div class="col-md-8">
             <!-- INTESTAZIONE -->
             <div class="card card-primary">
-                <div class="card-heading">
+                <div class="card-header">
                     <h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
                 </div>
 
@@ -213,7 +213,7 @@ if (!empty($id_sede_azienda)) {
 
             <!-- GEOLOCALIZZAZIONE -->
             <div class="card card-primary">
-                <div class="card-heading">
+                <div class="card-header">
                     <h3 class="card-title"><i class="fa fa-map"></i> <?php echo tr('Geolocalizzazione'); ?></h3>
                 </div>
                 <div class="card-body">
@@ -342,7 +342,7 @@ echo '
 
      <!-- DATI DDT -->
     <div class="card card-primary">
-        <div class="card-heading">
+        <div class="card-header">
             <h3 class="card-title"><?php echo tr('Dati ddt'); ?></h3>
         </div>
 
@@ -523,7 +523,7 @@ if ($dir == 'entrata') {
 
 <!-- RIGHE -->
 <div class="card card-primary">
-	<div class="card-heading">
+	<div class="card-header">
 		<h3 class="card-title"><?php echo tr('Righe'); ?></h3>
 	</div>
 

@@ -46,7 +46,7 @@ $query = 'SELECT
 
 echo '
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">'.tr('Articolo').'</h3>
     </div>
 
@@ -70,7 +70,7 @@ echo '
 <div class="row">
 	<div class="col-md-3">
 		<div class="card card-primary">
-			<div class="card-heading">
+			<div class="card-header">
                 <h3 class="card-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
@@ -136,7 +136,7 @@ echo '
 echo '
 	<div class="col-md-3">
 		<div class="card card-primary">
-			<div class="card-heading">
+			<div class="card-header">
 				<h3 class="card-title">'.tr('In ordine').'<span class="tip pull-right" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
@@ -208,7 +208,7 @@ $da_ordinare = (($diff <= 0) ? 0 : $diff);
 echo '
 	<div class="col-md-3">
 		<div class="card card-primary">
-			<div class="card-heading">
+			<div class="card-header">
 				<h3 class="card-title">'.tr('Da ordinare').'<span class="tip pull-right" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
@@ -229,7 +229,7 @@ $disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
 		<div class="card card-primary">
-			<div class="card-heading">
+			<div class="card-header">
 				<h3 class="card-title">'.tr('Disponibile').'<span class="tip pull-right" title="'.tr('Quantità disponibili nel magazzino.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
@@ -253,7 +253,7 @@ echo '
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
-            <div class="card-heading">
+            <div class="card-header">
                 <h3 class="card-title">'.tr('Giacenze').'</h3>
             </div>
 

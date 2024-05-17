@@ -228,7 +228,7 @@ if ($options['dir'] == 'entrata') {
         </div>
     </div>
     <div class="row">
-        <div class="col-md-offset-4 col-md-4 minimo_vendita text-center"></div>
+        <div class="offset-md-4 col-md-4 minimo_vendita text-center"></div>
     </div>';
 } else {
     echo '

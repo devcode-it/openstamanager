@@ -100,7 +100,7 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-1">
-        <img src="'.$logo.'" class="brand-link">
+        <img src="'.$logo.'" class="img-fluid">
     </div>';
 
 // Cliente

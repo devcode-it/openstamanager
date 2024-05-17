@@ -31,7 +31,7 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
 
 	<!-- DATI SEGMENTO -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Informazioni della stampa'); ?></h3>
 		</div>
 

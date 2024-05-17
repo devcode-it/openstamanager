@@ -74,12 +74,13 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
         echo '
-    <div class="row">
-    	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "name": "id_segment_", "required": 0, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-    	</div>
-    </div>
-    <br>';
+    <div class="container">
+        <div class="row justify-content-end">
+            <div class="col-md-4">
+                {[ "type": "select", "name": "id_segment_", "required": 0, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+            </div>
+        </div>
+    </div>';
 
         echo '
     <script>

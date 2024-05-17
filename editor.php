@@ -109,8 +109,8 @@ if (empty($record) || !$has_access) {
     echo '
 
         <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs nav-item" id="tabs" role="tablist">
-                <li class="pull-left active header">
+            <ul class="nav nav-tabs" id="tabs" role="tablist">
+                <li class="pull-left active header nav-item">
                     <a data-widget="tab" href="#tab_0" class="nav-link">
                     <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 

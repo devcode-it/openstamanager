@@ -27,16 +27,12 @@ $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
     ->orderBy('sezione')
     ->get();
 
-echo '
+    echo'
 <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-6 offset-md-3">
         <div class="input-group">
-            '.input([
-    'type' => 'text',
-    'name' => 'ricerca_impostazioni',
-    'value' => $ricerca,
-]).'
-            <div class="input-group-btn">
+            <input type="text" class="form-control" name="ricerca_impostazioni" value="'.$ricerca.'">
+            <div class="input-group-append">
                 <button class="btn btn-primary" type="button">
                     <span class="fa fa-search"></span>
                 </button>
@@ -84,7 +80,7 @@ $("[id^=impostazioni]").click(function() {
 $("#ricerca_impostazioni").change(function (){
     const ricerca = $(this).val();
     const icon = $(this).parent().find("span");
-    $(".box").removeClass("hidden");
+    $(".card").removeClass("hidden");
 
     // Segnalazione ricerca in corso
     globals.impostazioni.numero_ricerche = globals.impostazioni.numero_ricerche + 1;
@@ -105,28 +101,28 @@ $("#ricerca_impostazioni").change(function (){
                     .addClass("fa-search")
             }
 
-            $(".box").addClass("hidden");
+            $(".card").addClass("hidden");
 
             let sezioni = JSON.parse(data);
             for(const sezione of sezioni){
-                $(`.box[title="` + sezione + `"]`).removeClass("hidden");
+                $(`.card[title="` + sezione + `"]`).removeClass("hidden");
             }
         });
     }
 })
 
 function caricaSezione(header) {
-    let box = $(header).closest(".box");
-    box.toggleClass("collapsed-card");
+    let card = $(header).closest(".card");
+    card.toggleClass("collapsed-card");
 
     // Controllo sul caricamento già effettuato
-    let container = box.find(".card-body");
+    let container = card.find(".card-body");
     if (container.html()){
         return ;
     }
 
     // Caricamento della sezione di impostazioni
-    let sezione = box.attr("title");
+    let sezione = card.attr("title");
     localLoading(container, true);
     return $.get("'.$structure->fileurl('sezione.php').'?id_module='.$id_module.'&sezione=" + sezione, function(data) {
         container.html(data);

@@ -133,7 +133,7 @@ foreach ($elenchi as $elenco) {
                 <tr class="dettagli-componente" data-id="'.$componente->id.'" style="display: none">
                     <td colspan="5">
                         <div class="card card-'.$type.'">
-                            <div class="card-heading">
+                            <div class="card-header">
                                 <h3 class="card-title">'.tr('Dati').'</h3>
                             </div>
 

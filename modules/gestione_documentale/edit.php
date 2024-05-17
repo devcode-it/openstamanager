@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 
 	<!-- SCHEDA FILE -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"> Scheda file</h3>
 		</div>
 

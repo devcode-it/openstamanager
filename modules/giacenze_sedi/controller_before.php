@@ -26,7 +26,7 @@ $id_sede = $_SESSION['giacenze_sedi']['idsede'];
 
 echo '
 <div class="row">
-    <div class="col-md-offset-8 col-md-4">
+    <div class="offset-md-8 col-md-4">
         {["type":"select", "label":"'.tr('Sede').'", "name": "id_sede", "ajax-source": "sedi_azienda", "value":"'.$id_sede.'" ]}
     </div>
 </div>

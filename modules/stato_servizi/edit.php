@@ -165,7 +165,7 @@ if (Services::isEnabled()) {
             echo '
 
                 <div class="card card-primary">
-                    <div class="card-heading" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
+                    <div class="card-header" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'</div>
 
                     <div class="card-body">
                                 

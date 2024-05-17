@@ -63,7 +63,7 @@ $percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) /
 
 echo '
 <div class="row">
-    <div class="col-md-offset-4 col-md-4 text-center">
+    <div class="offset-md-4 col-md-4 text-center">
         <h4>'.strtoupper(tr('Impianti')).': '.$n_impianti.'</h4>
         <div class="progress">
             <div class="progress-bar progress-bar-striped progress-bar-success" role="progressbar" style="width:'.$percentuale_completati.'%"><i class="fa fa-check"></i> <b>'.$impianti_completati.'</b></div>

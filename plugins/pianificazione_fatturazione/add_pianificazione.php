@@ -147,7 +147,7 @@ foreach ($righe as $riga) {
 
 echo '
             <div class="row">
-                <div class="col-md-offset-9 col-md-3" id="div_totale">
+                <div class="offset-md-9 col-md-3" id="div_totale">
                 </div>
             </div>';
 

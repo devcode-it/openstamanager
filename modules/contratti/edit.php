@@ -37,7 +37,7 @@ if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !emp
 
 	<!-- DATI INTESTAZIONE -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
@@ -212,7 +212,7 @@ echo '
 
 	<!-- COSTI -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Costi unitari'); ?></h3>
 		</div>
 
@@ -330,7 +330,7 @@ echo '
 
 <!-- RIGHE -->
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">'.tr('Righe').'</h3>
     </div>
 

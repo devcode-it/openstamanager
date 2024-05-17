@@ -348,7 +348,7 @@ class Modules
 
         $result = '';
         if ($show) {
-            $result .= '<li class="nav-item'.($active ? ' menu-open' : '').'" id="'.$element['id'].'" data-id="'.$element['id'].'" '.($link != 'javascript:;' ? 'onclick="location.href=\''.$link.'\';"' : '').'>
+            $result .= '<li class="nav-item'.($active && !empty($submenus) ? ' menu-open' : '').'" id="'.$element['id'].'" data-id="'.$element['id'].'" '.($link != 'javascript:;' ? 'onclick="location.href=\''.$link.'\';"' : '').'>
                 <a href="'.$link.'" class="nav-link'.($active ? ' active' : '').'" target="'.$target.'">
                     <i class="'.$element['icon'].'">&nbsp;</i>
                     <p>'.$title.'</p>';

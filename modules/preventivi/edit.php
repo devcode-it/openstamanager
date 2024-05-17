@@ -42,7 +42,7 @@ if (count($preventivo->revisioni) > 1) {
 
 	<!-- DATI INTESTAZIONE -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
@@ -238,7 +238,7 @@ echo '
 echo '
 <!-- RIGHE -->
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">'.tr('Righe').'</h3>
     </div>
 

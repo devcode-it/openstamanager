@@ -283,7 +283,7 @@ echo '
 
 echo '
     <div class="row">
-        <big class="col-md-4 col-md-offset-4 text-center">
+        <big class="col-md-4 offset-md-4 text-center">
             <table class="table text-left table-striped table-bordered">';
 if (!empty($totale_ore_contratto)) {
     echo '

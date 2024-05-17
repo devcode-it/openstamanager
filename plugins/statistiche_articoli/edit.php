@@ -43,7 +43,7 @@ echo '
 </div>
 
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">
             <span class="tip" title="'.tr('La statistica considera le fatture di acquisto nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio acquisto').'
@@ -72,7 +72,7 @@ echo '
 </div>
 
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">
             <span class="tip" title="'.tr('La statistica considera le fatture di vendita nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio vendita').'

@@ -40,7 +40,7 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-6">
+		<div class="offset-md-3 col-md-6">
 			<div class="alert alert-info">
 				<i class="fa fa-info-circle"></i> '.tr('Puoi trovare alcuni esempi qui:').' <a href="https://crontab-generator.com/it/" target="_blank">https://crontab-generator.com/it/</a>
 			</div>
@@ -59,7 +59,7 @@ $giorno_sett = $exp[5];
 echo '
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-3">
+		<div class="offset-md-3 col-md-3">
 			{[ "type": "text", "label": "'.tr('Minuto').'", "name": "minuto", "required": 1, "class": "text-center", "value": "'.$minuto.'", "readonly": 1]}
 		</div>
 		<div class="col-md-3">
@@ -67,7 +67,7 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-3">
+		<div class="offset-md-3 col-md-3">
 			{[ "type": "text", "label": "'.tr('Ora').'", "name": "ora", "required": 1, "class": "text-center", "value": "'.$ora.'", "extra": "", "readonly": 1 ]}
 		</div>
 		<div class="col-md-3">
@@ -75,7 +75,7 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-3">
+		<div class="offset-md-3 col-md-3">
 			{[ "type": "text", "label": "'.tr('Giorno').'", "name": "giorno", "required": 1, "class": "text-center", "value": "'.$giorno.'", "extra": "", "readonly": 1]}
 		</div>
 		<div class="col-md-3">
@@ -83,7 +83,7 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-3">
+		<div class="offset-md-3 col-md-3">
 			{[ "type": "text", "label": "'.tr('Mese').'", "name": "mese", "required": 1, "class": "text-center", "value": "'.$mese.'", "extra": "", "readonly": 1]}
 		</div>
 		<div class="col-md-3">
@@ -91,7 +91,7 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-offset-3 col-md-3">
+		<div class="offset-md-3 col-md-3">
 			{[ "type": "text", "label": "'.tr('Giorno della settimana').'", "name": "giorno_sett", "required": 1, "class": "text-center", "value": "'.$giorno_sett.'", "extra": "", "readonly": 1]}
 		</div>
 		<div class="col-md-3">

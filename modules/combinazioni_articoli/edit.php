@@ -11,7 +11,7 @@ echo '
 	<input type="hidden" name="op" value="update">
 
     <div class="card card-primary">
-        <div class="card-heading">
+        <div class="card-header">
             <h3 class="card-title">'.tr('Dati').'</h3>
         </div>
 

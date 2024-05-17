@@ -38,7 +38,7 @@ echo '
     <input type="hidden" name="idanagrafica" value="'.$record['idanagrafica'].'">
 
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">
 			    '.tr('Dettagli scadenza').'
                 </button>
@@ -143,7 +143,7 @@ echo '
         </div>
     </div>
     <div class="card card-primary">
-        <div class="card-heading">
+        <div class="card-header">
             <h3 class="card-title">
                 '.tr('Rate scadenza').'
                 <button type="button" class="btn btn-xs btn-info pull-right tip" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">

@@ -27,7 +27,7 @@ use Models\Module;
 
 	<!-- DATI SEGMENTO -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Segmento'); ?></h3>
 		</div>
 
@@ -120,7 +120,7 @@ if ($record['is_sezionale']) {
     ?>
 	<!-- Campi extra -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Sezionale'); ?></h3>
 		</div>
 

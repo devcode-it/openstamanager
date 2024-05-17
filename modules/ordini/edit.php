@@ -50,7 +50,7 @@ if ($righe_vuote) {
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 	<!-- INTESTAZIONE -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
@@ -198,7 +198,7 @@ if ($dir == 'entrata') {
     <!-- Fatturazione Elettronica PA-->
     <div class="card-group">
         <div class="card card-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
-            <div class="card-heading">
+            <div class="card-header">
                 <h4 class="card-title">
                     <?php echo tr('Dati appalto'); ?>
 
@@ -238,7 +238,7 @@ if ($dir == 'entrata') {
 echo '
 <!-- RIGHE -->
 <div class="card card-primary">
-	<div class="card-heading">
+	<div class="card-header">
 		<h3 class="card-title">'.tr('Righe').'</h3>
 	</div>
 

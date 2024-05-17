@@ -38,7 +38,7 @@ $mesi = [
 
 echo '<div class="container"
     <div class="row">
-        <div class="col-md-2 col-md-offset-9">
+        <div class="col-md-2 offset-md-9">
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
 for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
@@ -173,7 +173,7 @@ echo '</tbody>
         <?php
     echo '
     
-        <div class="col-md-3 col-md-offset-5">
+        <div class="col-md-3 offset-md-5">
             <button type="button" class="btn btn-primary" onclick="crea_fattura_multipla($(this))">
                 <i class="fa fa-euro"></i> '.tr('Fattura tutti i selezionati').'
             </button>

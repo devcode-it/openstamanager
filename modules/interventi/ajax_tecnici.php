@@ -269,7 +269,7 @@ if (!$is_completato) {
         </button>
     </div>
 
-    <div class="col-md-offset-4 col-md-4">
+    <div class="offset-md-4 col-md-4">
         {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.(new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
     </div>
 

@@ -26,7 +26,7 @@ echo '
 
     <!-- DATI -->
     <div class="card card-primary">
-        <div class="card-heading">
+        <div class="card-header">
             <h3 class="card-title">'.tr('Dati').'</h3>
         </div>
 
@@ -81,7 +81,7 @@ foreach ($checks as $check) {
 echo '
 
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">'.tr('Checklist').'</h3>
     </div>
 

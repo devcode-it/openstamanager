@@ -44,7 +44,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Addebiti unitari al cliente'); ?></h3>
 		</div>
 
@@ -67,7 +67,7 @@ include_once __DIR__.'/../../core.php';
 
 
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Costi unitari del tecnico'); ?></h3>
 		</div>
 
@@ -88,7 +88,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Righe aggiuntive predefinite'); ?></h3>
 		</div>
 
@@ -107,7 +107,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Addebiti e costi per fasce orarie'); ?></h3>
 		</div>
 

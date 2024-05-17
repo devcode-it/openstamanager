@@ -39,49 +39,51 @@ $segmenti = $dbo->FetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module` =
 if ($segmenti) {
 	$segmenti = Modules::getSegments($id_module);
 	if (empty($segmenti)) {
-		echo '<div class="alert alert-warning">
-		<i class="fa fa-warning-circle"></i> '.tr("Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di questo modulo").'.
-	</div>';
+		echo '
+<div class="alert alert-warning">
+	<i class="fa fa-warning-circle"></i> '.tr("Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di questo modulo").'.
+</div>';
 	}
 }
 
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
-		<div class="nav-tabs-custom">
-			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-				<li class="pull-left active header nav-item">
-					<a class="nav-link" data-widget="tab" href="#tab_0" >
-                        <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
+<div class="nav-tabs-custom">
+	<ul class="nav nav-tabs" id="tabs" role="tablist">
+		<li class="pull-left active nav-item header">
+			<a data-widget="tab" href="#tab_0" class="nav-link">
+			<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
-						<br><button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+				
+				<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }
 
 echo '
-					</a>
-				</li>';
+			</a>
+		</li>';
 
 $plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
 
 // Tab dei plugin
 foreach ($plugins as $plugin) {
     echo '
-				<li class="nav-item">
-					<a class="nav-link" data-widget="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
-				</li>';
+		<li class="nav-item">
+			<a class="nav-link" data-widget="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
+		</li>';
 }
 
 echo '
-			</ul>
-			<div class="tab-content">
-				<div id="tab_0" class="tab-pane active">';
+	</ul>
+	<div class="tab-content">
+		<div id="tab_0" class="tab-pane active">';
 
 include base_dir().'/include/manager.php';
 
 echo '
-				</div>';
+		</div>';
 
 // Plugin
 $module_record = $record;
@@ -89,34 +91,34 @@ foreach ($plugins as $plugin) {
     $record = $module_record;
 
     echo '
-				<div id="tab_'.$plugin->id.'" class="tab-pane">';
+		<div id="tab_'.$plugin->id.'" class="tab-pane">';
 
-    $id_plugin = $plugin->id;
+$id_plugin = $plugin->id;
 
-    include base_dir().'/include/manager.php';
+include base_dir().'/include/manager.php';
 
-    echo '
-				</div>';
+echo '
+		</div>';
 }
 
 $record = $module_record;
 
 echo '
-			</div>
-		</div>';
+	</div>
+</div>';
 
 redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 
 // Interfaccia per la modifica dell'ordine e della visibilità delle colonne (Amministratore)
 if ($user->is_admin && string_contains($module['option'], '|select|')) {
     echo '
-<a class="btn btn-xs btn-default pull-right" style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
-    <i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
+<a class="btn btn-xs btn-default justify-content-end" style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
+	<i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
 </a><div class="clearfix" >&nbsp;</div>
 
 <script>
 function modificaColonne(button) {
-    openModal("'.tr('Modifica colonne').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&op=aggiorna_colonne")
+	openModal("'.tr('Modifica colonne').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&op=aggiorna_colonne")
 }
 </script>';
 }

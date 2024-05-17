@@ -31,7 +31,7 @@ use Modules\Pagamenti\Pagamento;
 
 	<!-- DATI -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
@@ -68,7 +68,7 @@ use Modules\Pagamenti\Pagamento;
 
     <!-- Date aggiuntive -->
     <div class="card card-primary hide">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Date aggiuntive'); ?></h3>
 		</div>
 

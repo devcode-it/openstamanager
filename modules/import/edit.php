@@ -86,7 +86,7 @@ if (empty($id_record)) {
         echo '
     <div class="col-sm-6 col-lg-4">
         <div class="card card-primary">
-            <div class="card-heading">
+            <div class="card-header">
                 <h3 class="card-title">'.tr('Colonna _NUM_', [
             '_NUM_' => $column + 1,
         ]).'</h3>

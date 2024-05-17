@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 
 	<!-- DATI -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 

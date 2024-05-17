@@ -90,7 +90,7 @@ echo '
 echo '
 	<!-- DATI PROMEMORIA -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">'.tr('Dati').'</h3>
 		</div>
 
@@ -150,7 +150,7 @@ echo '
 echo '
     <!-- RIGHE -->
     <div class="card card-primary">
-        <div class="card-heading">
+        <div class="card-header">
             <h3 class="card-title">'.tr('Righe').'</h3>
         </div>
 
@@ -191,7 +191,7 @@ echo '{( "name": "filelist_and_upload", "id_record": "'.$id_record.'", "id_modul
 echo '
 	<!-- PIANIFICAZIONE CICLICA -->
 	<div class="card card-primary '.(!$block_edit ? 'hide' : '').'">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">'.tr('Promemoria ciclico?').'</h3>
 		</div>
 
@@ -226,7 +226,7 @@ echo '
 echo '
 	<!-- PIANIFICARE INTERVENTI -->
 	<div class="card card-primary '.(!$block_edit ? 'hide' : '').'">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">'.tr('Pianificare interventi?').'</h3>
 		</div>
 

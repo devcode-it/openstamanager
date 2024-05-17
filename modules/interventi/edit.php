@@ -55,7 +55,7 @@ echo '
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
+        <div class="col-md-4 offset-md-4">
             {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.(new Module())->getByField('title', 'Tags').'|" ]}
         </div>
         <div class="col-md-4">
@@ -567,7 +567,7 @@ if (!$block_edit) {
         } else {
             echo '
 	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
-	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
+	   	<div class="col-md-6 offset-md-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
                 '_DATE_' => Translator::dateToLocale($record['firma_data']),
                 '_TIME_' => Translator::timeToLocale($record['firma_data']),
                 '_PERSON_' => (!empty($record['firma_nome']) ? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),

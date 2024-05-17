@@ -51,7 +51,7 @@ echo '
 
 	<!-- DATI -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">'.tr('Dati campagna').'</h3>
 		</div>
 
@@ -157,7 +157,7 @@ $destinatari_senza_mail = $newsletter->getNumeroDestinatariSenzaEmail();
 echo '
 <!-- Destinatari -->
 <div class="card card-primary">
-    <div class="card-heading">
+    <div class="card-header">
         <h3 class="card-title">
             '.tr('Destinatari').'
             <span> ('.$numero_destinatari.')</span>

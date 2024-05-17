@@ -31,7 +31,7 @@ echo '
     <input type="hidden" name="id_record" value="'.$id_record.'">
 
     <div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title">'.tr('Informazioni per rinnovo').'</h3>
 		</div>
 

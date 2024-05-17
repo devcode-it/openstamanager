@@ -39,7 +39,7 @@ if (!empty($record['immagine'])) {
 
 	<!-- DATI ANAGRAFICI -->
 	<div class="card card-primary">
-		<div class="card-heading">
+		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Dati impianto'); ?></h3>
 		</div>
 

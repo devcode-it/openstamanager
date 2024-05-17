@@ -521,15 +521,17 @@ class Gestore
                 ->setNumberOfTransactions($this->numero_transazioni_debito_diretto);
             $this->debito_diretto->setGroupHeader($groupHeader);
 
-            $xml = $this->debito_diretto->xml();
+            if($groupHeader->getNumberOfTransactions() > 0) {
+                $xml = $this->debito_diretto->xml();
 
-            // Generazione filename
-            $filename = $this->id_debito_diretto.'.xml';
-            $file = $path.'/'.$filename;
-            $files[] = base_url().'/'.$file;
+                // Generazione filename
+                $filename = $this->id_debito_diretto.'.xml';
+                $file = $path.'/'.$filename;
+                $files[] = base_url().'/'.$file;
 
-            // Salvataggio del file
-            file_put_contents(base_dir().'/'.$file, $xml);
+                // Salvataggio del file
+                file_put_contents(base_dir().'/'.$file, $xml);
+            }
         } catch (\Exception $e) {
         }
 

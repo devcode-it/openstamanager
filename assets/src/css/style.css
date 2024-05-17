@@ -1539,6 +1539,16 @@ kbd{
     padding: 20px;
 }
 
+.sidebar .nav-treeview .nav-link {
+    margin-left: 10px;
+    width: auto !important;
+}
+
+.sidebar  .nav-treeview .nav-treeview .nav-link {
+    margin-left: 20px;
+    width: auto !important;
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

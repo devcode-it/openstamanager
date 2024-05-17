@@ -33,38 +33,40 @@ echo '
 $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
-echo '
-<div class="card card-warning">
-    <div class="card-header">
-        <h4 class="card-title">'.tr('Periodi temporali').'</h4>
-        <div class="card-tools">
-            <button class="btn btn-warning btn-sm" onclick="add_calendar()">
-                <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="card-body" id="calendars">
-
-    </div>
-</div>';
-
 // Fatturato
 echo '
-<div class="card card-success">
+<div class="card card-info">
     <div class="card-header">
         <h4 class="card-title">'.tr('Vendite e acquisti').'</h4>
+
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <canvas class="card-body" id="fatturato" height="500"></canvas>
+    <div class="card-body">
+        <div class="card card-warning collapsed-card">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('Periodi temporali').'</h4>
+                <div class="card-tools">
+                    <button class="btn btn-warning btn-sm" onclick="add_calendar()">
+                        <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body" id="calendars">
+
+            </div>
+        </div>
+        <canvas id="fatturato" height="50"></canvas>
+    </div>
 </div>';
+
 // Script per il grafico del fatturato
 echo '
 <script>
@@ -219,7 +221,7 @@ $totale = $dbo->fetchArray('SELECT
 echo '
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-warning">
+        <div class="card card-info">
             <div class="card-header">
                 <h4 class="card-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
 
@@ -306,7 +308,7 @@ $totale = $dbo->fetchArray('SELECT
 
 echo '
     <div class="col-md-6">
-        <div class="card card-danger">
+        <div class="card card-info">
             <div class="card-header">
                 <h4 class="card-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
 
@@ -388,20 +390,23 @@ foreach ($tipi as $tipo) {
 }
 
 echo '
-<div class="card card-info">
-    <div class="card-header">
-        <h4 class="card-title">'.tr('Numero interventi per tipologia').'</h4>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('Numero interventi per tipologia').'</h4>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="interventi_n_tipologia"></canvas>
+            </div>
         </div>
-    </div>
-    <div class="card-body">
-        <canvas id="interventi_n_tipologia" height="100"></canvas>
-    </div>
-</div>';
+    </div>';
 
 // Script for the chart displaying the number of interventions by type
 echo '
@@ -445,18 +450,21 @@ foreach ($tipi as $tipo) {
 }
 
 echo '
-<div class="card card-info">
-    <div class="card-header">
-        <h4 class="card-title">'.tr('Ore interventi per tipologia').'</h4>
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('Ore interventi per tipologia').'</h4>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="interventi_ore_tipologia"></canvas>
+            </div>
         </div>
-    </div>
-    <div class="card-body">
-        <canvas id="interventi_ore_tipologia" height="100"></canvas>
     </div>
 </div>';
 
@@ -528,30 +536,33 @@ foreach ($tecnici as $tecnico) {
 }
 
 echo '
-<div class="card card-info">
-    <div class="card-header">
-        <h4 class="card-title">'.tr('Ore di lavoro per tecnico').'</h4>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('Ore di lavoro per tecnico').'</h4>
 
-        <div class="row">
-            <div class="col-md-3 float-right">';
+                <div class="row">
+                    <div class="col-md-3 float-right">';
 if ($_SESSION['superselect']['idtipiintervento']) {
     echo '
-                {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
+                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
 }
 echo '
+                    </div>
+                </div>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="sessioni"></canvas>
             </div>
         </div>
-
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
-        </div>
-    </div>
-    <div class="card-body">
-        <canvas id="sessioni" height="100"></canvas>
-    </div>
-</div>';
+    </div>';
 
 // Script per il grafico ore interventi per tecnico
 echo '
@@ -703,18 +714,22 @@ $dataset .= '{
     ]
 },';
 echo '
-<div class="card card-info">
-    <div class="card-header">
-        <h4 class="card-title">'.tr('Nuove anagrafiche').'</h4>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h4 class="card-title">'.tr('Nuove anagrafiche').'</h4>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="n_anagrafiche"></canvas>
+            </div>
         </div>
-    </div>
-    <div class="card-body">
-        <canvas id="n_anagrafiche" height="100"></canvas>
     </div>
 </div>';
 

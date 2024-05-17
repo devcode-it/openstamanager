@@ -58,7 +58,7 @@ $(document).ready(function () {
 
     // Gestione click sul pulsante per il toggle
     pluginToggle.on("click", function () {
-        $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");
+        $("aside.content-sidebar, section.content, .main-footer").toggleClass("with-control-sidebar");
 
         toggleControlSidebar();
     });

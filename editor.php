@@ -108,9 +108,9 @@ if (empty($record) || !$has_access) {
 
     echo '
 
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs" id="tabs" role="tablist">
-                <li class="pull-left active header nav-item">
+        <nav class="navbar navbar-expand navbar-light">
+            <ul class="navbar-nav" id="tabs">
+                <li class="nav-item">
                     <a data-widget="tab" href="#tab_0" class="nav-link">
                     <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
@@ -122,14 +122,15 @@ if (empty($record) || !$has_access) {
 
     echo '
 					</a>
-                </li>';
+                </li>
+            </ul>
 
-    echo '
-
-				<li class="control-sidebar-toggle nav-item">
+            <ul class="navbar-nav ml-auto">
+				<li class="nav-item control-sidebar-toggle">
                     <a class="nav-link" style="cursor: pointer">'.tr('Plugin').'</a>
                 </li>
 			</ul>
+        </nav>
 
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active nav-item">';

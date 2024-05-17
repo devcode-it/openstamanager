@@ -304,6 +304,7 @@ span.form-control {
 }
 
 #pulsanti {
+    position: sticky;
     top: 0;
     padding: 6px;
     z-index: 1;
@@ -1601,13 +1602,13 @@ kbd{
 
 @media screen and (min-width: 1140px) {
     .with-control-sidebar {
-        margin-right: 150px;
+        margin-right: 200px;
     }
 
     .control-sidebar-open {
         right: 0;
         display: block !important;
-        width: 150px !important;
+        width: 200px !important;
     }
 
     .control-sidebar.control-sidebar-open,

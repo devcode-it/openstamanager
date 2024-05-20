@@ -1345,7 +1345,7 @@ kbd{
 
 /* Sidebar yellow */
 .main-sidebar.bg-yellow .nav-link {
-    color: #fff;
+    color: #333;
 }
 
 .main-sidebar.bg-yellow .nav-link.active {
@@ -1354,7 +1354,7 @@ kbd{
 }
 
 .main-sidebar.bg-yellow .nav-link:not(.active):hover {
-    color: #f6f6f6;
+    color:  rgba(255,255,255,.9);
     background-color: rgba(255,255,255,.1);
 }
 
@@ -1363,11 +1363,11 @@ kbd{
 }
 
 .main-sidebar.bg-yellow .brand-link {
-    background-color: #fff;
+    background-color: #333;
 }
 
 .main-sidebar.bg-yellow .user-panel .info > a {
-    color: #fff;
+    color: #333;
 }
 
 .sidebar .btn-sidebar {
@@ -1538,12 +1538,12 @@ kbd{
 }
 
 .sidebar .nav-treeview .nav-link {
-    margin-left: 10px;
+    margin-left: 15px;
     width: auto !important;
 }
 
 .sidebar  .nav-treeview .nav-treeview .nav-link {
-    margin-left: 20px;
+    margin-left: 30px;
     width: auto !important;
 }
 

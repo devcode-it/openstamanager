@@ -505,8 +505,11 @@ if ($structure->permission == 'rw') {
                     }
                 }
 
+                //Lista casi in cui creare i campi personalizzati
+                $list = ['add', 'add_documento', 'add_preventivo', 'add_ordine_fornitore'];
+
                 // Inserimento iniziale
-                if (post('op') == 'add') {
+                if (in_array(post('op'),$list)) {
                     // Informazioni di log
                     Filter::set('get', 'id_record', $id_record);
 

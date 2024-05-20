@@ -354,7 +354,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         $("#language").removeClass("hide");
 
                         $("#language").select2({
-                            theme: "bootstrap",
+                            theme: "bootstrap4",
                             templateResult: function(item) {
                                 if (!item.id || !flag) {
                                     return item.text;

@@ -3,6 +3,7 @@
     "main": "gulpfile.js",
     "dependencies": {
         "@fullcalendar/moment": "^6.1.5",
+        "@ttskch/select2-bootstrap4-theme": "^1.5.2",
         "admin-lte": "^3.2.0",
         "autocompleter": "^6.1.1",
         "autonumeric": "^4.6.0",

@@ -420,7 +420,7 @@ $(document).ready(function() {
     $("#serials").select2().select2("destroy");
 
     $("#serials").select2({
-        theme: "bootstrap",
+        theme: "bootstrap4",
         language: "it",
         allowClear: true,
         tags: true,

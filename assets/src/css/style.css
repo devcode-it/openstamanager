@@ -165,7 +165,7 @@ a:focus {
 }
 
 .no-padding {
-    padding: 0 0px;
+    padding: 0 !important;
 }
 
 .no-padding-left {
@@ -516,16 +516,8 @@ input.small-width {
     z-index: 2000;
 }
 
-.after.input-group-addon .select2-selection,
-.after.input-group-addon {
-    border-radius: 0px 4px 4px 0px;
-    border-left: none;
-}
-
-.before.input-group-addon .select2-selection,
-.before.input-group-addon {
-    border-radius: 4px 0px 0px 4px;
-    border-right: none;
+.input-group-text > .btn{
+    line-height: 1px;
 }
 
 .hide-it-off-screen {
@@ -1020,6 +1012,12 @@ table.dataTable {
 
 .btn-box-tool:hover {
     color: #000000;
+}
+
+.select2-container--bootstrap4{
+    display: block;
+    flex: 1 1 auto;
+    width: 1% !important
 }
 
 .select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {

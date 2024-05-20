@@ -238,7 +238,7 @@ function initStaticSelectInput(input) {
     let $input = $(input);
 
     $input.select2({
-        theme: "bootstrap",
+        theme: "bootstrap4",
         language: "it",
         width: '100%',
         maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
@@ -261,7 +261,7 @@ function initDynamicSelectInput(input) {
     let $input = $(input);
 
     $input.select2({
-        theme: "bootstrap",
+        theme: "bootstrap4",
         language: "it",
         maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
         minimumInputLength: $input.data('heavy') ? 3 : 0,

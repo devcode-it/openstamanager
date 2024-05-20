@@ -185,6 +185,7 @@ const CSS = gulp.parallel(() => {
         'smartwizard/dist/css/smart_wizard_theme_arrows.min.css',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css',
         'leaflet/dist/leaflet.css',
+        '@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css'
     ];
 
     for (const i in vendor) {

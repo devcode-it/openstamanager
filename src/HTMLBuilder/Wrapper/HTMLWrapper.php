@@ -44,20 +44,29 @@ class HTMLWrapper implements WrapperInterface
 <div class="'.$extra_class.'">';
         }
 
+        $result .= '
+    <div class="form-group">';
+
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
             $result .= '
-    <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
+        <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
         }
+
+        $result .= '
+        <div class="input-group">';
 
         if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             $result .= '
-    <div class="input-group has-feedback">';
+            <div class="input-group-prepend">';
 
             if (!empty($values['icon-before'])) {
                 $result .= '
-        <span class="input-group-addon before'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
+                <span class="input-group-text before'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
             }
+
+            $result .= '
+            </div>';
         }
 
         return $result;
@@ -73,18 +82,19 @@ class HTMLWrapper implements WrapperInterface
         if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             if (!empty($values['icon-after'])) {
                 $result .= '
-                <span class="input-group-append after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
+                <div class="input-group-append">
+                    <span class="input-group-text after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>
+                </div>';
             }
 
             if (!empty($values['validation'])) {
                 $result .= '
                 <div class="input-group-append after" id="'.$pseudo_id.'_validation">
-                    <span class="tip" title="'.tr('Validazione').'"><i class="fa fa-question-circle "></i></span>
+                    <div class="input-group-text">
+                        <span class="tip" title="'.tr('Validazione').'"><i class="fa fa-question-circle "></i></span>
+                    </div>
                 </div>';
             }
-
-            $result .= '
-            </div>';
 
             unset($values['icon-before']);
             unset($values['icon-after']);
@@ -102,7 +112,9 @@ class HTMLWrapper implements WrapperInterface
         $values['data-parsley-errors-container'] = '#'.$pseudo_id.'-errors';
 
         $result .= '
-        <div id="'.$values['id'].$rand.'-errors"></div>';
+        </div>
+    </div>
+    <div id="'.$values['id'].$rand.'-errors"></div>';
 
         if ($values['type'] == 'checkbox') {
             $result .= '

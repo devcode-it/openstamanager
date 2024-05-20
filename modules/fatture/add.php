@@ -80,6 +80,7 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
     <?php
 if ($dir == 'entrata') {
     echo '
+            <br>
             <div id="info" class="hidden">
                 <div  class="row">
                     <div class="col-md-6 ">

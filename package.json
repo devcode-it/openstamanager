@@ -13,6 +13,7 @@
         "bootstrap-daterangepicker": "^2.1.25",
         "bootstrap-maxlength": "^1.10.1",
         "chart.js": "^3.8.0",
+        "ckeditor": "4.12.1",
         "ckeditor4": "ckeditor/ckeditor4-releases#full/4.22.1",
         "components-jqueryui": "^1.12.1",
         "datatables.net-bs": "^1.10.15",

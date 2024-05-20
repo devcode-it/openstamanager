@@ -652,8 +652,12 @@ class Prints
                 $report = '';
             }
 
-            // Footer per l'ultima pagina
-            if (!empty($options['last-page-footer'])) {
+            // Footer visibile solo sull'ultima pagina, sempre che non abbia deciso di nasconderlo
+            if (!empty($options['last-page-footer']) && empty($options['hide-footer'])) {
+                
+                //Definisco qual'è l'ultima pagina
+                $is_last_page = true;
+
                 // Generazione dei contenuti del footer
                 ob_start();
                 $print_footer = self::filepath($id_print, 'footer.php');

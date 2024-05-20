@@ -17,7 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!empty($options['last-page-footer'])) {
+//Se non è l'ultima pagina, oppure è l'ultima pagina ma ho scelto di nascondere il footer
+if (!$is_last_page) {
     return;
 }
 

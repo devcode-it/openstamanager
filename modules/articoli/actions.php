@@ -58,7 +58,7 @@ switch (post('op')) {
         $articolo = Articolo::build($codice, $categoria, $sottocategoria);
 
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-            $articolo->name = $descrizione;
+            $articolo->name = post('descrizione');
         }
         $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');

@@ -62,7 +62,7 @@ foreach ($gruppi as $key => $gruppo) {
         </div>
     </div>
 
-    <div class="card-body""></div>
+    <div class="card-body row"></div>
 </div>';
 }
 

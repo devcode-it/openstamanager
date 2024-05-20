@@ -132,7 +132,7 @@ if ($options['dir'] == 'entrata') {
                 mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
             }
 
-            div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-13px;\" >\
+            div.html("<table class=\"table table-extra-condensed table-margine\" >\
                         <tr>\
                             <td>\
                                 <small>&nbsp;'.tr('Guadagno').':</small>\

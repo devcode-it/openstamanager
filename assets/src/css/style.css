@@ -311,7 +311,7 @@ span.form-control {
     position: sticky;
     top: 0;
     padding: 6px;
-    z-index: 1;
+    z-index: 999;
     background: #f6f6f6;
 }
 

@@ -935,7 +935,7 @@ div.tip {
     display: block;
 }
 
-.hide {
+.hide, .hidden{
     display: none;
 }
 

@@ -568,6 +568,7 @@ class Prints
 
         // Generazione totale
         if (empty($single_pieces)) {
+            $rows_per_page = $options['rows-per-page'];
             ob_start();
             $print_body = self::filepath($id_print, 'body.php');
             if (!empty($print_body)) {

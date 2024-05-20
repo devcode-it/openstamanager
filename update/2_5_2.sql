@@ -193,3 +193,7 @@ UPDATE `zz_widgets` set `bgcolor` = 'success' WHERE `name` = 'Attività conferma
 UPDATE `zz_widgets` set `bgcolor` = 'success' WHERE `name` = 'Preventivi in lavorazione';
 UPDATE `zz_widgets` set `bgcolor` = 'warning' WHERE `name` = 'Attività da pianificare';
 UPDATE `zz_widgets` set `bgcolor` = 'warning' WHERE `name` = 'Attività nello stato da programmare';
+
+-- Opzioni possibili per stampa della Fattura
+UPDATE `zz_prints` SET `available_options` = '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"rows-per-page\": \"Definire il numero di righe per pagina\"}' WHERE `zz_prints`.`name` = 'Fattura di vendita';
+UPDATE `zz_prints` SET `available_options` = '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"rows-per-page\": \"Definire il numero di righe per pagina\"}' WHERE `zz_prints`.`name` = 'Fattura di vendita (senza intestazione)';

@@ -60,9 +60,15 @@ class HTMLWrapper implements WrapperInterface
             $result .= '
             <div class="input-group-prepend">';
 
+            // Se l'elemento da aggiungere prima è un <select>, non uso input-group-text per semplificare lo stile
+            $input_group_class = '';
+            if (!str_contains($values['icon-before'], '<select')) {
+                $input_group_class = 'input-group-text';
+            }
+
             if (!empty($values['icon-before'])) {
                 $result .= '
-                <span class="input-group-text before'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
+                <span class="'.$input_group_class.' before'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
             }
 
             $result .= '
@@ -79,11 +85,17 @@ class HTMLWrapper implements WrapperInterface
 
         $result = '';
 
+        // Se l'elemento da aggiungere prima è un <select>, non uso input-group-text per semplificare lo stile
+        $input_group_class = '';
+        if (!str_contains($values['icon-after'], '<select')) {
+            $input_group_class = 'input-group-text';
+        }
+
         if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             if (!empty($values['icon-after'])) {
                 $result .= '
                 <div class="input-group-append">
-                    <span class="input-group-text after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>
+                    <span class="'.$input_group_class.' after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>
                 </div>';
             }
 

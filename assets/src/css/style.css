@@ -1549,6 +1549,7 @@ kbd{
 
 .nav-sidebar {
     margin-bottom: 60px !important;
+    text-align: left !important;
 }
 
 @media screen and (max-width: 767px) {

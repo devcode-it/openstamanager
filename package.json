@@ -86,6 +86,7 @@
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
         "windows-fix": "yarn global add windows-build-tools",
-        "php-cs-fix": "vendor/bin/php-cs-fixer fix"
+        "php-cs-fix": "vendor/bin/php-cs-fixer fix",
+        "rector": "vendor/bin/rector process"
     }
 }

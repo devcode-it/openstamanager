@@ -92,7 +92,7 @@ switch (post('op')) {
         $database->query('ALTER TABLE `tmp_lang` DROP `id_record`');
         $database->query('INSERT INTO `em_templates` SELECT NULL,tmp. * FROM tmp');
         $id_record = $database->lastInsertedID();
-        $database->query('INSERT INTO `em_templates_lang` SELECT NULL, id_lang, '.$id_record.',name, subject, body FROM tmp_lang');
+        $database->query('INSERT INTO `em_templates_lang` SELECT NULL, `id_lang`, '.$id_record.', `title`, `subject`, `body`, NULL, NULL FROM tmp_lang');
         $database->query('DROP TEMPORARY TABLE tmp');
         $database->query('DROP TEMPORARY TABLE tmp_lang');
         $database->query('UPDATE `em_templates_lang` SET `title` = CONCAT (`title`, " (copia)") WHERE id_record = '.prepare($id_record));

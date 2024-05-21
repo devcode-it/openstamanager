@@ -277,7 +277,7 @@ echo '
         <div class="card-body">
             <!-- RIGA 3 -->
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
@@ -288,7 +288,7 @@ echo '
                 <div class="col-md-2">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
@@ -317,7 +317,7 @@ echo '
             </div>
             <!-- RIGA 5 -->
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
+                <div class="col-lg-6">';
 echo input([
     'type' => 'ckeditor',
     'label' => tr('Richiesta'),
@@ -328,7 +328,7 @@ echo input([
 ]);
 echo '
                 </div>
-                <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">';
+                <div class="col-lg-6">';
 echo input([
     'type' => 'ckeditor',
     'label' => tr('Descrizione'),
@@ -337,15 +337,14 @@ echo input([
     'extra' => 'style=\'max-height:40px;\'',
 ]);
 echo '
-                </div>
-            </div>';
+</div>
+</div>';
 // Nascondo le note interne ai clienti
 if ($user->gruppo != 'Clienti') {
     echo '
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-                </div>
+                {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
             </div>
         </div>
     </div>';
@@ -374,20 +373,19 @@ if (!empty($record['idcontratto'])) {
 
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
-			</div>
-			<div class="row">
-                <div class="col-md-6">
+
+                <div class="col-md-3">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-3">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
             </div>

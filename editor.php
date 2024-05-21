@@ -315,19 +315,16 @@ if (empty($record) || !$has_access) {
     // Informazioni sulle operazioni
     if (Auth::admin()) {
         echo '
-            <div id="tab_info" class="tab-pane">';
+            <div id="tab_info" class="tab-pane">
+                <div class="timeline">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
 
         if (!empty($operations)) {
-            echo '
-                <ul class="timeline">';
-
             foreach ($operations as $operation) {
                 $description = $operation['op'];
                 $icon = 'pencil-square-o';
-                $color = null;
-                $timeline_class = null;
+                $color = 'warning';
 
                 switch ($operation['op']) {
                     case 'add':
@@ -353,39 +350,25 @@ if (empty($record) || !$has_access) {
                         $icon = 'clone';
                         $color = 'info';
                         break;
-
-                    default:
-                        $timeline_class = ' class="timeline-inverted"';
-                        break;
                 }
 
                 echo '
-                    <li '.$timeline_class.'>
-                        <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
-                        <div class="timeline-panel">
-                            <div class="timeline-heading">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <h4 class="timeline-title">'.$description.'</h4>
-                                    </div>
-                                    <div class="col-md-4 text-right">
-                                        <p><span class="right badge badge-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
-                                        <p><span class="right badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'</small></p>
-                                    </div>
-                                </div>
-                            </div>
+                    <div>
+                        <i class="fa fa-'.$icon.' bg-'.$color.'"></i>
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></span>
+                            <h4 class="timeline-header">'.$description.'</h4>
                             <div class="timeline-body">
-
-                            </div>
-                            <div class="timeline-footer">
-
+                                <span class="badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'
                             </div>
                         </div>
-                    </li>';
+                    </div>';
             }
-
-            echo '
-                </ul>';
+            echo'
+                    <div>
+                        <i class="fa fa-clock-o bg-gray"></i>
+                    </div>
+                </div>';
         } else {
             echo '
                 <div class="alert alert-info">

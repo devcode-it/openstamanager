@@ -1,7 +1,6 @@
 $(document).ready(function() {
     if(!$('body').hasClass('sidebar-collapse')){
-        $('.sidebar-toggle').trigger('click');
-        $('.nav').hide();
+        $('body').addClass('sidebar-collapse');
     }
 
     setTimeout(function () {

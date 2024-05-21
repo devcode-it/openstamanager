@@ -104,17 +104,22 @@ echo '
 $record = $module_record;
 
 echo '
-	</div>
-</div>';
+	</div>';
 
 redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 
 // Interfaccia per la modifica dell'ordine e della visibilità delle colonne (Amministratore)
 if ($user->is_admin && string_contains($module['option'], '|select|')) {
     echo '
-<a class="btn btn-xs btn-default justify-content-end" style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
-	<i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
-</a><div class="clearfix" >&nbsp;</div>
+	<br>
+<div class="row">
+	<div class="col-md-12 text-right">
+		<a class="btn btn-xs btn-default " style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
+			<i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
+		</a>
+	</div>
+</div>
+<div class="clearfix" >&nbsp;</div>
 
 <script>
 function modificaColonne(button) {
@@ -122,6 +127,8 @@ function modificaColonne(button) {
 }
 </script>';
 }
+
+echo'</div>';
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';

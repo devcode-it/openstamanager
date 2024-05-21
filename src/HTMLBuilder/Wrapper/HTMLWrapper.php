@@ -62,7 +62,7 @@ class HTMLWrapper implements WrapperInterface
 
             // Se l'elemento da aggiungere prima è un <select>, non uso input-group-text per semplificare lo stile
             $input_group_class = '';
-            if (!str_contains((string)$values['icon-before'], '<select')) {
+            if (!str_contains((string) $values['icon-before'], '<select')) {
                 $input_group_class = 'input-group-text';
             }
 
@@ -87,7 +87,7 @@ class HTMLWrapper implements WrapperInterface
 
         // Se l'elemento da aggiungere prima è un <select>, non uso input-group-text per semplificare lo stile
         $input_group_class = '';
-        if (!str_contains((string)$values['icon-after'], '<select')) {
+        if (!str_contains((string) $values['icon-after'], '<select')) {
             $input_group_class = 'input-group-text';
         }
 
@@ -132,7 +132,7 @@ class HTMLWrapper implements WrapperInterface
             $result .= '
     </div>';
         }
-        
+
         if (!empty($values['label'])) {
             unset($values['label']);
         }

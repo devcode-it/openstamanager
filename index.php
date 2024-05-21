@@ -116,14 +116,14 @@ if (Update::isBeta()) {
 
 // Controllo se è una beta e in caso mostro un warning
 if (Auth::isBrute()) {
-    echo'
+    echo '
     <div class="box box-danger" id="brute">
         <div class="box-header with-border text-center">
             <h3 class="box-title">'.tr('Attenzione').'</h3>
         </div>
         <div class="box-body text-center">
             <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-            <p>'. tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+            <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
         </div>
     </div>
 

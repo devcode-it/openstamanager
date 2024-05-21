@@ -23,7 +23,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($options['pricing'] ? 6 : 3);
-$rows_per_page = $rows_per_page ?:16;
+$rows_per_page = $rows_per_page ?: 16;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 10;
 }

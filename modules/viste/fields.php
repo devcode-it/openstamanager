@@ -96,7 +96,7 @@ foreach ($fields as $key => $field) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Calcolo a fine colonna').'", "name": "sum-avg['.$key.']", "values": "list=\"0\":\"'.tr('Nessuno').'\",\"sum\":\"'.tr('Somma').'\",\"avg\":\"'.tr('Media').'\"", "value": "'.( $field->summable ? 'sum' : ($field->avg ? 'avg' : '' )).'", "help": "'.tr('Scegli quale tipo di totale valori vuoi calcolare a fine tabella').'" ]}
+                                {[ "type": "select", "label": "'.tr('Calcolo a fine colonna').'", "name": "sum-avg['.$key.']", "values": "list=\"0\":\"'.tr('Nessuno').'\",\"sum\":\"'.tr('Somma').'\",\"avg\":\"'.tr('Media').'\"", "value": "'.($field->summable ? 'sum' : ($field->avg ? 'avg' : '')).'", "help": "'.tr('Scegli quale tipo di totale valori vuoi calcolare a fine tabella').'" ]}
                             </div>
                         </div>
 

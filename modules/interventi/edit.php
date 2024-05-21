@@ -362,7 +362,7 @@ if (!empty($record['idcontratto'])) {
 ?>
     <!-- Fatturazione Elettronica PA-->
     <div class="card card-primary collapsable collapsed-card" >
-        <div class="card-header with-border <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? '': 'hidden'; ?>">
+        <div class="card-header with-border <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? '' : 'hidden'; ?>">
             <h3 class="card-title"><?php echo tr('Dati appalto'); ?></h3>
             <div class="card-tools pull-right">
                 <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
@@ -404,15 +404,15 @@ if (!empty($record['idcontratto'])) {
 
     <div class="card-body">
     <?php
-			if ($show_prezzi) {
-			    echo "
+            if ($show_prezzi) {
+                echo "
         <div class=\"pull-right\">
             <a class='btn btn-default btn-details' onclick=\"$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');\" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
             <a class='btn btn-info btn-details hide' onclick=\"$('.extra').addClass('hide'); $(this).addClass('hide'); $('#showall_dettagli').removeClass('hide');\" id='dontshowall_dettagli'><i class='fa fa-check-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
         </div>
         <div class=\"clearfix\"></div>
         <br>";
-			}
+            }
 ?>
 
         <div class="row">

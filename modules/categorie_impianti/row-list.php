@@ -36,4 +36,4 @@ foreach ($subcategorie as $sub) {
 				</a>
 			</td>
 		</tr>';
-	}
+}

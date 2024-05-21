@@ -37,13 +37,13 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "p
 
 $segmenti = $dbo->FetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module` = '.prepare($id_module));
 if ($segmenti) {
-	$segmenti = Modules::getSegments($id_module);
-	if (empty($segmenti)) {
-		echo '
+    $segmenti = Modules::getSegments($id_module);
+    if (empty($segmenti)) {
+        echo '
 <div class="alert alert-warning">
-	<i class="fa fa-warning-circle"></i> '.tr("Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di questo modulo").'.
+	<i class="fa fa-warning-circle"></i> '.tr('Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di questo modulo').'.
 </div>';
-	}
+    }
 }
 
 // Lettura eventuali plugins modulo da inserire come tab
@@ -93,11 +93,11 @@ foreach ($plugins as $plugin) {
     echo '
 		<div id="tab_'.$plugin->id.'" class="tab-pane">';
 
-$id_plugin = $plugin->id;
+    $id_plugin = $plugin->id;
 
-include base_dir().'/include/manager.php';
+    include base_dir().'/include/manager.php';
 
-echo '
+    echo '
 		</div>';
 }
 
@@ -128,7 +128,7 @@ function modificaColonne(button) {
 </script>';
 }
 
-echo'</div>';
+echo '</div>';
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';

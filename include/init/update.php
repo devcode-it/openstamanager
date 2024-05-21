@@ -38,31 +38,31 @@ if (filter('action') == 'do_update') {
                 <script>
                     addVersion("'.$update['name'].'");
                 </script>';
-        
+
             if (is_array($result)) {
                 // Adding a message about the completion of the database update
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
                 <script>
                     $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
-                                '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
-                            ]).'</p>");
+                        '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+                    ]).'</p>");
                 </script>';
                 }
-        
+
                 $rate = $result[1] - $result[0];
             } elseif (!empty($update['script'])) {
                 // Adding a message about the completion of the script
                 echo '
                 <script>
                     $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
-                            '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
-                        ]).'</p>");
+                    '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
+                ]).'</p>");
                 </script>';
-        
+
                 $rate = $scriptValue;
             }
-        
+
             // Increasing the total completion percentage
             if (!empty($rate)) {
                 echo '
@@ -70,7 +70,7 @@ if (filter('action') == 'do_update') {
                     addProgress('.$rate.');
                 </script>';
             }
-        
+
             echo '
                 <script>
                     $("#result").load("index.php?action=do_update&firstuse='.$_GET['firstuse'].'");
@@ -80,29 +80,29 @@ if (filter('action') == 'do_update') {
             echo '
                     <div class="alert alert-danger">
                         <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
-                        '_VERSION_' => $update['version'],
-                    ]).'
+                '_VERSION_' => $update['version'],
+            ]).'
                     </div>';
         }
     }
     // Update completed
     elseif (Update::isUpdateCompleted()) {
         Update::updateCleanup();
-    
+
         echo '
             <p><strong>'.tr('Aggiornamento completato').'</strong> 😃</p>
             <script>
                 setPercent(100);
             </script>';
-    
+
         // Instructions for the first installation
         if ($_GET['firstuse'] == 'true') {
             echo '
             <p class="text-danger">'.tr('Si consiglia di rimuovere i permessi di scrittura dal file _FILE_', [
-                    '_FILE_' => '<b>config.inc.php</b>',
-                ]).'.</p>';
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'.</p>';
         }
-    
+
         echo '
             <a class="btn btn-success btn-block" href="'.base_path().'">
                 <i class="fa fa-check"></i> '.tr('Continua').'
@@ -247,10 +247,10 @@ if (filter('action') == 'do_update') {
                 current += 1;
 
                 $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
-                    '_DONE_' => '" + current + "',
-                    '_TODO_' => '" + count + "',
-                    '_VERSION_' => '" + version.trim() + "',
-                ]).'</strong></p>");
+        '_DONE_' => '" + current + "',
+        '_TODO_' => '" + count + "',
+        '_VERSION_' => '" + version.trim() + "',
+    ]).'</strong></p>");
             }
         }
         </script>

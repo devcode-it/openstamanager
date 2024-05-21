@@ -27,7 +27,7 @@ $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
     ->orderBy('sezione')
     ->get();
 
-    echo'
+echo '
 <div class="container">
     <div class="row">
         <div class="col-md-6 offset-md-3">

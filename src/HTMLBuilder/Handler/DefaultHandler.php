@@ -101,7 +101,6 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
-
         $result = '
     <script>
         const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";

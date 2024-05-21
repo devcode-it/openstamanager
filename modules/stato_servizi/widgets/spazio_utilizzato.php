@@ -36,7 +36,7 @@ $(document).ready(function() {
         url: globals.rootdir + "/actions.php",
         type: "get",
         data: {
-            id_module: '.$id_module. ',
+            id_module: '.$id_module.',
             op: "sizes",
         },
         success: function(data) {

@@ -521,7 +521,7 @@ class Gestore
                 ->setNumberOfTransactions($this->numero_transazioni_debito_diretto);
             $this->debito_diretto->setGroupHeader($groupHeader);
 
-            if($groupHeader->getNumberOfTransactions() > 0) {
+            if ($groupHeader->getNumberOfTransactions() > 0) {
                 $xml = $this->debito_diretto->xml();
 
                 // Generazione filename

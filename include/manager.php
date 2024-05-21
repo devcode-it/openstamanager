@@ -106,7 +106,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             <thead>
                 <tr>
                     <th id="th_selector"></th>';
-    
+
     foreach ($total['fields'] as $key => $field) {
         $attr_td = '';
         $name = trim($field);

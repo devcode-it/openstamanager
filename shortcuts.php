@@ -23,7 +23,6 @@ $pageTitle = tr('Scorciatoie');
 
 include_once App::filepath('include|custom|', 'top.php');
 
-
 echo '
 <div class="card">
     <div class="card-header">
@@ -53,5 +52,5 @@ if (setting('Attiva scorciatoie da tastiera')) {
             '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>')),
         ]).'.</p>';
 }
-echo'
+echo '
 </div>';

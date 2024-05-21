@@ -67,11 +67,11 @@ class FieldManager implements ManagerInterface
 
         if (!empty($fields)) {
             $result .= '
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Campi personalizzati').'</h3>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Campi personalizzati').'</h3>
     </div>
-    <div class="panel-body">';
+    <div class="card-body">';
 
             // Costruzione dei campi
             foreach ($fields as $key => $field) {

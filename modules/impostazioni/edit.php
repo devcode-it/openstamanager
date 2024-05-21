@@ -28,37 +28,38 @@ $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
     ->get();
 
     echo'
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="input-group">
-            <input type="text" class="form-control" name="ricerca_impostazioni" value="'.$ricerca.'">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                    <span class="fa fa-search"></span>
-                </button>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="input-group">
+            <input type="text" class="form-control input-lg text-center" id="ricerca_impostazioni" placeholder="'.tr('Cerca').'...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="search">
+                        <span class="fa fa-search"></span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-3">
-        <button class="btn btn-warning hidden" type="button" id="riprova_salvataggi" onclick="riprovaSalvataggio()">
-            <span class="fa fa-save"></span> '.tr('Riprova salvataggi falliti').'
-        </button>
+        <div class="col-md-3">
+            <button class="btn btn-warning hidden" type="button" id="riprova_salvataggi" onclick="riprovaSalvataggio()">
+                <span class="fa fa-save"></span> '.tr('Riprova salvataggi falliti').'
+            </button>
+        </div>
     </div>
 </div>
 
-<br><hr>';
+<hr>';
 
 foreach ($gruppi as $key => $gruppo) {
     echo '
 <!-- Impostazioni della singola sezione -->
-<div class="card card-primary collapsed-card" title="'.$gruppo['nome'].'">
-    <div class="card-header clickable" id="impostazioni-'.$key.'">
+<div class="card card-primary collapsed-card" title="'.$gruppo->nome.'">
+    <div class="card-header clickable" title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
         <div class="card-title">'.tr('_SEZIONE_', [
-        '_SEZIONE_' => $gruppo['nome'],
+        '_SEZIONE_' => $gruppo->nome,
     ]).'</div>
         <div class="card-tools pull-right">
-            <div class="badge">'.$gruppo['numero'].'</div>
+            <div class="badge">'.$gruppo->numero.'</div>
         </div>
     </div>
 
@@ -68,6 +69,15 @@ foreach ($gruppi as $key => $gruppo) {
 
 echo '
 <script>
+
+$(document).ready(function() {
+    $("#ricerca_impostazioni").keyup(function(key) {
+        if (key.which == 13) {
+            $("#search").click();
+        }
+    });
+});
+
 globals.impostazioni = {
     errors: {},
     numero_ricerche: 0,
@@ -77,8 +87,8 @@ $("[id^=impostazioni]").click(function() {
     caricaSezione(this);
 });
 
-$("#ricerca_impostazioni").change(function (){
-    const ricerca = $(this).val();
+$("#search").on("click", function(){
+    const ricerca = $("#ricerca_impostazioni").val();
     const icon = $(this).parent().find("span");
     $(".card").removeClass("hidden");
 
@@ -101,11 +111,13 @@ $("#ricerca_impostazioni").change(function (){
                     .addClass("fa-search")
             }
 
-            $(".card").addClass("hidden");
+            $(".card-header").addClass("hidden");
 
             let sezioni = JSON.parse(data);
             for(const sezione of sezioni){
-                $(`.card[title="` + sezione + `"]`).removeClass("hidden");
+                $(`.card-header[title="` + sezione + `"]`).removeClass("hidden")
+                let card = $(`.card-header[title="` + sezione + `"]`).removeClass("hidden")
+                caricaSezione(card);
             }
         });
     }

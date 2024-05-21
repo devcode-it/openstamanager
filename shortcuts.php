@@ -19,14 +19,31 @@
 
 include_once __DIR__.'/core.php';
 
+$pageTitle = tr('Scorciatoie');
+
+include_once App::filepath('include|custom|', 'top.php');
+
+
 echo '
-<p>'.tr('Scorciatoie utilizzabili dalla schermata di modifica record').':</p>
-<ul>
-    <li><kbd>F1</kbd> '.tr('nuova finestra per l\'inserimento di un nuovo record').'.</li>
-    <li><kbd>F2</kbd> '.tr('salvataggio del record corrente').'.</li>
-    <li><kbd>F3</kbd> '.tr('generazione della stampa predefinita del record corrente, se presente').'.</li>
-    <li><kbd>F4</kbd> '.tr('apertura finestra predefinita di invio email, se presente').'.</li>
-</ul><br>';
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fa fa-book"></i> '.tr('Scorciatoie utilizzabili dalla schermata di modifica record').':</h3>
+    </div>
+
+    <div class="card-body table-responsive">
+        <br>
+        <ul>
+            <li><kbd>F1</kbd> '.tr('nuova finestra per l\'inserimento di un nuovo record').'.</li>
+            <li><kbd>F2</kbd> '.tr('salvataggio del record corrente').'.</li>
+            <li><kbd>F3</kbd> '.tr('generazione della stampa predefinita del record corrente, se presente').'.</li>
+            <li><kbd>F4</kbd> '.tr('apertura finestra predefinita di invio email, se presente').'.</li>
+        </ul>
+        <br>
+        <br>
+    </div>
+</div>
+
+<div class="jumbotron">';
 
 if (setting('Attiva scorciatoie da tastiera')) {
     echo '<p class="text-muted"><i class="fa fa-check text-success"></i> '.tr('Le scorciatoie da tastiera sono attive').'.</p>';
@@ -36,3 +53,5 @@ if (setting('Attiva scorciatoie da tastiera')) {
             '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>')),
         ]).'.</p>';
 }
+echo'
+</div>';

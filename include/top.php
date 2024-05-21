@@ -517,10 +517,10 @@ if (Auth::check()) {
             <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
             <li data-toggle="control-sidebar" class="active btn-default nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tab_0">
-                        '.$structure->getTranslation('title').'
-                    </a>
-                </li>';
+                <a class="nav-link" data-toggle="tab" href="#tab_0">
+                    '.$structure->getTranslation('title').'
+                </a>
+            </li>';
 
         // Tab dei plugin
         if (!empty($id_record)) {
@@ -541,8 +541,8 @@ if (Auth::check()) {
                 }
 
                 echo '
-                            <li data-widget="control-sidebar" class="btn-default nav-item" >
-                                <a class="nav-link" data-widget="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                            <li data-toggle="control-sidebar" class="btn-default nav-item" >
+                                <a class="nav-link" data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
                                     '.$plugin['title'].'
                                     <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
                                 </a>
@@ -555,34 +555,36 @@ if (Auth::check()) {
             $notes = $structure->recordNotes($id_record);
 
             echo '
-                        <li data-widget="control-sidebar" class="btn-default">
-                            <a class="bg-info" data-widget="tab" href="#tab_note" id="link-tab_note">
-                                <'.tr('Note interne').'
+                        <li data-toggle="control-sidebar" class="btn-default nav-item">
+                            <a class="bg-info nav-link" data-toggle="tab" href="#tab_note" id="link-tab_note">
+                                '.tr('Note interne').'
                                 <span class="badge pull-right">'.($notes->count() ?: '').'</span>
                             </a>
                         </li>';
         }
 
         // Tab per le checklist
+        // Tab per le checklist
         if ($structure->permission != '-' && $structure->use_checklists) {
             $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
             $checklists_total = $structure->recordChecks($id_record);
-
+        
             echo '
-                        <li data-widget="control-sidebar" class="btn-default">
-                            <a class="bg-info" data-widget="tab" href="#tab_checks" id="link-tab_checks">
-                                <'.tr('Checklist').'
-                                <'.($checklists_total->count() > 0) ? '<span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : ''.'
-                            </a>
-                        </li>';
+                <li data-toggle="control-sidebar" class="btn-default nav-item">
+                    <a class="bg-info nav-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
+                        '.tr('Checklist')
+                        . ($checklists_total ? ' <span class="badge pull-right">' . $checklists_unchecked->count() . tr(' / ') . $checklists_total->count() . '</span>' : '')
+                        . '
+                    </a>
+                </li>';
         }
 
         // Tab per le informazioni sulle operazioni
         if (Auth::admin()) {
             echo '
-                        <li data-widget="control-sidebar" class="btn-default">
-                            <a class="bg-info" data-widget="tab" href="#tab_info" id="link-tab_info">
-                                <'.tr('Info').'
+                        <li data-toggle="control-sidebar" class="btn-default nav-item">
+                            <a class="bg-info nav-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
+                                '.tr('Info').'
                             </a>
                         </li>';
         }

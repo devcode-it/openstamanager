@@ -556,7 +556,7 @@ if (!empty($righe)) {
         if (!$is_descrizione) {
             echo '
         <tr id="dati_'.$key.'">
-            <td colspan="4" class="row">
+            <td class="row">
                 <span class="hide" id="aliquota['.$key.']">'.$riga['AliquotaIVA'].'</span>
                 <input type="hidden" name="qta_riferimento['.$key.']" id="qta_riferimento_'.$key.'" value="'.$riga['Quantita'].'">
 
@@ -587,8 +587,8 @@ if (!empty($righe)) {
 
                             <div class="col-md-1 card-tools">
                                 <br>
-                                <button type="button" class="btn btn-card-tool no-padding-left" data-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
-                                <i class="fa fa-plus"></i> '.tr('Altro').'
+                                <button type="button" class="btn btn-card-tool no-padding-left" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                                <i class="fa fa-plus"></i>
                                 </button>
                             </div>
                         </div>

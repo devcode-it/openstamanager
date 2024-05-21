@@ -180,7 +180,7 @@ class Gestore
         $is_credito_diretto = ($direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21'])) || (empty($documento) && $importo < 0 && $ctgypurp != 'SALA');
         $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->creditor_id); // Mandato SEPA disponibile
         $is_riba = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP12']) && !empty($this->banca_azienda->codice_sia);
-        $is_bonifico = $direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia) || (empty($documento) && $importo < 0 && $ctgypurp == 'SALA');
+        $is_bonifico = $direzione == 'uscita' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia) || (empty($documento) && $importo < 0);
 
         if (in_array($pagamento->codice_modalita_pagamento_fe, ['MP19', 'MP21'])) {
             $method = 'B2B';

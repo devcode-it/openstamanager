@@ -347,7 +347,8 @@ if ($user->gruppo != 'Clienti') {
                 {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
             </div>
         </div>
-    </div>';
+    </div>
+</div>';
 }
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
 if (!empty($record['idcontratto'])) {

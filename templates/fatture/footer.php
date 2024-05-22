@@ -164,7 +164,6 @@ if (!empty($v_iva)) {
                         <table class="border-bottom">
                             <tr>
                                 <td>
-                                    <p class="small-bold text-muted">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
                                 </td>
                                 <td>
                                     <p><small>$appoggiobancario$</small></p>

@@ -29,13 +29,60 @@ if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !emp
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. Verificare le informazioni inserite.').'</div>';
 }
 
-?>
+echo'
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
+	<input type="hidden" name="id_record" value="'.$id_record.'">
+
+    <div class="row">
+        <div class="col-md-2 offset-md-10">
+        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
+        </div>
+    </div>
 
 	<!-- DATI INTESTAZIONE -->
+    <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Dati cliente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                    <i class="fa fa-'. (empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="card-body">
+                <!-- RIGA 1 -->
+                <div class="row">
+                    <div class="col-md-3">
+                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
+                        {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    </div>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+                    </div>
+
+                    <div class="col-md-3">
+                        '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
+                        {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
+                    </div>
+
+                    <div class="col-md-3">';
+if ($record['idagente'] != 0) {
+    echo 
+                        Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+}
+?>
+                        {[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": <?php echo $record['idanagrafica']; ?>}, "value": "$idagente$" ]}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>            
+
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
@@ -43,11 +90,11 @@ if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !emp
 
 		<div class="card-body">
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "required": 1, "value": "$data_bozza$" ]}
                 </div>
 
@@ -62,41 +109,15 @@ if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !emp
                 <div class="col-md-2">
                     {[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
                 </div>
+
+                <div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Validità contratto'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto'); ?>" ]}
+				</div>
             </div>
 
-			<div class="row">
-                <div class="col-md-3">
-                    <?php
-                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-?>
-
-                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
-                </div>
-
-                <?php
-
-                echo '
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
-                </div>
-
-				<div class="col-md-3">
-				    '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
-					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
-				</div>
-
-				<div class="col-md-3">';
-if ($record['idagente'] != 0) {
-    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-}
-echo '
-					{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-				</div>
-			</div>';
-?>
             <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Nome contratto'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -104,17 +125,6 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
-                </div>
-            </div>
-
-			<div class="row">
-
-				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità contratto'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto'); ?>" ]}
-				</div>
-
-                <div class="col-md-6">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id); ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
@@ -125,15 +135,22 @@ echo '
             </div>
 
 			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$" ]}
+				<div class="col-md-4">
+					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$", "extra": "rows='5'" ]}
 				</div>
-			</div>
+				<div class="col-md-4">
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='5'" ]}
+				</div>
+                <?php
+            // Nascondo le note interne ai clienti
+            if ($user->gruppo != 'Clienti') {
+                echo '
 
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$" ]}
-				</div>
+                <div class="col-md-4">
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                </div>';
+            }
+?>
 			</div>
 
             <div class="row">
@@ -148,19 +165,6 @@ echo '
 ?>
 				</div>
 			</div>
-
-<?php
-            // Nascondo le note interne ai clienti
-            if ($user->gruppo != 'Clienti') {
-                echo '
-                <div class="row">
-                    <div class="col-md-12">
-                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-                    </div>
-                </div>';
-            }
-?>
-
 		</div>
 	</div>
 

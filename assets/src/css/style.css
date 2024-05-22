@@ -352,13 +352,11 @@ span.form-control {
 
 .deleteicon {
     color: gray;
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
     position: absolute;
-    margin-left: -30px;
-    bottom: 1px;
-    right: 15px;
-    float: right;
+    bottom: 19px;
+    right: 29px;
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;

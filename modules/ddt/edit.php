@@ -595,29 +595,21 @@ if (!$block_edit) {
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li>
-                                <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
-                                    <i class="fa fa-plus"></i> '.tr('Descrizione').'
-                                </a>
-                            </li>
+                            <a style="cursor:pointer" class="dropdown-item" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
+                                <i class="fa fa-plus"></i> '.tr('Descrizione').'
+                            </a>
+                            
+                            <a style="cursor:pointer"  class="dropdown-item" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                            </a>
 
-                            <li>
-                                <a style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
-                                    <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="'.(!empty($tot_ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
-                                    <i class="fa fa-plus"></i> '.tr('Ddt').'
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="'.(!empty($tot_ordini) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
-                                    <i class="fa fa-plus"></i> '.tr('Ordine').'
-                                </a>
-                            </li>
+                            <a class="'.(!empty($tot_ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                <i class="fa fa-plus"></i> '.tr('Ddt').'
+                            </a>
+                        
+                            <a class="'.(!empty($tot_ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                <i class="fa fa-plus"></i> '.tr('Ordine').'
+                            </a>
                         </ul>
                     </div>
                 </div>

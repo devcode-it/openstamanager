@@ -144,7 +144,7 @@ foreach ($tipi_intervento as $tipo) {
 
     echo '
             <li>
-                <input type="checkbox" id="tipo_'.$tipo['id'].'" class="dashboard_tipo" value="'.$tipo['id'].'" '.$attr.'>
+                <input type="checkbox" id="tipo_'.$tipo['id'].'" class="dashboard_tipo dropdown-item" value="'.$tipo['id'].'" '.$attr.'>
                 <label for="tipo_'.$tipo['id'].'">
                     '.$tipo['descrizione'].'
                 </label>
@@ -180,7 +180,7 @@ foreach ($tecnici_disponibili as $tecnico) {
 
     echo '
             <li>
-                <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico" value="'.$tecnico['id'].'" '.$attr.'>
+                <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico dropdown-item" value="'.$tecnico['id'].'" '.$attr.'>
                 <label for="tecnico_'.$tecnico['id'].'">
                     '.$tecnico['ragione_sociale'].'&nbsp;<span class="pull-right" style="background-color:'.$tecnico['colore'].';"></span>
                 </label>
@@ -286,7 +286,7 @@ if (!empty($risultati_da_programmare)) {
     echo '
     </div>
 
-    <div id="external-events" class="hidden-xs hidden-sm col-md-2">
+    <div id="external-events" class="col-md-2">
         <h4>'.tr('Promemoria da pianificare').'</h4>';
 
     // Controllo pianificazioni mesi precedenti
@@ -340,20 +340,20 @@ if (!empty($risultati_da_programmare)) {
         ->sortBy('data');
 
     echo '
-    <select class="superselect openstamanager-input select-input" id="mese-promemoria">
-        <option value="all">'.tr('Tutti').'</option>';
-
+        <select class="superselect openstamanager-input select-input" id="mese-promemoria">
+            <option value="all">'.tr('Tutti').'</option>';
+    
     foreach ($mesi as $mese) {
         $data = Carbon::parse($mese['data']);
         $chiave = $data->format('mY');
         $testo = $data->isoFormat('MMMM YYYY');
-
+    
         if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))) {
             echo '
             <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
         }
     }
-
+    
     echo '
         </select>
         <div id="elenco-promemoria"></div>

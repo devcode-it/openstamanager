@@ -168,23 +168,23 @@ class ButtonManager implements ManagerInterface
         '.($predefined === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-right">';
+    <div class="dropdown-menu dropdown-menu-right">';
 
             foreach ($list as $i => $element) {
-                $result .= '
-        <li>'.$this->link([
+                $result .= 
+                $this->link([
                     'type' => $options['type'],
                     'id' => $element['id'],
                     'id_module' => $options['id_module'],
                     'id_record' => $options['id_record'],
-                    'class' => false,
+                    'class' => 'dropdown-item',
                     'parameters' => $options['parameters'],
                     'html_id' => $options['html_id'].'_'.$i,
-                ]).'</li>';
+                ]);
             }
 
             $result .= '
-    </ul>
+    </div>
 </div>';
         } elseif ($count == 1) {
             $result = $this->link([

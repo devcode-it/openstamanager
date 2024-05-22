@@ -181,12 +181,12 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             </div>
         </div>
 
-        <div class="col-md-2 dropdown">';
+        <div class="col-md-2 dropup">';
 
     if (!empty($bulk) && $structure->permission == 'rw' && empty($id_plugin)) {
         echo '
             <button class="btn btn-primary btn-block dropdown-toggle actions-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
-            <ul class="dropdown-menu" data-target="'.$table_id.'" role="menu">';
+            <div class="dropdown-menu dropup" data-target="'.$table_id.'" role="menu">';
 
         foreach ($bulk as $key => $value) {
             $text = is_array($value) ? $value['text'] : $value;
@@ -198,11 +198,11 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             }
 
             echo '
-                <li role="presentation"><a class="bulk-action clickable" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
+                <a class="bulk-action clickable dropdown-item" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
         }
 
         echo '
-            </ul>';
+            </div>';
     }
 
     echo '

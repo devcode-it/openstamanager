@@ -497,35 +497,25 @@ if (!$block_edit) {
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">';
-    /*<li>
-        <a style="cursor:pointer" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
-            <i class="fa fa-plus"></i> '.tr('Descrizione').'
-        </a>
-    </li>*/
     echo '
-                                    <li>
-                                        <a style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
-                                            <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-                                        </a>
-                                    </li>
 
-                                    <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($preventivi) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
-                                            <i class="fa fa-plus"></i> '.tr('Preventivo').'
-                                        </a>
-                                    </li>
+                                    <a class="dropdown-item" style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                                        <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                                    </a>
+                                   
+                                    <a class="'.(!empty($preventivi) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                        <i class="fa fa-plus"></i> '.tr('Preventivo').'
+                                    </a>
+                            
+                                    <a class="'.(!empty($contratti) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
+                                        <i class="fa fa-plus"></i> '.tr('Contratto').'
+                                    </a>
+                                  
 
-                                    <li title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($contratti) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
-                                            <i class="fa fa-plus"></i> '.tr('Contratto').'
-                                        </a>
-                                    </li>
-                                    
-                                    <li title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'.">
-                                        <a class="'.(!empty($ddt) ? '' : ' disabled').'" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
-                                            <i class="fa fa-plus"></i> '.tr('Ddt').'
-                                        </a>
-                                    </li>
+                                    <a class="'.(!empty($ddt) ? '' : ' disabled').' dropdown-item" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                        <i class="fa fa-plus"></i> '.tr('Ddt').'
+                                    </a>
+
                                 </ul>
                             </div>
                         </div>

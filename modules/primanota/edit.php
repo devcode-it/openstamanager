@@ -47,7 +47,7 @@ if (sizeof($rs_doc) > 0) {
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo $id_modulo; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a></li>
+                        <a class="dropdown-item" href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo $id_modulo; ?>"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a>
                     </ul>
                 </div>
             </div>
@@ -57,20 +57,19 @@ if (sizeof($rs_doc) > 0) {
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    
-
                     <button type="button" class="btn btn-info dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="false">
                         <?php echo tr('Più fatture collegate'); ?>... <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
-
 
                     <ul class="dropdown-menu">
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
             $id_modulo = ($rs[0]['dir'] == 'entrata') ? (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id)->id_record : (new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id); ?>
-                        <li><a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
+                        <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item">
+                            <i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?>
+                        </a>
         <?php
         } ?>
                     </ul>

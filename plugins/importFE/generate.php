@@ -570,7 +570,7 @@ if (!empty($righe)) {
                 <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
                 <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
 
-                <div class="card collapsed-card" style="background:#eeeeee;">
+                <div class="card collapsed-card card-lg" style="background:#eeeeee;">
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">

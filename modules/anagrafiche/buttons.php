@@ -23,64 +23,64 @@ use Models\Module;
 if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_anagrafica)) {
     echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-info dropdown-toggle" data-widget="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-magic"></i>
-        '.tr('Crea').'... <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
+    <button type="button" class="btn btn-info dropdown-toggle" data-widget="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-magic"></i> 
+        '.tr('Crea').'...
     </button>
-    <ul class="dropdown-menu dropdown-menu-right">';
+    <div class="dropdown-menu dropdown-menu-right">';
 
     // Aggiunta utente per i tecnici
     if (in_array($id_tecnico, $tipi_anagrafica)) {
         echo '
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi utente').'" data-href="modules/utenti/user.php?id_module='.(new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id)->id_record.'&id_record='.(new Group())->getByField('title', 'Tecnici', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-user"></i>'.tr('Nuovo utente').'
-        </a></li>';
+        <a class="dropdown-item" data-widget="modal" data-href="modules/utenti/user.php?id_module='.(new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id)->id_record.'&id_record='.(new Group())->getByField('title', 'Tecnici', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'">
+            <i class="fa fa-user"></i> '.tr('Nuovo utente').'
+        </a>';
     }
 
     if (in_array($id_cliente, $tipi_anagrafica)) {
         echo '
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi attività').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-wrench"></i>'.tr('Nuova attività').'
-        </a></li>
+        
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'">
+            <i class="fa fa-wrench"></i> '.tr('Nuova attività').'
+        </a>
+        
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'">
+            <i class="fa fa-file-text"></i> '.tr('Nuovo preventivo').'
+        </a>
 
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi preventivo').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-text"></i>'.tr('Nuovo preventivo').'
-        </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-text-o"></i> '.tr('Nuovo contratto').'</a>
 
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi contratto').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-text-o"></i>'.tr('Nuovo contratto').'
-        </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini cliente', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i> '.tr('Nuovo ordine cliente').'</a>
 
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi ordine cliente').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini cliente', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i>'.tr('Nuovo ordine cliente').'
-        </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i> '.tr('Nuovo ddt in uscita').'</a>
 
-		<li><a data-widget="modal" data-title="'.tr('Aggiungi ddt uscita').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i>'.tr('Nuovo ddt in uscita').'
-        </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i> '.tr('Nuova fattura di vendita').'</a>
 
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi fattura di vendita').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i>'.tr('Nuova fattura di vendita').'
-        </a></li>
-
-        <li><a data-widget="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id).'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile (cliente)').'
-        </a></li>';
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id).'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i> '.tr('Nuova registrazione contabile (cliente)').'</a>';
     }
 
     if (in_array($id_fornitore, $tipi_anagrafica)) {
-        echo '<li><a data-widget="modal" data-title="'.tr('Aggiungi ordine fornitore').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i>'.tr('Nuovo ordine fornitore').'
-    </a></li>
+        echo '
+            
+        <a class="dropdown-item" data-widget="modal" data-data-href="add.php?id_module='.(new Module())->getByField('title', 'Ordini fornitore', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i> '.tr('Nuovo ordine fornitore').'</a>
 
-    <li><a data-widget="modal" data-title="'.tr('Aggiungi ddt entrata').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i>'.tr('Nuovo ddt in entrata').'
-    </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i> '.tr('Nuovo ddt in entrata').'</a>
 
-    <li><a data-widget="modal" data-title="'.tr('Aggiungi fattura di acquisto').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i>'.tr('Nuova fattura di acquisto').'
-    </a></li>
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id).'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i> '.tr('Nuova fattura di acquisto').'</a>
 
-    <li><a data-widget="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id).'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile (fornitore)').'
-    </a></li>';
+        <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id).'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i> '.tr('Nuova registrazione contabile (fornitore)').'</a>';
     }
 
-    echo '
-    </ul>
+    echo' 
+    </div>
 </div>';
+
 }
 
 if (in_array($id_agente, $tipi_anagrafica)) {
     // Aggiunta liquidazione provvigioni per agente
     echo '
-    <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" ><i class="fa fa-print"></i> '.tr('Liquida Provvigioni').'</button>';
+        <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" >
+            <i class="fa fa-print"></i> '.tr('Liquida Provvigioni').'
+        </button>';
 }

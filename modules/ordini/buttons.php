@@ -45,39 +45,30 @@ echo '
 		<span class="caret"></span>
 	</button>
 	<ul class="dropdown-menu dropdown-menu-right">
-	    <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-widget="modal" data-title="'.tr('Crea attività').'">
-                <i class="fa fa-wrench"></i> '.tr('Attività').'
-            </a>
-        </li>';
+
+        <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-widget="modal" data-title="'.tr('Crea attività').'">
+            <i class="fa fa-wrench"></i> '.tr('Attività').'
+        </a>
+        ';
 
 if ($dir == 'entrata') {
     echo '
-        <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-widget="modal" data-title="'.tr('Crea ordine fornitore').'">
-                <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
-            </a>
-        </li>';
-} else {
-    /*echo '
-    <li>
-        <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
-            <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
+
+        <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-widget="modal" data-title="'.tr('Crea ordine fornitore').'">
+            <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
         </a>
-    </li>';*/
-}
+        ';
+} 
 
 echo '  
-         <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ddt').'">
-                <i class="fa fa-truck"></i> '.tr('Ddt').'
-            </a>
-        </li>
 
-        <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
-                <i class="fa fa-file"></i> '.tr('Fattura').'
-            </a>
-        </li>
+        <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ddt').'">
+            <i class="fa fa-truck"></i> '.tr('Ddt').'
+        </a>
+
+        <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
+            <i class="fa fa-file"></i> '.tr('Fattura').'
+        </a>
+
     </ul>
 </div>';

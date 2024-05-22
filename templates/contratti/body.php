@@ -44,12 +44,12 @@ echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
-            <br><br>
             <b>'.tr('Contratto num. _NUM_ del _DATE_', [
     '_NUM_' => $documento['numero'],
     '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
 ], ['upper' => true]).'</b>
-        </div>';
+        </div>
+        <br>';
 
 // Elenco impianti
 $impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($documento['id']).')');
@@ -61,18 +61,18 @@ if (!empty($impianti)) {
 
     echo '
         <br>
-        <p class="small-bold">'.tr('Impianti', [], ['upper' => true]).'</p>
+        <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
         <p><small>'.implode(', ', $list).'</small></p>';
 }
 
 echo '
     </div>
 
-	<div class="col-xs-6" style="margin-left: 10px">
-        <table class="table" style="width:100%;margin-top:5mm;">
+	<div class="col-xs-6">
+        <table class="table border-bottom">
             <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
+                <td colspan=2 style="height:16mm;">
+                    <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$</p>
                     <p>$c_citta_full$</p>
@@ -80,19 +80,19 @@ echo '
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="border-bottom text-right">
                     <small>$c_piva$</small>
                 </td>
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
             </tr>';
@@ -101,7 +101,7 @@ if (!empty($destinazione)) {
     echo '
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>'.$destinazione.'</small>
                 </td>
             </tr>';
@@ -120,7 +120,7 @@ if (!empty($documento['descrizione'])) {
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped table-bordered' id='contents'>
+<table class='table table-striped border-bottom' id='contents'>
     <thead>
         <tr>
             <th class='text-center' width='35' >#</th>";
@@ -139,7 +139,7 @@ if ($options['pricing']) {
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true]).'</th>';
     if (!$options['no-iva']) {
         echo "
-                <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
     }
     echo "
             <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
@@ -275,10 +275,16 @@ foreach ($righe as $riga) {
             echo '
             </td>';
 
+            // IVA
+            echo '
+            <td class="text-right">
+                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+            </td>';
+
             // Imponibile
             echo '
             <td class="text-right">
-				'.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile, $d_importi).'
+				'.moneyFormat($riga->subtotale + $riga->iva, $d_importi).'
             </td>';
         }
     } else {
@@ -318,7 +324,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : 5).'" class="text-right text-muted">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -331,7 +337,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right text-muted">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -343,7 +349,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right text-muted">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -356,7 +362,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // IVA
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right text-muted">
                 <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
             </td>
 
@@ -368,7 +374,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // TOTALE
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right text-muted">
                 <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
 
@@ -381,7 +387,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // SCONTO IN FATTURA
             echo '
             <tr>
-                 <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+                 <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right border-top">
                     <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
                 </td>
                <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
@@ -392,7 +398,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // NETTO A PAGARE
             echo '
             <tr>
-                <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+                <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right border-top">
                     <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
                 </td>
                 <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
@@ -417,29 +423,29 @@ if ($options['no-iva']) {
 $pagamento = Pagamento::find($documento['idpagamento']);
 
 echo '
-<table class="table table-bordered">
+<table class="table table-striped">
     <tr>
-        <th colspan="2" class="text-center" style="font-size:13pt;">
+        <th colspan="6" class="text-left text-muted">
             '.tr('Condizioni generali di fornitura', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
-        <th style="width:25%">
+        <td class="text-muted small-bold border-bottom" style="width:25%">
             '.tr('Pagamento', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
+        <td class="border-bottom">
             '.$pagamento->getTranslation('title').'
         </td>
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Validità offerta', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>';
+        <td class="border-bottom">';
 
 if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
     $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
@@ -458,11 +464,11 @@ echo '
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Validità contratto', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>';
+        <td class="border-bottom">';
 
 if (!empty($documento['data_accettazione']) && !empty($documento['data_conclusione'])) {
     echo '
@@ -479,11 +485,11 @@ echo '
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Esclusioni', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
+        <td class="border-bottom">
             '.nl2br($documento['esclusioni']).'
         </td>
     </tr>

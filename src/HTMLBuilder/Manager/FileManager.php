@@ -85,36 +85,17 @@ class FileManager implements ManagerInterface
 
             if (!empty($rs)) {
                 $result .= '
-<div class="box box-success">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
+<div class="card card-success">
+    <div class="card-header with-border">
+        <h3 class="card-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
 
-        {[ "type": "text", "class": "hidden category-name", "value": "'.$category.'" ]}
-
-        <div class="box-tools pull-right">';
-
-                if (!empty($category) && !in_array($category, ['Fattura Elettronica'])) {
-                    $result .= '
-            <button type="button" class="btn btn-box-tool category-save hidden">
-                <i class="fa fa-check"></i>
-            </button>
-
-            <button type="button" class="btn btn-box-tool category-cancel hidden">
-                <i class="fa fa-close"></i>
-            </button>
-
-            <button type="button" class="btn btn-box-tool category-edit">
-                <i class="fa fa-edit"></i>
-            </button>';
-                }
-
-                $result .= '
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
-    <div class="box-body no-padding table-responsive">
+    <div class="card-body no-padding table-responsive">
     <table class="table table-striped table-condensed ">
 	  <thead>
         <tr>

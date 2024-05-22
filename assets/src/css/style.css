@@ -927,10 +927,6 @@ div.tip {
     display: block;
 }
 
-.hide, .hidden{
-    display: none;
-}
-
 .number-input {
     text-align: right;
 }
@@ -1017,7 +1013,11 @@ table.dataTable {
 .select2-container--bootstrap4{
     display: block;
     flex: 1 1 auto;
-    width: 1% !important
+    width: 85% !important
+}
+
+.card-lg{
+    width: 100%;
 }
 
 .select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
@@ -1550,6 +1550,10 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 .nav-sidebar {
     margin-bottom: 60px !important;
     text-align: left !important;
+}
+
+.hide, .hidden{
+    display: none !important;
 }
 
 @media screen and (max-width: 767px) {

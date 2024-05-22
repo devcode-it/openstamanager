@@ -59,7 +59,7 @@ switch (filter('op')) {
             }
 
             // Delegazione per la gestione
-            $completato = $gestori_esportazione[$banca_azienda->id]->aggiungi($scadenza, $scadenza->id, $descrizione, $codice_sequenza[$scadenza->id]);
+            $completato = $gestori_esportazione[$banca_azienda->id]->aggiungi($scadenza, $scadenza->id, strip_tags($descrizione), $codice_sequenza[$scadenza->id]);
 
             // Salvataggio dell'esportazione
             if ($completato) {

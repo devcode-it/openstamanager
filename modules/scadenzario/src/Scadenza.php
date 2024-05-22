@@ -22,6 +22,7 @@ namespace Modules\Scadenzario;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Pagamenti\Pagamento;
 use Modules\Fatture\Fattura;
 
 class Scadenza extends Model
@@ -64,5 +65,10 @@ class Scadenza extends Model
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+    }
+
+    public function pagamento()
+    {
+        return $this->belongsTo(Pagamento::class, 'id_pagamento');
     }
 }

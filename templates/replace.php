@@ -30,6 +30,6 @@ foreach ($replaces as $key => $value) {
 }
 
 // Sostituisce alle variabili del template i valori
-$head = str_replace(array_keys($replaces), array_values($replaces), $head);
-$foot = str_replace(array_keys($replaces), array_values($replaces), $foot);
-$report = str_replace(array_keys($replaces), array_values($replaces), $report);
+$head = str_replace(array_keys($replaces), array_values($replaces), !empty($head) ? $head : '');
+$foot = str_replace(array_keys($replaces), array_values($replaces), !empty($foot) ? $foot : '');
+$report = str_replace(array_keys($replaces), array_values($replaces), !empty($report) ? $report : '');

@@ -70,9 +70,11 @@ $plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main
 // Tab dei plugin
 foreach ($plugins as $plugin) {
     echo '
+	<ul class="navbar-nav ml-auto">
 		<li class="nav-item">
 			<a class="nav-link" data-widget="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
-		</li>';
+		</li>
+	</ul>';
 }
 
 echo '

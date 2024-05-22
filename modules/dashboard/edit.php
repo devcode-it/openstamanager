@@ -144,7 +144,7 @@ foreach ($tipi_intervento as $tipo) {
 
     echo '
             <li>
-                <input type="checkbox" id="tipo_'.$tipo['id'].'" class="dashboard_tipo dropdown-item" value="'.$tipo['id'].'" '.$attr.'>
+                <input type="checkbox" id="tipo_'.$tipo['id'].'" class="dashboard_tipo" value="'.$tipo['id'].'" '.$attr.'>
                 <label for="tipo_'.$tipo['id'].'">
                     '.$tipo['descrizione'].'
                 </label>
@@ -180,7 +180,7 @@ foreach ($tecnici_disponibili as $tecnico) {
 
     echo '
             <li>
-                <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico dropdown-item" value="'.$tecnico['id'].'" '.$attr.'>
+                <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico" value="'.$tecnico['id'].'" '.$attr.'>
                 <label for="tecnico_'.$tecnico['id'].'">
                     '.$tecnico['ragione_sociale'].'&nbsp;<span class="pull-right" style="background-color:'.$tecnico['colore'].';"></span>
                 </label>

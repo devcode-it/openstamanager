@@ -20,9 +20,12 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i> <b>'.tr('Attenzione', [], ['upper']).':</b> '.tr('le seguenti stampe contabili possono essere utilizzate per fini fiscali previa verifica delle informazioni inserite nel gestionale.<br/> Rimane esclusiva responsabilità dell\'utente controllare la correttezza dei documenti qui prodotti').'.
+<div class="row">
+    <div class="col-md-12 text-center">
+        <div class="alert alert-warning">
+            <i class="fa fa-warning"></i> <strong>'.tr('Attenzione', [], ['upper']).':</strong><br> '.tr('le seguenti stampe contabili possono essere utilizzate per fini fiscali previa verifica delle informazioni inserite nel gestionale.<br/> Rimane esclusiva responsabilità dell\'utente controllare la correttezza dei documenti qui prodotti').'.
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -33,14 +36,16 @@ echo '
             </div>
 
             <div class="card-body">
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,14 +60,16 @@ echo '
             </div>
 
             <div class="card-body">
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
-                </div>
-                <div class="col-md-4">
-                    '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
-                </div>
-                <div class="col-md-4">
-                    '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
+                <div class="row">
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
+                    </div>
+                    <div class="col-md-4">
+                        '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
+                    </div>
+                    <div class="col-md-4">
+                        '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,11 +87,13 @@ echo '
             </div>
 
             <div class="card-body">
-                <div class="col-md-6">
-                    '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Fatturato'), '|default| fa-2x', 'dir=entrata').'
-                </div>
-                <div class="col-md-6">
-                '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Acquisti').'<br>', '|default| fa-2x', 'dir=uscita').'
+                <div class="row">
+                    <div class="col-md-6">
+                        '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Fatturato'), '|default| fa-2x', 'dir=entrata').'
+                    </div>
+                    <div class="col-md-6">
+                    '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Acquisti').'<br>', '|default| fa-2x', 'dir=uscita').'
+                    </div>
                 </div>
             </div>
         </div>

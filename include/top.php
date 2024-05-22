@@ -397,118 +397,118 @@ if (Auth::check()) {
                 </ul>
             
 
-                    <!-- Navbar Right Menu -->
-                    <ul class="navbar-nav ml-auto">';
+                <!-- Navbar Right Menu -->
+                <ul class="navbar-nav ml-auto">';
     // Visualizzo gli hooks solo se non sono stati disabilitati
     if (!$config['disable_hooks']) {
         echo '
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-bell-o"></i>
-                                <span id="hooks-badge" class="badge badge-warning">
-                                    <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
-                                    <span id="hooks-notified"></span>
-                                    <span id="hooks-counter" class="d-none">0</span>
-                                    <span id="hooks-number" class="d-none">0</span>
-                                </span>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span id="hooks-badge" class="badge badge-warning">
+                                <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                <span id="hooks-notified"></span>
+                                <span id="hooks-counter" class="d-none">0</span>
+                                <span id="hooks-number" class="d-none">0</span>
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            <a href="#" class="dropdown-item">
+                                <span class="small" id="hooks-header"></span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                <a href="#" class="dropdown-item">
-                                    <span class="small" id="hooks-header"></span>
-                                </a>
-                                <div id="hooks"></div>
-                            </div>
-                        </div>';
+                            <div id="hooks"></div>
+                        </div>
+                    </div>';
     }
 
     echo '
-                        <li class="nav-item">
-                            <a href="#" onclick="window.print()" class="nav-link" title="'.tr('Stampa').'">
-                                <i class="fa fa-print nav-icon"></i>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="#" onclick="window.print()" class="nav-link" title="'.tr('Stampa').'">
+                            <i class="fa fa-print nav-icon"></i>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="'.base_path().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
-                                <i class="fa fa-book nav-icon"></i>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="'.base_path().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
+                            <i class="fa fa-book nav-icon"></i>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="'.base_path().'/shortcuts.php" class="nav-link" title="'.tr('Scorciatoie').'">
-                                <i class="fa fa-keyboard-o nav-icon"></i>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="'.base_path().'/shortcuts.php" class="nav-link" title="'.tr('Scorciatoie').'">
+                            <i class="fa fa-keyboard-o nav-icon"></i>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="'.base_path().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
-                                <i class="fa fa-info nav-icon"></i>
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a href="'.base_path().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
+                            <i class="fa fa-info nav-icon"></i>
+                        </a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
-                                <i class="fa fa-power-off nav-icon"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- /.navbar -->
+                    <li class="nav-item">
+                        <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
+                            <i class="fa fa-power-off nav-icon"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.navbar -->
 
-                <!-- Main Sidebar Container -->
-                <aside class="main-sidebar '.$theme.' elevation-4">
-                    <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
-                        <img src="'.$rootdir.'/assets/dist/img/logo_completo.png" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" class="img-fluid">
-                        <span class="brand-text font-weight-light">&nbsp;</span>
-                    </a>
+            <!-- Main Sidebar Container -->
+            <aside class="main-sidebar '.$theme.' elevation-4">
+                <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
+                    <img src="'.$rootdir.'/assets/dist/img/logo_completo.png" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" class="img-fluid">
+                    <span class="brand-text font-weight-light">&nbsp;</span>
+                </a>
 
-                    <!-- Sidebar -->
-                    <div class="sidebar">
+                <!-- Sidebar -->
+                <div class="sidebar">
 
-                    <!-- Sidebar user panel (optional) -->
-                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                        <div class="image">';
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">';
 
     $user_photo = $user->photo;
     if ($user_photo) {
         echo '
-                            <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />';
+                        <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />';
     } else {
         echo '
-                            <i class="fa fa-user-circle-o fa-2x" alt="'.tr('Utente').'"></i>';
+                        <i class="fa fa-user-circle-o fa-2x" alt="'.tr('Utente').'"></i>';
     }
     echo '
-                        </div>
-
-                        <div class="info">
-                        <a href="'.base_path().'/modules/utenti/info.php" class="d-block">
-                                '.$user['username'].'
-                            </a>
-                        </div>
                     </div>
+
+                    <div class="info">
+                    <a href="'.base_path().'/modules/utenti/info.php" class="d-block">
+                            '.$user['username'].'
+                        </a>
+                    </div>
+                </div>
 
                         
-                    <!-- SidebarSearch Form -->
-                    <div class="form-inline">
-                        <div class="input-group" data-widget="sidebar-search">
-                            <input class="form-control form-control-sidebar" id="supersearch" type="search" placeholder="'.tr('Cerca').'" aria-label="'.tr('Cerca').'">
-                            <div class="input-group-append">
-                                <button class="btn btn-sidebar">
-                                    <i class="fa fa-search fa-fw"></i>
-                                </button>
-                            </div>
+                <!-- SidebarSearch Form -->
+                <div class="form-inline">
+                    <div class="input-group" data-widget="sidebar-search">
+                        <input class="form-control form-control-sidebar" id="supersearch" type="search" placeholder="'.tr('Cerca').'" aria-label="'.tr('Cerca').'">
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fa fa-search fa-fw"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Sidebar Menu -->
-                    <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
     echo Modules::getMainMenu();
     echo '
-                    </ul>
-                </section>
-                <!-- /.sidebar -->
-            </aside>';
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>';
 
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin

@@ -42,6 +42,8 @@ $id_stato_parz_pagato = (new StatoFattura())->getByField('title', 'Parzialmente 
 $id_stato_non_valida = (new StatoFattura())->getByField('title', 'Non valida', Models\Locale::getPredefined()->id);
 $id_stato_annullata = (new StatoFattura())->getByField('title', 'Annullata', Models\Locale::getPredefined()->id);
 
+$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+
 $block_edit = !empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || !$abilita_genera;
 
 if ($dir == 'entrata') {
@@ -258,13 +260,93 @@ if ($righe_vuote) {
 </div>';
 }
 
+$query = 'SELECT `co_statidocumento`.*, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`title` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
+if (empty($record['is_fiscale'])) {
+    $query .= " WHERE `co_statidocumento`.`id` = '.$id_stato_bozza.'";
+
+    $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
+    echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
+}
+// Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
+elseif ($fattura->stato->id == $id_stato_bozza) {
+    $query .= ' WHERE `co_statidocumento`.`id` IN ('.$id_stato_emessa.', '.$id_stato_bozza.')';
+}
+
+$query .= ' ORDER BY `title`';
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-	<!-- INTESTAZIONE -->
+
+    <div class="row">
+    <?php if ($dir == 'entrata') {; ?>
+        <div class="col-md-2 offset-md-8" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
+            {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+        </div>
+
+    <?php }
+    echo'
+        <div class="col-md-2">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+        </div>
+    </div>
+
+	<!-- DATI INTESTAZIONE -->
+    <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Dati cliente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                    <i class="fa fa-'. (empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- RIGA 1 -->
+            <div class="row">
+                <div class="col-md-3">
+                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+
+if ($dir == 'entrata') {
+    ?>
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
+<?php
+} else {
+    ?>
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
+<?php
+}
+
+echo '
+                </div>';
+
+if ($dir == 'entrata') {
+    echo '
+				<div class="col-md-3">';
+    if ($record['idagente'] != 0) {
+        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
+    }
+    echo '
+					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
+				</div>';
+}
+
+echo '
+                <div class="col-md-3">';
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+echo '
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
+            </div>
+        </div>
+    </div>';
+?>
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
@@ -283,42 +365,18 @@ if ($righe_vuote) {
                     {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                 </div>';
                     $label = tr('N. fattura del fornitore');
-                    $size = 2;
                 } else {
                     $label = tr('Numero fattura');
-                    $size = 4;
                 }
 ?>
 
-				<div class="col-md-<?php echo $size; ?>">
+				<div class="col-md-2">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo ($dir == 'uscita') ? 1 : 0; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
-
-<?php
-
-$query = 'SELECT `co_statidocumento`.*, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`title` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
-if (empty($record['is_fiscale'])) {
-    $query .= " WHERE `co_statidocumento`.`id` = '.$id_stato_bozza.'";
-
-    $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
-    echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
-}
-// Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
-elseif ($fattura->stato->id == $id_stato_bozza) {
-    $query .= ' WHERE `co_statidocumento`.`id` IN ('.$id_stato_emessa.', '.$id_stato_bozza.')';
-}
-
-$query .= ' ORDER BY `title`';
-
-?>
-				<?php if ($dir == 'entrata') {
-				    $readonly = '"readonly":1,';
-				}
-?>
 
 				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
                     {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
@@ -329,64 +387,7 @@ $query .= ' ORDER BY `title`';
                     {[ "type": "date", "class":"unblockable", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
-                <?php
-                if ($dir == 'entrata') {
-                    ?>
-
-                <div class="col-md-2" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
-                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
-                </div>
-
-                <?php
-                }
-
-echo '
-                <div class="col-md-'.($record['is_fiscale'] ? 2 : 6).'">
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
-                </div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-4">
-				    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-
-if ($dir == 'entrata') {
-    ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
-<?php
-} else {
-    ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
-<?php
-}
-
-echo '
-                </div>';
-
-if ($dir == 'entrata') {
-    echo '
-				<div class="col-md-4">';
-    if ($record['idagente'] != 0) {
-        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
-    }
-    echo '
-					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
-				</div>';
-}
-
-echo '
-                <div class="col-md-4">';
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
-echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
-                </div>';
-
-echo '
-            </div>
-            <div class="row">';
+<?php 
 // Conteggio numero articoli fatture
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`) WHERE `co_documenti`.`id`='.prepare($id_record));
 $id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);

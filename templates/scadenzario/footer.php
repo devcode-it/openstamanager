@@ -18,7 +18,7 @@
  */
 
 echo '
-<table style="color:#aaa; font-size:10px;">
+<table style="color:#aaa; font-size:8px;">
 <tr>
     <td align="left" style="width:97mm;">
         '.tr('Stampato con OpenSTAManager il _DATE_', ['_DATE_' => date('d/m/Y')]).'

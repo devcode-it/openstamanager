@@ -31,15 +31,15 @@ $autofill->setRows($rows_per_page);
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped table-bordered' id='contents'>
+<table class='table table-striped' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:14%'>".tr('Q.tà', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:16%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
+            <th class='text-center border-bottom' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:14%'>".tr('Q.tà', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:16%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>
 
@@ -257,7 +257,7 @@ echo '
 
 if (!empty($record['note'])) {
     echo '
-            <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
+            <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
             <p>'.nl2br($record['note']).'</p>';
 }
 

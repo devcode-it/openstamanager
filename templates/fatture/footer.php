@@ -82,7 +82,7 @@ echo "
                         <table class='border-bottom'>
                             <tr>
                                 <td colspan='4'>
-                                    <p class='small-bold'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
+                                    <p class='small-bold text-muted'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
 
@@ -109,7 +109,8 @@ if (!empty($rs2)) {
     }
 }
 
-echo '
+echo '            
+   
                         </table>
                     </td>';
 // Fine elenco scadenze
@@ -126,15 +127,15 @@ if (!empty($v_iva)) {
                         <table class='border-bottom'>
                             <tr>
                                 <td style='width:40mm;'>
-                                    <p class='small-bold'>".tr('Aliquota IVA', [], ['upper' => true])."</p>
+                                    <p class='small-bold text-muted'>".tr('Aliquota IVA', [], ['upper' => true])."</p>
                                 </td>
 
                                 <td style='width:20mm;' class='text-center'>
-                                    <p class='small-bold'>".tr('Importo', [], ['upper' => true])."</p>
+                                    <p class='small-bold text-muted'>".tr('Importo', [], ['upper' => true])."</p>
                                 </td>
 
                                 <td style='width:20mm;' class='text-center'>
-                                    <p class='small-bold'>".tr('Importo IVA', [], ['upper' => true]).'</p>
+                                    <p class='small-bold text-muted'>".tr('Importo IVA', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
 
@@ -158,6 +159,33 @@ if (!empty($v_iva)) {
     }
 
     echo '
+                        </table>
+                        <br>
+                        <table class="border-bottom">
+                            <tr>
+                                <td>
+                                    <p class="small-bold text-muted">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
+                                </td>
+                                <td>
+                                    <p><small>$appoggiobancario$</small></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="small-bold text-muted">'.tr('IBAN').'</p>
+                                </td>
+                                <td>
+                                    <p><small>$codiceiban$</small></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="small-bold text-muted">'.tr('BIC').'</p>
+                                </td>
+                                <td>
+                                    <p><small>$bic$</small></p>
+                                </td>
+                            </tr>
                         </table>';
 }
 
@@ -171,7 +199,8 @@ echo '
             </table>';
 // Fine tabella (scadenze + iva)
 echo '
-        </td>';
+        </td>
+        ';
 
 /*
  * Riga di riepilogo dei totali.

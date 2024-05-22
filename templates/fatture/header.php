@@ -40,58 +40,35 @@ echo '
 		<div class="text-center" style="height:5mm;">
 			<b>$tipo_doc$</b>
 		</div>
+        <br>
 
 		<table class="table">
             <tr>
-                <td valign="top" class="border-full text-center">
-                    <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
+                <td valign="top" class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
                     <p>$numero$</p>
                 </td>
 
-                <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('Data documento', [], ['upper' => true]).'</p>
+                <td class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
                     <p>$data$</p>
                 </td>
 
-                <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('Cliente', [], ['upper' => true]).'</p>
-                    <p>$c_codice$</p>
-                </td>
-
-                <td class="border-right border-bottom border-top center text-center">
-                    <p class="small-bold">'.tr('Foglio', [], ['upper' => true]).'</p>
+                <td class="border-bottom border-top center text-center">
+                    <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
                     <p>{PAGENO}/{nb}</p>
                 </td>
             </tr>
 
-            <tr>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                    <p>'.$record['pagamento'].'</p>
-                </td>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
-                    <p><small>$appoggiobancario$</small></p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="height:10mm;padding-top:2mm;white-space: nowrap;">
-                    <p class="small-bold">'.tr('IBAN').'</p>
-                    <p>$codiceiban$</p>
-                </td>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('BIC').'</p>
-                    <p>$bic$</p>
-                </td>
-            </tr>
+
         </table>
     </div>
 
 	<div class="col-xs-6" style="margin-left: 10px">
-        <table class="table" style="width:100%;margin-top:5mm;">
+        <table class="table border-bottom" >
             <tr>
-                <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
-                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
+                <td colspan=2 '.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
+                    <p class="small-bold text-muted">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
 					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>';
 if (empty($destinazione)) {
@@ -103,19 +80,19 @@ echo '
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="text-right">
                     <small>$c_piva$</small>
                 </td>
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
+                <td >
+                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
             </tr>';
@@ -124,7 +101,7 @@ if (!empty($destinazione)) {
     echo '
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <p><small>$c_destinazione$</small></p>
                     <p><small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small></p>
                 </td>

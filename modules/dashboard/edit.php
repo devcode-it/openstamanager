@@ -91,7 +91,7 @@ echo '
 <div class="row">
 	<!-- STATI INTERVENTO -->
 	<div class="dropdown col-md-3" id="dashboard_stati">
-		<button type="button" class="btn btn-block counter_object" data-card-widget="dropdown">
+		<button type="button" class="btn btn-block counter_object" data-toggle="dropdown">
             <i class="fa fa-filter"></i> '.tr('Stati attività').'
             (<span class="selected_counter"></span>/<span class="total_counter"></span>) <i class="caret"></i>
         </button>
@@ -128,7 +128,7 @@ echo '
 
 	<!-- TIPI INTERVENTO -->
 	<div class="dropdown col-md-3" id="dashboard_tipi">
-		<button type="button" class="btn btn-block counter_object" data-card-widget="dropdown">
+		<button type="button" class="btn btn-block counter_object" data-toggle="dropdown">
             <i class="fa fa-filter"></i> '.tr('Tipi attività').'
             (<span class="selected_counter"></span>/<span class="total_counter"></span>) <i class="caret"></i>
         </button>
@@ -165,7 +165,7 @@ echo '
 
 	<!-- TECNICI -->
 	<div class="dropdown col-md-3" id="dashboard_tecnici">
-		<button type="button" class="btn btn-block counter_object" data-card-widget="dropdown">
+		<button type="button" class="btn btn-block counter_object" data-toggle="dropdown">
             <i class="fa fa-filter"></i> '.tr('Tecnici').'
             (<span class="selected_counter"></span>/<span class="total_counter"></span>) <i class="caret"></i>
         </button>
@@ -201,7 +201,7 @@ echo '
 
 	<!-- ZONE -->
 	<div class="dropdown col-md-3" id="dashboard_zone">
-		<button type="button" class="btn btn-block counter_object" data-card-widget="dropdown">
+		<button type="button" class="btn btn-block counter_object" data-toggle="dropdown">
             <i class="fa fa-filter"></i> '.tr('Zone').'
             (<span class="selected_counter"></span>/<span class="total_counter"></span>) <i class="caret"></i>
         </button>

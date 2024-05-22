@@ -84,6 +84,7 @@ const JS = gulp.parallel(() => {
         'autosize/dist/autosize.js',
         'autocompleter/autocomplete.js',
         'html5sortable/dist/html5sortable.js',
+        'popper.js/dist/umd/popper.js',
         'bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
         'moment/moment.js',
         'components-jqueryui/jquery-ui.js',
@@ -124,7 +125,6 @@ const JS = gulp.parallel(() => {
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
         'ismobilejs/dist/isMobile.min.js',
         'ua-parser-js/dist/ua-parser.min.js',
-        'popper.js/dist/umd/popper.js',
     ];
 
     for (const i in vendor) {

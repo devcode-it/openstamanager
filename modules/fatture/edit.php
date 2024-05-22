@@ -899,7 +899,7 @@ if (!$block_edit) {
                             </a>
                             
                             <div class="btn-group tip" data-card-widget="tooltip">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
                                     <span class="caret"></span>
                                 </button>

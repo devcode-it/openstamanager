@@ -42,7 +42,7 @@ if (sizeof($rs_doc) > 0) {
                 <br>
                 <div class="btn-group">
                     <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo (new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id); ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
-                    <a type="button" class="btn btn-info dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
@@ -57,7 +57,7 @@ if (sizeof($rs_doc) > 0) {
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <?php echo tr('Più fatture collegate'); ?>... <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>

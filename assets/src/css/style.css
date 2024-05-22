@@ -1026,6 +1026,11 @@ table.dataTable {
     margin-top: 4px;
 }
 
+.select2-container--bootstrap4 .select2-selection__clear {
+    padding-left: 0.21em;
+    padding-top: 0.05em;
+}
+
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {
     margin: 2px 0px;
 }

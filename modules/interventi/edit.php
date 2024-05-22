@@ -70,7 +70,7 @@ echo '
                 <div class="card-header with-border">
                     <h3 class="card-title">'.tr('Dati cliente').'</h3>
                     <div class="card-tools pull-right">
-                        <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                        <button type="button" class="btn btn-xs btn-card-tool" data-card-widget="collapse">
                             <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                         </button>
                     </div>
@@ -492,7 +492,7 @@ if (!$block_edit) {
                             </a>
 
                             <div class="btn-group tip" data-card-widget="tooltip">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-card-widget="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
                                     <span class="caret"></span>
                                 </button>

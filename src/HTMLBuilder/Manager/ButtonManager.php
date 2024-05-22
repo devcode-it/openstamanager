@@ -164,8 +164,8 @@ class ButtonManager implements ManagerInterface
             }
 
             $result .= '
-    <button type="button" class="btn '.$options['class'].' dropdown-toggle" data-widget="dropdown" aria-haspopup="true" aria-expanded="false">
-        '.($predefined === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
+    <button type="button" class="btn '.$options['class'].' dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        '.($predefined === false ? $this->defaultText($options).' ' : '').'
         <span class="sr-only">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right">';

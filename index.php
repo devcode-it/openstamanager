@@ -179,7 +179,7 @@ echo ' required>
                                 </div>
                             </div>
 
-                            <div class="input-group mb-3">
+                            <div class="mb-3">
                                 {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'" ]}
                             </div>
 

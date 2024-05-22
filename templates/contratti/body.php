@@ -100,7 +100,7 @@ echo '
 if (!empty($destinazione)) {
     echo '
             <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
+                <td colspan=2 style="height:16mm;">
                     <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>'.$destinazione.'</small>
                 </td>

@@ -76,36 +76,16 @@ echo '
     '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
 ], ['upper' => true]).'</b>
         </div>
+<br>
 
-        <table class="table">
-            <tr>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                    <p>'.$pagamento['descrizione'].'</p>
-                </td>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
-                    <p><small>'.$banca['nome'].'</small></p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="height:10mm;padding-top:2mm;white-space: nowrap;">
-                    <p class="small-bold">'.tr('IBAN').'</p>
-                    <p>'.$banca['iban'].'</p>
-                </td>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.tr('BIC').'</p>
-                    <p>'.$banca['bic'].'</p>
-                </td>
-            </tr>
-        </table>
+
     </div>
 
-	<div class="col-xs-6" style="margin-left: 10px">
-        <table class="table" style="width:100%;margin-top:5mm;">
+	<div class="col-xs-6">
+        <table class="table border-bottom">
             <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
+                <td colspan=2 style="height:16mm;">
+                    <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$</p>
                     <p>$c_citta_full$</p>
@@ -113,27 +93,28 @@ echo '
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="border-bottom text-right">
                     <small>$c_piva$</small>
                 </td>
             </tr>
 
             <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
                 </td>
-                <td class="border-right border-bottom text-right">
+                <td class="border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
             </tr>';
+
 if (!empty($destinazione)) {
     echo '
             <tr>
-                <td colspan="2" class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                <td colspan=2 class="border-full" style="height:16mm;">
+                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>'.$destinazione.'</small>
                 </td>
             </tr>';
@@ -171,7 +152,7 @@ if ($options['pricing']) {
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true]).'</th>';
     if (!$options['no-iva']) {
         echo "
-                <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
     }
     echo "
             <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
@@ -365,7 +346,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : 4).'" class="text-right text-muted">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -378,7 +359,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right text-muted">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -390,7 +371,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+        <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right text-muted">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -404,7 +385,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     if (!$options['no-iva']) {
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right text-muted">
                 <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
             </td>
 
@@ -416,7 +397,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // TOTALE
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right border-top">
+            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right text-muted">
                 <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
             </td>
             
@@ -465,29 +446,30 @@ if ($options['no-iva']) {
 // CONDIZIONI GENERALI DI FORNITURA
 
 echo '
-<table class="table table-bordered">
+
+<table class="table table-striped">
     <tr>
-        <th colspan="2" class="text-center" style="font-size:13pt;">
+        <th colspan="6" class="text-left text-muted">
             '.tr('Condizioni generali di fornitura', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
-        <th style="width:25%">
+        <td class="text-muted small-bold border-bottom" style="width:25%">
             '.tr('Pagamento', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
-            '.$pagamento['descrizione'].'
+        <td class="border-bottom">
+            '.$pagamento->getTranslation('title').'
         </td>
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Validità offerta', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>';
+        <td class="border-bottom">';
 
 if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
     $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
@@ -506,34 +488,64 @@ echo '
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Tempi consegna', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
+        <td class="border-bottom">
             '.$documento['tempi_consegna'].'
         </td>
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Esclusioni', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
+        <td class="border-bottom">
             '.nl2br($documento['esclusioni']).'
         </td>
     </tr>
 
     <tr>
-        <th>
+        <td class="text-muted border-bottom small-bold">
             '.tr('Garanzia', [], ['upper' => true]).'
-        </th>
+        </td>
 
-        <td>
+        <td class="border-bottom">
             '.nl2br($documento['garanzia']).'
         </td>
     </tr>
+    <tr>
+        <td></td>
+    </tr>
+    ';
+    if ($banca) {
+        echo'
+    <tr>
+        <td class="text-muted border-bottom small-bold"></td>
+        <td class="border-bottom">
+            <p><small>'.$banca['nome'].'</small></p>
+        </td>
+    </tr>
+    <tr>
+        <td class="text-muted border-bottom small-bold">
+            '.tr('IBAN', [], ['upper' => true]).'
+        </td>
+        <td class="border-bottom">
+            <p>'.$banca['iban'].'</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="text-muted border-bottom small-bold">
+            '.tr('BIC', [], ['upper' => true]).'
+        </td>
+        <td class="border-bottom">
+            <p>'.$banca['bic'].'</p>
+        </td>
+    </tr>';
+    }
+    echo'
 </table>';
 
 // Conclusione

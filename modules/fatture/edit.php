@@ -289,7 +289,7 @@ $query .= ' ORDER BY `title`';
 
     <?php }
     echo '
-        <div class="col-md-2">
+        <div class="col-md-2'.($dir == 'uscita' ? ' offset-md-10':'').'">
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
         </div>
     </div>
@@ -532,10 +532,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                 </div>';
 }
 ?>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta previdenziale'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta previdenziale da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
@@ -543,7 +540,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                 <?php
 if ($dir == 'uscita') {
     echo '
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
                 </div>';
 }

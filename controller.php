@@ -48,37 +48,25 @@ if ($segmenti) {
 
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
-<div class="nav-tabs-custom">
-	<ul class="nav nav-tabs" id="tabs" role="tablist">
-		<li class="pull-left active nav-item header">
-			<a data-widget="tab" href="#tab_0" class="nav-link">
-			<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
+	<section class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1>
+						<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
-// Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-if ($structure->hasAddFile() && $structure->permission == 'rw') {
+    // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
+    if ($structure->hasAddFile() && $structure->permission == 'rw') {
+        echo '
+					<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+    }
+
     echo '
-				
-				<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
-}
+				</h1>
+			</div>
+		</div>
+	</section>
 
-echo '
-			</a>
-		</li>';
-
-$plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
-
-// Tab dei plugin
-foreach ($plugins as $plugin) {
-    echo '
-	<ul class="navbar-nav ml-auto">
-		<li class="nav-item">
-			<a class="nav-link" data-widget="tab" href="#tab_'.$plugin->id.'" id="link-tab_'.$plugin->id.'">'.$plugin->getTranslation('title').'</a>
-		</li>
-	</ul>';
-}
-
-echo '
-	</ul>
 	<div class="tab-content">
 		<div id="tab_0" class="tab-pane active">';
 
@@ -104,9 +92,6 @@ foreach ($plugins as $plugin) {
 }
 
 $record = $module_record;
-
-echo '
-	</div>';
 
 redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 

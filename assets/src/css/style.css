@@ -1559,6 +1559,34 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     display: none !important;
 }
 
+.with-control-sidebar {
+    margin-right: 200px;
+}
+
+.control-sidebar-open {
+    right: 0;
+    display: block !important;
+    width: 200px !important;
+}
+
+.control-sidebar.control-sidebar-open,
+.control-sidebar.control-sidebar-open+.control-sidebar-bg {
+    right: 0;
+}
+
+.control-sidebar-button{
+    position: fixed;
+    right: 0px;
+    padding: 10px;
+    top: 62px;
+    z-index: 50;
+    cursor: pointer;
+    background: #fff;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;
@@ -1628,23 +1656,6 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 }
 
 
-@media screen and (min-width: 1140px) {
-    .with-control-sidebar {
-        margin-right: 200px;
-    }
-
-    .control-sidebar-open {
-        right: 0;
-        display: block !important;
-        width: 200px !important;
-    }
-
-    .control-sidebar.control-sidebar-open,
-    .control-sidebar.control-sidebar-open+.control-sidebar-bg {
-        right: 0;
-    }
-
-}
 
 /*
 * Component: Sidebar Mini

@@ -107,12 +107,12 @@ if (empty($record) || !$has_access) {
     }
 
     echo '
-
-        <nav class="navbar navbar-expand navbar-light">
-            <ul class="navbar-nav" id="tabs">
-                <li class="nav-item">
-                    <a data-widget="tab" href="#tab_0" class="nav-link">
-                    <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>
+                            <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
     if ($structure->hasAddFile() && $structure->permission == 'rw') {
@@ -121,19 +121,20 @@ if (empty($record) || !$has_access) {
     }
 
     echo '
-					</a>
-                </li>
-            </ul>
+					</h1>
+                </div>
 
-            <ul class="navbar-nav ml-auto">
-				<li class="nav-item control-sidebar-toggle">
-                    <a class="nav-link" style="cursor: pointer">'.tr('Plugin').'</a>
-                </li>
-			</ul>
-        </nav>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="'.$rootdir.'/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="'.$rootdir.'/controller.php?id_module='.$id_module.'">'.$structure->getTranslation('title').'</a></li>
+                    </ol>
+                </div>
+            </div>
+        </section>
 
-			<div class="tab-content">
-                <div id="tab_0" class="tab-pane active nav-item">';
+        <div class="tab-content">
+            <div id="tab_0" class="tab-pane active nav-item">';
 
     if (!empty($record['deleted_at'])) {
         $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
@@ -400,8 +401,7 @@ if (empty($record) || !$has_access) {
     $record = $module_record;
 
     echo '
-        </div>
-    </div>';
+        </div>';
 }
 
 redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);

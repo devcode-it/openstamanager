@@ -79,6 +79,18 @@ $(document).ready(function () {
     if (largeScreen && !globals.collapse_plugin_sidebar) {
         pluginToggle.click();
     }
+
+    $('.control-sidebar-button').on("click", function(){
+        toggleControlSidebar();
+    });
+
+    $('.control-sidebar .nav-item > a').on("click", function(){
+        toggleControlSidebar();
+    });
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        window.dispatchEvent(new Event('resize'));
+    });
 });
 
 /**
@@ -88,13 +100,4 @@ function toggleControlSidebar() {
     const sidebar = $(".control-sidebar");
 
     sidebar.toggleClass("control-sidebar-open");
-
-    if (sidebar.hasClass("control-sidebar-open")) {
-        sidebar.delay(50)
-        .animate(
-          {width: "show"},
-          350,
-          'easeInOutQuint'
-        );
-    }
 }

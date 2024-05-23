@@ -147,18 +147,18 @@ if (!$has_user) {
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="admin_username">'.tr('Username').'</label>
                                 <input type="text" class="form-control" id="admin_username" name="admin_username" placeholder="'.tr("Imposta l'username dell'amministratore").'" required>
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "", "placeholder": "'.tr("Imposta la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="admin_email">'.tr('Email').'</label>
                                 <input type="email" class="form-control" id="admin_email" name="admin_email" placeholder="'.tr("Imposta l'indirizzo email dell'amministratore").'" required>
@@ -207,8 +207,8 @@ if (!$has_azienda) {
                             </div>
 
                             <p>&nbsp;</p>
-                            <div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.</div>
-
+                            <div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.
+                            </div>
                         </div>
                     </div>';
 
@@ -224,46 +224,40 @@ if (!$has_settings) {
                     <h3 class="card-title">'.tr('Impostazioni di base').'</h3>
                 </div>
 
-                <div class="card-body">';
-    $i = 0;
+                <div class="card-body">
+                    <div class="row">';
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
-            if ($i % 2 == 0 or $i == 0) {
-                echo '  <div class="row">';
-            }
 
-            echo '
-                        <div class="col-md-6">
+            echo '  
+                        <div class="col-md-4">
                             '.Settings::input($setting, $required).'
                         </div>';
-            ++$i;
-            if ($i % 2 == 0 or $i == sizeof($settings)) {
-                echo '  </div>';
-            }
+        
         }
     }
 
-    echo '      </div>
+    echo '          </div>
+                </div>
             </div>';
 }
 echo '
-        <!-- PULSANTI -->
-        <div class="row">
-            <div class="col-md-4">
-                <span>*<small><small>'.tr('Campi obbligatori').'</small></small></span>
+            <!-- PULSANTI -->
+            <div class="row">
+                <div class="col-md-4">
+                    <span>*<small><small>'.tr('Campi obbligatori').'</small></small></span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" id="config" class="btn btn-success btn-block">
+                        <i class="fa fa-cog"></i> '.tr('Configura').'
+                    </button>
+                </div>
             </div>
-            <div class="col-md-4 text-right">
-                <button type="submit" id="config" class="btn btn-success btn-block">
-                    <i class="fa fa-cog"></i> '.tr('Configura').'
-                </button>
-            </div>
-        </div>
 
         </form>
     </div>
-</div>';
+</div>
 
-echo '
 <script>
     $(document).ready(function(){
         $("button[type=submit]").not("#config").remove();

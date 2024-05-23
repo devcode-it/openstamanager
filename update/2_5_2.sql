@@ -166,7 +166,7 @@ ORDER BY
 UPDATE `zz_prints` SET `available_options` = '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"hide-item-number\": \"Nascondere i codici degli articoli\"}' WHERE `zz_prints`.`name` = 'Contratto';
 
 -- Aggiornamento icone per AdminLTE 3
-UPDATE `zz_modules` SET `icon` = "nav-icon fa fa-circle-o" WHERE `icon` = "fa fa-angle-right";
+UPDATE `zz_modules` SET `icon` = "fa fa-circle-o" WHERE `icon` = "fa fa-angle-right";
 
 -- Modifica valore colori
 ALTER TABLE `zz_widgets` CHANGE `bgcolor` `bgcolor` VARCHAR(100) NULL DEFAULT NULL; 
@@ -205,10 +205,14 @@ UPDATE `zz_plugins` SET `options` = '{\"main_query\": [{\"type\": \"table\", \"f
 UPDATE `zz_segments` SET `clause` = '1=1 AND `qta` > 0' WHERE `zz_segments`.`name` = 'Disponibili';
 
 -- Ridimensionamento immagini
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
-(NULL, 'Ridimensiona automaticamente le immagini caricate', '0', 'boolean', '1', 'Generali', NULL),
-(NULL, 'Larghezza per ridimensionamento immagini', '600', 'integer', '1', 'Generali', NULL);
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+('Ridimensiona automaticamente le immagini caricate', '0', 'boolean', '1', 'Generali', NULL),
+('Larghezza per ridimensionamento immagini', '600', 'integer', '1', 'Generali', NULL);
 
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
-(NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Ridimensiona automaticamente le immagini caricate'), 'Ridimensiona automaticamente le immagini caricate', ''),
-(NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Larghezza per ridimensionamento immagini', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Ridimensiona automaticamente le immagini caricate'), 'Ridimensiona automaticamente le immagini caricate', ''),
+('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Larghezza per ridimensionamento immagini', '');
+
+-- Allineamento icone
+UPDATE `zz_modules` SET `icon` = "fa fa-circle-o" WHERE `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = "Gestione email") AS b);
+UPDATE `zz_modules` SET `icon` = CONCAT ('nav-icon ', icon)

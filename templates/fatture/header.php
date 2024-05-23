@@ -36,7 +36,7 @@ echo '
 
 <div class="row">
     <!-- Dati Fattura -->
-    <div class="col-xs-6">
+    <div class="col-xs-5">
 		<div class="text-center" style="height:5mm;">
 			<b>$tipo_doc$</b>
 		</div>
@@ -59,21 +59,26 @@ echo '
                     <p>{PAGENO}/{nb}</p>
                 </td>
             </tr>
-
-
         </table>
     </div>
 
-	<div class="col-xs-6" style="margin-left: 10px">
+	<div class="col-xs-6 pull-right">
         <table class="table border-bottom" >
             <tr>
-                <td colspan=2 '.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
+                <td colspan=2>
                     <p class="small-bold text-muted">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
 					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>';
 if (empty($destinazione)) {
     echo '                
-					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>';
+            <tr>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>'.$c_codice_destinatario.'</small>
+                </td>
+            </tr>';
 }
 echo '
                 </td>
@@ -100,12 +105,24 @@ echo '
 if (!empty($destinazione)) {
     echo '
             <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
+                <td class="border-bottom">
                     <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                </td>
+                <td class="border-bottom text-right">
                     <p><small>$c_destinazione$</small></p>
-                    <p><small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small></p>
                 </td>
             </tr>';
+            if ($codice_destinatario) {
+                echo'        
+            <tr>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>'.$codice_destinatario.'</small>
+                </td>
+            </tr>';
+            }
 }
 
 echo '

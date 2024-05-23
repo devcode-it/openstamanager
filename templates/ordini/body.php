@@ -66,7 +66,7 @@ $autofill->setRows(20, 10);
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped' id='contents'>
+<table class='table table-striped border-bottom' id='contents'>
     <thead>
         <tr>
             <th class='text-center text-muted' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
@@ -388,7 +388,7 @@ if ($options['pricing']) {
         // NETTO A PAGARE
         echo '
         <tr>
-            <td colspan="'.$colspan.'" class="text-right border-top">
+            <td colspan="'.$colspan.'" class="text-right text-muted">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
@@ -411,3 +411,4 @@ if (!empty($documento['note'])) {
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
 <p>'.nl2br((string) $documento['note']).'</p>';
 }
+

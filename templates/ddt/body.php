@@ -23,7 +23,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($options['pricing'] ? 6 : 3);
-$rows_per_page = $rows_per_page ?: 16;
+$rows_per_page = $rows_per_page ?: 18;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 10;
 }
@@ -31,7 +31,7 @@ $autofill->setRows($rows_per_page);
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped table-bordered' id='contents'>
+<table class='table table-striped border-bottom' id='contents'>
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>

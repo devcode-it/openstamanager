@@ -19,4 +19,5 @@
 
 return [
     'footer-height' => 35,
+    'font-size' => 8.5,
 ];

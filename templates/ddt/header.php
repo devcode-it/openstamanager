@@ -17,87 +17,114 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+if ($options['hide-header']) {
+    echo '
+	<!-- Intestazione vuota fornitore -->
+	<div class="row" style="height:111px;">
+		<div class="col-xs-6">
+		</div>
+		<div class="col-xs-6 text-right">
+		</div>
+	</div>';
+} else {
+    echo '
+	<!-- Intestazione fornitore -->
+	$default_header$';
+}
+
 echo '
-<!-- Intestazione fornitore -->
-$default_header$
 
 <div class="row">
-    <!-- Dati Ddt -->
-    <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>'.tr('DDT').'</b>
-        </div>
+    <!-- Dati Ordine -->
+    <div class="col-xs-5">
+		<div class="text-center" style="height:5mm;">
+			<b>$tipo_doc$</b>
+		</div>
+        <br>
 
-        <table class="table">
+		<table class="table">
             <tr>
-                <td valign="top" class="border-full text-center">
-                    <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
+                <td valign="top" class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
                     <p>$numero$</p>
                 </td>
 
-                <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('Data documento', [], ['upper' => true]).'</p>
+                <td class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
                     <p>$data$</p>
                 </td>
 
-                <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('_TYPE_', ['_TYPE_' => $documento->direzione == 'uscita' ? 'Fornitore' : 'Cliente'], ['upper' => true]).'</p>
-                    <p>$c_codice$</p>
-                </td>
-
-                <td class="border-right border-bottom border-top center text-center">
-                    <p class="small-bold">'.tr('Foglio', [], ['upper' => true]).'</p>
+                <td class="border-bottom border-top center text-center">
+                    <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
                     <p>{PAGENO}/{nb}</p>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="4" style="height:11mm;">
-                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                    <p>$pagamento$</p>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="2">
-                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
-                    <small>$c_piva$</small>
-                </td>
-                <td colspan="2">
-                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
-                    <small>$c_codicefiscale$</small>
                 </td>
             </tr>
         </table>
     </div>
 
-	<div class="col-xs-6" style="margin-left: 10px">
-        <table class="table" style="width:100%;margin-top:5mm;">
+	<!-- Dati Cliente/Fornitore -->
+		<div class="col-xs-6 pull-right">
+        <table class="table border-bottom" >
             <tr>
-                <td class="border-full" style="height:20mm;">
-                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
+                <td colspan=2>
+                    <p class="small-bold text-muted">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$<br>$c_citta_full$</p>
+					<p>$c_indirizzo$<br> $c_citta_full$</p>
+					<p>$c_telefono$ $c_cellulare$</p>';
+if (empty($destinazione)) {
+    echo '                
+            <tr>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>'.$c_codice_destinatario.'</small>
+                </td>
+            </tr>';
+}
+echo '
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>$c_piva$</small>
+                </td>
+            </tr>
+
+            <tr>
+                <td >
+                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>$c_codicefiscale$</small>
                 </td>
             </tr>';
 
 if (!empty($destinazione)) {
     echo '
             <tr>
-                <td class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                    <small>$c_destinazione$</small>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                </td>
+                <td class="border-bottom text-right">
+                    <p><small>'.$destinazione.'</small></p>
                 </td>
             </tr>';
-}
-if (!empty($partenza)) {
-    echo '
+            if ($codice_destinatario) {
+                echo'        
             <tr>
-                <td class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Partenza merce', [], ['upper' => true]).'</p>
-                    <small>$c_partenza$</small>
+                <td>
+                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
+                </td>
+                <td class="text-right">
+                    <small>'.$codice_destinatario.'</small>
                 </td>
             </tr>';
+            }
 }
 
 echo '

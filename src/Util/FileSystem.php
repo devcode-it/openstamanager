@@ -46,7 +46,7 @@ class FileSystem
                 $fs->mkdir($path);
 
                 return true;
-            } catch (\Symfony\Component\Filesystem\Exception\IOException $e) {
+            } catch (\Symfony\Component\Filesystem\Exception\IOException) {
             }
         }
 

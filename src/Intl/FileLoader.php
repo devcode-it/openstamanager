@@ -27,11 +27,9 @@ namespace Intl;
 class FileLoader extends \Symfony\Component\Translation\Loader\FileLoader
 {
     protected static $loaders = [];
-    protected $include_filename;
 
-    public function __construct($include_filename = false)
+    public function __construct(protected $include_filename = false)
     {
-        $this->include_filename = $include_filename;
     }
 
     protected function loadResource($resource)
@@ -57,7 +55,7 @@ class FileLoader extends \Symfony\Component\Translation\Loader\FileLoader
     protected function getLoader($name)
     {
         if (empty(self::$loaders[$name])) {
-            $class = '\Symfony\Component\Translation\Loader\\'.ucfirst($name).'FileLoader';
+            $class = '\Symfony\Component\Translation\Loader\\'.ucfirst((string) $name).'FileLoader';
             if (class_exists($class)) {
                 self::$loaders[$name] = new $class();
             }

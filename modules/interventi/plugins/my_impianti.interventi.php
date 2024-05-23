@@ -50,7 +50,7 @@ if (!empty($results)) {
                 <td>
                     '.Modules::link('Interventi', $result['id'], $intervento->getReference()).'
                 </td>
-                <td>'.nl2br($result['descrizione']).'</td>
+                <td>'.nl2br((string) $result['descrizione']).'</td>
                 <td class="text-right">'.moneyFormat($intervento->totale).'</td>
             </tr>';
     }

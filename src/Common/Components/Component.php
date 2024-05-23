@@ -77,7 +77,7 @@ abstract class Component extends Model
 
     public function referenceSources()
     {
-        $class = get_class($this);
+        $class = static::class;
 
         return $this->hasMany(RowReference::class, 'target_id')
             ->where('target_type', $class);
@@ -85,7 +85,7 @@ abstract class Component extends Model
 
     public function referenceTargets()
     {
-        $class = get_class($this);
+        $class = static::class;
 
         return $this->hasMany(RowReference::class, 'source_id')
             ->where('source_type', $class);
@@ -191,10 +191,10 @@ abstract class Component extends Model
     public function copiaIn(Document $document, $qta = null, $evadi_qta_parent = true)
     {
         // Individuazione classe di destinazione
-        $class = get_class($document);
+        $class = $document::class;
         $namespace = implode('\\', explode('\\', $class, -1));
 
-        $current = get_class($this);
+        $current = static::class;
         $pieces = explode('\\', $current);
         $type = end($pieces);
 
@@ -291,11 +291,11 @@ abstract class Component extends Model
         // Informazioni del nuovo riferimento
         if (!empty($riga)) {
             $this->original_id = $riga->id;
-            $this->original_type = get_class($riga);
+            $this->original_type = $riga::class;
 
             $documento_origine = $riga->getDocument();
             $this->original_document_id = $documento_origine->id;
-            $this->original_document_type = get_class($documento_origine);
+            $this->original_document_type = $documento_origine::class;
 
             // Aggiunta del riferimento nella descrizione
             $nuovo_riferimento = self::getDescrizioneRiferimento(
@@ -317,7 +317,7 @@ abstract class Component extends Model
     {
         $riferimento = $origine->getReference();
 
-        return "\nRif. ".strtolower($riferimento);
+        return "\nRif. ".strtolower((string) $riferimento);
     }
 
     /**

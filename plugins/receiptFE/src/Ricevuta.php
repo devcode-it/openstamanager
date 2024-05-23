@@ -54,7 +54,7 @@ class Ricevuta
             $extraction_dir = static::getImportDirectory().'/tmp';
             Zip::extract($file, $extraction_dir);
 
-            $name = basename($name, '.zip').'.xml';
+            $name = basename((string) $name, '.zip').'.xml';
             $file = static::getImportDirectory().'/'.$name;
             copy($extraction_dir.'/'.$name, $file);
 
@@ -65,7 +65,7 @@ class Ricevuta
         $this->file = $file;
         $this->xml = XML::readFile($this->file);
 
-        $filename = explode('.', $name)[0];
+        $filename = explode('.', (string) $name)[0];
         $pieces = explode('_', $filename);
 
         $progressivo_invio = $pieces[1];
@@ -101,7 +101,7 @@ class Ricevuta
             $receipt->cleanup();
 
             Interaction::processReceipt($name);
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
         }
 
         return $fattura;
@@ -233,7 +233,7 @@ class Ricevuta
         } else {
             $data = $this->xml['DataOraRicezione'];
 
-            $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
+            $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime((string) $data)) : '';
             $fattura->codice_stato_fe = $codice;
             $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento : '');
             $fattura->id_ricevuta_principale = $id_allegato;

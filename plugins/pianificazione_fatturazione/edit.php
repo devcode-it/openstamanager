@@ -67,7 +67,7 @@ if (!$pianificazioni->isEmpty()) {
         if (!$pianificazione->data_scadenza->equalTo($previous)) {
             $previous = $pianificazione->data_scadenza;
             echo '
-                    <b>'.ucfirst($pianificazione->data_scadenza->isoFormat('MMMM YYYY')).'</b>';
+                    <b>'.ucfirst((string) $pianificazione->data_scadenza->isoFormat('MMMM YYYY')).'</b>';
         }
 
         echo '

@@ -151,7 +151,7 @@ class Generator
             }
 
             if (!isset($replaces[$key]['regex'])) {
-                $replaces[$key]['regex'] = '(?<'.preg_quote($key).'>.{'.strlen($replaces[$key]['value']).'})';
+                $replaces[$key]['regex'] = '(?<'.preg_quote($key).'>.{'.strlen((string) $replaces[$key]['value']).'})';
             }
         }
 
@@ -167,7 +167,7 @@ class Generator
     {
         $replaces = self::$replaces;
 
-        $date = strtotime($date);
+        $date = strtotime((string) $date);
         $results = [];
 
         foreach ($replaces as $key => $value) {

@@ -41,12 +41,12 @@ class SelectHandler implements HandlerInterface
 
         // Individuazione e gestione dei valori tramite array
         if (in_array('multiple', $extras)) {
-            $values['value'] = explode(',', $values['value']);
+            $values['value'] = explode(',', (string) $values['value']);
         } else {
             $values['value'] = (array) $values['value'];
         }
 
-        if (count($values['value']) === 1 && strlen($values['value'][0]) === 0) {
+        if (count($values['value']) === 1 && strlen((string) $values['value'][0]) === 0) {
             $values['value'] = [];
         }
 
@@ -91,14 +91,14 @@ class SelectHandler implements HandlerInterface
 
             // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
             elseif (string_starts_with($values['values'], 'query=')) {
-                $query = substr($values['values'], strlen('query='));
+                $query = substr((string) $values['values'], strlen('query='));
 
                 $result .= $this->selectQuery($query, $values['value'], $values['link']);
             }
 
             // Gestione del select dal formato JSON parziale (valori singoli)
             elseif (string_starts_with($values['values'], 'list=')) {
-                $list = substr($values['values'], strlen('list='));
+                $list = substr((string) $values['values'], strlen('list='));
 
                 $result .= $this->selectList(json_decode('{'.$list.'}', true), $values, $values['link']);
             }

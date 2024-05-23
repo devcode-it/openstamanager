@@ -250,7 +250,7 @@ class CSV extends CSVImporter
         // Individuazione del tipo dell'anagrafica
         $tipologie = [];
         if (!empty($record['tipologia'])) {
-            $tipi_selezionati = explode(',', $record['tipologia']);
+            $tipi_selezionati = explode(',', (string) $record['tipologia']);
 
             foreach ($tipi_selezionati as $tipo) {
                 $id_tipo = (new Tipo())->getByField('title', $tipo);
@@ -324,7 +324,7 @@ class CSV extends CSVImporter
         foreach ($campi_sede as $field) {
             if ($primary_key != $field) {
                 if (isset($record[$field])) {
-                    $dati_sede[$field] = trim($record[$field]);
+                    $dati_sede[$field] = trim((string) $record[$field]);
                     unset($record[$field]);
                 }
             }
@@ -332,7 +332,7 @@ class CSV extends CSVImporter
 
         // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
         if (!empty($primary_key)) {
-            $anagrafica = Anagrafica::where($primary_key, '=', trim($record[$primary_key]))->first();
+            $anagrafica = Anagrafica::where($primary_key, '=', trim((string) $record[$primary_key]))->first();
         }
 
         // Se non trovo nessuna anagrafica corrispondente, allora la creo

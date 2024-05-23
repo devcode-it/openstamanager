@@ -85,8 +85,8 @@ foreach ($rs as $key => $value) {
     $prezzo = $intervento->totale;
 
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
-    $rs[$key]['descrizione_intervento'] = str_replace("'", ' ', strip_tags($rs[$key]['descrizione_intervento']));
-    $rs[$key]['info'] = str_replace("'", ' ', strip_tags($module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione')))) ?: $rs[$key]['info'];
+    $rs[$key]['descrizione_intervento'] = str_replace("'", ' ', strip_tags((string) $rs[$key]['descrizione_intervento']));
+    $rs[$key]['info'] = str_replace("'", ' ', strip_tags((string) $module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione')))) ?: $rs[$key]['info'];
 }
 
 // Intervento

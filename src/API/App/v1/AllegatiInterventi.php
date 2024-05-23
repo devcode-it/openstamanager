@@ -92,7 +92,7 @@ class AllegatiInterventi extends AppResource
         $module = (new Module())->getByField('title', 'Anagrafiche', \Models\Locale::getPredefined()->id);
 
         // Creazione del file temporaneo
-        $content = explode(',', $data['contenuto']);
+        $content = explode(',', (string) $data['contenuto']);
         if (count($content) < 1) {
             throw new InternalError();
         }

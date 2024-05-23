@@ -183,7 +183,7 @@ class Services
     {
         $body = $response->getBody();
 
-        return json_decode($body, true) ?: [];
+        return json_decode((string) $body, true) ?: [];
     }
 
     /**

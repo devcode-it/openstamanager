@@ -117,7 +117,7 @@ class HTMLBuilder
     public static function replace($html, $depth = 0)
     {
         // Gestione dei manager generici
-        preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/is', $html ?: '', $managers);
+        preg_match_all('/'.preg_quote((string) self::$open['manager']).'(.+?)'.preg_quote((string) self::$close['manager']).'/is', $html ?: '', $managers);
 
         foreach ($managers[0] as $value) {
             $json = self::decode($value, 'manager');
@@ -145,7 +145,7 @@ class HTMLBuilder
         }
 
         // Gestione del formato di input HTML semplificato
-        preg_match_all('/'.preg_quote(self::$open['handler']).'(.+?)'.preg_quote(self::$close['handler']).'/is', $html ?: '', $handlers);
+        preg_match_all('/'.preg_quote((string) self::$open['handler']).'(.+?)'.preg_quote((string) self::$close['handler']).'/is', $html ?: '', $handlers);
 
         foreach ($handlers[0] as $value) {
             $json = self::decode($value, 'handler');
@@ -336,7 +336,7 @@ class HTMLBuilder
      */
     public static function decode($string, $type)
     {
-        $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
+        $string = '{'.substr($string, strlen((string) self::$open[$type]), -strlen((string) self::$close[$type])).'}';
 
         // Fix per contenuti con newline integrati
         $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
@@ -411,7 +411,7 @@ class HTMLBuilder
             foreach (self::$specifics as $specific) {
                 if (isset($json[$specific])) {
                     if (!empty($json[$specific])) {
-                        $extras[] = trim($specific);
+                        $extras[] = trim((string) $specific);
                     }
                     unset($json[$specific]);
                 }
@@ -420,7 +420,7 @@ class HTMLBuilder
             // Campo personalizzato "extra"
             if (isset($json['extra'])) {
                 if (!empty($json['extra'])) {
-                    $extras[] = trim($json['extra']);
+                    $extras[] = trim((string) $json['extra']);
                 }
                 unset($json['extra']);
             }
@@ -440,7 +440,7 @@ class HTMLBuilder
             $values['class'] = [];
             $values['class'][] = 'form-control';
             if (!empty($json['class'])) {
-                $classes = explode(' ', $json['class']);
+                $classes = explode(' ', (string) $json['class']);
                 foreach ($classes as $class) {
                     if (!empty($class)) {
                         $values['class'][] = trim($class);

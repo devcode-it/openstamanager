@@ -31,7 +31,7 @@ foreach ($rs as $r) {
     // Campi da evidenziare
     $result['labels'] = [];
     foreach ($fields as $name => $value) {
-        if (str_contains($r[$name], $term)) {
+        if (str_contains((string) $r[$name], (string) $term)) {
             $text = str_replace($term, "<span class='highlight'>".$term.'</span>', $r[$name]);
 
             $result['labels'][] = $name.': '.$text.'<br/>';

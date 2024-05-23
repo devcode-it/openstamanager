@@ -45,14 +45,14 @@ if (count($preventivo->revisioni) > 1) {
             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
         </div>
     </div>
-    <?php echo'
+    <?php echo '
 	<!-- DATI INTESTAZIONE -->
     <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Dati cliente').'</h3>
             <div class="card-tools pull-right">
                 <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
-                    <i class="fa fa-'. (empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
         </div>
@@ -520,7 +520,7 @@ UNION
         \'Interventi\' 
     FROM `in_interventi` 
     JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
-    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($preventivo->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($preventivo)).') OR `in_interventi`.`id_preventivo` = '.prepare($id_record).'
+    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($preventivo->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare($preventivo::class).') OR `in_interventi`.`id_preventivo` = '.prepare($id_record).'
 
 ORDER BY `data`');
 

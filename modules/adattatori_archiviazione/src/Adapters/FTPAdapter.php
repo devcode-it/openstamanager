@@ -26,7 +26,7 @@ class FTPAdapter extends OriginalAdapter
 {
     public function __construct($options)
     {
-        $options = json_decode($options, 1);
+        $options = json_decode((string) $options, 1);
 
         parent::__construct(FtpConnectionOptions::fromArray($options));
     }

@@ -75,7 +75,7 @@ switch (filter('op')) {
 
                 return;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         // Individuazione ID fisico
@@ -318,7 +318,7 @@ switch (filter('op')) {
                             'numero' => $dato['IdDocumento'],
                             'anno' => (new Carbon($dato['Data']))->format('Y'),
                         ];
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                         $dati_ordini[(int) $linea] = [
                             'numero' => $dato['IdDocumento'],
                         ];
@@ -337,7 +337,7 @@ switch (filter('op')) {
                         'numero' => $dato['IdDocumento'],
                         'anno' => (new Carbon($dato['Data']))->format('Y'),
                     ];
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['IdDocumento'],
                     ];
@@ -362,7 +362,7 @@ switch (filter('op')) {
                             'numero' => $dato['NumeroDDT'],
                             'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
                         ];
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                         $dati_ddt[(int) $linea] = [
                             'numero' => $dato['NumeroDDT'],
                         ];
@@ -380,7 +380,7 @@ switch (filter('op')) {
                         'numero' => $dato['NumeroDDT'],
                         'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
                     ];
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['NumeroDDT'],
                     ];
@@ -633,7 +633,7 @@ switch (filter('op')) {
                         'match_documento_da_fe' => $match_documento_da_fe,
                     ],
                     'riga' => [
-                        'tipo' => get_class($riga),
+                        'tipo' => $riga::class,
                         'id' => $riga->id,
                         'descrizione' => $riga->descrizione,
                         'qta' => $riga->qta,

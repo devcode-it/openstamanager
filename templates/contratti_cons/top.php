@@ -65,7 +65,7 @@ echo '
 // Descrizione
 if (!empty($documento['descrizione'])) {
     echo '
-<p>'.nl2br($documento['descrizione']).'</p>
+<p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
 }
 

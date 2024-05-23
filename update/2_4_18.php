@@ -35,7 +35,7 @@ $database->query('ALTER TABLE `zz_settings` ADD UNIQUE(`nome`)');
 // Rimozione dell'indice precedente
 try {
     $database->query('ALTER TABLE `zz_users` DROP INDEX `username`');
-} catch (PDOException $e) {
+} catch (PDOException) {
 }
 $database->query('ALTER TABLE `zz_users` CHANGE `username` `username` VARCHAR(150) NOT NULL');
 $database->query('ALTER TABLE `zz_users` ADD UNIQUE(`username`)');

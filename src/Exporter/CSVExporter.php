@@ -84,7 +84,7 @@ abstract class CSVExporter implements ExporterInterface
             $nome = $field['field'];
 
             // Navigazione secondo dot notation
-            $dot_notation = explode('.', $nome);
+            $dot_notation = explode('.', (string) $nome);
             $contenuto = $record;
             foreach ($dot_notation as $segment) {
                 $contenuto = $contenuto[$segment] ?? null;

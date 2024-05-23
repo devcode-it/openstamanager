@@ -142,7 +142,7 @@ if (!$elenco_promemoria->isEmpty()) {
             <tr>
                 <td>'.Translator::dateToLocale($promemoria['data_richiesta']).'</td>
                 <td>'.$promemoria->tipo->getTranslation('title').'</td>
-                <td>'.nl2br($promemoria['richiesta']).'</td>
+                <td>'.nl2br((string) $promemoria['richiesta']).'</td>
                 <td>'.$info_intervento.'</td>
                 <td>'.$info_sede.'</td>
                 <td>'.$info_impianti.'</td>

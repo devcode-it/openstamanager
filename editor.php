@@ -364,7 +364,7 @@ if (empty($record) || !$has_access) {
                         </div>
                     </div>';
             }
-            echo'
+            echo '
                     <div>
                         <i class="fa fa-clock-o bg-gray"></i>
                     </div>

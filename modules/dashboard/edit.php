@@ -342,18 +342,18 @@ if (!empty($risultati_da_programmare)) {
     echo '
         <select class="superselect openstamanager-input select-input" id="mese-promemoria">
             <option value="all">'.tr('Tutti').'</option>';
-    
+
     foreach ($mesi as $mese) {
         $data = Carbon::parse($mese['data']);
         $chiave = $data->format('mY');
         $testo = $data->isoFormat('MMMM YYYY');
-    
+
         if (checkdate($data->format('m'), $data->format('d'), $data->format('Y'))) {
             echo '
             <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
         }
     }
-    
+
     echo '
         </select>
         <div id="elenco-promemoria"></div>

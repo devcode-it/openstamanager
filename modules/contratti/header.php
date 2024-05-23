@@ -45,7 +45,6 @@ if ($contratto->idreferente) {
     $referente = $dbo->selectOne('an_referenti', '*', ['id' => $contratto->idreferente]);
 }
 
-
 // Preventivo
 $preventivo = null;
 if ($contratto->id_preventivo) {

@@ -6,7 +6,7 @@
 $rs = $dbo->fetchArray('SELECT idanagrafica, ragione_sociale, (SELECT GROUP_CONCAT(an_tipianagrafiche.descrizione) FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=an_anagrafiche.idanagrafica) AS idtipianagrafica FROM an_anagrafiche WHERE idconto_cliente=0 OR idconto_fornitore=0');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
-    if (in_array('Cliente', explode(',', $rs[$i]['idtipianagrafica']))) {
+    if (in_array('Cliente', explode(',', (string) $rs[$i]['idtipianagrafica']))) {
         // Calcolo il codice conto più alto
         $rs2 = $dbo->fetchArray("SELECT MAX( CAST(numero AS UNSIGNED) ) AS max_numero, idpianodeiconti2 FROM co_pianodeiconti3 WHERE numero=CAST(numero AS UNSIGNED) AND idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi')");
         $numero = str_pad($rs2[0]['max_numero'] + 1, 6, '0', STR_PAD_LEFT);
@@ -20,7 +20,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $dbo->query('UPDATE an_anagrafiche SET idconto_cliente="'.$idconto.'" WHERE idanagrafica="'.$rs[$i]['idanagrafica'].'"');
     }
 
-    if (in_array('Fornitore', explode(',', $rs[$i]['idtipianagrafica']))) {
+    if (in_array('Fornitore', explode(',', (string) $rs[$i]['idtipianagrafica']))) {
         // Calcolo il codice conto più alto
         $rs2 = $dbo->fetchArray("SELECT MAX( CAST(numero AS UNSIGNED) ) AS max_numero, idpianodeiconti2 FROM co_pianodeiconti3 WHERE numero=CAST(numero AS UNSIGNED) AND idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi')");
         $numero = str_pad($rs2[0]['max_numero'] + 1, 6, '0', STR_PAD_LEFT);

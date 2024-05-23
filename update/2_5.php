@@ -36,7 +36,7 @@ if ($backup_dir) {
     foreach ($files as $file) {
         $fileName = basename($file);
 
-        if (strpos($fileName, 'FULL') === false) {
+        if (!str_contains($fileName, 'FULL')) {
             $newFileName = pathinfo($fileName, PATHINFO_FILENAME).' FULL.zip';
             $newFilePath = $backup_dir.'/'.$newFileName;
 

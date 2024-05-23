@@ -508,7 +508,7 @@ ORDER BY
 
 $dataset = '';
 if ($_SESSION['superselect']['idtipiintervento']) {
-    $where = '`in_interventi_tecnici`.`id` IN('.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).')';
+    $where = '`in_interventi_tecnici`.`id` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')';
 } else {
     $where = '1=1';
 }
@@ -519,7 +519,7 @@ foreach ($tecnici as $tecnico) {
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
     // Colore tecnico
-    $background = strtoupper($tecnico['colore']);
+    $background = strtoupper((string) $tecnico['colore']);
     if (empty($background) || $background == '#FFFFFF') {
         // Random color
         $background = '#'.dechex(random_int(256, 16777215));
@@ -546,7 +546,7 @@ echo '
                     <div class="col-md-3 float-right">';
 if ($_SESSION['superselect']['idtipiintervento']) {
     echo '
-                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode($_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
+                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
 }
 echo '
                     </div>

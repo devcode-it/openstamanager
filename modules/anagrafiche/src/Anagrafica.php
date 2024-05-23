@@ -237,22 +237,22 @@ class Anagrafica extends Model
             $value = null;
         }
 
-        $this->attributes['piva'] = trim(strtoupper($value));
+        $this->attributes['piva'] = trim(strtoupper((string) $value));
     }
 
     public function setNomeAttribute($value)
     {
-        $this->attributes['nome'] = trim($value);
+        $this->attributes['nome'] = trim((string) $value);
     }
 
     public function setCognomeAttribute($value)
     {
-        $this->attributes['cognome'] = trim($value);
+        $this->attributes['cognome'] = trim((string) $value);
     }
 
     public function setCodiceFiscaleAttribute($value)
     {
-        $this->attributes['codice_fiscale'] = trim(strtoupper($value));
+        $this->attributes['codice_fiscale'] = trim(strtoupper((string) $value));
     }
 
     public function setCodiceDestinatarioAttribute($value)
@@ -261,7 +261,7 @@ class Anagrafica extends Model
             $value = '';
         }
 
-        $this->attributes['codice_destinatario'] = trim(strtoupper($value));
+        $this->attributes['codice_destinatario'] = trim(strtoupper((string) $value));
     }
 
     /**

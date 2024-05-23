@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     $response = Response::error('ok');
 }
 
-json_decode($response);
+json_decode((string) $response);
 
 // Impostazioni di Content-Type e Charset Header
 if (json_last_error() == JSON_ERROR_NONE) {

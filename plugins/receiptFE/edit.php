@@ -58,7 +58,7 @@ if (!empty($fatture_generate_errore->count())) {
 
             // Informazioni aggiuntive per EC02
             if (!empty($contenuto_ricevuta['EsitoCommittente'])) {
-                $descrizione .= ': '.htmlentities($contenuto_ricevuta['EsitoCommittente']['Descrizione']);
+                $descrizione .= ': '.htmlentities((string) $contenuto_ricevuta['EsitoCommittente']['Descrizione']);
             }
 
             // Informazioni aggiuntive per NS
@@ -67,7 +67,7 @@ if (!empty($fatture_generate_errore->count())) {
                 $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
 
                 $errore = $lista_errori[0]['Errore'];
-                $descrizione .= ': '.$errore['Codice'].' - '.htmlentities($errore['Descrizione']);
+                $descrizione .= ': '.$errore['Codice'].' - '.htmlentities((string) $errore['Descrizione']);
             }
         }
 

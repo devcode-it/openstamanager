@@ -78,7 +78,7 @@ function delete($files)
     // Eliminazione
     try {
         $fs->remove($files);
-    } catch (IOException $e) {
+    } catch (IOException) {
         return false;
     }
 
@@ -129,16 +129,16 @@ function copyr($source, $destination, $ignores = [])
 
     try {
         $fs->chmod($destination, 0777, 0000, true);
-    } catch (IOException $e) {
+    } catch (IOException) {
     }
 
     foreach ($files as $file) {
-        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
+        $filename = rtrim((string) $destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
         // Copia effettiva del file
         try {
             $fs->copy($file, $filename, true);
-        } catch (IOException $e) {
+        } catch (IOException) {
             $result = false;
         }
     }
@@ -175,7 +175,7 @@ function getOS()
     ];
 
     foreach ($os as $key => $value) {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], $key)) {
+        if (strpos((string) $_SERVER['HTTP_USER_AGENT'], $key)) {
             return $value;
         }
     }
@@ -209,7 +209,7 @@ function get_client_ip()
         $ipaddress = 'UNKNOWN';
     }
 
-    return strip_tags($ipaddress);
+    return strip_tags((string) $ipaddress);
 }
 
 /**
@@ -351,7 +351,7 @@ function prepareToField($string)
  */
 function isMobile()
 {
-    return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER['HTTP_USER_AGENT']);
+    return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", (string) $_SERVER['HTTP_USER_AGENT']);
 }
 
 /**
@@ -364,10 +364,10 @@ function isMobile()
 function getURLPath()
 {
     $path = $_SERVER['SCRIPT_FILENAME'];
-    $prefix = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
+    $prefix = rtrim((string) $_SERVER['DOCUMENT_ROOT'], '/\\');
 
-    if (substr($path, 0, strlen($prefix)) == $prefix) {
-        $path = substr($path, strlen($prefix));
+    if (str_starts_with((string) $path, $prefix)) {
+        $path = substr((string) $path, strlen($prefix));
     } else {
         $path = str_replace(base_dir(), base_path(), $path);
     }
@@ -406,7 +406,7 @@ function clean($string, $permitted = '')
 
 function check_query($query)
 {
-    $query = mb_strtoupper($query);
+    $query = mb_strtoupper((string) $query);
 
     $blacklist = ['INSERT', 'UPDATE', 'TRUNCATE', 'DELETE', 'DROP', 'GRANT', 'CREATE', 'REVOKE'];
     foreach ($blacklist as $value) {
@@ -449,11 +449,10 @@ function session_get($name, $default = null)
  * Imposta un parametro nella sessione secondo un nome indicato.
  *
  * @param string $name  Nome del parametro in dot-notation
- * @param mixed  $value Valore da impostare
  *
  * @return void
  */
-function session_set($name, $value)
+function session_set($name, mixed $value)
 {
     $session = &$_SESSION;
 

@@ -375,7 +375,7 @@ class Interventi extends AppResource
         // Salvataggio firma
         $firma_file = 'firma_'.time().'.png';
 
-        $data = explode(',', $firma_base64);
+        $data = explode(',', (string) $firma_base64);
 
         $img = ImageManagerStatic::make(base64_decode($data[1]));
         $img->resize(680, 202, function ($constraint) {

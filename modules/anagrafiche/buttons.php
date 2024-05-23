@@ -71,10 +71,9 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
         <a class="dropdown-item" data-widget="modal" data-href="add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id).'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i> '.tr('Nuova registrazione contabile (fornitore)').'</a>';
     }
 
-    echo' 
+    echo ' 
     </div>
 </div>';
-
 }
 
 if (in_array($id_agente, $tipi_anagrafica)) {

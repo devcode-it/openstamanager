@@ -302,7 +302,7 @@ switch ($op) {
 
             $totale_documento = abs($totale_documento);
             $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: $totale_documento;
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         echo json_encode([
@@ -369,7 +369,7 @@ switch ($op) {
             $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
 
             flash()->info(tr('Fattura eliminata!'));
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
 
@@ -527,7 +527,7 @@ switch ($op) {
 
         try {
             $articolo->qta = $qta;
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
         $articolo->save();
@@ -651,7 +651,7 @@ switch ($op) {
                     flash()->info(tr('Intervento _NUM_ rimosso!', [
                         '_NUM_' => $idintervento,
                     ]));
-                } catch (InvalidArgumentException $e) {
+                } catch (InvalidArgumentException) {
                     flash()->error(tr('Errore durante l\'eliminazione della riga!'));
                 }
             }
@@ -673,7 +673,7 @@ switch ($op) {
 
                 // Ricalcolo inps, ritenuta e bollo
                 ricalcola_costiagg_fattura($id_record);
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
 

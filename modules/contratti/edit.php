@@ -21,15 +21,15 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $block_edit = $record['is_completato'];
-$data_accettazione = $record['data_accettazione'] ? strtotime($record['data_accettazione']) : '';
-$data_conclusione = $record['data_conclusione'] ? strtotime($record['data_conclusione']) : '';
+$data_accettazione = $record['data_accettazione'] ? strtotime((string) $record['data_accettazione']) : '';
+$data_conclusione = $record['data_conclusione'] ? strtotime((string) $record['data_conclusione']) : '';
 
 if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !empty($data_conclusione)) {
     echo '
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. Verificare le informazioni inserite.').'</div>';
 }
 
-echo'
+echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -47,7 +47,7 @@ echo'
             <h3 class="card-title">'.tr('Dati cliente').'</h3>
             <div class="card-tools pull-right">
                 <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
-                    <i class="fa fa-'. (empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
         </div>
@@ -71,8 +71,7 @@ echo'
 
                     <div class="col-md-3">';
 if ($record['idagente'] != 0) {
-    echo 
-                        Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 ?>
                         {[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": <?php echo $record['idanagrafica']; ?>}, "value": "$idagente$" ]}
@@ -584,7 +583,7 @@ $elementi = $dbo->fetchArray('
         \'Interventi\' 
     FROM `in_interventi` 
     JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
-    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' '.($contratto ? 'AND `in_righe_interventi`.`original_document_type` = '.prepare(get_class($contratto)) : '').')
+    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($contratto->id).' '.($contratto ? 'AND `in_righe_interventi`.`original_document_type` = '.prepare($contratto::class) : '').')
     OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
 
     ORDER BY `data`');

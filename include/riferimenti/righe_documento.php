@@ -44,7 +44,7 @@ echo '
 
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
-    $riga_class = get_class($riga);
+    $riga_class = $riga::class;
 
     $riferimento_locale = $riga_class.'|'.$riga->id;
     $presente = in_array($riferimento_locale, $riferimenti);

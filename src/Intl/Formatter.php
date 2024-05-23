@@ -291,7 +291,7 @@ class Formatter
 
         if (!empty($current['thousands'])) {
             $error = true;
-            if (floor(strlen($integer) / 4) == substr_count($integer, $current['thousands'])) {
+            if (floor(strlen($integer) / 4) == substr_count($integer, (string) $current['thousands'])) {
                 $values = str_split(strrev($integer), 4);
 
                 foreach ($values as $key => $value) {
@@ -302,7 +302,7 @@ class Formatter
 
                 $integer = strrev(implode('', $values));
 
-                $error = substr_count($integer, $current['thousands']);
+                $error = substr_count($integer, (string) $current['thousands']);
             }
 
             if (!empty($error)) {

@@ -225,7 +225,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $riga->qta = round($qta_gruppo, $decimals);
 
                 // Riferimento al documento di origine
-                $riga->original_document_type = get_class($intervento);
+                $riga->original_document_type = $intervento::class;
                 $riga->original_document_id = $intervento->id;
 
                 $riga->save();
@@ -256,7 +256,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $riga->qta = $gruppo->count();
 
                 // Riferimento al documento di origine
-                $riga->original_document_type = get_class($intervento);
+                $riga->original_document_type = $intervento::class;
                 $riga->original_document_id = $intervento->id;
 
                 $riga->save();
@@ -292,7 +292,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
 
                 // Riferimento al documento di origine
-                $riga->original_document_type = get_class($intervento);
+                $riga->original_document_type = $intervento::class;
                 $riga->original_document_id = $intervento->id;
 
                 $riga->qta = $qta_trasferta;
@@ -351,7 +351,7 @@ if (!function_exists('verifica_numero_intervento')) {
         // Recupero maschera per questo segmento
         $maschera = Generator::getMaschera($id_segment);
 
-        if ((strpos($maschera, 'YYYY') == false) or (strpos($maschera, 'yy') == false)) {
+        if ((!str_contains($maschera, 'YYYY')) or (!str_contains($maschera, 'yy'))) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
                 'DATE(data_richiesta) < '.prepare($data->format('Y-m-d')),
                 'YEAR(data_richiesta) = '.prepare($data->format('Y')),

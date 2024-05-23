@@ -58,7 +58,7 @@ if ($dir == 'entrata') {
             <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
         </a>
         ';
-} 
+}
 
 echo '  
 

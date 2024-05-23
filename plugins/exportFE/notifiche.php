@@ -43,7 +43,7 @@ foreach ($recepits as $nome) {
         ->first();
 
     // Individuazione codice ricevuta
-    $filename = explode('.', $nome)[0];
+    $filename = explode('.', (string) $nome)[0];
     $pieces = explode('_', $filename);
     $codice_stato = $pieces[2];
 

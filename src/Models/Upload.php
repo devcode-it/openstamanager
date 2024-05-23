@@ -110,7 +110,7 @@ class Upload extends Model
             // Caricamento con l'interfaccia di upload
             try {
                 $file = $filesystem->upload($model->directory, $original_name, file_get_contents($source['tmp_name']));
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 flash()->error(tr('Impossibile creare il file!'));
 
                 return false;
@@ -122,7 +122,7 @@ class Upload extends Model
             // Caricamento con l'interfaccia di upload
             try {
                 $file = $filesystem->upload($model->directory, $original_name, $source);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 flash()->error(tr('Impossibile creare il file!'));
 
                 return false;
@@ -137,8 +137,8 @@ class Upload extends Model
         // Rimozione estensione dal nome visibile
         $extension = $file['extension'];
         if (string_ends_with($model->name, $extension)) {
-            $length = strlen($extension) + 1;
-            $model->name = substr($model->name, 0, -$length);
+            $length = strlen((string) $extension) + 1;
+            $model->name = substr((string) $model->name, 0, -$length);
         }
 
         $model->save();
@@ -343,7 +343,7 @@ class Upload extends Model
 
     public static function getInfo($file)
     {
-        return pathinfo($file);
+        return pathinfo((string) $file);
     }
 
     /**

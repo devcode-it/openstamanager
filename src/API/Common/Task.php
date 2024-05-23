@@ -96,7 +96,7 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
         $request .= "Content-Type: application/json\r\n\r\n";
         $request .= $postData;
 
-        $prefix = substr($endpoint, 0, 8) === 'https://' ? 'tls://' : '';
+        $prefix = str_starts_with($endpoint, 'https://') ? 'tls://' : '';
 
         $socket = fsockopen($prefix.$endpointParts['host'], $endpointParts['port']);
         fwrite($socket, $request);

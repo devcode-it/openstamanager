@@ -121,7 +121,7 @@ echo '
     <div class="card-body">';
 
 if (!empty($record['available_options'])) {
-    $available_options = json_decode($record['available_options']);
+    $available_options = json_decode((string) $record['available_options']);
     echo '
         <p>'.tr('Puoi utilizzare le seguenti opzioni per generare la stampa').':</p>
         <ul>';

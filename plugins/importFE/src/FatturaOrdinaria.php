@@ -193,7 +193,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $tot_arr = 0;
         foreach ($righe as $riga) {
-            if (strpos($riga['Descrizione'], 'Arrotondamento') !== false) {
+            if (str_contains((string) $riga['Descrizione'], 'Arrotondamento')) {
                 $tot_arr += $riga['PrezzoUnitario'];
             }
         }
@@ -501,7 +501,7 @@ class FatturaOrdinaria extends FatturaElettronica
                         $descrizione = $dato['RiferimentoTesto'];
                         $importo = floatval($dato['RiferimentoNumero']);
 
-                        preg_match('/^(.+?) - (.+?) \((.+?)%\)$/', trim($descrizione), $m);
+                        preg_match('/^(.+?) - (.+?) \((.+?)%\)$/', trim((string) $descrizione), $m);
 
                         $nome = ucwords(strtolower($m[2]));
                         $percentuale = $m[3];

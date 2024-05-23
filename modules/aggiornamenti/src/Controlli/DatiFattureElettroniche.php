@@ -120,7 +120,7 @@ class DatiFattureElettroniche extends Controllo
                     'descrizione' => $riepilogo_anomalie,
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addResult([
                 'id' => $fattura_vendita->id,
                 'nome' => $fattura_vendita->getReference(),
@@ -163,7 +163,7 @@ class DatiFattureElettroniche extends Controllo
     protected function htmlDiff($old, $new)
     {
         $ret = '';
-        $diff = $this->diff(preg_split("/[\s]+/", $old), preg_split("/[\s]+/", $new));
+        $diff = $this->diff(preg_split("/[\s]+/", (string) $old), preg_split("/[\s]+/", (string) $new));
         foreach ($diff as $k) {
             if (is_array($k)) {
                 $ret .= (!empty($k['d']) ? '<del>'.implode(' ', $k['d']).'</del> ' : '').

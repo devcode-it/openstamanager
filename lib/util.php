@@ -307,7 +307,7 @@ if (!function_exists('download')) {
         ob_end_clean();
 
         if (!headers_sent()) {
-            $filename = !empty($filename) ? $filename : basename($file);
+            $filename = !empty($filename) ? $filename : basename((string) $file);
 
             // Required for some browsers
             if (ini_get('zlib.output_compression')) {
@@ -385,13 +385,13 @@ if (!function_exists('isHTTPS')) {
      */
     function isHTTPS($trust_proxy_headers = false)
     {
-        if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+        if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
             // Check the standard HTTPS headers
             return true;
         } elseif ($trust_proxy_headers && isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             // Check proxy headers if allowed
             return true;
-        } elseif (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
+        } elseif (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower((string) $_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
             return true;
         }
 
@@ -457,17 +457,12 @@ if (!function_exists('color_inverse')) {
                 return '#000';
             }
         } else {
-            switch ($start_colour) {
-                case 'black':
-                    return 'white';
-                case 'blue':
-                    return 'white';
-                case 'purple':
-                    return 'white';
-                    // Aggiungere altri casi per colori specifici
-                default:
-                    return '#000'; // Se il colore non è specificato, restituisce il colore originale
-            }
+            return match ($start_colour) {
+                'black' => 'white',
+                'blue' => 'white',
+                'purple' => 'white',
+                default => '#000',
+            };
         }
     }
 }
@@ -558,7 +553,7 @@ if (!function_exists('temp_file')) {
         ]);
         $file = rtrim($base_directory, DIRECTORY_SEPARATOR).
             DIRECTORY_SEPARATOR.
-            ltrim($name, DIRECTORY_SEPARATOR);
+            ltrim((string) $name, DIRECTORY_SEPARATOR);
 
         file_put_contents($file, $content);
 

@@ -99,7 +99,7 @@ class EmailHook extends Manager
             try {
                 $email = EmailNotification::build($mail);
                 $email->send();
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
 

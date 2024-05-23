@@ -25,5 +25,5 @@ use Plugins\ExportFE\FatturaElettronica;
 try {
     $fattura = Fattura::find($id_record);
     $fattura_pa = new FatturaElettronica($id_record);
-} catch (UnexpectedValueException $e) {
+} catch (UnexpectedValueException) {
 }

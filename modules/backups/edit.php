@@ -222,7 +222,7 @@ if (file_exists($backup_dir)) {
 
         if (!empty($backups_zip)) {
             foreach ($backups_zip as $id => $backup) {
-                $name = basename($backup);
+                $name = basename((string) $backup);
                 $info = Backup::readName($backup);
 
                 $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];
@@ -273,7 +273,7 @@ if (file_exists($backup_dir)) {
         // Backup non compressi e quindi non scaricabili
         if (!empty($backups_file)) {
             foreach ($backups_file as $backup) {
-                $name = basename($backup);
+                $name = basename((string) $backup);
                 $info = Backup::readName($backup);
 
                 $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];

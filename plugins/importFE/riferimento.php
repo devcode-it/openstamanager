@@ -62,7 +62,7 @@ foreach ($righe as $riga) {
     }
 
     $dettagli = [
-        'tipo' => get_class($riga),
+        'tipo' => $riga::class,
         'id' => $riga->id,
         'descrizione' => str_replace(' ', '_', $riga->descrizione),
         'qta' => $riga->qta,

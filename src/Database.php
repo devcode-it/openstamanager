@@ -29,9 +29,6 @@ class Database extends Util\Singleton
     /** @var Capsule Gestore di connessione Laravel */
     protected $capsule;
 
-    /** @var string Nome del database */
-    protected $database_name;
-
     /** @var bool Stato di connessione del database */
     protected $is_connected;
     /** @var bool Stato di installazione del database */
@@ -54,7 +51,7 @@ class Database extends Util\Singleton
      *
      * @return Database
      */
-    protected function __construct($server, $username, $password, $database_name, $charset = null)
+    protected function __construct($server, $username, $password, protected $database_name, $charset = null)
     {
         if (is_array($server)) {
             $host = $server['host'];
@@ -68,16 +65,14 @@ class Database extends Util\Singleton
         // Possibilità di specificare una porta per il servizio MySQL diversa dalla standard 3306
         $port = !empty(App::getConfig()['port']) ? App::getConfig()['port'] : $port;
 
-        $this->database_name = $database_name;
-
-        if (!empty($host) && !empty($database_name)) {
+        if (!empty($host) && !empty($this->database_name)) {
             try {
                 // Istanziamento di Eloquent
                 $this->capsule = new Capsule();
                 $this->capsule->addConnection([
                     'driver' => 'mysql',
                     'host' => $host,
-                    'database' => $database_name,
+                    'database' => $this->database_name,
                     'username' => $username,
                     'password' => $password,
                     'charset' => 'utf8mb4',
@@ -198,7 +193,7 @@ class Database extends Util\Singleton
         if (empty($this->mysql_version) && $this->isConnected()) {
             $ver = $this->fetchArray('SELECT VERSION()');
             if (!empty($ver[0]['VERSION()'])) {
-                $this->mysql_version = explode('-', $ver[0]['VERSION()'])[0];
+                $this->mysql_version = explode('-', (string) $ver[0]['VERSION()'])[0];
             }
         }
 
@@ -214,7 +209,7 @@ class Database extends Util\Singleton
     {
         if ($this->isInstalled()) {
             $ver = $this->fetchArray('SELECT VERSION()');
-            if (preg_match('/MariaDB/', $ver[0]['VERSION()'])) {
+            if (preg_match('/MariaDB/', (string) $ver[0]['VERSION()'])) {
                 return 'MariaDB';
             } else {
                 return 'MySQL';
@@ -232,7 +227,7 @@ class Database extends Util\Singleton
     public function isMySQL()
     {
         $ver = $this->fetchOne('SELECT VERSION()')['VERSION()'];
-        if (preg_match('/MariaDB/', $ver)) {
+        if (preg_match('/MariaDB/', (string) $ver)) {
             return false;
         } else {
             return true;
@@ -410,7 +405,7 @@ class Database extends Util\Singleton
     {
         try {
             return $this->getPDO()->lastInsertId();
-        } catch (PDOException $e) {
+        } catch (PDOException) {
             throw new PDOException(tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
     }
@@ -521,7 +516,7 @@ class Database extends Util\Singleton
         // Impostazioni di ordinamento
         if (!empty($order)) {
             foreach ((array) $order as $key => $value) {
-                $order = is_numeric($key) ? 'ASC' : strtoupper($value);
+                $order = is_numeric($key) ? 'ASC' : strtoupper((string) $value);
                 $field = is_numeric($key) ? $value : $key;
 
                 if ($order == 'ASC') {

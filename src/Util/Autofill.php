@@ -29,17 +29,12 @@ class Autofill
     protected $space = 0;
     protected $current = 0;
 
-    protected $char_number;
-    protected $column_number;
-
     protected $max_rows = 20;
     protected $max_rows_first_page = 20;
     protected $max_additional = 15;
 
-    public function __construct($column_number, $char_number = 70)
+    public function __construct(protected $column_number, protected $char_number = 70)
     {
-        $this->column_number = $column_number;
-        $this->char_number = $char_number;
     }
 
     public function setRows($rows, $additional = null, $first_page = null)
@@ -52,12 +47,12 @@ class Autofill
 
     public function count($text, $small = false)
     {
-        $count = ceil(strlen($text) / $this->char_number);
-        $count += substr_count($text, PHP_EOL);
-        $count += substr_count($text, '<br>');
+        $count = ceil(strlen((string) $text) / $this->char_number);
+        $count += substr_count((string) $text, PHP_EOL);
+        $count += substr_count((string) $text, '<br>');
 
         // Ricerca dei caratteri a capo
-        preg_match_all("/(\r\n|\r|\n)/", $text, $matches);
+        preg_match_all("/(\r\n|\r|\n)/", (string) $text, $matches);
         $count += count($matches[0]);
 
         if ($small) {

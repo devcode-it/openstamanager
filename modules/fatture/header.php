@@ -85,7 +85,6 @@ $interventi_programmati = Intervento::select('in_interventi.*')
     ->where('in_interventi.id', '!=', $id_record)
     ->get();
 
-
 // Insoluti
 $insoluti = Scadenza::where('idanagrafica', $fattura->idanagrafica)
     ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')

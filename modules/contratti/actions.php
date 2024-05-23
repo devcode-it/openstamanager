@@ -190,7 +190,7 @@ switch (post('op')) {
 
         try {
             $articolo->qta = $qta;
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
@@ -385,7 +385,7 @@ switch (post('op')) {
                 $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
 
                 flash()->info(tr('Contratto eliminato!'));
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
             }
         }

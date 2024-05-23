@@ -69,7 +69,7 @@ class PianoConti extends Controllo
         GROUP BY `an_anagrafiche`.`idanagrafica`');
 
         foreach ($anagrafiche_interessate as $anagrafica) {
-            $tipi = explode(',', $anagrafica['tipi_anagrafica']);
+            $tipi = explode(',', (string) $anagrafica['tipi_anagrafica']);
             $cliente = in_array('Cliente', $tipi) && empty($anagrafica['idconto_cliente']);
             $fornitore = in_array('Fornitore', $tipi) && empty($anagrafica['idconto_fornitore']);
 

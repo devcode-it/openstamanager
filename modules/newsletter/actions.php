@@ -115,7 +115,7 @@ switch (filter('op')) {
                     $email->send();
 
                     $inviata = true;
-                } catch (Exception $e) {
+                } catch (Exception) {
                     // $mail->delete();
                 }
             } else {
@@ -168,7 +168,7 @@ switch (filter('op')) {
         // Selezione manuale
         $id_receivers = post('receivers');
         foreach ($id_receivers as $id_receiver) {
-            [$tipo, $id] = explode('_', $id_receiver);
+            [$tipo, $id] = explode('_', (string) $id_receiver);
             if ($tipo == 'anagrafica') {
                 $type = Anagrafica::class;
             } elseif ($tipo == 'sede') {

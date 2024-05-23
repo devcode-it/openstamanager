@@ -43,7 +43,7 @@ if ($options['pricing']) {
     <tr>
         <td rowspan='10'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            <p>'.nl2br($documento['note'])."</p>
+            <p>'.nl2br((string) $documento['note'])."</p>
         </td>
         <td style='width:33mm;'>
             <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
@@ -121,7 +121,7 @@ if ($options['pricing']) {
     <tr>
         <td style='height:40mm;'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            '.nl2br($documento['note']).'
+            '.nl2br((string) $documento['note']).'
         </td>
     </tr>';
 }

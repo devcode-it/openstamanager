@@ -224,7 +224,7 @@ switch ($operazione) {
 
         try {
             $articolo->qta = $qta;
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
@@ -276,7 +276,7 @@ switch ($operazione) {
                 $riga->delete();
 
                 flash()->info(tr('Riga rimossa!'));
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
         }

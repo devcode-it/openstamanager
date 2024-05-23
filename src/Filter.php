@@ -129,10 +129,8 @@ class Filter
 
     /**
      * Sanitarizza i contenuti dell'input.
-     *
-     * @param mixed $input Contenuti
      */
-    public static function sanitize($input)
+    public static function sanitize(mixed $input)
     {
         $output = null;
         if (is_array($input)) {
@@ -148,10 +146,8 @@ class Filter
 
     /**
      * Interpreta e formatta correttamente i contenuti dell'input.
-     *
-     * @param mixed $input Contenuti
      */
-    public static function parse($input)
+    public static function parse(mixed $input)
     {
         $output = null;
         if (is_array($input)) {

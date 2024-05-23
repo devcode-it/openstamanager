@@ -130,7 +130,7 @@ class Mail extends Model
 
     public function getOptionsAttribute()
     {
-        return json_decode($this->attributes['options'], true);
+        return json_decode((string) $this->attributes['options'], true);
     }
 
     /**

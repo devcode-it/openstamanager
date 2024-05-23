@@ -58,10 +58,10 @@ $singola_scadenza = get('single') != null;
 $is_insoluto = get('is_insoluto') != null;
 
 $id_documenti = $id_documenti ?: get('id_documenti');
-$id_documenti = $id_documenti ? explode(',', $id_documenti) : [];
+$id_documenti = $id_documenti ? explode(',', (string) $id_documenti) : [];
 
 $id_scadenze = $id_scadenze ?: get('id_scadenze');
-$id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
+$id_scadenze = $id_scadenze ? explode(',', (string) $id_scadenze) : [];
 
 // Controllo per l'utilizzo dei modelli di Prima Nota (per singolo documento o singola scadenza)
 $permetti_modelli = (count($id_documenti) + count($id_scadenze)) <= 1;
@@ -230,7 +230,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
     $descrizione = tr('_OP_ _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
         '_OP_' => $operation,
-        '_DOC_' => strtolower($tipo_fattura),
+        '_DOC_' => strtolower((string) $tipo_fattura),
         '_NUM_' => $numero_fattura,
         '_DATE_' => Translator::dateToLocale($fattura['data']),
         '_NAME_' => $fattura->anagrafica['ragione_sociale'],

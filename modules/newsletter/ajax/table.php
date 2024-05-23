@@ -25,7 +25,7 @@ if (!empty($search)) {
     include_once __DIR__.'/select.php';
 
     $results = collect($results)->mapToGroups(function ($item, $key) {
-        [$tipo, $id] = explode('_', $item['id']);
+        [$tipo, $id] = explode('_', (string) $item['id']);
 
         return [$tipo => $id];
     });
@@ -120,7 +120,7 @@ foreach ($destinatari_filtrati as $destinatario) {
         ).'
         </div>',
         '<div class="text-center">'.(empty($lista) && !empty($origine->email) && !empty($origine->enable_newsletter) ? '
-            <a class="btn btn-warning btn-xs" data-type="'.get_class($origine).'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
+            <a class="btn btn-warning btn-xs" data-type="'.$origine::class.'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
                 <i class="fa fa-paper-plane "></i>
             </a>' : '').'
             <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-type="'.$destinatario->record_type.'" data-id="'.$destinatario->record_id.'">

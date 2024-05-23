@@ -227,7 +227,7 @@ class RigheInterventi extends AppResource
 
         try {
             $record->qta = $data['qta'];
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
             throw new InternalError();
         }
 

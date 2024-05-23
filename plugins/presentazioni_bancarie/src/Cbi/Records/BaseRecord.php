@@ -136,7 +136,7 @@ abstract class BaseRecord implements RecordInterface
      */
     protected function padNumber(?string $string, int $length)
     {
-        $string = substr($string, 0, $length);
+        $string = substr((string) $string, 0, $length);
 
         return str_pad($string, $length, '0', STR_PAD_LEFT);
     }

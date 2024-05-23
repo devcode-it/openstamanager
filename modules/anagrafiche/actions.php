@@ -383,10 +383,10 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
 elseif (filter('op') == 'rimuovi-allegato') {
     $filename = filter('filename');
 
-    if (strpos($filename, setting('Logo stampe')) !== false) {
+    if (str_contains($filename, setting('Logo stampe'))) {
         $nome = 'Logo stampe';
     }
-    if (strpos($filename, setting('Filigrana stampe')) !== false) {
+    if (str_contains($filename, setting('Filigrana stampe'))) {
         $nome = 'Filigrana stampe';
     }
 

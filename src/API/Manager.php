@@ -77,7 +77,7 @@ class Manager
         // Selezione campi personalizzati
         // Esempio:
         // display=[id,ragione_sociale,telefono]
-        $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : null;
+        $select = !empty($request['display']) ? explode(',', substr((string) $request['display'], 1, -1)) : null;
 
         // Filtri personalizzati
         // Esempio:
@@ -85,7 +85,7 @@ class Manager
         $values = isset($request['filter']) ? (array) $request['filter'] : [];
         foreach ($values as $key => $value) {
             // Individuazione della tipologia (array o string)
-            $value = trim($value, '[');
+            $value = trim((string) $value, '[');
             $value = trim($value, ']');
             $values = explode(',', $value);
 
@@ -118,7 +118,7 @@ class Manager
         // order=[ragione_sociale]&order=[telefono]
         $values = isset($request['order']) ? (array) $request['order'] : [];
         foreach ($values as $value) {
-            $value = trim($value, '[');
+            $value = trim((string) $value, '[');
             $value = trim($value, ']');
             $pieces = explode('|', $value);
             $order = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
@@ -289,7 +289,7 @@ class Manager
 
         try {
             $database->commitTransaction();
-        } catch (\PDOException $e) {
+        } catch (\PDOException) {
         }
 
         // Operazioni di completamento

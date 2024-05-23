@@ -327,7 +327,7 @@ abstract class Article extends Accounting
         }
 
         $this->articolo->movimenta($qta_finale, $movimento, $data, false, [
-            'reference_type' => get_class($documento),
+            'reference_type' => $documento::class,
             'reference_id' => $documento->id,
             'idsede' => $id_sede,
         ]);

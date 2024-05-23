@@ -48,7 +48,7 @@ echo '
 		</div>';
 $expression = $record['expression'];
 
-preg_match('/(.*?) (.*?) (.*?) (.*?) (.*?)/U', $record['expression'], $exp);
+preg_match('/(.*?) (.*?) (.*?) (.*?) (.*?)/U', (string) $record['expression'], $exp);
 
 $minuto = $exp[1];
 $ora = $exp[2];

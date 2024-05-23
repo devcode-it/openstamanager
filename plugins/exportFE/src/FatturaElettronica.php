@@ -36,7 +36,7 @@ use Modules\Pagamenti\Pagamento;
  *
  * @since 2.4.2
  */
-class FatturaElettronica
+class FatturaElettronica implements \Stringable
 {
     /** @var Anagrafica Informazioni sull'anagrafica Azienda */
     protected static $azienda = [];
@@ -78,7 +78,7 @@ class FatturaElettronica
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toXML();
     }
@@ -754,7 +754,7 @@ class FatturaElettronica
 
         // Provincia impostata e SOLO SE nazione ITALIA
         if (!empty($anagrafica['provincia']) && $anagrafica->nazione->iso2 == 'IT') {
-            $result['Provincia'] = strtoupper($anagrafica['provincia']);
+            $result['Provincia'] = strtoupper((string) $anagrafica['provincia']);
         }
 
         if (!empty($anagrafica->nazione->iso2)) {
@@ -792,7 +792,7 @@ class FatturaElettronica
 
         // IscrizioneREA
         // Controllo che i codice non sia vuoto e che i primi due caratteri siano lettere
-        if (!empty($azienda['codicerea']) && (ctype_alpha($azienda['codicerea'][0]) && ctype_alpha($azienda['codicerea'][1]))) {
+        if (!empty($azienda['codicerea']) && (ctype_alpha((string) $azienda['codicerea'][0]) && ctype_alpha((string) $azienda['codicerea'][1]))) {
             $codice = explode('-', clean($azienda['codicerea'], '\-'));
 
             if (!empty($codice[0]) && !empty($codice[1])) {
@@ -901,9 +901,9 @@ class FatturaElettronica
     protected static function chunkSplit($str, $chunklen)
     {
         $res = [];
-        $k = ceil(strlen($str) / $chunklen);
+        $k = ceil(strlen((string) $str) / $chunklen);
         for ($i = 0; $i < $k; ++$i) {
-            $res[] = substr($str, $i * $chunklen, $chunklen);
+            $res[] = substr((string) $str, $i * $chunklen, $chunklen);
         }
 
         return $res;
@@ -1098,7 +1098,7 @@ class FatturaElettronica
                  * Ripetibile: No
                 */
 
-                $result['CausaleTrasporto'] = safe_truncate(html_entity_decode($causale), 100, null);
+                $result['CausaleTrasporto'] = safe_truncate(html_entity_decode((string) $causale), 100, null);
             }
 
             if (!empty($documento['n_colli'])) {
@@ -1426,9 +1426,9 @@ class FatturaElettronica
                 $descrizione = $riga['descrizione'];
                 // Aggiunta dei riferimenti ai documenti
                 if (setting('Riferimento dei documenti in Fattura Elettronica') == 0) {
-                    $pos = strpos($descrizione, 'Rif.');
+                    $pos = strpos((string) $descrizione, 'Rif.');
                     if ($pos !== false) {
-                        $descrizione = substr($descrizione, 0, $pos);
+                        $descrizione = substr((string) $descrizione, 0, $pos);
                     }
                 }
 
@@ -1761,7 +1761,7 @@ class FatturaElettronica
         $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode($info['pdf']),
+            'Attachment' => base64_encode((string) $info['pdf']),
         ];
 
         return $attachments;

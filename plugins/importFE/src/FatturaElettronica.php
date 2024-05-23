@@ -113,7 +113,7 @@ class FatturaElettronica
             new static($name);
 
             return true;
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
             $file = static::getImportDirectory().'/'.$name;
             delete($file);
 
@@ -130,7 +130,7 @@ class FatturaElettronica
             if ($tipo == 'TD06') {
                 $manager = new Parcella($name);
             }
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
             $manager = new FatturaSemplificata($name);
         }
 
@@ -174,14 +174,14 @@ class FatturaElettronica
         ];
 
         foreach ($allegati as $allegato) {
-            $content = base64_decode($allegato['Attachment']);
+            $content = base64_decode((string) $allegato['Attachment']);
 
             $extension = '.pdf';
             if (!empty($allegato['FormatoAttachment'])) {
-                $extension = '.'.strtolower($allegato['FormatoAttachment']);
+                $extension = '.'.strtolower((string) $allegato['FormatoAttachment']);
             }
 
-            if (preg_match('/\./', $allegato['NomeAttachment'])) {
+            if (preg_match('/\./', (string) $allegato['NomeAttachment'])) {
                 $original = $allegato['NomeAttachment'];
             } else {
                 $original = $allegato['NomeAttachment'].$extension;
@@ -191,7 +191,7 @@ class FatturaElettronica
                     'name' => $allegato['NomeAttachment'],
                     'original_name' => $original,
                 ]));
-            } catch (\UnexpectedValueException $e) {
+            } catch (\UnexpectedValueException) {
             }
         }
 
@@ -355,7 +355,7 @@ class FatturaElettronica
                 $nome = $info_pagamento['IstitutoFinanziario'] ?: 'Banca di '.$anagrafica->ragione_sociale;
                 try {
                     $banca_fornitore = Banca::build($anagrafica, $nome, $info_pagamento['IBAN'], $info_pagamento['BIC'] ?: '');
-                } catch (\UnexpectedValueException $e) {
+                } catch (\UnexpectedValueException) {
                     flash()->error(tr('Errore durante la creazione della banca: verificare la correttezza dei dati').'.');
                 }
             }
@@ -420,7 +420,7 @@ class FatturaElettronica
 
     public static function parseDate($data)
     {
-        return date('Y-m-d', strtotime($data));
+        return date('Y-m-d', strtotime((string) $data));
     }
 
     protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)

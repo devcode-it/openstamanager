@@ -241,7 +241,7 @@ class Settings
         else {
             $numerico = in_array($setting->tipo, ['integer', 'decimal']);
 
-            $tipo = preg_match('/password/i', $setting->getTranslation('title'), $m) ? 'password' : $setting->tipo;
+            $tipo = preg_match('/password/i', (string) $setting->getTranslation('title'), $m) ? 'password' : $setting->tipo;
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '

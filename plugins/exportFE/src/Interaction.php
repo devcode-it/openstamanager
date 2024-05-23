@@ -64,7 +64,7 @@ class Interaction extends Services
                 'code' => $body['status'],
                 'message' => $body['message'],
             ];
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
         }
 
         return [
@@ -88,7 +88,7 @@ class Interaction extends Services
                 'code' => $body['status'],
                 'results' => $body['results'],
             ];
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
         }
 
         return [

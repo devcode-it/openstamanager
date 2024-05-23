@@ -101,7 +101,7 @@ switch (get('op')) {
                     $descrizione .= '<hr>';
                     $descrizione .= '<b>Data</b>: '.(!empty($rs_sessioni['data']) ? Translator::dateToLocale($rs_sessioni['data']) : Translator::dateToLocale($records[$i]['data_richiesta'])).'<br>';
                     $descrizione .= '<b>Stato</b>: '.$records[$i]['stato'].'<br>';
-                    $descrizione .= '<b>Richiesta</b>: '.substr(strip_tags($records[$i]['richiesta']), 0, 200).'<br>';
+                    $descrizione .= '<b>Richiesta</b>: '.substr(strip_tags((string) $records[$i]['richiesta']), 0, 200).'<br>';
                     if (!empty($rs_sessioni['tecnici'])) {
                         $descrizione .= '<b>Tecnici</b>: '.$rs_sessioni['tecnici'];
                     }

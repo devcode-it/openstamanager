@@ -35,7 +35,7 @@ class OSMFilesystem extends Filesystem
     public function upload($directory, $filename, $contents)
     {
         // Verifico se l'esensione non è consentita
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $extension = pathinfo((string) $filename, PATHINFO_EXTENSION);
         $extension = strtolower($extension);
 
         // Controllo sulle estensioni permesse
@@ -49,7 +49,7 @@ class OSMFilesystem extends Filesystem
         if (!$this->directoryExists($directory)) {
             try {
                 $this->createDirectory($directory);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 flash()->error(tr('Impossibile creare la cartella controllare i permessi!'));
 
                 return false;
@@ -67,6 +67,6 @@ class OSMFilesystem extends Filesystem
 
     protected static function isSupportedType($extension)
     {
-        return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
+        return !in_array(strtolower((string) $extension), array_keys(self::$not_allowed_types));
     }
 }

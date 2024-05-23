@@ -186,7 +186,7 @@ switch (post('op')) {
 
         try {
             $articolo->qta = post('qta');
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
@@ -334,7 +334,7 @@ switch (post('op')) {
 
             try {
                 $riga->delete();
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
 
@@ -378,7 +378,7 @@ switch (post('op')) {
             $ordine->delete();
 
             flash()->info(tr('Ordine eliminato!'));
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
 

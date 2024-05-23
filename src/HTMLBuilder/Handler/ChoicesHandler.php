@@ -70,7 +70,7 @@ class ChoicesHandler implements HandlerInterface
 
         // Gestione valori custom
         if (!empty($values['values'])) {
-            $valori_custom = explode(',', $values['values']);
+            $valori_custom = explode(',', (string) $values['values']);
             $options = '<span class="text-success">'.str_replace('"', '', $valori_custom[0]).'</span>
             <span class="text-danger">'.str_replace('"', '', $valori_custom[1]).'</span>';
         }

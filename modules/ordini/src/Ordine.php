@@ -201,13 +201,13 @@ class Ordine extends Document
         } else {
             $maschera = Generator::getMaschera($id_segment);
 
-            if (strpos($maschera, 'm') !== false) {
+            if (str_contains($maschera, 'm')) {
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                     'MONTH(data) = '.prepare(date('m', strtotime($data))),
                     'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
                 ]);
-            } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                     'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
@@ -241,13 +241,13 @@ class Ordine extends Document
 
         $maschera = Generator::getMaschera($id_segment);
 
-        if (strpos($maschera, 'm') !== false) {
+        if (str_contains($maschera, 'm')) {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                 'MONTH(data) = '.prepare(date('m', strtotime($data))),
                 'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
             ]);
-        } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+        } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                 'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',

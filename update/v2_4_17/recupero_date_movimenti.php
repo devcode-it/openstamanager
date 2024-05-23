@@ -97,7 +97,7 @@ if (empty($query)) {
 }
 
 // Lettura dei contenuti
-$values = explode('VALUES', $query, 2)[1];
+$values = explode('VALUES', (string) $query, 2)[1];
 $values = explode('),', $values);
 
 // Generazione delle query per il recupero delle date per la Prima Nota

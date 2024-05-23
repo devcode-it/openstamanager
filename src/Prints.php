@@ -427,7 +427,7 @@ class Prints
             if (!$overwrite) {
                 $index = 1;
 
-                $file_parts = pathinfo($path);
+                $file_parts = pathinfo((string) $path);
                 $filename_no_extension = $file_parts['filename'];
 
                 while (file_exists($directory.'/'.$file_parts['basename'])) {
@@ -464,7 +464,7 @@ class Prints
         $name = replace($name, $replaces);
 
         $filename = sanitizeFilename($name);
-        $file = (empty($directory)) ? $filename : rtrim($directory, '/').'/'.$filename;
+        $file = (empty($directory)) ? $filename : rtrim((string) $directory, '/').'/'.$filename;
 
         return [
             'name' => $name,
@@ -517,7 +517,7 @@ class Prints
         // Instanziamento dell'oggetto mPDF
         $mpdf = new Mpdf([
             'format' => $settings['format'],
-            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
+            'orientation' => strtoupper((string) $settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
             'margin_left' => $settings['margins']['left'],
             'margin_right' => $settings['margins']['right'],
@@ -680,7 +680,7 @@ class Prints
             if (!$overwrite) {
                 $index = 1;
 
-                $file_parts = pathinfo($path);
+                $file_parts = pathinfo((string) $path);
                 $filename_no_extension = $file_parts['filename'];
 
                 while (file_exists($directory.'/'.$file_parts['basename'])) {
@@ -720,14 +720,14 @@ class Prints
             // Creazione effettiva del PDF
             if ($has_pdf) {
                 $pdf_merger = new PDFMerger();
-                $mpdf->Output(base_dir().'/files/'.$infos['directory'].'/'.basename($path), 'F');
-                $pdf_merger->addPDF(base_dir().'/files/'.$infos['directory'].'/'.basename($path));
+                $mpdf->Output(base_dir().'/files/'.$infos['directory'].'/'.basename((string) $path), 'F');
+                $pdf_merger->addPDF(base_dir().'/files/'.$infos['directory'].'/'.basename((string) $path));
                 foreach ($id_files as $id_file) {
                     $fil = Models\Upload::find($id_file)->first();
                     $pdf_merger->addPDF(base_dir().'/'.$fil->file_path, 'all');
                 }
                 $mode_merger = ($mode == 'F' ? 'file' : ($mode == 'D' ? 'download' : ($mode == 'S' ? 'string' : 'I')));
-                $path_merger = $mode == 'F' ? base_dir().'/files/'.$infos['directory'].'/'.basename($path) : $path;
+                $path_merger = $mode == 'F' ? base_dir().'/files/'.$infos['directory'].'/'.basename((string) $path) : $path;
 
                 $pdf = $pdf_merger->merge($mode_merger, $path_merger);
             } else {

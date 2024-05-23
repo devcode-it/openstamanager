@@ -78,14 +78,14 @@ class METEL
             $start = $key - 1;
 
             if ($fields_number - 1 == $i) {
-                $end = strlen($string);
+                $end = strlen((string) $string);
             } else {
                 $end = $keys[$i + 1] - 1;
             }
 
             $length = $end - $start;
 
-            $piece = substr($string, $start, $length);
+            $piece = substr((string) $string, $start, $length);
             $results[$fields[$key]] = trim($piece);
         }
 

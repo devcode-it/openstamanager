@@ -33,7 +33,7 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $data_richiesta = $r['data_richiesta'] ? date('d/m/Y', strtotime($r['data_richiesta'])) : '';
+        $data_richiesta = $r['data_richiesta'] ? date('d/m/Y', strtotime((string) $r['data_richiesta'])) : '';
 
         echo '
     <tr >

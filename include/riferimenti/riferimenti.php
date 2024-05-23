@@ -61,7 +61,7 @@ $ddt = DDT::whereHas('stato', function ($query) {
 })->get();
 foreach ($ddt as $elemento) {
     $documenti_disponibili->push([
-        'id' => get_class($elemento).'|'.$elemento->id,
+        'id' => $elemento::class.'|'.$elemento->id,
         'text' => $elemento->getReference(1),
         'optgroup' => tr('Ddt in ').$source->getDocument()->direzione,
     ]);
@@ -77,7 +77,7 @@ $ordini = Ordine::whereHas('stato', function ($query) {
 })->get();
 foreach ($ordini as $elemento) {
     $documenti_disponibili->push([
-        'id' => get_class($elemento).'|'.$elemento->id,
+        'id' => $elemento::class.'|'.$elemento->id,
         'text' => $elemento->getReference(1),
         'optgroup' => tr('Ordini ').$tipo_ordini,
     ]);

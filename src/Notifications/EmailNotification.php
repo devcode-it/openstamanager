@@ -85,8 +85,8 @@ class EmailNotification extends PHPMailer implements NotificationInterface
             }
 
             // Impostazioni di sicurezza
-            if (in_array(strtolower($account['encryption']), ['ssl', 'tls'])) {
-                $this->SMTPSecure = strtolower($account['encryption']);
+            if (in_array(strtolower((string) $account['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower((string) $account['encryption']);
             }
 
             // Disabilitazione verifica host

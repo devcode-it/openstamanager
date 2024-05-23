@@ -75,7 +75,7 @@ function calcola_sconto($data)
 
         $price = floatval($data['prezzo']);
 
-        $percentages = explode('+', $data['sconto']);
+        $percentages = explode('+', (string) $data['sconto']);
         foreach ($percentages as $percentage) {
             $discount = $price / 100 * floatval($percentage);
 
@@ -187,7 +187,7 @@ function reference($document, $text = null)
     }
 
     $description = $text ?: tr('Rif. _DOCUMENT_', [
-        '_DOCUMENT_' => strtolower($content),
+        '_DOCUMENT_' => strtolower((string) $content),
     ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
@@ -201,16 +201,16 @@ function reference($document, $text = null)
  */
 function parseScontoCombinato($combinato)
 {
-    $sign = substr($combinato, 0, 1);
+    $sign = substr((string) $combinato, 0, 1);
     $original = $sign != '+' && $sign != '-' ? '+'.$combinato : $combinato;
-    $pieces = preg_split('/[+,-]+/', $original);
+    $pieces = preg_split('/[+,-]+/', (string) $original);
     unset($pieces[0]);
 
     $result = 1;
     $text = $original;
     foreach ($pieces as $piece) {
-        $sign = substr($text, 0, 1);
-        $text = substr($text, 1 + strlen($piece));
+        $sign = substr((string) $text, 0, 1);
+        $text = substr((string) $text, 1 + strlen($piece));
 
         $result *= 1 - floatval($sign.$piece) / 100;
     }
@@ -336,7 +336,7 @@ function checkPrefix($cellulare)
 
     // Controlla se il campo "cellulare" inizia con uno dei prefissi
     foreach ($internationalPrefixes as $prefix) {
-        if (strpos($cellulare, $prefix) === 0) {
+        if (str_starts_with((string) $cellulare, $prefix)) {
             return true; // Un prefisso è già presente
         }
     }

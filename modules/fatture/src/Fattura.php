@@ -362,7 +362,7 @@ class Fattura extends Document
      */
     public function getDatiAggiuntiviFEAttribute()
     {
-        $result = ($this->attributes['dati_aggiuntivi_fe'] ? json_decode($this->attributes['dati_aggiuntivi_fe'], true) : '');
+        $result = ($this->attributes['dati_aggiuntivi_fe'] ? json_decode((string) $this->attributes['dati_aggiuntivi_fe'], true) : '');
 
         return (array) $result;
     }
@@ -494,7 +494,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(fn ($item) => false !== strstr($item->getTranslation('title'), $nome))->sortBy('created_at');
+        return $this->uploads()->filter(fn ($item) => str_contains((string) $item->getTranslation('title'), $nome))->sortBy('created_at');
     }
 
     /**

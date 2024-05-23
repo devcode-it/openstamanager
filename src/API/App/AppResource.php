@@ -47,7 +47,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         $last_sync_at = $request['last_sync_at'] && $request['last_sync_at'] != 'undefined' ? new Carbon($request['last_sync_at']) : null;
 
         // Gestione delle operazioni di cleanup
-        if (strpos($request['resource'], 'cleanup') !== false) {
+        if (str_contains((string) $request['resource'], 'cleanup')) {
             $list = [];
             if (!empty($last_sync_at)) {
                 $list = $this->getCleanupData($last_sync_at);

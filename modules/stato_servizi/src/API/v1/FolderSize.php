@@ -38,7 +38,7 @@ class FolderSize extends Resource implements RetrieveInterface
                 base_dir().'/logs' => tr('Logs'),
             ];
         } else {
-            $array = explode(',', $dirs);
+            $array = explode(',', (string) $dirs);
             foreach ($array as $key => $value) {
                 $dirs = [
                     base_dir().'/'.$value => $key,

@@ -19,6 +19,6 @@ $banche = Banca::all();
 foreach ($banche as $banca) {
     try {
         $banca->save();
-    } catch (Exception $e) {
+    } catch (Exception) {
     }
 }

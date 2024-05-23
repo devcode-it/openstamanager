@@ -24,7 +24,7 @@ echo '
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 
-	<div class="card card-info collapsable" style="'.((strtolower($record['colore']) == '#ffffff' or empty($record['colore'])) ? '' : 'border-color: '.$record['colore']).'">
+	<div class="card card-info collapsable" style="'.((strtolower((string) $record['colore']) == '#ffffff' or empty($record['colore'])) ? '' : 'border-color: '.$record['colore']).'">
 
         <div class="card-header with-border">
             <h3 class="card-title"><i class="fa fa-user"></i> '.$record['ragione_sociale'].'</h3>

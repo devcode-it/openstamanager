@@ -95,7 +95,7 @@ echo '
 </html>';
 
 // Retrocompatibilità
-if (!empty($id_record) || basename($_SERVER['PHP_SELF']) == 'controller.php' || basename($_SERVER['PHP_SELF']) == 'index.php') {
+if (!empty($id_record) || basename((string) $_SERVER['PHP_SELF']) == 'controller.php' || basename((string) $_SERVER['PHP_SELF']) == 'index.php') {
     unset($_SESSION['infos']);
     unset($_SESSION['errors']);
     unset($_SESSION['warnings']);

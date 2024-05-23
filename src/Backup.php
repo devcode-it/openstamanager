@@ -46,7 +46,7 @@ class Backup
     {
         $result = App::getConfig()['backup_dir'];
 
-        $result = rtrim($result, '/');
+        $result = rtrim((string) $result, '/');
         if (!directory($result) || !is_writable($result)) {
             // throw new UnexpectedValueException();
         }
@@ -98,7 +98,7 @@ class Backup
      */
     public static function readName($string)
     {
-        return Generator::read(self::PATTERN, basename($string));
+        return Generator::read(self::PATTERN, basename((string) $string));
     }
 
     /**

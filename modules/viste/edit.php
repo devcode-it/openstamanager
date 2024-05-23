@@ -70,7 +70,7 @@ echo '
 if ($options != '' && $options != 'menu' && $options != 'custom') {
     $module_query = Util\Query::getQuery(Module::find($id_record));
 
-    $beautiful_query = nl2br(htmlentities($module_query));
+    $beautiful_query = nl2br(htmlentities((string) $module_query));
     $beautiful_query = str_replace('   ', '&nbsp;&nbsp;&nbsp;&nbsp;', $beautiful_query);
 
     echo '

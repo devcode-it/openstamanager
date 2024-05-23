@@ -23,7 +23,7 @@ if (!empty($records)) {
     '.Modules::link('Banche', null, tr('Imposta'), null, null).'
 </div>';
         }
-    } catch (Exception $e) {
+    } catch (Exception) {
     }
 }
 

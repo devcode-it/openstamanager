@@ -43,12 +43,12 @@ if (!$riferimenti->isEmpty()) {
 
     foreach ($riferimenti as $riferimento) {
         $riga = $riferimento->target;
-        $riga_class = get_class($source);
+        $riga_class = $source::class;
 
         echo '
         <tr data-id="'.$riga->id.'" data-type="'.$riga_class.'">
             <td>
-                <button type="button" class="btn btn-xs btn-danger pull-right" onclick="rimuoviRiferimento(this, \''.addslashes($source_type).'\', \''.$source_id.'\', \''.$riferimento->id.'\')">
+                <button type="button" class="btn btn-xs btn-danger pull-right" onclick="rimuoviRiferimento(this, \''.addslashes((string) $source_type).'\', \''.$source_id.'\', \''.$riferimento->id.'\')">
                     <i class="fa fa-trash"></i>
                 </button>
 

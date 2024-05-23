@@ -32,11 +32,8 @@ use Util\XML;
  */
 class Scadenze
 {
-    private $fattura;
-
-    public function __construct(Fattura $fattura)
+    public function __construct(private readonly Fattura $fattura)
     {
-        $this->fattura = $fattura;
     }
 
     /**

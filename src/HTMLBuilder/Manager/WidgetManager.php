@@ -50,31 +50,13 @@ class WidgetManager implements ManagerInterface
         $result = ' ';
 
         // Generazione del widget in base al tipo
-        switch ($widget['type']) {
-            // Stampa
-            case 'print':
-                $result = $this->prints($widget);
-
-                break;
-
-                // Statistiche
-            case 'stats':
-                $result = $this->stats($widget);
-
-                break;
-
-                // Chart (codice PHP)
-            case 'chart':
-                $result = $this->chart($widget);
-
-                break;
-
-                // Personalizzato (codice PHP e icona)
-            case 'custom':
-                $result = $this->custom($widget);
-
-                break;
-        }
+        $result = match ($widget['type']) {
+            'print' => $this->prints($widget),
+            'stats' => $this->stats($widget),
+            'chart' => $this->chart($widget),
+            'custom' => $this->custom($widget),
+            default => $result,
+        };
 
         return $result;
     }
@@ -107,7 +89,7 @@ class WidgetManager implements ManagerInterface
         if (!empty($query)) {
             $value = $database->fetchArray($query)[0]['dato'];
             if ($value) {
-                if (!preg_match('/\d/', $value)) {
+                if (!preg_match('/\d/', (string) $value)) {
                     $value = '-';
                 }
             }

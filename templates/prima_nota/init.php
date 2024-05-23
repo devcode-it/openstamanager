@@ -27,7 +27,7 @@ $structure = Module::find((new Module())->getByField('title', 'Prima nota', Mode
 if (!empty($_SESSION['superselect']['mastrini'])) {
     $id_record = $_SESSION['superselect']['mastrini'];
     $where = 'co_movimenti.idmastrino IN ('.implode(',', $id_record).')';
-    $id_record = json_decode($righe);
+    $id_record = json_decode((string) $righe);
     unset($_SESSION['superselect']['mastrini']);
 } else {
     $where = 'co_movimenti.idmastrino='.prepare($id_record);

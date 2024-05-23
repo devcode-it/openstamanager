@@ -98,11 +98,11 @@ switch (filter('op')) {
         $results = [];
         foreach ($sessioni as $sessione) {
             if (setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico') {
-                $backgroundcolor = strtoupper($sessione['colore']);
-                $bordercolor = strtoupper($sessione['colore_tecnico']);
+                $backgroundcolor = strtoupper((string) $sessione['colore']);
+                $bordercolor = strtoupper((string) $sessione['colore_tecnico']);
             } else {
-                $backgroundcolor = strtoupper($sessione['colore_tecnico']);
-                $bordercolor = strtoupper($sessione['colore']);
+                $backgroundcolor = strtoupper((string) $sessione['colore_tecnico']);
+                $bordercolor = strtoupper((string) $sessione['colore']);
             }
 
             $results[] = [
@@ -210,7 +210,7 @@ switch (filter('op')) {
                 $results[] = [
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
                     'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'</b>',
-                    'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
+                    'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $evento['data'])) : $evento['data']),
                     // 'end' => $evento['data'],
                     'extendedProps' => [
                         'link' => base_path().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
@@ -329,7 +329,7 @@ switch (filter('op')) {
                     $tooltip .= '<b>'.tr('Data scadenza').'</b>: '.Translator::timestampToLocale($rs[0]['data_scadenza']).'<br/>';
                 }
 
-                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
+                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br((string) $desc_tipointervento).'<br/>';
 
                 $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
 
@@ -338,25 +338,25 @@ switch (filter('op')) {
                 }
 
                 if ($rs[0]['richiesta'] != '') {
-                    $tooltip .= '<b>'.tr('Richiesta').'</b>:<div class=\'shorten\'> '.nl2br($rs[0]['richiesta']).'</div>';
+                    $tooltip .= '<b>'.tr('Richiesta').'</b>:<div class=\'shorten\'> '.nl2br((string) $rs[0]['richiesta']).'</div>';
                 }
 
                 if ($rs[0]['descrizione'] != '') {
-                    $tooltip .= '<b>'.tr('Descrizione').'</b>:<div class=\'shorten\'> '.nl2br($rs[0]['descrizione']).'</div>';
+                    $tooltip .= '<b>'.tr('Descrizione').'</b>:<div class=\'shorten\'> '.nl2br((string) $rs[0]['descrizione']).'</div>';
                 }
 
                 if ($rs[0]['informazioniaggiuntive'] != '') {
-                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
+                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br((string) $rs[0]['informazioniaggiuntive']).'<br/>';
                 }
 
-                $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
+                $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br((string) $rs[0]['ragione_sociale']).'<br/>';
 
                 if (!empty($rs[0]['telefono'])) {
-                    $tooltip .= '<b>'.tr('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
+                    $tooltip .= '<b>'.tr('Telefono').'</b>: '.nl2br((string) $rs[0]['telefono']).'<br/>';
                 }
 
                 if (!empty($rs[0]['cellulare'])) {
-                    $tooltip .= '<b>'.tr('Cellulare').'</b>: '.nl2br($rs[0]['cellulare']).'<br/>';
+                    $tooltip .= '<b>'.tr('Cellulare').'</b>: '.nl2br((string) $rs[0]['cellulare']).'<br/>';
                 }
 
                 if (!empty($rs[0]['indirizzo']) || !empty($rs[0]['citta']) || !empty($rs[0]['provincia']) || !empty($rs[0]['cap'])) {
@@ -364,7 +364,7 @@ switch (filter('op')) {
                 }
 
                 if (!empty($rs[0]['note_anagrafica'])) {
-                    $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br($rs[0]['note_anagrafica']).'<br/>';
+                    $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br((string) $rs[0]['note_anagrafica']).'<br/>';
                 }
             }
         } else {
@@ -492,7 +492,7 @@ switch (filter('op')) {
             // Elenco interventi da pianificare
             foreach ($promemoria as $sessione) {
                 if ($sessione['mese'] == $mese || $mese == 'all') {
-                    if (date('Ymd', strtotime($sessione['data_scadenza'])) < date('Ymd') and !empty($sessione['data_scadenza'])) {
+                    if (date('Ymd', strtotime((string) $sessione['data_scadenza'])) < date('Ymd') and !empty($sessione['data_scadenza'])) {
                         $class = 'danger';
                     } else {
                         $class = 'primary';
@@ -511,7 +511,7 @@ switch (filter('op')) {
                     <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
-                        <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.strip_tags($sessione['richiesta']) : '').'</div>
+                        <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.strip_tags((string) $sessione['richiesta']) : '').'</div>
                         '.(!empty($sessione['numero_contratto']) ? '<span class="badge badge-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="badge badge-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="badge" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
                     </div>';
                 }
@@ -551,7 +551,7 @@ switch (filter('op')) {
             $results[] = [
                 'id' => $evento['id'],
                 'title' => $evento['nome'],
-                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime($evento['data'])) : $evento['data']),
+                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $evento['data'])) : $evento['data']),
                 // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
                 'display' => 'background',
                 'allDay' => true,

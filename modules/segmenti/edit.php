@@ -79,7 +79,7 @@ $module_query = Modules::replaceAdditionals($record['id_module'], $total['query'
 
 echo '
             <p><strong>'.tr('Query risultante').':</strong></p>
-            <p>'.htmlentities($module_query).'</p>';
+            <p>'.htmlentities((string) $module_query).'</p>';
 
 $_SESSION['module_'.$id_module]['id_segment'] = $previous;
 $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;

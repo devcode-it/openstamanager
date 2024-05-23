@@ -34,11 +34,11 @@ class Validate
         if ($partita_iva === '') {
             return true;
         }
-        if (strlen($partita_iva) == 13) {
-            $partita_iva = substr($partita_iva, 2);
+        if (strlen((string) $partita_iva) == 13) {
+            $partita_iva = substr((string) $partita_iva, 2);
         }
 
-        if (strlen($partita_iva) != 11 || preg_match('/^[0-9]+$/D', $partita_iva) != 1) {
+        if (strlen((string) $partita_iva) != 11 || preg_match('/^[0-9]+$/D', (string) $partita_iva) != 1) {
             return false;
         }
 
@@ -157,7 +157,7 @@ class Validate
 
                 // Indirizzo
                 $address = $data['result']['company_address'];
-                $info = explode(PHP_EOL, $address);
+                $info = explode(PHP_EOL, (string) $address);
                 $fields['indirizzo'] = $info[0];
 
                 $info = explode(' ', $info[1]);

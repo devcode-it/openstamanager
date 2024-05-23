@@ -67,7 +67,7 @@ foreach ($righe as $riga) {
     $descrizione = (!empty($riga->articolo) ? $riga->codice.' - ' : '').$riga['descrizione'];
 
     echo '
-            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+            <tr data-id="'.$riga->id.'" data-type="'.$riga::class.'" '.$extra.'>
                 <td class="text-center">';
     if (!$block_edit) {
         echo '

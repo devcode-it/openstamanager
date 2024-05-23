@@ -31,47 +31,18 @@ $modules = [
 
 $sapi_name = php_sapi_name();
 $php_interface = '';
-switch (true) {
-    case strpos($sapi_name, 'apache') !== false:
-        // PHP è in esecuzione come modulo Apache (4)
-        $php_interface = 'apache';
-        break;
-    case strpos($sapi_name, 'fpm-fcgi') !== false:
-        // PHP è in esecuzione come PHP-FPM FastCGI (3)
-        $php_interface = 'fpm-fcgi';
-        break;
-    case strpos($sapi_name, 'fpm') !== false:
-        // PHP è in esecuzione come PHP-FPM (9)
-        $php_interface = 'fpm';
-        break;
-    case strpos($sapi_name, 'cgi-fcgi') !== false:
-        // PHP è in esecuzione come FastCGI (8)
-        $php_interface = 'cgi-fcgi';
-        break;
-    case strpos($sapi_name, 'cgi') !== false:
-        // PHP è in esecuzione come modulo CGI (2)
-        $php_interface = 'cgi';
-        break;
-    case strpos($sapi_name, 'cli') !== false:
-        // PHP è in esecuzione dalla riga di comando (command line interface) (1)
-        $php_interface = 'cli';
-        break;
-    case strpos($sapi_name, 'embed') !== false:
-        // PHP è incorporato in un'applicazione (5)
-        $php_interface = 'embed';
-        break;
-    case strpos($sapi_name, 'litespeed') !== false:
-        // PHP è in esecuzione come modulo LiteSpeed (6)
-        $php_interface = 'litespeed';
-        break;
-    case strpos($sapi_name, 'isapi') !== false:
-        // PHP è in esecuzione come modulo ISAPI in IIS (7)
-        $php_interface = 'isapi';
-        break;
-    default:
-        // Non è possibile determinare il tipo di interfaccia di PHP (0)
-        $php_interface = 'n.d.';
-}
+$php_interface = match (true) {
+    str_contains($sapi_name, 'apache') => 'apache',
+    str_contains($sapi_name, 'fpm-fcgi') => 'fpm-fcgi',
+    str_contains($sapi_name, 'fpm') => 'fpm',
+    str_contains($sapi_name, 'cgi-fcgi') => 'cgi-fcgi',
+    str_contains($sapi_name, 'cgi') => 'cgi',
+    str_contains($sapi_name, 'cli') => 'cli',
+    str_contains($sapi_name, 'embed') => 'embed',
+    str_contains($sapi_name, 'litespeed') => 'litespeed',
+    str_contains($sapi_name, 'isapi') => 'isapi',
+    default => 'n.d.',
+};
 
 if (function_exists('apache_get_modules')) {
     $available_modules = apache_get_modules();

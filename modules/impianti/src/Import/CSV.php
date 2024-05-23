@@ -115,7 +115,7 @@ class CSV extends CSVImporter
             $sottocategoria = null;
             if (!empty($record['categoria'])) {
                 // Categoria
-                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['categoria'])))->first();
+                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->first();
 
                 if (empty($categoria)) {
                     $categoria = Categoria::build();
@@ -125,7 +125,7 @@ class CSV extends CSVImporter
 
                 // Sotto-categoria
                 if (!empty($record['sottocategoria'])) {
-                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower($record['sottocategoria'])))->first();
+                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
 
                     if (empty($sottocategoria)) {
                         $sottocategoria = Categoria::build();

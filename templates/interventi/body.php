@@ -61,12 +61,12 @@ echo '
 if (!empty($c_piva)) {
     echo '
 				<td colspan=2>
-					'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
+					'.tr('P.Iva').': <b>'.strtoupper((string) $c_piva).'</b>
 				</td>';
 } else {
     echo '
     			<td colspan=2>
-    				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
+    				'.tr('C.F.').': <b>'.strtoupper((string) $c_codicefiscale).'</b>
     			</td>';
 }
 
@@ -80,7 +80,7 @@ if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_prov
 					'.((!empty($s_indirizzo)) ? tr('Via').': <b>'.$s_indirizzo.'</b>' : '').'
 					'.((!empty($s_cap)) ? tr('CAP').': <b>'.$s_cap.'</b>' : '').'
 					'.((!empty($s_citta)) ? tr('Città').': <b>'.$s_citta.'</b>' : '').'
-					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper($s_provincia).'</b>' : '').'
+					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper((string) $s_provincia).'</b>' : '').'
 				</td>
 			</tr>';
 } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
@@ -90,7 +90,7 @@ if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_prov
 					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
 					'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
 					'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
-					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
+					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper((string) $c_provincia).'</b>' : '').'
 				</td>
 			</tr>';
 }
@@ -233,15 +233,15 @@ if (!$righe->isEmpty()) {
                     echo nl2br($text);
                 }
             }
-            $riga['descrizione'] = str_replace('Rif. '.strtolower($key), '', $riga['descrizione']);
+            $riga['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $riga['descrizione']);
         }
 
-        $source_type = get_class($riga);
+        $source_type = $riga::class;
 
         if (!setting('Visualizza riferimento su ogni riga in stampa')) {
             echo $riga['descrizione'];
         } else {
-            echo nl2br($riga['descrizione']);
+            echo nl2br((string) $riga['descrizione']);
         }
 
         if ($riga->isArticolo()) {

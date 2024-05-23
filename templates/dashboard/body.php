@@ -27,7 +27,7 @@ $date = $calendar['date'];
 $date = new Carbon($date);
 
 if ($calendar['format'] == 'week') {
-    $period = explode(' ', $_SESSION['dashboard']['week']);
+    $period = explode(' ', (string) $_SESSION['dashboard']['week']);
 
     $day = $period[0];
 

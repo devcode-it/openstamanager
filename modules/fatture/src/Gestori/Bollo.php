@@ -29,11 +29,8 @@ use Modules\Fatture\Fattura;
  */
 class Bollo
 {
-    private $fattura;
-
-    public function __construct(Fattura $fattura)
+    public function __construct(private readonly Fattura $fattura)
     {
-        $this->fattura = $fattura;
     }
 
     /**

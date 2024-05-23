@@ -25,7 +25,7 @@ class LocalAdapter extends OriginalAdapter
 {
     public function __construct($options)
     {
-        $options = json_decode($options);
+        $options = json_decode((string) $options);
 
         parent::__construct(base_dir().'/'.$options->directory);
     }

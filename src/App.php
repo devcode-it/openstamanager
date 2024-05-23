@@ -141,9 +141,9 @@ class App
     {
         if (!defined('DOCROOT')) {
             // Individuazione di $rootdir
-            $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
-            if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
-                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
+            $rootdir = substr((string) $_SERVER['SCRIPT_NAME'], 0, strrpos((string) $_SERVER['SCRIPT_NAME'], '/')).'/';
+            if (strrpos($rootdir, '/'.basename((string) $docroot).'/') !== false) {
+                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename((string) $docroot).'/')).'/'.basename((string) $docroot);
             } else {
                 $rootdir = '/';
             }

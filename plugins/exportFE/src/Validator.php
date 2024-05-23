@@ -541,12 +541,14 @@ class Validator
     /** @var array Irregolarità nella fattura XML */
     protected $errors;
 
-    /** @var string XML da validare */
-    protected $xml;
-
-    public function __construct($xml)
+    /**
+     * @param string $xml
+     */
+    public function __construct(
+        /** @var string XML da validare */
+        protected $xml
+    )
     {
-        $this->xml = $xml;
     }
 
     /**
@@ -628,7 +630,7 @@ class Validator
             // Formattazione testo
             elseif ($info['type'] == 'string' || $info['type'] == 'normalizedString') {
                 // Sostituzione tag e contenuti specifici per XML (non sembra essere eseguita)
-                $output = htmlspecialchars($output, ENT_NOQUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8', false);
+                $output = htmlspecialchars((string) $output, ENT_NOQUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8', false);
 
                 // Gestione dei caratteri non supportati e sostituzione con alternativi
                 // Problemi noti: sostituendo 1 carattere con 2 o più potrebbero verificarsi problemi se, per il testo di quel nodo, si era raggiunta la lunghezza massima prevista dal tracciato
@@ -672,7 +674,7 @@ class Validator
 
             // Riduzione delle dimensioni
             if ($info['type'] != 'integer' && isset($size[1])) {
-                $output = trim($output);
+                $output = trim((string) $output);
                 $output = S::create($output)->substr(0, $size[1])->__toString();
             }
 
@@ -717,7 +719,7 @@ class Validator
     {
         $result = '';
         $current = '';
-        $length = strlen($string);
+        $length = strlen((string) $string);
 
         for ($i = 0; $i < $length; ++$i) {
             $current = ord($string[$i]);

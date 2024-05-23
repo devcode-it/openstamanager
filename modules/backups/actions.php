@@ -26,7 +26,7 @@ switch (filter('op')) {
 
         $backups = Backup::getList();
         $backup = $backups[$number];
-        $filename = basename($backup);
+        $filename = basename((string) $backup);
 
         download($backup, $filename);
 
@@ -38,7 +38,7 @@ switch (filter('op')) {
 
         $backups = Backup::getList();
         $backup = $backups[$number];
-        $filename = basename($backup);
+        $filename = basename((string) $backup);
 
         delete($backup);
 

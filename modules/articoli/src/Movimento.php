@@ -45,7 +45,7 @@ class Movimento extends Model
         $model->idsede = $id_sede ?: 0; // Sede legale
 
         if (!empty($document)) {
-            $class = get_class($document);
+            $class = $document::class;
             $id = $document->id;
 
             $model->reference_type = $class;

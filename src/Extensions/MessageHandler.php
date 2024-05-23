@@ -51,7 +51,7 @@ class MessageHandler extends AbstractProcessingHandler
         // Messaggio nella sessione
         try {
             flash()->error($message);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         // Messaggio visivo immediato

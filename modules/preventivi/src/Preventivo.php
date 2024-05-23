@@ -303,14 +303,14 @@ class Preventivo extends Document
     {
         $maschera = Generator::getMaschera($id_segment);
 
-        if (strpos($maschera, 'm') !== false) {
+        if (str_contains($maschera, 'm')) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
-                'MONTH(data_bozza) = '.prepare(date('m', strtotime($data))),
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
+                'MONTH(data_bozza) = '.prepare(date('m', strtotime((string) $data))),
             ]);
-        } elseif ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+        } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
             ]);
         } else {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');

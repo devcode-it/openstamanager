@@ -434,14 +434,14 @@ class IBAN
         $keys = array_keys(self::$parsers);
 
         $length = strlen($structure);
-        $current = strlen($nation);
+        $current = strlen((string) $nation);
         $result = $nation;
         while ($current <= $length) {
             $char = $structure[$current];
             if (in_array($char, $keys)) {
                 $count = substr_count($structure, $char);
                 $result .= str_pad(
-                    substr($contents[self::$parsers[$char]], 0, $count),
+                    substr((string) $contents[self::$parsers[$char]], 0, $count),
                     $count, STR_PAD_LEFT);
                 $current += $count;
             } else {

@@ -488,7 +488,7 @@ class Auth extends Util\Singleton
                     $this->user->save();
                 }
             }
-        } catch (PDOException $e) {
+        } catch (PDOException) {
             $this->destory();
         }
     }

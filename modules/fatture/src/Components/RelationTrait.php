@@ -48,7 +48,7 @@ trait RelationTrait
      */
     public function getDatiAggiuntiviFEAttribute()
     {
-        $result = $this->attributes['dati_aggiuntivi_fe'] ? json_decode($this->attributes['dati_aggiuntivi_fe'], true) : '';
+        $result = $this->attributes['dati_aggiuntivi_fe'] ? json_decode((string) $this->attributes['dati_aggiuntivi_fe'], true) : '';
 
         return (array) $result;
     }

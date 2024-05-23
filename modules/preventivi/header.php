@@ -25,9 +25,9 @@ use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Contratti\Contratto;
+use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Scadenzario\Scadenza;
-use Modules\Interventi\Intervento;
 
 // Anagrafica
 $anagrafica = $preventivo->anagrafica;
@@ -153,7 +153,6 @@ if ($contratto) {
     echo '
                 </p>';
 }
-
 
 // Ordine
 if ($ordine) {

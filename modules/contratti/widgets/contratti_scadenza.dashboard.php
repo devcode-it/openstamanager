@@ -65,7 +65,7 @@ if (!empty($rs)) {
         $data_conclusione = !empty($r['data_conclusione']) ? Translator::dateToLocale($r['data_conclusione']) : '';
 
         // Se scaduto, segna la riga in rosso
-        $class = (strtotime($r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';
+        $class = (strtotime((string) $r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';
 
         if (isset($r['ore_rimanenti'])) {
             // Se ore finite, segna la riga in rosso

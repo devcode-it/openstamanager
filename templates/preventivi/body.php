@@ -37,7 +37,7 @@ $banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id)
 try {
     $banca = (clone $banca_azienda)
         ->findOrFail($anagrafica->idbanca_vendite);
-} catch (ModelNotFoundException $e) {
+} catch (ModelNotFoundException) {
     // Ricerca prima banca dell'Azienda con Conto corrispondente
     $banca = (clone $banca_azienda)
         ->orderBy('predefined', 'DESC')
@@ -127,7 +127,7 @@ echo '
 // Descrizione
 if (!empty($documento['descrizione'])) {
     echo '
-<p>'.nl2br($documento['descrizione']).'</p>
+<p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
 }
 
@@ -180,9 +180,9 @@ foreach ($righe as $key => $riga) {
         $iva_gruppo = 0;
         $has_gruppo = true;
         $colspan_titolo = $options['pricing'] ? 'colspan="5"' : 'colspan="2"';
-        $descrizione = '<b>'.nl2br($r['descrizione']).'</b>';
+        $descrizione = '<b>'.nl2br((string) $r['descrizione']).'</b>';
     } else {
-        $descrizione = nl2br($r['descrizione']);
+        $descrizione = nl2br((string) $r['descrizione']);
     }
     $subtotale_gruppo += $riga->totale_imponibile;
     $iva_gruppo += $riga->iva;
@@ -503,7 +503,7 @@ echo '
         </td>
 
         <td class="border-bottom">
-            '.nl2br($documento['esclusioni']).'
+            '.nl2br((string) $documento['esclusioni']).'
         </td>
     </tr>
 
@@ -513,15 +513,15 @@ echo '
         </td>
 
         <td class="border-bottom">
-            '.nl2br($documento['garanzia']).'
+            '.nl2br((string) $documento['garanzia']).'
         </td>
     </tr>
     <tr>
         <td></td>
     </tr>
     ';
-    if ($banca) {
-        echo'
+if ($banca) {
+    echo '
     <tr>
         <td class="text-muted border-bottom small-bold"></td>
         <td class="border-bottom">
@@ -544,8 +544,8 @@ echo '
             <p>'.$banca['bic'].'</p>
         </td>
     </tr>';
-    }
-    echo'
+}
+echo '
 </table>';
 
 // Conclusione

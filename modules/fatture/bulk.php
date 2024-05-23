@@ -128,7 +128,7 @@ switch (post('op')) {
                     $file = $fattura_elettronica->save();
                     $added[] = $fattura->numero_esterno;
                 }
-            } catch (UnexpectedValueException $e) {
+            } catch (UnexpectedValueException) {
                 $failed[] = $fattura->numero_esterno;
             }
         }
@@ -162,7 +162,7 @@ switch (post('op')) {
 
                     $added[] = $fattura->numero_esterno;
                 }
-            } catch (UnexpectedValueException $e) {
+            } catch (UnexpectedValueException) {
                 $failed[] = $fattura->numero_esterno;
             }
         }
@@ -201,7 +201,7 @@ switch (post('op')) {
                     } else {
                         $include = $fattura->isFE();
                     }
-                } catch (UnexpectedValueException $e) {
+                } catch (UnexpectedValueException) {
                     $include = false;
                 }
 
@@ -440,7 +440,7 @@ switch (post('op')) {
             $documento = Fattura::find($id);
             try {
                 $documento->delete();
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
             }
         }
 

@@ -104,7 +104,7 @@ foreach ($righe as $riga) {
                         $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                     }
                 }
-                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
                 preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
                 $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
                 if (!empty($rif2)) {
@@ -123,15 +123,15 @@ foreach ($righe as $riga) {
         $autofill->count($r['descrizione']);
     }
 
-    $source_type = get_class($riga);
+    $source_type = $riga::class;
     if (setting('Visualizza riferimento su ogni riga in stampa')) {
         echo $num.'
             </td>
-            <td>'.nl2br($r['descrizione']).'<br>';
+            <td>'.nl2br((string) $r['descrizione']).'<br>';
     } else {
         echo $num.'
             </td>
-            <td>'.nl2br($r['descrizione']);
+            <td>'.nl2br((string) $r['descrizione']);
     }
 
     if ($riga->isArticolo()) {
@@ -234,7 +234,7 @@ $dicitura = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_a
 if (!empty($dicitura['dicitura'])) {
     echo '
 <p class="text-left">
-    <span>'.nl2br($dicitura['dicitura']).'</span>
+    <span>'.nl2br((string) $dicitura['dicitura']).'</span>
 </p>';
 }
 
@@ -245,7 +245,7 @@ foreach ($v_iva as $key => $value) {
     if (!empty($dicitura['dicitura'])) {
         echo '
 <p class="text-center">
-    <b>'.nl2br($dicitura['dicitura']).'</b>
+    <b>'.nl2br((string) $dicitura['dicitura']).'</b>
 </p>';
     }
 }
@@ -258,7 +258,7 @@ echo '
 if (!empty($record['note'])) {
     echo '
             <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
-            <p>'.nl2br($record['note']).'</p>';
+            <p>'.nl2br((string) $record['note']).'</p>';
 }
 
 echo '

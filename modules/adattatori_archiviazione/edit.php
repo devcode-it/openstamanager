@@ -30,7 +30,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-5">
-			{[ "type": "select", "label": "<?php echo tr('Tipo archiviazione'); ?>", "name": "class", "value": "<?php echo explode('\\', $record['class'])[4]; ?>", "values": "list=\"LocalAdapter\":\"Archiviazione locale\",\"FTPAdapter\":\"Archiviazione FTP\"", "required": 1, "disabled": "1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo archiviazione'); ?>", "name": "class", "value": "<?php echo explode('\\', (string) $record['class'])[4]; ?>", "values": "list=\"LocalAdapter\":\"Archiviazione locale\",\"FTPAdapter\":\"Archiviazione FTP\"", "required": 1, "disabled": "1" ]}
 		</div>
 
         <div class="col-md-2">

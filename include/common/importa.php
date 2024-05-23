@@ -76,7 +76,7 @@ echo '
 
     <input type="hidden" name="id_documento" value="'.$documento->id.'">
     <input type="hidden" name="type" value="'.$options['type'].'">
-    <input type="hidden" name="class" value="'.get_class($documento).'">
+    <input type="hidden" name="class" value="'.$documento::class.'">
     <input type="hidden" name="is_evasione" value="1">';
 
 // Creazione fattura dal documento

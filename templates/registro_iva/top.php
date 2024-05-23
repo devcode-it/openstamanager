@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$year_start = date('Y', strtotime($date_start));
-$year_end = date('Y', strtotime($date_end));
+$year_start = date('Y', strtotime((string) $date_start));
+$year_end = date('Y', strtotime((string) $date_end));
 
 $esercizio = $year_start == $year_end ? ' - '.tr('Esercizio _YEAR_', [
     '_YEAR_' => $year_end,

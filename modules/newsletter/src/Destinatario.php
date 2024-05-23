@@ -34,7 +34,7 @@ class Destinatario extends Model
         $model = new static();
         $model->id_newsletter = $newsletter->id;
 
-        $model->record_type = get_class($origine);
+        $model->record_type = $origine::class;
         $model->record_id = $origine->id;
 
         $model->save();

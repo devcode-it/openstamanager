@@ -111,7 +111,7 @@ class XML
             if ($cmd === 0) {
                 return empty($output[0]) ? tr('Nessuna informazione sulla versione del client PHP') : $output[0];
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
 

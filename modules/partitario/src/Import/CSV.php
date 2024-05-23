@@ -61,7 +61,7 @@ class CSV extends CSVImporter
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
-        $numero = explode('.', $record['numero']);
+        $numero = explode('.', (string) $record['numero']);
         $codice_conto2 = $numero[0];
         $codice_conto3 = $numero[1];
 

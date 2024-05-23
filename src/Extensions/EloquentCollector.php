@@ -23,12 +23,9 @@ use Illuminate\Database\Capsule\Manager;
 
 class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
 {
-    protected $capsule;
-
-    public function __construct($capsule)
+    public function __construct(protected $capsule)
     {
         parent::__construct();
-        $this->capsule = $capsule;
         $this->addConnection($this->getTraceablePdo(), 'Eloquent PDO');
     }
 

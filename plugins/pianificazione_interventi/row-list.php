@@ -144,11 +144,11 @@ if (!$righe->isEmpty()) {
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga)).'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode($riga::class).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-widget="tooltip" onclick="elimina_riga(\''.addslashes(get_class($riga)).'\', \''.$riga->id.'\');">
+                <button type="button" class="btn btn-danger btn-xs" data-widget="tooltip" onclick="elimina_riga(\''.addslashes($riga::class).'\', \''.$riga->id.'\');">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';

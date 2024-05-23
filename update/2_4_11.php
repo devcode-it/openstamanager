@@ -19,7 +19,7 @@ foreach ($logs as $log) {
     $mail = Mail::build($user, $template, $log['id_record']);
     $mail->resetPrints();
 
-    $options = json_decode($log['options'], true);
+    $options = json_decode((string) $log['options'], true);
 
     foreach ($options['receivers'] as $receiver) {
         $mail->addReceiver($receiver);

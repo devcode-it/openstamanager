@@ -286,7 +286,7 @@ function renderElencoModuli($elenco, $depth = 0)
         // COMPATIBILITA'
         // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
         $compatibile = false;
-        $versioni_compatibili = explode(',', $record['compatibility']);
+        $versioni_compatibili = explode(',', (string) $record['compatibility']);
         foreach ($versioni_compatibili as $versione) {
             $compatibile = (preg_match('/'.$versione.'/', $versione_gestionale)) ? true : $compatibile;
         }
@@ -330,7 +330,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 </div>';
 
                 // Possibilità di abilitare tutti i sottomoduli
-                $sotto_moduli_disabilitato = strpos($sotto_moduli, 'fa fa-plug') !== false;
+                $sotto_moduli_disabilitato = str_contains((string) $sotto_moduli, 'fa fa-plug');
                 if ($sotto_moduli_disabilitato) {
                     $result .= '
                 <div class="tip" data-widget="tooltip" title="'.tr('Abilita tutti i sotto-moduli').'">

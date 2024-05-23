@@ -1,7 +1,7 @@
 <?php
 
 echo '
-	<br><br><span><big><b>CARICO SUGLI AUTOMEZZI IL '.date('d/m/Y', strtotime($dt_carico)).'</b></big></span><br>';
+	<br><br><span><big><b>CARICO SUGLI AUTOMEZZI IL '.date('d/m/Y', strtotime((string) $dt_carico)).'</b></big></span><br>';
 
 $targa = '';
 $totale_qta = 0.000;
@@ -66,7 +66,7 @@ if ($rs) {
                     <td class='table_cell text-right cell-padded'>".$qta."</td>
                     <td class='table_cell text-right cell-padded'>".number_format($prz_vendita, 2, ',', '.')." &euro;</td>
                     <td class='table_cell text-right cell-padded'>".number_format($totv, 2, ',', '.')." &euro;</td>
-                    <td class='table_cell cell-padded'>".ucfirst($rs[$r]['username']).'</td>
+                    <td class='table_cell cell-padded'>".ucfirst((string) $rs[$r]['username']).'</td>
                 </tr>';
 
         $totale_ven = $totale_ven + $totv;
@@ -75,7 +75,7 @@ if ($rs) {
         }
     }
 } else {
-    echo 'Nessun articolo caricato sugli automezzi il '.date('d/m/Y', strtotime($dt_carico)),'.';
+    echo 'Nessun articolo caricato sugli automezzi il '.date('d/m/Y', strtotime((string) $dt_carico)),'.';
 }
 
 echo '

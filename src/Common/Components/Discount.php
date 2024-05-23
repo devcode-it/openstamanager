@@ -86,12 +86,12 @@ abstract class Discount extends Accounting
         }
     }
 
-    public function setPrezzoUnitario($prezzo_unitario, $id_iva)
+    public function setPrezzoUnitario($prezzo_unitario, $id_iva): never
     {
         throw new \InvalidArgumentException();
     }
 
-    public function setSconto($value, $type)
+    public function setSconto($value, $type): never
     {
         throw new \InvalidArgumentException();
     }

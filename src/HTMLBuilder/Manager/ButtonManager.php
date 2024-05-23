@@ -58,7 +58,7 @@ class ButtonManager implements ManagerInterface
             if (!empty($print)) {
                 $result = [
                     'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                    'title' => tr('Stampa').' '.((strtoupper($print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst($print->getTranslation('title'))),
+                    'title' => tr('Stampa').' '.((strtoupper((string) $print->getTranslation('title')) == $print->getTranslation('title')) ? $print->getTranslation('title') : lcfirst((string) $print->getTranslation('title'))),
                     'icon' => $print->icon,
                 ];
             }
@@ -67,7 +67,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template_email->getTranslation('title')) == $template_email->getTranslation('title')) ? $template_email->getTranslation('title') : lcfirst($template_email->getTranslation('title'))),
+                'title' => tr('Invia').' '.((strtoupper((string) $template_email->getTranslation('title')) == $template_email->getTranslation('title')) ? $template_email->getTranslation('title') : lcfirst((string) $template_email->getTranslation('title'))),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
             ];
@@ -76,7 +76,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => base_path().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
-                'title' => tr('Invia').' '.((strtoupper($template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst($template_sms['name'])),
+                'title' => tr('Invia').' '.((strtoupper((string) $template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst((string) $template_sms['name'])),
                 'icon' => 'fa fa-comment',
                 'type' => 'modal',
             ];
@@ -171,7 +171,7 @@ class ButtonManager implements ManagerInterface
     <div class="dropdown-menu dropdown-menu-right">';
 
             foreach ($list as $i => $element) {
-                $result .= 
+                $result .=
                 $this->link([
                     'type' => $options['type'],
                     'id' => $element['id'],

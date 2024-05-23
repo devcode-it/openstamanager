@@ -66,7 +66,7 @@ switch (filter('op')) {
         foreach (post('setting') as $id => $value) {
             $result = Settings::get($id);
 
-            if (preg_match("/multiple\[(.+?)\]/", $result['tipo'], $m)) {
+            if (preg_match("/multiple\[(.+?)\]/", (string) $result['tipo'], $m)) {
                 $value = implode(',', $value);
             }
 
@@ -84,7 +84,7 @@ switch (filter('op')) {
 
                     // list
                     // verifico che il valore scelto sia nella lista enumerata nel db
-                    elseif (preg_match("/list\[(.+?)\]/", $result['tipo'], $m)) {
+                    elseif (preg_match("/list\[(.+?)\]/", (string) $result['tipo'], $m)) {
                         flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
                             '_NAME_' => '"'.$result['nome'].'"',
                         ]));

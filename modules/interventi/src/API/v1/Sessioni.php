@@ -54,7 +54,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
 
         try {
             add_tecnico($data['id_intervento'], $user['idanagrafica'], $data['orario_inizio'], $data['orario_fine']);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
         }
     }
 

@@ -107,24 +107,24 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     foreach ($total['fields'] as $key => $field) {
         $attr_td = '';
-        $name = trim($field);
+        $name = trim((string) $field);
 
         // Check per tipologie di campi particolari
-        if (preg_match('/^color_/', $field)) {
+        if (preg_match('/^color_/', (string) $field)) {
             $attr_td .= " width='140'";
             $field = str_replace('color_', '', $field);
         }
 
         // Data (larghezza fissa)
-        elseif (preg_match('/^Data/', $field)) {
+        elseif (preg_match('/^Data/', (string) $field)) {
             $attr_td .= " width='100'";
         }
 
         // Icona di stampa
-        elseif (trim($field) == '_print_') {
+        elseif (trim((string) $field) == '_print_') {
             $attr_td .= " width='30'";
             $field = str_replace('_print_', '', $field);
-        } elseif (preg_match('/^icon_/', $field)) {
+        } elseif (preg_match('/^icon_/', (string) $field)) {
             $attr_td .= " width='30'";
             $name = str_replace('icon_', 'icon_title_', $name);
             $field = str_replace('icon_', '', $field);

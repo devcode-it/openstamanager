@@ -178,7 +178,7 @@ switch (post('op')) {
             $preventivo->delete();
 
             flash()->info(tr('Preventivo eliminato!'));
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
 
@@ -209,7 +209,7 @@ switch (post('op')) {
 
         try {
             $articolo->qta = $qta;
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 

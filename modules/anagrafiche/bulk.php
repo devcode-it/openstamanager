@@ -87,7 +87,7 @@ switch (post('op')) {
                     $anagrafica->lat = $coordinates->getLatitude();
                     $anagrafica->lng = $coordinates->getLongitude();
                     $anagrafica->save();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     flash()->error("Impossibile recuperare le coordinate dell'anagrafica ".$anagrafica->ragione_sociale." per l'indirizzo ".$anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
                 }
             }

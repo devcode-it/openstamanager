@@ -114,7 +114,7 @@ echo '
 // Descrizione
 if (!empty($documento['descrizione'])) {
     echo '
-<p>'.nl2br($documento['descrizione']).'</p>
+<p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
 }
 
@@ -219,15 +219,15 @@ foreach ($righe as $riga) {
                 echo nl2br($text);
             }
         }
-        $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+        $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
     }
 
-    $source_type = get_class($riga);
+    $source_type = $riga::class;
 
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
         echo $r['descrizione'];
     } else {
-        echo nl2br($r['descrizione']);
+        echo nl2br((string) $r['descrizione']);
     }
 
     if ($riga->isArticolo()) {
@@ -490,7 +490,7 @@ echo '
         </td>
 
         <td class="border-bottom">
-            '.nl2br($documento['esclusioni']).'
+            '.nl2br((string) $documento['esclusioni']).'
         </td>
     </tr>
 </table>';

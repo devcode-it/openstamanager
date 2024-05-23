@@ -43,20 +43,8 @@ class Gestore
 
     protected $totale_debito_diretto = 0;
 
-    /**
-     * @var Anagrafica
-     */
-    private $azienda;
-    /**
-     * @var Banca
-     */
-    private $banca_azienda;
-
-    public function __construct(Anagrafica $azienda, Banca $banca_azienda)
+    public function __construct(private Anagrafica $azienda, private Banca $banca_azienda)
     {
-        $this->azienda = $azienda;
-        $this->banca_azienda = $banca_azienda;
-
         $this->id_riba = random_string();
         $this->initRiBa();
 
@@ -93,7 +81,7 @@ class Gestore
         $intestazione->nome_supporto = $supporto;
         $intestazione->citta_creditore = $this::cleanString(mb_strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']));
         $intestazione->ragione_sociale_creditore = $this::cleanString(mb_strtoupper($this->azienda->ragione_sociale));
-        $intestazione->indirizzo_creditore = $this::cleanString(mb_strtoupper($this->azienda['indirizzo']));
+        $intestazione->indirizzo_creditore = $this::cleanString(mb_strtoupper((string) $this->azienda['indirizzo']));
         $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
 
         $this->riba = new RiBa($intestazione);
@@ -124,7 +112,7 @@ class Gestore
         $intestazione->nome_supporto = $supporto;
         $intestazione->citta_creditore = mb_strtoupper($this->azienda['cap'].' '.$this->azienda['citta'].' '.$this->azienda['provincia']);
         $intestazione->ragione_sociale_creditore = mb_strtoupper($this->azienda->ragione_sociale);
-        $intestazione->indirizzo_creditore = mb_strtoupper($this->azienda['indirizzo']);
+        $intestazione->indirizzo_creditore = mb_strtoupper((string) $this->azienda['indirizzo']);
         $intestazione->partita_iva_o_codice_fiscale_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
         $intestazione->identificativo_creditore = !empty($this->azienda->partita_iva) ? $this->azienda->partita_iva : $this->azienda->codice_fiscale;
         $intestazione->descrizione_banca = $descrizione_banca;
@@ -244,9 +232,9 @@ class Gestore
 
         $ricevuta->nome_debitore = $this::cleanString(mb_strtoupper($ragione_sociale));
         $ricevuta->identificativo_debitore = !empty($controparte->partita_iva) ? $controparte->partita_iva : $controparte->codice_fiscale;
-        $ricevuta->indirizzo_debitore = $this::cleanString(mb_strtoupper($controparte['indirizzo']));
+        $ricevuta->indirizzo_debitore = $this::cleanString(mb_strtoupper((string) $controparte['indirizzo']));
         $ricevuta->cap_debitore = $controparte['cap'];
-        $ricevuta->comune_debitore = $this::cleanString(mb_strtoupper($controparte['citta']));
+        $ricevuta->comune_debitore = $this::cleanString(mb_strtoupper((string) $controparte['citta']));
         $ricevuta->provincia_debitore = $this::cleanString($controparte['provincia']);
         $ricevuta->descrizione_banca = $this::cleanString($descrizione_banca);
         $ricevuta->descrizione = $this::cleanString(mb_strtoupper($descrizione));
@@ -307,9 +295,9 @@ class Gestore
 
             $ricevuta->nome_debitore = mb_strtoupper($ragione_sociale);
             $ricevuta->identificativo_debitore = $identificativo_debitore;
-            $ricevuta->indirizzo_debitore = mb_strtoupper($controparte['indirizzo']);
+            $ricevuta->indirizzo_debitore = mb_strtoupper((string) $controparte['indirizzo']);
             $ricevuta->cap_debitore = $controparte['cap'];
-            $ricevuta->comune_debitore = mb_strtoupper($controparte['citta']);
+            $ricevuta->comune_debitore = mb_strtoupper((string) $controparte['citta']);
             $ricevuta->provincia_debitore = $controparte['provincia'];
             $ricevuta->descrizione_banca = $descrizione_banca;
             $ricevuta->descrizione = mb_strtoupper($descrizione);
@@ -532,7 +520,7 @@ class Gestore
                 // Salvataggio del file
                 file_put_contents(base_dir().'/'.$file, $xml);
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         return $files;

@@ -65,7 +65,7 @@ if (!empty($list)) {
         }
 
         echo '
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\')">
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and str_ends_with(strtolower((string) $element), '.p7m')) ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\')">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>

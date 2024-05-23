@@ -548,9 +548,9 @@ switch ($resource) {
             $rs = $data['results'];
 
             foreach ($rs as $k => $r) {
-                $currentDate = date('Y-m-d', strtotime($superselect['data']));
-                $startDate = date('Y-m-d', strtotime($r['data_inizio']));
-                $endDate = date('Y-m-d', strtotime($r['data_fine']));
+                $currentDate = date('Y-m-d', strtotime((string) $superselect['data']));
+                $startDate = date('Y-m-d', strtotime((string) $r['data_inizio']));
+                $endDate = date('Y-m-d', strtotime((string) $r['data_fine']));
 
                 $rs[$k] = array_merge($r, [
                     'text' => tr('N. prot.').' '.$r['numero_protocollo'].' - '.Translator::numberToLocale($r['totale']).'/'.Translator::numberToLocale($r['massimale']).' &euro; ['.Translator::dateToLocale($r['data_fine']).']',

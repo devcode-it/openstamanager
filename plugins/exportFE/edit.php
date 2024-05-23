@@ -180,7 +180,7 @@ if ($fattura !== null) {
                     echo '
             <tr>
                 <td>'.$errore['Codice'].'</td>
-                <td>'.htmlentities($errore['Descrizione']).'</td>
+                <td>'.htmlentities((string) $errore['Descrizione']).'</td>
             </tr>';
                 }
 

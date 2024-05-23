@@ -75,7 +75,7 @@ if (Auth::check()) {
 
                 echo '
             search.push("search_'.$field_name.'");
-            search["search_'.$field_name.'"] = "'.addslashes($value).'";';
+            search["search_'.$field_name.'"] = "'.addslashes((string) $value).'";';
             }
         }
     }
@@ -206,7 +206,7 @@ if (Auth::check()) {
 
                 search: search,
                 translations: translations,
-                locale: "'.explode('_', $lang)[0].'",
+                locale: "'.explode('_', (string) $lang)[0].'",
 				full_locale: "'.$lang.'",
 
                 start_date: "'.$_SESSION['period_start'].'",
@@ -276,7 +276,7 @@ if (Auth::check()) {
                 date_format: "'.formatter()->getDatePattern().'",
                 time_format: "'.formatter()->getTimePattern().'",
 
-                locale: "'.explode('_', $lang)[0].'",
+                locale: "'.explode('_', (string) $lang)[0].'",
 				full_locale: "'.$lang.'",
             };
         </script>';
@@ -530,9 +530,9 @@ if (Auth::check()) {
                 $count = 0;
                 $opt = '';
                 if (!empty($plugin['options2'])) {
-                    $opt = json_decode($plugin['options2'], true);
+                    $opt = json_decode((string) $plugin['options2'], true);
                 } elseif (!empty($plugin['options'])) {
-                    $opt = json_decode($plugin['options'], true);
+                    $opt = json_decode((string) $plugin['options'], true);
                 }
 
                 if (!empty($opt)) {
@@ -568,13 +568,13 @@ if (Auth::check()) {
         if ($structure->permission != '-' && $structure->use_checklists) {
             $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
             $checklists_total = $structure->recordChecks($id_record);
-        
+
             echo '
                 <li data-toggle="control-sidebar" class="btn-default nav-item">
                     <a class="bg-info nav-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
                         '.tr('Checklist')
-                        . ($checklists_total ? ' <span class="badge pull-right">' . $checklists_unchecked->count() . tr(' / ') . $checklists_total->count() . '</span>' : '')
-                        . '
+                        .($checklists_total ? ' <span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '')
+                        .'
                     </a>
                 </li>';
         }

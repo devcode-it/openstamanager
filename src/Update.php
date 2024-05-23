@@ -55,7 +55,7 @@ class Update
             $updates = $database->isConnected() ? $database->fetchArray('SELECT * FROM `updates` WHERE `done` != 1 OR `done` IS NULL ORDER BY `done` DESC, `id` ASC') : [];
 
             foreach ($updates as $key => $value) {
-                $name = explode('/', $value['directory']);
+                $name = explode('/', (string) $value['directory']);
                 $updates[$key]['name'] = ucwords(end($name)).' '.$value['version'];
 
                 $updates[$key]['filename'] = str_replace('.', '_', $value['version']);
@@ -220,7 +220,7 @@ class Update
             try {
                 $fs->chmod('backup', 0777, 0000, true);
                 $fs->chmod('files', 0777, 0000, true);
-            } catch (IOException $e) {
+            } catch (IOException) {
             }
 
             return true;
@@ -262,7 +262,7 @@ class Update
                         for ($i = $start; $i < $end; ++$i) {
                             try {
                                 $database->query($queries[$i]);
-                            } catch (Exception $e) {
+                            } catch (Exception) {
                                 throw new PDOException(tr('Aggiornamento fallito').': '.$queries[$i]);
                             }
 
@@ -480,7 +480,7 @@ class Update
                 $pos = array_search($result['path'], $versions);
                 $done = ($pos !== false) ? $updates[$pos]['done'] : null;
 
-                $directory = explode('update/', $result['path'])[0];
+                $directory = explode('update/', (string) $result['path'])[0];
                 $database->insert('updates', [
                     'directory' => rtrim($directory, '/'),
                     'version' => $result['version'],
@@ -568,8 +568,8 @@ class Update
         }
 
         if ($old_standard) {
-            $module = implode('_', explode('_', $update['version'], -1));
-            $version = explode('_', $update['version']);
+            $module = implode('_', explode('_', (string) $update['version'], -1));
+            $version = explode('_', (string) $update['version']);
             $version = end($version);
 
             $version = str_replace('.', '_', $version);

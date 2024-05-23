@@ -214,7 +214,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp tip' title='".((strpos($record['cellulare'], '+') === 0) ? substr($record['cellulare'], 1) : $record['cellulare'])."'></i>" : "<i class='fa fa-whatsapp tip' title='".tr('Compila il campo per utilizzare WhatsApp.')."'></i>"; ?>" ]}
+                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp tip' title='".((str_starts_with((string) $record['cellulare'], '+')) ? substr((string) $record['cellulare'], 1) : $record['cellulare'])."'></i>" : "<i class='fa fa-whatsapp tip' title='".tr('Compila il campo per utilizzare WhatsApp.')."'></i>"; ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -482,7 +482,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche.'&search_Anagrafica='.rawurlencode($anagrafica['ragione_sociale']).'">
+                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche.'&search_Anagrafica='.rawurlencode((string) $anagrafica['ragione_sociale']).'">
                                     '.tr("Visualizza le banche disponibili per l'Anagrafica").' <i class="fa fa-external-link"></i>
                                 </a>
                             </div>

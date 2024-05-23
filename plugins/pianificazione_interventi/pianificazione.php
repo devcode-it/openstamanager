@@ -38,7 +38,7 @@ $id_anagrafica = $contratto['idanagrafica'];
 $impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `idcontratto` = :id', [
     ':id' => $id_parent,
 ]);
-$id_impianti = explode(',', $impianti[0]['idimpianti']);
+$id_impianti = explode(',', (string) $impianti[0]['idimpianti']);
 
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {
@@ -56,7 +56,7 @@ $tempo_standard = $record['tempo_standard'];
 $idtipointervento = $record['idtipointervento'];
 
 if (!empty($id_sede)) {
-    $id_impianti = explode(',', trim($record['idimpianti']));
+    $id_impianti = explode(',', trim((string) $record['idimpianti']));
 }
 
 $pianificazione = [

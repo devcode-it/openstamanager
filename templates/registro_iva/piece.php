@@ -32,7 +32,7 @@ echo '
     <td>'.($different ? $record['numero_esterno'] : '').'</td>
     <td>'.($different ? Translator::datetoLocale($record['data']) : '').'</td>
     <td>'.($different ? $record['codice_tipo_documento_fe'] : '').'</td>
-    <td>'.($different ? $record['codice_anagrafica'].' '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
+    <td>'.($different ? $record['codice_anagrafica'].' '.safe_truncate(mb_strtoupper(html_entity_decode((string) $record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
     <td class="text-right">'.moneyFormat($record['totale'], 2).'</td>';
 
 echo '

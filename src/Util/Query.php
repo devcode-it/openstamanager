@@ -167,7 +167,7 @@ class Query
         $search_filters = [];
         foreach ($search as $field => $original_value) {
             $pos = array_search($field, $total['fields']);
-            $value = is_array($original_value) ? $original_value : trim($original_value);
+            $value = is_array($original_value) ? $original_value : trim((string) $original_value);
 
             if (isset($value) && $pos !== false) {
                 $search_query = $total['search_inside'][$pos];
@@ -274,7 +274,7 @@ class Query
             $pos = $order['column'];
 
             if ($pos !== false) {
-                $pieces = explode('ORDER', $query);
+                $pieces = explode('ORDER', (string) $query);
 
                 $count = count($pieces);
                 if ($count > 1) {
@@ -403,7 +403,7 @@ class Query
      */
     protected static function str_replace_once($str_pattern, $str_replacement, $string)
     {
-        if (strpos($string, $str_pattern) !== false) {
+        if (str_contains($string, $str_pattern)) {
             $occurrence = strpos($string, $str_pattern);
 
             return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
@@ -443,16 +443,16 @@ class Query
 
             if (!empty($view['visible'])) {
                 if (!empty($view['title'])) {
-                    $view['title'] = trim($view['title']);
+                    $view['title'] = trim((string) $view['title']);
                 }
                 if (!empty($view['search_inside'])) {
-                    $view['search_inside'] = trim($view['search_inside']);
+                    $view['search_inside'] = trim((string) $view['search_inside']);
                 }
                 if (!empty($view['order_by'])) {
-                    $view['order_by'] = trim($view['order_by']);
+                    $view['order_by'] = trim((string) $view['order_by']);
                 }
 
-                $fields[] = $view['title'] ? trim($view['title']) : $view['name'];
+                $fields[] = $view['title'] ? trim((string) $view['title']) : $view['name'];
 
                 $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : '`'.$view['title'].'`';
                 $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['title'].'`';
@@ -510,7 +510,7 @@ class Query
         $format = [];
 
         $query = $options['query'];
-        $views = $options ? explode(',', $options['fields']) : [];
+        $views = $options ? explode(',', (string) $options['fields']) : [];
         foreach ($views as $view) {
             $fields[] = trim($view);
             $order_by[] = '`'.trim($view).'`';

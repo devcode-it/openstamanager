@@ -122,7 +122,7 @@ foreach ($righe as $riga) {
                 if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
                     $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                 }
-                $r['descrizione'] = str_replace('Rif. '.strtolower($key), '', $r['descrizione']);
+                $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
                 preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
                 $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
 
@@ -154,7 +154,7 @@ foreach ($righe as $riga) {
         $autofill->count($r['descrizione']);
     }
 
-    $source_type = get_class($riga);
+    $source_type = $riga::class;
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
         echo $num.'</td>';
         if ($has_image) {
@@ -185,7 +185,7 @@ foreach ($righe as $riga) {
             }
         }
         echo '
-            <td>'.nl2br($r['descrizione']);
+            <td>'.nl2br((string) $r['descrizione']);
     }
 
     if ($documento->direzione == 'uscita') {
@@ -409,5 +409,5 @@ if (!empty($documento['note'])) {
     echo '
 <br>
 <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
-<p>'.nl2br($documento['note']).'</p>';
+<p>'.nl2br((string) $documento['note']).'</p>';
 }

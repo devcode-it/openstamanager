@@ -388,9 +388,9 @@ switch (post('op')) {
                     foreach ($sessioni as $sessione) {
                         // Se è la prima sessione che copio importo la data con quella della richiesta
                         if ($numero_sessione == 0) {
-                            $orario_inizio = date('Y-m-d', strtotime($data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                            $orario_inizio = date('Y-m-d', strtotime((string) $data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                         } else {
-                            $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                            $diff = strtotime($sessione->orario_inizio) - strtotime((string) $inizio_old);
                             $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
                         }
 
@@ -449,7 +449,7 @@ switch (post('op')) {
             $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
             flash()->info(tr('Intervento eliminato!'));
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
 
@@ -463,7 +463,7 @@ switch (post('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
             try {
                 $riga->delete();
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
 
@@ -527,7 +527,7 @@ switch (post('op')) {
 
         try {
             $articolo->qta = $qta;
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
@@ -1071,7 +1071,7 @@ switch (post('op')) {
                             if ($numero_sessione == 0) {
                                 $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
                             } else {
-                                $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                                $diff = strtotime($sessione->orario_inizio) - strtotime((string) $inizio_old);
                                 $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
                             }
 

@@ -33,7 +33,7 @@ class Stampa extends Resource implements RetrieveInterface
         if (!empty($print)) {
             $directory = base_dir().'/files/api';
 
-            $string = strpos($request['resource'], 'binary') !== false;
+            $string = str_contains((string) $request['resource'], 'binary');
             $data = \Prints::render($print->id, $request['id_record'], $directory, $string);
 
             if (!$string) {
@@ -45,7 +45,7 @@ class Stampa extends Resource implements RetrieveInterface
         }
 
         return [
-            'content' => base64_encode($content),
+            'content' => base64_encode((string) $content),
             'filename' => $data['name'],
         ];
     }

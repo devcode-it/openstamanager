@@ -112,7 +112,7 @@ foreach ($righe as $riga) {
     }
 
     echo '
-        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+        <tr data-id="'.$riga->id.'" data-type="'.$riga::class.'" '.$extra.'>
             <td class="text-center">';
     if (!$block_edit) {
         echo '
@@ -184,8 +184,8 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         if (strlen($riga->note) > 50) {
-            $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
-            $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (strpos($riga->note, ' ', 50) != 0) ? strpos($riga->note, ' ', 50) : 50);
+            $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
+            $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
             $stringa_modificata = '<span class="right badge badge-default">'.$prima_parte.'</small>
                 <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="right badge badge-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {

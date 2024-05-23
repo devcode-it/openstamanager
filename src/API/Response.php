@@ -120,13 +120,13 @@ class Response
             $manager = new Manager($request['resource'], $type, $version);
 
             $response = $manager->manage($request);
-        } catch (ResourceNotFound $e) {
+        } catch (ResourceNotFound) {
             return self::error('notFound');
-        } catch (InternalError $e) {
+        } catch (InternalError) {
             return self::error('internalError');
-        } catch (ServiceError $e) {
+        } catch (ServiceError) {
             return self::error('externalError');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return self::error('serverError');
         }
 

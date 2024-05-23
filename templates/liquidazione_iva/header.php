@@ -25,8 +25,8 @@
  *
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
-$year_start = date('Y', strtotime($date_start));
-$year_end = date('Y', strtotime($date_end));
+$year_start = date('Y', strtotime((string) $date_start));
+$year_end = date('Y', strtotime((string) $date_end));
 
 $esercizio = $year_start == $year_end ? ' - '.tr('Esercizio _YEAR_', [
     '_YEAR_' => $year_end,

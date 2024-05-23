@@ -178,7 +178,7 @@ switch (filter('op')) {
 
         try {
             $articolo->qta = post('qta');
-        } catch (UnexpectedValueException $e) {
+        } catch (UnexpectedValueException) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
@@ -381,7 +381,7 @@ switch (filter('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
             try {
                 $riga->delete();
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
 
@@ -442,7 +442,7 @@ switch (filter('op')) {
             $ddt->delete();
 
             flash()->info(tr('Ddt eliminato!'));
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
 

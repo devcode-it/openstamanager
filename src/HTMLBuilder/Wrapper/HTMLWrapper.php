@@ -140,7 +140,7 @@ class HTMLWrapper implements WrapperInterface
         if (!empty($values['validation'])) {
             $values['valid'] = '1';
 
-            $value = explode('|', $values['validation']);
+            $value = explode('|', (string) $values['validation']);
             $name = $value[0];
             $id_module = $value[1] ?? '$id_module$';
             $id_record = $value[2] ?? '$id_record$';
@@ -236,7 +236,7 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = null;
 
-        $pieces = explode('|', $string);
+        $pieces = explode('|', (string) $string);
 
         $module_id = $pieces[1];
         $module = Module::find($module_id);
@@ -264,7 +264,7 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = null;
 
-        $pieces = explode('|', $string);
+        $pieces = explode('|', (string) $string);
         $type = $pieces[1];
         $extra = !empty($pieces[3]) ? $pieces[3] : null;
 

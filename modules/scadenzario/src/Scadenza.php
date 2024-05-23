@@ -22,8 +22,8 @@ namespace Modules\Scadenzario;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Pagamenti\Pagamento;
 use Modules\Fatture\Fattura;
+use Modules\Pagamenti\Pagamento;
 
 class Scadenza extends Model
 {

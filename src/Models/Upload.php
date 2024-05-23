@@ -234,7 +234,7 @@ class Upload extends Model
         if ($this->isImage()) {
             // self::generateThumbnails($this);
 
-            if( setting('Ridimensionamento immagini') ){
+            if( setting('Ridimensiona automaticamente le immagini caricate') ){
                 self::ridimensionaImmagini($this);
             }
         }

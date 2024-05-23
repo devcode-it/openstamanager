@@ -44,14 +44,14 @@ echo '
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
                 <th width="105">'.tr('Prev. evasione').'</th>
-                <th class="text-center tip" width="190">'.tr('Q.tà').'</th>';
+                <th class="text-center tip" width="130">'.tr('Q.tà').'</th>';
 if ($dir == 'entrata') {
-    echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
+    echo '<th class="text-center" width="130">'.tr('Costo unitario').'</th>';
 }
 echo '
-                <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
-                <th class="text-center" width="140">'.tr('Sconto unitario').'</th>
-                <th class="text-center" width="130">'.tr('Importo').'</th>
+                <th class="text-center" width="130">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="130">'.tr('Sconto unitario').'</th>
+                <th class="text-center" width="100">'.tr('Importo').'</th>
                 <th width="80"></th>
             </tr>
         </thead>

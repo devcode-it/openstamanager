@@ -44,75 +44,56 @@ if ($righe_vuote) {
     </div>';
 }
 
-?><form action="" method="post" id="edit-form">
+echo'
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-	<!-- INTESTAZIONE -->
-	<div class="card card-primary">
-		<div class="card-header">
-			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
-		</div>
 
-		<div class="card-body">
-			<div class="row">
+    <div class="row">
+        <div class="col-md-2 offset-md-10">';
+        if (setting('Cambia automaticamente stato ordini fatturati')) {
+            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+            $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+            $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+            $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
 
-				<div class="col-md-3" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
-					{[ "type": "text", "label": "<?php echo tr('Numero ordine'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo ($dir == 'entrata') ? tr('Numero ordine') : tr('Numero ordine fornitore'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
-				</div>
-
-				<div class="col-md-3">
-                    <?php
-
-                    if (setting('Cambia automaticamente stato ordini fatturati')) {
-                        $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-                        $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-                        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-                        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
-                        $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
-
-                        if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
-                            ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
-                    <?php
-                        } else {
-                            ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
-                    <?php
-                        }
-                    } else {
-                        ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
-                    <?php
-                    }
-?>
-				</div>
-<?php
-            if ($dir == 'entrata') {
-                echo '
-                <div class="col-md-3">';
-                if ($record['idagente'] != 0) {
-                    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                }
-                echo '
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-                </div>';
+            if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
+                ?>
+                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                <?php
+            } else {
+                ?>
+                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                <?php
             }
-?>
-			</div>
+        } else {
+            ?>
+            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
+            <?php
+        }
 
-			<div class="row">
-				<div class="col-md-3">
-                    <?php
+        echo '
+        </div>
+    </div>
 
+	<!-- DATI INTESTAZIONE -->
+    <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Dati cliente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="card-body">
+                <!-- RIGA 1 -->
+                <div class="row">
+                    <div class="col-md-3">';
                     echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
 if ($dir == 'entrata') {
@@ -124,40 +105,81 @@ if ($dir == 'entrata') {
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
 }
-echo '
-                </div>
+echo'
+                    </div>
 
-                <div class="col-md-3">';
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
-echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
-                </div>
+                    <div class="col-md-3">';
+                    if (!empty($record['idreferente'])) {
+                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    }
+                    echo '
+                        {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
+                    </div>';
 
-                <div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
+                    if ($dir == 'entrata') {
+                        echo '
+                    <div class="col-md-3">';
+                        if ($record['idagente'] != 0) {
+                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                        }
+                        echo '
+                        {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    </div>';
+                    }
+                    echo'
+                </div>
+            </div>
+        </div>
+    </div>';
+?>
+
+	<!-- INTESTAZIONE -->
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+
+				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
+					{[ "type": "text", "label": "<?php echo tr('Numero ordine'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+				<div class="col-md-2">
+					{[ "type": "text", "label": "<?php echo ($dir == 'entrata') ? tr('Numero ordine') : tr('Numero ordine fornitore'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
-            </div>';
+
+				<div class="col-md-2">
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+				</div>
+
+                <div class="col-md-2">
+                    {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $ordine->sconto_finale_percentuale ?: $ordine->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($ordine->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
+                </div>
+            </div>
+<?php
 
 if ($dir == 'entrata') {
     ?>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-2">
                     {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
                 </div>
 
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $ordine->sconto_finale_percentuale ?: $ordine->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($ordine->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
-                </div>
+
             </div>
                 <?php
 }

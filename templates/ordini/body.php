@@ -61,42 +61,42 @@ if ($documento->direzione == 'uscita') {
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
-$autofill = new Util\Autofill($columns, $char_number);
-$autofill->setRows(30);
+$autofill = new Util\Autofill($columns);
+$autofill->setRows(20, 10);
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped table-bordered' id='contents'>
+<table class='table table-striped' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
+            <th class='text-center text-muted' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
 
 if ($has_image) {
     echo "
-            <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
+            <th class='text-center text-muted' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
 }
 
 echo "
-            <th class='text-center'>".tr('Descrizione', [], ['upper' => true]).'</th>
+            <th class='text-center text-muted'>".tr('Descrizione', [], ['upper' => true]).'</th>
             ';
 
 if ($documento->direzione == 'uscita') {
     echo "
-            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
+            <th class='text-center text-muted' style='width:10%'>".tr('Codice', [], ['upper' => true])."</th>
+            <th class='text-center text-muted' style='width:10%'>".tr('Codice fornitore', [], ['upper' => true]).'</th>';
 }
 echo "
-            <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
+            <th class='text-center text-muted' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
     echo "
-            <th class='text-center' style='width:11%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:11%'>".tr('Imponibile', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:5%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center text-muted' style='width:10%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
+            <th class='text-center text-muted' style='width:10%'>".tr('Imponibile', [], ['upper' => true])."</th>
+            <th class='text-center text-muted' style='width:5%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
 echo "
-            <th class='text-center' style='width:10%'>".tr('Data evasione', [], ['upper' => true]).'</th>
+            <th class='text-center text-muted' style='width:10%'>".tr('Data evasione', [], ['upper' => true]).'</th>
         </tr>
     </thead>
 
@@ -315,7 +315,7 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right text-muted">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -328,7 +328,7 @@ if ($options['pricing']) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right text-muted">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -340,7 +340,7 @@ if ($options['pricing']) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right text-muted">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -353,7 +353,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right text-muted">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -365,7 +365,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.$colspan.'" class="text-right border-top">
+    	<td colspan="'.$colspan.'" class="text-right text-muted" >
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">
@@ -377,7 +377,7 @@ if ($options['pricing']) {
         // SCONTO IN FATTURA
         echo '
         <tr>
-            <td colspan="'.$colspan.'" class="text-right border-top">
+            <td colspan="'.$colspan.'" class="text-right text-muted">
                 <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
             </td>
             <th colspan="2" class="text-right">
@@ -408,6 +408,6 @@ if (!empty($documento->condizioni_fornitura)) {
 if (!empty($documento['note'])) {
     echo '
 <br>
-<p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
+<p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
 <p>'.nl2br((string) $documento['note']).'</p>';
 }

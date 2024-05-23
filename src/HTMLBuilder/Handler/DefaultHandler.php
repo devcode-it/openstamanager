@@ -101,8 +101,12 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
+        $values['icon-after'] = ' <i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i> ';
+
         $result = '
     <script>
+
+       
         const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";
 
         function generateString(length) {
@@ -137,13 +141,13 @@ class DefaultHandler implements HandlerInterface
             }
         }
 
-        $(document).ready(function(){            
+        $(document).ready(function(){
             togglePassword_'.$values['id'].'();
         });
     </script>';
 
         if (!empty($values['strength'])) {
-            $values['icon-after'] .= ' <i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>&nbsp;|&nbsp;<span class="fa fa-eye-slash clickable" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>';
+            $values['icon-after'] .= '&nbsp;&nbsp;|&nbsp;&nbsp;<i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>';
 
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
@@ -197,7 +201,6 @@ class DefaultHandler implements HandlerInterface
         }
 
         // Delega al metodo "text", per la generazione del codice HTML
-        $values['icon-after'] = '<span class="fa fa-eye-slash clickable" id="'.$values['id'].'_toggle" onclick="togglePassword_'.$values['id'].'();"></span>';
         $result .= $this->text($values, $extras);
 
         return $result;

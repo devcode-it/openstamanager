@@ -233,6 +233,10 @@ class Upload extends Model
     {
         if ($this->isImage()) {
             // self::generateThumbnails($this);
+
+            if( setting('Ridimensionamento immagini') ){
+                self::ridimensionaImmagini($this);
+            }
         }
 
         return parent::save($options);
@@ -379,5 +383,27 @@ class Upload extends Model
             $constraint->aspectRatio();
         });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
+    }
+
+    protected static function ridimensionaImmagini($upload)
+    {
+        $info = $upload->info;
+        $directory = $upload->directory;
+
+        $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
+
+        if (!in_array(mime_content_type($filepath), ['image/x-png', 'image/gif', 'image/jpeg'])) {
+            return;
+        }
+
+        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
+        ImageManagerStatic::configure(['driver' => $driver]);
+
+        $img = ImageManagerStatic::make($filepath);
+
+        $img->resize(setting('Larghezza per ridimensionamento immagini'), null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($filepath));
     }
 }

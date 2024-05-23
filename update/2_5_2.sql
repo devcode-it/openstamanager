@@ -203,3 +203,12 @@ UPDATE `zz_plugins` SET `options` = '{\"main_query\": [{\"type\": \"table\", \"f
 
 -- Fix segmento Articoli disponibili
 UPDATE `zz_segments` SET `clause` = '1=1 AND `qta` > 0' WHERE `zz_segments`.`name` = 'Disponibili';
+
+-- Ridimensionamento immagini
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+(NULL, 'Ridimensionamento immagini', '0', 'boolean', '1', 'Generali', NULL),
+(NULL, 'Larghezza per ridimensionamento immagini', '600', 'integer', '1', 'Generali', NULL);
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
+(NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Ridimensionamento immagini'), 'Ridimensionamento immagini', ''),
+(NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Larghezza per ridimensionamento immagini', '');

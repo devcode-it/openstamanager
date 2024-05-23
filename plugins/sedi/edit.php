@@ -186,7 +186,7 @@ if (!empty($elementi)) {
         '_NUM_' => count($elementi),
     ]).'</h3>
 			<div class="card-tools pull-right">
-				<button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+				<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 		<div class="card-body">
@@ -223,7 +223,7 @@ echo '
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Dettagli aggiuntivi').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-widget="collapse">
+                <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>

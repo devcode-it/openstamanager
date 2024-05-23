@@ -242,7 +242,7 @@ echo '
         <div class="card-header with-border">
 			<h3 class="card-title">'.tr('Dettagli cliente').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -258,7 +258,7 @@ echo '
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Posizione').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -276,7 +276,7 @@ echo '
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Dettagli aggiuntivi').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
@@ -302,7 +302,7 @@ echo '
         <div class="card-header with-border">
 			<h3 class="card-title">'.tr('Assegnazione tecnici').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -337,7 +337,7 @@ echo '
         <div class="card-header with-border">
 			<h3 class="card-title">'.tr('Sessioni di lavoro').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-'.($origine_dashboard ? 'minus' : 'plus').'"></i>
                 </button>
             </div>
@@ -374,7 +374,7 @@ echo '
         <div class="card-header with-border">
 			<h3 class="card-title">'.tr('Ricorrenza').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>

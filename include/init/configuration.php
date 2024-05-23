@@ -164,7 +164,7 @@ if (!empty(post('db_host'))) {
 					<div class="card-header with-border">
 						<h4 class="card-title"><a class="clickable" data-widget="collapse">'.tr('Creazione manuale').'...</a></h4>
 						<div class="card-tools pull-right">
-							<button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+							<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
 						</div>
 					</div>
 					<div class="card-body">

@@ -587,7 +587,7 @@ if (!empty($righe)) {
 
                             <div class="col-md-1 card-tools">
                                 <br>
-                                <button type="button" class="btn btn-card-tool no-padding-left" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                                <button type="button" class="btn btn-tool no-padding-left" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
                                 <i class="fa fa-plus"></i>
                                 </button>
                             </div>

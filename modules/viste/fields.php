@@ -43,7 +43,7 @@ foreach ($fields as $key => $field) {
                         </h3>
 
                         <div class="card-tools pull-right">
-                            <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>

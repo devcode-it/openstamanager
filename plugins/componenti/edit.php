@@ -123,7 +123,7 @@ foreach ($elenchi as $elenco) {
                         <i class="'.$icona_allegati.' fa-lg"></i>
 
                         <div class="card-tools pull-right">
-                        <button type="button" class="btn btn-card-tool" onclick="toggleDettagli(this)">
+                        <button type="button" class="btn btn-tool" onclick="toggleDettagli(this)">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>

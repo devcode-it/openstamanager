@@ -513,6 +513,7 @@ if (Auth::check()) {
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
+        <div class="control-sidebar-button"><i class="fa fa-chevron-left"></i></div>
         <aside class="control-sidebar control-sidebar-light">
             <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">

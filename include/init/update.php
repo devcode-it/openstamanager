@@ -189,7 +189,7 @@ if (filter('action') == 'do_update') {
                         <div class="card-header with-border">
                             <h3 class="card-title"><a class="clickable" data-card-widget="collapse">'.tr('Log').'</a></h3>
                             <div class="card-tools pull-right">
-                                <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
                             </div>
                         </div>
                         <div class="card-body info text-left"></div>

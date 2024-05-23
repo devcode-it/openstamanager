@@ -89,7 +89,7 @@ if ($dir == 'entrata') {
                             <div class="card-header with-border">
                                 <h3 class="card-title">'.tr('Fatture in stato Bozza del cliente').'</h3>
                                 <div class="card-tools pull-right">
-                                    <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
                                     </button>
                                 </div>
@@ -102,7 +102,7 @@ if ($dir == 'entrata') {
                             <div class="card-header with-border">
                                 <h3 class="card-title">'.tr('Fatture con termini di pagamento trascorsi').'</h3>
                                 <div class="card-tools pull-right">
-                                    <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fa fa-minus"></i>
                                     </button>
                                 </div>
@@ -118,7 +118,7 @@ if ($dir == 'entrata') {
                 <div class="card-header with-border">
                     <h3 class="card-title">'.tr('Dettagli cliente').'</h3>
                     <div class="card-tools pull-right">
-                        <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>

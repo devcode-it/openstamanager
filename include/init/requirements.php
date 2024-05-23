@@ -454,7 +454,7 @@ foreach ($requirements as $key => $values) {
     if ($general_status) {
         echo '
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-card-tool" data-widget="collapse">
+            <button type="button" class="btn btn-tool" data-widget="collapse">
                 <i class="fa fa-plus"></i>
             </button>
         </div>';

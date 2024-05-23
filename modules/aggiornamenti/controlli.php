@@ -202,7 +202,7 @@ function initcard(controllo, success) {
     <div class="card-header with-border">
         <h3 class="card-title">` + controllo["name"] + `</h3>
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-card-tool" data-widget="collapse">
+            <button type="button" class="btn btn-tool" data-widget="collapse">
                 <i class="fa fa-` + icon + `"></i>
             </button>
         </div>

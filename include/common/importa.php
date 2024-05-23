@@ -432,7 +432,7 @@ if (!$righe_evase->isEmpty()) {
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Righe evase completamente').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
             </div>
         </div>
 

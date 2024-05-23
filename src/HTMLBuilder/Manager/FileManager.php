@@ -90,7 +90,7 @@ class FileManager implements ManagerInterface
         <h3 class="card-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
 
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>

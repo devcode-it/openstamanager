@@ -83,7 +83,7 @@ echo'
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Dati cliente').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
@@ -551,7 +551,7 @@ if (!empty($elementi)) {
         '_NUM_' => count($elementi),
     ]).'</h3>
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-card-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
     <div class="card-body">

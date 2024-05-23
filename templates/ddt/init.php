@@ -33,10 +33,10 @@ $id_sede = $record['idsede_partenza'];
 $id_azienda = setting('Azienda predefinita');
 
 $pagamento = Pagamento::find($documento['idpagamento']);
-$causale = $dbo->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']));
-$porto = $dbo->fetchOne('SELECT * FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['idporto']));
-$aspetto_beni = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']));
-$spedizione = $dbo->fetchOne('SELECT * FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['idspedizione']));
+$causale = $dbo->fetchOne('SELECT `dt_causalet`.*, `dt_causalet_lang`.`title` as descrizione FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']));
+$porto = $dbo->fetchOne('SELECT `dt_porto`.*, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['idporto']));
+$aspetto_beni = $dbo->fetchOne('SELECT `dt_aspettobeni`.*, `dt_aspettobeni_lang`.`title` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']));
+$spedizione = $dbo->fetchOne('SELECT `dt_spedizione`.*, `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['idspedizione']));
 
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
 
@@ -127,7 +127,7 @@ $custom = [
     'tipo_doc' => $tipo_doc,
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
-    'pagamento' => $pagamento->getTranslation('title'),
+    'pagamento' => $pagamento ? $pagamento->getTranslation('title') : '',
     'c_destinazione' => $destinazione,
     'c_partenza' => $partenza,
     'aspettobeni' => $aspetto_beni['descrizione'],

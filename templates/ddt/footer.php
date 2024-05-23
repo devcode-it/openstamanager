@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!$is_last_page) {
+if (!empty($options['last-page-footer']) && !$is_last_page) {
     return;
 }
 
@@ -35,18 +35,18 @@ $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 
 // TABELLA PRINCIPALE
 echo '
-<table class="table-bordered">';
+<table class="table table-striped table-bordered">';
 
 if ($options['pricing']) {
     // Riga 1
     echo "
     <tr>
         <td rowspan='10'>
-            <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
+            <p class='small-bold text-muted'>".tr('Note', [], ['upper' => true]).'</p>
             <p>'.nl2br((string) $documento['note'])."</p>
         </td>
         <td style='width:33mm;'>
-            <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
+            <p class='small-bold text-muted'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
         </td>
     </tr>';
 
@@ -62,7 +62,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td style='width:33mm;'>
-            <p class='small-bold'>".tr('Totale IVA', [], ['upper' => true])."</p>
+            <p class='small-bold text-muted'>".tr('Totale IVA', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -76,7 +76,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td>
-            <p class='small-bold'>".tr('Totale documento', [], ['upper' => true])."</p>
+            <p class='small-bold text-muted'>".tr('Totale documento', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -91,7 +91,7 @@ if ($options['pricing']) {
         echo "
         <tr>
             <td>
-                <p class='small-bold'>".tr('Sconto in fattura', [], ['upper' => true])."</p>
+                <p class='small-bold text-muted'>".tr('Sconto in fattura', [], ['upper' => true])."</p>
             </td>
         </tr>
 
@@ -105,7 +105,7 @@ if ($options['pricing']) {
         echo "
         <tr>
             <td>
-                <p class='small-bold'>".tr('Netto a pagare', [], ['upper' => true])."</p>
+                <p class='small-bold text-muted'>".tr('Netto a pagare', [], ['upper' => true])."</p>
             </td>
         </tr>
 
@@ -120,7 +120,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td style='height:40mm;'>
-            <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
+            <p class='small-bold text-muted'>".tr('Note', [], ['upper' => true]).'</p>
             '.nl2br((string) $documento['note']).'
         </td>
     </tr>';
@@ -131,25 +131,25 @@ echo '
 
 // Informazioni aggiuntive
 echo '
-<table class="table-bordered">
+<table class="table table-striped border-bottom">
     <tr>
-        <th class="small" class style="width:25%;">
+        <th class="small-bold text-muted" class style="width:25%;">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
+        <th class="small-bold text-muted" class style="width:20%">
             '.tr('Num. colli', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
+        <th class="small-bold text-muted" class style="width:20%">
             '.tr('Data ora trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="small" style="width:30%">
+        <th class="small-bold text-muted" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="small" style="width:25%">
+        <th class="small-bold text-muted" style="width:25%">
             '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
@@ -177,19 +177,19 @@ echo '
     </tr>
 
     <tr>
-        <th class="small">
+        <th class="small-bold text-muted">
             '.tr('Peso lordo', [], ['upper' => true]).'
         </th>
 
-        <th class="small">
+        <th class="small-bold text-muted">
             '.tr('Volume', [], ['upper' => true]).'
         </th>
 
-        <th class="small">
+        <th class="small-bold text-muted">
             '.tr('Vettore', [], ['upper' => true]).'
         </th>
 
-        <th class="small" colspan="2">
+        <th class="small-bold text-muted" colspan="2">
             '.tr('Tipo di spedizione', [], ['upper' => true]).'
         </th>
     </tr>
@@ -218,15 +218,15 @@ if ($documento->direzione == 'entrata') {
     echo '
     <table class="table-bordered">
         <tr>
-            <th class="small" style="width:33%">
+            <th class="small-bold text-muted" style="width:33%">
                 '.tr('Firma conducente', [], ['upper' => true]).'
             </th>
 
-            <th class="small" style="width:33%">
+            <th class="small-bold text-muted" style="width:33%">
                 '.tr('Firma vettore', [], ['upper' => true]).'
             </th>
 
-            <th class="small" style="width:33%">
+            <th class="small-bold text-muted" style="width:33%">
                 '.tr('Firma destinatario', [], ['upper' => true]).'
             </th>
         </tr>

@@ -40,71 +40,87 @@ if ($has_image) {
 $autofill = new Util\Autofill($columns);
 $autofill->setRows(20, 10);
 
-echo '
-<div class="row">
-    <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>'.tr('Contratto num. _NUM_ del _DATE_', [
-    '_NUM_' => $documento['numero'],
-    '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
-], ['upper' => true]).'</b>
-        </div>
-        <br>';
-
 // Elenco impianti
 $impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($documento['id']).')');
-if (!empty($impianti)) {
-    $list = [];
-    foreach ($impianti as $impianto) {
-        $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
-    }
-
-    echo '
-        <br>
-        <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
-        <p><small>'.implode(', ', $list).'</small></p>';
-}
 
 echo '
+<div class="col-xs-5">
+    <div class="text-center" style="height:5mm;">
+        <b>CONTRATTO</b>
     </div>
+    <br>
 
-	<div class="col-xs-6">
-        <table class="table border-bottom">
-            <tr>
-                <td colspan=2 style="height:16mm;">
-                    <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
-                    <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$</p>
-                    <p>$c_citta_full$</p>
-                </td>
-            </tr>
+    <table class="table text-center">
+        <tr>
+            <td valign="top" class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
+                <p>'.$documento['numero'].'</p>
+            </td>
 
-            <tr>
-                <td class="border-bottom">
-                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-bottom text-right">
-                    <small>$c_piva$</small>
-                </td>
-            </tr>
+            <td class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
+                <p>'.Translator::dateToLocale($documento['data_bozza']).'</p>
+            </td>
 
-            <tr>
-                <td class="border-bottom">
-                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-bottom text-right">
-                    <small>$c_codicefiscale$</small>
-                </td>
-            </tr>';
+            <td class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
+                <p> {PAGENO}/{nb} </p>
+            </td>
+        </tr>';
+        if (!empty($impianti)) {
+            $list = [];
+            foreach ($impianti as $impianto) {
+                $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
+            }
+        
+            echo '
+                <br>
+                <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
+                <p><small>'.implode(', ', $list).'</small></p>';
+        }
+        echo'
+    </table>
+</div>
+
+<div class="col-xs-6 pull-right">
+    <table class="table border-bottom">
+        <tr>
+            <td colspan=2 style="height:16mm;">
+                <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
+                <p>$c_ragionesociale$</p>
+                <p>$c_indirizzo$</p>
+                <p>$c_citta_full$</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="border-bottom">
+                <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-bottom text-right">
+                <small>$c_piva$</small>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="border-bottom">
+                <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-bottom text-right">
+                <small>$c_codicefiscale$</small>
+            </td>
+        </tr>';
 
 if (!empty($destinazione)) {
     echo '
-            <tr>
-                <td colspan=2 style="height:16mm;">
-                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                    <small>'.$destinazione.'</small>
-                </td>
-            </tr>';
+        <tr>
+            <td class="border-bottom">
+                <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-bottom text-right">
+                <small>'.$destinazione.'</small>
+            </td>
+        </tr>';
 }
 echo '
         </table>
@@ -387,7 +403,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // SCONTO IN FATTURA
             echo '
             <tr>
-                 <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right border-top">
+                 <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
                     <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
                 </td>
                <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
@@ -398,7 +414,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // NETTO A PAGARE
             echo '
             <tr>
-                <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right border-top">
+                <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
                     <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
                 </td>
                 <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">

@@ -68,20 +68,44 @@ $autofill = new Util\Autofill($columns);
 $autofill->setRows(20, 10);
 
 echo '
-<div class="row">
-    <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
-    '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
-    '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
-], ['upper' => true]).'</b>
-        </div>
-<br>
-
-
+<div class="col-xs-5">
+    <div class="text-center" style="height:5mm;">
+        <b>PREVENTIVO</b>
     </div>
+    <br>
 
-	<div class="col-xs-6">
+    <table class="table text-center">
+        <tr>
+            <td valign="top" class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
+                <p>'.$documento['numero'].'</p>
+            </td>
+
+            <td class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
+                <p>'.Translator::dateToLocale($documento['data_bozza']).'</p>
+            </td>
+
+            <td class="border-bottom border-top">
+                <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
+                <p> {PAGENO}/{nb} </p>
+            </td>
+        </tr>';
+        if (!empty($impianti)) {
+            $list = [];
+            foreach ($impianti as $impianto) {
+                $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
+            }
+        
+            echo '
+                <br>
+                <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
+                <p><small>'.implode(', ', $list).'</small></p>';
+        }
+        echo'
+    </table>
+</div>
+	<div class="col-xs-6 pull-right">
         <table class="table border-bottom">
             <tr>
                 <td colspan=2 style="height:16mm;">
@@ -110,16 +134,19 @@ echo '
                 </td>
             </tr>';
 
-if (!empty($destinazione)) {
-    echo '
+
+            if (!empty($destinazione)) {
+                echo '
             <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
+                <td class="border-bottom">
                     <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                </td>
+                <td class="border-bottom text-right">
                     <small>'.$destinazione.'</small>
                 </td>
             </tr>';
-}
-echo '
+            }
+            echo '
         </table>
     </div>
 </div>';
@@ -133,7 +160,7 @@ if (!empty($documento['descrizione'])) {
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped table-bordered' id='contents'>
+<table class='table table-striped border-bottom' id='contents'>
     <thead>
         <tr>
             <th class='text-center' width='35' >#</th>";
@@ -455,7 +482,7 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-muted small-bold border-bottom" style="width:25%">
+        <td class="text-muted small-bold text-muted border-bottom" style="width:25%">
             '.tr('Pagamento', [], ['upper' => true]).'
         </td>
 
@@ -465,7 +492,7 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('Validità offerta', [], ['upper' => true]).'
         </td>
 
@@ -488,7 +515,7 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('Tempi consegna', [], ['upper' => true]).'
         </td>
 
@@ -498,7 +525,7 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('Esclusioni', [], ['upper' => true]).'
         </td>
 
@@ -508,7 +535,7 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('Garanzia', [], ['upper' => true]).'
         </td>
 
@@ -523,13 +550,13 @@ echo '
 if ($banca) {
     echo '
     <tr>
-        <td class="text-muted border-bottom small-bold"></td>
+        <td class="text-muted border-bottom small-bold text-muted"></td>
         <td class="border-bottom">
             <p><small>'.$banca['nome'].'</small></p>
         </td>
     </tr>
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('IBAN', [], ['upper' => true]).'
         </td>
         <td class="border-bottom">
@@ -537,7 +564,7 @@ if ($banca) {
         </td>
     </tr>
     <tr>
-        <td class="text-muted border-bottom small-bold">
+        <td class="text-muted border-bottom small-bold text-muted">
             '.tr('BIC', [], ['upper' => true]).'
         </td>
         <td class="border-bottom">

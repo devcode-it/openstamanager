@@ -174,7 +174,7 @@ if (!empty($v_iva)) {
                                     <p class="small-bold text-muted">'.tr('IBAN').'</p>
                                 </td>
                                 <td>
-                                    <p>$codiceiban$</p>
+                                    <p><small>$codiceiban$</small></p>
                                 </td>
                             </tr>
                             <tr>
@@ -182,7 +182,7 @@ if (!empty($v_iva)) {
                                     <p class="small-bold text-muted">'.tr('BIC').'</p>
                                 </td>
                                 <td>
-                                    <p>$bic$</p>
+                                    <p><small>$bic$</small></p>
                                 </td>
                             </tr>
                         </table>';

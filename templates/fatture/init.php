@@ -42,7 +42,8 @@ $record = $dbo->fetchOne('SELECT
     `vettore`.`ragione_sociale` AS vettore,
     `co_banche`.`id` AS id_banca,
     `zz_segments`.`is_fiscale` AS is_fiscale,
-    `an_anagrafiche`.`tipo` AS tipo_cliente
+    `an_anagrafiche`.`tipo` AS tipo_cliente,
+    `an_anagrafiche`.`codice_destinatario` as codice_destinatario
 FROM 
     `co_documenti`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
@@ -93,7 +94,7 @@ if (empty($record['is_fiscale'])) {
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($record['idsede_destinazione'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `indirizzo2`, `cap`, `citta`, `provincia`, `piva`, `codice_fiscale`, `id_nazione` FROM `an_sedi` WHERE `idanagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
+    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `indirizzo2`, `cap`, `citta`, `provincia`, `piva`, `codice_fiscale`, `id_nazione`, `codice_destinatario` FROM `an_sedi` WHERE `idanagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';
@@ -118,6 +119,9 @@ if (!empty($record['idsede_destinazione'])) {
         if ($nazione['iso2'] != 'IT') {
             $destinazione .= ' - '.$nazione->getTranslation('title');
         }
+    }
+    if (!empty($rsd[0]['codice_destinatario'])) {
+        $codice_destinatario = $rsd[0]['codice_destinatario'];
     }
 }
 

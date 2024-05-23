@@ -79,125 +79,7 @@ if ($righe_vuote) {
     </div>';
 }
 
-?>
-<form action="" method="post" id="edit-form">
-	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-
-    <div class="row">
-        <div class="col-md-8">
-            <!-- INTESTAZIONE -->
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
-                </div>
-
-                <div class="card-body">
-                    <div class="row">
-                        <?php
-                            if ($dir == 'uscita') {
-                                echo '
-                        <div class="col-md-6">
-                            {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
-                        </div>';
-                            }
-?>
-
-                        <div class="col-md-6">
-                            {[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            <?php
-    if (setting('Cambia automaticamente stato ddt fatturati')) {
-        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
-
-        if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
-            ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}
-                            <?php
-        } else {
-            $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
-            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-            ?>
-                                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dt_statiddt`.`id` IN (<?php echo implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]); ?>) ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}
-                            <?php
-        }
-    } else {
-        ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}
-                            <?php
-    }
-?>
-                        </div>
-<?php
-                    if ($dir == 'entrata') {
-                        echo '
-                        <div class="col-md-6">';
-                        if ($record['idagente'] != 0) {
-                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
-                        echo '
-                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-                        </div>';
-                    }
-?>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
-                            {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
-                        </div>
-<?php
-    echo '
-                        <div class="col-md-6">';
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
-echo '
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
-                        </div>';
-
-// Conteggio numero articoli ddt in uscita
-$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
-$id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);
-if ($dir == 'entrata') {
-    echo '
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
-                        </div>';
-} else {
-    echo '
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
-                        </div>';
-}
-?>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <?php
-            $sede_anagrafica = $ddt->anagrafica->sedeLegale;
+$sede_anagrafica = $ddt->anagrafica->sedeLegale;
 $id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
 if (!empty($id_sede_anagrafica)) {
     $sede_anagrafica = Sede::find($id_sede_anagrafica);
@@ -209,134 +91,142 @@ $id_sede_azienda = $dir == 'entrata' ? $ddt->idsede_partenza : $ddt->idsede_dest
 if (!empty($id_sede_azienda)) {
     $sede_azienda = Sede::find($id_sede_azienda);
 }
-?>
 
-            <!-- GEOLOCALIZZAZIONE -->
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fa fa-map"></i> <?php echo tr('Geolocalizzazione'); ?></h3>
-                </div>
-                <div class="card-body">
-                <?php
-    if (!empty($sede_anagrafica->gaddress) || (!empty($sede_anagrafica->lat) && !empty($sede_anagrafica->lng))) {
-        echo '
-                    <div id="map-edit" style="width: 100%;"></div>
+echo'
+<form action="" method="post" id="edit-form">
+	<input type="hidden" name="backto" value="record-edit">
+	<input type="hidden" name="op" value="update">
+	<input type="hidden" name="id_record" value="'.$id_record.'">
 
-                    <div class="clearfix"></div>
-                    <br>';
+    <div class="row">
+        <div class="col-md-2 offset-md-10">';
+        if (setting('Cambia automaticamente stato ddt fatturati')) {
+        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
 
-        // Navigazione diretta verso l'indirizzo
-        echo '
-                    <a class="btn btn-info btn-block" onclick="$(\'#map-edit\').height(235); caricaMappa(); $(this).hide();">
-                        <i class="fa fa-compass"></i> '.tr('Carica mappa').'
-                    </a>';
-
-        // Navigazione diretta verso l'indirizzo
-        echo '
-                    <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                        <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                    </a>';
+        if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
+            echo'
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
+        } else {
+            $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+            echo'
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+        }
     } else {
-        // Navigazione diretta verso l'indirizzo
-        echo '
-                    <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                        <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                    </a>';
-
-        // Ricerca diretta su Mappa
-        echo '
-                    <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
-                        <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
-                        '.((!empty($sede_anagrafica->lat)) ? tr(' (GPS)') : '').'
-                    </a>';
+        echo'    
+        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
 
-echo '
+        echo'
+        </div>
+    </div>
+    
+	<!-- DATI INTESTAZIONE -->
+    <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Dati cliente').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="card-body">
+                <!-- RIGA 1 -->
+                <div class="row">
+                    <div class="col-md-3">
+                        '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
+                        {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
+                    </div>';
+                    if ($dir == 'entrata') {
+                        echo '
+                    <div class="col-md-3">';
+                        if ($record['idagente'] != 0) {
+                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                        }
+                        echo '
+                        {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    </div>';
+                    }
+                    echo'
+                    <div class="col-md-3">';
+                    if (!empty($record['idreferente'])) {
+                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    }
+                    echo '
+                        {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
+                    </div>
                 </div>
             </div>
-
-            <script>
-                function modificaPosizione() {
-                    openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
-                }
-
-                function cercaOpenStreetMap() {
-                    const indirizzo = getIndirizzoAnagrafica();
-                    if (indirizzo[0] && indirizzo[1]) {
-                        window.open("https://www.openstreetmap.org/?mlat=" + indirizzo[0] + "&mlon=" + indirizzo[1] + "#map=12/" + indirizzo[0] + "/" + indirizzo[1]);
-                    } else {
-                        window.open("https://www.openstreetmap.org/search?query=" + indirizzo[2]);
-                    }
-                }
-
-                function calcolaPercorso() {
-                    const indirizzo_partenza = getIndirizzoAzienda();
-                    const indirizzo_destinazione = getIndirizzoAnagrafica();
-                    window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione[0] + "," + indirizzo_destinazione[1]);
-                }
-
-                function getIndirizzoAzienda() {
-                    const indirizzo = "'.$sede_azienda->indirizzo.'";
-                    const citta = "'.$sede_azienda->citta.'";
-
-                    const lat = parseFloat("'.$sede_azienda->lat.'");
-                    const lng = parseFloat("'.$sede_azienda->lng.'");
-
-                    return lat + "," + lng;
-                }
-
-                function getIndirizzoAnagrafica() {
-                    const indirizzo = "'.$sede_anagrafica->indirizzo.'";
-                    const citta = "'.$sede_anagrafica->citta.'";
-
-                    const lat = parseFloat("'.$sede_anagrafica->lat.'");
-                    const lng = parseFloat("'.$sede_anagrafica->lng.'");
-
-                    const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
-
-                    return [lat, lng, indirizzo_default];
-                }
-
-                var map = null;
-                function caricaMappa() {
-                    const lat = parseFloat("'.$sede_anagrafica->lat.'");
-                    const lng = parseFloat("'.$sede_anagrafica->lng.'");
-                
-                    var container = L.DomUtil.get("map-edit"); 
-                    if(container._leaflet_id != null){ 
-                        map.eachLayer(function (layer) {
-                            if(layer instanceof L.Marker) {
-                                map.removeLayer(layer);
-                            }
-                        });
-                    } else {
-                        map = L.map("map-edit", {
-                            gestureHandling: true
-                        });
-                
-                        L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
-                            maxZoom: 17,
-                            attribution: "© OpenStreetMap"
-                        }).addTo(map); 
-                    }
-                
-                    var icon = new L.Icon({
-                        iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-                        shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-
-                    var marker = L.marker([lat, lng], {
-                        icon: icon
-                    }).addTo(map);
-                
-                    map.setView([lat, lng], 10);
-                }
-            </script>';
+        </div>
+    </div>';
 ?>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- INTESTAZIONE -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><?php echo tr('Intestazione'); ?></h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <?php
+                            if ($dir == 'uscita') {
+                                echo '
+                        <div class="col-md-2">
+                            {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
+                        </div>';
+                            }
+?>   
+                        <div class="col-md-2">
+                            {[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+                        </div>
+
+                        <div class="col-md-2">
+                            {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
+                        </div>
+<?php          
+
+// Conteggio numero articoli ddt in uscita
+$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
+$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);
+if ($dir == 'entrata') {
+    echo '
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                        </div>';
+} else {
+    echo '
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                        </div>';
+}
+?>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                        </div>
+                        <div class="col-md-2">
+                            {[ "type": "number", "label": "Sconto in fattura", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -371,9 +261,6 @@ echo '
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
-				</div>
 
                 <div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$" ]}
@@ -388,7 +275,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -436,31 +323,25 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
 
 if ($dir == 'entrata') {
     echo '
-        <div class="row">
-            <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'">
-            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                    <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'">
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value":"$peso_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
-            </div>
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value":"$peso_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$ddt->volume_calcolato.'">
-            </div>
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                    <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$ddt->volume_calcolato.'">
+                </div>
 
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value":"$volume_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                {[ "type": "number", "label": "Sconto in fattura", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
-            </div>
-        </div>';
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value":"$volume_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
+                </div>
+            </div>';
 }
 
 ?>
@@ -500,20 +381,20 @@ if ($dir == 'entrata') {
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
                 </div>
             </div>

@@ -31,19 +31,19 @@ use Modules\Preventivi\Preventivo;
 use Modules\Scadenzario\Scadenza;
 
 // Anagrafica
-$anagrafica = $fattura->anagrafica;
+$anagrafica = $ddt->anagrafica;
 
 // Sede
-if ($fattura->idsede_destinazione) {
-    $sede = $dbo->selectOne('an_sedi', '*', ['id' => $fattura->idsede_destinazione]);
+if ($ddt->idsede_destinazione) {
+    $sede = $dbo->selectOne('an_sedi', '*', ['id' => $ddt->idsede_destinazione]);
 } else {
     $sede = $anagrafica->toArray();
 }
 
 // Referente
 $referente = null;
-if ($fattura->idreferente) {
-    $referente = $dbo->selectOne('an_referenti', '*', ['id' => $fattura->idreferente]);
+if ($ddt->idreferente) {
+    $referente = $dbo->selectOne('an_referenti', '*', ['id' => $ddt->idreferente]);
 }
 
 // Contratto
@@ -52,8 +52,8 @@ $ore_erogate = 0;
 $ore_previste = 0;
 $perc_ore = 0;
 $color = 'danger';
-if ($fattura->id_contratto) {
-    $contratto = Contratto::find($fattura->id_contratto);
+if ($ddt->id_contratto) {
+    $contratto = Contratto::find($ddt->id_contratto);
     $ore_erogate = $contratto->interventi->sum('ore_totali');
     $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
     $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / $ore_previste : 0;
@@ -66,33 +66,24 @@ if ($fattura->id_contratto) {
 
 // Preventivo
 $preventivo = null;
-if ($fattura->id_preventivo) {
-    $preventivo = Preventivo::find($fattura->id_preventivo);
+if ($ddt->id_preventivo) {
+    $preventivo = Preventivo::find($ddt->id_preventivo);
 }
 
 // Ordine
 $ordine = null;
-if ($fattura->id_ordine) {
-    $ordine = Ordine::find($fattura->id_ordine);
+if ($ddt->id_ordine) {
+    $ordine = Ordine::find($ddt->id_ordine);
 }
 
-// Attività
-$interventi_programmati = Intervento::select('in_interventi.*')
-    ->join('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
-    ->where('idanagrafica', $intervento->idanagrafica)
-    ->where('idsede_destinazione', $intervento->idsede_destinazione)
-    ->where('is_completato', '!=', 1)
-    ->where('in_interventi.id', '!=', $id_record)
-    ->get();
-
 // Insoluti
-$insoluti = Scadenza::where('idanagrafica', $fattura->idanagrafica)
+$insoluti = Scadenza::where('idanagrafica', $ddt->idanagrafica)
     ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
     ->whereRaw('co_scadenziario.scadenza < NOW()')
     ->count();
 
 // Logo
-$logo = Upload::where('id_module', (new Module())->getByField('title', 'Anagrafiche'))->where('id_record', $fattura->idanagrafica)->where('name', 'Logo azienda')->first()->filename;
+$logo = Upload::where('id_module', (new Module())->getByField('title', 'Anagrafiche'))->where('id_record', $ddt->idanagrafica)->where('name', 'Logo azienda')->first()->filename;
 
 $logo = $logo ? base_path().'/files/anagrafiche/'.$logo : App::getPaths()['img'].'/logo_header.png';
 
@@ -128,22 +119,14 @@ echo '
     <div class="col-md-4">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Panoramica fattura num. ').$fattura->numero_esterno.'</h3>
+                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Panoramica ddt num. ').$ddt->codice.'</h3>
             </div>
             <div class="card-body">
 
                 <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
-                </p>
-
-                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti attività programmate') : 'Attività aperte:');
-if (count($interventi_programmati) != 0) {
-    foreach ($interventi_programmati as $intervento_programmato) {
-        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
-    }
-}
-echo '
                 </p>';
+                
 // Contratto
 if ($contratto) {
     echo '
@@ -182,10 +165,10 @@ echo '
     </div>';
 
 // Geolocalizzazione
-$anagrafica_cliente = $fattura->anagrafica;
+$anagrafica_cliente = $ddt->anagrafica;
 $sede_cliente = $anagrafica_cliente->sedeLegale;
-if (!empty($fattura->idsede_destinazione)) {
-    $sede_cliente = Sede::find($fattura->idsede_destinazione);
+if (!empty($ddt->idsede_destinazione)) {
+    $sede_cliente = Sede::find($ddt->idsede_destinazione);
 }
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));

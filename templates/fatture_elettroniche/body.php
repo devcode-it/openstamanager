@@ -28,7 +28,7 @@ if (empty($file)) {
     echo '<div class="text-center">'.tr('Questo documento non possiede una fattura elettronica associata').'</div>';
 } else {
     if ($file->isFatturaElettronica()) {
-        $content = file_get_contents(base_dir().'/'.$file->filepath);
+        $content = $file->get_contents();
 
         // Individuazione stylesheet
         $default_stylesheet = 'asso-invoice';

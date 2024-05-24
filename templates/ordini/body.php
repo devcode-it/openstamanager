@@ -411,4 +411,3 @@ if (!empty($documento['note'])) {
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
 <p>'.nl2br((string) $documento['note']).'</p>';
 }
-

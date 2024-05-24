@@ -279,7 +279,7 @@ class Contratto extends Document
                 'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
                 'MONTH(data_bozza) = '.prepare(date('m', strtotime((string) $data))),
             ]);
-        } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
+        } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [
                 'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
             ]);

@@ -289,7 +289,7 @@ $query .= ' ORDER BY `title`';
 
     <?php }
     echo '
-        <div class="col-md-2'.($dir == 'uscita' ? ' offset-md-10':'').'">
+        <div class="col-md-2'.($dir == 'uscita' ? ' offset-md-10' : '').'">
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
         </div>
     </div>

@@ -112,8 +112,8 @@ if (!empty($destinazione)) {
                     <p><small>$c_destinazione$</small></p>
                 </td>
             </tr>';
-            if ($codice_destinatario) {
-                echo'        
+    if ($codice_destinatario) {
+        echo '        
             <tr>
                 <td>
                     <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
@@ -122,7 +122,7 @@ if (!empty($destinazione)) {
                     <small>'.$codice_destinatario.'</small>
                 </td>
             </tr>';
-            }
+    }
 }
 
 echo '

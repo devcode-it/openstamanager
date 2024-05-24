@@ -207,7 +207,7 @@ class Ordine extends Document
                     'MONTH(data) = '.prepare(date('m', strtotime($data))),
                     'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
                 ]);
-            } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
+            } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
                 $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
                     'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                     'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
@@ -247,7 +247,7 @@ class Ordine extends Document
                 'MONTH(data) = '.prepare(date('m', strtotime($data))),
                 'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
             ]);
-        } elseif ((str_contains($maschera, 'YYYY')) or (str_contains($maschera, 'yy'))) {
+        } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
             $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
                 'YEAR(data) = '.prepare(date('Y', strtotime($data))),
                 'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',

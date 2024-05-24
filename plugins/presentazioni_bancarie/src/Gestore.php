@@ -495,7 +495,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $xml);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         // File per il pagamento delle vendite SEPA CBI

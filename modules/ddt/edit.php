@@ -92,7 +92,7 @@ if (!empty($id_sede_azienda)) {
     $sede_azienda = Sede::find($id_sede_azienda);
 }
 
-echo'
+echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -100,26 +100,26 @@ echo'
 
     <div class="row">
         <div class="col-md-2 offset-md-10">';
-        if (setting('Cambia automaticamente stato ddt fatturati')) {
-        $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+if (setting('Cambia automaticamente stato ddt fatturati')) {
+    $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+    $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
 
-        if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
-            echo'
+    if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
+        echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
-        } else {
-            $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
-            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-            echo'
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
-        }
     } else {
-        echo'    
-        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+        $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+        $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+        echo '
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
+} else {
+    echo '    
+        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+}
 
-        echo'
+echo '
         </div>
     </div>
     
@@ -142,22 +142,22 @@ echo'
                         '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                         {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                     </div>';
-                    if ($dir == 'entrata') {
-                        echo '
+if ($dir == 'entrata') {
+    echo '
                     <div class="col-md-3">';
-                        if ($record['idagente'] != 0) {
-                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
-                        echo '
+    if ($record['idagente'] != 0) {
+        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    }
+    echo '
                         {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                     </div>';
-                    }
-                    echo'
+}
+echo '
                     <div class="col-md-3">';
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                         {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                     </div>
                 </div>
@@ -190,7 +190,7 @@ echo'
                         <div class="col-md-2">
                             {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
                         </div>
-<?php          
+<?php
 
 // Conteggio numero articoli ddt in uscita
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));

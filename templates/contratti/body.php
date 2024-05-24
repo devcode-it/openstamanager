@@ -67,18 +67,18 @@ echo '
                 <p> {PAGENO}/{nb} </p>
             </td>
         </tr>';
-        if (!empty($impianti)) {
-            $list = [];
-            foreach ($impianti as $impianto) {
-                $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
-            }
-        
-            echo '
+if (!empty($impianti)) {
+    $list = [];
+    foreach ($impianti as $impianto) {
+        $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
+    }
+
+    echo '
                 <br>
                 <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
                 <p><small>'.implode(', ', $list).'</small></p>';
-        }
-        echo'
+}
+echo '
     </table>
 </div>
 

@@ -448,7 +448,7 @@ function session_get($name, $default = null)
 /**
  * Imposta un parametro nella sessione secondo un nome indicato.
  *
- * @param string $name  Nome del parametro in dot-notation
+ * @param string $name Nome del parametro in dot-notation
  *
  * @return void
  */

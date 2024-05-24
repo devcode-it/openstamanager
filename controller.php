@@ -55,13 +55,13 @@ echo '
 					<h1>
 						<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
-    // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-    if ($structure->hasAddFile() && $structure->permission == 'rw') {
-        echo '
-					<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
-    }
-
+// Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
+if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
+					<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+}
+
+echo '
 				</h1>
 			</div>
 		</div>

@@ -228,12 +228,10 @@ if (!$has_settings) {
                     <div class="row">';
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
-
             echo '  
                         <div class="col-md-4">
                             '.Settings::input($setting, $required).'
                         </div>';
-        
         }
     }
 

@@ -547,8 +547,7 @@ class Validator
     public function __construct(
         /** @var string XML da validare */
         protected $xml
-    )
-    {
+    ) {
     }
 
     /**

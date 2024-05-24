@@ -19,13 +19,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Carbon\Carbon;
 use Models\Module;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Contratti\Contratto;
-use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 use Modules\Scadenzario\Scadenza;
@@ -126,7 +124,7 @@ echo '
                 <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>';
-                
+
 // Contratto
 if ($contratto) {
     echo '

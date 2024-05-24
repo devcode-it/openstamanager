@@ -44,7 +44,7 @@ if ($righe_vuote) {
     </div>';
 }
 
-echo'
+echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -52,29 +52,29 @@ echo'
 
     <div class="row">
         <div class="col-md-2 offset-md-10">';
-        if (setting('Cambia automaticamente stato ordini fatturati')) {
-            $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-            $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-            $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-            $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
-            $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
+if (setting('Cambia automaticamente stato ordini fatturati')) {
+    $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+    $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+    $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
+    $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+    $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
 
-            if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
-                ?>
+    if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
+        ?>
                 {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
                 <?php
-            } else {
-                ?>
+    } else {
+        ?>
                 {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
                 <?php
-            }
-        } else {
-            ?>
+    }
+} else {
+    ?>
             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
             <?php
-        }
+}
 
-        echo '
+echo '
         </div>
     </div>
 
@@ -94,7 +94,7 @@ echo'
                 <!-- RIGA 1 -->
                 <div class="row">
                     <div class="col-md-3">';
-                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
 if ($dir == 'entrata') {
     ?>
@@ -105,14 +105,14 @@ if ($dir == 'entrata') {
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
 }
-echo'
+echo '
                     </div>
 
                     <div class="col-md-3">';
-                    if (!empty($record['idreferente'])) {
-                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                         {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
                     </div>
                     
@@ -120,17 +120,17 @@ echo'
                         {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
                     </div>';
 
-                    if ($dir == 'entrata') {
-                        echo '
+if ($dir == 'entrata') {
+    echo '
                     <div class="col-md-3">';
-                        if ($record['idagente'] != 0) {
-                        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-                        }
-                        echo '
+    if ($record['idagente'] != 0) {
+        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    }
+    echo '
                         {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                     </div>';
-                    }
-                    echo'
+}
+echo '
                 </div>
             </div>
         </div>

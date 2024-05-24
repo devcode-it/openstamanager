@@ -189,7 +189,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo(new Module())->getByField('title', 'Tags'); ?>|" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Tags'); ?>|" ]}
                 </div>
             </div>
 

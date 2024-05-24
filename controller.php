@@ -48,32 +48,33 @@ if ($segmenti) {
 
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
-	<section class="content-header">
-		<div class="container-fluid">
-			<div class="row mb-2">
-				<div class="col-sm-6">
-					<h1>
-						<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
+<section class="content-header">
+	<div class="container-fluid">
+		<div class="row mb-2">
+			<div class="col-sm-6">
+				<h1>
+					<i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title');
 
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
-					<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }
 
 echo '
 				</h1>
 			</div>
 		</div>
-	</section>
+	</div>
+</section>
 
-	<div class="tab-content">
-		<div id="tab_0" class="tab-pane active">';
+<div class="tab-content">
+	<div id="tab_0" class="tab-pane active">';
 
 include base_dir().'/include/manager.php';
 
 echo '
-		</div>';
+	</div>';
 
 // Plugin
 $module_record = $record;
@@ -81,14 +82,14 @@ foreach ($plugins as $plugin) {
     $record = $module_record;
 
     echo '
-		<div id="tab_'.$plugin->id.'" class="tab-pane">';
+	<div id="tab_'.$plugin->id.'" class="tab-pane">';
 
     $id_plugin = $plugin->id;
 
     include base_dir().'/include/manager.php';
 
     echo '
-		</div>';
+	</div>';
 }
 
 $record = $module_record;
@@ -99,14 +100,15 @@ redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
 if ($user->is_admin && string_contains($module['option'], '|select|')) {
     echo '
 	<br>
-<div class="row">
-	<div class="col-md-12 text-right">
-		<a class="btn btn-xs btn-default " style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
-			<i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
-		</a>
+	<div class="row">
+		<div class="col-md-12 text-right">
+			<a class="btn btn-xs btn-default " style="margin-top: -1.25rem;" onclick="modificaColonne(this)">
+				<i class="fa fa-th-list"></i> '.tr('Modifica colonne').'
+			</a>
+		</div>
 	</div>
-</div>
-<div class="clearfix" >&nbsp;</div>
+	<div class="clearfix" >&nbsp;
+	</div>
 
 <script>
 function modificaColonne(button) {
@@ -115,7 +117,8 @@ function modificaColonne(button) {
 </script>';
 }
 
-echo '</div>';
+echo '
+</div>';
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';

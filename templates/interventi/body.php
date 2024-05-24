@@ -31,78 +31,104 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
     Dati intervento
 */
 echo '
-<table class="table table-bordered">
+<table class="table border-bottom">
     <tr>
-        <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Rapporto attività e interventi', [], ['upper' => true]).'</th>
+        <th colspan="4" class="text-center" style="font-size:11pt;">'.tr('Rapporto attività', [], ['upper' => true]).'</th>
+    </tr>
+    
+    <tr>
+        <td>
+            <p class="small-bold text-muted">'.tr('Cliente', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$c_ragionesociale.'
+        </td>';
+        // Indirizzo
+if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
+    echo '
+
+        <td>
+            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).')
+        </td>';
+
+} elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+    echo '
+
+        <td>
+            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')
+        </td>';
+}
+echo'
+    </tr>
+    <tr>
+        <td>
+            <p class="small-bold text-muted">'.tr('Attività n.', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$documento['codice'].'
+        </td>
+        <td>
+            <p class="small-bold text-muted">'.tr('Data richiesta', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.Translator::dateToLocale($documento['data_richiesta']).'
+        </td>
+    </tr>';
+
+    // Dati cliente
+
+    if (!empty($preventivo) or !empty($contratto)) {
+    echo '
+    <tr>
+        <td>
+            <p class="small-bold text-muted">'.tr('Preventivo n.', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : 'Nessuno').'
+        </td>
+        <td>
+            <p class="small-bold text-muted">'.tr('Contratto n.', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : 'Nessuno').'
+        </td>
+    </tr>';
+    }
+    
+    echo'
+    <tr>
+        <td>
+            <p class="small-bold text-muted">'.tr('P.Iva', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.strtoupper((string) $c_piva).'
+        </td>
+        <td>
+            <p class="small-bold text-muted">'.tr('C.F.', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.strtoupper((string) $c_codicefiscale).'
+        </td>
     </tr>
 
     <tr>
-        <td class="text-left" style="width:30%">'.tr('Intervento n.').': <b>'.$documento['codice'].'</b></td>
-        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto) ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>';
-if (!empty($preventivo)) {
-    echo '
-        <td class="text-left" colspan="2" style="width:20%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : '').'</b></td>';
-} elseif (!empty($contratto)) {
-    echo '
-        <td class="text-left" colspan="2" style="width:20%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : '').'</b></td>';
-}
-echo '
-    </tr>';
-
-// Dati cliente
-echo '
-        <tr>
-            <td colspan=2>
-                '.tr('Cliente').': <b>'.$c_ragionesociale.'</b>
-            </td>';
-
-// Codice fiscale o P.Iva
-
-if (!empty($c_piva)) {
-    echo '
-				<td colspan=2>
-					'.tr('P.Iva').': <b>'.strtoupper((string) $c_piva).'</b>
-				</td>';
-} else {
-    echo '
-    			<td colspan=2>
-    				'.tr('C.F.').': <b>'.strtoupper((string) $c_codicefiscale).'</b>
-    			</td>';
-}
-
-echo '</tr>';
-
-// Indirizzo
-if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
-    echo '
-			<tr>
-				<td colspan="4">
-					'.((!empty($s_indirizzo)) ? tr('Via').': <b>'.$s_indirizzo.'</b>' : '').'
-					'.((!empty($s_cap)) ? tr('CAP').': <b>'.$s_cap.'</b>' : '').'
-					'.((!empty($s_citta)) ? tr('Città').': <b>'.$s_citta.'</b>' : '').'
-					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper((string) $s_provincia).'</b>' : '').'
-				</td>
-			</tr>';
-} elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
-    echo '
-			<tr>
-				<td colspan="4">
-					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
-					'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
-					'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
-					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper((string) $c_provincia).'</b>' : '').'
-				</td>
-			</tr>';
-}
-
-echo '
-    <tr>
-        <td colspan="4">
-            '.tr('Telefono').': <b>'.$c_telefono.'</b>';
-if (!empty($c_cellulare)) {
-    echo ' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
-}
-echo '
+        <td>
+            <p class="small-bold text-muted">'.tr('Telefono', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$c_telefono.'
+        </td>
+        <td>
+            <p class="small-bold text-muted">'.tr('Cellulare', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$c_cellulare.'
         </td>
     </tr>';
 
@@ -115,16 +141,17 @@ for ($j = 0; $j < count($rs2); ++$j) {
 }
 echo '
     <tr>
-        <td colspan="4">
-        '.tr('Impianti').': '.implode(', ', $impianti).'
+        <td>
+            <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
         </td>
-    </tr>';
-
-// Tipo intervento
-echo '
-    <tr>
-        <td colspan="4">
-            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->getTranslation('title').'
+        <td class="text-right">
+            '.implode(', ', $impianti).'
+        </td>
+        <td>
+            <p class="small-bold text-muted">'.tr('Tipo intervento', [], ['upper' => true]).'</p>
+        </td>
+        <td class="text-right">
+            '.$documento->tipo->getTranslation('title').'
         </td>
     </tr>';
 
@@ -132,8 +159,10 @@ echo '
 // Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
-        <td colspan="4" style="height:20mm;">
-            <b>'.tr('Richiesta').':</b>
+        <td colspan="2">
+            <p class="small-bold text-muted">'.tr('Richiesta', [], ['upper' => true]).'</p>
+        </td>
+        <td style="width:350px" colspan="2" class="text-right">
             <p>'.$documento['richiesta'].'</p>
         </td>
     </tr>';
@@ -142,13 +171,13 @@ echo '
 // Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
-        <td colspan="4" style="height:20mm;">
-            <b>'.tr('Descrizione').':</b>
+        <td colspan="2">
+            <p class="small-bold text-muted">'.tr('Descrizione', [], ['upper' => true]).'</p>
+        </td>
+        <td style="width:350px" colspan="2" class="text-right">
             <p>'.$documento['descrizione'].'</p>
         </td>
-    </tr>';
-
-echo '
+    </tr>
 </table>';
 
 $righe = $documento->getRighe();
@@ -174,7 +203,7 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
 
 if (!$righe->isEmpty()) {
     echo '
-<table class="table table-bordered">
+<table class="table border-bottom">
     <thead>
         <tr>
             <th colspan="4" class="text-center">
@@ -183,19 +212,19 @@ if (!$righe->isEmpty()) {
         </tr>
 
         <tr>
-            <th style="font-size:8pt;width:50%" class="text-center">
+            <th style="font-size:8pt;width:50%" class="text-center text-muted">
                 <b>'.tr('Descrizione').'</b>
             </th>
 
-            <th style="font-size:8pt;width:15%" class="text-center">
+            <th style="font-size:8pt;width:15%" class="text-center text-muted">
                 <b>'.tr('Q.tà').'</b>
             </th>
 
-            <th style="font-size:8pt;width:15%" class="text-center">
+            <th style="font-size:8pt;width:15%" class="text-center text-muted">
                 <b>'.tr('Prezzo unitario').'</b>
             </th>
 
-            <th style="font-size:8pt;width:20%" class="text-center">
+            <th style="font-size:8pt;width:20%" class="text-center text-muted">
                 <b>'.tr('Importo').'</b>
             </th>
         </tr>
@@ -297,7 +326,7 @@ if (!$righe->isEmpty()) {
         // Totale spese aggiuntive
         echo '
     <tr>
-        <td colspan="3" class="text-right">
+        <td colspan="3" class="text-right text-muted">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
 
@@ -316,16 +345,16 @@ echo '
 <table class="table table-bordered vertical-middle">
     <thead>
         <tr>
-            <th class="text-center" colspan="5" style="font-size:11pt;">
+            <th class="text-center" colspan="5">
                 <b>'.tr('Ore tecnici', [], ['upper' => true]).'</b>
             </th>
         </tr>
         <tr>
-            <th class="text-center" style="font-size:8pt;width:30%">
+            <th class="text-center small-bold text-muted" style="font-size:8pt;width:30%">
                 <b>'.tr('Tecnico').'</b>
             </th>
 
-            <th class="text-center" colspan="3" style="font-size:8pt;width:35%">
+            <th class="text-center small-bold text-muted" colspan="3" style="font-size:8pt;width:35%">
                 <b>'.tr('Orario').'</b>
             </th>
 

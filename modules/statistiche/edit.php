@@ -142,6 +142,9 @@ var chart_options = {
                 }
             }
         },
+        legend: {
+            position: "bottom",
+        },
     }
 };
 
@@ -420,12 +423,6 @@ $(document).ready(function() {
                 '.$dataset.'
             ]
         },
-        options: {
-            responsive: true,
-            legend: {
-                position: "bottom",
-            },
-        }
     });
 });
 </script>';
@@ -480,12 +477,6 @@ $(document).ready(function() {
                 '.$dataset.'
             ]
         },
-        options: {
-            responsive: true,
-            legend: {
-                position: "bottom",
-            },
-        }
     });
 });
 </script>';
@@ -579,9 +570,6 @@ $(document).ready(function() {
         options: {
             responsive: true,
             indexAxis: "y",
-            legend: {
-                position: "bottom",
-            },
             scales: {
                 x: {
                     ticks: {

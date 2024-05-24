@@ -180,11 +180,12 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         </div>
 
         <div class="col-md-2 dropup">';
-
     if (!empty($bulk) && $structure->permission == 'rw' && empty($id_plugin)) {
         echo '
-            <button class="btn btn-primary btn-block dropdown-toggle actions-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
-            <div class="dropdown-menu dropup" data-target="'.$table_id.'" role="menu">';
+            <div class="btn-group">
+                
+                <button class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> '.tr('Azioni di gruppo').'   </button>
+                <div class="dropdown-menu dropdown-menu-right">';
 
         foreach ($bulk as $key => $value) {
             $text = is_array($value) ? $value['text'] : $value;
@@ -196,15 +197,15 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             }
 
             echo '
-                <a class="bulk-action clickable dropdown-item" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
+                <a class="bulk-action clickable dropdown-item" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a>';
         }
 
         echo '
+                </div>
             </div>';
     }
-
-    echo '
-        </div>
+    echo'
+            </div>
 
         <div class="col-md-5 text-right">
             <i class="fa fa-question-circle-o tip" title="'.tr('Le operazioni di esportazione, copia e stampa sono limitate alle righe selezionate e visibili della tabella').'. '.tr('Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo').'."></i>

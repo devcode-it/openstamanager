@@ -55,10 +55,7 @@ echo '
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 
     <div class="row">
-        <div class="col-md-2 offset-md-8">
-            {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.(new Module())->getByField('title', 'Tags').'|" ]}
-        </div>
-        <div class="col-md-2">
+        <div class="col-md-2 offset-md-10">
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}
         </div>
     </div>
@@ -188,10 +185,12 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                 <div class="col-md-2">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo(new Module())->getByField('title', 'Tags'); ?>|" ]}
+                </div>
             </div>
 
 <?php

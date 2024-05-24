@@ -211,7 +211,9 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 ('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Ridimensiona automaticamente le immagini caricate'), 'Ridimensiona automaticamente le immagini caricate', ''),
-('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Larghezza per ridimensionamento immagini', '');
+('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Larghezza per ridimensionamento immagini', ''),
+('2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Ridimensiona automaticamente le immagini caricate'), 'Auto resize uploaded images', ''),
+('2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Larghezza per ridimensionamento immagini'), 'Resizing images width', '');
 
 -- Allineamento icone
 UPDATE `zz_modules` SET `icon` = "fa fa-circle-o" WHERE `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = "Gestione email") AS b);

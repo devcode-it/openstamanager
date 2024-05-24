@@ -38,7 +38,7 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
 echo '
         <tr>
             <th width="5%" style="border-right: 0"></th>
-            <th class="text-right" style="border-left: 0;">
+            <th class="text-right text-muted" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
             <th class="text-center">'.$somma_km.'</td>
@@ -50,7 +50,7 @@ echo '
 
         <tr>
             <th width="5%" style="border-right: 0"></th>
-            <th class="text-right" style="border-left: 0;">
+            <th class="text-right text-muted" style="border-left: 0;">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
@@ -59,7 +59,7 @@ echo '
 
         <tr>
             <th width="5%" style="border-right: 0"></th>
-            <th class="text-right" style="border-left: 0;">
+            <th class="text-right text-muted" style="border-left: 0;">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>

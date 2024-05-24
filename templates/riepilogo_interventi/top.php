@@ -22,17 +22,18 @@ include_once __DIR__.'/../../core.php';
 $tipo = get('tipo');
 
 echo '
-<h4><b>'.tr('Riepilogo attività selezionate', [], ['upper' => true]).'</b></h4>
+<br>
+<h5 class="text-center"><b>'.tr('Riepilogo attività selezionate', [], ['upper' => true]).'</b></h5>
 
-<table class="table table-bordered">
+<table class="table border-bottom">
     <thead>
         <tr>
-            <th colspan="2"><small>'.tr('Documento', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:8%"><small>'.tr('KM', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:8%"><small>'.tr('Ore', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</th>
-            <th class="text-center" style="width:15%"><small>'.tr('Sconto', [], ['upper' => true]).'</small></th>
-            <th class="text-center" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
+            <th colspan="2" class="text-muted"><small>'.tr('Documento', [], ['upper' => true]).'</small></th>
+            <th class="text-center text-muted" style="width:8%"><small>'.tr('KM', [], ['upper' => true]).'</small></th>
+            <th class="text-center text-muted" style="width:8%"><small>'.tr('Ore', [], ['upper' => true]).'</small></th>
+            <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</th>
+            <th class="text-center text-muted" style="width:15%"><small>'.tr('Sconto', [], ['upper' => true]).'</small></th>
+            <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
         </tr>
     </thead>
 

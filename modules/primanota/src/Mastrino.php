@@ -22,6 +22,7 @@ namespace Modules\PrimaNota;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
 /*
  * Struttura ausiliaria dedicata alla raggruppamento e alla gestione di un insieme di Movimenti, unificati attraverso il numero di mastrino.
  *
@@ -112,31 +113,11 @@ class Mastrino extends Model
         $movimenti = $movimenti ?: $this->movimenti;
 
         // Aggiornamento delle scadenze per i singoli documenti
-        $documenti = [];
-        $scadenze = [];
+        $documenti = $this->getUniqueDocumenti($movimenti);
+        $scadenze = $this->getScadenzePerDocumenti($movimenti, $documenti);
+        
         foreach ($movimenti as $movimento) {
-            $scadenza = $movimento->scadenza;
-            $documento = $movimento->documento;
-
-            // Retrocompatibilità per versioni <= 2.4.11
-            if (!empty($documento)) {
-                if (!in_array($documento->id, $documenti)) {
-                    $documenti[] = $documento->id;
-
-                    $this->correggiScadenza($movimento, $scadenza, $documento);
-                }
-            } elseif (!empty($scadenza)) {
-                $id_documento = $scadenza->documento->id;
-
-                if (!in_array($id_documento, $documenti) && !in_array($scadenza->id, $scadenze)) {
-                    if (!empty($id_documento)) {
-                        $documenti[] = $id_documento;
-                    }
-                    $scadenze[] = $scadenza->id;
-
-                    $this->correggiScadenza($movimento, $scadenza);
-                }
-            }
+            $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento);
         }
 
         // Fix dello stato della Fattura
@@ -157,8 +138,35 @@ class Mastrino extends Model
                 $stato = 'Emessa';
             }
 
-            $database->query('UPDATE `co_documenti` SET `idstatodocumento` = (SELECT `co_statidocumento`.`id` FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `title` = '.prepare($stato).') WHERE id = '.prepare($id_documento));
+            $documento = Fattura::find($id_documento);
+            $stato = (new Stato())->getByField('title', $stato, \Models\Locale::getPredefined()->id);
+            $documento->stato()->associate($stato);
+            $documento->save();
         }
+    }
+
+    private function getUniqueDocumenti($movimenti)
+    {
+        $documentIds = [];
+        foreach ($movimenti as $movimento) {
+            if (!in_array($movimento->iddocumento, $documentIds)) {
+                $documentIds[] = $movimento->documento->id;
+            }
+        }
+        return $documentIds;
+    }
+
+    private function getScadenzePerDocumenti($movimenti, $documenti)
+    {
+        $scadenze = [];
+        foreach ($movimenti as $movimento) {
+            if (in_array($movimento->iddocumento, $documenti)) {
+                if (!in_array($movimento->id_scadenza, $scadenze[$movimento->iddocumento] ?? [])) {
+                    $scadenze[$movimento->iddocumento][] = $movimento->id_scadenza;
+                }
+            }
+        }
+        return $scadenze;
     }
 
     // Relazioni Eloquent
@@ -185,31 +193,29 @@ class Mastrino extends Model
     /**
      * Funzione dedicata alla distribuzione del totale pagato del movimento nelle relative scadenze associate.
      */
-    protected function correggiScadenza(Movimento $movimento, ?Scadenza $scadenza = null, ?Fattura $documento = null)
+    protected function correggiScadenza(Movimento $movimento, $scadenze = null, $documento = null)
     {
         $is_nota = false;
-        $documento = $documento ?: $scadenza->documento;
 
-        if ($scadenza && empty($documento)) {
-            $scadenze = [$scadenza];
-            $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
+        if ($scadenze) {
+            if (empty($documento)) {
+                $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
+            } else {
+                $dir = Fattura::find($documento)->direzione;
+            }
 
-            $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
+            $totale_da_distribuire = 0;
+            foreach ($scadenze as $scadenza) {
+                $totale_da_distribuire += Movimento::where('id_scadenza', '=', $scadenza->id)
                 ->where('totale', '>', 0)
                 ->sum('totale');
-        } elseif ($scadenza) {
-            $scadenze = [$scadenza];
-            $dir = $documento->direzione;
-
-            $totale_da_distribuire = Movimento::where('id_scadenza', '=', $scadenza->id)
-                ->where('totale', '>', 0)
-                ->sum('totale');
-        }
-
+            }
+        } 
+            
         // Gestione delle scadenze di un documento
         elseif ($documento) {
             $dir = $documento->direzione;
-            $scadenze = $documento->scadenze->sortBy('scadenza');
+            $scadenze = $documento->scadenze->sortBy('scadenza')->all();
 
             $movimenti = $documento->movimentiContabili;
 
@@ -233,7 +239,8 @@ class Mastrino extends Model
         // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
 
         foreach ($scadenze as $scadenza) {
-            $scadenza_da_pagare = abs($scadenza['da_pagare']);
+            $scadenza = Scadenza::find($scadenza);
+            $scadenza_da_pagare = abs($scadenza->da_pagare);
 
             // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
             if ($totale_da_distribuire <= 0) {

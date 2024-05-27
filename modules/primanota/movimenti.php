@@ -78,7 +78,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
         <tbody>';
 
     foreach ($righe as $riga) {
-        renderRiga($counter++, $riga);
+        renderRiga($counter++, $riga, $totale_dare, $totale_avere);
     }
 
     // Totale per controllare sbilancio
@@ -169,7 +169,9 @@ renderRiga('-id-',
     [
         'iddocumento' => '-id_documento-',
         'id_scadenza' => '-id_scadenza-',
-    ]
+    ],
+    $totale_dare,
+    $totale_avere
 );
 
 echo '
@@ -224,7 +226,7 @@ function controllaConti() {
 
     // Blocco degli input con valore non impostato
     $("input[id*=dare], input[id*=avere]").each(function() {
-        let conto_relativo = $(this).parent().parent().parent().find("select").val();
+        let conto_relativo = $(this).parent().parent().parent().parent().find("select").val();
 
         if (!conto_relativo) {
             $(this).prop("disabled", true);

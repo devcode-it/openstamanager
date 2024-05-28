@@ -214,6 +214,8 @@ if ($fattura !== null) {
                             swal("'.tr('Fattura inviata!').'", data.message, "success");
 
                             $(button).attr("disabled", true).addClass("disabled");
+                            // Ricarica la pagina dopo 3 secondi
+                            setTimeout(function() { location.reload(); }, 3000);
                         } else if (data.code === 301) {
                             swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
                             $(button).attr("disabled", true).addClass("disabled");

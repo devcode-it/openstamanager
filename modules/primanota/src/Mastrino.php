@@ -80,7 +80,13 @@ class Mastrino extends Model
 
     public function delete()
     {
+        // Per ogni movimento imposto il totale = 0
         $movimenti = $this->cleanup();
+        foreach ($movimenti as $movimento) {
+            $movimento->totale = 0;
+            $movimento->save();
+        }
+
         $this->aggiornaScadenzario($movimenti);
 
         return parent::delete();
@@ -150,7 +156,7 @@ class Mastrino extends Model
         $documentIds = [];
         foreach ($movimenti as $movimento) {
             if (!in_array($movimento->iddocumento, $documentIds)) {
-                $documentIds[] = $movimento->documento->id;
+                $documentIds[] = $movimento->iddocumento;
             }
         }
         return $documentIds;
@@ -193,22 +199,21 @@ class Mastrino extends Model
     /**
      * Funzione dedicata alla distribuzione del totale pagato del movimento nelle relative scadenze associate.
      */
-    protected function correggiScadenza(Movimento $movimento, $scadenze = null, $documento = null)
+    protected function correggiScadenza(Movimento $movimento, $scadenze = null, $id_documento = null)
     {
         $is_nota = false;
-
+        $documento = Fattura::find($id_documento);
+        
         if ($scadenze) {
             if (empty($documento)) {
                 $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
             } else {
-                $dir = Fattura::find($documento)->direzione;
+                $dir = $documento->direzione;
             }
 
             $totale_da_distribuire = 0;
             foreach ($scadenze as $scadenza) {
-                $totale_da_distribuire += Movimento::where('id_scadenza', '=', $scadenza->id)
-                ->where('totale', '>', 0)
-                ->sum('totale');
+                $totale_da_distribuire += $movimento['totale'];
             }
         } 
             

@@ -604,7 +604,7 @@ class Validator
             // Operazioni di normalizzazione
             // Formattazione decimali
             if ($info['type'] == 'decimal') {
-                if (in_array($key, ['PrezzoUnitario'])) {
+                if (in_array($key, ['PrezzoUnitario', 'Importo'])) {
                     $output = number_format($output, 6, '.', '');
                 } elseif (in_array($key, ['Quantita'])) {
                     // Se i decimali per la quantità sono < 2 li imposto a 2 che è il minimo per lo standard della fatturazione elettronica

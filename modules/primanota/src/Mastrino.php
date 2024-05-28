@@ -23,13 +23,14 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
+use Modules\Scadenzario\Scadenza;
+
 /*
  * Struttura ausiliaria dedicata alla raggruppamento e alla gestione di un insieme di Movimenti, unificati attraverso il numero di mastrino.
  *
  * Questa classe non è utilizzabile come normale modello Eloquent poichè non prevede operazioni di modifica a livello di database.
  * La creazione di un record può essere utilizzata per la gestione di un insieme di Movimenti, mentre l'eliminazione provoca la rimozione in cascata dei Movimenti associati al Mastrino.
  */
-use Modules\Scadenzario\Scadenza;
 
 class Mastrino extends Model
 {
@@ -203,54 +204,59 @@ class Mastrino extends Model
     {
         $is_nota = false;
         $documento = Fattura::find($id_documento);
-        
-        if ($scadenze) {
+        $totale_da_distribuire = 0;
+
+        if (!empty($scadenze)) {
             if (empty($documento)) {
                 $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
             } else {
                 $dir = $documento->direzione;
             }
 
-            $totale_da_distribuire = 0;
             foreach ($scadenze as $scadenza) {
-                $totale_da_distribuire += $movimento['totale'];
-            }
-        } 
-
-        $totale_da_distribuire = abs($totale_da_distribuire);
-
-        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
-        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-
-        foreach ($scadenze as $scadenza) {
-            $scadenza = Scadenza::find($scadenza);
-            $scadenza_da_pagare = abs($scadenza->da_pagare);
-
-            // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
-            if ($totale_da_distribuire <= 0) {
-                $pagato = 0;
+                $totale_da_distribuire += ($movimento['totale'] != 0 ? Movimento::where('id_scadenza', '=', $scadenza->id)
+                ->where('totale', '>', 0)
+                ->sum('totale') : 0);
             }
 
-            // Se il totale da distribuire è superiore al valore da pagare della scadenza, completa il pagamento
-            elseif ($totale_da_distribuire >= $scadenza_da_pagare) {
-                $pagato = $scadenza_da_pagare;
-                $totale_da_distribuire -= $scadenza_da_pagare;
+            $totale_da_distribuire = abs($totale_da_distribuire);
+
+            // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
+            // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+            foreach ($scadenze as $scadenza) {
+                $scadenza = Scadenza::find($scadenza);
+
+                if (empty($scadenza)) {
+                    continue;
+                }
+                $scadenza_da_pagare = abs($scadenza->da_pagare);
+
+                // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
+                if ($totale_da_distribuire <= 0) {
+                    $pagato = 0;
+                }
+
+                // Se il totale da distribuire è superiore al valore da pagare della scadenza, completa il pagamento
+                elseif ($totale_da_distribuire >= $scadenza_da_pagare) {
+                    $pagato = $scadenza_da_pagare;
+                    $totale_da_distribuire -= $scadenza_da_pagare;
+                }
+
+                // In caso alternativo, assegno il rimanente da distribuire interamente alla scadenza
+                else {
+                    $pagato = $totale_da_distribuire;
+                    $totale_da_distribuire = 0;
+                }
+
+                // Inversione di segno per la direzione del movimento contabile
+                $pagato = ($dir == 'uscita' ? -$pagato : $pagato);
+                $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
+
+                // Salvataggio delle informazioni
+                $scadenza->pagato = $pagato;
+                $scadenza->data_pagamento = $pagato ? $this->data : null;
+                $scadenza->save();
             }
-
-            // In caso alternativo, assegno il rimanente da distribuire interamente alla scadenza
-            else {
-                $pagato = $totale_da_distribuire;
-                $totale_da_distribuire = 0;
-            }
-
-            // Inversione di segno per la direzione del movimento contabile
-            $pagato = ($dir == 'uscita' ? -$pagato : $pagato);
-            $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
-
-            // Salvataggio delle informazioni
-            $scadenza->pagato = $pagato;
-            $scadenza->data_pagamento = $pagato ? $this->data : null;
-            $scadenza->save();
         }
     }
 }

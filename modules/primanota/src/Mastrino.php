@@ -216,27 +216,6 @@ class Mastrino extends Model
                 $totale_da_distribuire += $movimento['totale'];
             }
         } 
-            
-        // Gestione delle scadenze di un documento
-        elseif ($documento) {
-            $dir = $documento->direzione;
-            $scadenze = $documento->scadenze->sortBy('scadenza')->all();
-
-            $movimenti = $documento->movimentiContabili;
-
-            if ($dir == 'entrata') {
-                $totale_movimenti = $movimenti->where('totale', '<', 0)->where('is_insoluto', 0)->sum('totale');
-                $totale_insoluto = $movimenti->where('totale', '<', 0)->where('is_insoluto', 1)->sum('totale');
-            }
-
-            if ($dir == 'uscita') {
-                $totale_movimenti = $movimenti->where('totale', '>', 0)->where('is_insoluto', 0)->sum('totale');
-                $totale_insoluto = $movimenti->where('totale', '>', 0)->where('is_insoluto', 1)->sum('totale');
-            }
-
-            $totale_da_distribuire = $totale_movimenti - $totale_insoluto;
-            $is_nota = $documento->isNota();
-        }
 
         $totale_da_distribuire = abs($totale_da_distribuire);
 

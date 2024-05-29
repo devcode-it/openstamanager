@@ -96,7 +96,7 @@ switch (filter('op')) {
 
     case 'disabilita-modulo':
         $id = filter('id');
-        $is_plugin = filter('tipo') == 'plugin';
+        $is_plugin = (filter('tipo') == 'plugin');
 
         // Disabilitazione del modulo indicato
         $database->table($is_plugin ? 'zz_plugins' : 'zz_modules')
@@ -129,16 +129,11 @@ switch (filter('op')) {
             ->whereIn('id', $moduli_sempre_attivi)
             ->update(['enabled' => 1]);
 
-        // Messaggio informativo
-        $struttura = $is_plugin ? Plugin::find($id) : Module::find($id);
+        // Messaggio informativo'
         if (!$is_plugin) {
-            flash()->info(tr('Modulo "_NAME_" disabilitato!', [
-                '_NAME_' => $struttura->getTranslation('title'),
-            ]));
+            flash()->info(tr('Modulo disabilitato!'));
         } else {
-            flash()->info(tr('Plugin "_NAME_" disabilitato!', [
-                '_NAME_' => $struttura->getTranslation('title'),
-            ]));
+            flash()->info(tr('Plugin disabilitato!'));
         }
 
         echo json_encode([]);

@@ -324,7 +324,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                     '_TYPE_' => $nome_tipo,
                 ]).'">
-                    <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaModulo(this)">
+                    <button type="button" class="btn btn-warning" onclick="disabilitaModulo(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
                 </div>';
@@ -334,7 +334,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 if ($sotto_moduli_disabilitato) {
                     $result .= '
                 <div class="tip" data-widget="tooltip" title="'.tr('Abilita tutti i sotto-moduli').'">
-                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaSottoModuli(this)">
+                    <button type="button" class="btn btn-success" onclick="abilitaSottoModuli(this)">
                         <i class="fa fa-recycle" title="'.tr('Abilita sotto-moduli').'"></i>
                     </button>
                 </div>';
@@ -344,7 +344,7 @@ function renderElencoModuli($elenco, $depth = 0)
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                     '_TYPE_' => $nome_tipo,
                 ]).'">
-                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaModulo(this)">
+                    <button type="button" class="btn btn-success" onclick="abilitaModulo(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
                 </div>';
@@ -366,7 +366,7 @@ function renderElencoModuli($elenco, $depth = 0)
         if (empty($record['default'])) {
             $result .= '
                 <div class="tip" data-widget="tooltip" title="'.tr('Puoi disintallare questo modulo: clicca qui per procedere').'">
-                    <button type="button" class="btn btn-danger btn-xs" onclick="rimuoviModulo(this)">
+                    <button type="button" class="btn btn-danger" onclick="rimuoviModulo(this)">
                         <i class="fa fa-trash" title="'.tr('Disinstalla').'"></i>
                     </button>
                 </div>';

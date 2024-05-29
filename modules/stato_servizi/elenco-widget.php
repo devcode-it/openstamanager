@@ -79,7 +79,7 @@ foreach ($gruppi as $modulo => $widgets) {
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
-                    <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaWidget(this)">
+                    <button type="button" class="btn btn-warning" onclick="disabilitaWidget(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
                 </div>';
@@ -88,7 +88,7 @@ foreach ($gruppi as $modulo => $widgets) {
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
-                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaWidget(this)">
+                    <button type="button" class="btn btn-success" onclick="abilitaWidget(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
                 </div>';
@@ -106,14 +106,14 @@ foreach ($gruppi as $modulo => $widgets) {
                 </div>
 
                 <div class="tip" data-widget="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte laterale').'">
-                    <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
+                    <button type="button" class="btn btn-info" onclick="spostaWidget(this)">
                         <i class="fa fa-arrow-right" title="'.tr('Sposta').'"></i>
                     </button>
                 </div>';
         } else {
             echo '
                 <div class="tip" data-widget="tooltip" title="'.tr('Clicca qui per spostare il widget nella parte superiore').'">
-                    <button type="button" class="btn btn-info btn-xs" onclick="spostaWidget(this)">
+                    <button type="button" class="btn btn-info" onclick="spostaWidget(this)">
                         <i class="fa fa-arrow-up" title="'.tr('Sposta').'"></i>
                     </button>
                 </div>

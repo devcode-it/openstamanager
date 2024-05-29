@@ -124,7 +124,7 @@ switch (filter('op')) {
         }
 
         // Disabilitazione modulo/plugin indicato
-        $moduli_sempre_attivi = [(new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id)->id_record, (new Module())->getByField('title', 'Stato dei servizi', Models\Locale::getPredefined()->id)];
+        $moduli_sempre_attivi = [(new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id), (new Module())->getByField('title', 'Stato dei servizi', Models\Locale::getPredefined()->id)];
         $database->table('zz_modules')
             ->whereIn('id', $moduli_sempre_attivi)
             ->update(['enabled' => 1]);

@@ -75,7 +75,7 @@ foreach ($gruppi as $modulo => $hooks) {
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è abilitato: clicca qui per disabilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
-                    <button type="button" class="btn btn-warning btn-xs" onclick="disabilitaHook(this)">
+                    <button type="button" class="btn btn-warning" onclick="disabilitaHook(this)">
                         <i class="fa fa-power-off" title="'.tr('Disabilita').'"></i>
                     </button>
                 </div>';
@@ -84,7 +84,7 @@ foreach ($gruppi as $modulo => $hooks) {
                 <div class="tip" data-widget="tooltip" title="'.tr('Questo _TYPE_ è disabilitato: clicca qui per abilitarlo', [
                 '_TYPE_' => $nome_tipo,
             ]).'">
-                    <button type="button" class="btn btn-success btn-xs" onclick="abilitaHook(this)">
+                    <button type="button" class="btn btn-success" onclick="abilitaHook(this)">
                         <i class="fa fa-plug" title="'.tr('Abilita').'"></i>
                     </button>
                 </div>';
@@ -96,7 +96,7 @@ foreach ($gruppi as $modulo => $hooks) {
     }
 }
 
-echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-danger btn-xs pull-right" onclick="svuotaCacheHooks(this)">
+echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-danger pull-right" onclick="svuotaCacheHooks(this)">
     <i class="fa fa-trash" title="'.tr('Svuota cache degli hooks').'"></i> '.tr('Svuota cache').'</button>
     </td></tr>';
 

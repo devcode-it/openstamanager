@@ -185,7 +185,7 @@ switch (filter('op')) {
             }
         } else {
             $modulo = Module::find($id);
-            flash()->info(tr('Moduli sotto a "_NAME_" abilitati!', [
+            flash()->info(tr('Sottomoduli di "_NAME_" abilitati!', [
                 '_NAME_' => $struttura->getTranslation('title'),
             ]));
         }

@@ -320,7 +320,7 @@ foreach ($righe as $key => $riga) {
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right">
                 <b>'.tr('Subtotale', [], ['upper' => true]).':</b>
             </td>
             <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
@@ -330,7 +330,7 @@ foreach ($righe as $key => $riga) {
         if (!$options['no-iva']) {
             echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">

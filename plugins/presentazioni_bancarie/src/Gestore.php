@@ -481,7 +481,7 @@ class Gestore
 
             // Salvataggio del file
             file_put_contents(base_dir().'/'.$file, $content);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         // File per il pagamento degli acquisti SEPA

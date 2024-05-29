@@ -122,7 +122,7 @@ class Mastrino extends Model
         // Aggiornamento delle scadenze per i singoli documenti
         $documenti = $this->getUniqueDocumenti($movimenti);
         $scadenze = $this->getScadenzePerDocumenti($movimenti, $documenti);
-        
+
         foreach ($movimenti as $movimento) {
             $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento);
         }
@@ -150,30 +150,6 @@ class Mastrino extends Model
             $documento->stato()->associate($stato);
             $documento->save();
         }
-    }
-
-    private function getUniqueDocumenti($movimenti)
-    {
-        $documentIds = [];
-        foreach ($movimenti as $movimento) {
-            if (!in_array($movimento->iddocumento, $documentIds)) {
-                $documentIds[] = $movimento->iddocumento;
-            }
-        }
-        return $documentIds;
-    }
-
-    private function getScadenzePerDocumenti($movimenti, $documenti)
-    {
-        $scadenze = [];
-        foreach ($movimenti as $movimento) {
-            if (in_array($movimento->iddocumento, $documenti)) {
-                if (!in_array($movimento->id_scadenza, $scadenze[$movimento->iddocumento] ?? [])) {
-                    $scadenze[$movimento->iddocumento][] = $movimento->id_scadenza;
-                }
-            }
-        }
-        return $scadenze;
     }
 
     // Relazioni Eloquent
@@ -258,5 +234,31 @@ class Mastrino extends Model
                 $scadenza->save();
             }
         }
+    }
+
+    private function getUniqueDocumenti($movimenti)
+    {
+        $documentIds = [];
+        foreach ($movimenti as $movimento) {
+            if (!in_array($movimento->iddocumento, $documentIds)) {
+                $documentIds[] = $movimento->iddocumento;
+            }
+        }
+
+        return $documentIds;
+    }
+
+    private function getScadenzePerDocumenti($movimenti, $documenti)
+    {
+        $scadenze = [];
+        foreach ($movimenti as $movimento) {
+            if (in_array($movimento->iddocumento, $documenti)) {
+                if (!in_array($movimento->id_scadenza, $scadenze[$movimento->iddocumento] ?? [])) {
+                    $scadenze[$movimento->iddocumento][] = $movimento->id_scadenza;
+                }
+            }
+        }
+
+        return $scadenze;
     }
 }

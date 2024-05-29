@@ -204,7 +204,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
                 </div>
             </div>';
     }
-    echo'
+    echo '
             </div>
 
         <div class="col-md-5 text-right">

@@ -43,7 +43,7 @@ echo '
         <td class="text-right">
             '.$c_ragionesociale.'
         </td>';
-        // Indirizzo
+// Indirizzo
 if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
     echo '
 
@@ -53,7 +53,6 @@ if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_prov
         <td class="text-right">
             '.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).')
         </td>';
-
 } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
     echo '
 
@@ -64,7 +63,7 @@ if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_prov
             '.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')
         </td>';
 }
-echo'
+echo '
     </tr>
     <tr>
         <td>
@@ -81,9 +80,9 @@ echo'
         </td>
     </tr>';
 
-    // Dati cliente
+// Dati cliente
 
-    if (!empty($preventivo) or !empty($contratto)) {
+if (!empty($preventivo) or !empty($contratto)) {
     echo '
     <tr>
         <td>
@@ -99,9 +98,9 @@ echo'
             '.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : 'Nessuno').'
         </td>
     </tr>';
-    }
-    
-    echo'
+}
+
+echo '
     <tr>
         <td>
             <p class="small-bold text-muted">'.tr('P.Iva', [], ['upper' => true]).'</p>

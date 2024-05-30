@@ -81,7 +81,7 @@ echo '
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "class": "email-mask", "validation": "email" ]}
 		</div>
 		<div class="col-md-3">
-			{[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m",  "value": "0", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter_add", "id": "disable_newsletter_m",  "value": "0", "help": "'.tr("Blocco per l'invio delle email.").'" ]}
 		</div>
 	</div>
 	<div class="row">
@@ -89,10 +89,10 @@ echo '
 			{[ "type": "text", "label": "'.($record['tipo_anagrafica'] == 'Ente pubblico' ? tr('Codice unico ufficio') : tr('Codice destinatario')).'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": '.($record['tipo_anagrafica'] == 'Ente pubblico' ? '6' : '7').', "help": "'.tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>').'", "readonly": "'.intval($record['iso2'] ? $record['iso2'] != 'IT' : 0).'" ]}
 		</div>
 		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "0", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo_add", "id": "is_automezzo", "value": "0", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
 		</div>
 		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale", "value": "'.$record['is_rappresentante_fiscale'].'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Rappresentante fiscale').'", "name": "is_rappresentante_fiscale_add", "value": "'.$record['is_rappresentante_fiscale'].'", "help": "'.tr("Utilizza questa sede come rappresentante fiscale per l'anagrafica.").'" ]}
 		</div>
 	</div>
 	<div class="row">

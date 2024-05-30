@@ -54,7 +54,7 @@ $codice = Aliquota::max('codice') + 1;
 
 	<div class="row">
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente", "id": "esente-add", "value": "$esente$" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente_add", "id": "esente-add", "value": "$esente$" ]}
         </div>
 
 		<div class="col-md-4">

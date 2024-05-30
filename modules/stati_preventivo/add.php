@@ -35,15 +35,15 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Completato'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Completato'); ?>", "name": "is_completato_add", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
 		</div>
 
 		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Pianificabile'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Pianificabile'); ?>", "name": "is_pianificabile_add", "value": "$is_pianificabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
 		</div>
 
 		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile'); ?>", "name": "is_fatturabile_add", "value": "$is_fatturabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 		</div>
 		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "fa ", "extra": "" ]}

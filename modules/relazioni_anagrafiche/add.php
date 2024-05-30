@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "checkbox", "label": "<?php echo tr('Blocca anagrafiche collegate'); ?>", "name": "is_bloccata", "help":"<?php echo tr('Le anagrafiche associate a questa relazione saranno bloccate'); ?>." ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Blocca anagrafiche collegate'); ?>", "name": "is_bloccata_add", "help":"<?php echo tr('Le anagrafiche associate a questa relazione saranno bloccate'); ?>." ]}
 		</div>
 
 		<div class="col-md-3">

@@ -83,11 +83,11 @@ echo '
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile", "value": "'.setting('Crea contratto rinnovabile di default').'", "id": "rinnovabile_add", "help": "'.tr('Il contratto è rinnovabile?').'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Rinnovabile').'", "name": "rinnovabile_add", "value": "'.setting('Crea contratto rinnovabile di default').'", "id": "rinnovabile_add", "help": "'.tr('Il contratto è rinnovabile?').'" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico", "id": "rinnovo_automatico_add", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "disabled": 1 ]}
+                    {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico_add", "id": "rinnovo_automatico_add", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "disabled": 1 ]}
                 </div>
 
                 <div class="col-md-6">

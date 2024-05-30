@@ -47,8 +47,8 @@ switch (post('op')) {
         $contratto->tipo_validita = post('tipo_validita');
         $contratto->data_accettazione = post('data_accettazione') ?: null;
         $contratto->data_conclusione = post('data_conclusione') ?: null;
-        $contratto->rinnovabile = post('rinnovabile');
-        $contratto->rinnovo_automatico = post('rinnovo_automatico');
+        $contratto->rinnovabile = post('rinnovabile_add');
+        $contratto->rinnovo_automatico = post('rinnovo_automatico_add');
         $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
         $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
         $contratto->save();

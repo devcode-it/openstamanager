@@ -49,9 +49,9 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $completato = post('completato');
-        $is_fatturabile = post('is_fatturabile');
-        $impegnato = post('impegnato');
+        $completato = post('completato_add');
+        $is_fatturabile = post('is_fatturabile_add');
+        $impegnato = post('impegnato_add');
 
         $stato_new = Stato::find((new Stato())->getByField('title', $descrizione));
 

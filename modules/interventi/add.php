@@ -383,7 +383,7 @@ echo '
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva", "value": "" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva_add", "value": "" ]}
                 </div>
 
                 <div class="col-md-4 ricorrenza">
@@ -415,7 +415,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni", "value": "" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
                 </div>
             </div>
         </div>

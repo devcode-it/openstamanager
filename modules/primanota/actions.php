@@ -30,7 +30,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $is_insoluto = post('is_insoluto');
         $id_anagrafica = post('id_anagrafica');
-        $chiudi_scadenza = post('chiudi_scadenza');
+        $chiudi_scadenza = post('chiudi_scadenza_add');
         $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
 
         $conti = post('idconto');

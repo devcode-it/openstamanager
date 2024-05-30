@@ -33,7 +33,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-3">
-			{[ "type": "checkbox", "label": "<?php echo tr('Calcola km'); ?>", "id":"km", "name": "calcola_km", "help": "<?php echo tr('Flag per effettuare o meno il calcolo dei km percorsi tra sede azienda e sede cliente'); ?>.", "value": "1"  ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Calcola km'); ?>", "id":"km", "name": "calcola_km_add", "help": "<?php echo tr('Flag per effettuare o meno il calcolo dei km percorsi tra sede azienda e sede cliente'); ?>.", "value": "1"  ]}
 		</div>
 
 		<div class="col-md-2">

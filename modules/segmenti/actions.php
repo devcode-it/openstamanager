@@ -89,7 +89,7 @@ switch (post('op')) {
             'pattern' => $pattern,
             'note' => post('note'),
             'predefined' => $predefined ?: 0,
-            'is_sezionale' => post('is_sezionale'),
+            'is_sezionale' => post('is_sezionale_add'),
         ]);
 
         $id_record = $dbo->lastInsertedID();

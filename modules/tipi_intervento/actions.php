@@ -63,7 +63,7 @@ switch (post('op')) {
 
     case 'add':
         $codice = post('codice');
-        $calcola_km = post('calcola_km');
+        $calcola_km = post('calcola_km_add');
         $tempo_standard = post('tempo_standard');
         $costo_orario = post('costo_orario');
         $costo_km = post('costo_km');

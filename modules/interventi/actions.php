@@ -335,7 +335,7 @@ switch (post('op')) {
             }
         }
 
-        if (!empty(post('ricorsiva'))) {
+        if (!empty(post('ricorsiva_add'))) {
             $periodicita = post('periodicita');
             $data = post('data_inizio_ricorrenza');
             $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
@@ -384,7 +384,7 @@ switch (post('op')) {
                 $idintervento = $new->id;
 
                 // Inserimento sessioni
-                if (!empty(post('riporta_sessioni'))) {
+                if (!empty(post('riporta_sessioni_add'))) {
                     $numero_sessione = 0;
                     $sessioni = $intervento->sessioni;
                     foreach ($sessioni as $sessione) {

@@ -64,7 +64,7 @@ switch (filter('op')) {
     case 'add':
         $descrizione = post('descrizione');
         $codice = post('codice');
-        $esente = post('esente');
+        $esente = post('esente_add');
         $percentuale = empty($esente) ? post('percentuale') : 0;
         $codice_natura = post('codice_natura_fe') ?: '';
         $esigibilita = post('esigibilita');

@@ -335,7 +335,7 @@ if (empty($id_documenti) && !empty($id_scadenze)) {
     echo '
     <div class="row">
 		<div class="offset-md-9 col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Forza chiusura scadenza').'", "name": "chiudi_scadenza" ]}
+            {[ "type": "checkbox", "label": "'.tr('Forza chiusura scadenza').'", "name": "chiudi_scadenza_add" ]}
         </div>
     </div>';
 }

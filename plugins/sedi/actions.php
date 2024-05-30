@@ -26,7 +26,7 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addsede':
         if (!empty(post('nomesede'))) {
-            $opt_out_newsletter = post('disable_newsletter');
+            $opt_out_newsletter = post('disable_newsletter_add');
             $dbo->insert('an_sedi', [
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
@@ -42,8 +42,8 @@ switch ($operazione) {
                 'email' => post('email'),
                 'enable_newsletter' => empty($opt_out_newsletter),
                 'codice_destinatario' => post('codice_destinatario'),
-                'is_automezzo' => post('is_automezzo'),
-                'is_rappresentante_fiscale' => post('is_rappresentante_fiscale'),
+                'is_automezzo' => post('is_automezzo_add'),
+                'is_rappresentante_fiscale' => post('is_rappresentante_fiscale_add'),
                 'targa' => post('targa'),
                 'nome' => post('nome'),
                 'descrizione' => post('descrizione'),

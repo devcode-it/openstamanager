@@ -29,7 +29,7 @@ switch ($operazione) {
             $nome = post('nome');
             $idmansione = post('idmansione');
             $idsede = post('idsede');
-            $opt_out_newsletter = post('disable_newsletter');
+            $opt_out_newsletter = post('disable_newsletter_add');
 
             $referente = Referente::build($id_parent, $nome, $idmansione, $idsede);
             $id_record = $referente->id;

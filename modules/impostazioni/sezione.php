@@ -27,7 +27,7 @@ $impostazioni = Setting::where('sezione', $sezione)
 
 foreach ($impostazioni as $impostazione) {
     echo '
-    <div class="col-md-3">
+    <div class="col-md-4">
         '.Settings::input($impostazione->id).'
     </div>
 

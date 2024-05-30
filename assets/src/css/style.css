@@ -142,8 +142,8 @@ input[type=file] {
 }
 
 .square {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     margin: auto;
 }
 
@@ -378,7 +378,7 @@ span.form-control {
 
 .colorpicker,
 .colorpicker * {
-    z-index: 9999
+    z-index: 9999;
 }
 
 .signature-pad {

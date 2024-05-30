@@ -59,11 +59,10 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-			$('#modals > div #colore_').parent().find('.square').css( 'background', $('#modals > div #colore_').val() );
-		});
-
-		$('#modals > div #colore_').parent().find('.square').css( 'background', $('#modals > div #colore_').val() );
-	});
+    $(document).ready(function() {
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
+            $(this).parent().find('.square').css('background', $(this).val());
+        });
+        $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
+    });
 </script>

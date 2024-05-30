@@ -63,12 +63,12 @@ if (!empty($record['can_delete'])) {
 
 ?>
 <script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-		});
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-
+    $(document).ready(function() {
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
+            $(this).parent().find('.square').css('background', $(this).val());
+        });
+        $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
 		notifica();
 	});
+
 </script>

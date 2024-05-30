@@ -83,15 +83,13 @@ use Models\Module;
 </div>
 
 <script>
-	$(document).ready( function() {
-		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-		});
-
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-	});
+    $(document).ready(function() {
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
+            $(this).parent().find('.square').css('background', $(this).val());
+        });
+        $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
+    });
 </script>
-
 <?php
 
 $elementi = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT `id` FROM `my_impianti_categorie` WHERE `parent`='.prepare($id_record).'))');

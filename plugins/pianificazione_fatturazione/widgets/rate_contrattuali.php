@@ -36,32 +36,35 @@ $mesi = [
     12 => 'Dicembre',
 ];
 
-echo '<div class="container"
+echo '
+<div class="container">
     <div class="row">
         <div class="col-md-2 offset-md-9">
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
 for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
     $selectType = ($i == date('Y')) ? 'selected' : '';
-    echo '<option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
+    echo '      <option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
 }
 
-echo '</select><br>
+echo '      </select>
         </div>
     </div>
-    <div class="div-month">';
+    <div class="div-month row">';
 for ($i = 1; $i <= 12; ++$i) {
     $btnType = ($i == date('m')) ? 'btn-primary' : '';
-    echo '<div class="col-md-1">
-                <a class="btn btn-month '.$btnType.'" data-month="'.$i.'" style="cursor:pointer" onclick="month_click($(this))">'.
-    $mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
-            </div>';
+    echo '
+        <div class="col-md-1">
+            <a class="btn btn-month '.$btnType.'" data-month="'.$i.'" style="cursor:pointer" onclick="month_click($(this))">'.$mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
+        </div>';
 }
 
-echo '</div>';
+echo '
+    </div>';
 
-echo '<div style="display:none" class="template-month">
-        <div class="col-md-1 " style="margin:10px 0px; padding:0px;">
+echo '
+    <div style="display:none" class="template-month">
+        <div class="col-md-1" style="margin:0px 0px; padding:0px;">
             <a class="btn btn-month" onclick="month_click($(this))">
                 <div class="text"></div>
                 <div class="text-count"></div>
@@ -80,7 +83,8 @@ echo '<div style="display:none" class="template-month">
 
     <?php
 
-echo '<div>
+echo '
+    <div>
         <table id="tbl-rate" class="table-rate table table-hover table-striped">
             <thead>
                 <tr>
@@ -120,7 +124,7 @@ foreach ($pianificazioni as $pianificazione) {
         '_NUM_' => numberFormat($numero_pianificazioni, 0),
         '_TOT_' => moneyFormat($contratto->totale),
     ]).
-            '</small>
+            '           </small>
                     </td>';
 
     // Pulsanti
@@ -130,12 +134,12 @@ foreach ($pianificazioni as $pianificazione) {
                             <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                         </button>
                     </td>
-                    </tr>';
+                </tr>';
 }
 
 echo '</tbody>
-                    <tfoot style="display:none">
-                    <tr>
+                <tfoot style="display:none">
+                <tr>
 
                     <td class="seleziona">
                         <div class="form-check">
@@ -239,11 +243,11 @@ function update_month(currentMonth, currentYear) {
             $div.html("");
             for (var i=1; i<=12; i++) {
                 $template.find("a").attr("data-month", i);
-                $template.find(".text").html(mesi[i]);
+                $template.find(".text").html("<small>" + mesi[i] + "</small>");
                 if (typeof data[i] === "undefined") {
-                    $template.find(".text-count").html("(0)");
+                    $template.find(".text-count").html("<small>(0)</small>");
                 } else {
-                    $template.find(".text-count").html("(" + data[i] + ")");
+                    $template.find(".text-count").html("<small>(" + data[i] + ")</small>");
                 }
                 if (i == parseInt(currentMonth)) {
                     $template.find("a").addClass("btn-primary");

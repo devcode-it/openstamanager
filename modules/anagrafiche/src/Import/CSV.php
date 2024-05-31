@@ -357,7 +357,11 @@ class CSV extends CSVImporter
         }
 
         $anagrafica->fill($record);
-        $anagrafica->tipologie = $tipologie;
+
+        //Aggiorno le tipologie solo se sono state passate nel file
+        if( !empty($tipologie) ){
+            $anagrafica->tipologie = $tipologie;
+        }
         $anagrafica->id_settore = $id_settore;
         $anagrafica->tipo = $tipo;
         $anagrafica->save();

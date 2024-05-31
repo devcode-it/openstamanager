@@ -158,14 +158,14 @@ echo '
                     <table class="table table-hover table-condensed table-bordered text-center">
                         <thead>
                             <tr>
-                                <th style="width:20%;">'.tr('Banca accredito').'</th> 
-                                <th style="width:20%;">'.tr('Banca addebito').'</th> 
+                                <th style="width:17%;">'.tr('Banca accredito').'</th> 
+                                <th style="width:16%;">'.tr('Banca addebito').'</th> 
                                 <th style="width:20%;">'.tr('Metodo di pagamento').'</th>
                                 <th style="width:10%;">'.tr('Data').'</th>
                                 <th style="width:10%;">'.tr('Data concordata').'</th>
                                 <th style="width:10%;">'.tr('Importo').'</th>
                                 <th style="width:10%;">'.tr('Pagato').'</th>
-                                <th style="width:3%;">'.tr('Rata').'</th>
+                                <th style="width:7%;">'.tr('Rata').'</th>
                             </tr>
                         </thead>
 

@@ -117,7 +117,7 @@ echo '
 		
 		<div class="col-md-1">
 			<label>&nbsp;</label>
-            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i> '.tr('Cerca').'</button>
+            <br><button type="button" class="btn btn-primary" onclick="initGeocomplete();"><i class="fa fa-search"></i></button>
         </div>
 		
 		<div class="col-md-2">

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.5.2 (2024-05-31)](#252-2024-05-31)
 - [2.5.1 (2024-04-24)](#251-2024-04-24)
 - [2.5 (2024-03-28)](#25-2024-03-28)
 - [2.4.54 (2024-02-02)](#2454-2024-02-02)
@@ -66,6 +67,39 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.5.2 (2024-05-31)
+### Aggiunto (Added)
+- Migrazione a tema grafico AdminLTE 3
+- Aggiunto plugin Assicurazione crediti
+- Aggiunta gestione dei file header.php
+- Aggiunta Tags in Attività
+- Aggiunta la gestione del calcolo della media sulle colonne delle viste
+- Aggiunti Marca e Modello su Impianti
+- Aggiunto avviso in caso di permessi assenti sui vari segmenti
+- Aggiunta legenda in Scadenzario 
+- Aggiunti nuovi temi grafici
+- Aggiunta funzione di ridimensionamento immagini
+
+### Modificato (Changed)
+- Migliorato il conteggio dei caratteri per la generazione delle righe in stampa
+- Migliorata la gestione delle attività in dashboard con apertura su nuova scheda
+- Aggiornato lo stylesheet FE
+- Migliorata la gestione delle rate nello scadenzario
+- Ottimizzato il codice per php8.3
+
+### Fixed
+- Corretta l'esportazione delle Ri.Ba.
+- Corretto il controllo della numerazione attività
+- Corretta la modifica del nome degli allegati
+- Corretta la correzione degli allegati in Attività
+- Corretta l'impostazione della banca controparte in fattura
+- Corretto l'invio del sollecito di pagamento
+- Corretta la ricerca del metodo di pagamento
+- Corrette la ricerca globale su ddt e automezzi
+- Corretta l'esportazione bancaria
+- Corretta la creazione dei campi personalizzati in fase di creazione documenti
+- Corretta la registrazione delle scadenze da azioni di gruppo
 
 ## 2.5.1 (2024-04-24)
 ### Aggiunto (Added)

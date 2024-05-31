@@ -42,7 +42,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "value": "$rinnovo_automatico$", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
+                    {[ "type": "checkbox", "label": "'.tr('Tacito rinnovo').'", "name": "rinnovo_automatico", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "value": "$rinnovo_automatico$", "disabled": '.($record['rinnovabile'] ? 0 : 1).' ]}
                 </div>
 
                 <div class="col-md-3">

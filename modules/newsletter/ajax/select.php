@@ -42,11 +42,11 @@ switch ($resource) {
             `an_anagrafiche`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
         WHERE 
             `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
         ORDER BY
-            `optgroup` ASC, `ragione_sociale` ASC';
+            `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
             '|nome|' => 'ragione_sociale',

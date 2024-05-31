@@ -285,6 +285,10 @@ span.form-control {
     border: none;
 }
 
+.form-inline {
+    display: inline !important;
+}
+
 .panel-heading.mini {
     padding: 5px 8px;
 }

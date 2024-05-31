@@ -129,26 +129,34 @@ class Mastrino extends Model
 
         // Fix dello stato della Fattura
         $database = database();
+
+        if ($documenti) {
+
+
         foreach ($documenti as $id_documento) {
-            // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
-            $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
+            if (empty($id_documento)) {
+                continue;
+            } else {}
+                // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
+                $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
 
-            $totale_pagato = abs(floatval($totali['tot_pagato']));
-            $totale_da_pagare = abs(floatval($totali['tot_da_pagare']));
+                $totale_pagato = abs(floatval($totali['tot_pagato']));
+                $totale_da_pagare = abs(floatval($totali['tot_da_pagare']));
 
-            // Aggiorno lo stato della fattura
-            if ($totale_pagato == $totale_da_pagare) {
-                $stato = 'Pagato';
-            } elseif ($totale_pagato != $totale_da_pagare && $totale_pagato != 0) {
-                $stato = 'Parzialmente pagato';
-            } else {
-                $stato = 'Emessa';
+                // Aggiorno lo stato della fattura
+                if ($totale_pagato == $totale_da_pagare) {
+                    $stato = 'Pagato';
+                } elseif ($totale_pagato != $totale_da_pagare && $totale_pagato != 0) {
+                    $stato = 'Parzialmente pagato';
+                } else {
+                    $stato = 'Emessa';
+                }
+
+                $documento = Fattura::find($id_documento);
+                $stato = (new Stato())->getByField('title', $stato, \Models\Locale::getPredefined()->id);
+                $documento->stato()->associate($stato);
+                $documento->save();
             }
-
-            $documento = Fattura::find($id_documento);
-            $stato = (new Stato())->getByField('title', $stato, \Models\Locale::getPredefined()->id);
-            $documento->stato()->associate($stato);
-            $documento->save();
         }
     }
 

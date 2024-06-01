@@ -39,7 +39,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
     <div class="row">
         <div class="offset-md-4 col-md-4">
-            {["type": "text", "label": "<?php echo tr('Ricerca con lettore'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
+            {["type": "text", "label": "<?php echo tr('Ricerca un articolo tramite barcode'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
         </div>
     </div>
 

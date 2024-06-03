@@ -63,7 +63,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', $record->options2)).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
+					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', ($record->options2 ?: ''))).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
 				</div>
             </div>';
 
@@ -103,7 +103,7 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active nav-item"><a class="nav-link" data-card-widget="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
+        <li class="active nav-item active"><a class="nav-link" data-card-widget="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
         <li class="nav-item"><a class="nav-link" data-card-widget="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
     </ul>
 

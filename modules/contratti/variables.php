@@ -17,17 +17,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT *,
-    co_contratti.nome AS nome_contratto,
-    an_anagrafiche.pec,
-    IF((an_referenti.email IS NOT NULL AND an_referenti.email != ""), an_referenti.email, an_anagrafiche.email) AS email,
-    an_anagrafiche.idanagrafica,
-    an_referenti.nome AS nome_referente,
-    an_anagrafiche.ragione_sociale
-FROM co_contratti
-    INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
-    LEFT JOIN an_referenti ON an_referenti.id=co_contratti.idreferente
-WHERE co_contratti.id='.prepare($id_record));
+$r = $dbo->fetchOne('
+    SELECT 
+        `co_contratti`.*,
+        `co_contratti`.`nome` AS nome_contratto,
+        `an_anagrafiche`.`pec`,
+        IF((`an_referenti`.`email` IS NOT NULL AND `an_referenti`.`email` != ""), `an_referenti`.`email`, `an_anagrafiche`.`email`) AS email,
+        `an_anagrafiche`.`idanagrafica`,
+        `an_referenti`.`nome` AS nome_referente,
+        `an_anagrafiche`.`ragione_sociale`
+    FROM 
+        `co_contratti`
+        INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+        LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`co_contratti`.`idreferente`
+    WHERE 
+        `co_contratti`.`id`='.prepare($id_record));
 
 // Variabili da sostituire
 return [

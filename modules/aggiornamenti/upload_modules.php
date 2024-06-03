@@ -78,6 +78,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         if (empty($installed)) {
             $dbo->insert($table, array_merge($insert, [
                 'directory' => $info['directory'],
+                'name' => $info['name'],
                 'options' => $info['options'],
                 'version' => $info['version'],
                 'compatibility' => $info['compatibility'],
@@ -89,7 +90,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
             ]));
             $id_record = $dbo->lastInsertedID();
             $dbo->insert($table.'_lang', array_merge($insert, [
-                'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
                 'id_lang' => Models\Locale::getDefault()->id,
@@ -147,6 +147,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         if (empty($installed)) {
             $dbo->insert($table, array_merge($insert, [
                 'directory' => $info['directory'],
+                'name' => $info['name'],
                 'options' => $info['options'],
                 'version' => $info['version'],
                 'compatibility' => $info['compatibility'],
@@ -156,7 +157,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
             ]));
             $id_record = $dbo->lastInsertedID();
             $dbo->insert($table.'_lang', array_merge($insert_lang, [
-                'name' => $info['name'],
                 'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                 'id_record' => $id_record,
                 'id_lang' => Models\Locale::getDefault()->id,

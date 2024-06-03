@@ -418,12 +418,14 @@ class Gestore
 
     public static function getBancaAzienda(Scadenza $scadenza): Banca
     {
-        $documento = $scadenza->documento;
-
-        $banca = $documento->id_banca_azienda ? Banca::find($documento->id_banca_azienda) : '';
-
+        $banca = Banca::find($scadenza->id_banca_azienda);
         if (empty($banca)) {
-            $banca = self::getBancaPredefinitaAzienda();
+            $documento = $scadenza->documento;
+            $banca = $documento->id_banca_azienda ? Banca::find($documento->id_banca_azienda) : '';
+
+            if (empty($banca)) {
+                $banca = self::getBancaPredefinitaAzienda();
+            }
         }
 
         return $banca;
@@ -461,7 +463,7 @@ class Gestore
             $content = $this->riba->asCBI();
 
             // Generazione filename
-            $filename = $this->id_riba.'.txt';
+            $filename = $this->banca_azienda->nome.' '.$this->id_riba.'.txt';
             $file = $path.'/'.$filename;
             $files[] = base_url().'/'.$file;
 
@@ -475,7 +477,7 @@ class Gestore
             $content = $this->bonifico->asXML();
 
             // Generazione filename
-            $filename = $this->id_bonifico.'.xml';
+            $filename = $this->banca_azienda->nome.' '.$this->id_bonifico.'.xml';
             $file = $path.'/'.$filename;
             $files[] = base_url().'/'.$file;
 
@@ -489,7 +491,7 @@ class Gestore
             $xml = $this->credito_diretto->asXML();
 
             // Generazione filename
-            $filename = $this->id_credito_diretto.'.xml';
+            $filename = $this->banca_azienda->nome.' '.$this->id_credito_diretto.'.xml';
             $file = $path.'/'.$filename;
             $files[] = base_url().'/'.$file;
 
@@ -513,7 +515,7 @@ class Gestore
                 $xml = $this->debito_diretto->xml();
 
                 // Generazione filename
-                $filename = $this->id_debito_diretto.'.xml';
+                $filename = $this->banca_azienda->nome.' '.$this->id_debito_diretto.'.xml';
                 $file = $path.'/'.$filename;
                 $files[] = base_url().'/'.$file;
 

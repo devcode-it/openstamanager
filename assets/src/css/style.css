@@ -1593,14 +1593,6 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     z-index: 99999 !important;
 }
 
-.modal {
-    z-index: 10500 !important;
-}
-
-.select2-container {
-    z-index: 10500 !important;
-}
-
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

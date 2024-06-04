@@ -76,7 +76,9 @@ include base_dir().'/include/manager.php';
 echo '
 	</div>';
 
-// Plugin
+// Plugins
+$plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
+
 $module_record = $record;
 foreach ($plugins as $plugin) {
     $record = $module_record;

@@ -24,7 +24,7 @@ $r = $dbo->fetchOne('
         `an_anagrafiche`.`pec`,
         IF((`an_referenti`.`email` IS NOT NULL AND `an_referenti`.`email` != ""), `an_referenti`.`email`, `an_anagrafiche`.`email`) AS email,
         `an_anagrafiche`.`idanagrafica`,
-        `an_referenti`.`nome` AS nome_referente,
+        IF(`an_referenti`.`nome`,`an_referenti`.`nome`, \'\') AS nome_referente,
         `an_anagrafiche`.`ragione_sociale`
     FROM 
         `co_contratti`

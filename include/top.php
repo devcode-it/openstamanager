@@ -510,84 +510,85 @@ if (Auth::check()) {
             <!-- /.sidebar -->
         </aside>';
 
-    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
+    $in_controller = string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php');
+    if ($in_editor || $in_controller) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <div class="control-sidebar-button"><i class="fa fa-chevron-left"></i></div>
         <aside class="control-sidebar control-sidebar-light">
             <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
-            <li data-toggle="control-sidebar" class="active btn-default nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tab_0">
-                    '.$structure->getTranslation('title').'
-                </a>
-            </li>';
+                <li data-toggle="control-sidebar" class="active btn-default nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab_0">
+                        '.$structure->getTranslation('title').'
+                    </a>
+                </li>';
 
         // Tab dei plugin
-        if (!empty($id_record)) {
-            $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='tab' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
-            foreach ($plugins as $plugin) {
-                // Badge count per record plugin
-                $count = 0;
-                $opt = '';
-                if (!empty($plugin['options2'])) {
-                    $opt = json_decode((string) $plugin['options2'], true);
-                } elseif (!empty($plugin['options'])) {
-                    $opt = json_decode((string) $plugin['options'], true);
-                }
-
-                if (!empty($opt)) {
-                    $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
-                    $count = $dbo->fetchNum($q);
-                }
-
-                echo '
-                            <li data-toggle="control-sidebar" class="btn-default nav-item" >
-                                <a class="nav-link" data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
-                                    '.$plugin['title'].'
-                                    <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
-                                </a>
-                            </li>';
+        $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='".($in_editor ? 'tab' : 'tab_main')."' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
+        foreach ($plugins as $plugin) {
+            // Badge count per record plugin
+            $count = 0;
+            $opt = '';
+            if (!empty($plugin['options2'])) {
+                $opt = json_decode((string) $plugin['options2'], true);
+            } elseif (!empty($plugin['options'])) {
+                $opt = json_decode((string) $plugin['options'], true);
             }
+
+            if (!empty($opt)) {
+                $q = str_replace('|id_parent|', $id_record, $opt['main_query'][0]['query']);
+                $count = $dbo->fetchNum($q);
+            }
+
+            echo '
+                        <li data-toggle="control-sidebar" class="btn-default nav-item" >
+                            <a class="nav-link" data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                                '.$plugin['title'].'
+                                <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
+                            </a>
+                        </li>';
         }
 
         // Tab per le note interne
-        if ($structure->permission != '-' && $structure->use_notes) {
-            $notes = $structure->recordNotes($id_record);
+        if ($in_editor) {
+            if ($structure->permission != '-' && $structure->use_notes) {
+                $notes = $structure->recordNotes($id_record);
 
-            echo '
-                        <li data-toggle="control-sidebar" class="btn-default nav-item">
-                            <a class="bg-info nav-link" data-toggle="tab" href="#tab_note" id="link-tab_note">
-                                '.tr('Note interne').'
-                                <span class="badge pull-right">'.($notes->count() ?: '').'</span>
-                            </a>
-                        </li>';
-        }
+                echo '
+                            <li data-toggle="control-sidebar" class="btn-default nav-item">
+                                <a class="bg-info nav-link" data-toggle="tab" href="#tab_note" id="link-tab_note">
+                                    '.tr('Note interne').'
+                                    <span class="badge pull-right">'.($notes->count() ?: '').'</span>
+                                </a>
+                            </li>';
+            }
 
-        // Tab per le checklist
-        // Tab per le checklist
-        if ($structure->permission != '-' && $structure->use_checklists) {
-            $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
-            $checklists_total = $structure->recordChecks($id_record);
+            // Tab per le checklist
+            if ($structure->permission != '-' && $structure->use_checklists) {
+                $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
+                $checklists_total = $structure->recordChecks($id_record);
 
-            echo '
-                <li data-toggle="control-sidebar" class="btn-default nav-item">
-                    <a class="bg-info nav-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
-                        '.tr('Checklist')
-                        .($checklists_total ? ' <span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '')
-                        .'
-                    </a>
-                </li>';
-        }
+                echo '
+                    <li data-toggle="control-sidebar" class="btn-default nav-item">
+                        <a class="bg-info nav-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
+                            '.tr('Checklist')
+                            .($checklists_total ? ' <span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '')
+                            .'
+                        </a>
+                    </li>';
+            }
 
-        // Tab per le informazioni sulle operazioni
-        if (Auth::admin()) {
-            echo '
-                        <li data-toggle="control-sidebar" class="btn-default nav-item">
-                            <a class="bg-info nav-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
-                                '.tr('Info').'
-                            </a>
-                        </li>';
+            // Tab per le informazioni sulle operazioni
+            if (Auth::admin()) {
+                echo '
+                            <li data-toggle="control-sidebar" class="btn-default nav-item">
+                                <a class="bg-info nav-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
+                                    '.tr('Info').'
+                                </a>
+                            </li>';
+            }
         }
         echo '
             </ul>

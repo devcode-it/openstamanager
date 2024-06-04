@@ -98,7 +98,6 @@ input[type=file] {
 .autocomplete,
 .ui-autocomplete {
     background: white;
-    z-index: 10000;
     min-width: 160px;
     padding: 10px;
     margin: 2px;

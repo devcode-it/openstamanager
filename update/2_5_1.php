@@ -291,7 +291,7 @@ if (database()->columnExists('in_fasceorarie_lang', 'name')) {
 $has_name = database()->columnExists('in_statiintervento', 'name');
 if (!$has_name) {
     $database->query('ALTER TABLE `in_statiintervento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`');
-    $database->query('UPDATE `in_statiintervento` SET `name` = (SELECT `name` FROM `in_statiintervento_lang` WHERE `id_record` = `in_statiintervento`.`codice` AND `id_lang` = 1)');
+    $database->query('UPDATE `in_statiintervento` SET `name` = (SELECT `title` FROM `in_statiintervento_lang` WHERE `id_record` = `in_statiintervento`.`codice` AND `id_lang` = 1)');
 }
 if (database()->columnExists('in_statiintervento_lang', 'name')) {
     $database->query('ALTER TABLE `in_statiintervento_lang` DROP `name`');
@@ -301,7 +301,7 @@ if (database()->columnExists('in_statiintervento_lang', 'name')) {
 $has_name = database()->columnExists('in_tipiintervento', 'name');
 if (!$has_name) {
     $database->query('ALTER TABLE `in_tipiintervento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`');
-    $database->query('UPDATE `in_tipiintervento` SET `name` = (SELECT `name` FROM `in_tipiintervento_lang` WHERE `id_record` = `in_tipiintervento`.`codice` AND `id_lang` = 1)');
+    $database->query('UPDATE `in_tipiintervento` SET `name` = (SELECT `title` FROM `in_tipiintervento_lang` WHERE `id_record` = `in_tipiintervento`.`codice` AND `id_lang` = 1)');
 }
 if (database()->columnExists('in_tipiintervento_lang', 'name')) {
     $database->query('ALTER TABLE `in_tipiintervento_lang` DROP `name`');
@@ -329,9 +329,11 @@ if (database()->columnExists('mg_categorie_lang', 'name')) {
 
 // Rimozione categoria 'Componenti' se non collegata ad articoli
 $categoria = Categoria::find((new Categoria())->getByField('title', 'Componenti'));
-$articoli_collegati = $categoria ? $categoria->articoli()->count() : 0;
-if ($articoli_collegati === 0) {
-    $database->query('DELETE FROM `mg_categorie` WHERE `id` = '.$categoria->id);
+if ($categoria) {
+    $articoli_collegati = $categoria ? $categoria->articoli()->count() : 0;
+    if ($articoli_collegati === 0) {
+        $database->query('DELETE FROM `mg_categorie` WHERE `id` = '.$categoria->id);
+    }
 }
 
 // Controllo se è presente il campo name in mg_causali_movimenti_lang

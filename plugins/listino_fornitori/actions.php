@@ -20,6 +20,7 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
+use Plugins\ListinoClienti\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -57,6 +58,15 @@ switch (filter('op')) {
 
         $fornitore = DettaglioFornitore::find($id_riga);
         $fornitore->delete();
+
+        $prezzi_fornitori = DettaglioPrezzo::where('id_articolo', $fornitore->id_articolo)
+            ->where('id_anagrafica', $fornitore->id_fornitore)
+            ->where('dir', 'uscita')
+            ->get();
+
+        foreach($prezzi_fornitori as $prezzo) {
+            $prezzo->delete();
+        }
 
         flash()->info(tr('Relazione articolo-fornitore rimossa correttamente!'));
         break;

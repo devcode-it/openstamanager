@@ -20,6 +20,7 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 
@@ -54,11 +55,14 @@ if ($articolo->id_fornitore == $anagrafica->idanagrafica) {
     $text = tr('No');
 }
 
-$id_riga = $dbo->fetchOne(
-    'SELECT id
-    FROM mg_fornitore_articolo
-    WHERE id_articolo = '.prepare($id_articolo).'
-    AND id_anagrafica = '.prepare($id_anagrafica)
+$id_riga = $dbo->fetchOne('
+    SELECT 
+        `id`
+    FROM 
+        `mg_fornitore_articolo`
+    WHERE 
+        `id_articolo` = '.prepare($id_articolo).'
+        AND `id_fornitore` = '.prepare($id_anagrafica)
 )['id'];
 
 $fornitore = [];
@@ -150,14 +154,14 @@ echo '
         </div>
     </div>
 
-    <div class="row">
-        <div class="info_prezzi">
-            <div class="col-md-4">
+    <div class="info_prezzi">
+        <div class="row">
+            <div class="col-md-6">
                 {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
-                <button type="button" style="margin-top:-10px;" class="btn btn-xs btn-info pull-right '.($prezzo_predefinito > 0 ? '' : 'disabled').'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
+                <button type="button" style="margin-top:-10px;" class="btn btn-info pull-right '.($prezzo_predefinito > 0 ? '' : 'disabled').'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 {[ "type": "number", "label": "'.tr('Sconto specifico').'", "name": "sconto_fisso", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
             </div>
         </div>
@@ -284,7 +288,7 @@ function aggiungiPrezzo(button) {
     let text = replaceAll($("#prezzi-template").html(), "-id-", "" + key);
     key++;
 
-    let body = $(button).closest(".box").find("table > tbody");
+    let body = $(button).closest(".card").find("table > tbody");
     let lastRow = body.find("tr").last();
     if (lastRow.length) {
         lastRow.after(text);

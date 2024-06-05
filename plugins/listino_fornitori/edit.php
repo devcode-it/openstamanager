@@ -62,7 +62,7 @@ $fornitori_disponibili = $dettagli_fornitori->keys()
 
 if (!$fornitori_disponibili->isEmpty()) {
     echo '
-<table class="table table-striped table-condensed table-bordered">
+<table class="table table-striped">
     <tbody>';
 
     foreach ($fornitori_disponibili as $id_fornitore) {
@@ -121,18 +121,18 @@ if (!$fornitori_disponibili->isEmpty()) {
 
         echo '
             <td class="text-center">
-                <button type="button" class="btn btn-xs btn-warning" onclick="modificaPrezzi(this)">
+                <button type="button" class="btn btn-warning" onclick="modificaPrezzi(this)">
                     <i class="fa fa-money"></i>
                 </button>';
 
         if (!empty($dettaglio)) {
             echo '
 
-                <a class="btn btn-secondary btn-xs btn-warning" onclick="modificaFornitore('.$dettaglio['id'].', '.$anagrafica->id.')">
+                <a class="btn btn-secondary btn-warning" onclick="modificaFornitore('.$dettaglio['id'].', '.$anagrafica->id.')">
                     <i class="fa fa-edit"></i>
                 </a>
 
-                <a class="btn btn-secondary btn-xs btn-danger ask" data-op="delete_fornitore" data-id_riga="'.$dettaglio['id'].'" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
+                <a class="btn btn-secondary btn-danger ask" data-op="delete_fornitore" data-id_riga="'.$dettaglio['id'].'" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
                     <i class="fa fa-trash-o"></i>
                 </a>';
         }
@@ -213,24 +213,15 @@ function modificaFornitore(id_riga, id_anagrafica) {
     openModal("Modifica dati fornitore", "'.$structure->fileurl('dettaglio_fornitore.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_riga=" + id_riga + "&id_anagrafica=" + id_anagrafica);
 }
 
-function aggiungiFornitore() {
-    let id_fornitore = $("#id_fornitore_informazioni").val();
-    if (id_fornitore) {
-        modificaFornitore("", id_fornitore);
-    } else {
-        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
-    }
-}
-
 function modificaFornitorePrezzi(id_anagrafica, direzione) {
     openModal("'.tr('Gestisci prezzi specifici fornitore').'", "'.$structure->fileurl('dettaglio_prezzi_fornitore.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
 }
 
 function aggiungiFornitorePrezzi(button) {
-    let card = $(button).closest(".box");
+    let card = $(button).closest(".card");
 
     let direzione = "uscita"
-    let id_anagrafica = card.find("select").val();
+    let id_anagrafica = card.find("#id_fornitore_informazioni").val();
 
     if (id_anagrafica) {
         modificaFornitorePrezzi(id_anagrafica, direzione);

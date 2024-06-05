@@ -232,11 +232,9 @@ class Query
                             if ($data != "'1970-01-01'") {
                                 $search_filters[] = 'date('.$search_query.') = '.$data.'';
                             }
-                        } elseif ($equal) {
+                        } else {
                             $search_filters[] = ($search_query.' = '.prepare($value));
-                        } else {                            
-                            $search_filters[] = ($search_query.' = '.prepare($value).' OR '.$search_query.' LIKE '.prepare('% '.$value).' OR '.$search_query.' LIKE '.prepare($value.' %').' OR '.$search_query.' LIKE '.prepare('% '.$value.' %'));
-                        }
+                        } 
                     } elseif ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
                         $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));

@@ -291,7 +291,7 @@ if (database()->columnExists('in_fasceorarie_lang', 'name')) {
 $has_name = database()->columnExists('in_statiintervento', 'name');
 if (!$has_name) {
     $database->query('ALTER TABLE `in_statiintervento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`');
-    $database->query('UPDATE `in_statiintervento` SET `name` = (SELECT `title` FROM `in_statiintervento_lang` WHERE `id_record` = `in_statiintervento`.`codice` AND `id_lang` = 1)');
+    $database->query('UPDATE `in_statiintervento` SET `name` = (SELECT `title` FROM `in_statiintervento_lang` WHERE `id_record` = `in_statiintervento`.`id` AND `id_lang` = 1)');
 }
 if (database()->columnExists('in_statiintervento_lang', 'name')) {
     $database->query('ALTER TABLE `in_statiintervento_lang` DROP `name`');
@@ -301,7 +301,7 @@ if (database()->columnExists('in_statiintervento_lang', 'name')) {
 $has_name = database()->columnExists('in_tipiintervento', 'name');
 if (!$has_name) {
     $database->query('ALTER TABLE `in_tipiintervento` ADD `name` VARCHAR(255) NULL DEFAULT NULL AFTER `codice`');
-    $database->query('UPDATE `in_tipiintervento` SET `name` = (SELECT `title` FROM `in_tipiintervento_lang` WHERE `id_record` = `in_tipiintervento`.`codice` AND `id_lang` = 1)');
+    $database->query('UPDATE `in_tipiintervento` SET `name` = (SELECT `title` FROM `in_tipiintervento_lang` WHERE `id_record` = `in_tipiintervento`.`id` AND `id_lang` = 1)');
 }
 if (database()->columnExists('in_tipiintervento_lang', 'name')) {
     $database->query('ALTER TABLE `in_tipiintervento_lang` DROP `name`');

@@ -28,8 +28,8 @@ if (!empty($rs)) {
     echo '
 <table class="table table-hover">
     <tr>
-        <th width="70">'.tr('Codice').'</th>
-        <th>'.tr('Cliente').'</th>
+        <th width="50">'.tr('Codice').'</th>
+        <th width="150">'.tr('Cliente').'</th>
         <th width="70"><small>'.tr('Data richiesta').'</small></th>
         <th width="20%" class="text-center">'.tr('Tecnici assegnati').'</th>
         <th width="200">'.tr('Tipo intervento').'</th>

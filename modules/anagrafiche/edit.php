@@ -440,13 +440,13 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
         <div class="card-body">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class=" nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
+                    <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class="nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
 
                     <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
 
-                    <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link'.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
+                    <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente && $is_fornitore ? '' : 'disabled').'" '.($is_cliente && $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
 
-                    <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link'.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
+                    <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
                 </ul>
 
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">

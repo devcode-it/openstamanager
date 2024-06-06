@@ -18,6 +18,7 @@
  */
 
 use Modules\Contratti\Contratto;
+use Modules\IVA\Aliquota;
 
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../modutil.php';
@@ -42,9 +43,9 @@ echo '
 
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs nav-justified">
-            <li class="active nav-item"><a class="nav-link" href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-widget="tab">'.tr('Periodi').'</a></li>
+            <li class="active nav-item"><a class="nav-link" href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-toggle="tab">'.tr('Periodi').'</a></li>
 
-            <li class="nav-item"><a class="nav-link" href="#div_righe" data-tab="righe" data-widget="tab">'.tr('Righe').'</a></li>
+            <li class="nav-item"><a class="nav-link" href="#div_righe" data-tab="righe" data-toggle="tab">'.tr('Righe').'</a></li>
         </ul>
 
         <div class="tab-content">
@@ -108,13 +109,13 @@ echo '
 </div>';
 
 foreach ($righe as $riga) {
-    $id_iva = $riga->id_iva;
-    $descrizione = $riga->getTranslation('title')."\n{periodo}";
+    $iva = Aliquota::find($riga->idiva);
+    $descrizione = $riga->descrizione."\n{periodo}";
 
     $options = [
-        'id' => $riga->id,
+        'id' => $riga->id_iva,
         'totale_imponibile' => $riga->totale_imponibile,
-        'iva' => $riga->iva,
+        'iva' => $riga->idiva,
         'totale' => $riga->totale,
         'qta' => $riga->qta,
     ];
@@ -122,7 +123,7 @@ foreach ($righe as $riga) {
 
     echo '
                 <!--h5>'.tr('Informazioni generali sulle righe con IVA: _IVA_', [
-        '_IVA_' => $riga->iva->getTranslation('title'),
+        '_IVA_' => $iva->getTranslation('title'),
     ]).'</h5-->
 
                 <div class="row">

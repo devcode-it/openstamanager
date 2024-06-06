@@ -57,13 +57,13 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-				<th width="70">'.tr('Codice').'</th>
-                <th>'.tr('Cliente').'</th>
+				<th width="50">'.tr('Codice').'</th>
+                <th width="100">'.tr('Cliente').'</th>
                 <th width="70"><small>'.tr('Data richiesta').'</small></th>
                 <th width="20%" class="text-center">'.tr('Tecnici assegnati').'</th>
                 <th width="200">'.tr('Tipo intervento').'</th>
-                <th width="200">'.tr('Stato intervento').'</th>
-                <th width="40"></th>
+                <th width="150">'.tr('Stato intervento').'</th>
+                <th width="20"></th>
             </tr>
         </thead>
 
@@ -95,7 +95,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `id`='.prepare($r['idtipointervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_tipiintervento`.`id`='.prepare($r['idtipointervento']))['descrizione'].'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`id`='.prepare($r['idstatointervento']))['descrizione'].'</td>
                 <td class="text-right">
                     <button type="button" class="btn btn-xs btn-default" onclick="toggleDettagli(this)">

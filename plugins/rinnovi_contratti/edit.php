@@ -61,6 +61,7 @@ echo '
     </div>
 </form>';
 
+if (!empty($id_contratto_precedente)) {
 echo '
 <table class="table table-hover table-condensed table-bordered table-striped">
     <thead>
@@ -73,6 +74,7 @@ echo '
     </thead>
 
     <tbody>';
+}
 
 $counter = 0;
 while (!empty($id_contratto_precedente) && $counter < 50) {

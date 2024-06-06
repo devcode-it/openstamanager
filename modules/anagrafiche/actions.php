@@ -110,11 +110,6 @@ switch (post('op')) {
         // Aggiorno gli agenti collegati
         $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) post('idagenti')]);
 
-        // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
-        if (!empty(post('idagente'))) {
-            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare(post('idagente')));
-        }
-
         flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [
             '_NAME_' => $anagrafica->ragione_sociale,
         ]));

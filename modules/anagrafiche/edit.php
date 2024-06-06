@@ -540,19 +540,13 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Agenti secondari').'", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(`deleted_at` IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL AND `an_anagrafiche`.`idanagrafica` NOT IN (SELECT `idagente` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($record['idanagrafica']).')) OR (`an_anagrafiche`.`idanagrafica` IN (SELECT `idagente` FROM `an_anagrafiche_agenti` WHERE `idanagrafica` = '.prepare($record['idanagrafica']).') ) ORDER BY `ragione_sociale`", "value": "$idagenti$" ]}
-                            </div>
-                        
-                            <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
                             </div>
-                        </div>
-                        
-                        <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
                             </div>
-                            
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                             </div>';

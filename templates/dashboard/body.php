@@ -78,7 +78,8 @@ $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
 $tecnici = (array) $calendar['idtecnici'];
 
-$query = "SELECT
+$query = "
+    SELECT
         DATE(`orario_inizio`) AS data,
         `an_anagrafiche`.`ragione_sociale` AS anagrafica,
         GROUP_CONCAT(DISTINCT `tecnico`.`ragione_sociale` SEPARATOR ', ') AS tecnico
@@ -86,7 +87,7 @@ $query = "SELECT
         `in_interventi_tecnici`
         INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-        LEFT JOIN `an_anagrafiche AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
     WHERE 
         ".$where.'
@@ -95,6 +96,7 @@ $query = "SELECT
         `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
     GROUP BY 
         `in_interventi`.`id`, data';
+
 $sessioni = $dbo->fetchArray($query);
 
 $sessioni = collect($sessioni)->groupBy('data');
@@ -154,7 +156,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         $element = $list[$i + $c];
 
         echo '
-        <th>'.ucfirst($element['date']->isoFormat('MMMM YYYY')).'</th>';
+        <th>'.ucfirst($element['date']->translatedFormat('d/m')).'</th>';
     }
 
     echo '

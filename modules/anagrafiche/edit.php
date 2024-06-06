@@ -778,7 +778,7 @@ if (!empty($elementi)) {
         // se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Utente'])) {
             $modulo = 'Utenti e permessi';
-        } elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {
+        } elseif (in_array($elemento['tipo_documento'], ['Attività'])) {
             $modulo = 'Interventi';
         } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
             $modulo = 'Preventivi';

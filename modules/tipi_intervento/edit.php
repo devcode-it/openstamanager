@@ -159,7 +159,7 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-        if (in_array($elemento['tipo_documento'], ['Intervento'])) {
+        if (in_array($elemento['tipo_documento'], ['Attività'])) {
             $modulo = 'Interventi';
         }
         if (in_array($elemento['tipo_documento'], ['Sessione intervento'])) {

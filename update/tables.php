@@ -143,6 +143,7 @@ return [
     'my_impianti_contratti',
     'my_impianti_interventi',
     'my_impianti_marche',
+    'my_impianti_marche_lang',
     'mg_articolo_attributo',
     'mg_attributi',
     'mg_attributi_lang',

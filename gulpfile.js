@@ -136,7 +136,7 @@ const JS = gulp.parallel(() => {
     })
         .pipe(babel(config.babelOptions))
         .pipe(concat('app.min.js'))
-        .pipe(gulpIf(!config.debug, minifyJS()))
+        .pipe(gulpIf(!config.debug, minifyJS({compress:false})))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 }, srcJS);
 

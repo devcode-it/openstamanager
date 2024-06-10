@@ -24,7 +24,7 @@ use Modules\Checklists\Check;
 
 $op = post('op');
 
-$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id))->directory;
+$upload_dir = base_dir().'/files/'.Module::find((new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id))->directory;
 $id_modulo_categorie_impianti = (new Module())->getByField('title', 'Categorie impianti', Models\Locale::getPredefined()->id);
 
 switch ($op) {
@@ -81,7 +81,7 @@ switch ($op) {
             }
 
             // Eliminazione file
-            if (post('delete_immagine') !== null) {
+            if (!empty(post('delete_immagine'))) {
                 Uploads::delete($record['immagine'], [
                     'id_module' => $id_module,
                     'id_record' => $id_record,

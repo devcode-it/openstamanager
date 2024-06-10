@@ -502,12 +502,13 @@ if (Auth::check()) {
 
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
     echo Modules::getMainMenu();
     echo '
-                </ul>
-            </section>
-            <!-- /.sidebar -->
+                    </ul>
+                </nav>
+                <!-- / Sidebar Menu -->
+            </div>
         </aside>';
 
     $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');

@@ -1656,7 +1656,7 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 @media (min-width: 1140px) {
     .modal-lg {
-        width: 60vw;
+        max-width: 60vw;
     }
 }
 

@@ -22,7 +22,7 @@ use Modules\Anagrafiche\Tipo;
 
 include_once __DIR__.'/../../core.php';
 
-$id_nazione_italia = Nazione::where('name', 'Italia')->first()->id;
+$id_nazione_italia = (new Nazione())->getByField('title', 'Italia', Models\Locale::getPredefined()->id);
 $tipo = get('tipoanagrafica');
 $id_tipo = Tipo::where('name', $tipo)->first()->id;
 $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;

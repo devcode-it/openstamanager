@@ -268,7 +268,7 @@ class Auth extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.(new Group())->getByField('title', $group)." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();

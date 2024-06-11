@@ -41,8 +41,8 @@ use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
 
-$id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
-$plugin_impianti = (new Plugin())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
+$plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
 
 switch (post('op')) {
     case 'update':
@@ -114,7 +114,7 @@ switch (post('op')) {
                 if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
-                        $template = (new Template())->getByField('title', 'Notifica rimozione intervento', Models\Locale::getPredefined()->id);
+                        $template = Template::where('name', 'Notifica rimozione intervento')->first()->id;
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -137,7 +137,7 @@ switch (post('op')) {
                     $tecnico = Anagrafica::find($tecnico_assegnato);
 
                     if (!empty($tecnico['email'])) {
-                        $template = (new Template())->getByField('title', 'Notifica intervento', Models\Locale::getPredefined()->id);
+                        $template = Template::where('name', 'Notifica intervento')->first()->id;
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -324,7 +324,7 @@ switch (post('op')) {
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!empty($tecnico['email'])) {
-                    $template = (new Template())->getByField('title', 'Notifica intervento', Models\Locale::getPredefined()->id);
+                    $template = Template::where('name', 'Notifica intervento')->first()->id;
 
                     if (!empty($template)) {
                         $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -953,7 +953,7 @@ switch (post('op')) {
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
             if (!empty($tecnico['email'])) {
-                $template = (new Template())->getByField('title', 'Notifica rimozione intervento', Models\Locale::getPredefined()->id);
+                $template = Template::where('name', 'Notifica rimozione intervento')->first()->id;
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);

@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$id_modulo_categorie_impianti = (new Module())->getByField('title', 'Categorie Impianti', Models\Locale::getPredefined()->id);
-$id_modulo_marca_impianti = (new Module())->getByField('title', 'Marche Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->first()->id;
+$id_modulo_marca_impianti = Module::where('name', 'Marche impianti')->first()->id;
 
 $img = null;
 if (!empty($record['immagine'])) {

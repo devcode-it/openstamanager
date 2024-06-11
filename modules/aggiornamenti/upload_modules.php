@@ -68,7 +68,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'modules';
             $table = 'zz_modules';
 
-            $installed = Module::find((new Module())->getByField('title', $info['name']));
+            $installed = Module::where('name', $info['name'])->first();
         }
 
         // Copia dei file nella cartella relativa
@@ -86,7 +86,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'default' => 0,
                 'enabled' => 1,
                 'icon' => $info['icon'],
-                'parent' => (new Module())->getByField('title', $info['parent']),
+                'parent' => Module::where('name', $info['parent'])->first()->id,
             ]));
             $id_record = $dbo->lastInsertedID();
             $dbo->insert($table.'_lang', array_merge($insert, [
@@ -122,9 +122,9 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'plugins';
             $table = 'zz_plugins';
 
-            $installed = Plugin::find((new Plugin())->getByField('title', $info['name']));
-            $insert['idmodule_from'] = (new Module())->getByField('title', $info['module_from']);
-            $insert['idmodule_to'] = (new Module())->getByField('title', $info['module_to']);
+            $installed = Plugin::where('name', $info['name'])->first()->id;
+            $insert['idmodule_from'] = Module::where('name', $info['module_from'])->first()->id;
+            $insert['idmodule_to'] = Module::where('name', $info['module_to'])->first()->id;
             $insert['position'] = $info['position'];
         }
 
@@ -134,7 +134,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_prints';
 
             $installed = Prints::getPrints()[$info['name']];
-            $insert['id_module'] = (new Module())->getByField('title', $info['module']);
+            $insert['id_module'] = Module::where('name', $info['module'])->first()->id;
             $insert['is_record'] = $info['is_record'];
             $insert_lang['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];

@@ -470,7 +470,7 @@ switch (filter('op')) {
          */
     case 'completa_trasporto':
         $tipo = Tipo::where('dir', '!=', $ddt->direzione)->first();
-        $stato = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', 'Evaso')->first()->id;
 
         // Duplicazione DDT
         $id_segment = post('id_segment');
@@ -518,7 +518,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id);
+        $id_module = $ddt->direzione == 'entrata' ? Module::where('name', 'Ddt di acquisto')->first()->id : Module::where('name', 'Ddt di vendita')->first()->id;
 
         break;
 
@@ -529,7 +529,7 @@ switch (filter('op')) {
         $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
-        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato);
         $new->save();
 

@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Sede;
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 $id_segment = $record['id_segment'];
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
@@ -94,7 +94,7 @@ echo '
                                 {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                             </div>
                             <div class="col-md-3">
-                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['idanagrafica'].'" ]}
                             </div>
                         </div>
                         <!-- RIGA 2 -->
@@ -118,7 +118,7 @@ if (!empty($record['idpreventivo'])) {
                             '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
 }
 echo '
-                                {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
+                                {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
                             </div>
 
                             <div class="col-md-6">';
@@ -131,7 +131,7 @@ if (!empty($record['idcontratto'])) {
 }
 echo '
 
-                                {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.(new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id).'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
 
                                 <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                             </div>
@@ -189,7 +189,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Tags'); ?>|" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo Module::where('name', 'Tags')->first()->id; ?>|" ]}
                 </div>
             </div>
 
@@ -378,7 +378,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-4" style="margin-top: 25px">

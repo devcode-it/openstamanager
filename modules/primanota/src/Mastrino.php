@@ -153,7 +153,7 @@ class Mastrino extends Model
                 }
 
                 $documento = Fattura::find($id_documento);
-                $stato = (new Stato())->getByField('title', $stato, \Models\Locale::getPredefined()->id);
+                $stato = Stato::where('name', $stato)->first()->id;
                 $documento->stato()->associate($stato);
                 $documento->save();
             }

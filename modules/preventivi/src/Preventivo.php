@@ -68,7 +68,7 @@ class Preventivo extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
         $id_agente = $anagrafica->idagente;
         $id_pagamento = $anagrafica->idpagamento_vendite;
@@ -274,7 +274,7 @@ class Preventivo extends Document
             $codice_intervento = 'OK';
         }
 
-        $stato = (new Stato())->getByField('title', $descrizione, \Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', $descrizione)->first()->id;
         $this->stato()->associate($stato);
         $this->save();
 

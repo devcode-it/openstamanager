@@ -574,7 +574,7 @@ if (!empty($righe)) {
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">
-                                {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
+                                {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
                             </div>
 
                             <div class="col-md-3">

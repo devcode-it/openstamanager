@@ -23,8 +23,7 @@ use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
-$structure = Module::find((new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id));
-
+$structure = Module::where('name', 'Articoli')->first();
 // Valori di ricerca
 $where['servizio'] = '0';
 

@@ -23,7 +23,7 @@ use Models\Module;
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-$module = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
+$module = Module::where('name', 'Interventi')->first();
 
 $total = Util\Query::readQuery($module);
 

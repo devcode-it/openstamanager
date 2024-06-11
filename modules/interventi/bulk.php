@@ -31,7 +31,7 @@ use Modules\Interventi\Stato;
 use Util\Zip;
 
 // Segmenti
-$id_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;

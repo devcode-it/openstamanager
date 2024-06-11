@@ -111,7 +111,7 @@ switch (post('op')) {
         $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
         $new->data_bozza = Carbon::now();
 
-        $stato_preventivo = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_preventivo = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato_preventivo);
 
         $new->save();
@@ -386,7 +386,7 @@ switch (post('op')) {
         // Copia del preventivo
         $new = $preventivo->replicate();
 
-        $stato_preventivo = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_preventivo = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato_preventivo);
 
         $new->save();

@@ -75,8 +75,8 @@ class NotificheRicevuteHook extends Manager
             ]);
         }
 
-        $id_module = (new Module())->getByField('title', 'Attività', \Models\Locale::getPredefined()->id);
-        $id_plugin = (new Plugin())->getByField('title', 'Ricevute FE', \Models\Locale::getPredefined()->id);
+        $id_module = Module::where('name', 'Interventi')->first()->id;
+        $id_plugin = Plugin::where('name', 'Ricevute FE')->first()->id;
 
         return [
             'icon' => 'fa fa-ticket text-yellow',

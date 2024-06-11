@@ -24,7 +24,7 @@ use Models\Module;
     Anagrafiche
 */
 
-$link_id = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$link_id = Module::where('name', 'Anagrafiche')->first()->id;
 
 $fields = [
     'Codice' => 'codice',

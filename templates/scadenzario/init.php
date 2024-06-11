@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Fatture\Fattura;
 
-$module = Module::find((new Module())->getByField('title', 'Scadenzario', Models\Locale::getPredefined()->id));
+$module = Module::where('name', 'Scadenzario')->first();
 
 $total = Util\Query::readQuery($module);
 

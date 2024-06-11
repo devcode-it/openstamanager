@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->getByField('title', 'Automezzi', Models\Locale::getPredefined()->id);
+$link_id = Module::where('name', 'Automezzi')->first()->id;
 
 $fields = [
     'Nome' => 'nome',

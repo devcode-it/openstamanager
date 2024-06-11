@@ -21,7 +21,7 @@ use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module_collegamento = $ddt->direzione == 'entrata' ? (new Module())->getByField('title', 'Ddt in entrata', Models\Locale::getPredefined()->id) : (new Module())->getByField('title', 'Ddt in uscita', Models\Locale::getPredefined()->id);
+$id_module_collegamento = $ddt->direzione == 'entrata' ? Module::where('name', 'Ddt di acquisto')->first()->id : Module::where('name', 'Ddt di vendita')->first()->id;
 
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {

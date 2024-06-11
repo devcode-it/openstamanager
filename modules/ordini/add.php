@@ -50,7 +50,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-4">
-            {[ "type": "select", "label": "<?php echo tr($tipo_anagrafica); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
+            {[ "type": "select", "label": "<?php echo tr($tipo_anagrafica); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
 		</div>
 
 		<div class="col-md-4">

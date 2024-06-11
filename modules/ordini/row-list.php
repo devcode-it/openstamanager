@@ -122,7 +122,7 @@ foreach ($righe as $riga) {
 
         echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
 
-        if ($id_module == (new Module())->getByField('title', 'Ordini_fornitore', Models\Locale::getPredefined()->id)) {
+        if ($id_module == Module::where('name', 'Ordini fornitore')->first()->id) {
             $codice_fornitore = $riga->articolo->dettaglioFornitore($ordine->idanagrafica)->codice_fornitore;
             if (!empty($codice_fornitore)) {
                 echo '
@@ -748,10 +748,10 @@ function aggiornaInline(id) {
 }
 init();';
 
-if (Plugin::find((new Plugin())->getByField('title', 'Distinta base', Models\Locale::getPredefined()->id))) {
+if (Plugin::where('name', 'Distinta base')->first()) {
     echo '
     async function viewDistinta(id_articolo) {
-        openModal("'.tr('Distinta base').'", "'.Plugin::find((new Plugin())->getByField('title', 'Distinta base', Models\Locale::getPredefined()->id))->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
+        openModal("'.tr('Distinta base').'", "'.Plugin::where('name', 'Distinta base')->first()->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
     }';
 }
 echo '

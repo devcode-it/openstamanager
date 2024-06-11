@@ -25,7 +25,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         if (isset($descrizione)) {
-            $aspetto_new = AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $aspetto_new = AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
             if (empty($aspetto_new)) {
                 $aspetto->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
@@ -46,7 +46,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         if (isset($descrizione)) {
-            if (empty(AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
                 $aspetto = AspettoBeni::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $aspetto->name = $descrizione;

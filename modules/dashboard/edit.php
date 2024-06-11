@@ -31,7 +31,7 @@ $stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `title` 
 $tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tecnici disponibili
-$id_tipo_tecnico = Tipo::find((new Tipo())->getByField('title', 'Tecnico', Models\Locale::getPredefined()->id))->id;
+$id_tipo_tecnico = Tipo::where('name', 'Tecnico')->first()->id;
 $tecnici_disponibili = $dbo->fetchArray('SELECT 
     `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore` 
 FROM 
@@ -390,7 +390,7 @@ foreach ($days as $key => $day) {
     }
 }
 
-$modulo_interventi = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
+$modulo_interventi = Module::where('name', 'Interventi')->first();
 
 echo '
 <script type="text/javascript">

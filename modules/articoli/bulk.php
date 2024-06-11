@@ -31,7 +31,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 include_once __DIR__.'/../../core.php';
 
 // Segmenti
-$id_preventivi = (new Module())->getByField('title', 'Preventivi', Models\Locale::getPredefined()->id);
+$id_preventivi = Module::where('name', 'Preventivi')->first()->id;
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {

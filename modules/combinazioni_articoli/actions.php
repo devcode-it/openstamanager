@@ -10,9 +10,9 @@ switch (filter('op')) {
         $nome = post('nome');
 
         // Ricerca combinazione con nome indicato
-        $combinazione_new = (new Combinazione())->getByField('title', $nome);
+        $combinazione_new = Combinazione::where('id', '=', (new Combinazione())->getByField('title', $nome)->orWhere('name', $nome)->where('id', '!=', $id_record)->first());
 
-        if (!empty($combinazione_new) && !empty($id_record) && $combinazione_new != $id_record) {
+        if (!empty($combinazione_new)) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
         } else {
             if (empty($combinazione)) {

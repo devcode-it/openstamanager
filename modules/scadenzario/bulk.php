@@ -74,7 +74,7 @@ switch (post('op')) {
         break;
 
     case 'send-sollecito':
-        $template = Template::find((new Template())->getByField('title', 'Sollecito di pagamento raggruppato per anagrafica', Models\Locale::getPredefined()->id));
+        $template = Template::where('name', 'Sollecito di pagamento raggruppato per anagrafica')->first()->id;
 
         $list = [];
         $anagrafiche = [];
@@ -95,7 +95,7 @@ switch (post('op')) {
 
                     // Allego stampa della fattura se non presente
                     if (empty($fattura_allegata)) {
-                        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id))->first();
+                        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', Module::where('name', 'Fatture di vendita')->first()->id)->first();
 
                         $print = Prints::render($print_predefined->id, $id_documento, null, true);
                         $upload = Uploads::upload($print['pdf'], [
@@ -181,7 +181,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'scadenzario',
-        'url' => base_path().'/add.php?id_module='.(new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id),
+        'url' => base_path().'/add.php?id_module='.Module::where('name', 'Prima nota')->first()->id,
     ],
 ];
 

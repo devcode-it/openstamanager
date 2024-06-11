@@ -343,7 +343,7 @@ if (!empty($articoli)) {
     echo '
                 </table>';
 
-    echo "<br><p class='float-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.(new Plugin())->getByField('title', 'Statistiche vendita', Models\Locale::getPredefined()->id)).'</p>';
+    echo "<br><p class='float-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugin::where('name', 'Statistiche vendita')->first()->id).'</p>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo venduto').'...</p>';

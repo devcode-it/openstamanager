@@ -29,7 +29,7 @@ class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {
     public function create($request)
     {
-        $id_module = (new Module())->getByField('title', $request['module']);
+        $id_module = Module::where('name', $request['module'])->first()->id;
 
         $name = !empty($request['name']) ? $request['name'] : null;
         $category = !empty($request['category']) ? $request['category'] : null;

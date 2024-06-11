@@ -53,8 +53,8 @@ echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
 
         <?php
 
-$id_module_acquisti = (new Module())->getByField('title', 'Fatture di acquisto', Models\Locale::getPredefined()->id);
-$id_module_vendite = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_module_acquisti = Module::where('name', 'Fatture di acquisto')->first()->id;
+$id_module_vendite = Module::where('name', 'Fatture di vendita')->first()->id;
 
 echo '
 		<div class="col-md-3">

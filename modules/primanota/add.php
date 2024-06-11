@@ -39,7 +39,7 @@ use Modules\Fatture\Fattura;
  * Nel caso in cui sia indicato una singola Scadenza (con o senza Fattura associata) viene permessa la gestione attraverso un Modello di Prima Nota, che prevede una compilazione di base per alcuni movimenti specificati nel relativo modulo.
  * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
  */
-$id_module = (new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id);
+$id_module = Module::where('name', 'Prima nota')->first()->id;
 $movimenti = [];
 
 // Registrazione da remoto
@@ -363,7 +363,7 @@ $("#modals > div #add-form").on("submit", function(e) {
 </script>';
 
 if ($permetti_modelli) {
-    $variables = Module::find((new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id))->getPlaceholders($id_anagrafica);
+    $variables = Module::where('name', 'Anagrafiche')->first()->getPlaceholders($id_anagrafica);
 
     echo '
 <script type="text/javascript">

@@ -56,7 +56,7 @@ class Ordine extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
@@ -177,7 +177,7 @@ class Ordine extends Document
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByField('title', $descrizione, \Models\Locale::getPredefined()->id);
+            $stato = Stato::where('name', $descrizione)->first()->id;
             $this->stato()->associate($stato);
             $this->save();
         }

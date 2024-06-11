@@ -52,7 +52,7 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
 
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
-            if ($documento->codice_stato_fe == 'NS' && ($documento->stato != (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id)) && ($documento->stato != (new Stato())->getByField('title', 'Non valida', Models\Locale::getPredefined()->id))) {
+            if ($documento->codice_stato_fe == 'NS' && ($documento->stato != Stato::where('name', 'Bozza')->first()->id) && ($documento->stato != Stato::where('name', 'Non valida')->first()->id)) {
                 $ricevuta_principale = $documento->getRicevutaPrincipale();
 
                 if (!empty($ricevuta_principale)) {

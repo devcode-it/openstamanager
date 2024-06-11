@@ -92,7 +92,7 @@ $insoluti = Scadenza::where('idanagrafica', $intervento->idanagrafica)
     ->count();
 
 // Logo
-$logo = Upload::where('id_module', (new Module())->getByField('title', 'Anagrafiche'))->where('id_record', $intervento->idanagrafica)->where('name', 'Logo azienda')->first()->filename;
+$logo = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', $intervento->idanagrafica)->where('name', 'Logo azienda')->first()->filename;
 
 $logo = $logo ? base_path().'/files/anagrafiche/'.$logo : App::getPaths()['img'].'/logo_header.png';
 

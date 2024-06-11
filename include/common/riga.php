@@ -45,7 +45,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.(new Module())->getByField('title', 'Unità di misura', Models\Locale::getPredefined()->id).'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Module::where('name', 'Unità di misura')->first()->id.'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
         </div>';
 
 // Unità di misura

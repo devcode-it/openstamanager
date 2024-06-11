@@ -67,7 +67,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
                     'category' => filter('categoria'),
-                    'id_module' => (new Module())->getByField('title', 'Gestione documentale', Models\Locale::getPredefined()->id),
+                    'id_module' => Module::where('name', 'Gestione documentale')->first()->id,
                     'id_record' => $id_record,
                 ]);
 

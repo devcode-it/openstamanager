@@ -53,11 +53,11 @@ echo '
     <div class="row">
         <div class="col-md-2 offset-md-10">';
 if (setting('Cambia automaticamente stato ordini fatturati')) {
-    $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-    $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-    $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-    $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
-    $id_stato_accettato = (new Stato())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
+    $id_stato_evaso = Stato::where('name', 'Evaso')->first()->id;
+    $id_stato_parz_evaso = Stato::where('name', 'Parzialmente evaso')->first()->id;
+    $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
+    $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
+    $id_stato_accettato = Stato::where('name', 'Accettato')->first()->id;
 
     if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
         ?>
@@ -291,7 +291,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">

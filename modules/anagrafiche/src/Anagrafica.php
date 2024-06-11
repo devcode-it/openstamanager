@@ -89,7 +89,7 @@ class Anagrafica extends Model
 
     public static function fromTipo($type)
     {
-        $tipologia = (new TipoAnagrafica())->getByField('title', $type);
+        $tipologia = TipoAnagrafica::where('name', $type)->first()->id;
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
             $query->where('an_tipianagrafiche.id', '=', $tipologia);
@@ -156,7 +156,7 @@ class Anagrafica extends Model
     public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
-            $tipologie[] = (new TipoAnagrafica())->getByField('title', 'Azienda', \Models\Locale::getPredefined()->id);
+            $tipologie[] = TipoAnagrafica::where('name', 'Azienda')->first()->id;
         }
 
         $tipologie = array_clean($tipologie);

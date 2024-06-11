@@ -27,9 +27,9 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'add':
         $name = post('name');
-        $lista_new = Lista::find((new Lista())->getByField('title', $name));
+        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->orWhere('name', $name)->where('id', '!=', $id_record)->first();
 
-        if (!empty($lista_new) && $lista_new->id != $id_record) {
+        if (!empty($lista_new)) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             $lista = Lista::build($name);
@@ -54,9 +54,9 @@ switch (filter('op')) {
             $query = html_entity_decode($query);
         }
 
-        $lista_new = Lista::find((new Lista())->getByField('title', $name));
+        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->orWhere('name', $name)->where('id', '!=', $id_record)->first();
 
-        if (!empty($lista_new) && $lista_new->id != $id_record) {
+        if (!empty($lista_new)) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {

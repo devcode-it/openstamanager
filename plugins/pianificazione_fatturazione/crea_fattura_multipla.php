@@ -46,7 +46,7 @@ foreach ($records as $j => $record) {
     }
 }
 
-$id_module_fattura = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_module_fattura = Module::where('name', 'Fatture di vendita')->first()->id;
 $id_conto = setting('Conto predefinito fatture di vendita');
 
 echo '<form action="" method="post">

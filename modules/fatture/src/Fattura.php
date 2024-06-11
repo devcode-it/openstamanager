@@ -96,7 +96,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
-        $id_stato_attuale_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_attuale_documento = Stato::where('name', 'Bozza')->first()->id;
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -568,11 +568,11 @@ class Fattura extends Document
         $id_stato_precedente = $this->original['idstatodocumento'];
         $id_stato_attuale = $this->stato['id'];
 
-        $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
-        $id_stato_emessa = (new Stato())->getByField('title', 'Emessa', \Models\Locale::getPredefined()->id);
-        $id_stato_annullata = (new Stato())->getByField('title', 'Annullata', \Models\Locale::getPredefined()->id);
-        $id_stato_non_valida = (new Stato())->getByField('title', 'Non valida', \Models\Locale::getPredefined()->id);
-        $id_stato_pagato = (new Stato())->getByField('title', 'Pagato', \Models\Locale::getPredefined()->id);
+        $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
+        $id_stato_emessa = Stato::where('name', 'Emessa')->first()->id;
+        $id_stato_annullata = Stato::where('name', 'Annullata')->first()->id;
+        $id_stato_non_valida = Stato::where('name', 'Non valida')->first()->id;
+        $id_stato_pagato = Stato::where('name', 'Pagato')->first()->id;
 
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
@@ -716,7 +716,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato
-        $id_stato_attuale = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $id_stato_attuale = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($id_stato_attuale);
 
         return $new;

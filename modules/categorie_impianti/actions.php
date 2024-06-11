@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Checklists\Check;
 use Modules\Impianti\Categoria;
 
-$modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
+$modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 
 switch (filter('op')) {
     case 'update':
@@ -60,7 +60,7 @@ switch (filter('op')) {
 
         $id_original = filter('id_original') ?: null;
 
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $nome));
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $nome))->orWhere('name', $nome);
         if (!empty($id_original)) {
             $categoria_new = $categoria_new->where('parent', '=', $id_original);
         } else {

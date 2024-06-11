@@ -77,7 +77,7 @@ use Modules\Pagamenti\Pagamento;
 
             <?php
 
-                $results = (new Pagamento())->getByField('title', prepare($record['descrizione']));
+                $results = Pagamento::where('name', prepare($record['descrizione']))->first()->id;
 $numero_data = 1;
 foreach ($results as $result) {
 }

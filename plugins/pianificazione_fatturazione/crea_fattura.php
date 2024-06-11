@@ -35,7 +35,7 @@ foreach ($contratto->pianificazioni as $i => $p) {
     }
 }
 
-$id_module_fattura = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_module_fattura = Module::where('name', 'Fatture di vendita')->first()->id;
 
 $id_conto = setting('Conto predefinito fatture di vendita');
 $data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
@@ -87,7 +87,7 @@ echo '
 
 // gestione replace
 $descrizione = setting('Descrizione fattura pianificata');
-$modules = (new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id);
+$modules = Module::where('name', 'Contratti')->first()->id;
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {
     $descrizione = str_replace('{'.$variable.'}', $value, $descrizione);

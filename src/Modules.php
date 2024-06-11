@@ -282,7 +282,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::get((new Module())->getByField('title', $modulo, Models\Locale::getPredefined()->id));
+        $module = self::get(Module::where('name', $modulo)->first()->id);
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 

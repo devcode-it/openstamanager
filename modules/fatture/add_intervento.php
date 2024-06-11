@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Fatture\Fattura;
 
 $module = Module::find($id_module);
-$module_interventi = Module::find((new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id));
+$module_interventi = Module::where('name', 'Interventi')->first();
 
 if ($module->getTranslation('title') == 'Fatture di vendita') {
     $dir = 'entrata';

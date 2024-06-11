@@ -221,7 +221,7 @@ echo '
     </div>
 </div>';
 
-$modulo_prima_nota = (new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id);
+$modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
 echo '
 <script>
 

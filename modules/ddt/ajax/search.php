@@ -46,7 +46,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Ddt in entrata' : 'Ddt in uscita';
-    $link_id = (new Module())->getByField('title', $module, Models\Locale::getPredefined()->id);
+    $link_id = Module::where('name', $module)->first()->id;
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 

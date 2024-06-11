@@ -24,7 +24,7 @@ use Modules\Contratti\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = Stato::find((new Stato())->getByField('title', $descrizione));
+        $stato_new = Stato::where('name', $descrizione)->first();
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));
@@ -53,7 +53,7 @@ switch (post('op')) {
         $is_fatturabile = post('is_fatturabile_add');
         $is_pianificabile = post('is_pianificabile_add');
 
-        $stato_new = Stato::find((new Stato())->getByField('title', $descrizione));
+        $stato_new = Stato::where('name', $descrizione)->first();
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));

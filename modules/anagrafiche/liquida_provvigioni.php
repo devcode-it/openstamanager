@@ -26,8 +26,8 @@ use Models\PrintTemplate;
 $id_record = filter('id_record');
 $dir = filter('dir');
 $nome_stampa = filter('nome_stampa');
-$id_print = (new PrintTemplate())->getByField('title', $nome_stampa, Models\Locale::getPredefined()->id);
-$id_module = (new Module())->getByField('title', 'Stampe contabili', Models\Locale::getPredefined()->id);
+$id_print = PrintTemplate::where('name', $nome_stampa)->first()->id;
+$id_module = Module::where('name', 'Stampe contabili')->first()->id;
 
 $year = (new Carbon($_SESSION['period_end']))->format('Y');
 

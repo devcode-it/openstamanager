@@ -290,7 +290,7 @@ class FatturaElettronica implements \Stringable
 
     public static function getDirectory()
     {
-        return \Uploads::getDirectory((new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id));
+        return \Uploads::getDirectory(Module::where('name', 'Fatture di vendita')->first()->id);
     }
 
     /**
@@ -1705,7 +1705,7 @@ class FatturaElettronica implements \Stringable
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = (new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id);
+        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
         $directory = \Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1852,7 +1852,7 @@ class FatturaElettronica implements \Stringable
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => (new Module())->getByField('title', 'Fatture di vendita', \Models\Locale::getPredefined()->id),
+            'id_module' => Module::where('name', 'Fatture di vendita')->first()->id,
             'id_record' => $this->getDocumento()['id'],
         ];
     }

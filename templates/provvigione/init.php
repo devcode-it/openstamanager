@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$module = Module::find((new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id));
+$module = Module::where('name', 'Fatture di vendita')->first();
 
 $module_query = '
 SELECT

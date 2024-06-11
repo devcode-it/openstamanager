@@ -124,9 +124,9 @@ class CSV extends CSVImporter
             unset($record['tipo']);
 
             if (empty($record['stato'])) {
-                $stato = Stato::find((new Stato())->getByField('title', 'Completato', \Models\Locale::getPredefined()->id));
+                $stato = Stato::where('name', 'Completato')->first();
             } else {
-                $stato = Stato::find((new Stato())->getByField('title', $record['stato']));
+                $stato = Stato::where('name', $record['stato'])->first()->id;
             }
             unset($record['stato']);
 
@@ -171,7 +171,7 @@ class CSV extends CSVImporter
             // Verifica il tecnico e inserisce la sessione
             $anagrafica_t = Anagrafica::where('ragione_sociale', $record['tecnico'])->first();
             $tipo = $database->fetchOne('SELECT `idtipoanagrafica` FROM `an_tipianagrafiche_anagrafiche` WHERE `idanagrafica` = '.prepare($anagrafica_t['idanagrafica']));
-            $tecnico = (new TipoAnagrafica())->getByField('title', 'Tecnico', \Models\Locale::getPredefined()->id);
+            $tecnico = TipoAnagrafica::where('name', 'Tecnico')->first()->id;
 
             if ($tipo = $tecnico) {
                 $anagrafica_t['tipo'] = TipoAnagrafica::find($tecnico);

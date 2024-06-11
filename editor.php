@@ -176,7 +176,7 @@ if (empty($record) || !$has_access) {
 
                         {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
 
-    if (Module::find((new Module())->getByField('title', 'Account SMS', Models\Locale::getPredefined()->id))) {
+    if (Module::where('name', 'Account SMS')->first()->id) {
         echo '
                         {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
     }

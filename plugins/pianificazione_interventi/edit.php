@@ -154,7 +154,7 @@ if (!$elenco_promemoria->isEmpty()) {
                     <i class="fa fa-clock-o"></i>
                 </button>
 
-                <button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-widget="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.(new Module())->getByField('title', 'Attività', Models\Locale::getPredefined()->id).'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$promemoria['id'].'\');"'.(!empty($is_pianificabile) ? '' : ' disabled').'>
+                <button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-widget="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.base_path().'/add.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$promemoria['id'].'\');"'.(!empty($is_pianificabile) ? '' : ' disabled').'>
                     <i class="fa fa-calendar"></i>
                 </button>
 

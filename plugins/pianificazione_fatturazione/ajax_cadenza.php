@@ -58,7 +58,7 @@ while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
     $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
     unset($checked);
 
-    if ($id_module == (new Module())->getByField('title', 'Contratti', Models\Locale::getPredefined()->id)) {
+    if ($id_module == Module::where('name', 'Contratti')->first()->id) {
         if ($data == date('Y-m-t', strtotime((string) $timeing, strtotime((string) $data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
             $checked = 'checked';
             $data_fatturazione = date('Y-m', strtotime($data));

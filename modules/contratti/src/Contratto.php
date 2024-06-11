@@ -67,7 +67,7 @@ class Contratto extends Document
     {
         $model = new static();
 
-        $stato_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
         $id_agente = $anagrafica->idagente;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
@@ -248,7 +248,7 @@ class Contratto extends Document
             $codice_intervento = 'FAT';
         }
 
-        $stato = (new Stato())->getByField('title', $descrizione, \Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', $descrizione)->first()->id;
         $this->stato()->associate($stato);
         $this->save();
 

@@ -124,7 +124,7 @@ switch (filter('op')) {
         }
 
         // Disabilitazione modulo/plugin indicato
-        $moduli_sempre_attivi = [(new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id), (new Module())->getByField('title', 'Stato dei servizi', Models\Locale::getPredefined()->id)];
+        $moduli_sempre_attivi = [Module::where('name', 'Utenti e permessi')->first()->id, Module::where('name', 'Stato dei servizi')->first()->id];
         $database->table('zz_modules')
             ->whereIn('id', $moduli_sempre_attivi)
             ->update(['enabled' => 1]);
@@ -367,7 +367,8 @@ switch (filter('op')) {
         break;
 
     case 'informazioni-fe':
-        $info = Cache::find((new Cache())->getByField('title', 'Informazioni su spazio FE', Models\Locale::getPredefined()->id));
+        $info = s;
+
         if (!$info->isValid()) {
             $response = Services::request('POST', 'informazioni_fe');
             $response = Services::responseBody($response);

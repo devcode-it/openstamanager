@@ -28,7 +28,7 @@ use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato as StatoPreventivo;
 
 // Segmenti
-$id_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -47,7 +47,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new StatoFattura())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = StatoFattura::where('name', 'Bozza')->first()->id;
         $accodare = post('accodare');
 
         $data = date('Y-m-d');

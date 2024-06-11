@@ -22,7 +22,7 @@ use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
-$structure = Module::find((new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id));
+$structure = Module::where('name', 'Prima nota')->first();
 
 if (!empty($_SESSION['superselect']['mastrini'])) {
     $id_record = $_SESSION['superselect']['mastrini'];

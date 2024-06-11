@@ -100,7 +100,7 @@ echo '
     </div>
 </div>';
 
-$statistiche = Module::find((new Module())->getByField('title', 'Statistiche', Models\Locale::getPredefined()->id));
+$statistiche = Module::where('name', 'Statistiche')->first();
 
 if ($statistiche != null) {
     echo '

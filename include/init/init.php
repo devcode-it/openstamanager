@@ -28,7 +28,7 @@ if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
     return;
 }
 
-$id_tipo_azienda = Tipo::find((new Tipo())->getByField('title', 'Azienda', Models\Locale::getPredefined()->id))->id;
+$id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
 $has_azienda = $dbo->fetchNum('SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
     LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
@@ -74,7 +74,7 @@ if (post('action') == 'init') {
     // Azienda predefinita
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
-        $id_module = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+        $id_module = Module::where('name', 'Anagrafiche')->first()->id;
         include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe
@@ -178,7 +178,7 @@ if (!$has_azienda) {
 
                 <div class="card-body" id="bs-popup">';
 
-    $idtipoanagrafica = (new Tipo())->getByField('title', 'Azienda', Models\Locale::getPredefined()->id);
+    $idtipoanagrafica = Tipo::where('name', 'Azienda')->first()->id;
     $readonly_tipo = true;
 
     ob_start();

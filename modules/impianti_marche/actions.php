@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Impianti\Marca;
 
-$id_modulo_marca_impianti = (new Module())->getByField('title', 'Marche Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_marca_impianti = Module::where('name', 'Marche impianti')->first()->id;
 
 switch (filter('op')) {
     case 'update':
@@ -52,7 +52,7 @@ switch (filter('op')) {
         $title = filter('title');
         $id_original = filter('id_original') ?: null;
 
-        $marca_new = Marca::where('id', '=', (new Marca())->getByField('title', $title));
+        $marca_new = Marca::where('id', '=', (new Marca())->getByField('title', $title))->orWhere('name', $title);
         if (!empty($id_original)) {
             $marca_new = $marca_new->where('parent', '=', $id_original);
         } else {

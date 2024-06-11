@@ -60,7 +60,7 @@ class DDT extends Document
         $model = new static();
         $user = \Auth::user();
 
-        $stato_documento = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+        $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
@@ -237,7 +237,7 @@ class DDT extends Document
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = (new Stato())->getByField('title', $descrizione, \Models\Locale::getPredefined()->id);
+            $stato = Stato::where('name', $descrizione)->first()->id;
             $this->stato()->associate($stato);
             $this->save();
         }

@@ -25,7 +25,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
             if (empty($causale_new)) {
                 $causale->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
@@ -50,7 +50,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
                 $causale = Causale::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $causale->name = $descrizione;

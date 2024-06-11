@@ -29,7 +29,7 @@ use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
 
 // Segmenti
-$id_modulo_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_modulo_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
 if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_modulo_fatture);
     $_SESSION['module_'.$id_modulo_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -49,7 +49,7 @@ switch (post('op')) {
 
         $tipo_documento = TipoFattura::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = Stato::where('name', 'Bozza')->first()->id;
         $accodare = post('accodare');
 
         $data = date('Y-m-d');

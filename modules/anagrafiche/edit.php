@@ -32,9 +32,9 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('title', 'Dichiarazioni d\'intento', Models\Locale::getPredefined()->id))
+    $ignore = Plugin::where('name', 'Sedi')
+        ->orWhere('name', 'Referenti')
+        ->orWhere('name', 'Dichiarazioni d\'intento')
         ->get();
 
     foreach ($ignore as $plugin) {
@@ -46,9 +46,9 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
 }
 
 if (!$is_cliente) {
-    $ignore = Plugin::where('id', '=', (new Plugin())->getByField('title', 'Impianti del cliente', Models\Locale::getPredefined()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('title', 'Contratti del cliente', Models\Locale::getPredefined()->id))
-        ->orWhere('id', '=', (new Plugin())->getByField('title', 'Ddt del cliente', Models\Locale::getPredefined()->id))
+    $ignore = Plugin::where('name', 'Impianti del cliente')
+        ->orWhere('name', 'Contratti del cliente')
+        ->orWhere('name', 'Ddt del cliente')
         ->get();
 
     foreach ($ignore as $plugin) {
@@ -228,7 +228,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Zone', Models\Locale::getPredefined()->id); ?>" ]}
+                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Module::where('name', 'Zone')->first()->id ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -457,7 +457,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.(new Module())->getByField('title', 'Relazioni', Models\Locale::getPredefined()->id).'" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
                             </div>
 
                             <div class="col-md-9">
@@ -471,7 +471,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
     $banca_predefinita = $banche->first(fn ($item) => !empty($item['predefined']));
-    $modulo_banche = (new Module())->getByField('title', 'Banche', Models\Locale::getPredefined()->id);
+    $modulo_banche = Module::where('name', 'Banche')->first()->id;
     if (!$banche->isEmpty()) {
         echo '
                         <div class="row">
@@ -500,7 +500,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.(new Module())->getByField('title', 'Provenienze', Models\Locale::getPredefined()->id).'" ]}
+                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Module::where('name', 'Provenienze')->first()->id.'" ]}
                             </div>
                         
                             <div class="col-md-6">
@@ -684,7 +684,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Settori', Models\Locale::getPredefined()->id); ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Module::where('name', 'Settori')->first()->id; ?>" ]}
                         </div>
 
                         <div class="col-md-3">

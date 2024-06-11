@@ -33,7 +33,7 @@ echo '
     <div class="card-body">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "required":"1", "ajax-source": "fornitori","icon-after": "add|'.(new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id).'|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
+                {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "required":"1", "ajax-source": "fornitori","icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
             </div>
 
             <div class="col-md-3">

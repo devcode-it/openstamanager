@@ -101,16 +101,16 @@ echo '
     <div class="row">
         <div class="col-md-2 offset-md-10">';
 if (setting('Cambia automaticamente stato ddt fatturati')) {
-    $id_stato_fatt = (new Stato())->getByField('title', 'Fatturato', Models\Locale::getPredefined()->id);
-    $id_stato_parz_fatt = (new Stato())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+    $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
+    $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
 
     if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
         echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
     } else {
-        $id_stato_bozza = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
-        $id_stato_evaso = (new Stato())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new Stato())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
+        $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
+        $id_stato_evaso = Stato::where('name', 'Evaso')->first()->id;
+        $id_stato_parz_evaso = Stato::where('name', 'Parzialmente evaso')->first()->id;
         echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
@@ -194,8 +194,8 @@ echo '
 
 // Conteggio numero articoli ddt in uscita
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`idarticolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
-$id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
+$id_plugin_sedi = Plugin::where('name', 'Sedi')->first()->id;
 if ($dir == 'entrata') {
     echo '
                         <div class="col-md-4">
@@ -239,7 +239,7 @@ if ($dir == 'entrata') {
         <div class="card-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Aspetto beni', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo Module::where('name', 'Aspetto beni')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -248,7 +248,7 @@ if ($dir == 'entrata') {
                 echo Modules::link('Causali', $record['idcausalet'], null, null, 'class="pull-right"');
             }
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo (new Module())->getByField('title', 'Causali', Models\Locale::getPredefined()->id); ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Module::where('name', 'Causali')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -275,7 +275,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-": "add|<?php echo (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id); ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -458,7 +458,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">

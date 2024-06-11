@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Checklists\Check;
 
 $operazione = filter('op');
-$id_modulo_impianti = (new Module())->getByField('title', 'Impianti', Models\Locale::getPredefined()->id);
+$id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 
 switch ($operazione) {
     case 'add_impianto':

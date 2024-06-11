@@ -96,7 +96,7 @@ class CSV extends CSVImporter
 
             if (empty($anagrafica)) {
                 $anagrafica = Anagrafica::build($record['ragione_sociale']);
-                $tipo_cliente = (new TipoAnagrafica())->getByField('title', 'Cliente', \Models\Locale::getPredefined()->id);
+                $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first()->id;
                 $anagrafica->tipologie = [$tipo_cliente];
                 $anagrafica->save();
             }
@@ -105,7 +105,7 @@ class CSV extends CSVImporter
 
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], new Carbon($record['data_bozza']), 0);
             $preventivo->numero = $record['numero'];
-            $preventivo->idstato = (new Stato())->getByField('title', 'Bozza', \Models\Locale::getPredefined()->id);
+            $preventivo->idstato = Stato::where('name', 'Bozza')->first()->id;
             $preventivo->descrizione = $record['descrizione'];
             $preventivo->save();
         }

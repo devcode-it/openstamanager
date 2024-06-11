@@ -149,7 +149,7 @@ switch (post('op')) {
         $new = $contratto->replicate(['idcontratto_prev']);
         $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
 
-        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato);
         $new->save();
 
@@ -404,7 +404,7 @@ switch (post('op')) {
         $new_contratto->data_bozza = Carbon::now();
         $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $new_contratto->id_segment);
 
-        $stato = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato = Stato::where('name', 'Bozza')->first()->id;
         $new_contratto->stato()->associate($stato);
 
         $new_contratto->save();
@@ -455,7 +455,7 @@ switch (post('op')) {
             foreach ($allegati as $allegato) {
                 $allegato->copia([
                     'id_module' => $id_module,
-                    'id_plugin' => (new Plugin())->getByField('title', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
+                    'id_plugin' => Plugin::where('name', 'Pianificazione interventi')->first()->id,
                     'id_record' => $id_promemoria,
                 ]);
             }

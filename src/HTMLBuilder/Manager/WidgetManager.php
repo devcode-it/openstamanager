@@ -63,7 +63,7 @@ class WidgetManager implements ManagerInterface
 
     protected static function getModule()
     {
-        return Module::find((new Module())->getByField('title', 'Stato dei servizi', \Models\Locale::getPredefined()->id));
+        return Module::where('name', 'Stato dei servizi')->first();
     }
 
     protected function prints($widget)

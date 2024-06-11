@@ -23,8 +23,8 @@ use Modules\Pagamenti\Pagamento;
 
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
-$id_modulo_banche = (new Module())->getByField('title', 'Banche', Models\Locale::getPredefined()->id);
-$id_modulo_prima_nota = (new Module())->getByField('title', 'Prima nota', Models\Locale::getPredefined()->id);
+$id_modulo_banche = Module::where('name', 'Banche')->first()->id;
+$id_modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
 
 echo '
 <form action="" method="post" id="edit-form">

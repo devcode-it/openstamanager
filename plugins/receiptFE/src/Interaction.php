@@ -42,7 +42,7 @@ class Interaction extends Services
         $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        Cache::find((new Cache())->getByField('title', 'Ricevute Elettroniche', \Models\Locale::getPredefined()->id))->set($result);
+        Cache::where('name', 'Ricevute Elettroniche')->first()->set($result);
 
         return $result;
     }

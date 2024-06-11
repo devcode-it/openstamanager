@@ -40,7 +40,7 @@ if (!empty($rs)) {
 }
 
 $api = base_url().'/api/?token='.$token;
-$module = Module::find((new Module())->getByField('title', 'Utenti e permessi', Models\Locale::getPredefined()->id));
+$module = Module::where('name', 'Utenti e permessi')->first();
 
 echo '
 <div class="card card-widget widget-user">

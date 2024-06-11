@@ -23,7 +23,7 @@ use Modules\Fatture\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = (new Stato())->getByField('title', $descrizione);
+        $stato_new = Stato::where('name', $descrizione)->first()->id;
 
         if (!empty($stato_new) && $stato_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato.'));

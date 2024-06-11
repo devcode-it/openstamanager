@@ -47,7 +47,7 @@ switch (post('op')) {
 
         if (!empty($descrizione)) {
             // Verifico che il nome non sia duplicato
-            $tipo = Tipo::find((new Tipo())->getByField('title', $descrizione));
+            $tipo = Tipo::where('name', $descrizione)->first();
 
             if ($tipo) {
                 flash()->error(tr('Nome già esistente!'));

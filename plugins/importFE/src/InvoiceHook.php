@@ -44,7 +44,7 @@ class InvoiceHook extends CachedManager
         $count = count($results);
         $notify = false;
 
-        $module = Module::find((new Module())->getByField('title', 'Fatture di acquisto', \Models\Locale::getPredefined()->id));
+        $module = Module::where('name', 'Fatture di acquisto')->first();
         $plugins = $module->plugins;
 
         if (!empty($plugins)) {

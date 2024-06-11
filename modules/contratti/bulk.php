@@ -31,7 +31,7 @@ use Modules\Fatture\Tipo;
 use Plugins\PianificazioneInterventi\Promemoria;
 
 // Segmenti
-$id_fatture = (new Module())->getByField('title', 'Fatture di vendita', Models\Locale::getPredefined()->id);
+$id_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
@@ -52,7 +52,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = (new Stato())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+        $stato_documenti_accodabili = Stato::where('name', 'Bozza')->first()->id;
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -161,7 +161,7 @@ switch (post('op')) {
                 $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
                 $new_contratto->data_bozza = Carbon::now();
 
-                $stato = (new StatoContratto())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
+                $stato = StatoContratto::where('name', 'Bozza')->first()->id;
                 $new_contratto->stato()->associate($stato);
 
                 $new_contratto->save();
@@ -212,7 +212,7 @@ switch (post('op')) {
                     foreach ($allegati as $allegato) {
                         $allegato->copia([
                             'id_module' => $id_module,
-                            'id_plugin' => (new Plugin())->getByField('title', 'Pianificazione interventi', Models\Locale::getPredefined()->id),
+                            'id_plugin' => Plugin::where('name', 'Pianificazione interventi')->first()->id,
                             'id_record' => $id_promemoria,
                         ]);
                     }

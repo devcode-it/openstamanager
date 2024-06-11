@@ -23,7 +23,7 @@ use Tasks\Task;
 switch (post('op')) {
     case 'update':
         $name = post('name');
-        $task_new = (new Task())->getByField('title', $name);
+        $task_new = Task::where('name', $name)->first()->id;
 
         if (!empty($task_new) && $task_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro task.'));

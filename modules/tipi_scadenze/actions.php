@@ -28,7 +28,7 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già una tipo di scadenza con lo stesso nome
-            $nome_new = Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $nome_new = Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first();
             $nome_prev = $tipo->getTranslation('title');
             if (empty($nome_new)) {
                 // nome_prev
@@ -39,7 +39,7 @@ switch (filter('op')) {
                 $tipo->save();
                 flash()->info(tr('Salvataggio completato.'));
 
-                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare((new Module())->getByField('title', 'Scadenzario', Models\Locale::getPredefined()->id)).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`title` = "Scadenzario '.$nome_prev.'"')['id'];
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`title` = "Scadenzario '.$nome_prev.'"')['id'];
 
                 // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
@@ -74,7 +74,7 @@ switch (filter('op')) {
 
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
-            if (empty(Tipo::where('id', '=', (new Tipo())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first())) {
                 $tipo = Tipo::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $nome;
@@ -87,7 +87,7 @@ switch (filter('op')) {
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
-                    'id_module' => (new Module())->getByField('title', 'Scadenzario', Models\Locale::getPredefined()->id),
+                    'id_module' => Module::where('name', 'Scadenzario')->first()->id,
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'position' => 'WHR',
                 ]);

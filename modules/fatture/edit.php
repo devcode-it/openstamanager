@@ -35,14 +35,14 @@ include_once __DIR__.'/../../core.php';
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
-$id_stato_bozza = (new StatoFattura())->getByField('title', 'Bozza', Models\Locale::getPredefined()->id);
-$id_stato_emessa = (new StatoFattura())->getByField('title', 'Emessa', Models\Locale::getPredefined()->id);
-$id_stato_pagato = (new StatoFattura())->getByField('title', 'Pagato', Models\Locale::getPredefined()->id);
-$id_stato_parz_pagato = (new StatoFattura())->getByField('title', 'Parzialmente pagato', Models\Locale::getPredefined()->id);
-$id_stato_non_valida = (new StatoFattura())->getByField('title', 'Non valida', Models\Locale::getPredefined()->id);
-$id_stato_annullata = (new StatoFattura())->getByField('title', 'Annullata', Models\Locale::getPredefined()->id);
+$id_stato_bozza = StatoFattura::where('name', 'Bozza')->first()->id;
+$id_stato_emessa = StatoFattura::where('name', 'Emessa')->first()->id;
+$id_stato_pagato = StatoFattura::where('name', 'Pagato')->first()->id;
+$id_stato_parz_pagato = StatoFattura::where('name', 'Parzialmente pagato')->first()->id;
+$id_stato_non_valida = StatoFattura::where('name', 'Non valida')->first()->id;
+$id_stato_annullata = StatoFattura::where('name', 'Annullata')->first()->id;
 
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 
 $block_edit = !empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || !$abilita_genera;
 
@@ -339,9 +339,9 @@ echo '
 if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
-$id_modulo_anagrafiche = (new Module())->getByField('title', 'Anagrafiche', Models\Locale::getPredefined()->id);
+$id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Referenti', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
             </div>
         </div>
@@ -390,7 +390,7 @@ echo '
 <?php
 // Conteggio numero articoli fatture
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`) WHERE `co_documenti`.`id`='.prepare($id_record));
-$id_plugin_sedi = (new Plugin())->getByField('title', 'Sedi', Models\Locale::getPredefined()->id);
+$id_plugin_sedi = Plugin::where('name', 'Sedi')->first()->id;
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">
@@ -432,7 +432,7 @@ if ($dir == 'entrata') {
                     <?php if ($record['id_banca_azienda'] != 0) {
                         echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
                     }
-$id_module_banche = (new Module())->getByField('title', 'Banche', Models\Locale::getPredefined()->id);
+$id_module_banche = Module::where('name', 'Banche')->first()->id;
 if ($dir == 'entrata') {
     echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
@@ -553,7 +553,7 @@ if ($dir == 'entrata') {
     }
 
     echo '
-                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.(new Plugin())->getByField('title', 'Dichiarazioni d\'intento', Models\Locale::getPredefined()->id).'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
+                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Dichiarazioni d\'intento')->first()->id.'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                 </div>';
 }
 echo '
@@ -602,11 +602,11 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.(new Module())->getByField('title', 'Aspetto beni', Models\Locale::getPredefined()->id).'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.Module::where('name', 'Aspetto beni')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.(new Module())->getByField('title', 'Causali', Models\Locale::getPredefined()->id).'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.Module::where('name', 'Causali')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -828,9 +828,9 @@ if (!$block_edit) {
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         }
 
-        $id_stato_evaso = (new StatoDDT())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new StatoDDT())->getByField('title', 'Parziale evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new StatoDDT())->getByField('title', 'Parziale fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_evaso = StatoDDT::where('name', 'Evaso')->first()->id;
+        $id_stato_parz_evaso = StatoDDT::where('name', 'Parzialmente evaso')->first()->id;
+        $id_stato_parz_fatt = StatoDDT::where('name', 'Parzialmente fatturato')->first()->id;
 
         // Lettura ddt (entrata o uscita)
         $ddt_query = 'SELECT 
@@ -851,10 +851,10 @@ if (!$block_edit) {
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
         // Lettura ordini (cliente o fornitore)
-        $id_stato_accettato = (new StatoOrdine())->getByField('title', 'Accettato', Models\Locale::getPredefined()->id);
-        $id_stato_evaso = (new StatoOrdine())->getByField('title', 'Evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_evaso = (new StatoOrdine())->getByField('title', 'Parzialmente evaso', Models\Locale::getPredefined()->id);
-        $id_stato_parz_fatt = (new StatoOrdine())->getByField('title', 'Parzialmente fatturato', Models\Locale::getPredefined()->id);
+        $id_stato_accettato = StatoOrdine::where('name', 'Accettato')->first()->id;
+        $id_stato_evaso = StatoOrdine::where('name', 'Evaso')->first()->id;
+        $id_stato_parz_evaso = StatoOrdine::where('name', 'Parzialmente evaso')->first()->id;
+        $id_stato_parz_fatt = StatoOrdine::where('name', 'Parzialmente fatturato')->first()->id;
 
         $ordini_query = 'SELECT 
                 COUNT(*) AS tot 
@@ -884,7 +884,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.(new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id).'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-3" style="margin-top: 25px">

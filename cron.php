@@ -61,13 +61,13 @@ $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
-$ultima_esecuzione = Cache::find((new Cache())->getByField('title', 'Ultima esecuzione del cron', Models\Locale::getPredefined()->id));
+$ultima_esecuzione = Cache::where('name', 'Ultima esecuzione del cron')->first();
 $data = $ultima_esecuzione->content;
 
-$in_esecuzione = Cache::find((new Cache())->getByField('title', 'Cron in esecuzione', Models\Locale::getPredefined()->id));
-$cron_id = Cache::find((new Cache())->getByField('title', 'ID del cron', Models\Locale::getPredefined()->id));
+$in_esecuzione = Cache::where('name', 'Cron in esecuzione')->first();
+$cron_id = Cache::where('name', 'ID del cron')->first();
 
-$disattiva = Cache::find((new Cache())->getByField('title', 'Disabilita cron', Models\Locale::getPredefined()->id));
+$disattiva = Cache::where('name', 'Disabilita cron')->first();
 if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     return;
 }

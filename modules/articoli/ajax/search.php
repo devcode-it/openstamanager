@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
-$link_id = (new Module())->getByField('title', 'Articoli', Models\Locale::getPredefined()->id);
+$link_id = Module::where('name', 'Articoli')->first()->id;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));

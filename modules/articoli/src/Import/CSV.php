@@ -277,7 +277,7 @@ class CSV extends CSVImporter
         $sottocategoria = null;
         if (!empty($record['categoria'])) {
             // Categoria
-            $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->first();
+            $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->orWhere('name', strtolower((string) $record['categoria']))->first();
 
             if (empty($categoria)) {
                 $categoria = Categoria::build();
@@ -287,7 +287,7 @@ class CSV extends CSVImporter
 
             // Sotto-categoria
             if (!empty($record['sottocategoria'])) {
-                $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
+                $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->orWhere('name', strtolower((string) $record['sottocategoria']))->first();
 
                 if (empty($sottocategoria)) {
                     $sottocategoria = Categoria::build();
@@ -367,7 +367,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
-                        'id_module' => (new Module())->getByField('title', 'Articoli', \Models\Locale::getPredefined()->id),
+                        'id_module' => Module::where('name', 'Articoli')->first()->id,
                         'id_record' => $articolo->id,
                     ]);
 
@@ -384,7 +384,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => (new Module())->getByField('title', 'Articoli', \Models\Locale::getPredefined()->id),
+                    'id_module' => Module::where('name', 'Articoli')->first()->id,
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,
@@ -466,7 +466,7 @@ class CSV extends CSVImporter
         }
 
         if ($dettagli['dir']) {
-            $tipo = (new Tipo())->getByField('title', $dettagli['dir']);
+            $tipo = Tipo::where('name', $dettagli['dir'])->first()->id;
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo;
 

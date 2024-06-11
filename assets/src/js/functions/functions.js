@@ -33,8 +33,7 @@ function launch_modal(title, href, init_modal) {
  */
 function openModal(title, href) {
     // Fix - Select2 does not function properly when I use it inside a Bootstrap modal.
-    $.fn.modal.Constructor.prototype.enforceFocus = function () {
-    };
+    $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 
     // Generazione dinamica modal
     do {

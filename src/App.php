@@ -46,8 +46,8 @@ class App
         // CSS
         'css' => [
             'app.min.css',
-            'style.min.css',
             'themes.min.css',
+            'style.min.css',
         ],
 
         // Print CSS

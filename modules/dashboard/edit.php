@@ -709,19 +709,19 @@ globals.dashboard = {
 if (isMobile() && setting('Utilizzare i tooltip sul calendario')) {
     echo '
             eventClick: function(info) {
-                let link = info.event.extendedProps.link;
-                let element = $(this);
+                var link = info.event.extendedProps.link;
+                var fc_element = info.el;
                 clickCnt++;
                 if (clickCnt === 1) {
                     oneClickTimer = setTimeout(function() {
                         clickCnt = 0;
-                        element.trigger("mouseenter");
+                        $(fc_element).trigger("mouseover");
                     }, 400);
                 } else if (clickCnt === 2) {
                     clearTimeout(oneClickTimer);
                     clickCnt = 0;
                     location.href = link;
-                }          
+                }
             },';
 } else {
     echo '

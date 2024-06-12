@@ -59,7 +59,7 @@ switch (filter('op')) {
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`idtecnico` = `tecnico`.`idanagrafica`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-           LEFT JOIN `zz_files` ON (`zz_files`.`id_record` = `in_interventi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_interventi->id).')
+            LEFT JOIN `zz_files` ON (`zz_files`.`id_record` = `in_interventi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_interventi->id).')
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
         WHERE
             (
@@ -91,6 +91,8 @@ switch (filter('op')) {
             AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
             AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery('Interventi').'
+        GROUP BY 
+            `idintervento`
         HAVING
             `idzona` IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);
@@ -141,10 +143,10 @@ switch (filter('op')) {
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-            (
-                (`co_preventivi`.`data_accettazione` >= '.prepare($start).' AND `co_preventivi`.`data_accettazione` <= '.prepare($end).')
-                OR (`co_preventivi`.`data_conclusione` >= '.prepare($start).' AND `co_preventivi`.`data_conclusione` <= '.prepare($end).')
-            )';
+                (
+                    (`co_preventivi`.`data_accettazione` >= '.prepare($start).' AND `co_preventivi`.`data_accettazione` <= '.prepare($end).')
+                    OR (`co_preventivi`.`data_conclusione` >= '.prepare($start).' AND `co_preventivi`.`data_conclusione` <= '.prepare($end).')
+                )';
 
             $preventivi = $dbo->fetchArray($query);
 
@@ -200,7 +202,7 @@ switch (filter('op')) {
                 DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end.'-1 day'))).')) 
                 )
             OR 
-            (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
+                (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
             // echo $query;
 

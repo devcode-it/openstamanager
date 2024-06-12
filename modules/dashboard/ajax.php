@@ -51,7 +51,7 @@ switch (filter('op')) {
             `in_interventi_tecnici`.`orario_fine`,
             `tecnico`.`ragione_sociale` AS nome_tecnico,
             `tecnico`.`colore` AS colore_tecnico, 
-            `zz_files`.`id` AS have_attachments,
+            IF(`have_attachments`.`cont`, 1, 0) AS have_attachments,
             `an_anagrafiche`.`ragione_sociale` as cliente,
             `an_anagrafiche`.`idzona` as idzona,
             `in_statiintervento`.`is_completato` AS is_completato
@@ -59,7 +59,7 @@ switch (filter('op')) {
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`idtecnico` = `tecnico`.`idanagrafica`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-            LEFT JOIN `zz_files` ON (`zz_files`.`id_record` = `in_interventi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_interventi->id).')
+            LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_interventi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `in_interventi`.`id`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
         WHERE
             (
@@ -91,8 +91,6 @@ switch (filter('op')) {
             AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
             AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery('Interventi').'
-        GROUP BY 
-            `idintervento`
         HAVING
             `idzona` IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);

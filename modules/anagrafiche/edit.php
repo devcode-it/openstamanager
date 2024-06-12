@@ -432,131 +432,131 @@ echo '
 if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
 
-    <div class="panel card-primary">
-        <div class="card-header">
-            <h3 class="card-title">'.tr('Informazioni per tipo di anagrafica').'</h3>
-        </div>
+        <div class="panel card-primary">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Informazioni per tipo di anagrafica').'</h3>
+            </div>
 
-        <div class="card-body">
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class="nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
+            <div class="card-body">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class="nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
 
-                    <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
+                        <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
 
-                    <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente && $is_fornitore ? '' : 'disabled').'" '.($is_cliente && $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
+                        <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente && $is_fornitore ? '' : 'disabled').'" '.($is_cliente && $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
 
-                    <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
-                </ul>
+                        <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
+                    </ul>
 
-                <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
-                    <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {[ "type": "checkbox", "label": "'.tr('Abilitare lo split payment').'", "name": "split_payment", "value": "$split_payment$", "help": "'.tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>').'", "placeholder": "'.tr('Split payment').'", "extra" : "'.($record['tipo'] == 'Ente pubblico' || $record['tipo'] == 'Azienda' ? '' : 'disabled').'" ]}
+                    <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
+                        <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {[ "type": "checkbox", "label": "'.tr('Abilitare lo split payment').'", "name": "split_payment", "value": "$split_payment$", "help": "'.tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>').'", "placeholder": "'.tr('Split payment').'", "extra" : "'.($record['tipo'] == 'Ente pubblico' || $record['tipo'] == 'Azienda' ? '' : 'disabled').'" ]}
+                                </div>
+
+                                <div class="col-md-3">
+                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
+                                </div>
+
+                                <div class="col-md-9">
+                                    {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
+                                </div>
                             </div>
 
-                            <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
-                            </div>
-
-                            <div class="col-md-9">
-                                {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            
-                        </div>';
+                            <div class="row">
+                                
+                            </div>';
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
     $banca_predefinita = $banche->first(fn ($item) => !empty($item['predefined']));
     $modulo_banche = Module::where('name', 'Banche')->first()->id;
     if (!$banche->isEmpty()) {
         echo '
-                        <div class="row">
-                            <div class="col-md-6">
-                                <a href="'.base_path().'/editor.php?id_module='.$modulo_banche.'&id_record='.$banca_predefinita->id.'">
-                                    '.tr("Visualizza la banca predefinita per l'Anagrafica").' <i class="fa fa-external-link"></i>
-                                </a>
-                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="'.base_path().'/editor.php?id_module='.$modulo_banche.'&id_record='.$banca_predefinita->id.'">
+                                        '.tr("Visualizza la banca predefinita per l'Anagrafica").' <i class="fa fa-external-link"></i>
+                                    </a>
+                                </div>
 
-                            <div class="col-md-6">
-                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche.'&search_Anagrafica='.rawurlencode((string) $anagrafica['ragione_sociale']).'">
-                                    '.tr("Visualizza le banche disponibili per l'Anagrafica").' <i class="fa fa-external-link"></i>
-                                </a>
-                            </div>
-                        </div>';
+                                <div class="col-md-6">
+                                    <a href="'.base_path().'/controller.php?id_module='.$modulo_banche.'&search_Anagrafica='.rawurlencode((string) $anagrafica['ragione_sociale']).'">
+                                        '.tr("Visualizza le banche disponibili per l'Anagrafica").' <i class="fa fa-external-link"></i>
+                                    </a>
+                                </div>
+                            </div>';
     } else {
         echo '
-                        <div class="alert alert-info">
-                            '.tr('Non sono presenti banche per l\'anagrafica').'... '.Modules::link('Banche', null, tr('Creane una')).'
-                        </div>';
+                            <div class="alert alert-info">
+                                '.tr('Non sono presenti banche per l\'anagrafica').'... '.Modules::link('Banche', null, tr('Creane una')).'
+                            </div>';
     }
 
     echo '
-                    </div>
-
-                    <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
-                        <div class="row">
-                            <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Module::where('name', 'Provenienze')->first()->id.'" ]}
-                            </div>
-                        
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_vendite$" ]}
-                            </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
+                        <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
+                            <div class="row">
+                                <div class="col-md-6">
+                                        {[ "type": "select", "label": "'.tr('Provenienza cliente').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Module::where('name', 'Provenienze')->first()->id.'" ]}
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_vendite$" ]}
+                                </div>
                             </div>
-                        
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$" ]}
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Banca predefinita per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$" ]}
+                                </div>
                             </div>
-                        
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_vendite$" ]}
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_vendite$" ]}
+                                </div>
                             </div>
-                        
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
+                                </div>
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
-                            </div>';
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
+                                </div>';
 
     // Collegamento con il conto
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
     echo '
-                            <div class="col-md-6">
-                                <p><b>'.tr('Piano dei conti cliente').'</b></p>';
+                                <div class="col-md-6">
+                                    <p><b>'.tr('Piano dei conti cliente').'</b></p>';
 
     if (!empty($conto['numero_conto'])) {
         $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
@@ -566,43 +566,43 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     }
 
     echo '
+                                </div>
                             </div>
-                        </div>
-                    </div>';
+                        </div>';
 
     echo '
-                    <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_acquisti", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_acquisti$" ]}
+                        <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_acquisti", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_acquisti$" ]}
+                                </div>
+
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Banca predefinita per addebiti').'", "name": "idbanca_acquisti", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_acquisti$", "help": "'.tr("Banca predefinita dell'Azienda da cui addebitare i pagamenti").'" ]}
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita per addebiti').'", "name": "idbanca_acquisti", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_acquisti$", "help": "'.tr("Banca predefinita dell'Azienda da cui addebitare i pagamenti").'" ]}
-                            </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_acquisti", "ajax-source": "iva", "value": "$idiva_acquisti$" ]}
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_acquisti", "ajax-source": "iva", "value": "$idiva_acquisti$" ]}
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$" ]}
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$" ]}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_acquisti$" ]}
-                            </div>';
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_acquisti$" ]}
+                                </div>';
 
     // Collegamento con il conto
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
     echo '
-                            <div class="col-md-6">
-                                <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
+                                <div class="col-md-6">
+                                    <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
 
     if (!empty($conto['numero_conto'])) {
         $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
@@ -612,110 +612,107 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     }
 
     echo '
+                                </div>
                             </div>
                         </div>
-                    </div>';
 
-    echo '
-                    <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
-                        <div class="row">
-                            <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "maxlength": "7", "icon-after": "<div class=\'img-circle square\'></div>" ]}
+                        <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "maxlength": "7", "icon-after": "<div class=\'img-circle square\'></div>" ]}
+                                </div>
                             </div>
                         </div>
-                    </div>';
-
-    echo '
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>';
+        </div>';
 }
 ?>
 
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
-                </div>
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><?php echo tr('Informazioni aggiuntive'); ?></h3>
+            </div>
 
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
-                        </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
+                    </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
-                                '_PATTERN_' => 'RM-123456',
-                            ]); ?>" ]}
-                        </div>
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
+                            '_PATTERN_' => 'RM-123456',
+                        ]); ?>" ]}
+                    </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
-                        </div>
-                        <?php
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Riferimento Amministrazione'); ?>", "name": "riferimento_amministrazione", "value": "$riferimento_amministrazione$", "maxlength": "20" ]}
+                    </div>
+                    <?php
             if ($is_agente) {
                 ?>
-                            <div class="col-md-3">
-                                {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
-                            </div>
-                        <?php
+                    <div class="col-md-3">
+                        {[ "type": "number", "label": "<?php echo tr('Provvigione predefinita'); ?>", "name": "provvigione_default", "value": "$provvigione_default$", "icon-after": "%" ]}
+                    </div>
+                <?php
             }
 ?>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
-                        </div>
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Module::where('name', 'Settori')->first()->id; ?>" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
-                        </div>
-
-                        <div class="col-md-3">
-                            {[ "type": "number", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "decimals": 0, "value": "$macchine$" ]}
-                        </div>
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "id_settore", "ajax-source": "settori", "value": "$id_settore$", "icon-after": "add|<?php echo Module::where('name', 'Settori')->first()->id; ?>" ]}
+                    </div>
+
+                    <div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
+                    </div>
+
+                    <div class="col-md-3">
+                        {[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
+                    </div>
+
+                    <div class="col-md-3">
+                        {[ "type": "number", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "decimals": 0, "value": "$macchine$" ]}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
                             <?php
     if (in_array($id_azienda, $tipi_anagrafica)) {
         echo '
-						<p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
+						    <p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
     }
 ?>
-                        </div>
-                        <div class="col-md-6">
-                            {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "charcounter": 1 ]}
-                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "charcounter": 1 ]}
                     </div>
                 </div>
             </div>
+        </div>
     </fieldset>
 </form>
 

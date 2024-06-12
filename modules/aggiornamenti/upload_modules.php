@@ -144,26 +144,59 @@ if (file_exists($extraction_dir.'/VERSION')) {
         copyr(dirname($file->getRealPath()), base_dir().'/'.$directory.'/'.$info['directory']);
 
         // Eventuale registrazione nel database
-        if (empty($installed)) {
-            $dbo->insert($table, array_merge($insert, [
-                'directory' => $info['directory'],
-                'name' => $info['name'],
-                'options' => $info['options'],
-                'version' => $info['version'],
-                'compatibility' => $info['compatibility'],
-                'order' => 100,
-                'default' => 0,
-                'enabled' => 1,
-            ]));
-            $id_record = $dbo->lastInsertedID();
-            $dbo->insert($table.'_lang', array_merge($insert_lang, [
-                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-                'id_record' => $id_record,
-                'id_lang' => Models\Locale::getDefault()->id,
-            ]));
-            flash()->error(tr('Installazione completata!'));
+        if (basename($file->getRealPath()) == 'PLUGIN') {
+            if (empty($installed)) {
+                $dbo->insert($table, array_merge($insert, [
+                    'directory' => $info['directory'],
+                    'name' => $info['name'],
+                    'options' => $info['options'],
+                    'idmodule_from' => $insert['idmodule_from'],
+                    'idmodule_to' => $insert['idmodule_to'],
+                    'position' => $insert['position'],
+                    'version' => $info['version'],
+                    'compatibility' => $info['compatibility'],
+                    'order' => 100,
+                    'default' => 0,
+                    'enabled' => 1,
+                ]));
+                $id_record = $dbo->lastInsertedID();
+                $dbo->insert($table.'_lang', array_merge($insert_lang, [
+                    'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                    'id_record' => $id_record,
+                    'id_lang' => Models\Locale::getDefault()->id,
+                ]));
+                flash()->error(tr('Installazione completata!'));
+            } else {
+                
+                flash()->error(tr('Aggiornamento completato!'));
+            }
         } else {
-            flash()->error(tr('Aggiornamento completato!'));
+            if (empty($installed)) {
+                $dbo->insert($table, array_merge($insert, [
+                    'directory' => $info['directory'],
+                    'name' => $info['name'],
+                    'options' => $info['options'],
+                    'version' => $info['version'],
+                    'compatibility' => $info['compatibility'],
+                    'id_module' => $insert['id_module'],
+                    'is_record' => $insert['is_record'],
+                    'icon' => $insert['icon'],
+                    'filename' => $insert_lang['filename'],
+                    'order' => 100,
+                    'default' => 0,
+                    'enabled' => 1,
+                ]));
+                $id_record = $dbo->lastInsertedID();
+                $dbo->insert($table.'_lang', array_merge($insert_lang, [
+                    'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                    'id_record' => $id_record,
+                    'id_lang' => Models\Locale::getDefault()->id,
+                ]));
+                flash()->error(tr('Installazione completata!'));
+            } else {
+                
+                flash()->error(tr('Aggiornamento completato!'));
+            }
         }
     }
 }

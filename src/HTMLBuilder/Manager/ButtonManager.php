@@ -49,7 +49,7 @@ class ButtonManager implements ManagerInterface
     protected function getInfo($options)
     {
         if ($options['type'] == 'print') {
-            $print = PrintTemplate::where('name',$options['id'])->first()->id;
+            $print = PrintTemplate::where('name',$options['id'])->first();
 
             if (empty($print)) {
                 $print = PrintTemplate::find($options['id']);

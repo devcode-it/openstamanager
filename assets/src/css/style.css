@@ -1534,6 +1534,14 @@ kbd{
     padding: 20px;
 }
 
+.conto3 {
+    font-size: 1rem;
+}
+
+h5 {
+    font-size: 1rem;
+}
+
 body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-link {
     margin-left: 15px;
     width: auto;

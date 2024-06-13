@@ -19,7 +19,6 @@
 
 use Models\Module;
 use Models\Upload;
-use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../../core.php';
 
@@ -136,7 +135,7 @@ if (empty($_GET['visualizza_allegati'])) {
                 // Anteprime supportate dal browser
                 if ($file->hasPreview()) {
                     echo '
-                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->getTranslation('title')).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
+                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->name).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
                                 <i class="fa fa-eye"></i>
                             </button>';
                 } else {
@@ -150,10 +149,10 @@ if (empty($_GET['visualizza_allegati'])) {
                         </td>
                         <td>
                             <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
-                                <i class="fa fa-external-link"></i> '.$file->getTranslation('title').'
+                                <i class="fa fa-external-link"></i> '.$file->name.'
                             </a>
                         </td>
-                        <td>'.Modules::link(Module::find($allegato['id_module']->getTranslation('title')), $file->id_record, $documento['descrizione']).'</td>
+                        <td>'.Modules::link(Module::find($allegato['id_module']->name), $file->id_record, $documento['descrizione']).'</td>
                         <td class="text-center">'.Translator::dateToLocale($file->created_at).'</td>
                         </tr>';
             }

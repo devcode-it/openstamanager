@@ -290,7 +290,7 @@ function doc_references($info, $dir, $ignore = [])
     if (!empty($info['idddt'])) {
         $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($info['idddt']));
 
-        $module = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        $module = ($dir == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
         $id = $info['idddt'];
 
         $document = tr('Ddt');

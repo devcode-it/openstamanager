@@ -28,7 +28,7 @@ $id_module_articoli = Module::where('name', 'Articoli')->first()->id;
 // Controllo sulla direzione monetaria
 $uscite = [
     'Fatture di acquisto',
-    'Ddt di acquisto',
+    'Ddt in entrata',
     'Ordini fornitore',
 ];
 

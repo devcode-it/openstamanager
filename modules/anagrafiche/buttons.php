@@ -52,7 +52,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
 
         <a class="dropdown-item" data-title="'.tr('Aggiungi ordine cliente').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ordini cliente')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i> '.tr('Nuovo ordine cliente').'</a>
 
-        <a class="dropdown-item" data-title="'.tr('Aggiungi ddt in uscita').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ddt di vendita')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i> '.tr('Nuovo ddt in uscita').'</a>
+        <a class="dropdown-item" data-title="'.tr('Aggiungi ddt in uscita').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i> '.tr('Nuovo ddt in uscita').'</a>
 
         <a class="dropdown-item" data-title="'.tr('Aggiungi fattura di vendita').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i> '.tr('Nuova fattura di vendita').'</a>
 
@@ -64,7 +64,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
             
         <a class="dropdown-item" data-title="'.tr('Aggiungi ordine fornitore').'" data-widget="modal" data-data-href="add.php?id_module='.Module::where('name', 'Ordini fornitore')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i> '.tr('Nuovo ordine fornitore').'</a>
 
-        <a class="dropdown-item" data-title="'.tr('Aggiungi ddt in entrata').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ddt di acquisto')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i> '.tr('Nuovo ddt in entrata').'</a>
+        <a class="dropdown-item" data-title="'.tr('Aggiungi ddt in entrata').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ddt in entrata')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i> '.tr('Nuovo ddt in entrata').'</a>
 
         <a class="dropdown-item" data-title="'.tr('Aggiungi fattura di acquisto').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Fatture di acquisto')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i> '.tr('Nuova fattura di acquisto').'</a>
 

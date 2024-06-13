@@ -78,13 +78,13 @@ if (empty($_GET['visualizza_allegati'])) {
     }
 
     // DDT dell'anagrafica
-    if ($user->is_admin || in_array(Module::where('name', 'Ddt di vendita')->first()->id, $permessi)) {
-        $ddt_vendita = $dbo->fetcharray('SELECT '.prepare(Module::where('name', 'Ddt di vendita')->first()->id)." AS id_module, id AS id_record, CONCAT('Ddt di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array(Module::where('name', 'Ddt in uscita')->first()->id, $permessi)) {
+        $ddt_vendita = $dbo->fetcharray('SELECT '.prepare(Module::where('name', 'Ddt in uscita')->first()->id)." AS id_module, id AS id_record, CONCAT('Ddt in uscita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ddt_vendita);
     }
 
-    if ($user->is_admin || in_array(Module::where('name', 'Ddt di acquisto')->first()->id, $permessi)) {
-        $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare(Module::where('name', 'Ddt di acquisto')->first()->id)." AS id_module, id AS id_record, CONCAT('Ddt di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+    if ($user->is_admin || in_array(Module::where('name', 'Ddt in entrata')->first()->id, $permessi)) {
+        $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare(Module::where('name', 'Ddt in entrata')->first()->id)." AS id_module, id AS id_record, CONCAT('Ddt in entrata num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
         $documenti = array_merge($documenti, $ddt_acquisto);
     }
 

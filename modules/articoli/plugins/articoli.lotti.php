@@ -162,7 +162,7 @@ if (empty(get('modal'))) {
 
                 // Acquistato su ddt
                 elseif (!empty($acquisto['id_riga_ddt'])) {
-                    $module = 'Ddt di acquisto';
+                    $module = 'Ddt in entrata';
 
                     $query = 'SELECT 
                             *, 
@@ -272,7 +272,7 @@ if (empty(get('modal'))) {
 
                 // Venduto su ddt
                 elseif (!empty($vendita['id_riga_ddt'])) {
-                    $module = 'Ddt di vendita';
+                    $module = 'Ddt in uscita';
 
                     $query = 'SELECT 
                             *, 

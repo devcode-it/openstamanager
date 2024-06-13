@@ -152,7 +152,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 $bollo = $rs2[0]['bollo'];
             }
 
-            // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
+            // Leggo la rivalsa inps se c'è (per i Ddt in uscita lo leggo dalle impostazioni)
             if ($dir == 'entrata') {
                 if (!empty($idrivalsainps)) {
                     $idrivalsainps = setting('Cassa previdenziale predefinita');
@@ -172,7 +172,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             $totale_ddt = get_totale_ddt($idddt);
 
-            // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
+            // Leggo la ritenuta d'acconto se c'è (per i Ddt in uscita lo leggo dalle impostazioni)
             if (!empty($idritenutaacconto)) {
                 if ($dir == 'entrata') {
                     $idritenutaacconto = setting("Ritenuta d'acconto predefinita");

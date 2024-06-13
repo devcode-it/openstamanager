@@ -32,3 +32,6 @@ ORDER BY
 
 -- Fix plugin Impianti del cliente
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [{\"type\": \"table\", \"fields\": \"Matricola, Nome, Data, Descrizione\", \"query\": \"SELECT id, (SELECT `id` FROM `zz_modules` WHERE `name` = ''Impianti'') AS _link_module_, id AS _link_record_, matricola AS Matricola, nome AS Nome, DATE_FORMAT(data, ''%d/%m/%Y'') AS Data, descrizione AS Descrizione FROM my_impianti WHERE idanagrafica=|id_parent| HAVING 2=2\"}]}' WHERE `zz_plugins`.`name` = 'Impianti del cliente';
+
+UPDATE `zz_modules` SET `name` = 'Ddt in uscita' WHERE `zz_modules`.`name` = 'Ddt di vendita'; 
+UPDATE `zz_modules` SET `name` = 'Ddt in entrata' WHERE `zz_modules`.`name` = 'Ddt di acquisto'; 

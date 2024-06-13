@@ -430,10 +430,10 @@ if (!empty($elementi)) {
         // se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
             $modulo = 'Preventivi';
-        } elseif (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto', 'Ddt in entrata', 'Ddt in uscita'])) {
+        } elseif (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata', 'Ddt in entrata', 'Ddt in uscita'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
         } else {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
         }
 
         $id = $elemento['id'];

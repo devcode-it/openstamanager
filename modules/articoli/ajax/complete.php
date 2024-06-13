@@ -52,7 +52,7 @@ switch ($resource) {
                 SELECT 
                     `idddt` AS id, 
                     "Ddt" AS tipo, 
-                    "Ddt di vendita" AS modulo, 
+                    "Ddt in uscita" AS modulo, 
                     (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
                     (SELECT `numero` FROM `dt_ddt` WHERE `id`=`idddt`) AS n_documento, 
                     (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`idddt`) AS n2_documento, 
@@ -114,7 +114,7 @@ switch ($resource) {
             SELECT
                 `idddt` AS id,
                 `dt_tipiddt_lang`.`title` AS tipo,
-                "Ddt di vendita" AS modulo,
+                "Ddt in uscita" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,
@@ -174,7 +174,7 @@ switch ($resource) {
             SELECT
                 `idddt` AS id,
                 `dt_tipiddt_lang`.`title` AS tipo,
-                "Ddt di acquisto" AS modulo,
+                "Ddt in entrata" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,

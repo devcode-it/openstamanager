@@ -26,7 +26,7 @@ $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 $module_name = $module ? $module->name : '';
 
-if ($module_name == 'Ddt di acquisto') {
+if ($module_name == 'Ddt in entrata') {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';

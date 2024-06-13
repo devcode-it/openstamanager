@@ -24,7 +24,7 @@ use Modules\DDT\Tipo;
 
 $module = Module::find($id_module);
 
-if ($module->name == 'Ddt di vendita') {
+if ($module->name == 'Ddt in uscita') {
     $dir = 'entrata';
 
     $id_tipoddt = Tipo::where('name', 'Ddt in uscita')->first()->id;

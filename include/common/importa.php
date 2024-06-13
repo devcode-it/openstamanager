@@ -98,8 +98,8 @@ if (!empty($options['create_document'])) {
     // Opzioni aggiuntive per le Fatture
     $id_module_fatt_vendita = Module::where('name', 'Fatture di vendita')->first()->id;
     $id_module_fatt_acquisto = Module::where('name', 'Fatture di acquisto')->first()->id;
-    $id_module_ddt_vendita = Module::where('name', 'Ddt di vendita')->first()->id;
-    $id_module_ddt_acquisto = Module::where('name', 'Ddt di acquisto')->first()->id;
+    $id_module_ddt_vendita = Module::where('name', 'Ddt in uscita')->first()->id;
+    $id_module_ddt_acquisto = Module::where('name', 'Ddt in entrata')->first()->id;
     if (in_array($final_module->id, [$id_module_fatt_vendita, $id_module_fatt_acquisto])) {
         $stato_predefinito = StatoFattura::where('name', 'Bozza')->first()->id;
         $fatt_differita_acquisto = Tipofattura::where('name', 'Fattura differita di acquisto')->first()->id;

@@ -518,7 +518,7 @@ switch (filter('op')) {
         $ddt->save();
 
         $id_record = $copia->id;
-        $id_module = $ddt->direzione == 'entrata' ? Module::where('name', 'Ddt di acquisto')->first()->id : Module::where('name', 'Ddt di vendita')->first()->id;
+        $id_module = $ddt->direzione == 'entrata' ? Module::where('name', 'Ddt in entrata')->first()->id : Module::where('name', 'Ddt in uscita')->first()->id;
 
         break;
 

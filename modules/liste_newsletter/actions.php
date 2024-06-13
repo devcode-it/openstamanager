@@ -34,7 +34,7 @@ switch (filter('op')) {
         } else {
             $lista = Lista::build($name);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $lista->name = $descrizione;
+                $lista->name = $name;
             }
             $id_record = $lista->id;
             $lista->setTranslation('title', $name);

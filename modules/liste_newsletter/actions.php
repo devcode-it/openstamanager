@@ -60,7 +60,7 @@ switch (filter('op')) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $lista->name = $descrizione;
+                $lista->name = $name;
             }
             $lista->setTranslation('title', $name);
             $lista->setTranslation('description', $description);

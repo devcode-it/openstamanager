@@ -22,28 +22,26 @@ use Models\Module;
 
 echo '
 <hr>
-<div class="box box-warning">
-    <div class="box-header">
-        <h4 class="box-title">
+<div class="card card-warning">
+    <div class="card-header">
+        <h4 class="card-title">
             '.tr('Periodi temporali').'
         </h4>
-        <div class="box-tools pull-right">
+        <div class="card-tools pull-right">
             <button class="btn btn-warning btn-xs" onclick="add_calendar()">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <button type="button" class="btn btn-card-tool" data-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
         </div>
     </div>
 
-    <div class="box-body collapse in" id="calendars">
-
+    <div class="card-body collapse in" id="calendars">
     </div>
 </div>
 
 <div id="widgets">
-
 </div>';
 
 $statistiche = Module::where('name', 'Statistiche')->first();

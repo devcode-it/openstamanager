@@ -105,9 +105,9 @@ $note_credito = Fattura::whereBetween('data', [$start, $end])
 $totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito->sum('totale_imponibile');
 
 echo '
-<div class="box box-info" id="row-'.$calendar_id.'">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Dal _START_ al _END_', [
+<div class="card card-info" id="row-'.$calendar_id.'">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('Dal _START_ al _END_', [
     '_START_' => dateFormat($start),
     '_END_' => dateFormat($end),
 ]).' - '.tr('Periodo _NUM_', [
@@ -115,10 +115,9 @@ echo '
 ]).'</h3>
     </div>
 
-    <div class="box-body">
-
+    <div class="card-body">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'info').'"><i class="fa fa-question"></i></span>
                     <div class="info-box-content">
@@ -133,7 +132,7 @@ echo '
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($contratti->count() == 0 ? 'gray' : 'purple').'"><i class="fa fa-refresh"></i></span>
                     <div class="info-box-content">
@@ -148,7 +147,7 @@ echo '
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
                     <div class="info-box-content">
@@ -162,10 +161,8 @@ echo '
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
@@ -187,7 +184,7 @@ echo '
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
@@ -202,7 +199,7 @@ echo '
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
                     <div class="info-box-content">
@@ -216,10 +213,9 @@ echo '
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3
+            ">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.(!empty($sessioni) ? 'warning' : 'gray').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">

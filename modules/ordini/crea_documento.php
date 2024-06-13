@@ -38,7 +38,7 @@ if (get('documento') == 'fattura') {
     $op = 'add_ordine_cliente';
     $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'intervento') {
-    $final_module = 'Attività';
+    $final_module = 'Interventi';
     $op = $module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
 } else {

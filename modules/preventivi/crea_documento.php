@@ -49,7 +49,7 @@ if (get('documento') == 'fattura') {
     $op = 'add_preventivo';
     $tipo_documento_finale = Contratto::class;
 } else {
-    $final_module = 'Attività';
+    $final_module = 'Interventi';
     $op = 'add_documento';
     $tipo_documento_finale = Intervento::class;
 }

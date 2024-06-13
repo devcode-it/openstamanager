@@ -1097,6 +1097,10 @@ kbd{
     color: #fff;
 }
 
+.main-sidebar.bg-green .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
+
 /* Sidebar green-light */
 .main-sidebar.bg-green-light .nav-link {
     color: #555;
@@ -1128,6 +1132,9 @@ kbd{
     color: #555;
 }
 
+.main-sidebar.bg-green-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
 
 /* Sidebar blue */
 .main-sidebar.bg-blue .nav-link {
@@ -1154,6 +1161,10 @@ kbd{
 
 .main-sidebar.bg-blue .user-panel .info > a {
     color: #fff;
+}
+
+.main-sidebar.bg-blue .sidebar .btn-sidebar {
+    background: #d7d7d7;
 }
 
 /* Sidebar blue-light */
@@ -1187,6 +1198,9 @@ kbd{
     color: #555;
 }
 
+.main-sidebar.bg-blue-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
 
 /* Sidebar black */
 .main-sidebar.bg-black .nav-link {
@@ -1213,6 +1227,10 @@ kbd{
 
 .main-sidebar.bg-black .user-panel .info > a {
     color: #fff;
+}
+
+.main-sidebar.bg-black .sidebar .btn-sidebar {
+    background: #d7d7d7;
 }
 
 /* Sidebar white */
@@ -1244,6 +1262,10 @@ kbd{
     color:  #333;
 }
 
+.main-sidebar.bg-black-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
+
 /* Sidebar red */
 .main-sidebar.bg-red .nav-link {
     color: #fff;
@@ -1271,6 +1293,9 @@ kbd{
     color: #fff;
 }
 
+.main-sidebar.bg-red .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
 
 /* Sidebar red-light */
 .main-sidebar.bg-red-light .nav-link {
@@ -1303,6 +1328,10 @@ kbd{
     color: #555;
 }
 
+.main-sidebar.bg-red-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
+
 /* Sidebar yellow */
 .main-sidebar.bg-yellow .nav-link {
     color: #333;
@@ -1328,6 +1357,10 @@ kbd{
 
 .main-sidebar.bg-yellow .user-panel .info > a {
     color: #333;
+}
+
+.main-sidebar.bg-yellow .sidebar .btn-sidebar {
+    background: #d7d7d7;
 }
 
 /* Sidebar yellow-light */
@@ -1361,6 +1394,9 @@ kbd{
     color: #555;
 }
 
+.main-sidebar.bg-yellow-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
 
 /* Sidebar purple */
 .main-sidebar.bg-purple .nav-link {
@@ -1387,6 +1423,10 @@ kbd{
 
 .main-sidebar.bg-purple .user-panel .info > a {
     color: #fff;
+}
+
+.main-sidebar.bg-purple .sidebar .btn-sidebar {
+    background: #d7d7d7;
 }
 
 /* Sidebar purple-light */
@@ -1420,6 +1460,10 @@ kbd{
     color: #555;
 }
 
+.main-sidebar.bg-purple-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
+}
+
 /* Sidebar info */
 .main-sidebar.bg-info .nav-link {
     color: #fff;
@@ -1447,10 +1491,9 @@ kbd{
     color: #fff;
 }
 
-.sidebar .btn-sidebar {
+.main-sidebar.bg-info .sidebar .btn-sidebar {
     background: #d7d7d7;
 }
-
 
 /* Sidebar info-light */
 .main-sidebar.bg-info-light .nav-link {
@@ -1481,6 +1524,10 @@ kbd{
 
 .main-sidebar.bg-info-light .user-panel .image > i {
     color: #555;
+}
+
+.main-sidebar.bg-info-light .sidebar .btn-sidebar {
+    background: #d7d7d7;
 }
 
 .container {

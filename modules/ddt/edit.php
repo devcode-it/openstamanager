@@ -388,8 +388,6 @@ if ($dir == 'entrata') {
                 <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
                 </div>

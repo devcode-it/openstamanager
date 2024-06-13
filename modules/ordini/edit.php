@@ -232,20 +232,19 @@ if ($dir == 'entrata') {
             <div id="dati_appalto" class="card-collapse collapse <?php echo $collapsed; ?>">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice Commessa'); ?>", "name": "codice_commessa", "required": 0, "value": "$codice_commessa$", "maxlength": 100 ]}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
+                        
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
                         </div>
                     </div>

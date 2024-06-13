@@ -218,36 +218,34 @@ if ($dir == 'entrata') {
 ?>
 
     <!-- Fatturazione Elettronica PA-->
-    <div class="card-group">
-        <div class="card card-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
-            <div class="card-header">
-                <h4 class="card-title">
-                    <?php echo tr('Dati appalto'); ?>
+    <div class="card card-primary collapsed-card <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
+        <div class="card-header">
+            <h4 class="card-title">    
+                <?php echo tr('Dati appalto'); ?>
+            </h4>
 
-                    <div class="card-tools pull-right">
-                        <a data-card-widget="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
-                    </div>
-                </h4>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fa fa-plus"></i>
+                </button>
             </div>
-            <div id="dati_appalto" class="card-collapse collapse <?php echo $collapsed; ?>">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Codice Commessa'); ?>", "name": "codice_commessa", "required": 0, "value": "$codice_commessa$", "maxlength": 100 ]}
-                        </div>
+            
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Codice Commessa'); ?>", "name": "codice_commessa", "required": 0, "value": "$codice_commessa$", "maxlength": 100 ]}
+                </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
-                        </div>
-                        
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
-                        </div>
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+                </div>
 
-                        <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
-                        </div>
-                    </div>
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
                 </div>
             </div>
         </div>

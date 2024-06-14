@@ -136,7 +136,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $installed = Prints::getPrints()[$info['name']];
             $insert['id_module'] = Module::where('name', $info['module'])->first()->id;
             $insert['is_record'] = $info['is_record'];
-            $insert['filename'] = $info['filename'];
+            $insert_lang['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];
         }
 
@@ -181,7 +181,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                     'id_module' => $insert['id_module'],
                     'is_record' => $insert['is_record'],
                     'icon' => $insert['icon'],
-                    'filename' => $insert['filename'],
+                    'filename' => $insert_lang['filename'],
                     'order' => 100,
                     'default' => 0,
                     'enabled' => 1,

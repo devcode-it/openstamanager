@@ -48,7 +48,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if (empty(Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
+            if (empty(Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $settore = Settore::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $settore->name = $descrizione;

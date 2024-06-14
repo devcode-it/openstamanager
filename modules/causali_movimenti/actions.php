@@ -46,7 +46,7 @@ switch (filter('op')) {
 
     case 'add':
         $descrizione = post('descrizione');
-        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
+        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
             $causale = Causale::build();
             $causale->tipo_movimento = post('tipo_movimento');
             $causale->save();

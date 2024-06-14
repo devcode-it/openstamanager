@@ -54,7 +54,7 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata_add');
 
         if (isset($descrizione)) {
-            if (empty(Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
+            if (empty(Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $relazione = Relazione::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $relazione->name = $descrizione;

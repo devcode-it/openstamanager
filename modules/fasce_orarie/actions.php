@@ -60,7 +60,7 @@ switch (post('op')) {
         $ora_fine = post('ora_fine');
 
         if (isset($descrizione)) {
-            if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
+            if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $fascia_oraria = FasciaOraria::build();
 
                 $fascia_oraria->ora_inizio = $ora_inizio;

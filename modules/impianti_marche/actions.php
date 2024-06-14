@@ -52,7 +52,7 @@ switch (filter('op')) {
         $title = filter('title');
         $id_original = filter('id_original') ?: null;
 
-        $marca_new = Marca::where('id', '=', (new Marca())->getByField('title', $title))->orWhere('name', $title);
+        $marca_new = Marca::where('id', '=', (new Marca())->getByField('title', $title));
         if (!empty($id_original)) {
             $marca_new = $marca_new->where('parent', '=', $id_original);
         } else {

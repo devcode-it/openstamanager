@@ -51,7 +51,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if (empty(Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first())) {
+            if (empty(Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $porto = Porto::build();
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $porto->name = $descrizione;

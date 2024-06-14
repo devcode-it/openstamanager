@@ -27,7 +27,7 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'add':
         $name = post('name');
-        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->orWhere('name', $name)->where('id', '!=', $id_record)->first();
+        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->where('id', '!=', $id_record)->first();
 
         if (!empty($lista_new)) {
             flash()->error(tr('Esiste già una lista con questo nome.'));

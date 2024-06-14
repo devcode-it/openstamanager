@@ -46,7 +46,7 @@ switch (post('op')) {
 
     case 'add':
         $descrizione = post('descrizione');
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('deleted_at', '=', null)->first();
+        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $descrizione))->where('deleted_at', '=', null)->first();
 
         if (!empty($categoria_new) && $categoria_new->id != $id_record) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [

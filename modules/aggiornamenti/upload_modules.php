@@ -181,7 +181,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
                     'id_module' => $insert['id_module'],
                     'is_record' => $insert['is_record'],
                     'icon' => $insert['icon'],
-                    'filename' => $insert_lang['filename'],
                     'order' => 100,
                     'default' => 0,
                     'enabled' => 1,
@@ -190,6 +189,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 $dbo->insert($table.'_lang', array_merge($insert_lang, [
                     'title' => !empty($info['title']) ? $info['title'] : $info['name'],
                     'id_record' => $id_record,
+                    'filename' => $insert_lang['filename'],
                     'id_lang' => Models\Locale::getDefault()->id,
                 ]));
                 flash()->error(tr('Installazione completata!'));

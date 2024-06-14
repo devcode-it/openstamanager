@@ -23,7 +23,7 @@ use Modules\Newsletter\Newsletter;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT `em_templates`.*, `em_templates_lang`.`title` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
+    $record = $dbo->fetchOne('SELECT `em_templates`.*, `em_templates_lang`.`title`, `em_templates_lang`.`subject`, `em_templates_lang`.`body` FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `em_templates`.`id`='.prepare($id_record).' AND `deleted_at` IS NULL');
 
     $template = Template::find($id_record);
 

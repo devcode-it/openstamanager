@@ -117,7 +117,7 @@ foreach ($prints as $print) {
                     <td>
                         <a href="'.Prints::getHref($print->getTranslation('title'), $mail->id_record).'" target="_blank">'.$print->getTranslation('title').'</a>
                     </td>
-                    <td>'.$print->pivot->getTranslation('title').'</td>
+                    <td>'.$print->pivot->name.'</td>
                 </tr>';
 }
 
@@ -145,9 +145,9 @@ foreach ($uploads as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->getTranslation('title').'</a>
+                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->name.'</a>
                     </td>
-                    <td>'.$upload->pivot->getTranslation('title').'</td>
+                    <td>'.$upload->pivot->name.'</td>
                 </tr>';
 }
 

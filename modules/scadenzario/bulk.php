@@ -74,7 +74,7 @@ switch (post('op')) {
         break;
 
     case 'send-sollecito':
-        $template = Template::where('name', 'Sollecito di pagamento raggruppato per anagrafica')->first()->id;
+        $template = Template::where('name', 'Sollecito di pagamento raggruppato per anagrafica')->first();
 
         $list = [];
         $anagrafiche = [];

@@ -24,6 +24,7 @@ use API\App\v1\Clienti;
 use API\App\v1\Interventi;
 use API\App\v1\RigheInterventi;
 use API\App\v1\SessioniInterventi;
+use API\App\v1\CampiPersonalizzatiValori;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Carbon\Carbon;
@@ -67,6 +68,7 @@ class Intervento extends Resource implements UpdateInterface
             'righe' => new RigheInterventi(),
             'sessioni' => new SessioniInterventi(),
             'allegati' => new AllegatiInterventi(),
+            'campi_personalizzati_valori' => new CampiPersonalizzatiValori(),
         ];
     }
 

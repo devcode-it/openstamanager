@@ -99,7 +99,7 @@ class FieldManager implements ManagerInterface
                 }
 
                 $result .= '
-            <div class="col-xs-4">
+            <div class="col-md-4">
                 '.$field['content'].'
             </div>';
 

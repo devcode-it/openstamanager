@@ -282,7 +282,7 @@ if (empty($record) || !$has_access) {
                 }
 
                 if (!last.length) {
-                    last = form.find(".row").eq(-2);
+                    last = form.find(".row").last();
                 }
 
                 // Campi a inizio form

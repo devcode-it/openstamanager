@@ -498,8 +498,8 @@ if ($structure->permission == 'rw') {
             if (post('op') != 'delete') {
                 $values = [];
                 foreach ($customs as $custom) {
-                    if (post($custom['name']) !== null) {
-                        $values[$custom['id']] = post($custom['name']);
+                    if (post($custom['title']) !== null) {
+                        $values[$custom['id']] = post($custom['title']);
                     } else {
                         $values[$custom['id']] = '';
                     }

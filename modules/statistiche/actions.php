@@ -18,6 +18,7 @@
  */
 
 use Modules\Statistiche\Stats;
+use Models\Module;
 
 include_once __DIR__.'/../../core.php';
 
@@ -27,7 +28,41 @@ $end = filter('end');
 
 switch (filter('op')) {
     case 'fatturato':
-        $results = $dbo->fetchArray('SELECT ROUND(SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))), 2) AS result, YEAR(`co_documenti`.`data`) AS year, MONTH(`co_documenti`.`data`) AS month FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`  WHERE `co_tipidocumento`.`dir`=\'entrata\' AND `co_tipidocumento_lang`.`title`!=\'Bozza\' AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 GROUP BY YEAR(`co_documenti`.`data`), MONTH(`co_documenti`.`data`) ORDER BY YEAR(`co_documenti`.`data`) ASC, MONTH(`co_documenti`.`data`) ASC');
+        if (empty(Module::where('name', 'Vendita al banco')->first()->id)) {
+            $results = $dbo->fetchArray('SELECT ROUND(SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))), 2) AS result, YEAR(`co_documenti`.`data`) AS year, MONTH(`co_documenti`.`data`) AS month FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`  WHERE `co_tipidocumento`.`dir`=\'entrata\' AND `co_tipidocumento`.`name`!=\'Bozza\' AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 GROUP BY YEAR(`co_documenti`.`data`), MONTH(`co_documenti`.`data`) ORDER BY YEAR(`co_documenti`.`data`) ASC, MONTH(`co_documenti`.`data`) ASC');
+        } else {
+            $results = $dbo->fetchArray('
+            SELECT 
+                ROUND(SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))), 2) AS result, 
+                YEAR(`co_documenti`.`data`) AS year, 
+                MONTH(`co_documenti`.`data`) AS month 
+            FROM 
+                `co_documenti` 
+                INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
+                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
+                INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`  
+            WHERE 
+                `co_tipidocumento`.`dir`=\'entrata\' 
+                AND `co_tipidocumento`.`name`!=\'Bozza\' 
+                AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end).'
+                AND `is_fiscale`=1  
+                AND `zz_segments`.`autofatture`=0 
+            GROUP BY 
+                YEAR(`co_documenti`.`data`), MONTH(`co_documenti`.`data`) 
+
+            UNION
+
+            SELECT 
+                ROUND(SUM(`vb_righe_venditabanco`.`subtotale` - `vb_righe_venditabanco`.`sconto`), 2) AS result, 
+                YEAR(`vb_venditabanco`.`data`) AS year, 
+                MONTH(`vb_venditabanco`.`data`) AS month 
+            FROM 
+                `vb_venditabanco` 
+                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idvendita`=`vb_venditabanco`.`id`
+            GROUP BY 
+                YEAR(`vb_venditabanco`.`data`), MONTH(`vb_venditabanco`.`data`)');
+        }
 
         $results = Stats::monthly($results, $start, $end);
 

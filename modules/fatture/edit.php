@@ -492,7 +492,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                         '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
 
     // Ricalcola scadenze disponibile solo per fatture di acquisto
-    if ($fattura->isFE() && $ricalcola && $module->getTranslation('title', \Models\Locale()->getPredefined()->id) == 'Fatture di acquisto') {
+    if ($fattura->isFE() && $ricalcola && !empty($module->where('name', 'Fatture di acquisto')->first()->id)) {
         echo '
                     <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>

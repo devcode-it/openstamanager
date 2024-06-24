@@ -535,7 +535,7 @@ class Fattura extends Document
     {
         $file = $this->getFatturaElettronica();
 
-        return !empty($this->progressivo_invio) && file_exists('files/fatture/'.$file->filename);
+        return !empty($this->progressivo_invio) && file_exists('files/'.$file->directory);
     }
 
     /**

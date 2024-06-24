@@ -452,9 +452,9 @@ class FatturaOrdinaria extends FatturaElettronica
             $riep_imp += $riepilogo['Imposta'];
         }
 
-        $diff_iva = round($riep_imp - $fattura->iva, 2);
+        $diff_iva = round(abs($riep_imp) - abs($fattura->iva), 2);
         $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr), 2);
-        $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - $totale_imp + $tot_arr, 2);
+        $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - abs($totale_imp) + $tot_arr, 2);
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
 

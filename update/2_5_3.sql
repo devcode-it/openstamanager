@@ -41,3 +41,6 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 
 -- Fix vista sottocategorie in Articoli
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`sottocategorie_lang`.`title`' WHERE `zz_modules`.`name` = 'Articoli' AND `zz_views`.`name` = 'Sottocategoria';
+
+-- Ripristino impostazione per limitare la visualizzazione degli impianti a quelli gestiti dal tecnico
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Limita la visualizzazione degli impianti a quelli gestiti dal tecnico', '0', 'boolean', '1', 'Applicazione', '9', '');

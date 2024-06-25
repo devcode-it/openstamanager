@@ -611,7 +611,7 @@ if (!empty($elementi)) {
         ]);
 
         echo '
-            <li>'.Modules::link(($elemento['modulo'] == 'Interventi' ?  'Attività' : $elemento['modulo']), $elemento['id'], $descrizione).'</li>';
+            <li>'.Modules::link($elemento['modulo'] == 'Interventi' ? 'Attività' : $elemento['modulo'], $elemento['id'], $descrizione).'</li>';
     }
 
     echo '

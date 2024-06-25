@@ -22,7 +22,7 @@ use Models\Module;
 
 $modulo_interventi = Module::where('name', 'Interventi')->first();
 $modulo_preventivi = Module::where('name', 'Preventivi')->first();
-$modulo_eventi =Module::where('name', 'Eventi')->first();
+$modulo_eventi = Module::where('name', 'Eventi')->first();
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';

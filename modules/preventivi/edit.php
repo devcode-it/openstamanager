@@ -167,15 +167,16 @@ echo '
                         'label' => tr('Condizioni generali di fornitura'),
                         'name' => 'condizioni_fornitura',
                         'value' => $record['condizioni_fornitura'],
-                    ]); echo'
+                    ]);
+echo '
                 </div>';
-                
-                if ($user->gruppo != 'Clienti') {
-                    echo '
+
+if ($user->gruppo != 'Clienti') {
+    echo '
                 <div class="col-md-6">
                     {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
                 </div>';
-                }
+}
 ?>
 				</div>
 			</div>

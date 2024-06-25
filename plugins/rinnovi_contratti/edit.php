@@ -62,7 +62,7 @@ echo '
 </form>';
 
 if (!empty($id_contratto_precedente)) {
-echo '
+    echo '
 <table class="table table-hover table-condensed table-bordered table-striped">
     <thead>
         <tr>

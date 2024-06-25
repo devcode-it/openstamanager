@@ -19,8 +19,8 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
-use Plugins\ListinoFornitori\DettaglioFornitore;
 use Plugins\ListinoClienti\DettaglioPrezzo;
+use Plugins\ListinoFornitori\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 
@@ -64,7 +64,7 @@ switch (filter('op')) {
             ->where('dir', 'uscita')
             ->get();
 
-        foreach($prezzi_fornitori as $prezzo) {
+        foreach ($prezzi_fornitori as $prezzo) {
             $prezzo->delete();
         }
 

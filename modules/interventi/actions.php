@@ -254,7 +254,6 @@ switch (post('op')) {
             $impianti = post('idimpianti');
             foreach ($impianti as $impianto) {
                 if (!empty($impianto)) {
-                        
                     $dbo->insert('my_impianti_interventi', [
                         'idintervento' => $id_record,
                         'idimpianto' => $impianto,

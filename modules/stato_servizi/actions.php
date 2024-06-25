@@ -367,7 +367,7 @@ switch (filter('op')) {
         break;
 
     case 'informazioni-fe':
-        $info = s;
+        $info = Cache::where('name', 'Informazioni su spazio FE')->first();
 
         if (!$info->isValid()) {
             $response = Services::request('POST', 'informazioni_fe');

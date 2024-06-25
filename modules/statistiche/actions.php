@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Statistiche\Stats;
 use Models\Module;
+use Modules\Statistiche\Stats;
 
 include_once __DIR__.'/../../core.php';
 

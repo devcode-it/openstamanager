@@ -131,12 +131,11 @@ class Mastrino extends Model
         $database = database();
 
         if ($documenti) {
-
-
-        foreach ($documenti as $id_documento) {
-            if (empty($id_documento)) {
-                continue;
-            } else {}
+            foreach ($documenti as $id_documento) {
+                if (empty($id_documento)) {
+                    continue;
+                } else {
+                }
                 // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
                 $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
 

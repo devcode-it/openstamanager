@@ -326,7 +326,7 @@ $dirs_to_check = [
 $directories = [];
 foreach ($dirs_to_check as $name => $description) {
     $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
-    
+
     $directories[] = [
         'name' => $name,
         'description' => $description,

@@ -20,11 +20,11 @@
 namespace API\App\v1\Flash;
 
 use API\App\v1\AllegatiInterventi;
+use API\App\v1\CampiPersonalizzatiValori;
 use API\App\v1\Clienti;
 use API\App\v1\Interventi;
 use API\App\v1\RigheInterventi;
 use API\App\v1\SessioniInterventi;
-use API\App\v1\CampiPersonalizzatiValori;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Carbon\Carbon;

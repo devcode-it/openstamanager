@@ -63,10 +63,6 @@ $(document).ready(function(){
     }
 
     if (!last.length) {
-        last = form.find(".card").last();
-    }
-
-    if (!last.length) {
         last = form.find(".row").eq(-2);
     }
 

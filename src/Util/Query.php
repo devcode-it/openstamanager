@@ -234,7 +234,7 @@ class Query
                             }
                         } else {
                             $search_filters[] = ($search_query.' = '.prepare($value));
-                        } 
+                        }
                     } elseif ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
                         $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));

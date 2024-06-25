@@ -252,9 +252,8 @@ switch (post('op')) {
 
             // Collegamenti intervento/impianti
             $impianti = post('idimpianti');
-            if (!empty($impianti)) {
-                $impianti = array_unique([$impianti]);
-                foreach ($impianti as $impianto) {
+            foreach ($impianti as $impianto) {
+                if (!empty($impianto)) {
                     $dbo->insert('my_impianti_interventi', [
                         'idintervento' => $id_record,
                         'idimpianto' => $impianto,
@@ -274,10 +273,12 @@ switch (post('op')) {
                         $check->save();
                     }
                 }
+            }
 
-                // Collegamenti intervento/componenti
-                $componenti = (array) post('componenti');
-                foreach ($componenti as $componente) {
+            // Collegamenti intervento/componenti
+            $componenti = (array) post('componenti');
+            foreach ($componenti as $componente) {
+                if ($componente) {
                     $dbo->insert('my_componenti_interventi', [
                         'id_intervento' => $id_record,
                         'id_componente' => $componente,

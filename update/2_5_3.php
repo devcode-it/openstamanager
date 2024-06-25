@@ -8,4 +8,4 @@ $has_name = database()->columnExists('zz_groups', 'name');
 
 if ($has_name && $has_nome) {
     $database->query('ALTER TABLE `zz_groups` DROP `name`');
-} 
+}

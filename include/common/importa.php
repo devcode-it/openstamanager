@@ -103,7 +103,7 @@ if (!empty($options['create_document'])) {
     if (in_array($final_module->id, [$id_module_fatt_vendita, $id_module_fatt_acquisto])) {
         $stato_predefinito = StatoFattura::where('name', 'Bozza')->first()->id;
         $fatt_differita_acquisto = Tipofattura::where('name', 'Fattura differita di acquisto')->first()->id;
-        $fatt_differita_vendita = Tipofattura::where('name', 'Fattura differita di vendita')->first()->id;;
+        $fatt_differita_vendita = Tipofattura::where('name', 'Fattura differita di vendita')->first()->id;
 
         if (!empty($options['reversed'])) {
             $idtipodocumento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];

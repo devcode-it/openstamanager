@@ -66,3 +66,6 @@ INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`, `
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`) VALUES (NULL, 'Indirizzo email mancato pagamento dopo i solleciti', '', 'string', '1', 'Scadenzario', NULL, '4');
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`, `created_at`) VALUES (NULL, (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), (SELECT `id` FROM `zz_settings` WHERE `nome`='Indirizzo email mancato pagamento dopo i solleciti'), 'Indirizzo email mancato pagamento dopo i solleciti', '', NULL);
+
+-- Ripristino impostazione per limitare la visualizzazione degli impianti a quelli gestiti dal tecnico
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Limita la visualizzazione degli impianti a quelli gestiti dal tecnico', '0', 'boolean', '1', 'Applicazione', '9', '');

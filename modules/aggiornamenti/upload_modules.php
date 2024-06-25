@@ -167,7 +167,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 ]));
                 flash()->error(tr('Installazione completata!'));
             } else {
-                
                 flash()->error(tr('Aggiornamento completato!'));
             }
         } else {
@@ -194,7 +193,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 ]));
                 flash()->error(tr('Installazione completata!'));
             } else {
-                
                 flash()->error(tr('Aggiornamento completato!'));
             }
         }

@@ -358,8 +358,8 @@ class CSV extends CSVImporter
 
         $anagrafica->fill($record);
 
-        //Aggiorno le tipologie solo se sono state passate nel file
-        if( !empty($tipologie) ){
+        // Aggiorno le tipologie solo se sono state passate nel file
+        if (!empty($tipologie)) {
             $anagrafica->tipologie = $tipologie;
         }
         $anagrafica->id_settore = $id_settore;

@@ -27,7 +27,7 @@ use Modules\Ordini\Ordine;
 
 $documento = Ordine::find($id_record);
 
-$module = Module::where('name', $documento->module)->first(); 
+$module = Module::where('name', $documento->module)->first();
 
 if (get('documento') == 'fattura') {
     $final_module = $module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';

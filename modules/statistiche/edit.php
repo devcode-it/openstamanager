@@ -50,9 +50,6 @@ echo '
             <div class="card-header">
                 <h4 class="card-title">'.tr('Periodi temporali').'</h4>
                 <div class="card-tools">
-                    <button class="btn btn-warning btn-sm" onclick="add_calendar()">
-                        <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
-                    </button>
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fa fa-plus"></i>
                     </button>
@@ -60,7 +57,12 @@ echo '
             </div>
 
             <div class="card-body" id="calendars">
-
+                <div class="row">
+                    <button class="btn btn-warning btn-sm" onclick="add_calendar()">
+                        <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
+                    </button>
+                </div>
+            <br>
             </div>
         </div>
         <canvas id="fatturato" height="50"></canvas>
@@ -112,7 +114,7 @@ var chart_options = {
                 scaleID: "y-axis-0",
                 value: 0,
                 label: {
-                    enabled: false,
+                    enabled: true,
                 }
             }]
         },
@@ -141,9 +143,6 @@ var chart_options = {
                     }
                 }
             }
-        },
-        legend: {
-            position: "bottom",
         },
     }
 };

@@ -84,14 +84,18 @@ class FatturaOrdinaria extends FatturaElettronica
 
     public function getRighe()
     {
+        // Estraggo le linee
         $linee = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
         $linee = $this->forceArray($linee);
+
+        // Estraggo la cassa previdenziale
         $cassa_previdenziale = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['DatiCassaPrevidenziale'];
 
         $imponibile = [];
         $totale_imposta = [];
         $importo = 0;
 
+        // Calcolo l'imponibile per aliquota al netto degli sconti
         foreach ($linee as $linea) {
             $importo = $linea['PrezzoUnitario'] * $linea['Quantita'];
 
@@ -122,22 +126,9 @@ class FatturaOrdinaria extends FatturaElettronica
             $imponibile[$linea['AliquotaIVA']] += round($importo, 2);
         }
 
-        // Aggiunta degli arrotondamenti IVA come righe indipendenti
+        // Estraggo i riepiloghi
         $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         $riepiloghi = $this->forceArray($riepiloghi);
-
-        foreach ($riepiloghi as $riepilogo) {
-            $aliquota_iva = $riepilogo['AliquotaIVA'];
-            $imponibile[$aliquota_iva] += (float) $riepilogo['Arrotondamento'];
-        }
-
-        foreach ($imponibile as $aliquota_iva => $importo) {
-            $totale_imposta[$aliquota_iva] = $imponibile[$aliquota_iva] * $aliquota_iva / 100;
-            if ($cassa_previdenziale['AliquotaIVA'] == $aliquota_iva) {
-                $totale_imposta[$aliquota_iva] += $cassa_previdenziale['ImportoContributoCassa'] * $cassa_previdenziale['AliquotaIVA'] / 100;
-            }
-        }
-
         $riepiloghi_raggruppati = [];
 
         foreach ($riepiloghi as $riepilogo) {
@@ -151,12 +142,20 @@ class FatturaOrdinaria extends FatturaElettronica
             }
         }
 
+        foreach ($imponibile as $aliquota_iva => $importo) {
+            $totale_imposta[$aliquota_iva] = $imponibile[$aliquota_iva] * $aliquota_iva / 100;
+            if ($cassa_previdenziale['AliquotaIVA'] == $aliquota_iva) {
+                $totale_imposta[$aliquota_iva] += $cassa_previdenziale['ImportoContributoCassa'] * $cassa_previdenziale['AliquotaIVA'] / 100;
+            }
+        }
+
+        // Calcolo la differenza IVA per aliquota, per creare una riga relativa all'arrotondamento IVA
         foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
-            $diff_iva = round((float) $riepilogo['Imposta'] - $totale_imposta[$riepilogo['AliquotaIVA']], 2);
+            $differenza_iva = round((float) $riepilogo['Imposta'] - $totale_imposta[$riepilogo['AliquotaIVA']], 2);
 
-            if ($diff_iva) {
-                $valore = $diff_iva * 100 / $riepilogo['AliquotaIVA'];
+            if ($differenza_iva) {
+                $valore = $differenza_iva * 100 / $riepilogo['AliquotaIVA'];
             }
 
             if ($valore != 0) {
@@ -191,10 +190,11 @@ class FatturaOrdinaria extends FatturaElettronica
         $ritenuta_contributi = !empty($fattura->id_ritenuta_contributi);
         $conto_arrotondamenti = null;
 
-        $tot_arr = 0;
+        // Estraggo l'eventuale arrotondamento IVA applicato
+        $arrotondamento_iva = 0;
         foreach ($righe as $riga) {
             if (str_contains((string) $riga['Descrizione'], 'Arrotondamento')) {
-                $tot_arr += $riga['PrezzoUnitario'];
+                $arrotondamento_iva += round($riga['PrezzoUnitario'], 2);
             }
         }
 
@@ -203,6 +203,54 @@ class FatturaOrdinaria extends FatturaElettronica
 
         \Settings::setValue('Permetti il superamento della soglia quantità dei documenti di origine', 1);
 
+        // Estraggo i totali del documento
+        $totale_righe_riepilogo = 0;
+        $totale_arrotondamento_riepilogo = 0;
+        $totale_imponibile_riepilogo = 0;
+
+        $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
+        if (!empty($dati_riepilogo['ImponibileImporto'])) {
+            $totale_arrotondamento_riepilogo = $dati_riepilogo['Arrotondamento'];
+            $totale_imponibile_riepilogo = sum($dati_riepilogo['ImponibileImporto']);
+        } elseif (is_array($dati_riepilogo)) {
+            foreach ($dati_riepilogo as $dato) {
+                $totale_arrotondamento_riepilogo += $dato['Arrotondamento'];
+                $totale_imponibile_riepilogo += $dato['ImponibileImporto'];
+            }
+        }
+
+        // Estraggo il totale delle righe
+        foreach ($righe as $linea) {
+            $importo = $linea['PrezzoUnitario'] * $linea['Quantita'];
+
+            if ($linea['ScontoMaggiorazione']) {
+                $linea['ScontoMaggiorazione'] = $this->forceArray($linea['ScontoMaggiorazione']);
+                foreach ($linea['ScontoMaggiorazione'] as $sm) {
+                    if (isset($sm['Percentuale'])) {
+                        $sconto = ($importo * $sm['Percentuale'] / 100);
+                        if ($sm['Tipo'] == 'SC') {
+                            $importo -= $sconto;
+                        } else {
+                            $importo += $sconto;
+                        }
+                    } elseif (isset($sm['Importo'])) {
+                        if ($sm['Tipo'] == 'SC') {
+                            $importo -= $sm['Importo'] * $linea['Quantita'];
+                        } else {
+                            $importo += $sm['Importo'] * $linea['Quantita'];
+                        }
+                    }
+                }
+            }
+
+            if (!$linea['Quantita']) {
+                $importo = $linea['PrezzoUnitario'];
+            }
+
+            $totale_righe_riepilogo += round($importo, 2);
+        }
+
+        // Creazione righe
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
@@ -302,32 +350,14 @@ class FatturaOrdinaria extends FatturaElettronica
                     $obj->id_rivalsa_inps = $id_rivalsa;
                 }
 
-                // Totale documento
-                $totale_righe = 0;
-                $totale_arrotondamento = 0;
-                $totale_imp = 0;
-                $dati_riepilogo = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
-                if (!empty($dati_riepilogo['ImponibileImporto'])) {
-                    $totale_arrotondamento = $dati_riepilogo['Arrotondamento'];
-                    $totale_imp = sum($dati_riepilogo['ImponibileImporto'], null, 2);
-                } elseif (is_array($dati_riepilogo)) {
-                    foreach ($dati_riepilogo as $dato) {
-                        $totale_arrotondamento += $dato['Arrotondamento'];
-                        $totale_imp += $dato['ImponibileImporto'];
-                    }
-                }
-                $totali_righe = array_column($righe, 'PrezzoTotale');
-                $tot_righe = sum($totali_righe, null, 2);
-                $totale_righe = round($tot_righe + $tot_arr + $totale_arrotondamento, 2);
-
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
                 // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
                 if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
                     $qta = (($riga['Quantita'] ?: 1) / $articolo->fattore_um_secondaria);
-                    $prezzo = $totale_righe > 0 ? $totale_righe / $qta : -($totale_righe / $qta);
+                    $prezzo = $totale_righe_riepilogo > 0 ? $totale_righe_riepilogo / $qta : -($totale_righe_riepilogo / $qta);
                 } else {
                     $qta = ($riga['Quantita'] ?: 1);
-                    $prezzo = $totale_righe > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
+                    $prezzo = $totale_righe_riepilogo > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
                 }
 
                 // Prezzo e quantità
@@ -444,30 +474,26 @@ class FatturaOrdinaria extends FatturaElettronica
         $fattura->refresh();
 
         // Arrotondamenti differenti nella fattura XML
-        $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
-        $riepiloghi = $this->forceArray($riepiloghi);
+        $riepiloghi = $this->forceArray($dati_riepilogo);
+        $imposta_riepilogo = 0;
 
-        $riep_imp = 0;
         foreach ($riepiloghi as $riepilogo) {
-            $riep_imp += $riepilogo['Imposta'];
+            $imposta_riepilogo += $riepilogo['Imposta'];
         }
 
-        $diff_iva = round(abs($riep_imp) - abs($fattura->iva), 2);
-        $diff = round(abs($fattura->totale_imponibile) - abs($totale_righe + $tot_arr), 2);
-        $diff_tot = round($fattura->totale_imponibile + $fattura->rivalsa_inps - abs($totale_imp) + $tot_arr, 2);
+        $totale_documento = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['ImportoTotaleDocumento'];
+        $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);
+        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - abs($totale_documento), 2);
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
-
-        if (($diff != 0 && $diff != $diff_tot) || (($diff_tot != $diff) && !$diff_iva) || $diff_iva) {
-            if ($diff != 0 && $diff != $diff_tot) {
-                $diff *= 100 / (100 + $iva_arrotondamento['percentuale']);
-            } elseif (($diff == $diff_tot) && !$diff_iva) {
-                $diff = $totale_righe - $fattura->totale_imponibile;
-            } elseif (($diff == $diff_tot) && $diff_iva) {
-                $diff = $diff_iva;
+        if ($diff || $differenza_iva) {
+            if ($diff && $differenza_iva) {
+                $diff = abs($diff + $differenza_iva);
+            } elseif ($diff == 0 && $differenza_iva) {
+                $diff = $differenza_iva;
             } else {
-                $diff = -($diff_tot * 100) / (100 + $iva_arrotondamento['percentuale']);
-            }
+                $diff = -$diff;
+            } 
 
             $obj = Riga::build($fattura);
 

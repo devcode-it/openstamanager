@@ -31,8 +31,7 @@ class LineChart extends Stat {
 
         this.getData(start, end, function(response) {
             var data = JSON.parse(response);
-
-            var label = data.badge;
+            var label = data.label;
 
             var dataset = [];
             var labels = [];

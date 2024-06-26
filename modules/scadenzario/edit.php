@@ -145,8 +145,8 @@ echo '
     <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">
-                '.tr('Rate scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right tip" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
+                <h3 class="card-title">'.tr('Rate scadenza').'</h3>
+                <button type="button" class="btn btn-xs btn-info float-right" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="'.tr('È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione').'">
                     <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
                 </button>
             </h3>

@@ -329,6 +329,7 @@ echo '
 <script>
     
 	$(document).on("click", "#add-scadenza", function() {
+        this.disabled = true;
         var i = '.$i.';
         cleanup_inputs();
 

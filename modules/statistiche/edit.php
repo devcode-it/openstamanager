@@ -33,6 +33,8 @@ echo '
 $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
+$translated_months = [ tr('Gennaio'), tr('Febbraio'), tr('Marzo'), tr('Aprile'), tr('Maggio'), tr('Giugno'), tr('Luglio'), tr('Agosto'), tr('Settembre'), tr('Ottobre'), tr('Novembre'), tr('Dicembre') ];
+
 // Fatturato
 echo '
 <div class="card card-info">
@@ -74,8 +76,6 @@ echo '
 <script>
 start = moment("'.$start.'");
 end = moment("'.$end.'");
-
-months = get_months(start, end);
 
 var chart_options = {
     type: "line",
@@ -414,10 +414,12 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
+    var translatedMonths = ' . json_encode($translated_months) . ';
+
     new Chart(document.getElementById("interventi_n_tipologia").getContext("2d"), {
         type: "bar",
         data: {
-            labels: months,
+            labels: translatedMonths,
             datasets: [
                 '.$dataset.'
             ]
@@ -468,10 +470,11 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
+    var translatedMonths = ' . json_encode($translated_months) . ';
     new Chart(document.getElementById("interventi_ore_tipologia").getContext("2d"), {
         type: "bar",
         data: {
-            labels: months,
+            labels: translatedMonths,
             datasets: [
                 '.$dataset.'
             ]
@@ -558,10 +561,12 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
+    var translatedMonths = ' . json_encode($translated_months) . ';
+
     new Chart(document.getElementById("sessioni").getContext("2d"), {
         type: "bar",
         data: {
-            labels: months,
+            labels: translatedMonths,
             datasets: [
                 '.($dataset ?: '{ label: "", backgroundColor: "transparent", data: [ 0,0,0,0,0,0,0,0,0,0,0,0 ] }').'
             ]
@@ -724,10 +729,12 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
+    var translatedMonths = ' . json_encode($translated_months) . ';
+
     new Chart(document.getElementById("n_anagrafiche").getContext("2d"), {
         type: "line",
         data: {
-            labels: months,
+            labels: translatedMonths,
             datasets: [
                 '.$dataset.'
             ]

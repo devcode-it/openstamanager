@@ -135,7 +135,11 @@ switch (post('op')) {
                 $id_scadenza_non_completa = $id_scadenza;
             }
 
-            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)
+            ->where('data_inizio', '<=', $data_scadenza)
+            ->where('data_fine', '>=', $data_scadenza)
+            ->first();
+            
             if (!empty($assicurazione_crediti)) {
                 $assicurazione_crediti->fixTotale();
                 $assicurazione_crediti->save();

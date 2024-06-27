@@ -54,6 +54,11 @@ class Impianti extends AppResource
                 $query->where('id', '=', $tipo_cliente);
             });
 
+        // Filtro per data
+        if ($last_sync_at) {
+            $statement = $statement->where('updated_at', '>', $last_sync_at);
+        }
+
         // Limite impianti visualizzabili dal tecnico
         $limite_impianti = setting('Limita la visualizzazione degli impianti a quelli gestiti dal tecnico');
 
@@ -67,11 +72,6 @@ class Impianti extends AppResource
             $id_interventi = array_keys($interventi);
 
             $statement->where('idtecnico', $id_tecnico)->orWhere('id', 'IN', 'SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')');
-        }
-
-        // Filtro per data
-        if ($last_sync_at) {
-            $statement = $statement->where('updated_at', '>', $last_sync_at);
         }
 
         $records = $statement->get();

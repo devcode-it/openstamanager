@@ -270,7 +270,7 @@ $articoli = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
         `mg_articoli`.`id`, 
         `mg_articoli`.`codice`, 
-        `mg_articoli_lang`.`title`, 
+        `mg_articoli_lang`.`title` as descrizione, 
         `mg_articoli`.`um` 
     FROM 
         `co_documenti` 

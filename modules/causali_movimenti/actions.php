@@ -26,7 +26,7 @@ switch (filter('op')) {
         $nome = post('nome');
         $descrizione = post('descrizione');
         if (isset($descrizione)) {
-            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $nome))->orWhere('name', $nome)->where('id', '!=', $id_record)->first();
+            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first();
             if (empty($causale_new)) {
                 $causale->tipo_movimento = post('tipo_movimento');
                 $causale->setTranslation('title', $nome);

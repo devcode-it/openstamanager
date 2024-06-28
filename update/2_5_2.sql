@@ -11,7 +11,7 @@ ALTER TABLE `in_tags`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 -- Aggiunta modulo Tags
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Tags', 'tags', 'SELECT |select| FROM `in_tags` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.2', '2.5.2', '2', (SELECT `id` FROM `zz_modules` as b WHERE `name` = 'Interventi'), '1', '1', '1', '0');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Tags', 'tags', 'SELECT |select| FROM `in_tags` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.2', '2.5.2', '2', (SELECT `id` FROM `zz_modules` as b WHERE `name` = 'Tabelle'), '1', '1', '1', '0');
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES ('1', (SELECT MAX(id) FROM `zz_modules`), 'Tags');
 
 -- Aggiunta viste Tags

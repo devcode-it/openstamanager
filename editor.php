@@ -24,6 +24,7 @@ use Models\Module;
 
 // Disabilitazione dei campi
 $read_only = $structure->permission == 'r';
+$module_header_html = '';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
     redirect(base_path().'/controller.php?id_module='.$id_module);
@@ -239,9 +240,20 @@ if (empty($record) || !$has_access) {
                 <div class="clearfix"></div>
                 <br>';
         // Eventuale header personalizzato
-        $header = $structure->filepath('header.php');
-        if ($header) {
-            include_once $header;
+        $module_header = $structure->filepath('header.php');
+        $module_header_html = '';
+
+        if (!empty($module_header)) {
+            ob_start();
+            include $module_header;
+            $module_header_html = ob_get_clean();
+        }
+
+        // Eventuale header personalizzato
+        if ($module_header_html) {
+            echo '<div class="module-header">';
+            echo $module_header_html;
+            echo '</div>';
         }
     }
 
@@ -296,6 +308,13 @@ if (empty($record) || !$has_access) {
     if ($structure->permission != '-' && $structure->use_notes && $user->gruppo != 'Clienti') {
         echo '
             <div id="tab_note" class="tab-pane">';
+        
+        // Eventuale header personalizzato
+        if ($module_header_html) {
+            echo '<div class="module-header">';
+            echo $module_header_html;
+            echo '</div>';
+        }
 
         include base_dir().'/plugins/notes.php';
 
@@ -307,6 +326,13 @@ if (empty($record) || !$has_access) {
         echo '
             <div id="tab_checks" class="tab-pane">';
 
+        // Eventuale header personalizzato
+        if ($module_header_html) {
+            echo '<div class="module-header">';
+            echo $module_header_html;
+            echo '</div>';
+        }
+
         include base_dir().'/plugins/checks.php';
 
         echo '
@@ -316,7 +342,16 @@ if (empty($record) || !$has_access) {
     // Informazioni sulle operazioni
     if (Auth::admin()) {
         echo '
-            <div id="tab_info" class="tab-pane">
+            <div id="tab_info" class="tab-pane">';
+
+            // Eventuale header personalizzato
+            if ($module_header_html) {
+                echo '<div class="module-header">';
+                echo $module_header_html;
+                echo '</div>';
+            }
+
+            echo '
                 <div class="timeline">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
@@ -389,6 +424,13 @@ if (empty($record) || !$has_access) {
 
         echo '
             <div id="tab_'.$plugin['id'].'" class="tab-pane">';
+
+        // Eventuale header personalizzato
+        if ($module_header_html) {
+            echo '<div class="module-header">';
+            echo $module_header_html;
+            echo '</div>';
+        }
 
         $id_plugin = $plugin['id'];
 

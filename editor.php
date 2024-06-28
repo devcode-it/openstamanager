@@ -172,7 +172,16 @@ if (empty($record) || !$has_access) {
                         <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                     </a>
 
-                    <div class="float-right d-none d-sm-inline">
+                    <div class="float-right d-none d-sm-inline">';
+
+                    // Pulsanti personalizzati
+                    $buttons = $structure->filepath('buttons.php');
+                    
+                    if (!empty($buttons)) {
+                        include $buttons;
+                    }
+
+                    echo '
                         {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
                         {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
@@ -225,36 +234,21 @@ if (empty($record) || !$has_access) {
                 <div class="clearfix"></div>
                 <br>';
 
-    // Pulsanti personalizzati
-    $buttons = $structure->filepath('buttons.php');
-    if (!empty($buttons)) {
+    // Eventuale header personalizzato
+    $module_header = $structure->filepath('header.php');
+    $module_header_html = '';
+
+    if (!empty($module_header)) {
         ob_start();
-        include $buttons;
-        $buttons = ob_get_clean();
+        include $module_header;
+        $module_header_html = ob_get_clean();
+    }
 
-        echo '
-                <div class="float-right d-none d-sm-inline" id="pulsanti-modulo">
-                    '.$buttons.'
-                </div>
-
-                <div class="clearfix"></div>
-                <br>';
-        // Eventuale header personalizzato
-        $module_header = $structure->filepath('header.php');
-        $module_header_html = '';
-
-        if (!empty($module_header)) {
-            ob_start();
-            include $module_header;
-            $module_header_html = ob_get_clean();
-        }
-
-        // Eventuale header personalizzato
-        if ($module_header_html) {
-            echo '<div class="module-header">';
-            echo $module_header_html;
-            echo '</div>';
-        }
+    // Eventuale header personalizzato
+    if ($module_header_html) {
+        echo '<div class="module-header">';
+        echo $module_header_html;
+        echo '</div>';
     }
 
     // Contenuti del modulo

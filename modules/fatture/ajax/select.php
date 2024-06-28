@@ -56,7 +56,7 @@ switch ($resource) {
                 'uscita' AS dir
             FROM `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-                INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstato` = `dt_statiddt`.`id`
+                INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                 LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 

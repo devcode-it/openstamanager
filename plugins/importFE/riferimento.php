@@ -26,6 +26,8 @@ include_once __DIR__.'/init.php';
 $direzione = 'uscita';
 $id_riga = get('id_riga');
 $qta = get('qta');
+$descrizione = get('descrizione');
+$prezzo_unitario = get('prezzo_unitario');
 
 $id_documento = get('id_documento');
 $tipo_documento = get('tipo_documento');
@@ -38,7 +40,17 @@ if ($tipo_documento == 'ordine') {
     $righe_utilizzate = get('righe_ddt');
 }
 
+
 echo '
+<div class="row">
+    <div class="col-md-8">
+        Riga: <strong>'.$descrizione.'</strong>
+    </div>
+    <div class="col-md-4 text-right">
+        Quantità: <strong>'.$qta.'</strong> - Prezzo unitario: <strong>'.number_format($prezzo_unitario, 2, ',', '.').'</strong>
+    </div>
+</div>
+<br>
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
         <th>'.tr('Descrizione').'</th>
@@ -54,7 +66,7 @@ echo '
 $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
-    $qta_rimanente = $riga->qta_rimanente - $righe_utilizzate[$riga->id];
+    $qta_rimanente = $riga->qta_rimanente - (float)$righe_utilizzate[$riga->id];
     $riga_origine = $riga->getOriginalComponent();
 
     if (!empty($riga->idarticolo)) {
@@ -73,7 +85,7 @@ foreach ($righe as $riga) {
         'id_articolo' => $riga->idarticolo,
         'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
         'id_conto' => $riga->articolo->idconto_acquisto,
-        'desc_conto' => str_replace(' ', '_', $desc_conto),
+        'desc_conto' => $desc_conto ? str_replace(' ', '_', $desc_conto) : null,
     ];
 
     echo '

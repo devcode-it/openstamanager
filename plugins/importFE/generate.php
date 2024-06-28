@@ -158,7 +158,7 @@ echo '
 			<h4>
 			    '.$ragione_sociale.'
 
-			    '.(empty($anagrafica) ? '<span class="badge bg-orange">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '').'</small>').'<br>
+			    '.(empty($anagrafica) ? '<span class="badge bg-warning">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '').'</small>').'<br>
 
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
@@ -514,7 +514,7 @@ if (!empty($righe)) {
         }
 
         echo '
-        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
+        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
                 '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
@@ -586,8 +586,8 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-1 card-tools">
-                                <br>
-                                <button type="button" class="btn btn-tool no-padding-left" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                            <br>
+                                <button type="button" class="btn btn-lg" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
                                 <i class="fa fa-plus"></i>
                                 </button>
                             </div>
@@ -754,12 +754,16 @@ function rimuoviRiferimento(button) {
 function selezionaRiferimento(riga, tipo_documento, id_documento, dir) {
     let id_riga = riga.data("id");
     let qta = riga.data("qta");
-
+    let descrizione = riga.data("descrizione");
+    let prezzo_unitario = riga.data("prezzo_unitario");
+    
     let riferimenti = getRiferimenti();
     let query = {
         id_module: "'.$id_module.'",
         id_record: "'.$id_record.'",
         qta: qta,
+        descrizione: descrizione,
+        prezzo_unitario: prezzo_unitario,
         id_riga: id_riga,
         id_documento: id_documento,
         tipo_documento: tipo_documento,

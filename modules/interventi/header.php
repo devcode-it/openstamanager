@@ -106,7 +106,7 @@ echo '
 // Cliente
 echo '
     <div class="col-md-3">
-        <h4 style="margin:4px 0;"><b>'.$anagrafica->ragione_sociale.'</b></h4>
+        <h4><b>'.Modules::link('Anagrafiche', $intervento->idanagrafica, $intervento->anagrafica->ragione_sociale, $intervento->anagrafica->ragione_sociale).'</b></h4>
 
         <p style="margin:3px 0;">
             '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'
@@ -124,15 +124,37 @@ echo '
     </div>';
 
 // Panoramica
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
+$stato = \Modules\Interventi\Stato::find($intervento->stato->id);
 echo '
     <div class="col-md-4">
-        <div class="card card-info">
+        <div class="card card-primary shadow-lg">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Panoramica attività num. ').$intervento->codice.'</h3>
+                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Attività _NUM_ del _DATA_', [
+                    '_NUM_' => $intervento->codice,
+                    '_DATA_' => Translator::dateToLocale($intervento->data_richiesta)
+                ]).'</h3>
             </div>
             <div class="card-body">
-
-                <p style="margin:3px 0;"><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
+                <p>
+                    <span class="tip" title="'.tr('Numero sessioni di lavoro').'"><i class="fa fa-user text-gray"></i> '.$intervento->sessioni->count().'</span>
+                    <span class="separator">|</span>
+                    
+                    <span class="tip" title="'.tr('Numero di ore totali').'"><i class="fa fa-hourglass text-gray"></i> '.Translator::numberToLocale($intervento->sessioni->sum('ore')).'</span>
+                    <span class="separator">|</span>
+                    
+                    <span class="tip" title="'.tr('Numero di km percorsi').'"><i class="fa fa-truck text-gray"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
+                    <span class="separator">|</span>
+                    
+                    <span class="tip" title="'.tr('Importo totale del lavoro').'"><i class="fa fa-money text-gray"></i> '.($show_prezzi ? moneyFormat(($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile), 2) : '-').'</span>
+                    <span class="separator">|</span>
+                    
+                    <span class="round-16" style="background-color:'.$stato->colore.';"></span> '.$stato->getTranslation('title').'
+                </p>
+                <hr>
+                <p><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>
 
@@ -151,7 +173,7 @@ if ($contratto) {
                     '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => $contratto->numero, '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
     if ($ore_previste > 0) {
         echo '
-                    - '.$ore_erogate.'/'.$ore_previste.' '.tr('ore').'<br>
+                    - '.Translator::numberToLocale($ore_erogate, 2).'/'.$ore_previste.' '.tr('ore').'<br>
 
                     <div class="progress" style="margin:0; height:8px;">
                         <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
@@ -193,7 +215,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="card card-info">
+        <div class="card card-primary shadow-lg">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>

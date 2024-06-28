@@ -55,11 +55,6 @@ echo '
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 
     <div class="row">
-        <div class="col-md-2 offset-md-10">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <!-- DATI CLIENTE -->
 
@@ -189,7 +184,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tags'); ?>", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "<?php echo implode(',', $tags); ?>", "icon-after": "add|<?php echo Module::where('name', 'Tags')->first()->id; ?>|" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` =<?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}
                 </div>
             </div>
 
@@ -200,18 +195,21 @@ $tecnici_assegnati = array_column($tecnici_assegnati, 'id_tecnico');
 echo '
 <!-- RIGA 4 -->
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                 </div>
                 ';
 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
 $articoli = $intervento->articoli;
 echo '
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.(Module::where('name', 'Tags')->first()->id).'|" ]}
                 </div>
             </div>
             <!-- RIGA 5 -->

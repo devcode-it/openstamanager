@@ -1601,6 +1601,29 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     z-index: 99999;
 }
 
+.module-header p{
+    margin: 3px 0;
+}
+
+.module-header h3,
+.module-header h4,
+.module-header h5{
+    margin: 4px 0;
+}
+
+.round-16{
+    border-radius: 16px;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.module-header .separator{
+    color: #ccc;
+    padding: 0 5px;
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

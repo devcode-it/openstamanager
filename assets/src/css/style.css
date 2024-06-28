@@ -31,7 +31,11 @@
 }
 
 a {
-    color: black;
+    color: #333;
+}
+
+a:hover {
+    color: #000;
 }
 
 .preloader{

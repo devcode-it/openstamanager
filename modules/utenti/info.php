@@ -44,23 +44,16 @@ $module = Module::where('name', 'Utenti e permessi')->first();
 
 echo '
 <div class="card card-widget widget-user">
-    <div class="widget-user-header bg-'.(($theme != 'default') ? $theme : 'primary').'">
+    <div class="widget-user-header bg-orange">
       <h3 class="widget-user-username">'.$user['username'].'</h3>
       <h5 class="widget-user-desc">'.$user['gruppo'].'</h5>
     </div>
 
     <div class="widget-user-image">';
 
-$user_photo = $user->photo;
-if ($user_photo) {
-    echo '
-        <img src="'.$user_photo.'" class="img-circle" alt="'.$user['username'].'" />';
-} else {
-    echo '
-        <i style="color:white;margin-left:5px;" class="fa fa-user-circle-o fa-5x" alt="'.tr('OpenSTAManager').'"></i>';
-}
-
+$user_photo = $user->photo ?: $rootdir.'/assets/dist/img/user.png';
 echo '
+        <img src="'.$user_photo.'" class="img-circle" alt="'.$user['username'].'" />
     </div>
     <div class="card-footer">
         <div class="row">

@@ -469,15 +469,10 @@ if (Auth::check()) {
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">';
 
-    $user_photo = $user->photo;
-    if ($user_photo) {
-        echo '
-                        <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />';
-    } else {
-        echo '
-                        <i class="fa fa-user-circle-o fa-2x" alt="'.tr('Utente').'"></i>';
-    }
+    $user_photo = $user->photo ?: $rootdir.'/assets/dist/img/user.png';
+    
     echo '
+                        <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />
                     </div>
 
                     <div class="info">

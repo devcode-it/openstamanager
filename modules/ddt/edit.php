@@ -104,7 +104,7 @@ if (setting('Cambia automaticamente stato ddt fatturati')) {
     $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
     $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
 
-    if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt) {
+    if ($ddt->stato->id == $id_stato_fatt || $ddt->stato->id == $id_stato_parz_fatt) {
         echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
     } else {

@@ -30,11 +30,11 @@
         url('../fonts/sourcesanspro-regular-webfont.svg') format('svg');
 }
 
-a {
+.li-widget > a {
     color: #333;
 }
 
-a:hover {
+.li-widget > a:hover {
     color: #000;
 }
 

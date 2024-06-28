@@ -30,6 +30,10 @@
         url('../fonts/sourcesanspro-regular-webfont.svg') format('svg');
 }
 
+a {
+    color: black;
+}
+
 .preloader{
     background-color: #f4f6f9de ;
 }

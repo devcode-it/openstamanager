@@ -50,6 +50,7 @@ for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
 echo '      </select>
         </div>
     </div>
+    <br>
     <div class="div-month row">';
 for ($i = 1; $i <= 12; ++$i) {
     $btnType = ($i == date('m')) ? 'btn-primary' : '';
@@ -243,11 +244,11 @@ function update_month(currentMonth, currentYear) {
             $div.html("");
             for (var i=1; i<=12; i++) {
                 $template.find("a").attr("data-month", i);
-                $template.find(".text").html("<small>" + mesi[i] + "</small>");
+                $template.find(".text").html(mesi[i]);
                 if (typeof data[i] === "undefined") {
-                    $template.find(".text-count").html("<small>(0)</small>");
+                    $template.find(".text-count").html("(0)");
                 } else {
-                    $template.find(".text-count").html("<small>(" + data[i] + ")</small>");
+                    $template.find(".text-count").html("(" + data[i] + ")");
                 }
                 if (i == parseInt(currentMonth)) {
                     $template.find("a").addClass("btn-primary");

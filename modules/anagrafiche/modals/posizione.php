@@ -105,6 +105,15 @@ function initGeocomplete() {
 }
 
 var map = null;
+const icon = new L.Icon({
+    iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
 function caricaMappa() {
     const lat = parseFloat(input("lat").get());
     const lng = parseFloat(input("lng").get());
@@ -146,20 +155,17 @@ function caricaMappa() {
 		}).addTo(map); 
 	}
 
-	var icon = new L.Icon({
-		iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-		shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-		iconSize: [25, 41],
-		iconAnchor: [12, 41],
-		popupAnchor: [1, -34],
-		shadowSize: [41, 41]
-	});
-
     var marker = L.marker([lat, lng], {
         icon: icon
     }).addTo(map);
 
 	map.setView([lat, lng], 10);
+
+    map.on("click", function(e) {
+        marker.setLatLng(e.latlng);
+        input("lat").set(e.latlng.lat);
+        input("lng").set(e.latlng.lng);
+    });
 }
 
 // Ricaricamento della pagina alla chiusura

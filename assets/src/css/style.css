@@ -115,6 +115,7 @@ input[type=file] {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    z-index: 9990;
 }
 
 .autocomplete .group,

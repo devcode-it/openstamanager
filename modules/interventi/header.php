@@ -173,7 +173,7 @@ echo '
                 <p><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
 if (count($interventi_programmati) != 0) {
     foreach ($interventi_programmati as $intervento_programmato) {
-        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
+        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
     }
 }
 echo '

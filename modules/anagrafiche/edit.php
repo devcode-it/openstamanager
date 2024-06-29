@@ -432,7 +432,7 @@ echo '
 if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
 
-        <div class="panel card-primary">
+        <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">'.tr('Informazioni per tipo di anagrafica').'</h3>
             </div>

@@ -99,28 +99,40 @@ $logo = $logo ? base_path().'/files/anagrafiche/'.$logo : App::getPaths()['img']
 echo '
 <hr>
 <div class="row">
-    <div class="col-md-1">
-        <img src="'.$logo.'" class="img-fluid">
-    </div>';
+    <div class="col-md-4">
+        <div class="card card-primary shadow">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Cliente').'</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="'.$logo.'" class="img-fluid">
+                    </div>
+                    
+                    <div class="col-md-9">';
 
 // Cliente
 echo '
-    <div class="col-md-3">
-        <h4><b>'.Modules::link('Anagrafiche', $intervento->idanagrafica, $intervento->anagrafica->ragione_sociale, $intervento->anagrafica->ragione_sociale).'</b></h4>
+                        <h4><b>'.Modules::link('Anagrafiche', $intervento->idanagrafica, $intervento->anagrafica->ragione_sociale, $intervento->anagrafica->ragione_sociale).'</b></h4>
 
-        <p style="margin:3px 0;">
-            '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'
-            '.$sede['indirizzo'].'<br>
-            '.$sede['cap'].' - '.$sede['citta'].' ('.$sede['provincia'].')
-        </p>
+                        <p>
+                            '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'
+                            '.$sede['indirizzo'].'<br>
+                            '.$sede['cap'].' - '.$sede['citta'].' ('.$sede['provincia'].')
+                        </p>
 
-        <p style="margin:3px 0;">
-            '.($sede['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$sede['telefono'].'</a>' : '').'
-            '.($sede['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$sede['email'].'</a>' : '').'
-            '.($referente['nome'] ? '<p></p><i class="fa fa-user-o text-muted"></i> '.$referente['nome'].'<br>' : '').'
-            '.($referente['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$referente['telefono'].'</a>' : '').'
-            '.($referente['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$referente['email'].'</a>' : '').'
-        </p>
+                        <p>
+                            '.($sede['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$sede['telefono'].'</a>' : '').'
+                            '.($sede['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$sede['email'].'</a>' : '').'
+                            '.($referente['nome'] ? '<p></p><i class="fa fa-user-o text-muted"></i> '.$referente['nome'].'<br>' : '').'
+                            '.($referente['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$referente['telefono'].'</a>' : '').'
+                            '.($referente['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$referente['email'].'</a>' : '').'
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>';
 
 // Panoramica
@@ -130,7 +142,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $stato = \Modules\Interventi\Stato::find($intervento->stato->id);
 echo '
     <div class="col-md-4">
-        <div class="card card-primary shadow-lg">
+        <div class="card card-primary shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Attività _NUM_ del _DATA_', [
                     '_NUM_' => $intervento->codice,
@@ -158,7 +170,7 @@ echo '
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>
 
-                <p style="margin:3px 0;"><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
+                <p><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
 if (count($interventi_programmati) != 0) {
     foreach ($interventi_programmati as $intervento_programmato) {
         echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
@@ -169,7 +181,7 @@ echo '
 // Contratto
 if ($contratto) {
     echo '
-                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                <p><i class="fa fa-book text-info"></i>
                     '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => $contratto->numero, '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
     if ($ore_previste > 0) {
         echo '
@@ -186,7 +198,7 @@ if ($contratto) {
 // Preventivo
 if ($preventivo) {
     echo '
-                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                <p><i class="fa fa-book text-info"></i>
                 '.Modules::link('Preventivi', $preventivo->id, tr('Preventivo num. _NUM_ del _DATA_', ['_NUM_' => $preventivo->numero, '_DATA_' => Translator::dateToLocale($preventivo->data_bozza)])).'
                 </p>';
 }
@@ -194,7 +206,7 @@ if ($preventivo) {
 // Ordine
 if ($ordine) {
     echo '
-                <p style="margin:3px 0;"><i class="fa fa-book text-info"></i>
+                <p><i class="fa fa-book text-info"></i>
                 '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
                 </p>';
 }
@@ -215,7 +227,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="card card-primary shadow-lg">
+        <div class="card card-primary shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>
@@ -369,4 +381,12 @@ echo '
     
         map.setView([lat, lng], 10);
     }
+
+    max_height = 0;
+    $(".module-header .card").each( function(){
+        if($(this).height() > max_height){
+            max_height = $(this).height();
+        }
+    });
+    $(".module-header .card").height(max_height);
 </script>';

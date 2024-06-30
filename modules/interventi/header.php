@@ -244,9 +244,10 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
                     <div class="col-md-6">';
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-xs btn-default btn-block" onclick="$(\'#map-edit\').css(\'height\', \'100%\'); caricaMappa(); $(this).hide();">
-                            <i class="fa fa-compass"></i> '.tr('Carica mappa').'
-                        </a>
+                        <button class="btn btn-xs btn-default btn-block" onclick="caricaMappa();">
+                            <div class="load"><i class="fa fa-compass"></i> '.tr('Carica mappa').'</div>
+                            <a class="go-to hidden" href="geo://'.$sede['lat'].','.$sede['lng'].'"><i class="fa fa-map"></i> '.tr('Apri mappa').'</a>
+                        </button>
                     </div>
                     
                     <div class="col-md-6">';
@@ -345,6 +346,16 @@ echo '
 
     var map = null;
     function caricaMappa() {
+        const $map_container = $(".module-header:visible .card").eq(2);
+
+        // Ingrandimento area mappa
+        $map_container.css("height", "300px");
+        alignMaxHeight(".module-header .card");
+        $("#map-edit").css("height", "80%");
+
+        $map_container.find(".load").addClass("hidden");
+        $map_container.find(".go-to").removeClass("hidden");
+
         const lat = parseFloat("'.$sede_cliente->lat.'");
         const lng = parseFloat("'.$sede_cliente->lng.'");
     
@@ -393,11 +404,15 @@ echo '
         map.setView([lat, lng], 10);
     }
 
-    max_height = 0;
-    $(".module-header .card").each( function(){
-        if($(this).height() > max_height){
-            max_height = $(this).height();
-        }
-    });
-    $(".module-header .card").height(max_height);
+    function alignMaxHeight(element){
+        max_height = 0;
+        $(element).each( function(){
+            if($(this).height() > max_height){
+                max_height = $(this).height();
+            }
+        });
+        $(element).height(max_height);
+    }
+
+    alignMaxHeight(".module-header .card");
 </script>';

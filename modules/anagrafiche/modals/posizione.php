@@ -159,7 +159,18 @@ function caricaMappa() {
         icon: icon
     }).addTo(map);
 
-	map.setView([lat, lng], 10);
+    L.control
+        .fullscreen({
+            position: "topright",
+            title: "'.tr('Vai a schermo intero').'",
+            titleCancel: "'.tr('Esci dalla modalità schermo intero').'",
+            content: null,
+            forceSeparateButton: true,
+            forcePseudoFullscreen: true,
+            fullscreenElement: false
+        }).addTo(map);
+
+	map.setView([lat, lng], 14);
 
     map.on("click", function(e) {
         marker.setLatLng(e.latlng);

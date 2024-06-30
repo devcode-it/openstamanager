@@ -387,7 +387,7 @@ echo '
                     L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                         maxZoom: 17,
                         attribution: "© OpenStreetMap"
-                    }).addTo(map); 
+                    }).addTo(map);
                 }
             
                 var icon = new L.Icon({
@@ -402,8 +402,19 @@ echo '
                 var marker = L.marker([lat, lng], {
                     icon: icon
                 }).addTo(map);
+
+                L.control
+                .fullscreen({
+                    position: "topright",
+                    title: "'.tr('Vai a schermo intero').'",
+                    titleCancel: "'.tr('Esci dalla modalità schermo intero').'",
+                    content: null,
+                    forceSeparateButton: true,
+                    forcePseudoFullscreen: true,
+                    fullscreenElement: false
+                }).addTo(map);
             
-                map.setView([lat, lng], 10);
+                map.setView([lat, lng], 14);
             }
 
             function risolviConto(tipo){

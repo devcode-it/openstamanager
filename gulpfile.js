@@ -123,6 +123,7 @@ const JS = gulp.parallel(() => {
         'bootstrap-maxlength/dist/bootstrap-maxlength.js',
         'leaflet/dist/leaflet.js',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
+        'leaflet.fullscreen/Control.FullScreen.js',
         'ismobilejs/dist/isMobile.min.js',
         'ua-parser-js/dist/ua-parser.min.js',
     ];
@@ -184,6 +185,7 @@ const CSS = gulp.parallel(() => {
         'smartwizard/dist/css/smart_wizard_theme_arrows.min.css',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css',
         'leaflet/dist/leaflet.css',
+        'leaflet.fullscreen/Control.FullScreen.css',
         '@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css'
     ];
 
@@ -252,6 +254,10 @@ function srcImages() {
 }
 
 function leaflet() {
+    gulp.src([
+        config.nodeDirectory + '/leaflet.fullscreen/icon-fullscreen.svg',
+    ]).pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
+
     return gulp.src([
         config.nodeDirectory + '/leaflet/dist/images/*.{jpg,png,jpeg}',
     ])

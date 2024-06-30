@@ -244,7 +244,7 @@ if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($se
                     <div class="col-md-6">';
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-xs btn-default btn-block" onclick="$(\'#map-edit\').height(180); caricaMappa(); $(this).hide();">
+                        <a class="btn btn-xs btn-default btn-block" onclick="$(\'#map-edit\').css(\'height\', \'100%\'); caricaMappa(); $(this).hide();">
                             <i class="fa fa-compass"></i> '.tr('Carica mappa').'
                         </a>
                     </div>
@@ -359,7 +359,18 @@ echo '
             map = L.map("map-edit", {
                 gestureHandling: true
             });
-    
+
+            L.control
+                .fullscreen({
+                    position: "topright",
+                    title: "'.tr('Vai a schermo intero').'",
+                    titleCancel: "'.tr('Esci dalla modalità schermo intero').'",
+                    content: null,
+                    forceSeparateButton: true,
+                    forcePseudoFullscreen: true,
+                    fullscreenElement: false
+                }).addTo(map);
+
             L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                 maxZoom: 17,
                 attribution: "© OpenStreetMap"

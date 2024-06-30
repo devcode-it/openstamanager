@@ -1625,6 +1625,10 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     padding: 0 5px;
 }
 
+.fullscreen-icon {
+	background-image: url('../img/leaflet/icon-fullscreen.svg');
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

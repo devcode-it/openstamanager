@@ -100,17 +100,17 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-4">
-        <div class="card card-primary shadow">
+        <div class="card card-info card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Cliente').'</h3>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <img src="'.$logo.'" class="img-fluid">
                     </div>
                     
-                    <div class="col-md-9">';
+                    <div class="col-md-10">';
 
 // Cliente
 echo '
@@ -142,9 +142,9 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $stato = \Modules\Interventi\Stato::find($intervento->stato->id);
 echo '
     <div class="col-md-4">
-        <div class="card card-primary shadow">
+        <div class="card card-info card-outline shadow">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Attività _NUM_ del _DATA_', [
+                <h3 class="card-title"><i class="fa fa-wrench"></i> '.tr('Attività _NUM_ del _DATA_', [
                     '_NUM_' => $intervento->codice,
                     '_DATA_' => Translator::dateToLocale($intervento->data_richiesta)
                 ]).'</h3>
@@ -227,7 +227,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="card card-primary shadow">
+        <div class="card card-info card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>

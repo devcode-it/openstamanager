@@ -123,6 +123,7 @@ switch ($operazione) {
                         if (!empty($r->idarticolo)) {
                             $articolo = ArticoloOriginale::find($r->idarticolo);
                             $riga = Articolo::build($contratto, $articolo);
+                            $riga->original_id = $r->id;
                         } else {
                             $riga = Riga::build($contratto);
                         }

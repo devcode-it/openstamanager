@@ -108,7 +108,7 @@ switch (filter('op')) {
         }
 
         // Controllo sulla verifica
-        if (!empty($check_email['smtp-check'])) {
+        if (!empty($check_email['valid-format'])) {
             flash()->info(tr('SMTP email verificato'));
         } else {
             flash()->warning(tr('SMTP email non verificato'));

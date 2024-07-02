@@ -52,6 +52,7 @@ include_once __DIR__.'/../../core.php';
 				<div class="col-md-12">
 					<?php echo input([
 					    'type' => 'ckeditor',
+					    'use_full_ckeditor' => 1,
 					    'label' => tr('Descrizione'),
 					    'name' => 'descrizione',
 					    'value' => $record['descrizione'],

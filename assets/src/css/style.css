@@ -1629,6 +1629,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 	background-image: url('../img/leaflet/icon-fullscreen.svg');
 }
 
+/** Rimozione avviso CKEditor temporanea **/
+.cke_notification_warning{
+    display:none !important;
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

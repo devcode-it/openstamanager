@@ -87,7 +87,6 @@ echo '
                 <div class="col-md-12">';
 echo input([
     'type' => 'ckeditor',
-    'use_full_ckeditor' => 1,
     'label' => tr('Contenuto'),
     'name' => 'content',
     'value' => $record['content'],

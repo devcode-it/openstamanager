@@ -173,7 +173,6 @@ echo '
         <div class="col-md-12">';
 echo input([
     'type' => 'ckeditor',
-    'use_full_ckeditor' => 1,
     'label' => tr('Contenuto'),
     'name' => 'body',
     'id' => 'body_'.rand(0, 999),

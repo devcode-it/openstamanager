@@ -163,7 +163,6 @@ echo '
                 <div class="col-md-6">
                     <?php echo input([
                         'type' => 'ckeditor',
-                        'use_full_ckeditor' => 1,
                         'label' => tr('Condizioni generali di fornitura'),
                         'name' => 'condizioni_fornitura',
                         'value' => $record['condizioni_fornitura'],

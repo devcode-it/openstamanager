@@ -17,7 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT `co_scadenziario`.*, 
+$giorni_promemoria = setting('Intervallo di giorni in anticipo per invio promemoria scadenza');
+
+$r = $dbo->fetchOne('SELECT 
+        `co_scadenziario`.*, 
         `co_documenti`.*,
         `an_anagrafiche`.`email`,
         `an_anagrafiche`.`pec`,
@@ -25,7 +28,8 @@ $r = $dbo->fetchOne('SELECT `co_scadenziario`.*,
         `an_referenti`.`nome`,
         `co_scadenziario`.`da_pagare` - `co_scadenziario`.`pagato` AS totale,
         `title` AS pagamento,
-        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(`scadenza`,"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE `scadenza` < NOW() AND `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica` ORDER BY `scadenza`) AS scadenze_fatture_scadute
+        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) < NOW() AND `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica` ORDER BY IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`)) AS scadenze_fatture_scadute,
+        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica` AND IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL '.prepare($giorni_promemoria).' DAY),"%Y-%m-%d") ORDER BY IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`)) AS scadenze_fatture_promemoria
     FROM `co_scadenziario`
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenziario`.`iddocumento`
         LEFT JOIN `co_pagamenti` ON `co_pagamenti`.`id` = `co_documenti`.`idpagamento`
@@ -34,7 +38,8 @@ $r = $dbo->fetchOne('SELECT `co_scadenziario`.*,
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` 
         LEFT JOIN `an_referenti` ON `an_referenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     WHERE 
-        `co_scadenziario`.`da_pagare` > `co_scadenziario`.`pagato` AND `co_scadenziario`.`iddocumento` = (SELECT `iddocumento` FROM `co_scadenziario` s WHERE `id`='.prepare($id_record).')');
+        `co_scadenziario`.`da_pagare` > `co_scadenziario`.`pagato` AND `co_scadenziario`.`iddocumento` = (SELECT `iddocumento` FROM `co_scadenziario` s WHERE `id`='.prepare($id_record).')
+    GROUP BY iddocumento');
 
 $logo_azienda = str_replace(base_dir(), base_path(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
 
@@ -52,4 +57,5 @@ return [
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
     'nome_referente' => $r['nome'],
     'scadenze_fatture_scadute' => $r['scadenze_fatture_scadute'],
+    'scadenze_fatture_promemoria' => $r['scadenze_fatture_promemoria'],
 ];

@@ -56,7 +56,22 @@ class SollecitoTask extends Manager
             $user = User::find($id_user);
 
             // Invio promemoria
-            $rs = database()->fetchArray("SELECT `co_scadenziario`.* FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` WHERE `co_tipidocumento`.`dir`='entrata' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND `scadenza` = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL ".prepare($giorni_promemoria).' DAY),"%Y-%m-%d")');
+            $rs = database()->fetchArray("
+                SELECT 
+                    `co_scadenziario`.*, 
+                    IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) AS `data_scadenza`
+                FROM 
+                    `co_scadenziario` 
+                    INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` 
+                    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
+                    INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
+                WHERE 
+                    `co_tipidocumento`.`dir`='entrata' 
+                    AND `is_fiscale`=1  
+                    AND `zz_segments`.`autofatture`=0 
+                    AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) 
+                    AND IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL ".prepare($giorni_promemoria)." DAY),'%Y-%m-%d')");
+
             foreach ($rs as $r) {
                 $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_promemoria).' AND id_record='.prepare($r['id']));
                 $id_template = $template_promemoria;
@@ -135,7 +150,7 @@ class SollecitoTask extends Manager
                 }
             }
 
-            $rs = database()->fetchArray("SELECT `co_scadenziario`.* FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` WHERE `co_tipidocumento`.`dir`='entrata' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND `scadenza` < DATE_SUB(NOW(), INTERVAL ".prepare($giorni_scadenza).' DAY)');
+            $rs = database()->fetchArray("SELECT `co_scadenziario`.*, IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) AS `data_scadenza` FROM `co_scadenziario` INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` WHERE `co_tipidocumento`.`dir`='entrata' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) < DATE_SUB(NOW(), INTERVAL ".prepare($giorni_scadenza).' DAY) GROUP BY iddocumento');
 
             foreach ($rs as $r) {
                 $da_inviare = false;

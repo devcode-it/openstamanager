@@ -493,7 +493,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $diff = $differenza_iva;
             } else {
                 $diff = -$diff;
-            } 
+            }
 
             $obj = Riga::build($fattura);
 

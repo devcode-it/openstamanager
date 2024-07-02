@@ -139,15 +139,15 @@ echo '
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-$stato = \Modules\Interventi\Stato::find($intervento->stato->id);
+$stato = Modules\Interventi\Stato::find($intervento->stato->id);
 echo '
     <div class="col-md-4">
         <div class="card card-info card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-wrench"></i> '.tr('Attività _NUM_ del _DATA_', [
-                    '_NUM_' => $intervento->codice,
-                    '_DATA_' => Translator::dateToLocale($intervento->data_richiesta)
-                ]).'</h3>
+    '_NUM_' => $intervento->codice,
+    '_DATA_' => Translator::dateToLocale($intervento->data_richiesta),
+]).'</h3>
             </div>
             <div class="card-body">
                 <p>
@@ -160,7 +160,7 @@ echo '
                     <span class="tip" title="'.tr('Numero di km percorsi').'"><i class="fa fa-truck text-gray"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
                     <span class="separator">|</span>
                     
-                    <span class="tip" title="'.tr('Importo totale del lavoro').'"><i class="fa fa-money text-gray"></i> '.($show_prezzi ? moneyFormat(($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile), 2) : '-').'</span>
+                    <span class="tip" title="'.tr('Importo totale del lavoro').'"><i class="fa fa-money text-gray"></i> '.($show_prezzi ? moneyFormat($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile, 2) : '-').'</span>
                     <span class="separator">|</span>
                     
                     <span class="round-16" style="background-color:'.$stato->colore.';"></span> '.$stato->getTranslation('title').'

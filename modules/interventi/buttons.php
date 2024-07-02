@@ -41,7 +41,6 @@ echo '
     <i class="fa fa-'.(!empty($info_firma) ? 'refresh' : 'desktop').'"></i> '.$frase.'...
 </button>';
 
-
 // TODO: da standardizzare in struttura per tutti i moduli di tipo table
 /*<a class="btn btn-info'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
     <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'

@@ -159,7 +159,7 @@ class SollecitoTask extends Manager
                 $data_sollecito_1 = $has_inviata['sent_at'];
                 $id_template = $template_1;
                 if (!$has_inviata) {
-                    $da_inviare = date('Y-m-d', strtotime($r['scadenza'].' + '.($giorni_scadenza).' days')) < date('Y-m-d') ? true : false;
+                    $da_inviare = date('Y-m-d', strtotime($r['scadenza'].' + '.$giorni_scadenza.' days')) < date('Y-m-d') ? true : false;
                 } else {
                     $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_2).' AND id_record='.prepare($r['id']));
                     $data_sollecito_2 = $has_inviata['sent_at'];

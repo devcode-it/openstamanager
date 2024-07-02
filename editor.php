@@ -174,14 +174,14 @@ if (empty($record) || !$has_access) {
 
                     <div class="float-right d-none d-sm-inline">';
 
-                    // Pulsanti personalizzati
-                    $buttons = $structure->filepath('buttons.php');
-                    
-                    if (!empty($buttons)) {
-                        include $buttons;
-                    }
+    // Pulsanti personalizzati
+    $buttons = $structure->filepath('buttons.php');
 
-                    echo '
+    if (!empty($buttons)) {
+        include $buttons;
+    }
+
+    echo '
                         {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
                         {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
@@ -302,7 +302,7 @@ if (empty($record) || !$has_access) {
     if ($structure->permission != '-' && $structure->use_notes && $user->gruppo != 'Clienti') {
         echo '
             <div id="tab_note" class="tab-pane">';
-        
+
         // Eventuale header personalizzato
         if ($module_header_html) {
             echo '<div class="module-header">';
@@ -338,14 +338,14 @@ if (empty($record) || !$has_access) {
         echo '
             <div id="tab_info" class="tab-pane">';
 
-            // Eventuale header personalizzato
-            if ($module_header_html) {
-                echo '<div class="module-header">';
-                echo $module_header_html;
-                echo '</div>';
-            }
+        // Eventuale header personalizzato
+        if ($module_header_html) {
+            echo '<div class="module-header">';
+            echo $module_header_html;
+            echo '</div>';
+        }
 
-            echo '
+        echo '
                 <div class="timeline">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');

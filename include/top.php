@@ -470,7 +470,7 @@ if (Auth::check()) {
                     <div class="image">';
 
     $user_photo = $user->photo ?: $rootdir.'/assets/dist/img/user.png';
-    
+
     echo '
                         <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />
                     </div>

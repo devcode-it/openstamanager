@@ -139,7 +139,7 @@ switch (post('op')) {
             ->where('data_inizio', '<=', $data_scadenza)
             ->where('data_fine', '>=', $data_scadenza)
             ->first();
-            
+
             if (!empty($assicurazione_crediti)) {
                 $assicurazione_crediti->fixTotale();
                 $assicurazione_crediti->save();

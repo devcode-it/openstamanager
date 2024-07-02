@@ -40,7 +40,6 @@ if ($tipo_documento == 'ordine') {
     $righe_utilizzate = get('righe_ddt');
 }
 
-
 echo '
 <div class="row">
     <div class="col-md-8">
@@ -66,7 +65,7 @@ echo '
 $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
-    $qta_rimanente = $riga->qta_rimanente - (float)$righe_utilizzate[$riga->id];
+    $qta_rimanente = $riga->qta_rimanente - (float) $righe_utilizzate[$riga->id];
     $riga_origine = $riga->getOriginalComponent();
 
     if (!empty($riga->idarticolo)) {

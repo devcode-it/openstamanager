@@ -51,7 +51,7 @@ switch ($operazione) {
         break;
 
     case 'deletepagamento':
-        $id_record = post('id_record');
+        $id_record = filter('id_record');
         $dbo->query('DELETE FROM `an_pagamenti_anagrafiche` WHERE `id` = '.prepare($id_record).'');
 
         flash()->info(tr('Regola pagamento eliminata!'));

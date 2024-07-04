@@ -88,7 +88,7 @@ echo '
 				backto: "record-edit",
 				hash: hash,
 				op: "deletepagamento",
-				id: "'.$record['id'].'",
+				id_record: "'.$record['id'].'",
 				id_plugin: "'.$id_plugin.'",
 				id_module: "'.$id_module.'",
 				id_parent: "'.$id_parent.'",

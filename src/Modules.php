@@ -282,7 +282,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::get(Module::where('name', $modulo)->first()->id);
+        $module = self::get(Module::where('name', $modulo)->orWhere('id', $modulo)->first()->id);
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 

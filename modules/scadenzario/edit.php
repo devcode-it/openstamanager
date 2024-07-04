@@ -26,6 +26,26 @@ $numero = $documento->numero_esterno ?: $documento->numero;
 $id_modulo_banche = Module::where('name', 'Banche')->first()->id;
 $id_modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
 
+$mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHERE idanagrafica = '.$record['idanagrafica']);
+$scadenza_in_chiusura = 0;
+
+foreach ($scadenze as $scadenza) {
+    $scadenza = (array) $scadenza;
+    foreach ($mesi_chiusura as $mese) {
+        if (date('m', strtotime(($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'])) == str_pad($mese['mese'], 2, '0', STR_PAD_LEFT)) {
+            $scadenza_in_chiusura = 1;
+        }
+    }
+}
+
+if ($scadenza_in_chiusura) {
+    echo '
+<div class="alert alert-warning">
+<i class="fa fa-warning"></i> '.tr("E' presente una scadenza che rientra nel periodo di chiusura dell'azienda, impostato nel plugin").'
+    <b>'.Plugins::link('Regole pagamenti', $scadenza['idanagrafica'], tr('Regole pagamenti')).'</b>
+</div>';
+}
+
 echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">

@@ -212,11 +212,14 @@ class Query
 
                         $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
 
-                        if ($more || $minus) {
-                            [$giorno, $mese, $anno] = explode('/', $value);
-                            $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
-                            if ($data != "'1970-01-01'") {
-                                $search_filters[] = $search_query.' '.$sign.' '.$data.'';
+                        if ($minus || $more) {
+                            // Se il filtro contiene una data, la converto in formato YYYY-MM-DD per la query
+                            if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $value, $m)) {
+                                $giorno = $m[1];
+                                $mese = $m[2];
+                                $anno = $m[3];
+                                $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
+                                $search_filters[] = $search_query.' '.$sign.' '.$data;
                             } else {
                                 $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                             }

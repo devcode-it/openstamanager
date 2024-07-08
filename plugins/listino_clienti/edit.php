@@ -141,7 +141,7 @@ function gestionePrezzi(id_anagrafica, direzione) {
 }
 
 function aggiungiPrezzi(button, is_uscita) {
-    let card = $(button).closest(".box");
+    let card = $(button).closest(".card");
 
     let direzione = is_uscita ? "uscita" : "entrata";
     let id_anagrafica = card.find("select").val();

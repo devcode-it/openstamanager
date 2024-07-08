@@ -91,8 +91,8 @@ foreach ($elenchi as $elenco) {
 <hr>';
 
     echo '
-<div class="card collapsed-card card-'.$type.'">
-    <div class="card-header with-border mini">
+<div class="box collapsed-box box-'.$type.'">
+    <div class="box-heading with-border mini">
         <table class="table" style="margin:0; padding:0;">
             <thead>
                 <tr>
@@ -122,7 +122,7 @@ foreach ($elenchi as $elenco) {
                     <td class="text-center">
                         <i class="'.$icona_allegati.' fa-lg"></i>
 
-                        <div class="card-tools pull-right">
+                        <div class="box-tools pull-right">
                         <button type="button" class="btn btn-tool" onclick="toggleDettagli(this)">
                                 <i class="fa fa-plus"></i>
                             </button>

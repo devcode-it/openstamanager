@@ -87,7 +87,7 @@ class Combinazione extends Model
     /**
      * Metodo per generare dinamicamente una variante dell'articolo per la combinazione corrente.
      */
-    public function generaVariante($valori_attributi, $id_articolo = null)
+    public function generaVariante($valori_attributi, $id_articolo = null, $nome_articolo = null)
     {
         $database = database();
 
@@ -100,6 +100,8 @@ class Combinazione extends Model
             if ($articoli->isEmpty()) {
                 $articolo = Articolo::build($this->codice);
                 $articolo->id_combinazione = $this->id;
+                $articolo->setTranslation('title', $nome_articolo);
+                $articolo->name = $nome_articolo;
 
                 $articolo->id_categoria = $this->id_categoria;
                 $articolo->id_sottocategoria = $this->id_sottocategoria;
@@ -120,8 +122,8 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".implode("', '", $variante)."')");
-            $articolo->codice = $this->codice.'-'.implode('|', $variante);
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".$articolo->getTranslation('title')."')");
+            $articolo->codice = $this->codice.' - '.implode('|', $variante);
             $articolo->save();
         }
 
@@ -144,7 +146,7 @@ class Combinazione extends Model
     /**
      * Metodo per la generazione di tutte le varianti disponibili per la combinazione corrente.
      */
-    public function generaTutto()
+    public function generaTutto($nome_articolo = null)
     {
         if ($this->articoli()->count() !== 0) {
             return;
@@ -162,7 +164,7 @@ class Combinazione extends Model
 
         // Generazione delle singole varianti
         foreach ($varianti as $variante) {
-            $this->generaVariante($variante);
+            $this->generaVariante($variante, null, $nome_articolo);
         }
     }
 

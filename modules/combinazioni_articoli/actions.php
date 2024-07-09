@@ -79,7 +79,8 @@ switch (filter('op')) {
         break;
 
     case 'genera-varianti':
-        $combinazione->generaTutto();
+        $nome_articolo = $combinazione->getTranslation('title');
+        $combinazione->generaTutto($nome_articolo);
 
         flash()->info(tr('Varianti generate correttamente!'));
 

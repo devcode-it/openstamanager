@@ -219,9 +219,10 @@ class Combinazione extends Model
         // Filtro campi combinazioni
         $combo = collect($values)->filter(fn ($value, $key) => in_array($key, self::$campi_combinazione));
 
-        // Aggiornamento dati combinazioni
-        database()->table('mg_combinazioni')
-            ->where('id', $this->id)
-            ->update($combo->toArray());
+        foreach ($combo as $key => $value) {
+            if (!empty($value)) {
+                database()->query('UPDATE mg_combinazioni SET '.$key.' = ? WHERE id = ?', [$value, $this->id]);
+            }
+        }
     }
 }

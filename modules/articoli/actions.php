@@ -111,10 +111,11 @@ switch (post('op')) {
         // Modifica articolo
     case 'update':
         $qta = post('qta');
+        $codice = post('codice');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         $numero_codice = Articolo::where([
-            ['codice', $value],
+            ['codice', $codice],
             ['id', '<>', $id_record],
         ])->count();
         if ($numero_codice > 0) {

@@ -386,10 +386,10 @@ if (empty($record) || !$has_access) {
                     <div>
                         <i class="fa fa-'.$icon.' bg-'.$color.'"></i>
                         <div class="timeline-item">
-                            <span class="time"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></span>
+                            <span class="time"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</span>
                             <h4 class="timeline-header">'.$description.'</h4>
                             <div class="timeline-body">
-                                <span class="badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'
+                                <span class="badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'</span>
                             </div>
                         </div>
                     </div>';
@@ -397,17 +397,16 @@ if (empty($record) || !$has_access) {
             echo '
                     <div>
                         <i class="fa fa-clock-o bg-gray"></i>
-                    </div>
-                </div>';
+                    </div>';
         } else {
             echo '
                 <div class="alert alert-info">
-                    <i class="fa fa-info-circle"></i>
                     <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
                 </div>';
         }
 
         echo '
+                </div>
             </div>';
     }
 

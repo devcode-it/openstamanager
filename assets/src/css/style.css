@@ -1634,6 +1634,13 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     display:none !important;
 }
 
+/** Fix per stile tema bootstrap-datetimepicker **/
+.bootstrap-datetimepicker-widget table td,
+.bootstrap-datetimepicker-widget table th{
+    padding: 0 !important;
+    border: none !important;
+}
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

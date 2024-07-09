@@ -113,7 +113,7 @@ switch (post('op')) {
         $qta = post('qta');
         $codice = post('codice');
         $descrizione = post('descrizione');
-        
+
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         $numero_codice = Articolo::where([
             ['codice', $codice],

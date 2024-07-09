@@ -121,17 +121,41 @@ switch (post('op')) {
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
-            $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id).'
-
-            UNION SELECT `dt_ddt`.`id` FROM `dt_ddt` INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id).')
-
-            UNION SELECT `or_ordini`.`id` FROM `or_ordini` INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `or_righe_ordini`.`idarticolo` = '.prepare($id).')
-
-            UNION SELECT `co_contratti`.`id` FROM `co_contratti` INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_contratti`.`idarticolo` = '.prepare($id).')
-
-            UNION SELECT `co_preventivi`.`id` FROM `co_preventivi` INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id).')
-
-            UNION SELECT `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` WHERE `in_righe_interventi`.`idarticolo` = '.prepare($id).')');
+            $elementi = $dbo->fetchArray('
+                SELECT `co_documenti`.`id` FROM `co_documenti` 
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+                WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id).'
+                
+                UNION 
+                
+                SELECT `dt_ddt`.`id` FROM `dt_ddt` 
+                INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
+                WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id).'
+                
+                UNION 
+                
+                SELECT `or_ordini`.`id` FROM `or_ordini` 
+                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` 
+                WHERE `or_righe_ordini`.`idarticolo` = '.prepare($id).'
+                
+                UNION 
+                
+                SELECT `co_contratti`.`id` FROM `co_contratti` 
+                INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` 
+                WHERE `co_righe_contratti`.`idarticolo` = '.prepare($id).'
+                
+                UNION 
+                
+                SELECT `co_preventivi`.`id` FROM `co_preventivi` 
+                INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id` 
+                WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id).'
+                
+                UNION 
+                
+                SELECT `in_interventi`.`id` FROM `in_interventi` 
+                INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
+                WHERE `in_righe_interventi`.`idarticolo` = '.prepare($id)
+            );
 
             if (!empty($elementi)) {
                 $dbo->query('UPDATE `mg_articoli` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));

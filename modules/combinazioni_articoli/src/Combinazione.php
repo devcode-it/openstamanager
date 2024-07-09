@@ -100,7 +100,6 @@ class Combinazione extends Model
             if ($articoli->isEmpty()) {
                 $articolo = Articolo::build($this->codice);
                 $articolo->id_combinazione = $this->id;
-                $articolo->setTranslation('title', $nome_articolo);
                 $articolo->name = $nome_articolo;
 
                 $articolo->id_categoria = $this->id_categoria;
@@ -122,7 +121,7 @@ class Combinazione extends Model
                     $articolo->save();
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".$articolo->getTranslation('title')."')");
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".$nome_articolo."')");
             $articolo->codice = $this->codice.' - '.implode('|', $variante);
             $articolo->save();
         }

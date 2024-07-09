@@ -118,7 +118,7 @@ if (!empty($documento)) {
                             <td>';
     echo input([
         'type' => 'ckeditor',
-        'label' => tr('descrizione'),
+        'label' => tr('Descrizione'),
         'name' => 'descrizione',
         'required' => 1,
         'extra' => 'rows="2"',

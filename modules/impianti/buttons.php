@@ -19,11 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo impianto?\') ){ $(\'#copia-impianto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica impianto').'</button>
-
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist della categoria verranno importate in questo impianto. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Importa checklist categoria').'</button>';
-
 // Duplica impianto
 echo '
 <form action="" method="post" id="copia-impianto">
@@ -37,4 +32,8 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="sync_checklist">
     <input type="hidden" name="id_categoria" value="'.$record['id_categoria'].'">
-</form>';
+</form>
+
+<button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo impianto?\') ){ $(\'#copia-impianto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica impianto').'</button>
+
+<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist della categoria verranno importate in questo impianto. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Importa checklist categoria').'</button>';

@@ -14,8 +14,6 @@ $(document).ready(function (){
     $("#link-tab_'.$id_plugin.'").addClass("disabled");
 })
 </script>';
-
-    return;
 }
 
 echo '

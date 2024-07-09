@@ -258,18 +258,29 @@ echo '
         const tr = $(trigger).closest("tr");
         const id_componente = tr.data("id");
 
-        if(confirm("'.tr('Vuoi sostituire questo componente?').'")) {
+        swal({
+            title: "'.tr('Vuoi sostituire questo componente?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function () {
             redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
-        }
+        }).catch(swal.noop);
+            
     }
 
     function rimuoviComponente(trigger) {
         const tr = $(trigger).closest("tr");
         const id_componente = tr.data("id");
 
-        if(confirm("'.tr('Vuoi eliminare questo componente?').'")){
+        swal({
+            title: "'.tr('Vuoi eliminare questo componente?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function () {
             redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
-        }
+        }).catch(swal.noop);
     }
 
 </script>';

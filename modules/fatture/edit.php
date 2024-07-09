@@ -181,7 +181,7 @@ if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
         if (($assicurazione_crediti->totale + $fattura->totale) >= $assicurazione_crediti->fido_assicurato) {
             echo '
 <div class="alert alert-warning text-center">
-    <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzone! Il fido assicurato per questo cliente è stato superato!').'<br>('.moneyFormat($assicurazione_crediti->totale + $fattura->totale, 2).' / '.moneyFormat($assicurazione_crediti->fido_assicurato, 2).')
+    <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione! Il fido assicurato per questo cliente è stato superato!').'<br>('.moneyFormat($assicurazione_crediti->totale + $fattura->totale, 2).' / '.moneyFormat($assicurazione_crediti->fido_assicurato, 2).')
     '.Plugins::link('Assicurazione crediti', $fattura->idanagrafica).'
 </div>';
         }

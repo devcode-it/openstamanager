@@ -175,7 +175,7 @@ echo '
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-hover table-condensed table-bordered text-center">
+                    <table class="table table-hover table-condensed table-bordered">
                         <thead>
                             <tr>
                                 <th style="width:17%;">'.tr('Banca accredito').'</th> 
@@ -209,7 +209,7 @@ foreach ($scadenze as $i => $scadenza) {
     echo '
                             <tr class="'.$class.'">
                                 <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
-                                <td align="center">
+                                <td>
                                     '.($dir == 'entrata' ?
                                 '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
                                 :
@@ -217,7 +217,7 @@ foreach ($scadenze as $i => $scadenza) {
                                     ').'
                                 </td>
 
-                                <td align="center">
+                                <td>
                                     '.($dir == 'entrata' ?
                                 '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}'
                                 :
@@ -229,11 +229,11 @@ foreach ($scadenze as $i => $scadenza) {
                                     {[ "type": "select", "name": "id_pagamento['.$i.']", "values": "query=SELECT `co_pagamenti`.`id`, `fe_modalita_pagamento_lang`.`title` as descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record` = `fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') INNER JOIN `co_pagamenti` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` GROUP BY title", "value": "'.$pagamento.'" ]}
                                 </td>
 
-                                <td align="center">
+                                <td>
                                     {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'", "readonly": 1 ]}
                                 </td>
 
-                                <td align="center">
+                                <td>
                                     {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
                                 </td>
 
@@ -245,7 +245,7 @@ foreach ($scadenze as $i => $scadenza) {
                                     {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
                                 </td>
 
-                                <td align="center">
+                                <td>
                                     <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.$id_modulo_prima_nota.'&id_scadenze='.$scadenza['id'].'\');" class="btn btn-sm btn-primary">
                                         <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                                     </a>
@@ -301,14 +301,14 @@ echo '
     <tbody id="scadenza-template">
         <tr class="danger">
             <input type="hidden" name="id_scadenza[-id-]" value="">
-                <td align="center">
+                <td>
                     '.($dir == 'entrata' ?
 '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'" ]}'
 :
 '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}
                     ').'
                 </td>
-                <td align="center">
+                <td>
                     '.($dir == 'entrata' ?
 '{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'"]}'
 :
@@ -320,11 +320,11 @@ echo '
                     {[ "type": "select", "name": "id_pagamento[-id-]", "values": "query=SELECT `co_pagamenti`.`id`, `fe_modalita_pagamento_lang`.`title` as descrizione FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record` = `fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') INNER JOIN `co_pagamenti` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` GROUP BY title"]}
                 </td>
 
-                <td align="center">
+                <td>
                     {[ "type": "date", "name": "scadenza[-id-]" ]}
                 </td>
 
-                <td align="center">
+                <td>
                     {[ "type": "date", "name": "data_concordata[-id-]" ]}
                 </td>
 
@@ -336,7 +336,7 @@ echo '
                     {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
                 </td>
 
-                <td align="center">
+                <td>
                     <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.$id_modulo_prima_nota.'&id_scadenze=-id-\');" class="btn btn-sm btn-primary">
                         <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                     </a>

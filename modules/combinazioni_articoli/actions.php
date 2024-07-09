@@ -73,6 +73,7 @@ switch (filter('op')) {
 
         $database->delete('mg_articolo_attributo', ['id_articolo' => $id_articolo]);
         $database->update('mg_articoli', ['id_combinazione' => null], ['id' => $id_articolo]);
+        \Modules\Articoli\Articolo::find($id_articolo)->delete();
 
         flash()->info(tr('Variante rimossa correttamente!'));
 

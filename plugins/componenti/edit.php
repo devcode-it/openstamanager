@@ -67,7 +67,7 @@ $elenchi = [
     ],
 ];
 
-$plugin = Plugin::where('name', 'Componenti')->first()->id;
+$plugin = Plugin::where('name', 'Componenti')->first();
 $module = $plugin->module;
 
 // Generazione elenchi HTML

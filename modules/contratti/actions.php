@@ -462,7 +462,7 @@ switch (post('op')) {
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = \'Concluso\')  WHERE `co_staticontratti`.`id` = '.prepare($id_record));
+        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($id_record));
 
         flash()->info(tr('Contratto rinnovato!'));
 

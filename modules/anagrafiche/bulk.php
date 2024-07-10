@@ -46,8 +46,8 @@ switch (post('op')) {
     case 'ricerca-coordinate':
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
-            if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
-                $indirizzo = urlencode($anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
+            if (!empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->provincia)) {
+                $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia);
 
                 // TODO: da riscrivere con Guzzle e spostare su hook
                 $ch = curl_init();
@@ -138,16 +138,16 @@ switch (post('op')) {
 
 $operations = [];
 
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-        ],
-    ];
-}
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
 
 $operations['export-csv'] = [
     'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
@@ -159,18 +159,18 @@ $operations['export-csv'] = [
     ],
 ];
 
-if (App::debug()) {
-    $operations['ricerca-coordinate'] = [
-        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
-        'data' => [
-            'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-        ],
-    ];
+$operations['ricerca-coordinate'] = [
+    'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
+    'data' => [
+        'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
 
+if (App::debug()) {
     $operations['ricerca-coordinate-google'] = [
-        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (google)').'</span>',
+        'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (Google)').'</span> <span class="badge badge-danger">beta</span>',
         'data' => [
             'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
             'button' => tr('Procedi'),
@@ -189,9 +189,9 @@ $operations['cambia-relazione'] = [
 ];
 
 $operations['aggiorna-listino'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna listino cliente').'</span>',
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta listino').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero aggiornare il listino cliente delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Listino scollegato').'" ]}',
+        'msg' => tr('Vuoi impostare il listino cliente selezionato a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Nessun listino').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

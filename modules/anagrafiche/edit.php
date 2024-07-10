@@ -455,7 +455,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
 
-                        <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente && $is_fornitore ? '' : 'disabled').'" '.($is_cliente && $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
+                        <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
 
                         <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
                     </ul>
@@ -467,11 +467,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                     {[ "type": "checkbox", "label": "'.tr('Abilitare lo split payment').'", "name": "split_payment", "value": "$split_payment$", "help": "'.tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>').'", "placeholder": "'.tr('Split payment').'", "extra" : "'.($record['tipo'] == 'Ente pubblico' || $record['tipo'] == 'Azienda' ? '' : 'disabled').'" ]}
                                 </div>
 
-                                <div class="col-md-3">
-                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
-                                </div>
-
-                                <div class="col-md-9">
+                                <div class="col-md-6">
                                     {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
                                 </div>
                             </div>
@@ -560,6 +556,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="row">
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
+                                </div>
+                                <div class="col-md-6">
+                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
                                 </div>';
 
     // Collegamento con il conto

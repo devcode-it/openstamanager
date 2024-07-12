@@ -60,7 +60,14 @@ if (!function_exists('renderChecklist')) {
 
             $result .= '
                         <td style="width:500px;border-top:0px;"> 
-                            {[ "type": "textarea", "class": "unblockable", "name": "note_checklist", "placeholder": "'.tr('Note').'...", "id": "note_'.$check->id.'", "value": "'.$check->note.'" ]}
+                        '.input([
+                            'type' => 'textarea',
+                            'name' => '',
+                            'id' => 'note_'.$check->id,
+                            'class' => 'unblockable',
+                            'placeholder' => tr('Note').'...',
+                            'value' => $check->note,
+                        ]).'
                         </td>';
 
             $result .= '

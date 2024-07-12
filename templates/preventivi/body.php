@@ -330,18 +330,18 @@ foreach ($righe as $key => $riga) {
         if (!$options['no-iva']) {
             echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
-            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 1)).'" class="text-right">
                 '.moneyFormat($iva_gruppo, $d_totali).'
             </td>
         </tr>
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
                 <b>'.tr('Subtotale ivato', [], ['upper' => true]).':</b>
             </td>
-            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 1)).'" class="text-right">
                 <b>'.moneyFormat($subtotale_gruppo + $iva_gruppo, $d_totali).'</b>
             </td>
         </tr>';

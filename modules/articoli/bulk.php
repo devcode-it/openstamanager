@@ -221,7 +221,6 @@ switch (post('op')) {
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
             $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
             $articolo->qta = 1;
-            $articolo->setTranslation('title', $originale->getTranslation('title'));
             $articolo->um = $originale->um ?: null;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->prezzo_unitario = $originale->prezzo_vendita;

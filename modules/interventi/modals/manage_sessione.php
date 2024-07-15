@@ -107,6 +107,12 @@ echo '
 echo '
     </div>
 
+    <div class="row">
+        <div class="col-md-8">
+            {[ "type": "text", "label": "'.tr('Note').'", "name": "note", "value": "'.$sessione['note'].'" ]}
+        </div>
+    </div>
+
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">

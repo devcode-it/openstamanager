@@ -990,6 +990,9 @@ switch (post('op')) {
         $sessione->scontokm_unitario = post('sconto_km');
         $sessione->tipo_scontokm = post('tipo_sconto_km');
 
+        // Note
+        $sessione->note = post('note');
+
         $sessione->save();
 
         break;

@@ -110,3 +110,7 @@ HAVING
     2=2
 ORDER BY
     `mg_articoli_lang`.`title`" WHERE `name` = 'Articoli';
+
+-- Aggiunta impostazione per utilizzare il codice come barcode
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES ('Utilizza codice articolo come barcode', '0', 'boolean', '1', 'Magazzino', '4');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ((SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Lingua'), (SELECT `id` FROM `zz_settings` WHERE `nome`='Utilizza codice articolo come barcode'), 'Utilizza codice articolo come barcode', '');

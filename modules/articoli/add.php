@@ -25,6 +25,7 @@ use Modules\Iva\Aliquota;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $iva_predefinita = setting('Iva predefinita');
 $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
+$utilizza_codice_barcode = setting('Utilizza codice articolo come barcode');
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -36,7 +37,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "required": 0, "value": "<?php echo htmlentities(filter('barcode')) ?: ''; ?>", "validation": "barcode" ]}
+			{[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "required": 0, "value": "<?php echo htmlentities(filter('barcode')) ?: ''; ?>", "validation": "barcode", "disabled": "<?php echo $utilizza_codice_barcode; ?>" ]}
 		</div>
     </div>
 

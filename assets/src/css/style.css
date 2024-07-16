@@ -311,10 +311,6 @@ span.form-control {
     padding: 5px;
 }
 
-.input-group .input-group-addon {
-    background-color: transparent;
-}
-
 .input-group-addon {
     padding: 3px 12px;
 }

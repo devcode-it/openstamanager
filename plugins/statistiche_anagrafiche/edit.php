@@ -31,8 +31,8 @@ echo '
             <button class="btn btn-warning btn-xs" onclick="add_calendar()">
                 <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
             </button>
-            <button type="button" class="btn btn-card-tool" data-widget="collapse">
-                <i class="fa fa-minus"></i>
+            <button type="button" class="btn btn-card-tool" data-card-widget="collapse">
+                <i class="fa fa-plus"></i>
             </button>
         </div>
     </div>

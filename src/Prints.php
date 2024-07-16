@@ -210,7 +210,7 @@ class Prints
         $infos = PrintTemplate::where('name', $print)->first()->id;
 
         if (empty($infos)) {
-            $infos = PrintTemplate::find($print);
+            $infos = PrintTemplate::find($print)->id;
         }
 
         if (empty($infos)) {

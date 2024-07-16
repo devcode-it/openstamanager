@@ -25,8 +25,8 @@ $where = [];
 $search_targa = get('search_targa');
 $search_nome = get('search_nome');
 
-$where[] = 'movimenti.qta > 0';
-$where[] = 'movimenti.qta > 0';
+$where[] = 'mg_movimenti.qta > 0';
+
 if ($search_targa) {
     $where[] = 'an_sedi.targa like '.prepare('%'.$search_targa.'%');
 }

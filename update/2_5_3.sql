@@ -117,3 +117,6 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 
 -- Aggiunte note sessioni
 ALTER TABLE `in_interventi_tecnici` ADD `note` TEXT NOT NULL AFTER `tipo_scontokm`; 
+
+-- Fix campo id visibile in vista Fasce orarie
+UPDATE `zz_views` SET `visible` = '0' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie') 

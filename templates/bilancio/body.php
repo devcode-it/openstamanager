@@ -93,7 +93,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Attività</b></h6></td>
-                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_attivita), 2).'</b></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_attivita ? numberFormat(abs($totale_attivita), 2): '').'</b></td>
                     </tr>';
 if ($utile_perdita > 0) {
     echo '
@@ -182,7 +182,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Passività</b></h6></td>
-                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_passivita), 2).'</b></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_passivita ? numberFormat(abs($totale_passivita), 2):'').'</b></td>
                     </tr>';
 if ($utile_perdita < 0) {
     echo '
@@ -262,7 +262,7 @@ foreach ($liv2_economico as $liv2_e) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale costi</b></h6></td>
-                        <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_costi), 2).'</b></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_costi ? numberFormat(abs($totale_costi), 2) : '').'</b></td>
                         <td></td>
                     </tr>';
 if ($utile_perdita < 0) {
@@ -274,7 +274,7 @@ if ($utile_perdita < 0) {
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_costi) + abs($utile_perdita), 2).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.($totale_costi ? numberFormat(abs($totale_costi)) : 0) + ($utile_perdita ? numberFormat(abs($utile_perdita), 2) : 0).'</b></td>
                             <td></td>
                         </tr>';
 }
@@ -335,7 +335,7 @@ foreach ($liv2_economico as $liv2_e) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale ricavi</b></h6></td>
-                        <td style="font-size:8pt;" class="text-right"><b>'.numberFormat(abs($totale_ricavi), 2).'</b></td>
+                        <td style="font-size:8pt;" class="text-right"><b>'.($totale_ricavi ? numberFormat(abs($totale_ricavi), 2) : '').'</b></td>
                         <td></td>
                     </tr>';
 if ($utile_perdita > 0) {

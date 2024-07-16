@@ -48,8 +48,9 @@ if (get('lev') == '2' || get('lev') == '3') {
             $totale_passivo += $patrimoniale[$i]['totale'];
         }
     }
-    echo '</table>
-    <table class="table table-striped table-bordered">
+    echo '
+</table>
+<table class="table table-striped table-bordered">
     <tr>
         <th width="25%">TOTALE ATTIVITÀ</th>
         <th width="25%" class="text-right">'.moneyFormat(abs($totale_attivo), 2).'</th>
@@ -60,19 +61,19 @@ if (get('lev') == '2' || get('lev') == '3') {
 
     if ($utile_perdita['totale'] <= 0) {
         echo '  
-            <th></th>
-            <th></th>
-            <th>UTILE</th>
-            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']), 2).'</th>
-        </tr>';
+        <th></th>
+        <th></th>
+        <th>UTILE</th>
+        <th class="text-right">'.($utile_perdita['totale'] ? moneyFormat(abs($utile_perdita['totale']), 2) : 0).'</th>
+    </tr>';
         $totale_passivo = abs($totale_passivo + $utile_perdita['totale']);
     } else {
         echo '  
-            <th>PERDITA</th>
-            <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']), 2).'</th>
-            <th></th>
-            <th></th>
-        </tr>';
+        <th>PERDITA</th>
+        <th class="text-right">'.moneyFormat(abs($utile_perdita['totale']), 2).'</th>
+        <th></th>
+        <th></th>
+    </tr>';
         $totale_attivo = abs($totale_attivo + $utile_perdita['totale']);
     }
 
@@ -83,7 +84,5 @@ if (get('lev') == '2' || get('lev') == '3') {
         <th>TOTALE A PAREGGIO</th>
         <th class="text-right">'.moneyFormat(abs($totale_passivo), 2).'</th>
     </tr>
-    </table>';
+</table>';
 }
-
-echo '</tbody></table>';

@@ -224,7 +224,7 @@ class Prints
 
             $link .= !empty($infos['previous']) && !empty($id_record) ? '&'.$infos['previous'].'='.$id_record : '';
         } else {
-            $link .= 'id_print='.$infos['id'];
+            $link .= 'id_print='.$infos;
 
             $link .= !empty($id_record) ? '&id_record='.$id_record : '';
         }

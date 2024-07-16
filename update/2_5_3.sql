@@ -120,3 +120,11 @@ ALTER TABLE `in_interventi_tecnici` ADD `note` TEXT NOT NULL AFTER `tipo_scontok
 
 -- Fix campo id visibile in vista Fasce orarie
 UPDATE `zz_views` SET `visible` = '0' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie') 
+
+-- Fix widget Anagrafiche in modulo Anagrafiche
+UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Cliente\'){ $(\'#th_Tipo input\').val(\'Cliente\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di clienti'; 
+UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Tecnico\'){ $(\'#th_Tipo input\').val(\'Tecnico\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di tecnici'; 
+UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Fornitore\'){ $(\'#th_Tipo input\').val(\'Fornitore\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di fornitori'; 
+UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Agente\'){ $(\'#th_Tipo input\').val(\'Agente\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di agenti'; 
+UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Vettore\'){ $(\'#th_Tipo input\').val(\'Vettore\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di vettori'; 
+UPDATE `zz_widgets` SET `more_link` = "$(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');" WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche'; 

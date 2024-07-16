@@ -102,13 +102,11 @@ class DefaultHandler implements HandlerInterface
     protected function password(&$values, &$extras)
     {
         $values['icon-after'] = ' <i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i> ';
-
+    
         $result = '
     <script>
-
-       
         const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$£%-()*[]";
-
+    
         function generateString(length) {
             let result = "";
             const charactersLength = characters.length;
@@ -117,47 +115,46 @@ class DefaultHandler implements HandlerInterface
             }
             return result;
         }
-
+    
         function generatePassword_'.$values['id'].'() {
             var button = $("#'.$values['id'].'_generate");
             button.attr("title", "'.tr('Genera password').'");
-
+    
             $("#'.$values['id'].'").val(generateString(10));
             $("'.$values['strength'].'").attr("disabled", false).removeClass("disabled");
         }
-
+    
         function togglePassword_'.$values['id'].'() {
             var button = $("#'.$values['id'].'_toggle");
-
+    
             if (button.hasClass("fa-eye")) {
                 $("#'.$values['id'].'").attr("type", "text");
                 button.removeClass("fa-eye").addClass("fa-eye-slash");
                 button.attr("title", "'.tr('Nascondi password').'");
-            }
-            else {
+            } else {
                 $("#'.$values['id'].'").attr("type", "password");
                 button.removeClass("fa-eye-slash").addClass("fa-eye");
                 button.attr("title", "'.tr('Visualizza password').'");
             }
         }
-
+    
         $(document).ready(function(){
             togglePassword_'.$values['id'].'();
         });
     </script>';
-
+    
         if (!empty($values['strength'])) {
             $values['icon-after'] .= '&nbsp;&nbsp;|&nbsp;&nbsp;<i onclick="generatePassword_'.$values['id'].'()" class="clickable fa fa-cog"  id="'.$values['id'].'_generate"></i>';
-
+    
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
-
+    
     <script src="'.base_path().'/assets/dist/password-strength/password.min.js"></script>
-       <script>
+    <script>
         $(document).ready(function(){
             $("#'.$values['id'].'").pwstrength({
                 ui: {
-                    bootstrap3: true,
+                    bootstrap4: true,
                     showVerdictsInsideProgressBar: true,
                     viewports: {
                         progress: "#'.$values['id'].'_viewport_progress",
@@ -177,7 +174,7 @@ class DefaultHandler implements HandlerInterface
                 i18n: {
                     t: function (key) {
                         var result = globals.translations.password[key];
-
+    
                         return result === key ? \'\' : result;
                     }
                 },
@@ -185,7 +182,7 @@ class DefaultHandler implements HandlerInterface
                     minChar: 8,
                     onKeyUp: function(event, data) {
                         var len = $("#'.$values['id'].'").val().length;
-
+    
                         if(len < 8) {
                             $("'.$values['strength'].'").attr("disabled", true).addClass("disabled");
                         } else {
@@ -194,15 +191,15 @@ class DefaultHandler implements HandlerInterface
                     }
                 },
             });
-
+    
             $("#'.$values['id'].'_viewport_progress").insertAfter($("#'.$values['id'].'").closest(".form-group").find("div[id$=-errors]")).css("margin-top", "5px");
         });
     </script>';
         }
-
+    
         // Delega al metodo "text", per la generazione del codice HTML
         $result .= $this->text($values, $extras);
-
+    
         return $result;
     }
 

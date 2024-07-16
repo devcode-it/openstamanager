@@ -148,10 +148,7 @@ if (!$has_user) {
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="admin_username">'.tr('Username').'</label>
-                                <input type="text" class="form-control" id="admin_username" name="admin_username" placeholder="'.tr("Imposta l'username dell'amministratore").'" required>
-                            </div>
+                            {[ "type": "text", "label": "'.tr('Username').'", "id": "admin_username", "name": "admin_username", "value": "", "placeholder": "'.tr("Imposta lo username dell'amministratore").'", "required": 1]}
                         </div>
 
                         <div class="col-md-4">
@@ -159,10 +156,7 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="admin_email">'.tr('Email').'</label>
-                                <input type="email" class="form-control" id="admin_email" name="admin_email" placeholder="'.tr("Imposta l'indirizzo email dell'amministratore").'" required>
-                            </div>
+                            {[ "type": "text", "label": "'.tr('Email').'", "id": "admin_email", "name": "admin_email", "value": "", "placeholder": "'.tr("Imposta l'indirizzo email dell'amministratore").'", "required": 1]}
                         </div>
                     </div>
                 </div>

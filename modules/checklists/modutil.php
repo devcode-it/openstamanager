@@ -61,13 +61,13 @@ if (!function_exists('renderChecklist')) {
             $result .= '
                         <td style="width:500px;border-top:0px;"> 
                         '.input([
-                            'type' => 'textarea',
-                            'name' => '',
-                            'id' => 'note_'.$check->id,
-                            'class' => 'unblockable',
-                            'placeholder' => tr('Note').'...',
-                            'value' => $check->note,
-                        ]).'
+                'type' => 'textarea',
+                'name' => '',
+                'id' => 'note_'.$check->id,
+                'class' => 'unblockable',
+                'placeholder' => tr('Note').'...',
+                'value' => $check->note,
+            ]).'
                         </td>';
 
             $result .= '

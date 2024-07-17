@@ -138,7 +138,6 @@ switch (post('op')) {
 
 $operations = [];
 
-
 $operations['delete-bulk'] = [
     'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
     'data' => [
@@ -147,7 +146,6 @@ $operations['delete-bulk'] = [
         'class' => 'btn btn-lg btn-danger',
     ],
 ];
-
 
 $operations['export-csv'] = [
     'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',

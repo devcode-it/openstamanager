@@ -93,7 +93,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Attività</b></h6></td>
-                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_attivita ? numberFormat(abs($totale_attivita), 2): '').'</b></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_attivita ? numberFormat(abs($totale_attivita), 2) : '').'</b></td>
                     </tr>';
 if ($utile_perdita > 0) {
     echo '
@@ -182,7 +182,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
 echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale Passività</b></h6></td>
-                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_passivita ? numberFormat(abs($totale_passivita), 2):'').'</b></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_passivita ? numberFormat(abs($totale_passivita), 2) : '').'</b></td>
                     </tr>';
 if ($utile_perdita < 0) {
     echo '

@@ -47,7 +47,7 @@ $utilizza_codice_barcode = setting('Utilizza codice articolo come barcode');
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "<?php echo ($utilizza_codice_barcode ? '$codice$' : '$barcode$'); ?>", "disabled": "<?php echo $utilizza_codice_barcode; ?>" ]}
+                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "<?php echo $utilizza_codice_barcode ? '$codice$' : '$barcode$'; ?>", "disabled": "<?php echo $utilizza_codice_barcode; ?>" ]}
                         </div>
                     </div>
 

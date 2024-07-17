@@ -128,11 +128,11 @@ if (!empty($sessioni)) {
             <td>
                 '.$sessione['descrizione_tipo'].' '.(($sessione['tipo_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '');
 
-            if ($sessione['note']) {
-                echo '
-                <br><small class="text-muted">'.$sessione['note'].'</small>';
-            }
+        if ($sessione['note']) {
             echo '
+                <br><small class="text-muted">'.$sessione['note'].'</small>';
+        }
+        echo '
             </td>';
 
         // Orario di inizio

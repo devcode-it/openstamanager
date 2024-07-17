@@ -70,7 +70,7 @@ class Impianti extends AppResource
             // Da applicazione, i Clienti sono sincronizzati prima degli Interventi: last_sync_at permette di identificare le stesse modifiche
             $interventi = $risorsa_interventi->getModifiedRecords(null);
             $id_interventi = array_keys($interventi);
-            
+
             $rs_impianti = database()->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')');
             $id_impianti = array_column($rs_impianti, 'idimpianto');
 

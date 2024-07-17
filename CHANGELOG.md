@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.5.3 (2024-07-18)](#253-2024-07-18)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
 - [2.5.1 (2024-04-24)](#251-2024-04-24)
 - [2.5 (2024-03-28)](#25-2024-03-28)
@@ -67,6 +68,73 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.5.3 (2024-07-18)
+### Aggiunto (Added)
+- Aggiunto il valore delle **Vendite al banco** sul grafico del Fatturato
+- Aggiunta legenda in **Articoli**
+- Aggiunta la possibilità di spostare il marcatore della mappa manualmente
+- Aggiunta plugin LeafletJS per mappe a schermo intero
+- Aggiunto riferimento articolo in Pianificazione fatturazione in **Contratti**
+- Aggiunta la gestione dell'invio automatico dei promemoria delle scadenze
+- Aggiunto avviso nel caso di scadenza durante il mese di chiusura aziendale
+- Aggiunta gestione caratteri speciali in fattura elettronica
+- Aggiunta impostazione per utilizzare codice come barcode
+
+### Modificato (Changed)
+- Rimozione agenti secondari in **Anagrafiche**
+- Migliorati gli stili grafici
+- Ripristinata l'impostazione per limitare la visualizzazione degli **Impianti** a quelli gestiti dal tecnico da **App**
+- Migliorata la gestione dell'invio automatico di solleciti di pagamento
+- Spostata la gestione dei **Tag** in Strumenti
+- Replicato l'header anche sui plugin del modulo
+- Migliorato l'header delle **Attività**
+- Unificati i pulsanti su un'unica riga
+- Corretta la colorazione degli **Hooks**
+- Ottimizzata l'apertura del riquadro **Mappa**
+- Rimossi i file header.php non completati
+- Modificato l'avviso in plugin **Componenti**
+- Migliorata la tabella **Scadenzario**
+
+### Fixed
+- Corretta la procedura di installazione dei moduli e plugins
+- Corretta l'esportazione delle scadenze con più banche
+- Corretta gestione dei plugin 
+- Corretti i requisiti di installazione
+- Corretti i plugins **Statistiche di vendita**, **Listino fornitori**, **Pianificazione fatturazione contratti**, **Impianti del cliente**, **Statistiche anagrafiche**, **Allegati**,**Contratti del cliente**, **DDT del cliente**, **Listino clienti**, **Componenti**,  **Dichiarazioni d'intento** e **Note**
+- Corretti i widgets **Promemoria attività da pianificare**, **Stampa calendario** e **Anagrafiche**
+- Corrette le informazioni per tipo di anagrafica
+- Corretto il controllo documento duplicato in **Fatture di vendita**
+- Corretti i link al modulo **Attività**
+- Corretto il salvataggio dell'immagine **Impianto**
+- Corretta la compressione dei JS
+- Corretto il click su **Dashboard** da mobile
+- Corretto il filtro nelle selezioni
+- Corretti i moduli **Liste**, **Template email**
+- Corretta la vista delle sottocategorie in **Articoli**
+- Corretta la sincronizzazione dei campi personalizzati e degli impianti in App
+- Corretta la creazione di **Attività** collegate ad Impianti
+- Corretti i campi personalizzati
+- Corretta l'importazione delle Note di credito
+- Corretto il controllo dei valori delle **Fatture di acquisto**
+- Corretta la gestione degli arrotondamenti in fase di importazione **Fattura di acquisto**
+- Corretta la gestione dei periodi multipli in **Statistiche**
+- Corretta la modifica delle **Fasce orarie**, **Scadenze** e **Causali movimento**
+- Corretto temporaneamente l'avviso del componente di videoscrittura
+- Corretta la verifica della connessione SMTP in **Account email**
+- Corretta l'eliminazione delle **Regole di pagamento**
+- Corretto il filtro per data e numero delle tabelle
+- Corretta la creazione di **Attributi** e **Combinazioni**
+- Corretta l'eliminazione **Articoli** da azioni di gruppo
+- Corretta la query di rinnovo contratto
+- Corretta l'eliminazione, esportazione, calcolo coordinate e aggiunta listino **Anagrafiche** da azioni di gruppo
+- Corretto il cambio stato degli **Ordini** da azioni di gruppo
+- Corretto il salvataggio e la visualizzazione delle note delle **Checklists**
+- Corretta la creazione preventivo da azioni di gruppo in **Articoli**
+- Corretta la pagina di login
+- Corrette le **Stampe contabili**, **Automezzi** e **Inventario**
+- Corretta la tipologia attività in modifica sessione
+- Corretto l'avviso di occupazione dei tecnici
 
 ## 2.5.2 (2024-05-31)
 ### Aggiunto (Added)

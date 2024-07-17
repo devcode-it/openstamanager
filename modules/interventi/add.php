@@ -493,6 +493,10 @@ echo '
                 $("#dettagli_cliente").html(data);
             });
         }
+            
+        let data = anagrafica.getData();
+        input("idcontratto").getElement()
+        .selectSetNew(data.id_contratto, data.descrizione_contratto);
 
 		// Quando modifico orario inizio, allineo anche l\'orario fine
 		let orario_inizio = input("orario_inizio").getElement();

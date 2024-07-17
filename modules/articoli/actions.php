@@ -266,7 +266,11 @@ switch (post('op')) {
 
         $new->codice = $codice;
         $new->qta = 0;
+        $nome_immagine = $articolo->immagine;
+        $new->immagine = $nome_immagine;
         $new->save();
+
+        $id_record = $new->id;
 
         // Copia degli allegati
         $copia_allegati = post('copia_allegati');
@@ -279,13 +283,6 @@ switch (post('op')) {
                 ]);
             }
         }
-
-        // Salvataggio immagine relativa
-        $nome_immagine = $articolo->immagine_upload->getTranslation('title');
-        $new->immagine = $new->uploads()->where('name', $nome_immagine)->first()->filename;
-        $new->save();
-
-        $id_record = $new->id;
 
         flash()->info(tr('Articolo duplicato correttamente!'));
 

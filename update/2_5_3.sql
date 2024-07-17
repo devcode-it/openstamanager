@@ -119,7 +119,7 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 ALTER TABLE `in_interventi_tecnici` ADD `note` TEXT NOT NULL AFTER `tipo_scontokm`; 
 
 -- Fix campo id visibile in vista Fasce orarie
-UPDATE `zz_views` SET `visible` = '0' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie') 
+UPDATE `zz_views` SET `visible` = '0' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
 
 -- Fix widget Anagrafiche in modulo Anagrafiche
 UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Cliente\'){ $(\'#th_Tipo input\').val(\'Cliente\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di clienti'; 

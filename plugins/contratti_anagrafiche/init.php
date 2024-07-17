@@ -20,5 +20,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT *, `co_staticontratti`.`is_pianificabile` AS is_pianificabile FROM `co_contratti` INNER JOIN `co_stationtratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id` WHERE `co_contratti`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, `co_staticontratti`.`is_pianificabile` AS is_pianificabile FROM `co_contratti` INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id` WHERE `co_contratti`.`id`='.prepare($id_record));
 }

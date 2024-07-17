@@ -33,10 +33,10 @@ switch (post('op')) {
             $fascia_oraria_new = FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($fascia_oraria_new)) {
                 if (!empty($is_predefined)) {
-                    $dbo->query('UPDATE `in_fasceorarie` SET `predefined` = 0');
+                    $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
                 }
                 $fascia_oraria->setTranslation('title', $descrizione);
-                $fascia_oraria->giorni = $giorni;
+                $fascia_oraria->giorni = implode(',', $giorni);
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->include_bank_holidays = $include_bank_holidays;

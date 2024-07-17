@@ -71,7 +71,7 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->fir
 <script type="text/javascript">
 $(document).ready(function () {
     var sub = $('#add-form').find('#sottocategoria_add');
-    var original = sub.parent().find(".input-group-addon button").attr("onclick");
+    var original = sub.parent().find(".input-group-append button").attr("onclick");
 
     $('#add-form').find('#id_categoria').change(function() {
         updateSelectOption("id_categoria", $(this).val());
@@ -80,11 +80,11 @@ $(document).ready(function () {
         sub.selectReset();
 
         if($(this).val()){
-            sub.parent().find(".input-group-addon button").removeClass("hide");
-            sub.parent().find(".input-group-addon button").attr("onclick", original.replace('&ajax=yes', "&ajax=yes&id_original=" + $(this).val()));
+            sub.parent().find(".input-group-append button").removeClass("hide");
+            sub.parent().find(".input-group-append button").attr("onclick", original.replace('&ajax=yes', "&ajax=yes&id_original=" + $(this).val()));
         }
         else {
-            sub.parent().find(".input-group-addon button").addClass("hide");
+            sub.parent().find(".input-group-append button").addClass("hide");
         }
     });
 

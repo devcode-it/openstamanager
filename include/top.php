@@ -618,7 +618,7 @@ if (Auth::check()) {
 
     if (!empty($messages['warning']) || !empty($messages['error'])) {
         echo '
-            <div class="card card-warning card-center">
+            <div class="card card-warning card-center card-center-large">
                 <div class="card-header with-border text-center">
                     <h3 class="card-title">'.tr('Informazioni').'</h3>
                 </div>

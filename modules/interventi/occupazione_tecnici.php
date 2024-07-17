@@ -75,10 +75,10 @@ foreach ($tecnici as $id_tecnico => $ore) {
 
     // Conflitti ristretti per orario
     foreach ($ore as $orario) {
-        $query_conflitto = $query.' AND ((orario_inizio > '.prepare($orario['inizio']).' AND orario_inizio < '.prepare($orario['fine']).') OR
-        (orario_fine > '.prepare($orario['inizio']).' AND orario_fine < '.prepare($orario['fine']).') OR
-        (orario_inizio < '.prepare($orario['inizio']).' AND orario_fine > '.prepare($orario['inizio']).') OR
-        (orario_inizio < '.prepare($orario['fine']).' AND orario_fine > '.prepare($orario['fine']).'))';
+        $query_conflitto = $query.' AND ((orario_inizio >= '.prepare($orario['inizio']).' AND orario_inizio <= '.prepare($orario['fine']).') OR
+        (orario_fine >= '.prepare($orario['inizio']).' AND orario_fine <= '.prepare($orario['fine']).') OR
+        (orario_inizio <= '.prepare($orario['inizio']).' AND orario_fine >= '.prepare($orario['inizio']).') OR
+        (orario_inizio <= '.prepare($orario['fine']).' AND orario_fine >= '.prepare($orario['fine']).'))';
 
         $conflitto = $database->fetchArray($query_conflitto);
         if (!empty($conflitto)) {
@@ -96,44 +96,47 @@ if (empty($elenco_conflitti)) {
 }
 
 echo '
-<div class="alert alert-warning">
-    <p>'.tr('Sono presenti dei conflitti con le sessioni di lavoro di alcuni tecnici').'.</p>
+<div class="card card-danger">
+    <div class="card-header">
+        <h3 class="card-title">'.tr('⚠️ Sono presenti dei conflitti con le sessioni di lavoro di alcuni tecnici').'</h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>'.tr('Tecnico').'</th>
+                    <th>'.tr('Attività').'</th>
+                    <th>'.tr('Orario di conflitto').'</th>
+                </tr>
+            </thead>
 
-    <table class="table table-condensed">
-        <thead>
-            <tr>
-                <th>'.tr('Tecnico').'</th>
-                <th>'.tr('Attività').'</th>
-                <th>'.tr('Orario di conflitto').'</th>
-            </tr>
-        </thead>
-
-        <tbody>';
+            <tbody>';
 
 foreach ($elenco_conflitti as $id_tecnico => $elenco_conflitti_tecnico) {
     $anagrafica_tecnico = $database->fetchOne('SELECT ragione_sociale, deleted_at FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_tecnico));
 
     foreach ($elenco_conflitti_tecnico as $conflitto) {
         echo '
-            <tr>
-                <td>'.$anagrafica_tecnico['ragione_sociale'].' '.(!empty($anagrafica_tecnico['deleted_at']) ? '<small class="text-danger">('.tr('Eliminato').')' : '').'</td>
-                <td></td>
-                <td>'.timestampFormat($conflitto['inizio']).' - '.timestampFormat($conflitto['fine']).'</td>
-            </tr>';
+                <tr>
+                    <td>'.$anagrafica_tecnico['ragione_sociale'].' '.(!empty($anagrafica_tecnico['deleted_at']) ? '<small class="text-danger">('.tr('Eliminato').')' : '').'</td>
+                    <td>Attività corrente</td>
+                    <td>'.timestampFormat($conflitto['inizio']).' - '.timestampFormat($conflitto['fine']).'</td>
+                </tr>';
 
         foreach ($conflitto['conflitti'] as $conflitto_intervento) {
             $intervento = Intervento::find($conflitto_intervento['idintervento']);
             echo '
-            <tr>
-                <td>'.$anagrafica_tecnico['ragione_sociale'].' '.(!empty($anagrafica_tecnico['deleted_at']) ? '<small class="text-danger">('.tr('Eliminato').')' : '').'</td>
-                <td>'.Modules::link('Interventi', $intervento->id, $intervento->getReference()).'</td>
-                <td>'.timestampFormat($conflitto_intervento['orario_inizio']).' - '.timestampFormat($conflitto_intervento['orario_fine']).'</td>
-            </tr>';
+                <tr>
+                    <td>'.$anagrafica_tecnico['ragione_sociale'].' '.(!empty($anagrafica_tecnico['deleted_at']) ? '<small class="text-danger">('.tr('Eliminato').')' : '').'</td>
+                    <td>'.Modules::link('Interventi', $intervento->id, $intervento->getReference()).'</td>
+                    <td>'.timestampFormat($conflitto_intervento['orario_inizio']).' - '.timestampFormat($conflitto_intervento['orario_fine']).'</td>
+                </tr>';
         }
     }
 }
 
 echo '
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>';

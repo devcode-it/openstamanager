@@ -19,12 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist degli impianti di questa categoria verranno aggiornate. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Sincronizza checklist impianti').'</button>';
-
 // Sincronizza checklist impianti
 echo '
 <form action="" method="post" id="check-impianto">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="sync_checklist">
-</form>';
+</form>
+
+<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist degli impianti di questa categoria verranno aggiornate. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Sincronizza checklist impianti').'</button>';
+

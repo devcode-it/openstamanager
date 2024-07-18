@@ -126,7 +126,7 @@ class CSV extends CSVImporter
             if (empty($record['stato'])) {
                 $stato = Stato::where('name', 'Completato')->first();
             } else {
-                $stato = Stato::where('name', $record['stato'])->first()->id;
+                $stato = Stato::where('name', $record['stato'])->first();
             }
             unset($record['stato']);
 

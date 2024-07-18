@@ -296,7 +296,7 @@ class CSV extends CSVImporter
                 $database->insert('an_settori_lang', [
                     'id_lang' => \Models\Locale::getDefault()->id,
                     'id_record' => $id_settore,
-                    'name' => $settore,
+                    'title' => $settore,
                 ])['id'];
             }
             unset($record['id_settore']);

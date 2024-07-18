@@ -115,7 +115,7 @@ class CSV extends CSVImporter
             $sottocategoria = null;
             if (!empty($record['categoria'])) {
                 // Categoria
-                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->orWhere('name', strtolower((string) $record['categoria']))->get()->id;
+                $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->first();
 
                 if (empty($categoria)) {
                     $categoria = Categoria::build();
@@ -125,7 +125,7 @@ class CSV extends CSVImporter
 
                 // Sotto-categoria
                 if (!empty($record['sottocategoria'])) {
-                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->orWhere('name', strtolower((string) $record['sottocategoria']))->get()->id;
+                    $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
                     if (empty($sottocategoria)) {
                         $sottocategoria = Categoria::build();
                         $sottocategoria->setTranslation('title', $record['sottocategoria']);
@@ -168,7 +168,7 @@ class CSV extends CSVImporter
 
             $impianto->idanagrafica = $anagrafica->idanagrafica;
             $impianto->id_marca = $id_marca;
-            $impianto->modello = $record['modello'];
+            $impianto->id_modello = $record['modello'];
             $impianto->save();
 
             if (!empty($record['sede'])) {

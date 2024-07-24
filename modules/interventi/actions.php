@@ -832,7 +832,7 @@ switch (post('op')) {
                         $intervento = Intervento::find($id_record);
                         if (!empty($stato)) {
                             $intervento = Intervento::find($id_record);
-                            $intervento->id = $stato['id'];
+                            $intervento->idstatointervento = $stato['id'];
                             $intervento->save();
                         }
 

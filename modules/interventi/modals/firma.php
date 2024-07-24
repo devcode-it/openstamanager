@@ -192,7 +192,7 @@ echo '
 <form action="" method="post" id="form-firma" class="hide">
     <input type="hidden" name="op" value="firma_bulk">
     <input type="hidden" name="backto" value="record-list">
-    <input type="hidden" name="records" value="<?php echo implode(';', $records ?: ''); ?>">
+    <input type="hidden" name="records" value="<?php echo implode(';', $records); ?>">
 
     <div class="row">
         <div class="col-md-12">

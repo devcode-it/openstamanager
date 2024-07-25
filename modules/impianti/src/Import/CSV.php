@@ -59,12 +59,12 @@ class CSV extends CSVImporter
                 'label' => 'Nome',
             ],
             [
-                'field' => 'cliente',
-                'label' => 'Cliente',
+                'field' => 'partita_iva',
+                'label' => 'Partita IVA cliente',
             ],
             [
-                'field' => 'telefono',
-                'label' => 'Telefono',
+                'field' => 'codice_fiscale',
+                'label' => 'Codice Fiscale cliente',
             ],
             [
                 'field' => 'categoria',
@@ -102,10 +102,12 @@ class CSV extends CSVImporter
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
-        if (!empty($record['telefono'])) {
-            $anagrafica = Anagrafica::where('telefono', $record['telefono'])->first();
+        if (!empty($record['partita_iva'])) {
+            $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
+        } else if (!empty($record['codice_fiscale'])) {
+            $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
         }
-
+        
         if (!empty($anagrafica)) {
             $url = $record['immagine'];
             unset($record['immagine']);
@@ -229,11 +231,11 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Cliente', 'Telefono', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione'],
-            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca1', '', '', '2023-01-01'],
-            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca2', '', '', '2023-03-06'],
-            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca3', '', '', '2023-04-01'],
-            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie', 'Mario Rossi', '+39 0429 60 25 12', 'Elettrodomestici', 'Marca4', '', '', '2023-08-06'],
+            ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione'],
+            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice', '123456789', '123456789', 'Elettrodomestici', 'Marca1', '', '', '2023-01-01'],
+            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia', '123456789', '123456789', 'Elettrodomestici', 'Marca2', '', '', '2023-03-06'],
+            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno', '123456789', '123456789', 'Elettrodomestici', 'Marca3', '', '', '2023-04-01'],
+            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie', '123456789', '123456789', 'Elettrodomestici', 'Marca4', '', '', '2023-08-06'],
         ];
     }
 }

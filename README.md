@@ -195,3 +195,5 @@ Verificheremo se la pull request soddisferà i requisiti e, una volta approvata,
 ## Licenza
 
 Questo progetto è tutelato dalla licenza [**GPL 3**](https://github.com/devcode-it/openstamanager/blob/master/LICENSE).
+
+Si richiede che qualsiasi distribuzione del software (o di sue versioni modificate) includa una copia del codice sorgente completo, una menzione adeguata al software originale **OpenSTAManager** e una copia della licenza GPL 3.

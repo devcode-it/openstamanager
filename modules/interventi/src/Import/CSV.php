@@ -44,8 +44,12 @@ class CSV extends CSVImporter
                 'primary_key' => true,
             ],
             [
-                'field' => 'telefono',
-                'label' => 'Telefono',
+                'field' => 'partita_iva',
+                'label' => 'Partita IVA cliente',
+            ],
+            [
+                'field' => 'codice_fiscale',
+                'label' => 'Codice Fiscale cliente',
             ],
             [
                 'field' => 'data',
@@ -99,8 +103,10 @@ class CSV extends CSVImporter
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
-        if (!empty($record['telefono'])) {
-            $anagrafica = Anagrafica::where('telefono', $record['telefono'])->first();
+        if (!empty($record['partita_iva'])) {
+            $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
+        } else if (!empty($record['codice_fiscale'])) {
+            $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
         }
 
         if (!empty($record['impianto'])) {
@@ -187,9 +193,9 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Telefono', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['00001/2024', '+39 0429 60 25 12', '07/11/2024', '03/11/2024', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
-            ['0002/2024', '+39 0429 60 25 12', '08/11/2024', '04/11/2024', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
+            ['00001/2024', '123456789', '123456789', '07/11/2024', '03/11/2024', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
+            ['0002/2024', '123456789', '123456789', '08/11/2024', '04/11/2024', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
         ];
     }
 }

@@ -180,7 +180,17 @@ class Manager
                 }
 
                 foreach ($joins as $join) {
-                    $query->leftJoin($join[0], $join[1], $join[2]);
+                    if (count($join) >= 3) {
+                        $query->leftJoin($join[0], function($joinClause) use ($join) {
+                            $joinClause->on($join[1], $join[2]);
+                            
+                            // Aggiungi condizioni aggiuntive se ci sono abbastanza elementi in $join
+                            if (isset($join[3])) {
+                                $joinClause->whereRaw($join[3] . ' = ?', [$join[4]]);
+                            }
+                            
+                        });
+                    }
                 }
 
                 if (!empty($where)) {

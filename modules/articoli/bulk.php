@@ -160,6 +160,7 @@ switch (post('op')) {
             if (!empty($elementi)) {
                 $dbo->query('UPDATE `mg_articoli` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
             } else {
+                $dbo->query('DELETE FROM `mg_prezzi_articoli` WHERE `id_articolo` = '.prepare($id));
                 $dbo->query('DELETE FROM `mg_articoli` WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
             }
         }

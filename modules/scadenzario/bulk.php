@@ -172,6 +172,13 @@ switch (post('op')) {
             ]));
         }
 
+        // Se non sono stati inviati alcuni i solleciti, mostro un messaggio di avviso
+        if (!empty(array_diff($id_records, $list))) {
+            flash()->warning(tr('_NUM_ solleciti non sono stati inviati.', [
+                '_NUM_' => sizeof(array_diff($id_records, $list)),
+            ]));
+        }
+
         break;
 }
 

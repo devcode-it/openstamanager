@@ -41,7 +41,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             'in_interventi.*',
             'MAX(in_interventi_tecnici.orario_fine) as data',
             'GROUP_CONCAT(DISTINCT b.ragione_sociale SEPARATOR \', \') AS tecnici',
-            'in_statiintervento_lang.name AS stato',
+            'in_statiintervento_lang.title AS stato',
         ];
 
         $joins[] = [

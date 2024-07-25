@@ -326,7 +326,7 @@ if ($dir == 'entrata') {
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                    <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'">
+                    <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'", "decimals": "qta">
                 </div>
 
                 <div class="col-md-3">
@@ -335,7 +335,7 @@ if ($dir == 'entrata') {
 
                 <div class="col-md-3">
                     {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
-                    <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$ddt->volume_calcolato.'">
+                    <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$ddt->volume_calcolato.'", "decimals": "qta">
                 </div>
 
                 <div class="col-md-3">

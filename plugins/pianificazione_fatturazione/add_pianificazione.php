@@ -132,7 +132,7 @@ foreach ($righe as $riga) {
 
                         {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('su _TOT_ totali', [
         '_TOT_' => Translator::numberToLocale($riga->qta - $riga->qta_evasa),
-    ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
+    ]).'", "options":"'.str_replace('"', '\"', $options).'", "decimals": "qta" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">
                     </div>

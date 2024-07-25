@@ -138,7 +138,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Qta minima ordinabile').'", "name": "qta_minima", "required": 0, "value": "'.$fornitore['qta_minima'].'", "icon-after": "'.$articolo->um.'" ]}
+            {[ "type": "number", "label": "'.tr('Qta minima ordinabile').'", "name": "qta_minima", "required": 0, "value": "'.$fornitore['qta_minima'].'", "icon-after": "'.$articolo->um.'", "decimals": "qta" ]}
         </div>
 
         <div class="col-md-6">

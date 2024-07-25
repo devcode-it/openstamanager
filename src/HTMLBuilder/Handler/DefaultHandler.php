@@ -282,7 +282,7 @@ class DefaultHandler implements HandlerInterface
 
         // Gestione della precisione (numero specifico, oppure "qta" per il valore previsto nell'impostazione "Cifre decimali per quantità").
         $decimals = null;
-        if (isset($values['decimals'])) {
+        if (!empty($values['decimals'])) {
             if (is_numeric($values['decimals'])) {
                 $decimals = $values['decimals'];
             } elseif (string_starts_with($values['decimals'], 'qta')) {

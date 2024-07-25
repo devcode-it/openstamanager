@@ -98,7 +98,7 @@ echo '
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
 		</div>
 		<div class="col-md-4">
-			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
+			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$", "decimals": "qta" ]}
 		</div>
 	</div>
 	<div class="row">

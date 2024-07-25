@@ -232,7 +232,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
+                                {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals": "qta", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                             </div>
                         </div>
 

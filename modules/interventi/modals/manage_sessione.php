@@ -72,7 +72,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "'.$sessione['km'].'"]}
+            {[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "'.$sessione['km'].'","decimals": "qta"]}
         </div>
     </div>
 

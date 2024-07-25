@@ -52,7 +52,7 @@ echo '
 if ($options['dir'] == 'uscita' && $articolo->fattore_um_secondaria) {
     echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float) $articolo->fattore_um_secondaria * $result['qta']).'", "icon-after": "'.$articolo->um_secondaria.'" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà secondaria').'", "name": "fattore_um_secondaria", "value": "'.abs((float) $articolo->fattore_um_secondaria * $result['qta']).'", "icon-after": "'.$articolo->um_secondaria.'", "decimals": "qta"]}
         </div>
         
         <script>

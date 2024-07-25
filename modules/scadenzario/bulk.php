@@ -212,7 +212,7 @@ $operations['send-sollecito'] = [
     'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail sollecito').'</span>',
     'data' => [
         'title' => tr('Inviare mail sollecito?'),
-        'msg' => tr('Per ciascuna scadenza selezionata collegata ad una fattura di vendita, verrà inviata una mail con allegata la fattura di vendita corrispondente.<br>(Template utilizzato: Sollecito di pagamento raggruppato per anagrafica)'),
+        'msg' => tr('Per ciascuna rata scaduta selezionata collegata ad una fattura di vendita, verrà inviata una mail con allegata la fattura di vendita corrispondente.<br>(Template utilizzato: Sollecito di pagamento raggruppato per anagrafica)'),
         'button' => tr('Invia'),
         'class' => 'btn btn-lg btn-warning',
     ],

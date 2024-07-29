@@ -128,3 +128,7 @@ UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Fornit
 UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Agente\'){ $(\'#th_Tipo input\').val(\'Agente\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di agenti'; 
 UPDATE `zz_widgets` SET `more_link` = "if($(\'#th_Tipo input\').val()!= \'Vettore\'){ $(\'#th_Tipo input\').val(\'Vettore\').trigger(\'keyup\');} else { $(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');}" WHERE `zz_widgets`.`name` = 'Numero di vettori'; 
 UPDATE `zz_widgets` SET `more_link` = "$(\'#th_Tipo input\').val(\'\').trigger(\'keyup\');" WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche'; 
+
+
+-- Spostata impostazione Stato dell'attività alla chiusura (utilizzata solo da APP)
+UPDATE `zz_settings` SET `sezione` = 'Applicazione' WHERE `zz_settings`.`nome` = "Stato dell\'attività alla chiusura"; 

@@ -105,7 +105,7 @@ class CSV extends CSVImporter
 
         if (!empty($record['partita_iva'])) {
             $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
-        } else if (!empty($record['codice_fiscale'])) {
+        } elseif (!empty($record['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
         }
 

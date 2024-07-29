@@ -133,6 +133,11 @@ foreach ($scadenze as $id_documento => $righe) {
     ]);
 
     renderTabella($nome, $righe, $totale_dare, $totale_avere);
+
+    foreach ($righe as $riga) {
+        $totale_dare += $riga['dare'];
+        $totale_avere += $riga['avere'];
+    }
 }
 
 // Elenco per scadenze
@@ -146,6 +151,10 @@ foreach ($scadenze as $id_scadenza => $righe) {
     ]);
 
     renderTabella($nome, $righe, $totale_dare, $totale_avere);
+    foreach ($righe as $riga) {
+        $totale_dare += $riga['dare'];
+        $totale_avere += $riga['avere'];
+    }
 }
 
 // Elenco generale
@@ -183,8 +192,8 @@ echo '
 <table class="table table-bordered">
     <tr>
         <th class="text-right">'.tr('Totale').'</th>
-        <th class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
-        <th class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
+        <th id="totale_dare" class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
+        <th id="totale_avere" class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
     </tr>
 </table>';
 
@@ -359,6 +368,22 @@ $(document).on("keyup change", "input[id*=avere]", function() {
 
         controllaConti();
     }
+});
+
+$(document).on("change", "[id*=dare], [id*=avere]", function() {
+  var totalDare = 0;
+  var totalAvere = 0;
+
+  $("[id*=dare]").each(function() {
+    totalDare += parseFloat($(this).val()) || 0;
+  });
+
+  $("[id*=avere]").each(function() {
+    totalAvere += parseFloat($(this).val()) || 0;
+  });
+
+  $("#totale_dare").text(totalDare.toLocale());
+  $("#totale_avere").text(totalAvere.toLocale());
 });
 
 function visualizzaMovimenti(button) {

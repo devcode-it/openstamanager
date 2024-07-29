@@ -30,41 +30,55 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $table = '`an_anagrafiche`';
+        $table = 'an_anagrafiche';
 
         $select = [
-            '`an_anagrafiche`.*',
-            '`an_nazioni_lang`.`title` AS nazione',
+            'an_anagrafiche.*',
+            'an_nazioni_lang.title AS nazione',
         ];
 
         $joins[] = [
-            'an_nazioni_lang' => '`an_nazioni_lang`.`id_record` = `an_nazioni`.`id` AND `an_nazioni_lang`.`id_lang` = '.\Models\Locale::getDefault()->id,
+            'an_nazioni',
+            'an_nazioni.id',
+            'an_anagrafiche.id_nazione',
         ];
 
-        $where[] = ['`an_anagrafiche`.`deleted_at`', '=', null];
+        $joins[] = [
+            'an_nazioni_lang',
+            'an_nazioni_lang.id_record',
+            'an_nazioni.id',
+            'an_nazioni_lang.id_lang',
+            \Models\Locale::getDefault()->id,
+        ];
 
-        $order['`an_anagrafiche`.`ragione_sociale`'] = 'ASC';
+        $where[] = ['an_anagrafiche.deleted_at', '=', null];
+
+        $order['an_anagrafiche.ragione_sociale'] = 'ASC';
 
         if ($request['resource'] != 'anagrafiche') {
             $type = 'Cliente';
 
             $joins[] = [
-                '`an_tipianagrafiche_anagrafiche`',
-                '`an_anagrafiche`.`idanagrafica`',
-                '`an_tipianagrafiche_anagrafiche`.`idanagrafica`',
+                'an_tipianagrafiche_anagrafiche',
+                'an_anagrafiche.idanagrafica',
+                'an_tipianagrafiche_anagrafiche.idanagrafica',
             ];
 
             $joins[] = [
-                '`an_tipianagrafiche`',
-                '`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`',
-                '`an_tipianagrafiche`.`id`',
+                'an_tipianagrafiche',
+                'an_tipianagrafiche_anagrafiche.idtipoanagrafica',
+                'an_tipianagrafiche.id',
             ];
 
             $joins[] = [
-                'an_tipianagrafiche_lang' => '`an_tipianagrafiche_lang`.`idrecord` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`idlang` = '.\Models\Locale::getDefault()->id,
+                'an_tipianagrafiche_lang',
+                'an_tipianagrafiche_lang.id_record',
+                'an_tipianagrafiche.id',
+                'an_tipianagrafiche_lang.id_lang',
+                \Models\Locale::getDefault()->id,
+                'an_tipianagrafiche_lang.title',
+                ''.$type.'',
             ];
-
-            $where[] = ['`an_tipianagrafiche_lang`.`title`', '=', $type];
         }
 
         return [

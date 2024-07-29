@@ -318,7 +318,6 @@ switch (post('op')) {
 
         flash()->info(tr('Attività duplicate correttamente!'));
 
-
         break;
 
     case 'delete-bulk':

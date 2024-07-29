@@ -27,4 +27,3 @@ echo '
 </form>
 
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist degli impianti di questa categoria verranno aggiornate. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Sincronizza checklist impianti').'</button>';
-

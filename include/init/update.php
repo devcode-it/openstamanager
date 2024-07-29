@@ -118,7 +118,7 @@ if (filter('action') == 'do_update') {
         include_once App::filepath('include|custom|', 'top.php');
 
         echo '
-        <div class="card card-danger card-outline text-center">
+        <div class="card card-danger card-outline card-center-large text-center">
             <div class="card-header">
                 <h3 class="card-title">'.tr('Aggiornamento in corso!').'</h3>
             </div>

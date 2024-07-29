@@ -427,6 +427,9 @@ switch (post('op')) {
 
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            if (empty($id_articolo)) {
+                $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+            }
         }
 
         if (!empty($id_articolo)) {

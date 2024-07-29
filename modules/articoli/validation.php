@@ -46,6 +46,14 @@ switch ($name) {
             ['id', '<>', $id_record],
         ])->count() == 0;
 
+        if ($disponibile) {
+            $disponibile = Articolo::where([
+                ['codice', $value],
+                ['barcode', '=', ''],
+                ['id', '<>', $id_record],
+            ])->count() == 0;
+        }
+
         $message = $disponibile ? tr('Il barcode è disponbile') : tr('Il barcode è già utilizzato in un altro articolo');
 
         $response = [

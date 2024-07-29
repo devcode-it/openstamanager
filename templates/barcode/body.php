@@ -45,7 +45,7 @@ $page = 0;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 foreach ($articoli as $articolo) {
-    $barcode = setting('Utilizza codice articolo come barcode') ? $articolo->codice : $articolo->barcode;
+    $barcode = $articolo->barcode ?: $articolo->codice;
 
     echo '
     <div class="barcode-cell">

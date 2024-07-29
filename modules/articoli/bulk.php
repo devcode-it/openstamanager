@@ -504,7 +504,7 @@ $operations['stampa-etichette'] = [
     'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
     'data' => [
         'title' => tr('Stampare le etichette?'),
-        'msg' => tr('Per ciascun articolo selezionato, se presente il barcode, verrà stampata un\'etichetta').'<br><br>
+        'msg' => tr('Per ciascun articolo selezionato, verrà stampata un\'etichetta').'<br><br>
         {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

@@ -60,9 +60,7 @@ switch (post('op')) {
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
             $articolo->name = post('descrizione');
         }
-        if (!setting('Utilizza codice articolo come barcode')) {
-            $articolo->barcode = post('barcode');
-        }
+        $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
@@ -133,9 +131,7 @@ switch (post('op')) {
         }
 
         $articolo->codice = post('codice', true);
-        if (!setting('Utilizza codice articolo come barcode')) {
-            $articolo->barcode = post('barcode');
-        }
+        $articolo->barcode = post('barcode');
         $articolo->um = post('um');
         $articolo->id_categoria = post('categoria');
         $articolo->id_sottocategoria = post('subcategoria');

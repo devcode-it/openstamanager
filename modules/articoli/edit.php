@@ -22,8 +22,6 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Iva\Aliquota;
 
-$utilizza_codice_barcode = setting('Utilizza codice articolo come barcode');
-
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -47,7 +45,7 @@ $utilizza_codice_barcode = setting('Utilizza codice articolo come barcode');
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "<?php echo $utilizza_codice_barcode ? '$codice$' : '$barcode$'; ?>", "disabled": "<?php echo $utilizza_codice_barcode; ?>" ]}
+                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "$barcode$" ]}
                         </div>
                     </div>
 

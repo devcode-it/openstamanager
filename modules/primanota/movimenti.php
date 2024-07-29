@@ -192,8 +192,8 @@ echo '
 <table class="table table-bordered">
     <tr>
         <th class="text-right">'.tr('Totale').'</th>
-        <th class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
-        <th class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
+        <th id="totale_dare" class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
+        <th id="totale_avere" class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
     </tr>
 </table>';
 
@@ -368,6 +368,22 @@ $(document).on("keyup change", "input[id*=avere]", function() {
 
         controllaConti();
     }
+});
+
+$(document).on("change", "[id*=dare], [id*=avere]", function() {
+  var totalDare = 0;
+  var totalAvere = 0;
+
+  $("[id*=dare]").each(function() {
+    totalDare += parseFloat($(this).val()) || 0;
+  });
+
+  $("[id*=avere]").each(function() {
+    totalAvere += parseFloat($(this).val()) || 0;
+  });
+
+  $("#totale_dare").text(totalDare.toFixed(2));
+  $("#totale_avere").text(totalAvere.toFixed(2));
 });
 
 function visualizzaMovimenti(button) {

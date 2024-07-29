@@ -382,8 +382,8 @@ $(document).on("change", "[id*=dare], [id*=avere]", function() {
     totalAvere += parseFloat($(this).val()) || 0;
   });
 
-  $("#totale_dare").text(totalDare.toFixed(2));
-  $("#totale_avere").text(totalAvere.toFixed(2));
+  $("#totale_dare").text(totalDare.toLocale());
+  $("#totale_avere").text(totalAvere.toLocale());
 });
 
 function visualizzaMovimenti(button) {

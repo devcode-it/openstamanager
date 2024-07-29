@@ -73,7 +73,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             $joins[] = [
                 'an_tipianagrafiche_lang',
                 'an_tipianagrafiche_lang.id_record',
-                'an_tipianagrafiche.id', 
+                'an_tipianagrafiche.id',
                 'an_tipianagrafiche_lang.id_lang',
                 \Models\Locale::getDefault()->id,
                 'an_tipianagrafiche_lang.title',

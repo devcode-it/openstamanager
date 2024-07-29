@@ -133,6 +133,11 @@ foreach ($scadenze as $id_documento => $righe) {
     ]);
 
     renderTabella($nome, $righe, $totale_dare, $totale_avere);
+
+    foreach ($righe as $riga) {
+        $totale_dare += $riga['dare'];
+        $totale_avere += $riga['avere'];
+    }
 }
 
 // Elenco per scadenze
@@ -146,6 +151,10 @@ foreach ($scadenze as $id_scadenza => $righe) {
     ]);
 
     renderTabella($nome, $righe, $totale_dare, $totale_avere);
+    foreach ($righe as $riga) {
+        $totale_dare += $riga['dare'];
+        $totale_avere += $riga['avere'];
+    }
 }
 
 // Elenco generale

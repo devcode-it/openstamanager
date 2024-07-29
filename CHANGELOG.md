@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.5.3 (2024-07-18)](#253-2024-07-18)
+- [2.5.3 (2024-07-31)](#253-2024-07-31)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
 - [2.5.1 (2024-04-24)](#251-2024-04-24)
 - [2.5 (2024-03-28)](#25-2024-03-28)
@@ -69,7 +69,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.5.3 (2024-07-18)
+## 2.5.3 (2024-07-31)
 ### Aggiunto (Added)
 - Aggiunto il valore delle **Vendite al banco** sul grafico del Fatturato
 - Aggiunta legenda in **Articoli**

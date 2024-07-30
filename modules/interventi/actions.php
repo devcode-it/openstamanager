@@ -785,10 +785,14 @@ switch (post('op')) {
                             foreach ($tecnici as $tecnico) {
                                 $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
                                 if (!empty($mail_tecnico['email'])) {
-                                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                    $mail->addReceiver($mail_tecnico['email']);
-                                    $mail->save();
-                                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
+
+                                    if (!empty($template)) {
+                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                        $mail->addReceiver($mail_tecnico['email']);
+                                        $mail->save();
+                                        flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
+                                    }
+
                                 }
                             }
 

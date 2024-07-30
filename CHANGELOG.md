@@ -79,7 +79,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta la gestione dell'invio automatico dei promemoria delle scadenze
 - Aggiunto avviso nel caso di scadenza durante il mese di chiusura aziendale
 - Aggiunta gestione caratteri speciali in fattura elettronica
-- Aggiunta impostazione per utilizzare codice come barcode
 
 ### Modificato (Changed)
 - Rimozione agenti secondari in **Anagrafiche**

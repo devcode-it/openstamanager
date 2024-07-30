@@ -103,6 +103,7 @@ if (!empty($movimenti)) {
     echo '
         <table class="table table-striped table-condensed table-bordered">
             <tr>
+                 <th class="text-center" width="40">#</th>
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
                 <th>'.tr('Operazione').'</th>
@@ -119,15 +120,18 @@ if (!empty($movimenti)) {
         } else {
             $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
         }
+        
         $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
-        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
-
+       
         $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
         $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];
 
         // Quantità
         echo '
             <tr>
+                <td class="text-center">
+                    '.count($movimenti)-($i).'
+                </td>
                 <td class="text-center">
                     '.numberFormat($movimento->qta, 'qta').' '.$record['um'].'
                 </td>

@@ -113,6 +113,7 @@ if (!function_exists('add_tecnico')) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_intervento);
                     $mail->addReceiver($anagrafica['email']);
                     $mail->save();
+                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                 }
             }
         }

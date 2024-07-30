@@ -120,6 +120,7 @@ switch (post('op')) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
+                            flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                         }
                     }
                 }
@@ -143,6 +144,7 @@ switch (post('op')) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
+                            flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                         }
                     }
                 }
@@ -331,6 +333,7 @@ switch (post('op')) {
                         $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
                         $mail->addReceiver($tecnico['email']);
                         $mail->save();
+                        flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                     }
                 }
             }
@@ -785,8 +788,11 @@ switch (post('op')) {
                                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
                                     $mail->addReceiver($mail_tecnico['email']);
                                     $mail->save();
+                                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                                 }
                             }
+
+                            
                         }
                     }
                 } else {
@@ -960,6 +966,7 @@ switch (post('op')) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
                     $mail->addReceiver($tecnico['email']);
                     $mail->save();
+                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                 }
             }
         }

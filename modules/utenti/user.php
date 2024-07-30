@@ -30,7 +30,7 @@ $utente = $user ? $user->toArray() : [];
 
 // Gruppo della selezione
 if (!empty($id_record)) {
-    $gruppo_utente = Group::find($id_record)->getTranslation('title');
+    $gruppo_utente = $user ? $user->group->getTranslation('title') : 0;
 
     $gruppi = [
         'Clienti' => 'Cliente',

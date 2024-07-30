@@ -19,7 +19,21 @@
 
 include_once __DIR__.'/../../core.php';
 
-$utenti = $dbo->fetchArray('SELECT *, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idanagrafica`=`zz_users`.`idanagrafica` ) AS `ragione_sociale`, (SELECT GROUP_CONCAT(`title` SEPARATOR ", ") FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`=`zz_users`.`idanagrafica` GROUP BY `idanagrafica`) AS tipo FROM `zz_users` WHERE `idgruppo`='.prepare($record['id']));
+$utenti = $dbo->fetchArray('
+    SELECT 
+        `zz_users`.*, 
+        `an_anagrafiche`.`ragione_sociale`, 
+        GROUP_CONCAT(`an_tipianagrafiche_lang`.`title` SEPARATOR ", ") AS tipo 
+    FROM 
+        `zz_users` 
+        JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` 
+        JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` 
+        JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` 
+        JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE 
+        `zz_users`.`idgruppo` = '.prepare($record['id']).' 
+    GROUP BY 
+        `zz_users`.`idanagrafica`');
 
 echo '
 	<div class="card card-primary">
@@ -32,7 +46,7 @@ echo '
 		<div class="card-body">
             <div class="row">
                 <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.$group->id_module_start.'" ]}
+                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?:0).'" ]}
                 </div>
                  <div class="col-md-3 pull-right">
                     {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"black\": \"'.tr('Nero').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"info-light\": \"'.tr('Azzurro chiaro').'\",\"info\": \"'.tr('Azzurro').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$group->theme.'" ]}
@@ -106,7 +120,7 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-                <a href="" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" class="btn btn-xs btn-warning tip" data-card-widget="modal" title="'.tr('Aggiorna dati utente').'"  data-msg="" data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'"><i class="fa fa-unlock-alt"></i></a>';
+                <a title="'.tr('Aggiorna dati utente').'" class="btn btn-xs btn-warning tip" data-msg=""data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" data-card-widget="modal"><i class="fa fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
@@ -171,8 +185,11 @@ echo '
 	<div class="card card-primary">
 		<div class="card-header">
             <h3 class="card-title">'.tr('Permessi del gruppo: _GROUP_', [
-    '_GROUP_' => $record['nome'],
-]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
+                '_GROUP_' => $record['nome'],
+            ]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '</h3>
+            <div class="card-tools">
+                <btn type="button" class="btn clickable btn-xs btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn>' : '').'
+            </div>
 		</div>
 
 		<div class="card-body">';

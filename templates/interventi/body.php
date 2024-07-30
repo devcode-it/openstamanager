@@ -31,52 +31,53 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
     Dati intervento
 */
 echo '
+<br>
 <table class="table border-bottom">
     <tr>
-        <th colspan="4" class="text-center" style="font-size:11pt;">'.tr('Rapporto attività', [], ['upper' => true]).'</th>
+        <th colspan="4" class="text-center">'.tr('Rapporto attività', [], ['upper' => true]).'</th>
     </tr>
     
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Cliente', [], ['upper' => true]).'</p>
+            <p class="small-bold text-muted">'.tr('Cliente', [], ['upper' => true]).':</p>
         </td>
-        <td class="text-right">
-            '.$c_ragionesociale.'
+        <td>
+            <b>'.$c_ragionesociale.'</b>
         </td>';
 // Indirizzo
 if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
     echo '
 
         <td>
-            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).'</p>
+            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
         </td>
-        <td class="text-right">
-            '.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).')
+        <td>
+            <b>'.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).'</b>)
         </td>';
 } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
     echo '
 
         <td>
-            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).'</p>
+            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
         </td>
-        <td class="text-right">
-            '.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')
+        <td>
+            <b>'.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')</b>
         </td>';
 }
 echo '
     </tr>
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Attività n.', [], ['upper' => true]).'</p>
-        </td>
-        <td class="text-right">
-            '.$documento['codice'].'
+            <p class="small-bold text-muted">'.tr('Attività n.', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Data richiesta', [], ['upper' => true]).'</p>
+            <b>'.$documento['codice'].'</b>
         </td>
-        <td class="text-right">
-            '.Translator::dateToLocale($documento['data_richiesta']).'
+        <td>
+            <p class="small-bold text-muted">'.tr('Data richiesta', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b>
         </td>
     </tr>';
 
@@ -86,16 +87,16 @@ if (!empty($preventivo) or !empty($contratto)) {
     echo '
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Preventivo n.', [], ['upper' => true]).'</p>
-        </td>
-        <td class="text-right">
-            '.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : 'Nessuno').'
+            <p class="small-bold text-muted">'.tr('Preventivo n.', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Contratto n.', [], ['upper' => true]).'</p>
+            <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : 'Nessuno').'</b>
         </td>
-        <td class="text-right">
-            '.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : 'Nessuno').'
+        <td>
+            <p class="small-bold text-muted">'.tr('Contratto n.', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : 'Nessuno').'</b>
         </td>
     </tr>';
 }
@@ -103,31 +104,31 @@ if (!empty($preventivo) or !empty($contratto)) {
 echo '
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('P.Iva', [], ['upper' => true]).'</p>
+            <p class="small-bold text-muted">'.tr('P.Iva', [], ['upper' => true]).':</p>
         </td>
-        <td class="text-right">
-            '.strtoupper((string) $c_piva).'
+        <td >
+            <b>'.strtoupper((string) $c_piva).'</b>
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('C.F.', [], ['upper' => true]).'</p>
+            <p class="small-bold text-muted">'.tr('C.F.', [], ['upper' => true]).':</p>
         </td>
-        <td class="text-right">
-            '.strtoupper((string) $c_codicefiscale).'
+        <td >
+            <b>'.strtoupper((string) $c_codicefiscale).'</b>
         </td>
     </tr>
 
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Telefono', [], ['upper' => true]).'</p>
-        </td>
-        <td class="text-right">
-            '.$c_telefono.'
+            <p class="small-bold text-muted">'.tr('Telefono', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Cellulare', [], ['upper' => true]).'</p>
+            <b>'.$c_telefono.'</b>
         </td>
-        <td class="text-right">
-            '.$c_cellulare.'
+        <td>
+            <p class="small-bold text-muted">'.tr('Cellulare', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            <b>'.$c_cellulare.'</b>
         </td>
     </tr>';
 
@@ -141,16 +142,16 @@ for ($j = 0; $j < count($rs2); ++$j) {
 echo '
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
-        </td>
-        <td class="text-right">
-            '.implode(', ', $impianti).'
+            <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Tipo intervento', [], ['upper' => true]).'</p>
+            <b>'.implode(', ', $impianti).'</b>
         </td>
-        <td class="text-right">
-            '.$documento->tipo->getTranslation('title').'
+        <td>
+            <p class="small-bold text-muted">'.tr('Tipo intervento', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            <b>'.$documento->tipo->getTranslation('title').'</b>
         </td>
     </tr>';
 
@@ -159,9 +160,9 @@ echo '
 echo '
     <tr>
         <td colspan="2">
-            <p class="small-bold text-muted">'.tr('Richiesta', [], ['upper' => true]).'</p>
+            <p class="small-bold">'.tr('Richiesta', [], ['upper' => true]).':</p>
         </td>
-        <td style="width:350px" colspan="2" class="text-right">
+        <td style="width:350px" colspan="2">
             <p>'.$documento['richiesta'].'</p>
         </td>
     </tr>';
@@ -171,9 +172,9 @@ echo '
 echo '
     <tr>
         <td colspan="2">
-            <p class="small-bold text-muted">'.tr('Descrizione', [], ['upper' => true]).'</p>
+            <p class="small-bold">'.tr('Descrizione', [], ['upper' => true]).':</p>
         </td>
-        <td style="width:350px" colspan="2" class="text-right">
+        <td style="width:350px" colspan="2">
             <p>'.$documento['descrizione'].'</p>
         </td>
     </tr>

@@ -130,9 +130,9 @@ if (!empty($movimenti)) {
         echo '
             <tr>
                 <td class="text-center">
-                    '.count($movimenti)-($i).'
+                    '.count($movimenti)-($i). '
                 </td>
-                <td class="text-center">
+                <td class="text-center" style="color: ' . ($movimento->qta < 0 ? 'red' : 'green') . ';">
                     '.numberFormat($movimento->qta, 'qta').' '.$record['um'].'
                 </td>
 

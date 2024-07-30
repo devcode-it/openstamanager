@@ -65,16 +65,7 @@ class Impianti extends AppResource
         if ($limite_impianti == 1 && !\Auth::user()->is_admin) {
             $id_tecnico = \Auth::user()->id_anagrafica;
 
-            // Elenco di interventi di interesse
-            $risorsa_interventi = $this->getRisorsaInterventi();
-            // Da applicazione, i Clienti sono sincronizzati prima degli Interventi: last_sync_at permette di identificare le stesse modifiche
-            $interventi = $risorsa_interventi->getModifiedRecords(null);
-            $id_interventi = array_keys($interventi);
-
-            $rs_impianti = database()->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento IN ('.implode(',', $id_interventi).')');
-            $id_impianti = array_column($rs_impianti, 'idimpianto');
-
-            $statement->where('idtecnico', $id_tecnico)->orWhereIn('id', $id_impianti);
+            $statement->where('idtecnico', $id_tecnico);
         }
 
         $records = $statement->get();

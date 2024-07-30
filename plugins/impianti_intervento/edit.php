@@ -47,7 +47,7 @@ $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagra
 echo '
     <div class="row">
         <div class="offset-md-4 col-md-4">
-                <input type="text" class="form-control input-lg text-center unblockable" id="input-cerca" placeholder="'.tr('Cerca').'...">
+                <input type="text" class="form-control form-control-lg text-center unblockable" id="input-cerca" placeholder="'.tr('Cerca').'...">
         </div>
 
         <div class="col-md-1">

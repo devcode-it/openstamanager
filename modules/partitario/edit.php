@@ -33,7 +33,7 @@ if ($bilancio_gia_aperto) {
 echo '
 <div class="row">
     <div class="offset-md-4 col-md-3">
-            <input type="text" class="form-control input-lg text-center" id="input-cerca" placeholder="'.tr('Cerca').'...">
+            <input type="text" class="form-control form-control-lg text-center" id="input-cerca" placeholder="'.tr('Cerca').'...">
     </div>
 
     <div class="col-md-1">

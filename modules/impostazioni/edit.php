@@ -32,7 +32,7 @@ echo '
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <div class="input-group">
-            <input type="text" class="form-control input-lg text-center" id="ricerca_impostazioni" placeholder="'.tr('Cerca').'...">
+            <input type="text" class="form-control form-control-lg text-center" id="ricerca_impostazioni" placeholder="'.tr('Cerca').'...">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button" id="search">
                         <span class="fa fa-search"></span>

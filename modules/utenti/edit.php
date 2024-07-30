@@ -186,10 +186,10 @@ echo '
 		<div class="card-header">
             <h3 class="card-title">'.tr('Permessi del gruppo: _GROUP_', [
                 '_GROUP_' => $record['nome'],
-            ]).((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '</h3>
+            ]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
             <div class="card-tools">
-                <btn type="button" class="btn clickable btn-xs btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn>' : '').'
-            </div>
+                <btn type="button" class="btn clickable btn-xs btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn> 
+            </div>' : '').'
 		</div>
 
 		<div class="card-body">';

@@ -375,11 +375,11 @@ $(document).on("change", "[id*=dare], [id*=avere]", function() {
   var totalAvere = 0;
 
   $("[id*=dare]").each(function() {
-    totalDare += parseFloat($(this).val()) || 0;
+    totalDare += parseFloat($(this).val().toEnglish()) || 0;
   });
 
   $("[id*=avere]").each(function() {
-    totalAvere += parseFloat($(this).val()) || 0;
+    totalAvere += parseFloat($(this).val().toEnglish()) || 0;
   });
 
   $("#totale_dare").text(totalDare.toLocale());

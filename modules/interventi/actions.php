@@ -114,7 +114,7 @@ switch (post('op')) {
                 if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica rimozione intervento')->first()->id;
+                        $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -138,7 +138,7 @@ switch (post('op')) {
                     $tecnico = Anagrafica::find($tecnico_assegnato);
 
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica intervento')->first()->id;
+                        $template = Template::where('name', 'Notifica intervento')->first();
 
                         if (!empty($template)) {
                             $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
@@ -326,12 +326,12 @@ switch (post('op')) {
 
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
-                if (!empty($tecnico['email'])) {
-                    $template = Template::where('name', 'Notifica intervento')->first()->id;
+                if (!empty($tecnico->email)) {
+                    $template = Template::where('name', 'Notifica intervento')->first();
 
                     if (!empty($template)) {
                         $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
-                        $mail->addReceiver($tecnico['email']);
+                        $mail->addReceiver($tecnico->email);
                         $mail->save();
                         flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                     }
@@ -964,7 +964,7 @@ switch (post('op')) {
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
             if (!empty($tecnico['email'])) {
-                $template = Template::where('name', 'Notifica rimozione intervento')->first()->id;
+                $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);

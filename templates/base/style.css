@@ -139,3 +139,7 @@ table#contents tbody td {
 .cell-padded {
     padding: 4px;
 }
+
+.bg-gray{
+    background: #eee;
+}

@@ -27,142 +27,156 @@ $d_qta = (int) setting('Cifre decimali per quantità in stampa');
 $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
-/*
-    Dati intervento
-*/
+$sessioni = $documento->sessioni->sortBy('orario_inizio');
+
+$firma = !empty($documento['firma_file']) ? '<img src="'.base_dir().'/files/interventi/'.$documento['firma_file'].'" style="width:70mm;">' : '';
+
 echo '
 <br>
+
 <table class="table border-bottom">
     <tr>
-        <th colspan="4" class="text-center">'.tr('Rapporto attività', [], ['upper' => true]).'</th>
+        <th colspan="6" class="text-center bg-gray"><h4>'.tr('Cliente', [], ['upper' => true]).'</h4></th>
     </tr>
-    
     <tr>
-        <td>
-            <p class="small-bold text-muted">'.tr('Cliente', [], ['upper' => true]).':</p>
+        <td width="80">
+            <p class="text-muted">'.tr('Cliente', [], ['upper' => true]).':</p>
         </td>
-        <td>
-            <b>'.$c_ragionesociale.'</b>
+        <td width="150">
+            '.$c_ragionesociale.'
         </td>';
 // Indirizzo
 if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
     echo '
 
-        <td>
-            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
+        <td width="110">
+            <p class="text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <b>'.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).'</b>)
+            '.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).')
         </td>';
 } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
     echo '
 
         <td>
-            <p class="small-bold text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <b>'.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')</b>
+            '.$c_indirizzo.' '.$c_cap.' - '.$c_citta.' ('.strtoupper((string) $c_provincia).')
         </td>';
 }
 echo '
     </tr>
+
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Attività n.', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('P.Iva', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <b>'.$documento['codice'].'</b>
+            '.strtoupper((string) $c_piva).'
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Data richiesta', [], ['upper' => true]).':</p>
-        </td>
-        <td>
-            <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b>
-        </td>
-    </tr>';
-
-// Dati cliente
-
-if (!empty($preventivo) or !empty($contratto)) {
-    echo '
-    <tr>
-        <td>
-            <p class="small-bold text-muted">'.tr('Preventivo n.', [], ['upper' => true]).':</p>
-        </td>
-        <td>
-            <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : 'Nessuno').'</b>
-        </td>
-        <td>
-            <p class="small-bold text-muted">'.tr('Contratto n.', [], ['upper' => true]).':</p>
-        </td>
-        <td>
-            <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : 'Nessuno').'</b>
-        </td>
-    </tr>';
-}
-
-echo '
-    <tr>
-        <td>
-            <p class="small-bold text-muted">'.tr('P.Iva', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('C.F.', [], ['upper' => true]).':</p>
         </td>
         <td >
-            <b>'.strtoupper((string) $c_piva).'</b>
-        </td>
-        <td>
-            <p class="small-bold text-muted">'.tr('C.F.', [], ['upper' => true]).':</p>
-        </td>
-        <td >
-            <b>'.strtoupper((string) $c_codicefiscale).'</b>
+            '.strtoupper((string) $c_codicefiscale).'
         </td>
     </tr>
 
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Telefono', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('Telefono', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <b>'.$c_telefono.'</b>
+            '.$c_telefono.'
         </td>
         <td>
-            <p class="small-bold text-muted">'.tr('Cellulare', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('Cellulare', [], ['upper' => true]).':</p>
         </td>
         <td>
-            <b>'.$c_cellulare.'</b>
+            '.$c_cellulare.'
+        </td>
+    </tr>
+</table>';
+
+
+// Dati attività
+echo '
+<table class="table border-bottom">
+    <tr>
+        <th colspan="6" class="text-center bg-gray">
+            <h4>'.tr('Rapporto attività', [], ['upper' => true]).'</h4>
+        </th>
+    </tr>
+
+    <tr>
+        <td width="60">
+            <p class="text-muted">'.tr('Codice', [], ['upper' => true]).':</p>
+        </td>
+        <td width="170">
+            '.$documento['codice'].'
+        </td>
+
+        <td width="110">
+            <p class="text-muted">'.tr('Data richiesta', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            '.Translator::dateToLocale($documento['data_richiesta']).'
+        </td>
+
+        <td width="100">
+            <p class="text-muted">'.tr('Tipologia', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            '.$documento->tipo->getTranslation('title').'
         </td>
     </tr>';
+
+// Dati preventivo o contratto
+if (!empty($preventivo) or !empty($contratto)) {
+    echo '
+    <tr>
+        <td colspan="2"></td>
+        <td>
+            <p class="text-muted">'.tr('Preventivo n.', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            '.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : '-').'
+        </td>
+        <td>
+            <p class="text-muted">'.tr('Contratto n.', [], ['upper' => true]).':</p>
+        </td>
+        <td>
+            '.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : '-').'
+        </td>
+    </tr>';
+}
+
+
 
 // riga 3
 // Elenco impianti su cui è stato fatto l'intervento
 $rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 $impianti = [];
 for ($j = 0; $j < count($rs2); ++$j) {
-    $impianti[] = '<b>'.$rs2[$j]['nome']."</b> <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
+    $impianti[] = ''.$rs2[$j]['nome']." <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
 }
 echo '
     <tr>
         <td>
-            <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).':</p>
+            <p class="text-muted">'.tr('Impianti', [], ['upper' => true]).':</p>
         </td>
-        <td>
-            <b>'.implode(', ', $impianti).'</b>
-        </td>
-        <td>
-            <p class="small-bold text-muted">'.tr('Tipo intervento', [], ['upper' => true]).':</p>
-        </td>
-        <td>
-            <b>'.$documento->tipo->getTranslation('title').'</b>
+
+        <td colspan="5">
+            '.implode(', ', $impianti).'
         </td>
     </tr>';
 
 // Richiesta
-// Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
-        <td colspan="2">
-            <p class="small-bold">'.tr('Richiesta', [], ['upper' => true]).':</p>
-        </td>
-        <td style="width:350px" colspan="2">
+        <td colspan="6" style="line-height:1.5em">
+            <p class="text-muted">'.tr('Richiesta', [], ['upper' => true]).':</p>
             <p>'.$documento['richiesta'].'</p>
         </td>
     </tr>';
@@ -171,10 +185,8 @@ echo '
 // Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
-        <td colspan="2">
-            <p class="small-bold">'.tr('Descrizione', [], ['upper' => true]).':</p>
-        </td>
-        <td style="width:350px" colspan="2">
+        <td colspan="6" style="line-height:1.5em">
+            <p class="text-muted">'.tr('Descrizione', [], ['upper' => true]).':</p>
             <p>'.$documento['descrizione'].'</p>
         </td>
     </tr>
@@ -206,27 +218,27 @@ if (!$righe->isEmpty()) {
 <table class="table border-bottom">
     <thead>
         <tr>
-            <th colspan="4" class="text-center">
-                <b>'.tr('Materiale utilizzato e spese aggiuntive', [], ['upper' => true]).'</b>
+            <th colspan="4" class="text-center bg-gray">
+                <h4>'.tr('Materiale utilizzato e spese aggiuntive', [], ['upper' => true]).'</h4>
             </th>
         </tr>
 
         <tr>
-            <th style="font-size:8pt;width:50%" class="text-center text-muted">
-                <b>'.tr('Descrizione').'</b>
-            </th>
+            <td class="text-muted text-left">
+                '.tr('Descrizione', [], ['upper' => true]).'
+            </td>
 
-            <th style="font-size:8pt;width:15%" class="text-center text-muted">
-                <b>'.tr('Q.tà').'</b>
-            </th>
+            <td style="width:17%" class="text-muted text-right">
+                '.tr('Q.tà', [], ['upper' => true]).'
+            </td>
 
-            <th style="font-size:8pt;width:15%" class="text-center text-muted">
-                <b>'.tr('Prezzo unitario').'</b>
-            </th>
+            <td style="width:20%" class="text-muted text-right">
+                '.tr('Prezzo unitario', [], ['upper' => true]).'
+            </td>
 
-            <th style="font-size:8pt;width:20%" class="text-center text-muted">
-                <b>'.tr('Importo').'</b>
-            </th>
+            <td style="width:20%" class="text-muted text-right">
+                '.tr('Importo', [], ['upper' => true]).'
+            </td>
         </tr>
     </thead>
 
@@ -252,7 +264,7 @@ if (!$righe->isEmpty()) {
             if (in_array($riga->id, $riferimento)) {
                 if ($riga->id === $riferimento[0]) {
                     $riga_ordine = $riga->getOriginalComponent()->getDocument();
-                    $text = '<b>'.$key.'</b><br>';
+                    $text = ''.$key.'<br>';
 
                     if ($options['pricing']) {
                         $text = $text.'</td><td></td><td>';
@@ -292,13 +304,13 @@ if (!$righe->isEmpty()) {
 
         // Quantità
         echo '
-        <td class="text-center">
+        <td class="text-right">
             '.$qta.' '.$riga->um.'
         </td>';
 
         // Prezzo unitario
         echo '
-        <td class="text-center">
+        <td class="text-right">
             '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_corrente, $d_importi) : '-');
 
         if ($options['pricing'] && $riga->sconto > 0) {
@@ -313,7 +325,7 @@ if (!$righe->isEmpty()) {
 
         // Prezzo totale
         echo '
-        <td class="text-center">
+        <td class="text-right">
             '.($options['pricing'] ? moneyFormat($riga->importo, $d_importi) : '-').'
         </td>
     </tr>';
@@ -326,12 +338,12 @@ if (!$righe->isEmpty()) {
         // Totale spese aggiuntive
         echo '
     <tr>
-        <td colspan="3" class="text-right text-muted">
-            <b>'.tr('Totale', [], ['upper' => true]).':</b>
+        <td colspan="3" class="text-right bg-gray">
+            <b>'.tr('Totale', [], ['upper' => true]).'</b>
         </td>
 
-        <th class="text-center">
-            <b>'.moneyFormat($righe->sum('importo'), $d_totali).'</b>
+        <th class="text-right">
+            '.moneyFormat($righe->sum('importo'), $d_totali).'
         </th>
     </tr>';
     }
@@ -342,23 +354,23 @@ if (!$righe->isEmpty()) {
 
 // INTESTAZIONE ELENCO TECNICI
 echo '
-<table class="table table-bordered vertical-middle">
+<table class="table border-bottom vertical-middle">
     <thead>
         <tr>
-            <th class="text-center" colspan="5">
-                <b>'.tr('Ore tecnici', [], ['upper' => true]).'</b>
+            <th class="text-center bg-gray" colspan="5">
+                <h4>'.tr('Ore tecnici', [], ['upper' => true]).'</h4>
             </th>
         </tr>
         <tr>
-            <th class="text-center small-bold text-muted" style="font-size:8pt;width:30%">
-                <b>'.tr('Tecnico').'</b>
-            </th>
+            <td class="text-center text-muted" style="width:30%">
+                '.tr('Tecnico', [], ['upper' => true]).'
+            </td>
 
-            <th class="text-center small-bold text-muted" colspan="3" style="font-size:8pt;width:35%">
-                <b>'.tr('Orario').'</b>
-            </th>
+            <td class="text-center text-muted" colspan="3" style="width:35%">
+                '.tr('Orario', [], ['upper' => true]).'
+            </td>
 
-            <td class="text-center" style="font-size:6pt;width:35%">
+            <td class="text-center" style="font-size:6pt;width:35%; border-left:1px solid #aaa;">
                 '.tr('I dati del ricevente verrano trattati in base alla normativa europea UE 2016/679 del 27 aprile 2016 (GDPR)').'
             </td>
         </tr>
@@ -367,44 +379,64 @@ echo '
     <tbody>';
 
 // Sessioni di lavoro dei tecnici
-$sessioni = $documento->sessioni->sortBy('orario_inizio');
-foreach ($sessioni as $i => $sessione) {
-    echo '
-    <tr>';
-    // Nome tecnico
-    echo '
-    	<td>
-            '.$sessione->anagrafica->ragione_sociale.'
-            ('.$sessione->tipo->getTranslation('title').')
-    	</td>';
-
-    $inizio = new Carbon($sessione['orario_inizio']);
-    $fine = new Carbon($sessione['orario_fine']);
-    if ($inizio->isSameDay($fine)) {
-        $orario = timestampFormat($inizio).' - '.timeFormat($fine);
-    } else {
-        $orario = timestampFormat($inizio).' - '.timestampFormat($fine);
-    }
-
-    // Orario
-    echo '
-    	<td class="text-center" colspan="3">
-            '.$orario.'
-    	</td>';
-
-    // Spazio aggiuntivo
-    if ($i == 0) {
+$i = 0;
+if (count($sessioni) > 0) {
+    foreach ($sessioni as $id => $sessione) {
         echo '
-    	<td class="text-center" style="font-size:6pt;">
-            '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati nel rispetto delle vigenti normative tecniche').'
-        </td>';
-    } else {
-        echo '
-    	<td class="text-center" style="border-bottom:0px;border-top:0px;"></td>';
-    }
+        <tr>';
 
-    echo '
-    </tr>';
+        // Nome tecnico
+        echo '
+            <td class="text-center">
+                '.$sessione->anagrafica->ragione_sociale.'
+                ('.$sessione->tipo->getTranslation('title').')
+            </td>';
+
+        $inizio = new Carbon($sessione['orario_inizio']);
+        $fine = new Carbon($sessione['orario_fine']);
+        if ($inizio->isSameDay($fine)) {
+            $orario = timestampFormat($inizio).' - '.timeFormat($fine);
+        } else {
+            $orario = timestampFormat($inizio).' - '.timestampFormat($fine);
+        }
+
+        // Orario
+        echo '
+            <td class="text-center" colspan="3">
+                '.$orario.'
+            </td>';
+
+
+        // Testo lavori eseguiti 1/2
+        if ($i == 0) {
+            echo '
+            <td class="text-center" style="font-size:6pt; vertical-align:top; border-left:1px solid #aaa;">
+                '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati nel rispetto delle vigenti normative tecniche').'
+            </td>';
+        }
+
+        // Firma 1/3
+        if ($i == 1) {
+            echo '
+            <td rowspan="'.(count($sessioni)+1).'" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
+                '.$firma.'<br>';
+
+
+            if (empty($documento['firma_file'])) {
+                echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
+            } else {
+                echo '      <i>'.$documento['firma_nome'].'</i>';
+            }
+
+            echo '
+            </td>';
+        }
+
+        echo '
+        </tr>';
+
+        $i++;
+    }
 }
 
 // Ore lavorate
@@ -417,49 +449,61 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Ore lavorate').':</small><br/><b>'.$ore_totali.'</b>
+            <small class="text-muted">'.tr('Ore lavorate', [], ['upper' => true]).'</small><br/>'.$ore_totali.'
         </td>';
 
 // Costo totale manodopera
 if ($options['pricing']) {
     echo '
         <td colspan="3" class="text-center">
-            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_manodopera'), $d_totali).'</b>
+            <small class="text-muted">'.tr('Totale manodopera', [], ['upper' => true]).'</small><br/>'.moneyFormat($sessioni->sum('prezzo_manodopera'), $d_totali).'
         </td>';
 } else {
     echo '
         <td colspan="3" class="text-center">-</td>';
 }
 
-// Timbro e firma
-$firma = !empty($documento['firma_file']) ? '<img src="'.base_dir().'/files/interventi/'.$documento['firma_file'].'" style="width:70mm;">' : '';
 
-echo '
-        <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
+// Testo lavori eseguiti 2/2
+if (count($sessioni) == 0) {
+    echo '
+        <td class="text-center" style="font-size:6pt; vertical-align:top; border-left:1px solid #aaa;">
+            '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati nel rispetto delle vigenti normative tecniche').'
+        </td>';
+}
+
+// Firma 2/3
+if (count($sessioni) == 1) {
+    echo '<td rowspan="2" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
             '.$firma.'<br>';
 
-if (empty($documento['firma_file'])) {
-    echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
-} else {
-    echo '      <i>'.$documento['firma_nome'].'</i>';
+
+    if (empty($documento['firma_file'])) {
+        echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
+    } else {
+        echo '      <i>'.$documento['firma_nome'].'</i>';
+    }
+
+    echo '
+        </td>';
 }
 
 echo '
-        </td>
     </tr>';
+
 
 // Totale km
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($documento->km_totali, $d_qta).'</b>
+            <small class="text-muted">'.tr('Km percorsi', [], ['upper' => true]).'</small><br/>'.Translator::numberToLocale($documento->km_totali, $d_qta).'
         </td>';
 
 // Costo trasferta
 if ($options['pricing']) {
     echo '
         <td class="text-center">
-            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_viaggio'), $d_totali).'</b>
+            <small class="text-muted">'.tr('Costi di trasferta', [], ['upper' => true]).'</small><br/>'.moneyFormat($sessioni->sum('prezzo_viaggio'), $d_totali).'
         </td>';
 } else {
     echo '
@@ -470,12 +514,29 @@ if ($options['pricing']) {
 if ($options['pricing']) {
     echo '
         <td class="text-center" colspan="2" width="120px" >
-            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), $d_totali).'</b>
+            <small class="text-muted">'.tr('Diritto di chiamata', [], ['upper' => true]).'</small><br/>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), $d_totali).'
         </td>';
 } else {
     echo '
         <td class="text-center" colspan="2">-</td>';
 }
+
+// Firma 3/3
+if (count($sessioni) == 0) {
+    echo '<td class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
+            '.$firma.'<br>';
+
+
+    if (empty($documento['firma_file'])) {
+        echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
+    } else {
+        echo '      <i>'.$documento['firma_nome'].'</i>';
+    }
+
+    echo '
+        </td>';
+}
+
 
 // Calcoli
 $imponibile = abs($documento->imponibile);
@@ -492,38 +553,38 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="4" class="text-right">
-            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+        <td colspan="4" class="text-right bg-gray">
+            '.tr('Imponibile', [], ['upper' => true]).'
         </td>
 
-        <th class="text-center">
+        <td class="text-right">
             '.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'
-        </th>
+        </td>
     </tr>';
 
     // Eventuale sconto totale
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="4" class="text-right">
-        <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+        <td colspan="4" class="text-right bg-gray">
+        '.tr('Sconto', [], ['upper' => true]).'
         </td>
 
-        <th class="text-center">
-            <b>'.moneyFormat($sconto, $d_totali).'</b>
-        </th>
+        <td class="text-right">
+            '.moneyFormat($sconto, $d_totali).'
+        </td>
     </tr>';
 
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="4" class="text-right">
-            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+        <td colspan="4" class="text-right bg-gray">
+            '.tr('Totale imponibile', [], ['upper' => true]).'
         </td>
 
-        <th class="text-center">
-            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
-        </th>
+        <td class="text-right">
+            '.moneyFormat($totale_imponibile, $d_totali).'
+        </td>
     </tr>';
     }
 
@@ -531,24 +592,24 @@ if ($options['pricing']) {
     // Totale intervento
     echo '
     <tr>
-        <td colspan="4" class="text-right">
-            <b>'.tr('Iva', [], ['upper' => true]).':</b>
+        <td colspan="4" class="text-right bg-gray">
+            '.tr('Iva', [], ['upper' => true]).'
         </td>
 
-        <th class="text-center">
-            <b>'.moneyFormat($totale_iva, $d_totali).'</b>
-        </th>
+        <td class="text-right">
+            '.moneyFormat($totale_iva, $d_totali).'
+        </td>
     </tr>';
 
     // TOTALE INTERVENTO
     echo '
     <tr>
-    	<td colspan="4" class="text-right">
-            <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
+    	<td colspan="4" class="text-right bg-gray">
+            <b>'.tr('Totale', [], ['upper' => true]).'</b>
     	</td>
-    	<th class="text-center">
+    	<td class="text-right">
     		<b>'.moneyFormat($totale, $d_totali).'</b>
-    	</th>
+    	</td>
     </tr>';
 }
 
@@ -565,7 +626,7 @@ if ($options['checklist']) {
 <table class="table table-bordered vertical-middle">
     <tr>
         <th class="text-center" colspan="2" style="font-size:11pt;">
-            <b>CHECKLIST</b>
+            CHECKLIST
         </th>
     </tr>';
 
@@ -584,7 +645,7 @@ if ($options['checklist']) {
                 echo '
             <tr>
                 <th class="text-center" colspan="2" style="font-size:11pt;">
-                    <b>'.tr('Impianto', [], ['upper' => true]).' '.$impianto['matricola'].' - '.$impianto['nome'].'</b>
+                    '.tr('Impianto', [], ['upper' => true]).' '.$impianto['matricola'].' - '.$impianto['nome'].'
                 </th>
             </tr>';
                 foreach ($checks as $check) {

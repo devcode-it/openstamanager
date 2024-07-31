@@ -33,7 +33,7 @@ $utenti = $dbo->fetchArray('
     WHERE 
         `zz_users`.`idgruppo` = '.prepare($record['id']).' 
     GROUP BY 
-        `zz_users`.`idanagrafica`');
+        `zz_users`.`id`');
 
 echo '
 	<div class="card card-primary">
@@ -92,7 +92,7 @@ if (!empty($utenti)) {
 			<td>-</td>';
         }
 
-        $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user ')['nomesede'];
+        $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user')['nomesede'];
 
         echo '
             <td>'.$sedi.'</td>';

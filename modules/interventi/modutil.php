@@ -171,8 +171,6 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
 
         $fattura = Fattura::find($id_fattura);
         $intervento = Intervento::find($id_intervento);
-
-        $data = $intervento->fine;
         $codice = $intervento->codice;
 
         // Riga di descrizione
@@ -193,12 +191,20 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
 
             $ore_di_lavoro = $sessioni->groupBy(fn ($item, $key) => $item['prezzo_orario'].'|'.$item['sconto_unitario'].'|'.$item['tipo_sconto']);
             foreach ($ore_di_lavoro as $gruppo) {
+                $date = [];
                 $sessione = $gruppo->first();
                 $riga = Riga::build($fattura);
 
+                foreach ($gruppo as $sessione){
+                    $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                    if (!in_array($dateValue, $date)) {
+                        $date[] = $dateValue;
+                    }
+                }
+
                 $riga->descrizione = tr("Ore di lavoro dell'attività _NUM_ del _DATE_", [
                     '_NUM_' => $codice,
-                    '_DATE_' => dateFormat($data),
+                    '_DATE_' => implode(', ', $date),
                 ]);
                 $riga->idintervento = $id_intervento;
                 $riga->um = 'ore';
@@ -235,12 +241,20 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             // Diritti di chiamata raggruppati per costo
             $diritti_chiamata = $sessioni->where('prezzo_diritto_chiamata', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_diritto_chiamata']);
             foreach ($diritti_chiamata as $gruppo) {
+                $date = [];
                 $diritto_chiamata = $gruppo->first();
                 $riga = Riga::build($fattura);
 
+                foreach ($gruppo as $sessione){
+                    $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                    if (!in_array($dateValue, $date)) {
+                        $date[] = $dateValue;
+                    }
+                }
+
                 $riga->descrizione = tr("Diritto di chiamata dell'attività _NUM_ del _DATE_", [
                     '_NUM_' => $codice,
-                    '_DATE_' => dateFormat($data),
+                    '_DATE_' => implode(', ', $date),
                 ]);
                 $riga->idintervento = $id_intervento;
                 // $riga->um = 'ore';
@@ -266,9 +280,17 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             // Viaggi raggruppati per costo
             $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm']);
             foreach ($viaggi as $gruppo) {
+                $date = [];
                 $qta_trasferta = $gruppo->sum('km');
                 if ($qta_trasferta == 0) {
                     continue;
+                }
+                
+                foreach ($gruppo as $sessione){
+                    $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                    if (!in_array($dateValue, $date)) {
+                        $date[] = $dateValue;
+                    }
                 }
 
                 $viaggio = $gruppo->first();
@@ -276,7 +298,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
 
                 $riga->descrizione = tr("Trasferta dell'attività _NUM_ del _DATE_", [
                     '_NUM_' => $codice,
-                    '_DATE_' => dateFormat($data),
+                    '_DATE_' => implode(', ', $date),
                 ]);
                 $riga->idintervento = $id_intervento;
                 $riga->um = 'km';

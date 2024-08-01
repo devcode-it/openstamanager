@@ -53,7 +53,7 @@ if (!empty($elementi)) {
         $descrizione = tr('Attività _CODICE_', [
             '_CODICE_' => $elemento['codice'],
         ]);
-        $modulo = 'Attività';
+        $modulo = 'Interventi';
         $id = $elemento['id'];
 
         echo '

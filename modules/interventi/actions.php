@@ -48,6 +48,7 @@ switch (post('op')) {
     case 'update':
         $idcontratto = post('idcontratto') ?: null;
         $id_promemoria = post('idcontratto_riga');
+        $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
 
         // Rimozione del collegamento al promemoria
         if (!empty($id_promemoria) && $intervento->id_contratto != $idcontratto) {
@@ -111,7 +112,7 @@ switch (post('op')) {
 
             // Notifica rimozione tecnico assegnato
             if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
-                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati)) {
+                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati_array)) {
                     $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
                     if (!empty($tecnico['email'])) {
                         $template = Template::where('name', 'Notifica rimozione intervento')->first();
@@ -127,7 +128,6 @@ switch (post('op')) {
             }
         }
 
-        $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
         $tecnici_assegnati = [];
 
         foreach ($tecnici_assegnati_array as $tecnico_assegnato) {

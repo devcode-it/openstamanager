@@ -28,7 +28,7 @@ switch (filter('op')) {
         $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            $spedizione_new = Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $spedizione_new = Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($spedizione_new)) {
                 $spedizione->setTranslation('title', $descrizione);
                 if (!empty($predefined)) {

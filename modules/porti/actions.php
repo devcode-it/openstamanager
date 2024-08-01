@@ -26,7 +26,7 @@ switch (filter('op')) {
         $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            $porto_new = Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $porto_new = Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($porto_new)) {
                 $porto->setTranslation('title', $descrizione);
                 if (!empty($predefined)) {

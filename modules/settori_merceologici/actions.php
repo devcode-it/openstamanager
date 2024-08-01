@@ -26,7 +26,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            $settore_new = Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $settore_new = Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($settore_new)) {
                 $settore->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {

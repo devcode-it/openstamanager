@@ -27,7 +27,7 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            $provenienza_new = Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $provenienza_new = Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($provenienza_new)) {
                 $provenienza->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {

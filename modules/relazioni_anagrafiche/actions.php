@@ -28,7 +28,7 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            $relazione_new = Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->orWhere('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $relazione_new = Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($relazione_new)) {
                 $relazione->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {

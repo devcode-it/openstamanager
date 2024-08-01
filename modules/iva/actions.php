@@ -31,7 +31,7 @@ switch (filter('op')) {
         $esigibilita = post('esigibilita');
         $descrizione = post('descrizione');
 
-        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->orWhere('name', $descrizione)->where('id', '!=', $iva->id)->first();
+        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->where('id', '!=', $iva->id)->first();
         if (!$aliquota) {
             $iva->esente = $esente;
             $iva->percentuale = $percentuale;

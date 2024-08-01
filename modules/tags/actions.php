@@ -50,14 +50,11 @@ switch (post('op')) {
             ]);
             $id_record = $dbo->lastInsertedID();
 
-            flash()->info(tr('Nuovo tag aggiunto!'));
-        }
+            if (isAjaxRequest()) {
+                echo json_encode(['id' => $id_record, 'text' => $nome]);
+            }
 
-        if (isAjaxRequest()) {
-            echo json_encode([
-                'id' => $id_record,
-                'text' => $nome,
-            ]);
+            flash()->info(tr('Nuovo tag aggiunto!'));
         }
 
         break;

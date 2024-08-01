@@ -130,8 +130,8 @@ UPDATE `zz_widgets` SET `more_link` = "$(\'#th_Tipo input\').val(\'\').trigger(\
 UPDATE `zz_settings` SET `sezione` = 'Applicazione' WHERE `zz_settings`.`nome` = "Stato dell\'attività alla chiusura"; 
 
 -- Viste modulo adattatori di archiviazione
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-(NULL, (SELECT id FROM zz_modules WHERE directory='giacenze_sedi'), 'Valore', '(prezzo_acquisto*movimenti.qta)', 11, 1, 0, 1, 0, '', '', 1, 1, 0);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`= 'Giacenze sedi'), 'Valore', '(prezzo_acquisto*movimenti.qta)', 11, 1, 0, 1, 0, '', '', 1, 1, 0);
 
-INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, 1, (SELECT id FROM zz_views WHERE id_module = (SELECT id FROM zz_modules WHERE directory='giacenze_sedi') AND query = '(prezzo_acquisto*qta)'), 'Valore');
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name` = 'Valore'), 'Valore');

@@ -630,11 +630,21 @@ function rimuoviRiga(id) {
             },
             success: function (response) {
                 renderMessages();
-                caricaRighe(null);
+                caricaRighe(null);';
+            if(!in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT'])){
+                echo '
+                $("#elimina").removeClass("disabled");';
+            }
+        echo '
             },
             error: function() {
                 renderMessages();
-                caricaRighe(null);
+                caricaRighe(null);';
+            if(!in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT'])){
+                echo '
+                $("#elimina").removeClass("disabled");';
+            }
+        echo '
             }
         });
     }).catch(swal.noop);

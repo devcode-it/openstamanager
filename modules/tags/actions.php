@@ -40,7 +40,7 @@ switch (post('op')) {
         $nome = post('name');
         $tag_new = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`name`='.prepare($nome));
 
-        if (!empty($tag_new) && $tag_new['id'] != $id_record) {
+        if (!empty($tag_new)) {
             flash()->error(tr('Tag _NAME_ già esistente!', [
                 '_NAME_' => $nome,
             ]));

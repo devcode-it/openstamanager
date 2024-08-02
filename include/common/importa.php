@@ -82,7 +82,7 @@ echo '
 // Creazione fattura dal documento
 if (!empty($options['create_document'])) {
     echo '
-    <div class="card card-warning">
+    <div class="card card-primary">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Nuovo documento').'</h3>
         </div>
@@ -213,7 +213,7 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
     }
 
     echo '
-    <div class="card card-info">
+    <div class="card card-primary">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Opzioni generali delle righe').'</h3>
         </div>
@@ -281,7 +281,7 @@ if (!empty($options['serials'])) {
 
 // Righe del documento
 echo '
-    <div class="card card-success">
+    <div class="card card-primary">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Righe da importare').'</h3>
         </div>
@@ -415,7 +415,7 @@ echo '
             </tbody>
 
             <tr>
-                <td colspan="3" class="text-right">
+                <td colspan="4" class="text-right">
                     <b>'.tr('Totale').':</b>
                 </td>
                 <td class="text-right">
@@ -428,7 +428,7 @@ echo '
 // Elenco righe evase completametne
 if (!$righe_evase->isEmpty()) {
     echo '
-    <div class="card card-info collapsable collapsed-card">
+    <div class="card card-primary collapsable collapsed-card">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Righe evase completamente').'</h3>
             <div class="card-tools pull-right">
@@ -461,7 +461,7 @@ if (!$righe_evase->isEmpty()) {
 
 // Gestione articolo sottoscorta
 echo '
-    <div class="alert alert-warning hidden" id="articoli_sottoscorta">
+    <div class="card alert hidden" id="articoli_sottoscorta">
         <table class="table table-condensed">
             <thead>
                 <tr>
@@ -472,7 +472,7 @@ echo '
                 </tr>
             </thead>
 
-            <tbody></tbody>
+            <tbody class="alert-warning"></tbody>
         </table>
     </div>';
 

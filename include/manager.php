@@ -222,9 +222,9 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
                     </button>
 
                     <ul class="dropdown-menu">
-                        <li><a class="table-btn btn-pdf disabled" disabled>'.tr('PDF').'</a></li>
+                        <a class="table-btn btn-pdf disabled clickable dropdown-item" disabled>'.tr('PDF').'</a>
 
-                        <li><a class="table-btn btn-excel disabled" disabled>'.tr('Excel').'</a></li>
+                        <a class="table-btn btn-excel disabled clickable dropdown-item" disabled>'.tr('Excel').'</a>
                     </ul>
                 </div>';
     } else {

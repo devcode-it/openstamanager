@@ -56,7 +56,13 @@ switch (post('op')) {
                 $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia);
 
                 // TODO: da riscrivere con Guzzle e spostare su hook
-                $ch = curl_init();
+                if (!function_exists('curl_init')) {
+                    // cURL non è attivo
+                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+                    return false;
+                } else {
+                    $ch = curl_init();
+                }
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);

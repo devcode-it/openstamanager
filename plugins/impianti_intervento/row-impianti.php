@@ -57,9 +57,9 @@ foreach ($impianti_collegati as $impianto) {
     }
 }
 
-$percentuale_completati = $n_impianti ? round(($impianti_completati * 100) / $n_impianti) : 0;
-$percentuale_non_completati = $n_impianti ? round(($impianti_non_completati * 100) / $n_impianti) : 0;
-$percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) / $n_impianti) : 0;
+$percentuale_completati = $n_impianti ? round(($impianti_completati * 100) / ($n_impianti?:1)) : 0;
+$percentuale_non_completati = $n_impianti ? round(($impianti_non_completati * 100) / ($n_impianti?:1)) : 0;
+$percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) / ($n_impianti?:1)) : 0;
 
 echo '
 <div class="row">

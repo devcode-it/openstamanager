@@ -484,7 +484,7 @@ if (!empty($righe)) {
                 if ($tipo_sconto == '%') {
                     $sconto_calcolato = calcola_sconto([
                         'sconto' => $sconto_riga,
-                        'prezzo' => $sconto_unitario ? $prezzo_unitario - ($tot_sconto_calcolato / $qta) : $prezzo_unitario,
+                        'prezzo' => $sconto_unitario ? $prezzo_unitario - ($tot_sconto_calcolato / ($qta?:1)) : $prezzo_unitario,
                         'tipo' => 'PRC',
                         'qta' => $qta,
                     ]);

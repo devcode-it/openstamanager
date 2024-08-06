@@ -93,7 +93,7 @@ class Pianificazione extends Document
     {
         $righe = $this->contratto->getRighe();
         $pianificazioni = $this->contratto->pianificazioni;
-        $numero_righe = $righe->count() / $pianificazioni->count();
+        $numero_righe = $righe->count() / ($pianificazioni->count()?:1);
 
         $p = $this;
         $index = $pianificazioni->search(fn ($item) => $item->id == $p->id);

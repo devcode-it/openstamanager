@@ -149,7 +149,7 @@ foreach ($righe as $riga) {
         foreach ($evasione_bar as $table => $color) {
             $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
             if ($righe_ev->count() > 0) {
-                $perc_ev = $righe_ev->sum('qta') * 100 / $riga->qta;
+                $perc_ev = $righe_ev->sum('qta') * 100 / ($riga->qta?:1);
                 echo '
                             <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
             }

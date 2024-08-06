@@ -86,7 +86,7 @@ class FatturaSemplificata extends FatturaElettronica
 
                 $prezzo = $importo - $imposta;
 
-                $aliquota = !empty($prezzo) ? $imposta / $prezzo * 100 : 0;
+                $aliquota = !empty($prezzo) ? $imposta / ($prezzo?:1) * 100 : 0;
                 $result[$index]['AliquotaIVA'] = $aliquota;
             }
         }

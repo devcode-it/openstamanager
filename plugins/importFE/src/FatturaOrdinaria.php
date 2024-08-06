@@ -155,7 +155,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $differenza_iva = round((float) $riepilogo['Imposta'] - $totale_imposta[$riepilogo['AliquotaIVA']], 2);
 
             if ($differenza_iva) {
-                $valore = $differenza_iva * 100 / $riepilogo['AliquotaIVA'];
+                $valore = $differenza_iva * 100 / ($riepilogo['AliquotaIVA']?:1);
             }
 
             if ($valore != 0) {
@@ -353,8 +353,8 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
                 // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
                 if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && $riga['UnitaMisura'] == $articolo->um_secondaria) {
-                    $qta = (($riga['Quantita'] ?: 1) / $articolo->fattore_um_secondaria);
-                    $prezzo = $totale_righe_riepilogo > 0 ? $totale_righe_riepilogo / $qta : -($totale_righe_riepilogo / $qta);
+                    $qta = (($riga['Quantita'] ?: 1) / ($articolo->fattore_um_secondaria?:1));
+                    $prezzo = $totale_righe_riepilogo > 0 ? $totale_righe_riepilogo / ($qta?:1) : -($totale_righe_riepilogo / ($qta?:1));
                 } else {
                     $qta = ($riga['Quantita'] ?: 1);
                     $prezzo = $totale_righe_riepilogo > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
@@ -399,13 +399,13 @@ class FatturaOrdinaria extends FatturaElettronica
                         if ($tipo_sconto == 'PRC') {
                             $sconto_calcolato = calcola_sconto([
                                 'sconto' => $sconto_riga,
-                                'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($tot_sconto_calcolato / $obj->qta) : $obj->prezzo_unitario,
+                                'prezzo' => $sconto_unitario ? $obj->prezzo_unitario - ($tot_sconto_calcolato / ($obj->qta?:1)) : $obj->prezzo_unitario,
                                 'tipo' => 'PRC',
                                 'qta' => $obj->qta,
                             ]);
 
                             if ($tipo == 'PRC') {
-                                $tot_sconto = $sconto_calcolato * 100 / $obj->imponibile;
+                                $tot_sconto = $sconto_calcolato * 100 / ($obj->imponibile?:1);
                             } else {
                                 $tot_sconto = $sconto_calcolato;
                             }
@@ -532,7 +532,7 @@ class FatturaOrdinaria extends FatturaElettronica
                         $nome = ucwords(strtolower($m[2]));
                         $percentuale = $m[3];
 
-                        $totale_previsto = round($importo / $percentuale * 100, 2);
+                        $totale_previsto = round($importo / ($percentuale?:1) * 100, 2);
                         $percentuale_importo = round($totale_previsto / ($totale ?: 1) * 100, 2);
 
                         $ritenuta_contributi = $database->fetchOne('SELECT * FROM`co_ritenuta_contributi` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
@@ -633,7 +633,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $totale = sum($totali);
             }
 
-            $totale_previsto = round($importo * 100 / $percentuale, 2);
+            $totale_previsto = round($importo * 100 / ($percentuale?:1), 2);
             $percentuale_importo = round($totale_previsto / ($totale ?: 1) * 100, 2);
             $percentuale_importo = min($percentuale_importo, 100); // Nota: Fix per la percentuale che superava il 100% nel caso di importi con Rivalsa compresa
 

@@ -32,7 +32,7 @@ $prezzo_max = $prezzi['max'];
 $prezzo_medio = $prezzi['media'];
 
 $oscillazione = $prezzo_max['prezzo'] - $prezzo_min['prezzo'];
-$oscillazione_percentuale = $prezzo_medio ? $oscillazione * 100 / $prezzo_medio : 0;
+$oscillazione_percentuale = $prezzo_medio ? $oscillazione * 100 / ($prezzo_medio?:1) : 0;
 
 $data_min = $prezzo_min['data'] ? strtotime((string) $prezzo_min['data']) : '';
 $data_max = $prezzo_max['data'] ? strtotime((string) $prezzo_max['data']) : '';

@@ -172,7 +172,7 @@ $operations['ricerca-coordinate'] = [
     ],
 ];
 
-# TODO: 06/08/2024 Correggere questa operazione e rimuovere da Beta
+// TODO: 06/08/2024 Correggere questa operazione e rimuovere da Beta
 if (App::debug()) {
     $operations['ricerca-coordinate-google'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (Google)').'</span> <span class="badge badge-danger">beta</span>',

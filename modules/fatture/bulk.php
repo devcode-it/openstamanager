@@ -658,7 +658,7 @@ $operations['copy-bulk'] = [
     ],
 ];
 
-# TODO: 06/08/2024 Migliorare introducendo controlli e portare in versione stabile
+// TODO: 06/08/2024 Migliorare introducendo controlli e portare in versione stabile
 if (App::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',

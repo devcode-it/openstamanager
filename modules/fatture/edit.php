@@ -563,13 +563,13 @@ if ($dir == 'entrata') {
     echo '
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
+                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr('Se abilitata, questa impostazione addebita automaticamente l\'importo della marca da bollo quando la fattura soddisfa i requisiti per la sua applicazione. In particolare, la marca da bollo si applica se la fattura contiene righe con aliquote IVA con natura N2.1, N2.2, N3.5, N3.6, N4, e se il totale della fattura supera i _MONEY_', [
         '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-    ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
+    ]).'.<br> Se disabilitata questa impostazione permette di impostare manualmente la marca da bollo.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
 
                 <div class="col-md-3 bollo">
-                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$", "help":"Se abilitata addebita l\'importo della marca da bollo definito nell\'impostazione in fattura.<br>Se disabilitato, non imposta alcuna marca da bollo in fattura." ]}
                 </div>
 
                 <div class="col-md-3 bollo">

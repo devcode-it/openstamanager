@@ -31,7 +31,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`='.prepare($id));
-            $tipi = array_column($anagrafica, 'idtipoanagrafica');
+            $tipi = array_column($anagrafica, 'id');
 
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
@@ -39,12 +39,13 @@ switch (post('op')) {
                 ++ $eliminate;
             }
         }
+
         if ($eliminate > 1) {
             flash()->info(tr('Sono state eliminate _NUM_ anagrafiche', ['_NUM_' => $eliminate]));
         } elseif ($eliminate == 1) {
             flash()->info(tr('E\' stata eliminata una anagrafica'));
         } else {
-            flash()->info(tr('Non è stato possibile eliminare le anagrafiche selezionate.'));
+            flash()->warning(tr('Non è stato possibile eliminare le anagrafiche selezionate.'));
         }
 
         break;

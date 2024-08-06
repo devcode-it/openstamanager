@@ -538,11 +538,7 @@ function getTable(selector) {
         getSelectedRowsFooter: function () {
             let ids = this.getSelectedRows();
 
-            let summable_results = [];
-            let avg_results = [];
-            let results = [];
-            
-            summable_results = $.ajax({
+            return $.ajax({
                 url: globals.rootdir + "/ajax.php",
                 type: "POST",
                 dataType: "json",
@@ -553,25 +549,10 @@ function getTable(selector) {
                     ids: ids,
                 }
             });
-
-            avg_results = $.ajax({
-                url: globals.rootdir + "/ajax.php",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    id_module: this.id_module,
-                    id_plugin: this.id_plugin,
-                    op: "avg-results",
-                    ids: ids,
-                }
-            });
-
-            results = $.when(summable_results, avg_results);
-            return results;
         },
 
         /**
-         * Aggiornamento dei campi summable e avg
+         * Aggiornamento dei campi summable
          */
         updateFooterForSelectedRows: function () {
             let datatable = this.datatable;
@@ -582,9 +563,6 @@ function getTable(selector) {
                     let sel = datatable.column(index).footer();
                     $(sel).css("text-align", "right")
                         .attr("id", "summable")
-                        .html(value);
-                    $(sel).css("text-align", "right")
-                        .attr("id", "avg")
                         .html(value);
                 }
             });

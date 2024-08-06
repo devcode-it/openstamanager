@@ -36,7 +36,7 @@ foreach ($fields as $key => $field) {
     $editable = !($field->default && $enable_readonly);
 
     echo '
-                <div class="card collapsed-card card-'.($field->visible ? 'success' : 'danger').'">
+                <div class="card collapsed-card card-outline card-'.($field->visible ? 'success' : 'danger').'">
                     <div class="card-header with-border">
                         <h3 class="card-title">'.
                             $field->getTranslation('title').' <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">('.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().')</small>

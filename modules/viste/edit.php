@@ -103,9 +103,10 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active nav-item active"><a class="nav-link" data-card-widget="tab" href="#fields">'.tr('Campi').' <span class="badge">'.View::where('id_module', $record->id)->count().'</a></li>
-        <li class="nav-item"><a class="nav-link" data-card-widget="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
+        <li class="active nav-item clicked"><a class="nav-link" data-card-widget="tab" href="#fields">'.tr('Campi').' <span class="badge badge-info">'.View::where('id_module', $record->id)->count().'</a></li>
+        <li class="nav-item"><a class="nav-link" data-card-widget="tab" href="#filters">'.tr('Filtri').' <span class="badge badge-info">'.Clause::where('idmodule', $record->id)->count().' </span></a></li>
     </ul>
+    <br>
 
     <div class="tab-content">
 

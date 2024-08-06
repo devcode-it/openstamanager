@@ -34,7 +34,7 @@ if (!empty($additionals)) {
         $editable = !($additional['default'] && $enable_readonly);
 
         echo '
-        <div class="card collapsed-card card-'.($additional['enabled'] ? 'success' : 'danger').'">
+        <div class="card collapsed-card card-outline card-'.($additional['enabled'] ? 'success' : 'danger').'">
             <div class="card-header with-border">
                 <h3 class="card-title">'.
                     tr('Filtro: _NAME_', [

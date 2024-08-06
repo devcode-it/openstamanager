@@ -36,10 +36,16 @@ switch (post('op')) {
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
                 $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `idanagrafica` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                ++ $eliminate;
             }
         }
-
-        flash()->info(tr('Anagrafiche eliminate!'));
+        if ($eliminate > 1) {
+            flash()->info(tr('Sono state eliminate _NUM_ anagrafiche', ['_NUM_' => $eliminate]));
+        } elseif ($eliminate == 1) {
+            flash()->info(tr('E\' stata eliminata una anagrafica'));
+        } else {
+            flash()->info(tr('Non è stato possibile eliminare le anagrafiche selezionate.'));
+        }
 
         break;
 
@@ -166,6 +172,7 @@ $operations['ricerca-coordinate'] = [
     ],
 ];
 
+# TODO: 06/08/2024 Correggere questa operazione e rimuovere da Beta
 if (App::debug()) {
     $operations['ricerca-coordinate-google'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate (Google)').'</span> <span class="badge badge-danger">beta</span>',

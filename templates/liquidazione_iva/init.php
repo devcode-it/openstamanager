@@ -26,8 +26,9 @@ $date_end = filter('date_end');
 
 $anno_precedente_start = (new Carbon($date_start))->subYears(1)->format('Y-m-d');
 $anno_precedente_end = (new Carbon($date_end))->subYears(1)->format('Y-m-d');
+$periodo = setting('Liquidazione IVA');
 
-if (setting('Liquidazione IVA') == 'Mensile') {
+if ($periodo == 'Mensile') {
     $periodo_precedente_start = (new Carbon($date_start))->subMonth()->format('Y-m-d');
     $periodo_precedente_end = (new Carbon($date_end))->subMonth()->format('Y-m-d');
 } else {

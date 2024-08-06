@@ -44,8 +44,8 @@ $totale_iva_periodo_precedente = $totale_iva_vendite_periodo_precedente - $total
 
 $totale_iva = $totale_iva_esigibile - $totale_iva_detraibile;
 
-if ($periodo['valore'] == 'Trimestrale' && $totale_iva > 25.82) {
-    if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
+if ($periodo == 'Trimestrale') {
+    if ($totale_iva_periodo_precedente > 0) {
         $totale_iva += $totale_iva_periodo_precedente;
     }
     $maggiorazione = $totale_iva * 0.01;
@@ -328,15 +328,10 @@ echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2
         <td class=text-right>'.moneyFormat($totale_iva_nondetraibile, 2).'</td>
     </tr>
     <tr>
-        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>';
-if ($totale_iva_periodo_precedente < 25.82 && $totale_iva_periodo_precedente > 0) {
-    echo '
-            <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2).'</td>';
-} else {
-    echo '
-            <td class=text-right></td>';
-}
-echo '
+        <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>
+            <td class=text-right>'.($totale_iva_periodo_precedente > 0 ? moneyFormat(abs($totale_iva_periodo_precedente), 2):'').'</td>
+
+
     </tr>
     <tr>
         <td>DI CUI INTERESSI PER RAVVEDIMENTO</td>
@@ -350,13 +345,9 @@ echo '
         <td>CREDITO IVA COMPENSABILE</td>
         <td class=text-right></td>
     </tr>
-    <tr>';
-if ($totale_iva >= 0) {
-    echo ' <td>IVA A DEBITO</td>';
-} else {
-    echo ' <td>IVA A CREDITO</td>';
-}
-echo ' <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
+    <tr>
+        <td>'.($totale_iva >= 0 ? 'IVA A DEBITO' : 'IVA A CREDITO') .'</td>
+        <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
     </tr>
     <tr>
         <td>CREDITO SPECIALE DI IMPOSTA</td>
@@ -364,34 +355,20 @@ echo ' <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
     </tr>
     <tr>
         <td>MAGGIORAZIONE 1,00%</td>
-        <td class=text-right>'.($periodo['valore'] == 'Trimestrale' && $totale_iva > 25.82 ? moneyFormat($maggiorazione, 2) : '').'</td>
+        <td class=text-right>'.($periodo == 'Trimestrale' ? moneyFormat($maggiorazione, 2) : '').'</td>
     </tr>
     <tr>
-        <td>IVA A DEBITO CON MAGGIORAZIONE</td>';
-if ($totale_iva > 25.82 && $periodo['valore'] == 'Trimestrale') {
-    echo '
-            <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
-} else {
-    echo '
-            <td class=text-right></td>';
-}
-echo '
+        <td>IVA A DEBITO CON MAGGIORAZIONE</td>
+            <td class=text-right>'.($periodo == 'Trimestrale' ?moneyFormat($totale_iva_maggiorata, 2): '').'</td>
+
+
     </tr>
     <tr>
-        <td>IMPORTO DA VERSARE</td>';
-if ($totale_iva > 25.82) {
-    if ($periodo['valore'] == 'Mensile') {
-        echo '
-                <td class=text-right>'.moneyFormat($totale_iva, 2).'</td>';
-    } else {
-        echo '
-                <td class=text-right>'.moneyFormat($totale_iva_maggiorata, 2).'</td>';
-    }
-} else {
-    echo '
-            <td class=text-right></td>';
-}
-echo '
+        <td>IMPORTO DA VERSARE</td>
+            <td class=text-right>'.($periodo == 'Mensile' ?moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>
+
+
+
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

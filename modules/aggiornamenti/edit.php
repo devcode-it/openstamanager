@@ -188,14 +188,14 @@ function search(button) {
 // Verifiche di integrità
 echo '
     <div class="col-md-4">
-        <div class="card card-primary">
+        <div class="card card-primary card-outline">
             <div class="card-header with-border">
                 <h3 class="card-title">
                     '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="card-body">
-                <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
+                <button type="button" class="btn btn-info btn-block" onclick="checksum(this)">
                     <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
                 </button>
 
@@ -203,7 +203,7 @@ echo '
                     <i class="fa fa-database"></i> '.tr('Controlla database').'
                 </button>
 
-                <button type="button" class="btn btn-block" onclick="controlli(this)">
+                <button type="button" class="btn btn-info btn-block" onclick="controlli(this)">
                     <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
                 </button>
             </div>
@@ -214,7 +214,7 @@ echo '
 echo '
 
     <div class="col-md-4">
-        <div class="card card-primary">
+        <div class="card card-primary card-outline">
             <div class="card-header with-border">
                 <h3 class="card-title">
                     '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
@@ -238,7 +238,7 @@ echo '   </div>
 // Form di caricamento aggiornamenti gestionale o moduli
 echo '
     <div class="col-md-4">
-        <div class="card card-primary">
+        <div class="card card-primary card-outline">
             <div class="card-header with-border">
                 <h3 class="card-title">
                     '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>

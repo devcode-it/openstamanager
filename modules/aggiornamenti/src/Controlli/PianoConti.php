@@ -70,16 +70,22 @@ class PianoConti extends Controllo
 
         foreach ($anagrafiche_interessate as $anagrafica) {
             $tipi = explode(',', (string) $anagrafica['tipi_anagrafica']);
-            $cliente = in_array('Cliente', $tipi) && empty($anagrafica['idconto_cliente']);
-            $fornitore = in_array('Fornitore', $tipi) && empty($anagrafica['idconto_fornitore']);
+            $cliente = in_array('Cliente', $tipi);
+            $fornitore = in_array('Fornitore', $tipi);
+            $is_esistente = 0;
+            $descrizione = 0;
+            
+            if ($cliente || $fornitore) {
+                $is_esistente = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_cliente'].' OR id = '.$anagrafica['idconto_fornitore']);
+                $descrizione = null;
 
-            $descrizione = null;
-            if ($cliente && $fornitore) {
-                $descrizione = tr("L'anagrafica corrente non ha impostati i conti relativi al Piano dei Conti");
-            } elseif ($cliente) {
-                $descrizione = tr("L'anagrafica corrente non ha impostati il conto Cliente relativo al Piano dei Conti");
-            } elseif ($fornitore) {
-                $descrizione = tr("L'anagrafica corrente non ha impostati il conto Fornitore relativo al Piano dei Conti");
+                if (($cliente && $fornitore) && (empty($anagrafica['idconto_cliente']) || empty($anagrafica['idconto_fornitore']) || !$is_esistente)) {
+                    $descrizione = tr("L'anagrafica corrente non ha impostati i conti relativi al Piano dei Conti");
+                } elseif ($cliente && (empty($anagrafica['idconto_cliente'])) || !$is_esistente) {
+                    $descrizione = tr("L'anagrafica corrente non ha impostati il conto Cliente relativo al Piano dei Conti");
+                } elseif ($fornitore && (empty($anagrafica['idconto_fornitore'])) || !$is_esistente) {
+                    $descrizione = tr("L'anagrafica corrente non ha impostati il conto Fornitore relativo al Piano dei Conti");
+                } 
             }
 
             if (!empty($descrizione)) {

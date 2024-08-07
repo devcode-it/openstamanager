@@ -442,14 +442,14 @@ foreach ($requirements as $key => $values) {
     }
 
     echo '
-<div class="card card-'.($general_status ? 'success collapsed-card' : 'danger').'">
+<div class="card card-outline card-'.($general_status ? 'success collapsed-card' : 'danger').'">
     <div class="card-header with-border">
         <h3 class="card-title">'.$key.'</h3>';
 
     if ($general_status) {
         echo '
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-widget="collapse">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-plus"></i>
             </button>
         </div>';

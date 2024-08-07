@@ -112,6 +112,14 @@ class Anagrafica extends Model
             // Collegamento conto
             $anagrafica->idconto_cliente = $id_conto;
             $anagrafica->save();
+        } else {
+            $conto = $anagrafica->idconto_cliente;
+            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_cliente']);
+            if (!$is_esistente) {
+                $anagrafica->idconto_cliente = null;
+                $anagrafica->save();
+                Anagrafica::fixCliente($anagrafica);
+            }
         }
     }
 
@@ -124,6 +132,14 @@ class Anagrafica extends Model
             // Collegamento conto
             $anagrafica->idconto_fornitore = $id_conto;
             $anagrafica->save();
+        } else {
+            $conto = $anagrafica->idconto_fornitore;
+            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_fornitore']);
+            if (!$is_esistente) {
+                $anagrafica->idconto_fornitore = null;
+                $anagrafica->save();
+                Anagrafica::fixFornitore($anagrafica);
+            }
         }
     }
 

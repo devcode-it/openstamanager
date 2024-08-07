@@ -443,24 +443,59 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-        ],
-    ];
-}
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+$operations['change-iva'] = [
+    'text' => '<span><i class="fa fa-percent"></i> '.tr('Aggiorna aliquota iva').'</span>',
     'data' => [
-        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
+        'title' => tr('Cambiare l\'aliquota iva?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'aliquota iva').'
+        <br><br>{[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "ajax-source": "iva" ]}',
         'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-categoria'] = [
+    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria e sottocategoria').'</span>',
+    'data' => [
+        'title' => tr('Cambiare la categoria e la sottocategoria?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria e la sottocategoria').'
+        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie", "extra": "onchange=\"$(\'#subcategoria\').enable();updateSelectOption(\'id_categoria\', $(\'#id_categoria\').val());session_set(\'superselect,id_categoria\', $(\'#id_categoria\').val(), 0);$(\'#subcategoria\').val(null).trigger(\'change\');\"" ]}<br>
+        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "disabled": "1", "select-options-escape": true ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-coefficiente'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna coefficiente di vendita').'</span>',
+    'data' => [
+        'title' => tr('Aggiornare il coefficiente di vendita per gli articoli selezionati?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il coefficiente e il relativo prezzo di vendita').'<br><br>{[ "type": "number", "label": "'.tr('Coefficiente di vendita').'", "name": "coefficiente", "required": 1 ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['change-conto-acquisto'] = [
+    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di acquisto').'</span>',
+    'data' => [
+        'title' => tr('Cambiare il conto predefinito di acquisto?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di acquisto').'
+        <br><br>{[ "type": "select", "label": "'.tr('Conto acquisto').'", "name": "conto_acquisto", "required": 1, "ajax-source": "conti-acquisti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-conto-vendita'] = [
+    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di vendita').'</span>',
+    'data' => [
+        'title' => tr('Cambiare il conto predefinito di vendita?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di vendita').'
+        <br><br>{[ "type": "select", "label": "'.tr('Conto vendita').'", "name": "conto_vendita", "required": 1, "ajax-source": "conti-vendite" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 
@@ -490,29 +525,6 @@ $operations['change-vendita'] = [
     ],
 ];
 
-$operations['change-coefficiente'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna coefficiente di vendita').'</span>',
-    'data' => [
-        'title' => tr('Aggiornare il coefficiente di vendita per gli articoli selezionati?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il coefficiente e il relativo prezzo di vendita').'<br><br>{[ "type": "number", "label": "'.tr('Coefficiente di vendita').'", "name": "coefficiente", "required": 1 ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
-
-$operations['stampa-etichette'] = [
-    'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
-    'data' => [
-        'title' => tr('Stampare le etichette?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà stampata un\'etichetta').'<br><br>
-        {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => true,
-    ],
-];
-
 $operations['change-qta'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna quantità').'</span>',
     'data' => [
@@ -521,6 +533,28 @@ $operations['change-qta'] = [
         <br><br>{[ "type": "text", "label": "'.tr('Quantità').'", "name": "qta", "required": 1 ]}
         {[ "type": "text", "label": "'.tr('Causale').'", "name": "descrizione", "required": 1 ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['change-um'] = [
+    'text' => '<span><i class="fa fa-balance-scale"></i> '.tr('Aggiorna unità di misura').'</span>',
+    'data' => [
+        'title' => tr('Cambiare l\'unità di misura?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'unità di misura').'
+        <br><br>{[ "type": "select", "label": "'.tr('Unità di misura').'", "name": "um", "required": 1, "ajax-source": "misure" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['add-listino'] = [
+    'text' => '<span><i class="fa fa-plus"></i> '.tr('Aggiungi a listino cliente').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero aggiungere gli articoli al listino cliente?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 1, "ajax-source": "listini" ]}
+        <br>{[ "type": "number", "label": "'.tr('Sconto percentuale').'", "name": "sconto_percentuale", "required": 1, "icon-after": "%" ]}
+        <br>{[ "type": "date", "label": "'.tr('Data scadenza').'", "name": "data_scadenza", "placeholder": "'.tr('Utilizza data scadenza predefinita listino').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],
@@ -541,26 +575,24 @@ $operations['crea-preventivo'] = [
     ],
 ];
 
-$operations['change-categoria'] = [
-    'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria e sottocategoria').'</span>',
-    'data' => [
-        'title' => tr('Cambiare la categoria e la sottocategoria?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la categoria e la sottocategoria').'
-        <br><br>{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 1, "ajax-source": "categorie", "extra": "onchange=\"$(\'#subcategoria\').enable();updateSelectOption(\'id_categoria\', $(\'#id_categoria\').val());session_set(\'superselect,id_categoria\', $(\'#id_categoria\').val(), 0);$(\'#subcategoria\').val(null).trigger(\'change\');\"" ]}<br>
-        {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "subcategoria", "ajax-source": "sottocategorie", "disabled": "1", "select-options-escape": true ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
+if (App::debug()) {
+    $operations['delete-bulk'] = [
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+        'data' => [
+            'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-danger',
+        ],
+    ];
+}
 
-$operations['change-iva'] = [
-    'text' => '<span><i class="fa fa-percent"></i> '.tr('Aggiorna aliquota iva').'</span>',
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
     'data' => [
-        'title' => tr('Cambiare l\'aliquota iva?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'aliquota iva').'
-        <br><br>{[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "ajax-source": "iva" ]}',
+        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
         'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
     ],
 ];
 
@@ -572,39 +604,6 @@ $operations['set-acquisto-ifzero'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
-    ],
-];
-
-$operations['change-um'] = [
-    'text' => '<span><i class="fa fa-balance-scale"></i> '.tr('Aggiorna unità di misura').'</span>',
-    'data' => [
-        'title' => tr('Cambiare l\'unità di misura?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificata l\'unità di misura').'
-        <br><br>{[ "type": "select", "label": "'.tr('Unità di misura').'", "name": "um", "required": 1, "ajax-source": "misure" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['change-conto-acquisto'] = [
-    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di acquisto').'</span>',
-    'data' => [
-        'title' => tr('Cambiare il conto predefinito di acquisto?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di acquisto').'
-        <br><br>{[ "type": "select", "label": "'.tr('Conto acquisto').'", "name": "conto_acquisto", "required": 1, "ajax-source": "conti-acquisti" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['change-conto-vendita'] = [
-    'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di vendita').'</span>',
-    'data' => [
-        'title' => tr('Cambiare il conto predefinito di vendita?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà modificato il conto predefinito di vendita').'
-        <br><br>{[ "type": "select", "label": "'.tr('Conto vendita').'", "name": "conto_vendita", "required": 1, "ajax-source": "conti-vendite" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 
@@ -620,14 +619,15 @@ $operations['set-provvigione'] = [
     ],
 ];
 
-$operations['add-listino'] = [
-    'text' => '<span><i class="fa fa-plus"></i> '.tr('Aggiungi a listino cliente').'</span>',
+$operations['stampa-etichette'] = [
+    'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero aggiungere gli articoli al listino cliente?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 1, "ajax-source": "listini" ]}
-        <br>{[ "type": "number", "label": "'.tr('Sconto percentuale').'", "name": "sconto_percentuale", "required": 1, "icon-after": "%" ]}
-        <br>{[ "type": "date", "label": "'.tr('Data scadenza').'", "name": "data_scadenza", "placeholder": "'.tr('Utilizza data scadenza predefinita listino').'" ]}',
+        'title' => tr('Stampare le etichette?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà stampata un\'etichetta').'<br><br>
+        {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
     ],
 ];
 

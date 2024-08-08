@@ -142,6 +142,13 @@ if ((setting('Sistema di firma') == 'Base') || isMobile()) {
             $("#firma").on("click", function() {
                 $("#preview").addClass("hide");
                 try {
+                    
+                    // Controlla se la pagina è servita tramite HTTPS  
+                    if (window.location.protocol !== \'https:\') {
+                        swal("'.tr('Errore').'", "'.tr('Questa funzione richiede una connessione HTTPS.').'", "error");  
+                        $("#modals > div").modal("hide");
+                    }  
+                                
                     // Check if navigator.hid is available
                     if (navigator.hid) {
                             caricaTavoletta()
@@ -150,6 +157,7 @@ if ((setting('Sistema di firma') == 'Base') || isMobile()) {
                         swal("'.tr('Errore').'", "'.tr('navigator.hid non è supportato da questo browser!').'", "error");
                         $("#modals > div").modal("hide");
                     }
+
                 } catch (error) {
                     // Handle any other errors that may occur
                     console.error("An error occurred:", error);

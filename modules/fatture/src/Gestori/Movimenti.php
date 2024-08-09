@@ -91,7 +91,7 @@ class Movimenti
          *
          * Totale (Split Payment disabilitato), oppure Totale - IVA detraibile (Split Payment abilitato) -> DARE per Vendita, AVERE per Acquisto
          */
-        $anagrafica = $this->fattura->anagrafica;
+        $anagrafica = \Modules\Anagrafiche\Anagrafica::find(post('idanagrafica'));
 
         $id_conto = $is_acquisto ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente;
         if (empty($id_conto)) {

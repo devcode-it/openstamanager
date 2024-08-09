@@ -325,7 +325,7 @@ if ($dir == 'entrata') {
     echo '
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                    {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'", "icon-after": "KG" ]}
                     <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'", "decimals": "qta">
                 </div>
 

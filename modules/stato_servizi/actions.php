@@ -381,9 +381,11 @@ switch (filter('op')) {
         $spazio_totale = floatval($informazioni['maxSize']) * (1024 ** 2);
         $avviso_spazio = !empty($spazio_totale) && floatval($informazioni['size']) > 0.9 * $spazio_totale;
 
-        // Restrizione storico agli ultimi 3 anni
+        
         $history = (array) $informazioni['history'];
-        $history = array_slice($history, 0, 3);
+
+        // Restrizione storico agli ultimi 3 anni
+        //$history = array_slice($history, 0, 3);
 
         $max_number = $informazioni['maxNumber'];
         $avviso_numero = !empty($max_number) && floatval($history[0]['number']) > 0.9 * $max_number;

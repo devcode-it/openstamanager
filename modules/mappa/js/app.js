@@ -11,14 +11,6 @@ $(document).ready(function() {
 
 let map;
 var markers = [];
-var icon = new L.Icon({
-    iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
 
 $('#menu-filtri-toggle').click(function() {
 
@@ -41,9 +33,11 @@ $('#menu-filtri-toggle').click(function() {
     }
 });
 
+
 function reload_pointers() {
     clearMarkers();
     var check = [];
+    var svgContent = "";
 
     $("input[type='checkbox']").each(function() {
         if($(this).is(':checked')){
@@ -53,16 +47,61 @@ function reload_pointers() {
         }
     });
 
-    $.get(ROOTDIR+'/modules/mappa/actions.php?op=get_markers&idanagrafica='+$('#idanagrafica').val()+'&check='+check, function(data){
+    $.ajax({
+        url: globals.rootdir + '/assets/dist/img/leaflet/place-marker.svg', // Percorso al file SVG
+        dataType: 'text', // Imposta il tipo di dati attesi
+        success: function(data) {
+            svgContent = data; // Inserisci il contenuto SVG nella variabile
+        },
+        error: function() {
+            alert('Failed to load SVG file.');
+        }
+    });
+
+    $.get(globals.rootdir + '/modules/mappa/actions.php?op=get_markers&idanagrafica='+$('#idanagrafica').val()+'&check='+check, function(data){
         var dettagli = JSON.parse(data);
         dettagli.forEach(function(dettaglio) {
 
             if (dettaglio.lat && dettaglio.lng) {
+                let svgIcon = L.divIcon({
+                    html: svgContent.replace('fill="#cccccc"','fill="' + dettaglio.colore + '"'),
+                    className: '',
+                    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                    iconSize: [45, 61],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
                 L.marker([dettaglio.lat, dettaglio.lng], {
-                icon: icon
-                }).addTo(map);
+                    icon: svgIcon
+                }).bindTooltip("", 
+                    {
+                        permanent: false, 
+                        direction: 'right'
+                    }
+                ).bindPopup(dettaglio.descrizione
+                ).addTo(map);
             }
         });
+
+        if (input("lat").get() && input("lng").get()) {
+            const lat = parseFloat(input("lat").get());
+            const lng = parseFloat(input("lng").get());
+
+            var icon = new L.Icon({
+                iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            L.marker([lat, lng], {
+                icon: icon
+            }).addTo(map);
+        }
     });
 }
 

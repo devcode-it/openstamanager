@@ -30,14 +30,28 @@ include_once __DIR__.'/../../core.php';
 <div id="menu-filtri" class="open-menu">
     <div style='width:100%;height:50px;background-color:#4d4d4d;padding:8px;font-size:25px;color:white;' class='text-center'>
         <div class="pull-left"><i class='fa fa-forward clickable' id="menu-filtri-toggle"></i></div>
-        <b>Filtri</b>
+        <b><?php echo tr('Filtri');?></b>
     </div>
 
     <div id="lista-filtri" style="padding:20px 40px;height:637px;overflow:auto;">
 
         <div class="row">
+            <div class="col-md-12" id="geocomplete">
+                <input type="hidden" name="lat" id="lat" value="">
+                <input type="hidden" name="lng" id="lng" value="">
+                {[ "type": "text", "label": "<?php echo tr('Indirizzo');?>", "name": "gaddress", "value": "", "extra": "data-geo='formatted_address'", "icon-after":"<button type=\"button\" class=\"btn btn-info\" onclick=\"initGeocomplete();\"><i class=\"fa fa-search\"></i></button>", "icon-before":"<button type=\"button\" class=\"btn btn-info\" onclick=\"getLocation();\"><i class=\"fa fa-map-marker\"></i></button>" ]}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="geocomplete">
+                <input type="hidden" name="lat" id="lat" value="">
+                <input type="hidden" name="lng" id="lng" value="">
+                {[ "type": "number", "label": "<?php echo tr('Nel raggio di');?>", "name": "range", "value": "", "decimals": 0, "icon-after":"m" ]}
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
-                <label style='font-size:12pt;'>Geolocalizzazione attività per anagrafica</label>
+                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per anagrafica');?></label>
                 <hr>
             </div>
         </div>
@@ -50,7 +64,7 @@ include_once __DIR__.'/../../core.php';
 
         <div class="row">
             <div class="col-md-12">
-                <label style='font-size:12pt;'>Geolocalizzazione attività per stato</label>
+                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per stato');?></label>
                 <hr>
             </div>
         </div>
@@ -76,6 +90,9 @@ foreach ($rs_stati as $stato) {
 </div>
 
 <script>
+    var indirizzi = [];
+    var coords = [];
+    var circle = "";
     var ROOTDIR = '<?php echo $rootdir; ?>';
 
     function caricaMappa() {
@@ -92,6 +109,91 @@ foreach ($rs_stati as $stato) {
             maxZoom: 17,
             attribution: "© OpenStreetMap"
         }).addTo(map); 
+    }
+
+    function initGeocomplete() {
+        $.ajax({
+            url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2",
+            type : "GET",
+            dataType: "JSON",
+            success: function(data){
+                input("lat").set(data[0].lat);
+                input("lng").set(data[0].lon);
+                input("gaddress").set(data[0].display_name);
+
+                var latlng = L.latLng(data[0].lat, data[0].lon);
+                map.setView(latlng, 16);
+
+                L.marker(latlng).addTo(map)
+                    .bindPopup("You are here").openPopup();
+
+                // Aggiungi cerchio per indicare l'accuratezza
+                if (circle) {
+                    map.removeLayer(circle);
+                }
+
+                circle = L.circle(latlng, {
+                    radius: $("#range").val().toEnglish()
+                }).addTo(map);
+
+                reload_pointers();
+            }
+        });
+    }
+
+    // Avvio ricerca indirizzo premendo Invio
+    $("#gaddress, #range").on("keypress", function(e){
+        if(e.which == 13){
+            e.preventDefault();
+            initGeocomplete();
+        }
+    });
+
+    // Funzione per ottenere e visualizzare la geolocalizzazione
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(onLocationFound, onLocationError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function onLocationFound(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+
+        var latlng = L.latLng(lat, lng);
+        map.setView(latlng, 16);
+
+        if (circle) {
+            map.removeLayer(circle);
+        }
+
+        L.marker(latlng).addTo(map)
+            .bindPopup("You are here").openPopup();
+
+        // Aggiungi cerchio per indicare l'accuratezza
+        circle = L.circle(latlng, {
+            //radius: position.coords.accuracy
+            radius: $("#range").val().toEnglish()
+        }).addTo(map);
+
+        // Invia richiesta per ottenere l'indirizzo
+        $.getJSON('https://nominatim.openstreetmap.org/reverse', {
+            lat: lat,
+            lon: lng,
+            format: 'json'
+        }, function(data) {
+            input("lat").set(data.lat);
+            input("lng").set(data.lon);
+            input("gaddress").set(data.display_name);
+
+            reload_pointers();
+        });
+    }
+
+    function onLocationError(error) {
+        alert("Error: " + error.message);
     }
 </script>
 

@@ -346,7 +346,7 @@ if ($utile_perdita > 0) {
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></td>
-                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_ricavi) + abs($utile_perdita), 2).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.$utile_perdita ? (numberFormat(abs($utile_perdita), 2)) : ''.'</b></td>
                             <td></td>
                         </tr>';
 }

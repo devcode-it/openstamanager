@@ -165,7 +165,7 @@ switch (filter('op')) {
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
-        $articolo->setTranslation('title', post('descrizione'));
+        $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 

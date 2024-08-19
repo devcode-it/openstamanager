@@ -179,7 +179,7 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->setTranslation('title', post('descrizione'));
+        $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 

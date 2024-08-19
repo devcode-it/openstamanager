@@ -136,7 +136,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name` = 'Valore'), 'Valore');
 
-DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = "Addebita marca da bollo al cliente"
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = "Addebita marca da bollo al cliente";
 
 -- Aggiunta API per DDT
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES 

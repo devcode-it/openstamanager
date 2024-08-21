@@ -429,7 +429,7 @@ ALTER TABLE `my_impianti` ADD `id_marca` INT NULL AFTER `idanagrafica`;
 ALTER TABLE `my_impianti` ADD `id_modello` INT NULL AFTER `id_marca`;
 
 -- Modulo Marche impianto
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Marche impianti', 'impianti_marche', 'SELECT |select| FROM `my_impianti_marche` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.1', '2.5.1', '2', '30', '1', '1', '0', '0');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Marche impianti', 'impianti_marche', 'SELECT |select| FROM `my_impianti_marche` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.1', '2.5.1', '2', (SELECT `id` FROM `zz_modules` `m` WHERE `name`='Impianti'), '1', '1', '0', '0');
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES ('1', (SELECT MAX(id) FROM `zz_modules`), 'Marche impianti');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`) VALUES

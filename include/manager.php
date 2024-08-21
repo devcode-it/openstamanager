@@ -184,7 +184,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         echo '
             <div class="btn-group">
                 
-                <button class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> '.tr('Azioni di gruppo').'   </button>
+                <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> '.tr('Azioni di gruppo').'   </button>
                 <div class="dropdown-menu dropdown-menu-right">';
 
         foreach ($bulk as $key => $value) {

@@ -862,7 +862,7 @@ if (empty($record['deleted_at'])) {
                     update(results);
                 },
                 onSelect: function (item) {
-                    input.value = item.badge;
+                    input.value = item.label;
                 },
             });
         }

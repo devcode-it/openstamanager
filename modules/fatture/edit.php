@@ -297,7 +297,7 @@ $query .= ' ORDER BY `title`';
 	<!-- DATI INTESTAZIONE -->
     <div class="card card-primary collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
         <div class="card-header with-border">
-            <h3 class="card-title">'.tr('Dati cliente').'</h3>
+            <h3 class="card-title">'.($dir == 'entrata' ? tr('Dati cliente') : tr('Dati fornitore')).'</h3>
             <div class="card-tools pull-right">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>

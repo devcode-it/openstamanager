@@ -258,6 +258,10 @@ function leaflet() {
         config.nodeDirectory + '/leaflet.fullscreen/icon-fullscreen.svg',
     ]).pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
 
+    gulp.src([
+        config.development + '/' + config.paths.images + '/leaflet/*',
+    ]).pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
+
     return gulp.src([
         config.nodeDirectory + '/leaflet/dist/images/*.{jpg,png,jpeg}',
     ])

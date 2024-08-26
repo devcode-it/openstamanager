@@ -1886,7 +1886,7 @@ INSERT INTO `zz_storage_adapters` (`id`, `name`, `class`, `options`, `can_delete
 (1, 'Adattatore locale', '\\Modules\\FileAdapters\\Adapters\\LocalAdapter', '{ \"directory\":\"/files\" }', 0, 1, 1, NULL);
 
 -- Modulo adattatori di archiviazione
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Adattatori di archiviazione', 'adattatori_archiviazione', 'SELECT |select| FROM zz_storage_adapters WHERE 1=1 HAVING 2=2', '', 'fa fa-folder', '2.5', '2.5', '2', '36', '1', '1', '0', '0');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Adattatori di archiviazione', 'adattatori_archiviazione', 'SELECT |select| FROM zz_storage_adapters WHERE 1=1 HAVING 2=2', '', 'fa fa-folder', '2.5', '2.5', '2', (SELECT id FROM zz_modules m WHERE directory='adattatori_archiviazione'), '1', '1', '0', '0');
 INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `name`, `title`) VALUES (NULL, '1', (SELECT id FROM zz_modules WHERE directory='adattatori_archiviazione'), 'Adattatori di archiviazione', 'Adattatori di archiviazione');
 
 -- Viste modulo adattatori di archiviazione

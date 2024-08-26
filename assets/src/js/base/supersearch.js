@@ -50,14 +50,14 @@ $(document).ready(function () {
                     data = data ? data : [];
 
                     // Trasformazione risultati in formato leggibile
-                    const results = data.map(function (result) {
-                        return {
-                            label: result.badge ? result.badge : '<h4>' + result.title + '</h4>' + result.badges
-                                .join('').split('<br/>,').join('<br/>'),
-                            group: result.category,
-                            link: result.link,
-                            value: result.title
-                        }
+                    const results = data.map(result => {
+                        const title = result.title;
+                        const labels = result.labels.join('').split('<br/>,').join('<br/>');
+                        const label = result.label ? result.label : `<h5>${title}</h5><small>${labels}</small>`;
+                        const group = result.category;
+                        const link = result.link;
+                        const value = result.title;
+                    return { label, group, link, value };
                     });
 
                     // Rimozione ricerca in corso
@@ -87,8 +87,8 @@ $(document).ready(function () {
         },
         render: function(item, currentValue){
             const itemElement = document.createElement("div");
-            itemElement.innerHTML = item.badge;
-            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.badge + "</a>
+            itemElement.innerHTML = item.label;
+            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.label + "</a>
             return itemElement;
         }
     });

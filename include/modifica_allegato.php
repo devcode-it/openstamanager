@@ -90,7 +90,7 @@ $(document).ready(function () {
             update(results);
         },
         onSelect: function (item) {
-            input.value = item.badge;
+            input.value = item.label;
         },
     });
 });

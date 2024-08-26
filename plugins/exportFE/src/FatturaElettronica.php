@@ -1606,7 +1606,7 @@ class FatturaElettronica implements \Stringable
                 'ImponibileImporto' => $totale,
                 'Imposta' => $imposta,
                 'EsigibilitaIVA' => $dati->esigibilita,
-                'RiferimentoNormativo' => $dati->descrizione,
+                'RiferimentoNormativo' => $dati->getTranslation('title'),
             ];
 
             // Con split payment EsigibilitaIVA sempre a S

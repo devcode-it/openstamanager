@@ -111,7 +111,7 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     <div class="tab-content">
 
         <!-- CAMPI -->
-        <div id="fields" class="tab-pane fade in active">';
+        <div id="fields" class="tab-pane active">';
 
     include $module->filepath('fields.php');
 

@@ -197,17 +197,18 @@ switch (filter('op')) {
     case 'disabilita-widget':
         $id = filter('id');
 
+        $widget = $database->table('zz_widgets_lang')
+        ->where('id', '=', $id)
+        ->first();
+
         // Abilitazione del widget indicato
         $database->table('zz_widgets')
-            ->where('id', '=', $id)
+            ->where('id', '=', $widget->id_record)
             ->update(['enabled' => 0]);
 
         // Messaggio informativo
-        $widget = $database->table('zz_widgets')
-            ->where('id', '=', $id)
-            ->first();
         flash()->info(tr('Widget "_NAME_" disabilitato!', [
-            '_NAME_' => $widget->getTranslation('title'),
+            '_NAME_' => $widget->title,
         ]));
 
         echo json_encode([]);
@@ -223,11 +224,13 @@ switch (filter('op')) {
             ->update(['enabled' => 1]);
 
         // Messaggio informativo
-        $widget = $database->table('zz_widgets')
-            ->where('id', '=', $id)
-            ->first();
+        $widget = $database->table('zz_widgets_lang')
+        ->where('id_record', '=', $id)
+        ->where('id_lang', '=', Models\Locale::getDefault()->id)
+        ->first();
+
         flash()->info(tr('Widget "_NAME_" abilitato!', [
-            '_NAME_' => $widget->getTranslation('title'),
+            '_NAME_' => $widget->title,
         ]));
 
         echo json_encode([]);

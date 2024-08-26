@@ -18,8 +18,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Upload;
 
-$user_photo = $user->photo;
+$user_photo = $rootdir.'/files/utenti/'.Upload::find($user->image_file_id)->filename;
+
 if ($user_photo) {
     echo '
         <center><img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" /></center>';

@@ -149,7 +149,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path().'/'.$image->filepath;
+        return base_path().'/files/'.$image->module->directory.'/'.$image->filename;
     }
 
     public function setPhotoAttribute($value)
@@ -179,7 +179,7 @@ class User extends Model
         $img->save(slashes($file));
 
         // Aggiunta nuova foto
-        $upload = Upload::build($file, $data);
+        $upload = Upload::build(file_get_contents($file), $data, basename($value['name']));
 
         // Rimozione foto precedenti
         delete($file);

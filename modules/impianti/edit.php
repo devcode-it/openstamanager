@@ -143,7 +143,7 @@ if (!empty($record['immagine'])) {
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
-$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` AS numero, `data_richiesta` AS data, "Intervento" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
+$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` AS numero, `data_richiesta` AS data, "Attività" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
 UNION 
 SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
 $class = '';

@@ -271,7 +271,7 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
     </tbody>
 </table>';
     }
-    if (!empty($results_settings_added) && empty($results_settings)) {
+    if (!empty($results_settings_added)) {
         echo '
 <table class="table table-bordered">
 <thead>

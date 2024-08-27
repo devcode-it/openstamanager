@@ -131,7 +131,7 @@ class Fattura extends Document
         } else {
             $model->idsede_partenza = $id_sede;
         }
-        
+
         // Ritenuta contributi predefinita
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta previdenziale predefinita') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;

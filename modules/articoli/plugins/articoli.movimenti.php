@@ -120,9 +120,9 @@ if (!empty($movimenti)) {
         } else {
             $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
         }
-        
+
         $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
-       
+
         $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
         $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];
 
@@ -130,9 +130,9 @@ if (!empty($movimenti)) {
         echo '
             <tr>
                 <td class="text-center">
-                    '.count($movimenti)-($i). '
+                    '.count($movimenti) - $i.'
                 </td>
-                <td class="text-center" style="color: ' . ($movimento->qta < 0 ? 'red' : 'green') . ';">
+                <td class="text-center" style="color: '.($movimento->qta < 0 ? 'red' : 'green').';">
                     '.numberFormat($movimento->qta, 'qta').' '.$record['um'].'
                 </td>
 

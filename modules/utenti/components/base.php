@@ -60,7 +60,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi .'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
+		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi.'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
 		</div>
 	</div>';
 

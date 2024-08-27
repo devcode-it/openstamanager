@@ -36,7 +36,7 @@ switch (post('op')) {
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
                 $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `idanagrafica` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-                ++ $eliminate;
+                ++$eliminate;
             }
         }
 
@@ -60,6 +60,7 @@ switch (post('op')) {
                 if (!function_exists('curl_init')) {
                     // cURL non è attivo
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+
                     return false;
                 } else {
                     $ch = curl_init();

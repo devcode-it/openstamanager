@@ -30,7 +30,6 @@ use Modules\DDT\DDT;
 use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 use Modules\Iva\Aliquota;
-use Modules\Ordini\Stato as StatoOrdine;
 
 $module = Module::find($id_module);
 

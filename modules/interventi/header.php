@@ -56,7 +56,7 @@ if ($intervento->id_contratto) {
     $contratto = Contratto::find($intervento->id_contratto);
     $ore_erogate = $contratto->interventi->sum('ore_totali');
     $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
-    $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste?:1) : 0;
+    $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste ?: 1) : 0;
     if ($perc_ore < 75) {
         $color = 'success';
     } elseif ($perc_ore <= 100) {

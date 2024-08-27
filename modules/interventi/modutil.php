@@ -195,7 +195,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $sessione = $gruppo->first();
                 $riga = Riga::build($fattura);
 
-                foreach ($gruppo as $sessione){
+                foreach ($gruppo as $sessione) {
                     $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
                     if (!in_array($dateValue, $date)) {
                         $date[] = $dateValue;
@@ -245,7 +245,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 $diritto_chiamata = $gruppo->first();
                 $riga = Riga::build($fattura);
 
-                foreach ($gruppo as $sessione){
+                foreach ($gruppo as $sessione) {
                     $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
                     if (!in_array($dateValue, $date)) {
                         $date[] = $dateValue;
@@ -285,8 +285,8 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
                 if ($qta_trasferta == 0) {
                     continue;
                 }
-                
-                foreach ($gruppo as $sessione){
+
+                foreach ($gruppo as $sessione) {
                     $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
                     if (!in_array($dateValue, $date)) {
                         $date[] = $dateValue;

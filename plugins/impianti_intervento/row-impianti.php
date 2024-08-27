@@ -57,26 +57,26 @@ foreach ($impianti_collegati as $impianto) {
     }
 }
 
-$percentuale_completati = $n_impianti ? round(($impianti_completati * 100) / ($n_impianti?:1)) : 0;
-$percentuale_non_completati = $n_impianti ? round(($impianti_non_completati * 100) / ($n_impianti?:1)) : 0;
-$percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) / ($n_impianti?:1)) : 0;
+$percentuale_completati = $n_impianti ? round(($impianti_completati * 100) / ($n_impianti ?: 1)) : 0;
+$percentuale_non_completati = $n_impianti ? round(($impianti_non_completati * 100) / ($n_impianti ?: 1)) : 0;
+$percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) / ($n_impianti ?: 1)) : 0;
 
 echo '
 <div class="row">
     <div class="offset-md-4 col-md-4 text-center">
-        <h4>'.strtoupper(tr('Impianti')).': '.$n_impianti. '</h4>
+        <h4>'.strtoupper(tr('Impianti')).': '.$n_impianti.'</h4>
         <div class="progress" style="height:2rem;">
             <div class="progress-bar progress-bar-striped progress-bar-success" role="progressbar" style="width:'.$percentuale_completati.'%"><i class="fa fa-check"></i> <b>'.$impianti_completati.'</b></div>
 
             <div class="progress-bar progress-bar-striped progress-bar-danger" role="progressbar" style="width:'.$percentuale_non_completati.'%"><i class="fa fa-clock-o"></i> <b>'.$impianti_non_completati.'</b></div>
 
-            <div class="progress-bar progress-bar-striped progress-bar-warning" role="progressbar" style="width:'.$percentuale_non_previsti.'%"><i class="fa fa-times"></i> <b>'.$impianti_non_previsti. '</b></div>
+            <div class="progress-bar progress-bar-striped progress-bar-warning" role="progressbar" style="width:'.$percentuale_non_previsti.'%"><i class="fa fa-times"></i> <b>'.$impianti_non_previsti.'</b></div>
         </div>
     </div>
 
     <div class="col-md-1">
         <button type="button" class="btn btn-default" onclick="caricaImpianti()" style="margin-top: 25px;">
-            <i class="fa fa-refresh"></i> '.tr('Aggiorna'). '
+            <i class="fa fa-refresh"></i> '.tr('Aggiorna').'
         </button>
     </div>
 </div>

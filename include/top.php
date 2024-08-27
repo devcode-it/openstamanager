@@ -534,7 +534,7 @@ if (Auth::check()) {
             }
 
             if (!empty($opt)) {
-                $q = str_replace('|id_parent|', ($id_record?:$id_parent), $opt['main_query'][0]['query']);
+                $q = str_replace('|id_parent|', $id_record ?: $id_parent, $opt['main_query'][0]['query']);
                 $count = $dbo->fetchNum($q);
             }
 

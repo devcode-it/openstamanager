@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
+$directory = FatturaElettronica::getImportDirectory();
 $filename = get('filename');
 
 $content = file_get_contents($directory.'/'.$filename);

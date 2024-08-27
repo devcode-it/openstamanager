@@ -48,7 +48,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $joins[] = [
             'dt_statiddt_lang',
             'dt_statiddt_lang.id_record',
-            'dt_statiddt.id', 
+            'dt_statiddt.id',
         ];
 
         $where = [];

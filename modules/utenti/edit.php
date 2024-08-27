@@ -46,7 +46,7 @@ echo '
 		<div class="card-body">
             <div class="row">
                 <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?:0).'" ]}
+                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
                 </div>
                  <div class="col-md-3 pull-right">
                     {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"black\": \"'.tr('Nero').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"info-light\": \"'.tr('Azzurro chiaro').'\",\"info\": \"'.tr('Azzurro').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$group->theme.'" ]}
@@ -185,8 +185,8 @@ echo '
 	<div class="card card-primary">
 		<div class="card-header">
             <h3 class="card-title">'.tr('Permessi del gruppo: _GROUP_', [
-                '_GROUP_' => $record['nome'],
-            ]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
+    '_GROUP_' => $record['nome'],
+]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
             <div class="card-tools">
                 <btn type="button" class="btn clickable btn-xs btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn> 
             </div>' : '').'

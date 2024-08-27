@@ -30,7 +30,7 @@ include_once __DIR__.'/../../core.php';
 <div id="menu-filtri" class="open-menu">
     <div style='width:100%;height:50px;background-color:#4d4d4d;padding:8px;font-size:25px;color:white;' class='text-center'>
         <div class="pull-left"><i class='fa fa-forward clickable' id="menu-filtri-toggle"></i></div>
-        <b><?php echo tr('Filtri');?></b>
+        <b><?php echo tr('Filtri'); ?></b>
     </div>
 
     <div id="lista-filtri" style="padding:20px 40px;height:637px;overflow:auto;">
@@ -39,19 +39,19 @@ include_once __DIR__.'/../../core.php';
             <div class="col-md-12" id="geocomplete">
                 <input type="hidden" name="lat" id="lat" value="">
                 <input type="hidden" name="lng" id="lng" value="">
-                {[ "type": "text", "label": "<?php echo tr('Indirizzo');?>", "name": "gaddress", "value": "", "extra": "data-geo='formatted_address'", "icon-after":"<button type=\"button\" class=\"btn btn-info\" onclick=\"initGeocomplete();\"><i class=\"fa fa-search\"></i></button>", "icon-before":"<button type=\"button\" class=\"btn btn-info\" onclick=\"getLocation();\"><i class=\"fa fa-map-marker\"></i></button>" ]}
+                {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "gaddress", "value": "", "extra": "data-geo='formatted_address'", "icon-after":"<button type=\"button\" class=\"btn btn-info\" onclick=\"initGeocomplete();\"><i class=\"fa fa-search\"></i></button>", "icon-before":"<button type=\"button\" class=\"btn btn-info\" onclick=\"getLocation();\"><i class=\"fa fa-map-marker\"></i></button>" ]}
             </div>
         </div>
         <div class="row">
             <div class="col-md-12" id="geocomplete">
                 <input type="hidden" name="lat" id="lat" value="">
                 <input type="hidden" name="lng" id="lng" value="">
-                {[ "type": "number", "label": "<?php echo tr('Nel raggio di');?>", "name": "range", "value": "", "decimals": 0, "icon-after":"m" ]}
+                {[ "type": "number", "label": "<?php echo tr('Nel raggio di'); ?>", "name": "range", "value": "", "decimals": 0, "icon-after":"m" ]}
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per anagrafica');?></label>
+                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per anagrafica'); ?></label>
                 <hr>
             </div>
         </div>
@@ -64,7 +64,7 @@ include_once __DIR__.'/../../core.php';
 
         <div class="row">
             <div class="col-md-12">
-                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per stato');?></label>
+                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per stato'); ?></label>
                 <hr>
             </div>
         </div>

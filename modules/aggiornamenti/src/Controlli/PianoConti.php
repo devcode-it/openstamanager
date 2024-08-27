@@ -74,7 +74,7 @@ class PianoConti extends Controllo
             $fornitore = in_array('Fornitore', $tipi);
             $is_esistente = 0;
             $descrizione = 0;
-            
+
             if ($cliente || $fornitore) {
                 $is_esistente = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_cliente'].' OR id = '.$anagrafica['idconto_fornitore']);
                 $descrizione = null;
@@ -85,7 +85,7 @@ class PianoConti extends Controllo
                     $descrizione = tr("L'anagrafica corrente non ha impostati il conto Cliente relativo al Piano dei Conti");
                 } elseif ($fornitore && (empty($anagrafica['idconto_fornitore'])) || !$is_esistente) {
                     $descrizione = tr("L'anagrafica corrente non ha impostati il conto Fornitore relativo al Piano dei Conti");
-                } 
+                }
             }
 
             if (!empty($descrizione)) {

@@ -99,7 +99,6 @@ echo '
     </tr>
 </table>';
 
-
 // Dati attività
 echo '
 <table class="table border-bottom">
@@ -151,8 +150,6 @@ if (!empty($preventivo) or !empty($contratto)) {
         </td>
     </tr>';
 }
-
-
 
 // riga 3
 // Elenco impianti su cui è stato fatto l'intervento
@@ -406,7 +403,6 @@ if (count($sessioni) > 0) {
                 '.$orario.'
             </td>';
 
-
         // Testo lavori eseguiti 1/2
         if ($i == 0) {
             echo '
@@ -418,9 +414,8 @@ if (count($sessioni) > 0) {
         // Firma 1/3
         if ($i == 1) {
             echo '
-            <td rowspan="'.(count($sessioni)+1).'" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
+            <td rowspan="'.(count($sessioni) + 1).'" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
                 '.$firma.'<br>';
-
 
             if (empty($documento['firma_file'])) {
                 echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
@@ -435,7 +430,7 @@ if (count($sessioni) > 0) {
         echo '
         </tr>';
 
-        $i++;
+        ++$i;
     }
 }
 
@@ -463,7 +458,6 @@ if ($options['pricing']) {
         <td colspan="3" class="text-center">-</td>';
 }
 
-
 // Testo lavori eseguiti 2/2
 if (count($sessioni) == 0) {
     echo '
@@ -477,7 +471,6 @@ if (count($sessioni) == 1) {
     echo '<td rowspan="2" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
             '.$firma.'<br>';
 
-
     if (empty($documento['firma_file'])) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
@@ -490,7 +483,6 @@ if (count($sessioni) == 1) {
 
 echo '
     </tr>';
-
 
 // Totale km
 echo '
@@ -526,7 +518,6 @@ if (count($sessioni) == 0) {
     echo '<td class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
             '.$firma.'<br>';
 
-
     if (empty($documento['firma_file'])) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
@@ -536,7 +527,6 @@ if (count($sessioni) == 0) {
     echo '
         </td>';
 }
-
 
 // Calcoli
 $imponibile = abs($documento->imponibile);

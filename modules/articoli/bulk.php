@@ -78,7 +78,7 @@ switch (post('op')) {
                         $new_prezzo_vendita = $new_prezzo_vendita + ($new_prezzo_vendita * $aliquota_iva / 100);
                     }
 
-                    $new_prezzo_vendita = ceil($new_prezzo_vendita / ($arrotondamento?:1)) * $arrotondamento;
+                    $new_prezzo_vendita = ceil($new_prezzo_vendita / ($arrotondamento ?: 1)) * $arrotondamento;
                 }
 
                 if (in_array($tipologia, ['ivato', '']) && !$prezzi_ivati) {

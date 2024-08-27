@@ -329,7 +329,7 @@ echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2
     </tr>
     <tr>
         <td>VARIAZIONE DI IMPOSTA RELATIVE A PERIODI PRECEDENTI</td>
-            <td class=text-right>'.($totale_iva_periodo_precedente > 0 ? moneyFormat(abs($totale_iva_periodo_precedente), 2):'').'</td>
+            <td class=text-right>'.($totale_iva_periodo_precedente > 0 ? moneyFormat(abs($totale_iva_periodo_precedente), 2) : '').'</td>
 
 
     </tr>
@@ -346,7 +346,7 @@ echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2
         <td class=text-right></td>
     </tr>
     <tr>
-        <td>'.($totale_iva >= 0 ? 'IVA A DEBITO' : 'IVA A CREDITO') .'</td>
+        <td>'.($totale_iva >= 0 ? 'IVA A DEBITO' : 'IVA A CREDITO').'</td>
         <td class=text-right>'.moneyFormat(abs($totale_iva), 2).'</td>
     </tr>
     <tr>
@@ -359,13 +359,13 @@ echo ' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente), 2
     </tr>
     <tr>
         <td>IVA A DEBITO CON MAGGIORAZIONE</td>
-            <td class=text-right>'.($periodo == 'Trimestrale' ?moneyFormat($totale_iva_maggiorata, 2): '').'</td>
+            <td class=text-right>'.($periodo == 'Trimestrale' ? moneyFormat($totale_iva_maggiorata, 2) : '').'</td>
 
 
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>
-            <td class=text-right>'.($periodo == 'Mensile' ?moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>
+            <td class=text-right>'.($periodo == 'Mensile' ? moneyFormat($totale_iva, 2) : moneyFormat($totale_iva_maggiorata, 2)).'</td>
 
 
 

@@ -403,7 +403,7 @@ class Sessione extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / ($this->totale_imponibile?:1))) * 100;
+        return (1 - ($this->spesa / ($this->totale_imponibile ?: 1))) * 100;
     }
 
     /**
@@ -413,7 +413,7 @@ class Sessione extends Model
      */
     public function getRicaricoPercentualeAttribute()
     {
-        return $this->imponibile ? (($this->imponibile / ($this->spesa?:1)) - 1) * 100 : 0;
+        return $this->imponibile ? (($this->imponibile / ($this->spesa ?: 1)) - 1) * 100 : 0;
     }
 
     public function getIvaIndetraibileAttribute()

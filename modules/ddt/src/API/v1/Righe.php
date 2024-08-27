@@ -55,35 +55,35 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
     public function create($request)
     {
         $data = $request['data'];
-        $data['qta'] = ($data['qta']>0 ? $data['qta'] : 1);
+        $data['qta'] = ($data['qta'] > 0 ? $data['qta'] : 1);
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
         $ddt = DDT::find($data['id_ddt']);
 
-        if( !empty($data['is_descrizione']) ){
+        if (!empty($data['is_descrizione'])) {
             $riga = Descrizione::build($ddt);
             $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
             $riga->qta = 0;
-        }elseif(!empty($data['id_articolo']) && !empty($originale)){
+        } elseif (!empty($data['id_articolo']) && !empty($originale)) {
             $riga = Articolo::build($ddt, $originale);
 
-            if( $originale->prezzo_vendita>0 ){
+            if ($originale->prezzo_vendita > 0) {
                 $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
                 $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
-            }else{
+            } else {
                 $riga->prezzo_unitario = 0;
             }
             $riga->costo_unitario = $originale->prezzo_acquisto;
             $riga->qta = $data['qta'];
             $riga->descrizione = (!empty($data['descrizione']) ? $data['descrizione'] : $originale->descrizione);
-        }else{
+        } else {
             $riga = Riga::build($ddt);
             $riga->qta = $data['qta'];
             $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
-        }        
-        
+        }
+
         $riga->um = $data['um'] ?: null;
         $riga->save();
     }
@@ -91,7 +91,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
     public function update($request)
     {
         $data = $request['data'];
-        $data['qta'] = ($data['qta']>0 ? $data['qta'] : 1);
+        $data['qta'] = ($data['qta'] > 0 ? $data['qta'] : 1);
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
 
@@ -100,25 +100,25 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
 
         $riga->is_descrizione = 0;
         $riga->qta = $data['qta'];
-        if( !empty($data['is_descrizione']) ){
+        if (!empty($data['is_descrizione'])) {
             $riga->qta = 0;
             $riga->is_descrizione = 1;
             $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
-        }elseif(!empty($data['id_articolo']) && !empty($originale)){
+        } elseif (!empty($data['id_articolo']) && !empty($originale)) {
             $descrizione = (!empty($data['descrizione']) ? $data['descrizione'] : $originale->descrizione);
             $descrizione = ($descrizione ? $descrizione : '-');
 
-            $riga->descrizione  = ($descrizione ? $descrizione : '-');
+            $riga->descrizione = ($descrizione ? $descrizione : '-');
             $riga->costo_unitario = $originale->prezzo_acquisto;
             $riga->idarticolo = $originale->id;
             $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
             $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
-        }else{
+        } else {
             $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
         }
-        
+
         $riga->um = $data['um'] ?: null;
         $riga->save();
     }

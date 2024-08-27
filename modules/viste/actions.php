@@ -106,6 +106,7 @@ switch (filter('op')) {
 
             if (check_query($query)) {
                 $array = [
+                    'name' => post('name')[$c],
                     'idgruppo' => post('gruppo')[$c],
                     'idmodule' => $id_record,
                     'clause' => $query,
@@ -114,22 +115,15 @@ switch (filter('op')) {
 
                 if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
-                    $clause = Clause::find($id);
-                    $clause->idgruppo = post('gruppo')[$c];
-                    $clause->idmodulo = $id_record;
-                    $clause->clause = $query;
-                    $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->setTranslation('title', post('name')[$c]);
-                    $clause->save();
+
+                    $dbo->update('zz_group_module', $array, ['id' => $id]);
+                    $dbo->update('zz_group_module_lang', ['title' => $array['name']], ['id_record' => $id, 'id_lang' => Models\Locale::getDefault()->id]);
+                    
                 } elseif (!empty($query)) {
-                    $clause = Clause::build();
-                    $id_record = $dbo->lastInsertedID();
-                    $clause->idgruppo = post('gruppo')[$c];
-                    $clause->idmodulo = $id_record;
-                    $clause->clause = $query;
-                    $clause->position = !empty(post('position')[$c]) ? 'HVN' : 'WHR';
-                    $clause->setTranslation('title', post('name')[$c]);
-                    $clause->save();
+                    $dbo->insert('zz_group_module', $array);
+                    $dbo->insert('zz_group_module_lang', ['id_record' => $dbo->lastInsertedID(), 'id_lang' => Models\Locale::getDefault()->id, 'title' => $array['name']]);
+
+                    $id = $dbo->lastInsertedID();
                 }
             } else {
                 $rs = false;

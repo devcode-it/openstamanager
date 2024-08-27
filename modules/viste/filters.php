@@ -42,7 +42,7 @@ if (!empty($additionals)) {
                     ]).'
                 </h3>
                 <div class="card-tools pull-right">
-                    <button type="button" class="btn btn-tool" data-widget="collapse">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>';

@@ -4,11 +4,18 @@ Le problematiche saranno raggruppate per release e le relative correzioni (se ap
 #### 2.5.3 - 07/08/2024
 
 ##### Problemi noti
-Non è possibile modificare la descrizione di una riga articolo inserita in un contratto, ddt, attività, ordine e preventivo.
+- Non è possibile modificare la descrizione di una riga articolo inserita in un contratto, ddt, attività, ordine e preventivo.
 
 ##### Soluzione
 https://github.com/devcode-it/openstamanager/commit/b82efb339f8df5da4f2279e25d72904778d2a8d3
 
+
+- La ricerca globale non funziona.
+
+##### Soluzione
+https://github.com/devcode-it/openstamanager/commit/5c86d3b7489431b2e8001841b07769cd26e4c24c
+
+Per applicare le modifiche è necessario ricompilare gli assets
 
 #### 2.4.54 - 03/02/2024
 

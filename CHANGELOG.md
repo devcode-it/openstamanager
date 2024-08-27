@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.5.4 ())](#254-)
+- [2.5.4 (2024-08-28))](#254-2024-08-28)
 - [2.5.3 (2024-08-07)](#253-2024-08-07)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
 - [2.5.1 (2024-04-24)](#251-2024-04-24)
@@ -72,11 +72,27 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ## 2.5.4 
 ### Aggiunto (Added)
+- Aggiunta l'unità di misura nel campo Peso nei DDT
+- Aggiunte le API dei DDT
+- Aggiunta colonna Agente in Ordini cliente
 
 ### Modificato (Changed)
+- Migliorata la gestione delle stampe contabili vuote
+- Rimossa la restrizione allo storico degli ultimi 3 anni
+- Migliorate le API degli interventi
+- Migliorata la mappa degli interventi
 
 ### Fixed
+- Corretti i controlli sul gestionale
+- Corretto il filtro stato interventi in mappa
+- Corretta la registrazione contabile della fattura al cambio di anagrafica
+- Corretto il widget Contratti in scadenza
+- Corretta l'eliminazione della sede in Anagrafiche
 - Corretta la modifica della descrizione di una riga articolo inserita in un contratto, ddt, attività, ordine e preventivo.
+- Corretto il riferimento normativo in fattura
+- Corretta la ricerca globale
+- Corretta la gestione dei widgets
+- Corretto il caricamento dell'immagine utente
 
 ## 2.5.3 (2024-08-07)
 ### Aggiunto (Added)

@@ -55,7 +55,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
     public function create($request)
     {
         $data = $request['data'];
-        $data['qta'] = ($data['qta'] ? $data['qta'] : 1);
+        $data['qta'] = ($data['qta'] ?: 1);
 
         $intervento = Intervento::find($data['id_intervento']);
         $originale = ArticoloOriginale::find($data['id_articolo']);
@@ -67,7 +67,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
             $riga->um = $data['um'];
             $riga->costo_unitario = $originale->prezzo_acquisto;
             if ($originale->prezzo_vendita > 0) {
-                $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
+                $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
                 $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
             } else {
                 $riga->prezzo_unitario = 0;
@@ -76,13 +76,13 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
             $riga = Descrizione::build($intervento);
 
             $riga->qta = 0;
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
         } else {
             $riga = Riga::build($intervento);
 
             $riga->qta = $data['qta'];
             $riga->um = $data['um'];
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
         }
@@ -100,7 +100,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
     public function update($request)
     {
         $data = $request['data'];
-        $data['qta'] = ($data['qta'] ? $data['qta'] : 1);
+        $data['qta'] = ($data['qta'] ?: 1);
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
         $riga = Articolo::find($data['id_riga']) ?: Riga::find($data['id_riga']);
@@ -108,15 +108,15 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga->qta = $data['qta'];
         if (!empty($data['id_articolo']) && !empty($originale)) {
             $descrizione = (!empty($data['descrizione']) ? $data['descrizione'] : $originale->descrizione);
-            $descrizione = ($descrizione ? $descrizione : '-');
+            $descrizione = ($descrizione ?: '-');
 
             $riga->descrizione = $descrizione;
             $riga->idarticolo = $originale->id;
             $riga->costo_unitario = $originale->prezzo_acquisto;
-            $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
+            $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
             $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
         } else {
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
         }

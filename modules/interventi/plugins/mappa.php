@@ -66,7 +66,7 @@ if (get('op') == 'getmappa') {
     $lat = '';
     $lng = '';
     for ($i = 0; $i < sizeof($rs1); ++$i) {// elenco delle righe
-        $val = html_entity_decode($rs1[$i]['idanagrafica']);
+        $val = html_entity_decode((string) $rs1[$i]['idanagrafica']);
         $id_sede = $dbo->selectOne('in_interventi', '*', ['id' => $rs1[$i]['id']])['idsede_destinazione'];
         if ($id_sede) {
             $query = "SELECT *, nomesede AS ragione_sociale FROM an_sedi WHERE id='".$id_sede."'";
@@ -88,7 +88,7 @@ if (get('op') == 'getmappa') {
 
             $altri_interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE idsede_destinazione='.prepare($id_sede).' AND idanagrafica='.prepare($val).' AND id IN ('.implode(',', array_column($rs1, 'id')).')');
             for ($j = 0; $j < sizeof($altri_interventi); ++$j) {
-                $stringa_content .= str_replace("'", '', '<br> <a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$altri_interventi[$j]['id'].'">Intervento numero: '.$altri_interventi[$j]['codice'].' del '.date('d/m/Y', strtotime($altri_interventi[$j]['data_richiesta'])).'</a>');
+                $stringa_content .= str_replace("'", '', '<br> <a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$altri_interventi[$j]['id'].'">Intervento numero: '.$altri_interventi[$j]['codice'].' del '.date('d/m/Y', strtotime((string) $altri_interventi[$j]['data_richiesta'])).'</a>');
             }
 
             $stringa_content .= "',";

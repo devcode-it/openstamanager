@@ -179,7 +179,7 @@ class User extends Model
         $img->save(slashes($file));
 
         // Aggiunta nuova foto
-        $upload = Upload::build(file_get_contents($file), $data, basename($value['name']));
+        $upload = Upload::build(file_get_contents($file), $data, basename((string) $value['name']));
 
         // Rimozione foto precedenti
         delete($file);

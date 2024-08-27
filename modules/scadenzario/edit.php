@@ -32,7 +32,7 @@ $scadenza_in_chiusura = 0;
 foreach ($scadenze as $scadenza) {
     $scadenza = (array) $scadenza;
     foreach ($mesi_chiusura as $mese) {
-        if (date('m', strtotime(($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'])) == str_pad($mese['mese'], 2, '0', STR_PAD_LEFT)) {
+        if (date('m', strtotime(($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'])) == str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT)) {
             $scadenza_in_chiusura = 1;
         }
     }

@@ -62,13 +62,13 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
 
         if (!empty($data['is_descrizione'])) {
             $riga = Descrizione::build($ddt);
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->qta = 0;
         } elseif (!empty($data['id_articolo']) && !empty($originale)) {
             $riga = Articolo::build($ddt, $originale);
 
             if ($originale->prezzo_vendita > 0) {
-                $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
+                $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
                 $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
             } else {
                 $riga->prezzo_unitario = 0;
@@ -79,7 +79,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         } else {
             $riga = Riga::build($ddt);
             $riga->qta = $data['qta'];
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
         }
@@ -103,18 +103,18 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         if (!empty($data['is_descrizione'])) {
             $riga->qta = 0;
             $riga->is_descrizione = 1;
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
         } elseif (!empty($data['id_articolo']) && !empty($originale)) {
             $descrizione = (!empty($data['descrizione']) ? $data['descrizione'] : $originale->descrizione);
-            $descrizione = ($descrizione ? $descrizione : '-');
+            $descrizione = ($descrizione ?: '-');
 
-            $riga->descrizione = ($descrizione ? $descrizione : '-');
+            $riga->descrizione = ($descrizione ?: '-');
             $riga->costo_unitario = $originale->prezzo_acquisto;
             $riga->idarticolo = $originale->id;
-            $idiva = ($originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita'));
+            $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
             $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
         } else {
-            $riga->descrizione = ($data['descrizione'] ? $data['descrizione'] : '-');
+            $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->costo_unitario = 0;
             $riga->setPrezzoUnitario(0, setting('Iva predefinita'));
         }

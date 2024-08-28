@@ -208,11 +208,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
         <tbody>';
 
-        foreach ($foreign_keys as $name => $diff) {
+                foreach ($foreign_keys as $name => $diff) {
                     echo '
             <tr class="bg-warning" >
                 <td>
-                    '.($name?:$diff['expected']['title']).'
+                    '.($name ?: $diff['expected']['title']).'
                 </td>
                 <td>
                     QUERY DA ESEGUIRE:<br>
@@ -229,7 +229,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     }
 
     if (!empty($results_added)) {
-        
         foreach ($results_added as $table => $errors) {
             echo '
     <h3>'.$table.'</h3>';
@@ -284,7 +283,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
         <tbody>';
 
-        foreach ($foreign_keys as $name => $diff) {
+                foreach ($foreign_keys as $name => $diff) {
                     echo '
             <tr class="bg-info" >
                 <td>

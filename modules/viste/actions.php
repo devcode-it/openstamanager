@@ -118,7 +118,6 @@ switch (filter('op')) {
 
                     $dbo->update('zz_group_module', $array, ['id' => $id]);
                     $dbo->update('zz_group_module_lang', ['title' => $array['name']], ['id_record' => $id, 'id_lang' => Models\Locale::getDefault()->id]);
-                    
                 } elseif (!empty($query)) {
                     $dbo->insert('zz_group_module', $array);
                     $dbo->insert('zz_group_module_lang', ['id_record' => $dbo->lastInsertedID(), 'id_lang' => Models\Locale::getDefault()->id, 'title' => $array['name']]);

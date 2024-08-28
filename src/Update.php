@@ -407,8 +407,8 @@ class Update
                 $fks = [];
                 foreach ($fks_found as $fk) {
                     $fk = array_change_key_case($fk);
-                    $name = $fk['name'];
-                    unset($fk['name']);
+                    $name = $fk['title'];
+                    unset($fk['title']);
 
                     $fks[$name] = $fk;
                 }

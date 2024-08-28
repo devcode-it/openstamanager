@@ -131,6 +131,7 @@ if (empty($data)) {
 // Controllo degli errori
 $info = Update::getDatabaseStructure();
 $results = integrity_diff($data, $info);
+$results_added = integrity_diff($info, $data);
 
 $contents = file_get_contents(base_dir().'/settings.json');
 $data = json_decode($contents, true);
@@ -140,7 +141,7 @@ $results_settings = settings_diff($data, $settings);
 $results_settings_added = settings_diff($settings, $data);
 
 // Schermata di visualizzazione degli errori
-if (!empty($results) || !empty($results_settings) || !empty($results_settings_added)) {
+if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
     if (!empty($results)) {
         echo '
     <p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
@@ -179,13 +180,8 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
         <tbody>';
 
                 foreach ($errors as $name => $diff) {
-                    if (count($diff) == 1 && array_key_exists('type', $diff) && string_contains($diff['type']['expected'], $diff['type']['current'])) {
-                        $class = 'info';
-                    } else {
-                        $class = 'warning';
-                    }
                     echo '
-            <tr class="bg-'.$class.'" >
+            <tr class="bg-warning" >
                 <td>
                     '.$name.'
                 </td>
@@ -212,19 +208,90 @@ if (!empty($results) || !empty($results_settings) || !empty($results_settings_ad
 
         <tbody>';
 
-                foreach ($foreign_keys as $name => $diff) {
-                    if (count($diff) == 2 && array_key_exists('current', $diff) && $diff['current'] == null) {
-                        $class = 'info';
-                    } else {
-                        $class = 'warning';
-                    }
+        foreach ($foreign_keys as $name => $diff) {
                     echo '
-            <tr class="bg-'.$class.'" >
+            <tr class="bg-warning" >
+                <td>
+                    '.($name?:$diff['expected']['title']).'
+                </td>
+                <td>
+                    QUERY DA ESEGUIRE:<br>
+                    ALTER TABLE '.$table.' ADD  CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';
+                </td>
+            </tr>';
+                }
+
+                echo '
+        </tbody>
+    </table>';
+            }
+        }
+    }
+
+    if (!empty($results_added)) {
+        
+        foreach ($results_added as $table => $errors) {
+            echo '
+    <h3>'.$table.'</h3>';
+
+            if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                echo '
+    <div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
+                continue;
+            }
+
+            $foreign_keys = $errors['foreign_keys'] ?: [];
+            unset($errors['foreign_keys']);
+
+            if (!empty($errors)) {
+                echo '
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>'.tr('Colonna').'</th>
+                <th>'.tr('Conflitto').'</th>
+            </tr>
+        </thead>
+
+        <tbody>';
+
+                foreach ($errors as $name => $diff) {
+                    echo '
+            <tr class="bg-info" >
                 <td>
                     '.$name.'
                 </td>
                 <td>
                     '.json_encode($diff).'
+                </td>
+            </tr>';
+                }
+
+                echo '
+        </tbody>
+    </table>';
+            }
+
+            if (!empty($foreign_keys)) {
+                echo '
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>'.tr('Foreign keys').'</th>
+                <th>'.tr('Conflitto').'</th>
+            </tr>
+        </thead>
+
+        <tbody>';
+
+        foreach ($foreign_keys as $name => $diff) {
+                    echo '
+            <tr class="bg-info" >
+                <td>
+                    '.$name.'
+                </td>
+                <td>
+                    Chiave esterna non prevista
                 </td>
             </tr>';
                 }

@@ -48,6 +48,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 const shell = require('shelljs');
 const inquirer = require('inquirer');
+const { Readable } = require('stream');
 
 // Configurazione
 const config = {
@@ -256,10 +257,6 @@ function srcImages() {
 function leaflet() {
     gulp.src([
         config.nodeDirectory + '/leaflet.fullscreen/icon-fullscreen.svg',
-    ]).pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
-
-    gulp.src([
-        config.development + '/' + config.paths.images + '/leaflet/*',
     ]).pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
 
     return gulp.src([
@@ -531,52 +528,69 @@ function release(done) {
         archive.file('checksum.json', {});
 
         // Aggiunta del file per il controllo di integrità del database
-        archive.append(shell.exec('php update/structure.php', {
+        var bufferStream = new Readable();
+        
+        bufferStream.push(shell.exec('php update/structure.php', {
             silent: true
-        }).stdout, {
-            name: 'mysql.json'
-        });
+        }).stdout);
+        bufferStream.push(null);
+        archive.append(bufferStream, { name: 'mysql.json' });
 
         // Aggiunta del file per il controllo delle impostazioni
-        archive.append(shell.exec('php update/settings.php', {
+        bufferStream = new Readable();
+        bufferStream.push(shell.exec('php update/settings.php', {
             silent: true
-        }).stdout, {
-            name: 'settings.json'
-        });
+        }).stdout);
+        bufferStream.push(null);
+        archive.append(bufferStream, { name: 'settings.json' });
 
         // Aggiunta del commit corrente nel file REVISION
-        archive.append(shell.exec('git rev-parse --short HEAD', {
+        bufferStream = new Readable();
+        bufferStream.push(shell.exec('git rev-parse --short HEAD', {
             silent: true
-        }).stdout, {
-            name: 'REVISION'
-        });
+        }).stdout);
+        bufferStream.push(null);
+        archive.append(bufferStream, { name: 'REVISION' });
 
-        // Opzioni sulla release
+        // Opzioni sulla release  
         inquirer.prompt([{
             type: 'input',
             name: 'version',
             message: 'Numero di versione:',
+            validate: (input) => input ? true : 'Il numero di versione non può essere vuoto.'
         }, {
             type: 'confirm',
             name: 'beta',
             message: 'Versione beta?',
             default: false,
         }]).then(function (result) {
+
             let version = result.version;
 
+            // Aggiungi 'beta' solo se l'opzione beta è selezionata  
             if (result.beta) {
                 version += 'beta';
             }
 
-            archive.append(version, {
-                name: 'VERSION'
+            // Creazione di un stream leggibile con la versione  
+            const bufferStream = new Readable({
+                read() {
+                    this.push(version);
+                    this.push(null);
+                }
             });
 
-            // Completamento dello zip
+            // Aggiunta della versione corrente nel file VERSION  
+            archive.append(bufferStream, { name: 'VERSION' });
+
+            // Completamento dello ZIP  
             archive.finalize();
 
             done();
+        }).catch(err => {
+            console.error('Si è verificato un errore:', err);
         });
+
     });
 }
 

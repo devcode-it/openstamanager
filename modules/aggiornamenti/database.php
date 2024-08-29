@@ -261,7 +261,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     '.$name.'
                 </td>
                 <td>
-                    '.json_encode($diff).'
+                    Campo non previsto
                 </td>
             </tr>';
                 }

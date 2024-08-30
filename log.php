@@ -80,7 +80,7 @@ foreach ($logs as $log) {
                         <td>'.$log['username'].'</td>
                         <td class="tip" title="'.$created_at->format('d/m/Y H:i:s').'">'.$created_at->diffForHumans().'</td>
                         <td>'.$log['ip'].'</td>
-                        <td class="user-agent tip" title="'.strip_tags($log['user_agent']).'">'.$log['user_agent'].'</td>
+                        <td class="user-agent tip" title="'.strip_tags($log['user_agent']?:'').'">'.$log['user_agent'].'</td>
                         <td><span class="badge badge-'.$type.'">'.$stato.'</span></td>
                     </tr>';
 }

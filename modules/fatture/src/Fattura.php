@@ -140,7 +140,7 @@ class Fattura extends Document
         // $model->id_banca_controparte = ;
 
         // Tipo di pagamento dall'anagrafica controparte
-        $id_pagamento = Pagamento::find($anagrafica['idpagamento_'.$conto])->id_record;
+        $id_pagamento = $anagrafica['idpagamento_'.$conto];
 
         // Per Fatture di Vendita senza pagamento predefinito per il Cliente, si utilizza il pagamento predefinito dalle Impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {

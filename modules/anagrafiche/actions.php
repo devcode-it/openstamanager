@@ -48,8 +48,6 @@ switch (post('op')) {
         $opt_out_newsletter = post('disable_newsletter');
         $sede->enable_newsletter = empty($opt_out_newsletter);
 
-        $sede->save();
-
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');

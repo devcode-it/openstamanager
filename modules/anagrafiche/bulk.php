@@ -53,59 +53,7 @@ switch (post('op')) {
     case 'ricerca-coordinate':
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
-            if (!empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->provincia)) {
-                $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia);
-
-                // TODO: da riscrivere con Guzzle e spostare su hook
-                if (!function_exists('curl_init')) {
-                    // cURL non è attivo
-                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
-
-                    return false;
-                } else {
-                    $ch = curl_init();
-                }
-                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
-                $user_agent = 'traccar';
-                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $data = json_decode(curl_exec($ch));
-                curl_close($ch);
-
-                // Salvataggio informazioni
-                $anagrafica->gaddress = $data[0]->display_name;
-                $anagrafica->lat = $data[0]->lat;
-                $anagrafica->lng = $data[0]->lon;
-                $anagrafica->save();
-            }
-        }
-
-        break;
-
-    case 'ricerca-coordinate-google':
-        $curl = new CurlHttpAdapter();
-        $geocoder = new GoogleMaps($curl, 'IT-it', null, true, $google);
-
-        foreach ($id_records as $id) {
-            $anagrafica = Anagrafica::find($id);
-            if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
-                $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
-
-                try {
-                    // Ricerca indirizzo
-                    $address = $geocoder->geocode($indirizzo)->first();
-                    $coordinates = $address->getCoordinates();
-
-                    // Salvataggio informazioni
-                    $anagrafica->lat = $coordinates->getLatitude();
-                    $anagrafica->lng = $coordinates->getLongitude();
-                    $anagrafica->save();
-                } catch (Exception) {
-                    flash()->error("Impossibile recuperare le coordinate dell'anagrafica ".$anagrafica->ragione_sociale." per l'indirizzo ".$anagrafica->sedeLegale->indirizzo.' '.$anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap);
-                }
-            }
+            $anagrafica->save();
         }
 
         break;

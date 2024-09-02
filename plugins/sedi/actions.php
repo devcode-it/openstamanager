@@ -27,29 +27,29 @@ switch ($operazione) {
     case 'addsede':
         if (!empty(post('nomesede'))) {
             $opt_out_newsletter = post('disable_newsletter_add');
-            $dbo->insert('an_sedi', [
-                'idanagrafica' => $id_parent,
-                'nomesede' => post('nomesede'),
-                'indirizzo' => post('indirizzo'),
-                'citta' => post('citta'),
-                'cap' => post('cap'),
-                'provincia' => strtoupper(post('provincia')),
-                'km' => post('km'),
-                'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-                'idzona' => !empty(post('idzona')) ? post('idzona') : 0,
-                'cellulare' => post('cellulare'),
-                'telefono' => post('telefono'),
-                'email' => post('email'),
-                'enable_newsletter' => empty($opt_out_newsletter),
-                'codice_destinatario' => post('codice_destinatario'),
-                'is_automezzo' => post('is_automezzo_add'),
-                'is_rappresentante_fiscale' => post('is_rappresentante_fiscale_add'),
-                'targa' => post('targa'),
-                'nome' => post('nome'),
-                'descrizione' => post('descrizione'),
-            ]);
+            $sede = Sede::build(Anagrafica::find($id_parent));
+            
+            $sede->nomesede = post('nomesede');
+            $sede->indirizzo = post('indirizzo');
+            $sede->citta = post('citta');
+            $sede->cap = post('cap');
+            $sede->provincia = strtoupper(post('provincia'));
+            $sede->km = post('km');
+            $sede->id_nazione = !empty(post('id_nazione')) ? post('id_nazione') : null;
+            $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;
+            $sede->cellulare = post('cellulare');
+            $sede->telefono = post('telefono');
+            $sede->email = post('email');
+            $sede->enable_newsletter = empty($opt_out_newsletter);
+            $sede->codice_destinatario = post('codice_destinatario');
+            $sede->is_automezzo = post('is_automezzo');
+            $sede->is_rappresentante_fiscale = post('is_rappresentante_fiscale');
+            $sede->targa = post('targa');
+            $sede->nome = post('nome');
+            $sede->descrizione = post('descrizione');
+            $sede->save();
 
-            $id_record = $dbo->lastInsertedID();
+            $id_record = $sede->id;
 
             $id_referenti = (array) post('id_referenti');
             foreach ($id_referenti as $id_referente) {
@@ -78,32 +78,28 @@ switch ($operazione) {
         $opt_out_newsletter = post('disable_newsletter');
         $sede = Sede::find($id_record);
 
-        $dbo->update('an_sedi', [
-            'nomesede' => post('nomesede'),
-            'indirizzo' => post('indirizzo'),
-            'citta' => post('citta'),
-            'cap' => post('cap'),
-            'provincia' => strtoupper(post('provincia')),
-            'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-            'telefono' => post('telefono'),
-            'cellulare' => post('cellulare'),
-            'email' => post('email'),
-            'enable_newsletter' => empty($opt_out_newsletter),
-            'codice_destinatario' => post('codice_destinatario'),
-            'is_rappresentante_fiscale' => post('is_rappresentante_fiscale'),
-            'piva' => post('piva'),
-            'codice_fiscale' => post('codice_fiscale'),
-            'is_automezzo' => post('is_automezzo'),
-            'idzona' => post('idzona'),
-            'km' => post('km'),
-            'note' => post('note'),
-            'gaddress' => post('gaddress'),
-            'lat' => post('lat'),
-            'lng' => post('lng'),
-            'targa' => post('targa'),
-            'nome' => post('nome'),
-            'descrizione' => post('descrizione'),
-        ], ['id' => $id_record]);
+        $sede->nomesede = post('nomesede');
+        $sede->indirizzo = post('indirizzo');
+        $sede->citta = post('citta');
+        $sede->cap = post('cap');
+        $sede->provincia = strtoupper(post('provincia'));
+        $sede->km = post('km');
+        $sede->id_nazione = !empty(post('id_nazione')) ? post('id_nazione') : null;
+        $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;
+        $sede->cellulare = post('cellulare');
+        $sede->telefono = post('telefono');
+        $sede->email = post('email');
+        $sede->enable_newsletter = empty($opt_out_newsletter);
+        $sede->codice_destinatario = post('codice_destinatario');
+        $sede->is_automezzo = post('is_automezzo');
+        $sede->is_rappresentante_fiscale = post('is_rappresentante_fiscale');
+        $sede->targa = post('targa');
+        $sede->nome = post('nome');
+        $sede->descrizione = post('descrizione');
+        $sede->gaddress = post('gaddress');
+        $sede->lat = post('lat');
+        $sede->lng = post('lng');
+        $sede->save();
 
         $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);
         $id_referenti = (array) post('id_referenti');

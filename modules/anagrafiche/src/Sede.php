@@ -21,6 +21,8 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Geocoder\Provider\GoogleMaps;
+use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class Sede extends Model
 {
@@ -67,6 +69,10 @@ class Sede extends Model
     {
         $this->fixRappresentanteFiscale();
 
+        if( setting('Geolocalizzazione automatica') ){
+            $this->geolocalizzazione();
+        }
+
         return parent::save($options);
     }
 
@@ -82,6 +88,49 @@ class Sede extends Model
                 ]);
 
             $this->attributes['is_rappresentante_fiscale'] = $rappresentante_fiscale;
+        }
+    }
+
+    protected function geolocalizzazione()
+    {
+        if (!empty($this->indirizzo) && !empty($this->citta) && !empty($this->provincia) && empty($this->gaddress)) {
+            $indirizzo = urlencode($this->indirizzo.', '.$this->citta.', '.$this->provincia);
+
+            if( setting('Gestore mappa')=='OpenStreetMap' ){
+                // TODO: da riscrivere con Guzzle e spostare su hook
+                if (!function_exists('curl_init')) {
+                    // cURL non è attivo
+                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+                    return false;
+                } else {
+                    $ch = curl_init();
+                }
+                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
+                $user_agent = 'traccar';
+                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $data = json_decode(curl_exec($ch));
+                curl_close($ch);
+
+                // Salvataggio informazioni
+                $this->gaddress = $data[0]->display_name;
+                $this->lat = $data[0]->lat;
+                $this->lng = $data[0]->lon;
+            }elseif( setting('Gestore mappa')=='Google Maps' ){
+                $curl = new CurlHttpAdapter();
+                $geocoder = new GoogleMaps($curl, 'IT-it', null, true, $google);
+
+                // Ricerca indirizzo
+                $address = $geocoder->geocode($indirizzo)->first();
+                $coordinates = $address->getCoordinates();
+
+                // Salvataggio informazioni
+                $this->gaddress = $data[0]->display_name;
+                $this->lat = $coordinates->getLatitude();
+                $this->lng = $coordinates->getLongitude();
+            }
         }
     }
 }

@@ -534,17 +534,6 @@ echo '
         <div class="card card-info">
             <div class="card-header">
                 <h4 class="card-title">'.tr('Ore di lavoro per tecnico').'</h4>
-
-                <div class="row">
-                    <div class="col-md-3 float-right">';
-if ($_SESSION['superselect']['idtipiintervento']) {
-    echo '
-                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
-}
-echo '
-                    </div>
-                </div>
-
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fa fa-minus"></i>
@@ -552,6 +541,16 @@ echo '
                 </div>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">';
+                if ($_SESSION['superselect']['idanagrafica']) {
+                    echo '
+                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
+                }
+                echo '
+                    </div>
+                </div>
+          
                 <canvas id="sessioni"></canvas>
             </div>
         </div>

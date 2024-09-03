@@ -247,6 +247,8 @@ class Query
                     } elseif ($end_with) {
                         $value = trim(str_replace(['$'], '', $value));
                         $search_filters[] = ($search_query.' LIKE '.prepare('%'.$value));
+                    } elseif (str_contains($value, ',')) {
+                        $search_filters[] = ($search_query.' IN ("'.str_replace(',', '","', $value).'")');
                     } else {
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                     }

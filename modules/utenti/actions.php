@@ -152,7 +152,7 @@ switch (filter('op')) {
         /* Controlla che non posso auto eliminarmi */
         if (Auth::user()->id != $utente->id) {
             /* Controlla che l'utente che voglio eliminare non presenti logs associati */
-            if (count($utente->logs) > 0) {
+            if (count($utente->logs) == 0) {
                 if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
                     flash()->info(tr('Utente eliminato!'));
 

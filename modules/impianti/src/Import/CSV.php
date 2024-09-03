@@ -158,6 +158,7 @@ class CSV extends CSVImporter
             // Ricerca sulla base della chiave primaria se presente
             if (!empty($primary_key)) {
                 $impianto = Impianto::where($primary_key, $record[$primary_key])->first();
+                $impianto->nome = $record['nome'];
             }
             if (empty($impianto)) {
                 $impianto = Impianto::build($record['matricola'], $record['nome'], $categoria, $record['cliente']);
@@ -165,7 +166,6 @@ class CSV extends CSVImporter
 
             if (!empty($record['data'])) {
                 $impianto->data = $record['data'];
-                $impianto->save();
             }
 
             $impianto->idanagrafica = $anagrafica->idanagrafica;

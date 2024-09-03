@@ -12,4 +12,4 @@ WHERE
 HAVING
     2=2
 ORDER BY
-    `id`, `nome` ASC' WHERE `zz_modules`.`id` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `name` = 'Utenti e permessi');
+    `id`, `nome` ASC' WHERE `zz_modules`.`name` = 'Utenti e permessi';

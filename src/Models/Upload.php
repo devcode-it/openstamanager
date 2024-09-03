@@ -75,7 +75,7 @@ class Upload extends Model
 
         // Informazioni di base
         $name = $data['name'] ?? $name;
-        $name ??= basename($source);
+        $name ??= basename($source['name']);
         $original_name = $source['name'] ?? $name;
         $category = $data['category'] ?? $category;
 

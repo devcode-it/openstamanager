@@ -186,7 +186,7 @@ class HTMLWrapper implements WrapperInterface
                             icon.attr("class", "fa fa-check");
                             parent.addClass("has-success").removeClass("has-error");
                         } else {
-                            icon.attr("class", "fa fa-close");
+                            icon.attr("class", "fa fa-close text-danger");
                             parent.addClass("has-error").removeClass("has-success");
                         }
 

@@ -97,6 +97,8 @@ if (empty($_GET['movimentazione_completa'])) {
     $movimenti->limit(20);
 }
 
+$giacenze = $articolo->getGiacenze();
+
 // Raggruppamento per documento
 $movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
 if (!empty($movimenti)) {
@@ -115,16 +117,16 @@ if (!empty($movimenti)) {
 
     foreach ($movimenti as $i => $movimento) {
         // Quantità progressiva
-        if ($i == 0) {
-            $movimento['progressivo_finale'] = $articolo->qta;
+        if ($mov[$movimento['idsede']]['progressivo_finale'] === null) {
+            $movimento['progressivo_finale'] = $giacenze[$movimento['idsede']][0];
         } else {
-            $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
+            $movimento['progressivo_finale'] = $mov[$movimento['idsede']]['progressivo_iniziale'];
         }
 
         $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
 
-        $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
-        $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];
+        $mov[$movimento['idsede']]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
+        $mov[$movimento['idsede']]['progressivo_finale'] = $movimento['progressivo_finale'];
 
         // Quantità
         echo '

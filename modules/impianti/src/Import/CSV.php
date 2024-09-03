@@ -171,15 +171,16 @@ class CSV extends CSVImporter
             $impianto->idanagrafica = $anagrafica->idanagrafica;
             $impianto->id_marca = $id_marca;
             $impianto->id_modello = $record['modello'];
-            $impianto->save();
 
             if (!empty($record['sede'])) {
                 $sede = Sede::where('nomesede', $record['sede'])
                     ->where('idanagrafica', $anagrafica->idanagrafica)
                     ->first();
                 $impianto->idsede = $sede->id;
-                $impianto->save();
             }
+
+            $impianto->descrizione = $record['descrizione'];
+            $impianto->save();
 
             // Gestione immagine
             if (!empty($url) && !empty($record['import_immagine'])) {

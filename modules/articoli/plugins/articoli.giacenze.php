@@ -41,6 +41,8 @@ $query = 'SELECT
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1
         AND `or_statiordine`.`impegnato` = 1
+    GROUP BY
+        `or_ordini`.`id`
     HAVING 
         `qta_ordinata` > 0";
 

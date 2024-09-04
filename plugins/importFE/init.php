@@ -24,21 +24,21 @@ use Plugins\ImportFE\Interaction;
 
 if (!empty($id_record)) {
     $files = Interaction::getFileList();
-    $record = $files[$id_record - 1];
+    $record = $files[$id_record - 1] ?? null;
 
     $has_next = isset($files[$id_record]);
 
     try {
-        $fattura_pa = FatturaElettronica::manage($record['name']);
+        $fattura_pa = FatturaElettronica::manage($record['name'] ?? '');
         $anagrafica = $fattura_pa->findAnagrafica();
-    } catch (UnexpectedValueException) {
+    } catch (UnexpectedValueException $e) {
         $imported = true;
-    } catch (Exception) {
+    } catch (Exception $e) {
         $error = true;
     }
 
     // Rimozione .p7m dal nome del file (causa eventuale estrazione da ZIP)
-    $record['name'] = preg_replace('/(.+)\.p7m$/i', '{1}', $record['name']);
+    $record['name'] = preg_replace('/(.+)\.p7m$/i', '$1', $record['name'] ?? '');
 
     if (empty($record)) {
         flash()->warning(tr('Nessuna fattura da importare!'));

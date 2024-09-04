@@ -202,31 +202,27 @@ class FatturaElettronica
         ]));
     }
 
-    public function findAnagrafica($type = 'Fornitore')
+    public function findAnagrafica()
     {
         $info = $this->getAnagrafe();
 
         if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('piva', $info['partita_iva'])
-                ->orWhere('codice_fiscale', $info['codice_fiscale'])
-                ->orWhere('piva', 'like', '__'.$info['partita_iva'])
-                ->orwhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
+                ->orWhere('codice_fiscale', $info['codice_fiscale']);
         } elseif (!empty($info['codice_fiscale'])) {
-            $anagrafica = Anagrafica::where('codice_fiscale', $info['codice_fiscale'])
-                ->orWhere('codice_fiscale', 'like', '__'.$info['codice_fiscale']);
+            $anagrafica = Anagrafica::where('codice_fiscale', $info['codice_fiscale']);
         } elseif (!empty($info['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', $info['partita_iva'])
-                ->orWhere('piva', 'like', '__'.$info['partita_iva']);
+            $anagrafica = Anagrafica::where('piva', '=', $info['partita_iva']);
         }
 
-        $anagrafica = $anagrafica->first();
+        $anagrafica = $anagrafica->get()->first();
 
-        $is_fornitore = $anagrafica->isTipo($type);
+        $is_fornitore = $anagrafica->isTipo('Fornitore');
         $is_cliente = $anagrafica->isTipo('Cliente');
 
         if ($is_fornitore || $is_cliente) {
-            return $anagrafica->first();
-        }
+            return $anagrafica;
+        } 
     }
 
     /**

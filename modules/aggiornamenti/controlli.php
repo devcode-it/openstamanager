@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 // Schermata di caricamento delle informazioni
 echo '
-    <button class="btn btn-lg btn-block" onclick="avviaControlli(this);">
+    <button class="btn btn-lg btn-block btn-primary" onclick="avviaControlli(this);">
         <i class="fa fa-cog"></i> '.tr('Avvia controlli').'
 </button>
 

@@ -213,9 +213,12 @@ class Fattura extends Document
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
-            $model->idporto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
-            $model->idcausalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
-            $model->idspedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
+            $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
+            $model->idporto = $porto ?: '';
+            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
+            $model->idcausalet = $causalet ?: '';
+            $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
+            $model->idspedizione = $spedizione ?: '';
         }
 
         $model->save();

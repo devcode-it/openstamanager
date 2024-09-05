@@ -53,12 +53,3 @@ HAVING
 ORDER BY 
 	`data` DESC, 
     CAST(`numero_esterno` AS UNSIGNED) DESC" WHERE `zz_modules`.`name` = 'Ordini cliente';
-
--- Geolocalizzazione automatica
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
-(NULL, 'Geolocalizzazione automatica', '1', 'boolean', '1', 'Anagrafiche', NULL),
-(NULL, 'Gestore mappa', 'Google Maps', 'list[Google Maps, OpenStreetMap]', '1', 'Generale', NULL);
-
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Geolocalizzazione automatica'), 'Geolocalizzazione automatica', '');
-
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Gestore mappa'), 'Gestore mappa', '');

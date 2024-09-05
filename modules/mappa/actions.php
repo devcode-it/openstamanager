@@ -21,9 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 use Util\Query;
+use Modules\Anagrafiche\Anagrafica;
 
 switch (get('op')) {
     case 'get_markers':
+        $azienda = Anagrafica::find(setting('Azienda predefinita'));
         $idanagrafica = get('idanagrafica');
         $checks = get('check');
 
@@ -92,9 +94,9 @@ switch (get('op')) {
 
                     $descrizione .= '<hr>';
 
-                    $descrizione .= '<a class="btn btn-info btn-block btn-xs" onclick="calcolaPercorso(\''.$indirizzo.' '.$cap.' '.$citta.' '.$provincia.'\')">
-                                            <i class="fa fa-map-signs"></i> Calcola percorso
-                                        </a>';
+                    $descrizione .= '<button class="btn btn-info btn-block btn-xs" onclick="calcolaPercorso(\''.$azienda->lat.', '.$azienda->lng.'\', \''.$lat.', '.$lng.'\' )">
+                                        <i class="fa fa-map-signs"></i> Calcola percorso
+                                    </button>';
 
                     // dettagli intervento
                     $rs_sessioni = $dbo->fetchOne("SELECT MIN(orario_inizio) AS data, GROUP_CONCAT(DISTINCT ragione_sociale SEPARATOR ', ') AS tecnici FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE idintervento=".prepare($records[$i]['idintervento']).' GROUP BY idintervento');
@@ -109,9 +111,9 @@ switch (get('op')) {
 
                     $descrizione .= '<hr>';
 
-                    $descrizione .= '<a class="btn btn-info btn-block btn-xs" onclick="window.open(\''.$rootdir.'/editor.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&id_record='.$records[$i]['idintervento'].'\');">
+                    $descrizione .= '<button class="btn btn-info btn-block btn-xs" onclick="window.open(\''.$rootdir.'/editor.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&id_record='.$records[$i]['idintervento'].'\');">
                                             <i class="fa fa-external-link"></i> Apri attività
-                                        </a>';
+                                        </button>';
 
                     $descrizione .= '<hr>';
 

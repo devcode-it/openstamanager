@@ -121,3 +121,11 @@ $('#idanagrafica').change(function() {
     reload_pointers();
 });
 
+function calcolaPercorso(indirizzo_partenza, indirizzo_destinazione) {
+    if (isMobile.any) {
+        window.open("geo:" + indirizzo_destinazione + "?z=16&q=" + indirizzo_destinazione);
+    } else {
+        window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione);
+    }
+}
+

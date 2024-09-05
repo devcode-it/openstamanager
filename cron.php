@@ -93,6 +93,11 @@ $ultima_esecuzione->set($adesso->__toString());
 // Prima esecuzione immediata
 $slot_minimo = $adesso->copy();
 
+// Rimozione dei log più vecchi
+$database->query('DELETE FROM `zz_tasks_logs` WHERE DATE_ADD(`created_at`, INTERVAL :interval DAY) <= NOW()', [
+    ':interval' => 7,
+]);
+
 // Esecuzione ricorrente
 $number = 1;
 while (true) {
@@ -105,11 +110,6 @@ while (true) {
     if (!$database_online || !empty($disattiva->content) || $cron_id->content != $current_id) {
         return;
     }
-
-    // Rimozione dei log più vecchi
-    $database->query('DELETE FROM `zz_tasks_logs` WHERE DATE_ADD(`created_at`, INTERVAL :interval DAY) <= NOW()', [
-        ':interval' => 7,
-    ]);
 
     // Risveglio programmato tramite slot
     $timestamp = $slot_minimo->getTimestamp();

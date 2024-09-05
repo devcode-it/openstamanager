@@ -158,7 +158,7 @@ if ($fattura !== null) {
     </div>';
 
         // Lettura della ricevuta
-        if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filename)) {
+        if (!empty($ricevuta_principale) && !empty($ricevuta_principale->filename) && file_exists($ricevuta_principale->filename)) {
             $contenuto_ricevuta = XML::readFile($ricevuta_principale->filename);
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
 

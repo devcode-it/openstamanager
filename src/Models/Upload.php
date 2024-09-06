@@ -122,7 +122,7 @@ class Upload extends Model
         } else {
             // Caricamento con l'interfaccia di upload
             try {
-                $file = $filesystem->upload($model->directory, $original_name, file_get_contents($source));
+                $file = $filesystem->upload($model->directory, $original_name, file_exists($source) ? file_get_contents($source) : $source);
                 $model->size = $file['size'];
             } catch (\Exception) {
                 flash()->error(tr('Impossibile creare il file!'));

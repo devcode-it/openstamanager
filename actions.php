@@ -514,11 +514,16 @@ if ($structure->permission == 'rw') {
                     Filter::set('get', 'id_record', $id_record);
 
                     foreach ($values as $key => $value) {
-                        $dbo->insert('zz_field_record', [
-                            'id_record' => $id_record,
-                            'id_field' => $key,
-                            'value' => $value,
-                        ]);
+                        $name = $dbo->fetchOne('SELECT `name` FROM `zz_fields` WHERE `id` = '.prepare($key));
+                        $custom_fields = new HTMLBuilder\Manager\FieldManager;
+                        $campo = $custom_fields->getValue(['id_record' => $id_record, 'id_module' => $id_module], $name);
+                        if (empty($campo)){
+                            $dbo->insert('zz_field_record', [
+                                'id_record' => $id_record,
+                                'id_field' => $key,
+                                'value' => $value,
+                            ]);
+                        }
                     }
                 }
 

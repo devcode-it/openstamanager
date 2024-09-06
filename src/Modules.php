@@ -287,7 +287,7 @@ class Modules
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
-            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
+            $link = !empty($id_record) ? 'editor.php?id_module='.$module->id.'&id_record='.$id_record : 'controller.php?id_module='.$module->id;
 
             return '<a href="'.base_path().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {

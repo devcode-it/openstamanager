@@ -65,7 +65,16 @@ use Modules\Iva\Aliquota;
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $articolo->getTranslation('title'); ?>", "charcounter": 1 ]}
+                    <?php
+                    echo input([
+                        'type' => 'textarea',
+                        'label' => tr('Descrizione'),
+                        'name' => 'descrizione',
+                        'required' => 1,
+                        'value' => $articolo->getTranslation('title'),
+                        'charcounter' => 1
+                    ])
+                    ?>
 				</div>
 			</div>
 

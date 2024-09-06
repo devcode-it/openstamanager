@@ -137,7 +137,7 @@ if ($nome_stampa != 'Liquidazione IVA') {
         '_END_' => dateFormat($_SESSION['period_end']),
     ]).'</h3>
 			<div class="card-tools pull-right">
-				<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+				<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 		<div class="card-body">

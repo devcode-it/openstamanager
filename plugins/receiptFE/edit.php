@@ -211,12 +211,18 @@ function upload(btn) {
 function importMessage(data) {
     data = JSON.parse(data);
 
-    var ricevuta = "<br>'.tr('Ricevuta').': " + data.file;
+    var ricevuta = "<br><h5>'.tr('Ricevuta').': " + data.file+ "</h5>";
 
     if(data.fattura) {
+        data_fattura = new Date(data.fattura.data);
+        data_fattura = data_fattura.toLocaleDateString("it-IT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+            }).replace(",", "/");
         swal({
             title: "'.tr('Importazione completata!').'",
-            html: "'.tr('Fattura aggiornata correttamente').':" + data.fattura + ricevuta,
+            html: "'.tr('Fattura aggiornata correttamente').': <h4>" + data.fattura.numero_esterno + " '.tr('del').' " + data_fattura + "</h4>" + ricevuta,
             type: "success",
         });
     } else {

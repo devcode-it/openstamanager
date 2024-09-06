@@ -61,8 +61,9 @@ class OSMFilesystem extends Filesystem
         } while ($this->fileExists($directory.'/'.$filename));
 
         $this->write($directory.'/'.$filename, $contents);
+        $size = $this->fileSize($directory.'/'.$filename);
 
-        return ['filename' => $filename, 'extension' => $extension];
+        return ['filename' => $filename, 'extension' => $extension, 'size' => $size];
     }
 
     protected static function isSupportedType($extension)

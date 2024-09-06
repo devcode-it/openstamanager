@@ -86,3 +86,5 @@ if (get('lev') == '2' || get('lev') == '3') {
     </tr>
 </table>';
 }
+
+echo '</tbody></table>';

@@ -23,6 +23,7 @@ $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 $saldo_iniziale = 0;
 $i = 0;
+$records = [];
 
 if (get('lev') == '3') {
     $conto3 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id='.prepare($id_record));

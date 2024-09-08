@@ -161,6 +161,23 @@ Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstaman
 
 ## Strumenti di sviluppo e debug
 
+Riepilogando, per compilare occorre installare i seguenti strumenti:
+ - **php** >= 8.1 con estensioni:
+   - php-curl
+   - php-dom
+   - php-intl
+   - php-json
+   - php-xml
+   - php-mbstring
+   - php-pdo
+   - php-xml
+   - php-xsl
+   - php-zip
+ - **composer** v2: https://getcomposer.org/download/
+ - **nodejs** >= 16: https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
+ - **yarn** v 1.22: https://classic.yarnpkg.com/en/docs/install
+ - **gulp** v4: https://gulpjs.com/docs/en/getting-started/quick-start/#install-the-gulp-command-line-utility
+
 Consigliamo di installare [psalm](https://github.com/vimeo/psalm) e configurarlo nel proprio IDE se supportato, in modo che vengano eseguiti ulteriori controlli automatici sul codice scritto.
 
 E' già configurato su **composer** l'inclusione di [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer), uno strumento che permette di formattare in modo uniforme il codice scritto. Si può configurare nel proprio IDE se supportato. Il percorso dell'eseguibile è `vendor/bin/php-cs-fixer`.

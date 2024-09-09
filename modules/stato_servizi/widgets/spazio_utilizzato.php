@@ -41,86 +41,72 @@ $(document).ready(function() {
         },
         success: function(data) {
             data = JSON.parse(data);
-
             crea_grafico(data);
         }
     });
 });
 
 function crea_grafico(values){
-	var ctx = $("#chart");
-
-	$data = [];
-	$labels = [];
+    var ctx = $("#chart");
+    $data = [];
+    $labels = [];
     
-	values.forEach(function(element) {
+    values.forEach(function(element) {
         $data.push(element.size);
 
         //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
-        if (element.dbSize>0 && element.description == "Allegati"){
-           if (element.size<element.dbSize){
-                var diff = (element.dbSize-element.size);
-
-                if (diff>1000){
-                    $("#message").append("<div class=\"badge badge-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
+        if (element.dbSize > 0 && element.description == "Allegati"){
+            if (element.size < element.dbSize){
+                var diff = (element.dbSize - element.size);
+                if (diff > 1000){
+                    $("#message").append("<div class=\"badge badge-warning\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
                 }
             }
         }
 
-
         //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
-        if (element.dbCount>0 && element.description == "Allegati" ){
-           if (element.count<element.dbCount){
-                var diff = (element.dbCount-element.count);
+        if (element.dbCount > 0 && element.description == "Allegati" ){
+            if (element.count < element.dbCount){
+                var diff = (element.dbCount - element.count);
+                $("#message").append("<div class=\"badge badge-warning\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
 
-                $("#message").append("<div class=\"badge badge-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
 
             }
         }
         
         //Numero di file in Allegati suddivisi per estensione
         if (element.dbExtensions.length > 0){
-
             $("#message").append("<br><p><b>Top 10 allegati:</b></p>");
-
             element.dbExtensions.forEach(function(ext) {
-                $("#message").append("<div class=\"badge badge-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext["num"]+"</b> files con estensione <b>"+ext["extension"]+"</b>.</div><br>");
+                $("#message").append("<div class=\"badge badge-info\"><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext.num+"</b> files con estensione <b>"+ext.extension+"</b>.</div><br>");
+
 
             });
-
         }
-
-        $labels.push(element.description + " (" + element.formattedSize + ")" + " [" + element.count + "]" )
-    
+        $labels.push(`${element.description} (${element.formattedSize}) [${element.count}]`);
     });
 
-	options = {
+    const options = {
         responsive: true,
         maintainAspectRatio: false,
-		legend: {
-			display: true,
-			position: "right",
-		},
-		animation:{
-			animateScale: true,
-			animateRotate: true,
+        legend: {
+            display: true,
+            position: "right",
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true,
         },
         tooltips: {
             callbacks: {
-              title: function(tooltipItem, data) {
-                return data["labels"][tooltipItem[0]["index"]];
-              },
-              label: function(tooltipItem, data) {
-                //return data["datasets"][0]["data"][tooltipItem["index"]];
-                var dataset = data["datasets"][0];
-                var percent = Math.round((dataset["data"][tooltipItem["index"]] / dataset["_meta"][0]["total"]) * 100)
-                return "(" + percent + "%)";
-              },
-              afterLabel: function(tooltipItem, data) {
-                //var dataset = data["datasets"][0];
-                //var percent = Math.round((dataset["data"][tooltipItem["index"]] / dataset["_meta"][0]["total"]) * 100)
-                //return "(" + percent + "%)";
-              }
+                title: function(tooltipItem, data) {
+                    return data.labels[tooltipItem[0].index];
+                },
+                label: function(tooltipItem, data) {
+                    const dataset = data.datasets[0];
+                    const percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
+                    return `(${percent}%)`;
+                },
             },
             backgroundColor: "#fbfbfb",
             titleFontSize: 12,
@@ -162,7 +148,7 @@ function crea_grafico(values){
 	});
 }
 </script>
-<div id="message" class="pull-right"></div>
+<div id="message float-right"></div>
 <div class="chart-container">
     <canvas id="chart"></canvas>
 </div>';

@@ -22,3 +22,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Geolocalizzazione automatica'), 'Geolocalizzazione automatica', '');
 
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Gestore mappa'), 'Gestore mappa', '');
+
+-- Fix widget statistiche
+UPDATE `zz_widgets` SET `class` = 'col-md-6' WHERE `zz_widgets`.`name` = "Spazio utilizzato"; 

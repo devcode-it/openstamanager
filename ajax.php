@@ -112,7 +112,7 @@ switch (filter('op')) {
             if ($hook->permission != '-') {
                 $results[] = [
                     'id' => $hook->id,
-                    'name' => $hook->getTranslation('title'),
+                    'name' => $hook->name,
                 ];
             }
         }

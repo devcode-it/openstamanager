@@ -309,7 +309,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Hook "_NAME_" disabilitato!', [
-            '_NAME_' => $hook->getTranslation('title'),
+            '_NAME_' => $hook->name,
         ]));
 
         echo json_encode([]);
@@ -329,7 +329,7 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->first();
         flash()->info(tr('Hook "_NAME_" abilitato!', [
-            '_NAME_' => $hook->getTranslation('title'),
+            '_NAME_' => $hook->name,
         ]));
 
         echo json_encode([]);

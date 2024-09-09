@@ -47,7 +47,8 @@ if (!empty(post('db_host'))) {
             'db_username' => $db_username,
             'db_password' => $db_password,
         ]);
-    } catch (Exception) {
+    } catch (Throwable $e) {
+        error_log($e->getMessage());
     }
 
     // Test della configurazione

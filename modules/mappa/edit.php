@@ -94,7 +94,7 @@ foreach ($rs_stati as $stato) {
     var coords = [];
     var circle = "";
     var ROOTDIR = '<?php echo $rootdir; ?>';
-    var esri_url ="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+    var esri_url = '<?php echo setting('Tile server satellite');?>';
     var esri_attribution = "© Esri © OpenStreetMap Contributors";
 
     function caricaMappa() {

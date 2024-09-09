@@ -30,3 +30,11 @@ UPDATE `zz_widgets` SET `class` = 'col-md-6' WHERE `zz_widgets`.`name` = "Spazio
 ALTER TABLE `em_templates` 
   ADD `type` varchar(5) NOT NULL DEFAULT 'a' AFTER `note_aggiuntive`, 
   ADD `indirizzi_proposti` TINYINT NOT NULL DEFAULT '0' AFTER `type`; 
+
+-- Aggiunta visualizzazione satellite in mappa
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES 
+(NULL, 'Tile server satellite', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 'string', '1', 'Generali');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
+(NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Tile server satellite'), 'Tile server satellite', ''), 
+(NULL, '2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Tile server satellite'), 'Satellite tile server', '');

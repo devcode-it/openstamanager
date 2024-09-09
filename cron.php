@@ -33,7 +33,7 @@ use Monolog\Logger;
 use Tasks\Task;
 
 // Rimozione delle limitazioni sull'esecuzione
-set_time_limit(0);
+set_time_limit(86400);
 ignore_user_abort(true);
 
 // Chiusura della richiesta alla pagina

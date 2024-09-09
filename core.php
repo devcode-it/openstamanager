@@ -24,7 +24,7 @@
 date_default_timezone_set('Europe/Rome');
 
 // Controllo sulla versione PHP
-$minimum = '7.2.0';
+$minimum = '8.1.0';
 if (version_compare(phpversion(), $minimum) < 0) {
     echo '
 <p>Stai utilizzando la versione PHP '.phpversion().', non compatibile con OpenSTAManager.</p>

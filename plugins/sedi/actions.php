@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Sede;
+use Modules\Anagrafiche\Anagrafica;
 
 $operazione = filter('op');
 

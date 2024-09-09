@@ -1630,6 +1630,10 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 	background-image: url('../img/leaflet/icon-fullscreen.svg');
 }
 
+.leaflet-control-layers-toggle {
+    background-image: url('../img/leaflet/layers.png');
+}
+
 /** Rimozione avviso CKEditor temporanea **/
 .cke_notification_warning{
     display:none !important;

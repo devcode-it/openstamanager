@@ -122,6 +122,8 @@ if (get('op') == 'getmappa') {
         const lt = "41.706";
         const ln = "13.228";
         var container = L.DomUtil.get("mappa");
+        var esri_url ="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+        var esri_attribution = "© Esri © OpenStreetMap Contributors";
 
         if(container._leaflet_id != null){ 
             map.eachLayer(function (layer) {
@@ -139,7 +141,21 @@ if (get('op') == 'getmappa') {
             L.tileLayer("<?php echo setting('Tile server OpenStreetMap'); ?>", {
                 maxZoom: 17,
                 attribution: "© OpenStreetMap"
+            }); 
+
+            var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap');?>', {
+                maxZoom: 17,
+                attribution: "© OpenStreetMap",
             }).addTo(map); 
+
+            var satellite = L.tileLayer(esri_url, {id: "mappa", maxZoom: 17, tileSize: 512, zoomOffset: -1, attribution: esri_attribution});
+
+            var baseLayers = {
+                "Strade": street,
+                "Satellite": satellite
+            };
+
+            L.control.layers(baseLayers).addTo(map);
 
             var markerArray = [];
             if( document.getElementById('mappa') ){

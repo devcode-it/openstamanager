@@ -94,6 +94,8 @@ foreach ($rs_stati as $stato) {
     var coords = [];
     var circle = "";
     var ROOTDIR = '<?php echo $rootdir; ?>';
+    var esri_url ="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+    var esri_attribution = "© Esri © OpenStreetMap Contributors";
 
     function caricaMappa() {
         const lat = "41.706";
@@ -108,7 +110,21 @@ foreach ($rs_stati as $stato) {
         L.tileLayer("<?php echo setting('Tile server OpenStreetMap'); ?>", {
             maxZoom: 17,
             attribution: "© OpenStreetMap"
+        }); 
+
+        var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap');?>', {
+            maxZoom: 17,
+            attribution: "© OpenStreetMap",
         }).addTo(map); 
+
+        var satellite = L.tileLayer(esri_url, {id: "mappa", maxZoom: 17, tileSize: 512, zoomOffset: -1, attribution: esri_attribution});
+
+        var baseLayers = {
+            "Strade": street,
+            "Satellite": satellite
+        };
+
+        L.control.layers(baseLayers).addTo(map);
     }
 
     function initGeocomplete() {

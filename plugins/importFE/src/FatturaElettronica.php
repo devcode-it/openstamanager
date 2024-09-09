@@ -214,15 +214,17 @@ class FatturaElettronica
         } elseif (!empty($info['partita_iva'])) {
             $anagrafica = Anagrafica::where('piva', '=', $info['partita_iva']);
         }
+        
+        if (!empty($anagrafica)) {
+            $anagrafica = $anagrafica->get()->first();
 
-        $anagrafica = $anagrafica->get()->first();
+            $is_fornitore = $anagrafica->isTipo('Fornitore');
+            $is_cliente = $anagrafica->isTipo('Cliente');
 
-        $is_fornitore = $anagrafica->isTipo('Fornitore');
-        $is_cliente = $anagrafica->isTipo('Cliente');
-
-        if ($is_fornitore || $is_cliente) {
-            return $anagrafica;
-        } 
+            if ($is_fornitore || $is_cliente) {
+                return $anagrafica;
+            } 
+        }
     }
 
     /**

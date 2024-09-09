@@ -118,14 +118,14 @@ $idx = 0;
 foreach ($emails as $email) {
     echo '
             <div class="col-md-12">
-                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
+                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
 }
 
 if (empty($emails)) {
     echo '
             <div class="col-md-12">
-                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
+                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
             </div>';
 }
 echo '
@@ -197,7 +197,7 @@ echo '
 echo '
 <div class="hidden" id="template-destinatario">
     <div class="col-md-12">
-        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari" ]}
+        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari" ]}
     </div>
 </div>';
 
@@ -226,7 +226,23 @@ echo '
 
                 aggiungiDestinatario();
             });
+        }';
+
+        if (!empty($template['indirizzi_proposti'])) {
+            echo '
+            $(document).load(globals.rootdir + "/modules/emails/ajax/complete.php?op=get_email&indirizzi_proposti='.$template['indirizzi_proposti'].'", function(response) {
+                emails = JSON.parse(response);
+                console.log(emails);
+
+                $(".destinatari").each(function(){
+                    addAutoComplete(this);
+                });
+
+                aggiungiDestinatario();
+            });';
         }
+
+echo '
     });
 
     function inviaEmail() {

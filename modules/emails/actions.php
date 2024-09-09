@@ -56,6 +56,8 @@ switch (post('op')) {
         $template->note_aggiuntive = post('note_aggiuntive');
         $template->setTranslation('subject', post('subject'));
         $template->setTranslation('body', post('body'));
+        $template->type = post('type');
+        $template->indirizzi_proposti = post('indirizzi_proposti');
         $template->save();
 
         $prints[] = post('prints');

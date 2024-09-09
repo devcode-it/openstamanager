@@ -60,8 +60,14 @@ if (!$record['predefined']) {
             </div>
 
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Oggetto'); ?>", "name": "subject", "value": "$subject$" ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Proponi destinatari'); ?>", "name": "indirizzi_proposti", "value": "$indirizzi_proposti$", "values":"list=\"0\":\"<?php echo tr('Nessuno');?>\", \"1\":\"<?php echo tr('Clienti');?>\", \"2\":\"<?php echo tr('Fornitori');?>\", \"3\":\"<?php echo tr('Tutti');?>\" " ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Tipologia destinatari'); ?>", "name": "type", "value": "$type$", "values":"list=\"a\":\"<?php echo tr('A');?>\", \"cc\":\"<?php echo tr('CC');?>\", \"bcc\":\"<?php echo tr('CCN');?>\" ", "required":1 ]}
                 </div>
             </div>
 

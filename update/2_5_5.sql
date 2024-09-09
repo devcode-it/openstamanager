@@ -25,3 +25,8 @@ INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) V
 
 -- Fix widget statistiche
 UPDATE `zz_widgets` SET `class` = 'col-md-6' WHERE `zz_widgets`.`name` = "Spazio utilizzato"; 
+
+-- Gestione tipi destinatari e autocompletamenti destinatari nelle mail in uscita
+ALTER TABLE `em_templates` 
+  ADD `type` varchar(5) NOT NULL DEFAULT 'a' AFTER `note_aggiuntive`, 
+  ADD `indirizzi_proposti` TINYINT NOT NULL DEFAULT '0' AFTER `type`; 

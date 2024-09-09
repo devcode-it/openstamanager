@@ -136,7 +136,7 @@ class Backup
     {
         // Creazione del backup eventuale
         if (!self::isDailyComplete()) {
-            return self::create();
+            return self::create([]);
         }
 
         return false;

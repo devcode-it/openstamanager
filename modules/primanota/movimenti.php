@@ -387,7 +387,7 @@ $(document).on("change", "[id*=dare], [id*=avere]", function() {
 });
 
 function visualizzaMovimenti(button) {
-    let id_conto = $(button).parent().parent().find("select").val();
+    let id_conto = $(button).parent().parent().parent().find("select").val();
     openModal("'.tr('Ultimi 25 movimenti').'", "'.$module->fileurl('dettagli.php').'?id_module=" + globals.id_module + "&id_conto=" + id_conto);
 }
 </script>';

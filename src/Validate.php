@@ -158,9 +158,10 @@ class Validate
                 // Indirizzo
                 $address = $data['result']['company_address'];
                 $info = explode(PHP_EOL, (string) $address);
+
                 $fields['indirizzo'] = $info[0];
 
-                $info = explode(' ', $info[1]);
+                $info = $info[1] ? explode(' ', $info[1]) : $info;
 
                 $fields['cap'] = $info[0];
                 $fields['provincia'] = end($info);
@@ -169,6 +170,7 @@ class Validate
                 $fields['citta'] = implode(' ', $citta);
 
                 $result['fields'] = $fields;
+                
             }
         }
 

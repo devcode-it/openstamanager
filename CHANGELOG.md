@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.5.5 (2024-09-11))](#255-2024-09-11)
 - [2.5.4 (2024-08-28))](#254-2024-08-28)
 - [2.5.3 (2024-08-07)](#253-2024-08-07)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
@@ -70,7 +71,42 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.5.4 
+## 2.5.5 (2024-09-11)
+### Aggiunto (Added)
+- Aggiunta la geolocalizzazione automatica per anagrafiche e sedi
+- Aggiunta la ricerca multipla nelle tabelle datatables
+- Aggiunta controllo campi personalizzati doppi
+- Aggiunta la gestione tipi destinatari e autocompletamenti destinatari nelle mail in uscita
+- Aggiunta vista satellite su mappa
+
+### Modificato (Changed)
+- Ottimizzazioni varie codice per php8.3
+- Ripristinato il filtro per tipo attività in statistiche
+- Ottimizzata la query di pulizia dei log
+
+### Fixed
+- Corretta l'aggiunta dei filtri dei moduli nelle Viste
+- Corretti i riferimenti ai documenti nelle Attività
+- Corretti i dati cliente/fornitore nei documenti
+- Corretti i controlli per le impostazioni non previste
+- Corretto l'upload dei file
+- Corretta la vista Utenti e permessi
+- Corretta la visualizzazione delle variazioni di quantità
+- Corretta l'importazione delle fatture di acquisto
+- Corretta l'importazione delle anagrafiche
+- Corretta l'impostazione dell'immagine utente
+- Corretta l'eliminazione degli utenti
+- Corretta la sovrascrittura del campo nome in Importazione impianti
+- Corretta la creazione di una fattura accompagnatoria
+- Corretto il modulo Mappa
+- Corretta la visualizzazione della descrizione articolo in presenza di apici
+- Corretta la stampa partitario mastrino
+- Corretta la creazione di backup automatici
+- Corretti i requisiti di php
+- Corretta la visualizzazione di anagrafiche senza tipo
+- Corretta la visualizzazione degli ultimi movimenti in prima nota
+
+## 2.5.4 (2024-08-28)
 ### Aggiunto (Added)
 - Aggiunta l'unità di misura nel campo Peso nei DDT
 - Aggiunte le API dei DDT

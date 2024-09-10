@@ -31,9 +31,9 @@ if (!empty($id_record)) {
     try {
         $fattura_pa = FatturaElettronica::manage($record['name'] ?? '');
         $anagrafica = $fattura_pa->findAnagrafica();
-    } catch (UnexpectedValueException $e) {
+    } catch (UnexpectedValueException) {
         $imported = true;
-    } catch (Exception $e) {
+    } catch (Exception) {
         $error = true;
     }
 

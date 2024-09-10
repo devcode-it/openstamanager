@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$resource = ($resource ? $resource : $_GET['op']);
+$resource = ($resource ?: $_GET['op']);
 
 switch ($resource) {
     // Elenco e-mail

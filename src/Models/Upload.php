@@ -80,7 +80,7 @@ class Upload extends Model
 
         $original_name = $source['name'] ?? $name;
         $category = $data['category'] ?? $category;
-        
+
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
         $model->category = $category;

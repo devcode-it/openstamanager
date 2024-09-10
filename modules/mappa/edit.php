@@ -94,7 +94,7 @@ foreach ($rs_stati as $stato) {
     var coords = [];
     var circle = "";
     var ROOTDIR = '<?php echo $rootdir; ?>';
-    var esri_url = '<?php echo setting('Tile server satellite');?>';
+    var esri_url = '<?php echo setting('Tile server satellite'); ?>';
     var esri_attribution = "© Esri © OpenStreetMap Contributors";
 
     function caricaMappa() {
@@ -112,7 +112,7 @@ foreach ($rs_stati as $stato) {
             attribution: "© OpenStreetMap"
         }); 
 
-        var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap');?>', {
+        var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap'); ?>', {
             maxZoom: 17,
             attribution: "© OpenStreetMap",
         }).addTo(map); 

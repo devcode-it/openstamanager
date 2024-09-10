@@ -170,7 +170,6 @@ class Validate
                 $fields['citta'] = implode(' ', $citta);
 
                 $result['fields'] = $fields;
-                
             }
         }
 

@@ -24,8 +24,8 @@ if (!function_exists('geolocalizzazione')) {
     {
         $dbo = database();
 
-        if( $is_sede ){
-            $sede = $dbo->table('an_sedi')->where('id',$id_record)->first();
+        if ($is_sede) {
+            $sede = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
             if (!empty($sede->indirizzo) && !empty($sede->citta) && !empty($sede->provincia) && empty($sede->lat) && empty($sede->lng)) {
                 $indirizzo = urlencode($sede->indirizzo.', '.$sede->citta.', '.$sede->provincia);
@@ -34,6 +34,7 @@ if (!function_exists('geolocalizzazione')) {
                 if (!function_exists('curl_init')) {
                     // cURL non è attivo
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+
                     return false;
                 } else {
                     $ch = curl_init();
@@ -52,9 +53,9 @@ if (!function_exists('geolocalizzazione')) {
                     'gaddress' => $data[0]->display_name,
                     'lat' => $data[0]->lat,
                     'lng' => $data[0]->lon,
-                ],['id' => $sede->id]);
+                ], ['id' => $sede->id]);
             }
-        }else{
+        } else {
             $anagrafica = Anagrafica::find($id_record);
             if (!empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->provincia) && empty($anagrafica->lat) && empty($anagrafica->lng)) {
                 $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia);
@@ -63,6 +64,7 @@ if (!function_exists('geolocalizzazione')) {
                 if (!function_exists('curl_init')) {
                     // cURL non è attivo
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+
                     return false;
                 } else {
                     $ch = curl_init();

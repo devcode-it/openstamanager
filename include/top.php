@@ -457,8 +457,8 @@ if (Auth::check()) {
 
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar '.$theme.' elevation-4">
-                <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica"). '" target="_blank">
-                    <img src="'. $rootdir . '/assets/dist/img/logo_completo.png" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica"). '">
+                <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" target="_blank">
+                    <img src="'.$rootdir.'/assets/dist/img/logo_completo.png" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'">
                     <span class="brand-text font-weight-light">&nbsp;</span>
                    
                 </a>

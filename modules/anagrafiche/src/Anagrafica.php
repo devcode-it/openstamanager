@@ -222,7 +222,7 @@ class Anagrafica extends Model
     {
         $this->fixRagioneSociale();
 
-        if( setting('Geolocalizzazione automatica') ){
+        if (setting('Geolocalizzazione automatica')) {
             $this->geolocalizzazione();
         }
 
@@ -452,11 +452,12 @@ class Anagrafica extends Model
         if (!empty($this->sedeLegale->indirizzo) && !empty($this->sedeLegale->citta) && !empty($this->sedeLegale->provincia)) {
             $indirizzo = urlencode($this->sedeLegale->indirizzo.', '.$this->sedeLegale->citta.', '.$this->sedeLegale->provincia);
 
-            if( setting('Gestore mappa')=='OpenStreetMap' ){
+            if (setting('Gestore mappa') == 'OpenStreetMap') {
                 // TODO: da riscrivere con Guzzle e spostare su hook
                 if (!function_exists('curl_init')) {
                     // cURL non è attivo
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+
                     return false;
                 } else {
                     $ch = curl_init();
@@ -474,9 +475,9 @@ class Anagrafica extends Model
                 $this->gaddress = $data[0]->display_name;
                 $this->lat = $data[0]->lat;
                 $this->lng = $data[0]->lon;
-            }elseif( setting('Gestore mappa')=='Google Maps' ){
+            } elseif (setting('Gestore mappa') == 'Google Maps') {
                 $apiKey = setting('Google Maps API key per Tecnici');
-                $url = "https://maps.googleapis.com/maps/api/geocode/json?address=".$indirizzo."&key=".$apiKey;
+                $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$indirizzo.'&key='.$apiKey;
 
                 $response = file_get_contents($url);
                 $data = json_decode($response, true);

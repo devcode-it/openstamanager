@@ -543,11 +543,11 @@ echo '
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">';
-                if ($_SESSION['superselect']['idanagrafica']) {
-                    echo '
+if ($_SESSION['superselect']['idanagrafica']) {
+    echo '
                         {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
-                }
-                echo '
+}
+echo '
                     </div>
                 </div>
           

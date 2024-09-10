@@ -122,7 +122,7 @@ if (get('op') == 'getmappa') {
         const lt = "41.706";
         const ln = "13.228";
         var container = L.DomUtil.get("mappa");
-        var esri_url = '<?php echo setting('Tile server satellite');?>';
+        var esri_url = '<?php echo setting('Tile server satellite'); ?>';
         var esri_attribution = "© Esri © OpenStreetMap Contributors";
 
         if(container._leaflet_id != null){ 
@@ -143,7 +143,7 @@ if (get('op') == 'getmappa') {
                 attribution: "© OpenStreetMap"
             }); 
 
-            var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap');?>', {
+            var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap'); ?>', {
                 maxZoom: 17,
                 attribution: "© OpenStreetMap",
             }).addTo(map); 

@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
 
 $operazione = filter('op');
 
@@ -29,7 +29,7 @@ switch ($operazione) {
         if (!empty(post('nomesede'))) {
             $opt_out_newsletter = post('disable_newsletter_add');
             $sede = Sede::build(Anagrafica::find($id_parent));
-            
+
             $sede->nomesede = post('nomesede');
             $sede->indirizzo = post('indirizzo');
             $sede->citta = post('citta');

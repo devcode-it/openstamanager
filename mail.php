@@ -228,8 +228,8 @@ echo '
             });
         }';
 
-        if (!empty($template['indirizzi_proposti'])) {
-            echo '
+if (!empty($template['indirizzi_proposti'])) {
+    echo '
             $(document).load(globals.rootdir + "/modules/emails/ajax/complete.php?op=get_email&indirizzi_proposti='.$template['indirizzi_proposti'].'", function(response) {
                 emails = JSON.parse(response);
                 console.log(emails);
@@ -240,7 +240,7 @@ echo '
 
                 aggiungiDestinatario();
             });';
-        }
+}
 
 echo '
     });

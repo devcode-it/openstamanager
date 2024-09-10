@@ -133,7 +133,7 @@ if (!empty($query)) {
 
             // Formattazione HTML
             if (empty($total['html_format'][$pos]) && !empty($value)) {
-                $value = strip_tags($value?:'');
+                $value = strip_tags($value ?: '');
             }
 
             // Formattazione automatica

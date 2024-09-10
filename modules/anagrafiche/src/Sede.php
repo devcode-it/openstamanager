@@ -20,8 +20,8 @@
 namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
-use Illuminate\Database\Eloquent\Model;
 use Geocoder\Provider\GoogleMaps;
+use Illuminate\Database\Eloquent\Model;
 use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class Sede extends Model
@@ -69,7 +69,7 @@ class Sede extends Model
     {
         $this->fixRappresentanteFiscale();
 
-        if( setting('Geolocalizzazione automatica') ){
+        if (setting('Geolocalizzazione automatica')) {
             $this->geolocalizzazione();
         }
 
@@ -96,11 +96,12 @@ class Sede extends Model
         if (!empty($this->indirizzo) && !empty($this->citta) && !empty($this->provincia) && empty($this->gaddress)) {
             $indirizzo = urlencode($this->indirizzo.', '.$this->citta.', '.$this->provincia);
 
-            if( setting('Gestore mappa')=='OpenStreetMap' ){
+            if (setting('Gestore mappa') == 'OpenStreetMap') {
                 // TODO: da riscrivere con Guzzle e spostare su hook
                 if (!function_exists('curl_init')) {
                     // cURL non è attivo
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
+
                     return false;
                 } else {
                     $ch = curl_init();
@@ -118,7 +119,7 @@ class Sede extends Model
                 $this->gaddress = $data[0]->display_name;
                 $this->lat = $data[0]->lat;
                 $this->lng = $data[0]->lon;
-            }elseif( setting('Gestore mappa')=='Google Maps' ){
+            } elseif (setting('Gestore mappa') == 'Google Maps') {
                 $curl = new CurlHttpAdapter();
                 $geocoder = new GoogleMaps($curl, 'IT-it', null, true, $google);
 

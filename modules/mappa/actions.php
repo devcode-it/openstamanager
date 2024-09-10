@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
-use Util\Query;
 use Modules\Anagrafiche\Anagrafica;
+use Util\Query;
 
 switch (get('op')) {
     case 'get_markers':

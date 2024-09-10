@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Geocoder\Provider\GoogleMaps;
-use Ivory\HttpAdapter\CurlHttpAdapter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 use Modules\Anagrafiche\Tipo;

@@ -28,14 +28,17 @@ use Monolog\Handler\AbstractProcessingHandler;
  */
 class MessageHandler extends AbstractProcessingHandler
 {
-    protected function write(array $record)
+    protected function write(array $record): void  
     {
+         // Controlla se la richiesta è AJAX
         if (\Whoops\Util\Misc::isAjaxRequest()) {
             return;
         }
 
+        // Costruisci il messaggio di errore  
         $message = tr('Si è verificato un errore').' <i>[uid: '.$record['extra']['uid'].']</i>.';
 
+        // Aggiungi informazioni utente se autenticato
         if (auth()->check()) {
             $message .= '
             '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite il forum apposito (_LINK_FORUM_)', [
@@ -52,6 +55,7 @@ class MessageHandler extends AbstractProcessingHandler
         try {
             flash()->error($message);
         } catch (\Exception) {
+            // Gestisci l'eccezione se necessario  
         }
 
         // Messaggio visivo immediato

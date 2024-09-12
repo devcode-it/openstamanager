@@ -215,9 +215,9 @@ class FatturaElettronica
             $anagrafica = Anagrafica::where('piva', '=', $info['partita_iva']);
         }
 
-        if (!empty($anagrafica)) {
-            $anagrafica = $anagrafica->get()->first();
+        $anagrafica = $anagrafica->first();
 
+        if (!empty($anagrafica)) {
             $is_fornitore = $anagrafica->isTipo('Fornitore');
             $is_cliente = $anagrafica->isTipo('Cliente');
 

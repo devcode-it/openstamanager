@@ -486,7 +486,7 @@ echo '
         </td>
 
         <td class="border-bottom">
-            '.$pagamento->getTranslation('title').'
+            '.($pagamento ? $pagamento->getTranslation('title') : '').'
         </td>
     </tr>
 

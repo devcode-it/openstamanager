@@ -105,11 +105,12 @@ foreach ($righe as $riga) {
                     }
                 }
                 $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
-                preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2);
-                $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
-                if (!empty($rif2)) {
+                
+                if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
+                    $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
                     $text .= '<b>'.$rif2[0].'</b>';
                 }
+
                 $text .= '<b>'.$key.'</b></td><td></td><td></td><td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
                 echo '

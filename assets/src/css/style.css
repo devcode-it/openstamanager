@@ -1646,6 +1646,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     border: none !important;
 }
 
+.info-active ul.list{
+    list-style: none;
+}
+
+
 @media screen and (max-width: 767px) {
     .navbar-left {
         display: inline-block;

@@ -94,11 +94,11 @@ if (empty($record) || !$has_access) {
         $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
         echo '
-		<div class="box box-warning box-solid text-center info-active hide">
-			<div class="box-header with-border">
-				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
+		<div class="card card-warning card-solid text-center info-active hide">
+			<div class="card-header with-border">
+				<h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
 			</div>
-			<div class="box-body">
+			<div class="card-body">
 				<p>'.tr('I seguenti utenti stanno consultando questa scheda').':</p>
 				<ul class="list">
 				</ul>

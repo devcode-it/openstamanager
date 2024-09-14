@@ -140,7 +140,7 @@ class Uploads
     public static function fileInfo($filepath)
     {
         $infos = pathinfo($filepath);
-        $infos['extension'] = strtolower($infos['extension']);
+        $infos['extension'] = strtolower($infos['extension'] ?? '');
 
         return $infos;
     }

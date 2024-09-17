@@ -128,7 +128,7 @@ class Validate
             $fields['ragione_sociale'] = $data->company_name;
 
             // Indirizzo
-            $address = $data->company_address;
+            $address = $data->company_address ?: '';
             $info = explode(PHP_EOL, $address);
             $fields['indirizzo'] = $info[0];
 

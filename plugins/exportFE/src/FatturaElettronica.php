@@ -1621,7 +1621,7 @@ class FatturaElettronica implements \Stringable
         }
 
         // Se sono presenti solo righe descrittive uso l'iva da impostazioni e creo un riepilogo con gli importi a 0
-        if (empty($iva)) {
+        if (empty($iva) && $righe->count() > 0) {
             $iva = [
                 'AliquotaIVA' => $aliquota->percentuale,
                 'ImponibileImporto' => 0,

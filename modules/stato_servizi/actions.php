@@ -198,7 +198,7 @@ switch (filter('op')) {
         $id = filter('id');
 
         $widget = $database->table('zz_widgets_lang')
-        ->where('id', '=', $id)
+        ->where('id_record', '=', $id)
         ->first();
 
         // Abilitazione del widget indicato

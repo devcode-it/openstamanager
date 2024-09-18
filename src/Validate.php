@@ -132,7 +132,7 @@ class Validate
             $info = explode(PHP_EOL, $address);
             $fields['indirizzo'] = $info[0];
 
-            $info = explode(' ', $info[1]);
+            $info = explode(' ', $info[1] ?: '');
 
             $fields['cap'] = $info[0];
             $fields['provincia'] = end($info);

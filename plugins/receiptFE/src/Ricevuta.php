@@ -62,17 +62,21 @@ class Ricevuta
             delete($extraction_dir);
         }
 
-        $this->file = $file;
-        $this->xml = XML::readFile($this->file);
-
-        $filename = explode('.', (string) $name)[0];
-        $pieces = explode('_', $filename);
-
-        $progressivo_invio = $pieces[1];
-
-        $this->fattura = Fattura::where([
-            'progressivo_invio' => $progressivo_invio,
-        ])->first();
+        if (!file_exists($file)) {
+            throw new \UnexpectedValueException();
+        } else {
+            $this->file = $file;
+            $this->xml = XML::readFile($this->file);
+    
+            $filename = explode('.', (string) $name)[0];
+            $pieces = explode('_', $filename);
+    
+            $progressivo_invio = $pieces[1];
+    
+            $this->fattura = Fattura::where([
+                'progressivo_invio' => $progressivo_invio,
+            ])->first();
+        }
 
         if (empty($this->fattura)) {
             throw new \UnexpectedValueException();

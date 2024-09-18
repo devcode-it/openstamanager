@@ -66,7 +66,7 @@ if (sizeof($rs_doc) > 0) {
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
-            $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id->id_record : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
+            $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
                         <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item">
                             <i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?>
                         </a>

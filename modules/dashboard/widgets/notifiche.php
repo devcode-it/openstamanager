@@ -92,6 +92,8 @@ foreach ($moduli as $module_id => $note) {
             $documento = $dbo->fetchOne("SELECT `matricola` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `my_impianti` ON (`my_impianti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Impianti' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `my_impianti`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
         } elseif ($modulo->getTranslation('title') == 'Anagrafiche') {
             $documento = $dbo->fetchOne("SELECT ' ' AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `an_anagrafiche` ON (`an_anagrafiche`.`idanagrafica` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Anagrafiche' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) WHERE `zz_notes`.`id` = '.$nota->id);
+        } elseif ($modulo->getTranslation('title') == 'Scadenzario') {
+            $documento = $dbo->fetchOne("SELECT `co_scadenziario`.`tipo` AS numero , `ragione_sociale` FROM `zz_notes` INNER JOIN `co_scadenziario` ON (`co_scadenziario`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Scadenzario' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_scadenziario`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
         } else {
             $documento['numero'] = ' ';
         }

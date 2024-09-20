@@ -19,6 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+$totale_passivita = 0;
+$utile_perdita = 0;
+
 // Stato Patrimoniale
 echo '
 <h4>Stato Patrimoniale</h3>

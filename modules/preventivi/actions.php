@@ -456,6 +456,9 @@ switch (post('op')) {
 
             // CALCOLO PREZZO UNITARIO
             $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+            if (!$prezzo_consigliato['prezzo_unitario']) {
+                $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+            }
             $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
             $sconto = $prezzo_consigliato['sconto'];
 
@@ -549,6 +552,9 @@ switch (post('op')) {
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                if (!$prezzo_consigliato['prezzo_unitario']) {
+                    $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+                }
                 $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
                 $sconto = $prezzo_consigliato['sconto'];
 

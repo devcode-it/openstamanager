@@ -84,6 +84,8 @@ class Sessione extends Model
         }
 
         $model->km = empty($km) ? 0 : $km;
+        $model->tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+        $model->tipo_scontokm = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
 
         $model->save();
 

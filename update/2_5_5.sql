@@ -38,3 +38,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
 (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Tile server satellite'), 'Tile server satellite', ''), 
 (NULL, '2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Tile server satellite'), 'Satellite tile server', '');
+
+-- Aggiunto flag Attivo in Template
+ALTER TABLE `em_templates` ADD `enabled` BOOLEAN NOT NULL DEFAULT TRUE AFTER `note_aggiuntive`;

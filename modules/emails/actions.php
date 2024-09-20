@@ -58,6 +58,7 @@ switch (post('op')) {
         $template->setTranslation('body', post('body'));
         $template->type = post('type');
         $template->indirizzi_proposti = post('indirizzi_proposti');
+        $template->enabled = post('enabled');
         $template->save();
 
         $prints[] = post('prints');

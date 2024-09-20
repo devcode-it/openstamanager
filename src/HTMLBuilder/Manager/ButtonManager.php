@@ -125,7 +125,7 @@ class ButtonManager implements ManagerInterface
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } elseif ($options['type'] == 'email') {
-            $results = TemplateEmail::where('id_module', $options['id_module'])->with(['translations' => function ($query) {
+            $results = TemplateEmail::where('id_module', $options['id_module'])->where('enabled', 1)->with(['translations' => function ($query) {
                 $query->orderBy('title');
             }])->get()->toArray();
         } elseif ($options['type'] == 'sms') {

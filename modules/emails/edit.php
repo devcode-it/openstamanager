@@ -40,12 +40,16 @@ if (!$record['predefined']) {
 
 		<div class="card-body">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$title$", "required": 1, "extra": "<?php echo $attr; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
                     {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->getTranslation('title'); ?>" ]}
+                </div>
+
+                <div class="col-md-2">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "$enabled$", "values": "Sì,No" ]}
                 </div>
             </div>
 

@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 echo '
         <tr>
             <th colspan="4" class="text-right">TOTALE GENERALE</th>
-            <th class="text-right">'.moneyFormat(abs($totale_dare), 2).'</th>
-            <th class="text-right">'.moneyFormat(abs($totale_avere), 2).'</th>
+            <th class="text-right">'.moneyFormat(abs($totale_dare?:0), 2).'</th>
+            <th class="text-right">'.moneyFormat(abs($totale_avere?:0), 2).'</th>
         </tr>
     </tbody>
 </table>';

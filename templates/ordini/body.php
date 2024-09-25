@@ -123,14 +123,14 @@ foreach ($righe as $riga) {
                     $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                 }
                 $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
-                
+
                 if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
                     $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
                     $text .= '<b>'.$rif2[0].'</b>';
                 }
 
                 $text .= '<b>'.$key.'</b></td>';
-                
+
                 if ($options['pricing']) {
                     $text .= '
                         <td></td>

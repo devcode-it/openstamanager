@@ -172,11 +172,11 @@ if (empty($record) || !$has_access) {
                         <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                     </a>';
 
-                    if (isMobile()) { 
-                        echo'<div>'; 
-                    } else {
-                        echo'<div class="float-right d-none d-sm-inline">';
-                    };
+    if (isMobile()) {
+        echo '<div>';
+    } else {
+        echo '<div class="float-right d-none d-sm-inline">';
+    }
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');

@@ -266,6 +266,7 @@ switch (post('op')) {
         $new->immagine = $nome_immagine;
         $new->save();
 
+        $new->setTranslation('title', $articolo->getTranslation('title'));
         $id_record = $new->id;
 
         // Copia degli allegati

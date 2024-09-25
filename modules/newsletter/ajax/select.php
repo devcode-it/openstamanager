@@ -98,13 +98,14 @@ switch ($resource) {
         break;
 
     case 'liste_newsletter':
-        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`title`, ' (', COUNT(*), ' `destinatari`)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` WHERE 1=1 |where| ORDER BY `title` ASC';
+        $query = "SELECT `em_lists`.`id`, CONCAT(`em_lists_lang`.`title`, ' (', COUNT(*), ' destinatari)') AS descrizione FROM `em_lists` LEFT JOIN `em_lists_lang` ON (`em_lists_lang`.`id_record` = `em_lists`.`id` AND `em_lists_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') INNER JOIN `em_list_receiver` ON `em_lists`.`id` = `em_list_receiver`.`id_list` |where| GROUP BY `em_lists`.`id` ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`id`='.prepare($element);
         }
 
         if (empty($filter)) {
+            $where[] = '1=1';
             $where[] = '`deleted_at` IS NULL';
         }
 

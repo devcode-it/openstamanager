@@ -54,7 +54,7 @@ foreach ($modules as $name => $values) {
 
     $status = isset($available_modules) ? in_array($name, $available_modules) : $_SERVER[$values['server']] == 'On';
 
-    if ($name == 'mod_mime' && $php_interface != 'apache') {
+    if ($name == 'mod_mime' && $php_interface != 'apache' && $dbo->isConnected() ) {
         $headers = get_headers((!empty($config['redirectHTTPS']) && !isHTTPS(true)) ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true);
         if (isset($headers['Content-Type'])) {
             $status = 1;

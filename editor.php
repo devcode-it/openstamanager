@@ -170,9 +170,13 @@ if (empty($record) || !$has_access) {
                 <div id="pulsanti">
                     <a class="btn btn-default" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                         <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
-                    </a>
+                    </a>';
 
-                    <div class="float-right d-none d-sm-inline">';
+                    if (isMobile()) { 
+                        echo'<div>'; 
+                    } else {
+                        echo'<div class="float-right d-none d-sm-inline">';
+                    };
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');

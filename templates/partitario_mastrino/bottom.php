@@ -31,13 +31,15 @@ if (get('lev') == '2' || get('lev') == '3') {
         }
     }
     echo '
-    <tr>
-        <th></th>
-        <th>SALDO FINALE</th>
-        <th class="text-right">'.moneyFormat(abs($dare), 2).'</th>
-        <th class="text-right">'.moneyFormat(abs($avere), 2).'</th>
-        <th class="text-right">'.moneyFormat(abs($scalare), 2).'</th>
-    </tr>';
+        <tr>
+            <th></th>
+            <th>SALDO FINALE</th>
+            <th class="text-right">'.moneyFormat(abs($dare), 2).'</th>
+            <th class="text-right">'.moneyFormat(abs($avere), 2).'</th>
+            <th class="text-right">'.moneyFormat(abs($scalare), 2).'</th>
+        </tr>
+    </tbody>
+</table>';
 } elseif (get('lev') == '1') {
     $totale_attivo = 0;
     $totale_passivo = 0;
@@ -86,5 +88,3 @@ if (get('lev') == '2' || get('lev') == '3') {
     </tr>
 </table>';
 }
-
-echo '</tbody></table>';

@@ -32,7 +32,7 @@ trait ReferenceTrait
     public function getReference($show_ragione_sociale = null)
     {
         // Informazioni disponibili
-        $name = $this->getReferenceName();
+        $name = $this->getReferenceName()->name ?? $this->getReferenceName();
 
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();

@@ -895,7 +895,7 @@ class Fattura extends Document
 
     public function getReferenceName()
     {
-        return $this->tipo->getTranslation('title');
+        return $this->tipo;
     }
 
     public function getReferenceNumber()

@@ -315,7 +315,7 @@ switch ($op) {
         // Elenco fatture in stato Bozza per il cliente
     case 'fatture_bozza':
         $id_anagrafica = post('id_anagrafica');
-        $stato = Stato::where('name', 'Bozza')->first()->id;
+        $stato = Stato::where('name', 'Bozza')->first();
 
         $fatture = Fattura::vendita()
             ->where('idanagrafica', $id_anagrafica)
@@ -334,12 +334,12 @@ switch ($op) {
         // Elenco fatture Scadute per il cliente
     case 'fatture_scadute':
         $id_anagrafica = post('id_anagrafica');
-        $stato1 = Stato::where('name', 'Emessa')->first()->id;
-        $stato2 = Stato::where('name', 'Parzialmente pagato')->first()->id;
+        $stato1 = Stato::where('name', 'Emessa')->first();
+        $stato2 = Stato::where('name', 'Parzialmente pagato')->first();
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
-            ->where('co_documenti.idanagrafica', $id_anagrafica)
+            ->where('co_documenti.idanagrafica', "=", $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
             ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
             ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')

@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.5.5 (2024-09-11))](#255-2024-09-11)
+- [2.5.5 (2024-09-27))](#255-2024-09-27)
 - [2.5.4 (2024-08-28))](#254-2024-08-28)
 - [2.5.3 (2024-08-07)](#253-2024-08-07)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
@@ -71,13 +71,15 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.5.5 (2024-09-11)
+## 2.5.5 (2024-09-27)
 ### Aggiunto (Added)
 - Aggiunta la geolocalizzazione automatica per anagrafiche e sedi
 - Aggiunta la ricerca multipla nelle tabelle datatables
 - Aggiunta controllo campi personalizzati doppi
 - Aggiunta la gestione tipi destinatari e autocompletamenti destinatari nelle mail in uscita
 - Aggiunta vista satellite su mappa
+- Aggiunta la gestione del flag Attivo in template
+- Aggiunta la gestione del listino predefinito per l'anagrafica azienda
 
 ### Modificato (Changed)
 - Ottimizzazioni varie codice per php8.3
@@ -105,6 +107,11 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretti i requisiti di php
 - Corretta la visualizzazione di anagrafiche senza tipo
 - Corretta la visualizzazione degli ultimi movimenti in prima nota
+- Corretta la stampa preventivo con pagamento mancante
+- Corretta la disabilitazione dei widget
+- Corretta l'apertura delle fatture collegate da prima nota
+- Corretta la duplicazione degli articoli
+- Corretta la visualizzazione dei tasti da mobile
 
 ## 2.5.4 (2024-08-28)
 ### Aggiunto (Added)

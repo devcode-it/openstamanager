@@ -54,7 +54,7 @@ if (!empty($fatture_generate_errore->count())) {
 
         $ricevuta_principale = $fattura_generata->getRicevutaPrincipale();
         if (!empty($ricevuta_principale)) {
-            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
+            $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/'.$ricevuta_principale->filename);
 
             // Informazioni aggiuntive per EC02
             if (!empty($contenuto_ricevuta['EsitoCommittente'])) {

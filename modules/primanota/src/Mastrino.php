@@ -197,7 +197,7 @@ class Mastrino extends Model
             }
 
             foreach ($scadenze as $scadenza) {
-                $totale_da_distribuire += ($movimento['totale'] != 0 ? Movimento::where('id_scadenza', '=', $scadenza->id)
+                $totale_da_distribuire = ($movimento['totale'] != 0 ? Movimento::where('id_scadenza', '=', $scadenza)
                 ->where('totale', '>', 0)
                 ->sum('totale') : 0);
             }

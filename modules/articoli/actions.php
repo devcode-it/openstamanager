@@ -148,6 +148,7 @@ switch (post('op')) {
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
+        $articolo->id_marchio = post('id_marchio');
 
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');

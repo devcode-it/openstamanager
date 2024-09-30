@@ -121,8 +121,8 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'info').'"><i class="fa fa-question"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Preventivi').'</span>
-                        '.($preventivi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Preventivi')->first()->id.'&search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Preventivi').'
+                        '.($preventivi->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Preventivi')->first()->id.'&search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$preventivi->count().'</big><br>
@@ -136,8 +136,8 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($contratti->count() == 0 ? 'gray' : 'purple').'"><i class="fa fa-refresh"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Contratti').'</span>
-                        '.($contratti->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Contratti')->first()->id.'&search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Contratti').'
+                        '.($contratti->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Contratti')->first()->id.'&search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$contratti->count().'</big><br>
@@ -151,8 +151,8 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Ordini cliente').'</span>
-                        '.($ordini_cliente->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Ordini cliente')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Ordini cliente').'
+                        '.($ordini_cliente->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Ordini cliente')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ordini_cliente->count().'</big><br>
@@ -166,13 +166,13 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Attività').'</span>';
+                        <span class="info-box-text pull-left">'.tr('Attività');
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 } else {
     echo '
-                            '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 }
 echo '                     
                         <br class="clearfix">
@@ -188,8 +188,8 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Ddt in uscita').'</span>
-                        '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Ddt in uscita').'
+                        '.($ddt_uscita->count() > 0 ? '<a class="pull-right"href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ddt_uscita->count().'</big><br>
@@ -203,8 +203,8 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Fatture').'</span>
-                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        <span class="info-box-text pull-left">'.tr('Fatture').'
+                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.($fatture_vendita->count() + $note_credito->count()).'</big><br>
@@ -219,18 +219,19 @@ echo '
                 <div class="info-box">
                     <span class="info-box-icon bg-'.(!empty($sessioni) ? 'warning' : 'gray').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Ore lavorate').'</span>';
+                        <span class="info-box-text pull-left">'.tr('Ore lavorate');
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 } else {
     echo '
-                            '.($sessioni ? '<span class="info-box-text pull-right"><a href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'';
+                            '.($sessioni ? '<a class="pull-right" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 }
 echo '                     
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.numberFormat($totale_ore_lavorate, 0).'</big>
+                            <br><br>
                         </span>
                     </div>
                 </div>

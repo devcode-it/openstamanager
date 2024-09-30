@@ -38,20 +38,15 @@ switch ($operazione) {
 
         if (post('scadenza') == 'Mensile') {
             $timeing = '+1 month';
-        }
-        if (post('scadenza') == 'Bimestrale') {
+        } else if (post('scadenza') == 'Bimestrale') {
             $timeing = '+2 month';
-        }
-        if (post('scadenza') == 'Trimestrale') {
+        } else if (post('scadenza') == 'Trimestrale') {
             $timeing = '+3 month';
-        }
-        if (post('scadenza') == 'Quadrimestrale') {
+        } else if (post('scadenza') == 'Quadrimestrale') {
             $timeing = '+4 month';
-        }
-        if (post('scadenza') == 'Semestrale') {
+        } else if (post('scadenza') == 'Semestrale') {
             $timeing = '+6 month';
-        }
-        if (post('scadenza') == 'Annuale') {
+        } else if (post('scadenza') == 'Annuale') {
             $timeing = '+12 month';
         }
 
@@ -61,12 +56,15 @@ switch ($operazione) {
         $numero_fatture = 0;
         $date_pianificazioni = [];
         $pianificazioni = [];
+
+        $cadenza_fatturazione = post('cadenza_fatturazione');
+
         foreach ($selezioni as $key => $selezione) {
             $date = new DateTime($periodi[$key]);
 
-            if (post('cadenza_fatturazione') == 'Inizio') {
+            if ($cadenza_fatturazione == 'Inizio') {
                 $date->modify('first day of this month');
-            } elseif (post('cadenza_fatturazione') == 'Giorno' && !empty(post('giorno_fisso'))) {
+            } elseif ($cadenza_fatturazione == 'Giorno' && !empty(post('giorno_fisso'))) {
                 $date->modify('last day of this month');
                 $last_day = $date->format('d');
                 $day = post('giorno_fisso') > $last_day ? $last_day : post('giorno_fisso');
@@ -98,10 +96,13 @@ switch ($operazione) {
                 $qta_evasa = $r->qta_evasa;
                 $data_scadenza = '';
                 $inizio = $date_pianificazioni[0];
-                $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
-                $fine = date('Y-m-d', strtotime($fine.' -1 days'));
+
                 if ($cadenza_fatturazione == 'Fine') {
-                    $fine = Carbon\Carbon::parse($fine)->endOfMonth()->format('Y-m-d');
+                    $inizio = Carbon\Carbon::parse($inizio)->startOfMonth()->format('Y-m-d');
+                    $fine = Carbon\Carbon::parse($inizio)->endOfMonth()->format('Y-m-d');
+                } else {
+                    $fine = date('Y-m-d', strtotime($inizio.' '.$timeing));
+                    $fine = date('Y-m-d', strtotime($fine.' -1 days'));
                 }
                 for ($rata = 1; $rata <= $numero_fatture; ++$rata) {
                     if ($qta_evasa < $r->qta) {

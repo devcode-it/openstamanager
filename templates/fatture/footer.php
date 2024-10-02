@@ -473,7 +473,7 @@ if ($has_sconto_finale) {
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color: #FFFFCC;">
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
             '.moneyFormat($totale, 2).'
         </td>
     </tr>';

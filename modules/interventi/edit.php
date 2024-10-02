@@ -93,14 +93,17 @@ echo '
                             </div>
                         </div>
                         <!-- RIGA 2 -->
-                        <div class="row">';
+                        <div class="row">
+                            <div class="col-md-3">';
 if ($record['idagente'] != 0) {
-    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+                                echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
-                            <div class="col-md-3">
+
                                 {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                             </div>
+
+
                             <div class="col-md-3">';
 echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
 echo '

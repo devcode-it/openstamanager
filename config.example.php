@@ -74,3 +74,6 @@ $assets = [
     'print' => [],
     'js' => [],
 ];
+
+// Configura il limite di tempo di esecuzione del file cron.php
+$time_limit = '';

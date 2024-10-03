@@ -40,7 +40,7 @@ if (isset($id_original)) {
 
 	<div class="row">
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
         </div>
 
         <div class="col-md-4">

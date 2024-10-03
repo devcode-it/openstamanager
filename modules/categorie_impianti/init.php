@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Impianti\Categoria;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_categorie`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT `my_impianti_categorie`.*, `my_impianti_categorie_lang`.`title` FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_categorie`.`id`='.prepare($id_record));
 
     $categoria = Categoria::find($id_record);
 }

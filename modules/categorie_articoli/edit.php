@@ -43,7 +43,7 @@ use Models\Module;
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "<?php echo $categoria->getTranslation('note'); ?>" ]}
 				</div>
 			</div>
 		</div>

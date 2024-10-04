@@ -33,12 +33,8 @@ use Monolog\Logger;
 use Tasks\Task;
 
 // Rimozione delle limitazioni sull'esecuzione
-if ($config['time_limit'])  {
-    $time_limit = $config['time_limit'];
-} else {
-    $time_limit = 86400;
-}
-set_time_limit($time_limit);
+$php_time_limit = $config['php_time_limit'] ?? 86400;
+set_time_limit($php_time_limit);
 ignore_user_abort(true);
 
 // Chiusura della richiesta alla pagina

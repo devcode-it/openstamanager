@@ -155,7 +155,7 @@ if (!empty($interventi)) {
                 echo '
                 <tr>
                     <td>
-                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->getTranslation('title')).'
+                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->descrizione).'
                     </td>
                     <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
                     <td class="text-right danger">'.moneyFormat($articolo->spesa).'</td>
@@ -167,7 +167,7 @@ if (!empty($interventi)) {
                 $costo = $articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1);
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->getTranslation('title');
 
-                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->articolo->id;
+                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->id;
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;
                 $materiali_art[$descrizione][$ricavo][$costo]['costo'] += $articolo->spesa;
                 $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $articolo->imponibile - $articolo->sconto;

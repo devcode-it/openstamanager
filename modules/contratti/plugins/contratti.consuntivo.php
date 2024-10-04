@@ -163,9 +163,9 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per articolo con lo stesso prezzo
-                $ricavo = ($articolo->imponibile - $articolo->sconto) / ($articolo->qta > 0 ? $articolo->qta : 1);
-                $costo = $articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1);
-                $descrizione = $articolo->articolo->codice.' - '.$articolo->articolo->getTranslation('title');
+                $ricavo = (string)(($articolo->imponibile - $articolo->sconto) / ($articolo->qta > 0 ? $articolo->qta : 1));
+                $costo = (string)($articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1));
+                $descrizione = $articolo->articolo->codice.' - '.$articolo->descrizione;
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->id;
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;

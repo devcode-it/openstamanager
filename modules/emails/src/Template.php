@@ -52,11 +52,12 @@ class Template extends Model
         return (array) $variables;
     }
 
-    public static function build($id_module = null, $id_account = null)
+    public static function build($id_module = null, $id_account = null, $name = null)
     {
         $model = new static();
         $model->id_module = $id_module;
         $model->id_account = $id_account;
+        $model->name = $name;
         $model->save();
 
         return $model;

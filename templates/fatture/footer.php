@@ -44,7 +44,7 @@ $totale_imponibile = $totale_scontato + $rivalsa;
 $totale_iva = 0;
 foreach ($righe as $riga) {
     $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
-    $totale_iva += $totale_imponibile * $aliquota / 100;
+    $totale_iva += $riga['iva'] + $riga['rivalsainps'] * $aliquota / 100;;
 }
 
 $totale = $totale_iva + $totale_imponibile;
@@ -278,17 +278,22 @@ if ($show_sconto) {
  * Rivalsa INPS | Totale (+ Rivalsa INPS)
  */
 if ($has_rivalsa) {
-    $rs2 = $dbo->fetchOne('SELECT percentuale, descrizione FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione FROM co_rivalse WHERE id IN (SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0)');
 
+    foreach ($rs2 as $rs) {
+        $descrizione .= '<p class="text-muted small-bold">'.$rs['descrizione'].'</p>';
+    }
+    
     echo '
         <td class="cell-padded text-center">
             '.moneyFormat($rivalsa, 2).'
-            <p class="text-muted small-bold">'.$rs2['descrizione'].'</p>
+           '.$descrizione.'
         </td>
         <td class="cell-padded text-center">
             '.moneyFormat($totale_imponibile, $d_totali).'
         </td>
     </tr>';
+
 } else if ($show_sconto) {
     echo '
         <td class="cell-padded text-center">

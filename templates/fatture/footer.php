@@ -331,10 +331,16 @@ echo '
 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($totale_iva, $d_totali).'
-        </td>
-
-            <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale, $d_totali).'
+        </td>';
+        if ($has_ritenuta || $show_sconto || $has_rivalsa) {
+            echo'<td class="cell-padded text-center" colspan="'.$second_colspan.'">
+            '.moneyFormat($totale, $d_total);
+        } else {
+            echo'
+            <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+            <b>'.moneyFormat($totale, $d_total).'</b>';
+        }
+        echo'
         </td>
 </tr>';
 
@@ -415,8 +421,8 @@ if ($has_ritenuta) {
     $totale = $totale - ($ritenuta_acconto_totale + $ritenuta_contributi_totale);
     echo '
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale, 2).'
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+            <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';
 }

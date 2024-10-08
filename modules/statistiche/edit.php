@@ -500,7 +500,7 @@ ORDER BY
     `ragione_sociale` ASC");
 
 $dataset = '';
-if ($_SESSION['superselect']['idtipiintervento']) {
+if (is_array($_SESSION['superselect']['idtipiintervento'])) {
     $where = '`in_interventi_tecnici`.`id` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')';
 } else {
     $where = '1=1';
@@ -542,12 +542,8 @@ echo '
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">';
-if ($_SESSION['superselect']['idanagrafica']) {
-    echo '
-                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}';
-}
-echo '
+                    <div class="col-md-4">
+                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
                     </div>
                 </div>
           

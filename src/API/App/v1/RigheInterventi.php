@@ -145,8 +145,6 @@ class RigheInterventi extends AppResource
         if ($data['is_articolo']) {
             $originale = ArticoloOriginale::find($data['id_articolo']);
             $riga = Articolo::build($intervento, $originale);
-        } elseif ($data['is_sconto']) {
-            // TODO: sconti
         } else {
             $riga = Riga::build($intervento);
         }

@@ -61,7 +61,6 @@ function anteprimaFirma() {
 </script>';
 
 // Creazione altri documenti
-// TODO: trasformazione delle sessioni in righe relative
 /*
 echo '
 <div class="btn-group">

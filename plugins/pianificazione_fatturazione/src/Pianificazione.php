@@ -123,28 +123,16 @@ class Pianificazione extends Document
         return $this->contratto->descrizioni();
     }
 
-    public function getReferenceName()
-    {
-        // TODO: Implement getReferenceName() method.
-    }
+    public function getReferenceName() {}
 
-    public function getReferenceNumber()
-    {
-        // TODO: Implement getReferenceNumber() method.
-    }
+    public function getReferenceNumber() {}
 
-    public function getReferenceDate()
-    {
-        // TODO: Implement getReferenceDate() method.
-    }
+    public function getReferenceDate() {}
 
     public function getReferenceRagioneSociale()
     {
         return $this->anagrafica->ragione_sociale;
     }
 
-    public function getReference()
-    {
-        // TODO: Implement getReference() method.
-    }
+    public function getReference() {}
 }

@@ -124,7 +124,6 @@ class FatturaSemplificata extends FatturaElettronica
             $obj->idconto = $conto[$key];
 
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
-            // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
             $prezzo = $prezzo < 0 ? -$prezzo : $prezzo;
             $qta = 1;
             $qta = $riga['Importo'] < 0 ? -$qta : $qta;

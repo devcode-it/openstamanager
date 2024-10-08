@@ -273,7 +273,6 @@ if (!API\Response::isAPIRequest()) {
 
 // Inclusione dei file modutil.php
 // TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}
-// TODO: sostituire tutte le funzioni dei moduli con classi Eloquent relative
 $files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
 $custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
 foreach ($custom_files as $key => $value) {

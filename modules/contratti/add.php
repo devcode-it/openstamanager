@@ -112,7 +112,7 @@ echo '
 </form>
 
 <script type="text/javascript">
-    input("rinnovabile").on("change", function() {
+    input("rinnovabile_add").on("change", function() {
         const disabled = parseInt($(this).val()) === 0;
 
         input("giorni_preavviso_rinnovo").setDisabled(disabled);

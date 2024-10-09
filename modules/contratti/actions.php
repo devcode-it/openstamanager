@@ -109,13 +109,27 @@ switch (post('op')) {
 
             $contratto->save();
 
-            $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
-            $matricola = post('matricolaimpianto');
-            if ($matricola) {
-                foreach ([$matricola] as $matricolaimpianto) {
-                    $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
-                }
+            // Verifico impianti presenti
+            $matricole_presenti_array = $dbo->select('my_impianti_contratti', 'idimpianto', [], ['idcontratto' => $id_record]);
+            $matricole_presenti = [];
+            foreach ($matricole_presenti_array as $matricola) {
+                $matricole_presenti[] = $matricola['idimpianto'];
             }
+
+            // Verifico nuovi impianti
+            $matricole_assegnate_array = post('matricolaimpianto') ?: [];
+            $matricole = [];
+
+            foreach ($matricole_assegnate_array as $matricola_assegnata) {
+                $matricole[] = $matricola_assegnata;
+            }
+
+            // Aggiornamento impianti
+            $dbo->sync('my_impianti_contratti', [
+                'idcontratto' => $id_record,
+            ], [
+                'idimpianto' => $matricole,
+            ]);
 
             // Salvataggio costi attività unitari del contratto
             foreach (post('costo_ore') as $id_tipo => $valore) {

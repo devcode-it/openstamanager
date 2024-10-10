@@ -86,9 +86,9 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     $upload = Upload::find($id_allegato);
 
                     $response = [
-                        'fileName' => basename($upload->filepath),
+                        'fileName' => base_path().'/files/gestione_documentale/'.basename($upload->filename),
                         'uploaded' => 1,
-                        'url' => $upload->filepath,
+                        'url' => base_path().'/files/gestione_documentale/'.$upload->filename,
                     ];
 
                     // Upload da form
@@ -97,7 +97,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                         <script type="text/javascript">
                             $(document).ready(function() {
                                 window.parent.toastr.success("'.tr('Caricamento riuscito').'");
-                                window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/'.$upload->filepath.'");
+                                window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/files/gestione_documentale/'.$upload->filename.'");
                             });
                         </script>';
                     }
@@ -194,7 +194,7 @@ elseif (filter('op') == 'download-zip-allegati') {
 
     foreach ($rs as $r) {
         $allegato = Upload::find($r['id']);
-        $src = basename($allegato->filepath);
+        $src = basename($allegato->filename);
         $dst = basename($allegato->original_name);
 
         $file_content = $allegato->get_contents();

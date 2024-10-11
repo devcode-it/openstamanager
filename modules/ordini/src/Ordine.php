@@ -68,7 +68,7 @@ class Ordine extends Document
         }
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = Pagamento::find($anagrafica['idpagamento_'.$conto])->id_record;
+        $id_pagamento = $anagrafica['idpagamento_'.$conto];
 
         // Se il ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {

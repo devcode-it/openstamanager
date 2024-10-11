@@ -72,10 +72,7 @@ class Contratto extends Document
         $id_agente = $anagrafica->idagente;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
-        $id_pagamento = $anagrafica->idpagamento_vendite;
-        if (empty($id_pagamento)) {
-            $id_pagamento = setting('Tipo di pagamento predefinito');
-        }
+        $id_pagamento = $anagrafica->idpagamento_vendite ?: setting('Tipo di pagamento predefinito');
 
         $model->anagrafica()->associate($anagrafica);
         $model->stato()->associate($stato_documento);

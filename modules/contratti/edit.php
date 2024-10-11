@@ -245,7 +245,7 @@ if (!empty($rs)) {
     for ($i = 0; $i < sizeof($rs); ++$i) {
         echo '
                             <tr>
-                                <td>'.$rs[$i]['descrizione'].'</td>
+                                <td>'.$rs[$i]['title'].'</td>
 
                                 <td>
                                     {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore'].'" ]}
@@ -297,7 +297,7 @@ if (!empty($rs)) {
     for ($i = 0; $i < sizeof($rs); ++$i) {
         echo '
                             <tr>
-                                <td>'.$rs[$i]['descrizione'].'</td>
+                                <td>'.$rs[$i]['title'].'</td>
 
                                 <td>
                                     {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}

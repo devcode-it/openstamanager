@@ -131,6 +131,7 @@ return [
     'mg_causali_movimenti_lang',
     'mg_listini',
     'mg_listini_articoli',
+    'mg_marchi',
     'mg_piani_sconto',
     'mg_prezzi_articoli',
     'mg_movimenti',

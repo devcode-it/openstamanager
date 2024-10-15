@@ -389,17 +389,12 @@ switch ($resource) {
         $user = Auth::user();
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nomesede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nomesede`, CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab |filter| ORDER BY descrizione";
-
-        foreach ($elements as $element) {
-            $filter[] = '`id`='.prepare($element);
-        }
+        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nomesede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nomesede`, CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi`) AS tab |filter| ORDER BY descrizione";
 
         $where[] = '`idanagrafica`='.prepare($id_azienda);
-        // admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
-        if (!empty($user->sedi) and !$user->is_admin) {
-            $where[] = '`id` IN('.implode(',', $user->sedi).')';
-        }
+
+        // filtro in base alle sedi abilitate all'anagrafica
+        $filter[] = '`id` IN('.implode(',', $user->sedi).')';
 
         if (!empty($search)) {
             $search_fields[] = '`nomesede` LIKE '.prepare('%'.$search.'%');

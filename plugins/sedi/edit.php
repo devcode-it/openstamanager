@@ -24,14 +24,25 @@ use Models\Plugin;
 $referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'idanagrafica' => $id_parent]);
 $referenti = implode(',', array_column($referenti, 'id'));
 
+$id_azienda = setting('Azienda predefinita');
+$utenti = $dbo->fetchArray('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record).' AND id_user != '.prepare($id_azienda));
+
 echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
     <input type="hidden" name="id_parent" value="'.$id_parent.'">
     <input type="hidden" name="id_record" value="'.$record['id'].'">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="updatesede">
+	<input type="hidden" name="op" value="updatesede">';
 
+	if (!$utenti) {
+		echo'
+	<div class="alert alert-warning">
+		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>
+	</div>';
+	}
+
+	echo'
 	<div class="row">
 		<div class="col-md-12">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1, "value": "$nomesede$" ]}
@@ -186,7 +197,7 @@ if (!empty($elementi)) {
         '_NUM_' => count($elementi),
     ]).'</h3>
 			<div class="card-tools pull-right">
-				<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+				<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 		<div class="card-body">

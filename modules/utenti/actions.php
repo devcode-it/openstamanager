@@ -96,21 +96,24 @@ switch (filter('op')) {
             if (!empty($_FILES['photo']['tmp_name'])) {
                 $utente->photo = $_FILES['photo'];
             }
-
             // Anagrafica
             $id_anagrafica = filter('idanag');
             $utente->id_anagrafica = $id_anagrafica;
 
             // Gruppo
+            $id_azienda = setting('Azienda predefinita');
             $id_gruppo = filter('idgruppo');
             $utente->idgruppo = $id_gruppo;
 
             $utente->save();
 
             $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
-            $sedi = post('idsede');
+            $sedi= post('idsede');
+
             if (empty($sedi)) {
-                $sedi = [0];
+                $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE idanagrafica = '.prepare($id_azienda));
+                $sedi = array_column($sedi, 'id');
+                $sedi = array_merge([0], $sedi);
             }
             foreach ($sedi as $id_sede) {
                 $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($utente['id']).', '.prepare($id_sede).')');

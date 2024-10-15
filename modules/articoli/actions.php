@@ -83,7 +83,8 @@ switch (post('op')) {
 
         if (!empty(post('qta'))) {
             $data_movimento = new Carbon();
-            $articolo->movimenta(post('qta'), tr('Carico manuale'), $data_movimento->format('Y-m-d'), true);
+            $sede = post('sede');
+            $articolo->movimenta(post('qta'), tr('Carico manuale'), $data_movimento->format('Y-m-d'), true, $sede);
         }
 
         $id_record = $articolo->id;

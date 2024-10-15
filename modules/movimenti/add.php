@@ -30,9 +30,6 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
 ?>
 
-
-
-
 <form action="" method="post" id="add-form">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-edit">

@@ -57,7 +57,7 @@ $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
 
 $has_rivalsa = !empty($rivalsa);
-$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['split_payment']);
+$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi);
 $has_split_payment = !empty($record['split_payment']);
 $has_sconto_finale = !empty($sconto_finale);
 
@@ -246,7 +246,7 @@ echo "
         </th>
     </tr>";
 
-if ($has_ritenuta || $show_sconto) {
+if ($has_ritenuta || $show_sconto || $has_rivalsa) {
     echo "
     <tr>
         <td class='cell-padded text-center'>
@@ -332,7 +332,7 @@ echo '
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($totale_iva, $d_totali).'
         </td>';
-        if ($has_ritenuta || $show_sconto || $has_rivalsa) {
+        if ($has_ritenuta || $show_sconto || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
             echo'<td class="cell-padded text-center" colspan="'.$second_colspan.'">
             '.moneyFormat($totale, $d_total);
         } else {
@@ -432,8 +432,8 @@ if ($has_ritenuta) {
  * Totale IVA | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA)
  */
 if ($has_split_payment) {
-    $first_colspan = 1;
-    $second_colspan = 2;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
@@ -453,8 +453,8 @@ if ($has_split_payment) {
             '.moneyFormat($totale_iva, 2).'
         </td>
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale, 2).'
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+            <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';
 }

@@ -1192,6 +1192,8 @@ if ($dir == 'entrata') {
         }
     }
     $(document).ready(function() {
+        $("#idsede_partenza").trigger("change");
+
         if(!$("#volume_manuale").is(":checked")){
             input("volume").set($("#volume_calcolato").val());
         }
@@ -1292,4 +1294,12 @@ function risolviStato() {
         }
     });
 }
+
+// Impostazione della sede di partenza
+var sede_partenza = input("idsede_partenza");
+
+sede_partenza.change(function() {
+    updateSelectOption("idsede_partenza", $(this).val());
+    session_set("superselect,idsede_partenza", $(this).val(), 0);
+})
 </script>';

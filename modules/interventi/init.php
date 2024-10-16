@@ -19,7 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Module;
 use Modules\Interventi\Intervento;
 
 if (!empty($id_record)) {
@@ -44,5 +43,4 @@ if (!empty($id_record)) {
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
-
 }

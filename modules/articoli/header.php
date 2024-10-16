@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Articoli\Categoria;
-
 $immagine_articolo = $articolo->immagine ? base_path().'/files/articoli/'.$articolo->immagine : App::getPaths()['img'].'/logo_header.png';
 
 echo '
@@ -41,11 +39,11 @@ echo '
 
 // Articolo
 echo '
-                        <h4><b>'.$articolo->getTranslation('title').'</b></h4>
-                        <p><small>'.tr('Codice').':</small> '.$articolo->codice.' '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
-                        '.($articolo->id_categoria ? '<p><small>'.tr('Categoria').':</small> '.Categoria::where('id', $articolo->id_categoria)->first()->getTranslation('title') : '').($articolo->id_sottocategoria ? ' - <small>'.('Sottocategoria').':</small> '.Categoria::where('id', $articolo->id_sottocategoria)->first()->getTranslation('title') : '').'</p>
-                        '.($articolo->id_marchio ? '<p><small>'.tr('Marchio').':</Small> '.$dbo->fetchOne('select name from mg_marchi where id = '.$articolo->id_marchio)['name'] : '').'</p>
-                        '.($articolo->note ? '<p><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
+                        <h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4>
+                        <p>'.tr('COD').'. '.$articolo->codice.' '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
+                        '.($articolo->id_categoria ? '<p> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <i class="fa fa-chevron-right"></i> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
+                        '.($articolo->id_marchio ? '<p><i class="fa fa-tag"></i> '.$dbo->fetchOne('select name from mg_marchi where id = '.$articolo->id_marchio)['name'] : '').'</p>
+                        '.($articolo->note ? '<p class="text-danger"><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
                     </div>
                 </div>
             </div>
@@ -62,17 +60,8 @@ echo '
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-
-                        <p>'.($articolo->um ? '<small>'.tr('Unità di misura').':</Small> '.$articolo->um : '').'</p>
                         <p>'.($articolo->gg_garanzia ? '<small>'.tr('Garanzia').':</Small> '.$articolo->gg_garanzia.' giorni' : '').'</p>
-                        <p>'.($articolo->um_secondaria ? '<small>'.tr('Unità di misura secondaria').':</Small> '.$articolo->um_secondaria : '').'</p>
-                        <p>'.($articolo->fattore_um_secondaria ? '<small>'.tr('Fattore').':</Small> '.numberFormat($articolo->fattore_um_secondaria, $decimals) : '').'</p>
-                        <p>'.($articolo->qta_multipla ? '<small>'.tr('Quantità multipla').':</Small> '.numberFormat($articolo->qta_multipla, $decimals) : '').'</p>
-                    </div>
-
-                    <div class="col-md-6">
                         <p><small> '.tr('Serial number').':</small> '.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
-                        <p><small> '.tr('Attivo').':</small> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
                         <p>'.($articolo->ubicazione ? '<small>'.tr('Ubicazione').':</Small> '.$articolo->ubicazione : '').'</p>
                         <p>'.($articolo->peso_lordo ? '<small>'.tr('Peso lordo').':</Small> '.numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</p>
                         <p>'.($articolo->volume ? '<small>'.tr('Volume').':</Small> '.numberFormat($articolo->volume, $decimals).' '.tr('m3') : '').'</p>
@@ -98,10 +87,33 @@ echo '
                 <h3 class="card-title"><i class="fa fa-archive"></i> '.tr('Giacenze').'</h3>
             </div>
             <div class="card-body">';
-foreach ($sedi as $sede) {
-    echo '<p><small>'.$sede['nomesede'].':</small> '.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</p>';
-}
-echo '
+            if ($articolo->servizio) {
+                echo'
+                <tr><td><p class="text-info"><i class="fa fa-warning"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
+            } else {
+                echo '
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Sede</th>
+                            <th>Giacenza</th>
+                            '.($articolo->fattore_um_secondaria != 0 ? '<th>Unità di misura secondaria</th>' : '').'
+                        </tr>
+                    </thead>
+                    <tbody>';
+                foreach ($sedi as $sede) {
+                echo '
+                        <tr>
+                            <td>'.$sede['nomesede'].'</td>
+                            <td>'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
+                            '.($articolo->fattore_um_secondaria != 0 ? '<td><i class="fa fa-chevron-right"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
+                        </tr>';
+                }
+                echo '
+                    </tbody>
+                </table>';
+            }
+                echo'
             </div>
         </div>
     </div>            

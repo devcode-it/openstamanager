@@ -45,15 +45,15 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
-$elementi = $dbo->fetchArray('SELECT `mg_articoli`.`id`, CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`title`) AS `descrizione` FROM `mg_articoli` INNER JOIN mg_articoli_lang ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`id_marchio` = '.prepare($id_record));
+$articoli = $marchio->articoli;
 $class = '';
 
-if (!empty($elementi)) {
+if (!empty($articoli)) {
     echo '
 <div class="card card-warning collapsable collapsed-card">
     <div class="card-header with-border">
         <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Articoli collegati: _NUM_', [
-        '_NUM_' => count($elementi),
+        '_NUM_' => count($articoli),
     ]).'</h3>
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
@@ -62,9 +62,9 @@ if (!empty($elementi)) {
     <div class="card-body">
         <ul>';
 
-    foreach ($elementi as $elemento) {
+    foreach ($articoli as $articolo) {
         echo '
-            <li>'.Modules::link('Articoli', $elemento['id'], $elemento['descrizione']).'</li>';
+            <li>'.Modules::link('Articoli', $articolo->id, $articolo->codice.' - '.$articolo->getTranslation('title')).'</li>';
     }
     $class = 'disabled';
 

@@ -37,10 +37,9 @@ echo '
                     
                     <div class="col-md-9">';
 
-$marchio = $dbo->fetchOne('SELECT `link`, `name` FROM mg_marchi WHERE id = '.$articolo->id_marchio);
 // Articolo
 echo '
-                        '.($articolo->id_marchio ? '<p class="float-right"><i class="fa fa-tag"></i> '.($marchio['link']? '<a href="'.$marchio['link'].'" target="_blank" rel="noopener noreferrer"> '.$marchio['name'].'</a>' : $marchio['name']).'</p>' : '').                    
+                        '.($articolo->id_marchio ? '<p class="float-right"><i class="fa fa-tag"></i> '.($articolo->marchio->name? '<a href="'.$articolo->marchio->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marchio->name.'</a>' : $articolo->marchio->name).'</p>' : '').                    
                         ($articolo->id_categoria ? '<p class="text-muted"> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
                         <h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4>
                         <p><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>

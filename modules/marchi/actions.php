@@ -19,27 +19,55 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Marchio;
+
 switch (post('op')) {
     // Aggiorno informazioni di base marchio
     case 'update':
-        $dbo->update('mg_marchi', [
-            'name' => post('name'),
-            'link' => post('link'),
-        ], ['id' => $id_record]);
+        $nome = filter('name');
+        $link = filter('link');
 
-        flash()->info(tr('Informazioni salvate correttamente!'));
+        $marchio_new = Marchio::where('name', '=', $nome)->first();
+
+        if (!empty($marchio_new)) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro marchio.'));
+        } else {
+            $marchio = Marchio::find($id_record);
+            $marchio->name = $nome;
+            $marchio->link = $link;
+            $marchio->save();
+
+            flash()->info(tr('Marchio aggiornato!'));
+        }
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
+        }
 
         break;
 
+
     // Aggiungo marchio
     case 'add':
-        $dbo->insert('mg_marchi', [
-            'name' => post('name'),
-            'link' => post('link'),
-        ]);
-        $id_record = $dbo->lastInsertedID();
+        $nome = filter('name');
+        $link = filter('link');
 
-        flash()->info(tr('Aggiunto nuovo marchio!'));
+        $marchio_new = Marchio::where('name', '=', $nome)->first();
+
+        if (!empty($marchio_new)) {
+            flash()->error(tr('Questo nome è già stato utilizzato per un altro marchio.'));
+        } else {
+            $marchio = Marchio::build($nome);
+            $id_record = $dbo->lastInsertedID();
+            $marchio->link = $link;
+            $marchio->save();
+
+            flash()->info(tr('Aggiunto nuovo marchio'));
+        }
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
+        }
 
         break;
 

@@ -330,6 +330,11 @@ class Articolo extends Model
         return $this->belongsTo(Categoria::class, 'id_sottocategoria');
     }
 
+    public function marchio()
+    {
+        return $this->belongsTo(Marchio::class, 'id_marchio');
+    }
+
     public function dettaglioFornitori()
     {
         return $this->hasMany(DettaglioFornitore::class, 'id_articolo');

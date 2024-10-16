@@ -18,7 +18,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Marchio;
 
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM mg_marchi WHERE id='.prepare($id_record));
+
+    $marchio = Marchio::find($id_record);
 }

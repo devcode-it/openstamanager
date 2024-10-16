@@ -17,27 +17,38 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+namespace Modules\Articoli;
 
-$id_anagrafica = filter('id_anagrafica');
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Traits\HierarchyTrait;
+use Traits\RecordTrait;
 
-?><form action="" method="post" id="add-form">
-	<input type="hidden" name="op" value="add">
-	<input type="hidden" name="backto" value="record-edit">
+class Marchio extends Model
+{
+    use SimpleModelTrait;
+    use HierarchyTrait;
+    use RecordTrait;
 
-	<div class="row">
-		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "validation": "name" ]}
-		</div>
-		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}
-		</div>
-	</div>
+    protected $table = 'mg_marchi';
 
-	<!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
-		</div>
-	</div>
-</form>
+
+    public static function build($nome = null)
+    {
+        $model = new static();
+        $model->name = $nome;
+        $model->save();
+
+        return $model;
+    }
+
+    public function articoli()
+    {
+        return $this->hasMany(Articolo::class, 'id_marchio');
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Marchi';
+    }
+}

@@ -199,7 +199,7 @@ $id_plugin_sedi = Plugin::where('name', 'Sedi')->first()->id;
 if ($dir == 'entrata') {
     echo '
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                            {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                         </div>
 
                         <div class="col-md-4">

@@ -84,7 +84,7 @@ switch (post('op')) {
         if (!empty(post('qta'))) {
             $data_movimento = new Carbon();
             $sede = post('sede');
-            $articolo->movimenta(post('qta'), tr('Carico manuale'), $data_movimento->format('Y-m-d'), true, $sede);
+            $articolo->movimenta(post('qta'), tr('Carico manuale'), $data_movimento->format('Y-m-d'), true, ['idsede' => $sede]);
         }
 
         $id_record = $articolo->id;
@@ -170,20 +170,6 @@ switch (post('op')) {
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
-
-        // Leggo la quantità attuale per capire se l'ho modificata
-        // TODO: gestire la movimentazione manuale per sede
-        $id_sede = 0;
-        $old_qta = $articolo->getGiacenze(post('data_movimento'));
-        $movimento = $qta - $old_qta[$id_sede][0];
-
-        $qta_manuale = post('qta_manuale');
-        if (!empty($qta_manuale)) {
-            $descrizione_movimento = post('descrizione_movimento');
-            $data_movimento = post('data_movimento');
-
-            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento, true);
-        }
 
         // Salvataggio info componente (campo `contenuto`)
         if (!empty($componente)) {

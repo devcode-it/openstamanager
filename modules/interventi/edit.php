@@ -472,99 +472,101 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-async function saveForm() {
-    // Salvataggio via AJAX
-    await salvaForm("#edit-form");
-}
+    async function saveForm() {
+        // Salvataggio via AJAX
+        await salvaForm("#edit-form");
+    }
 
-function gestioneSconto(button) {
-    gestioneRiga(button, "is_sconto=1");
-}
+    function gestioneSconto(button) {
+        gestioneRiga(button, "is_sconto=1");
+    }
 
-function gestioneDescrizione(button) {
-    gestioneRiga(button, "is_descrizione=1");
-}
+    function gestioneDescrizione(button) {
+        gestioneRiga(button, "is_descrizione=1");
+    }
 
-async function gestioneRiga(button, options) {
-    // Salvataggio via AJAX
-    await salvaForm("#edit-form", {}, button);
+    async function gestioneRiga(button, options) {
+        // Salvataggio via AJAX
+        await salvaForm("#edit-form", {}, button);
 
-    // Lettura titolo e chiusura tooltip
-    let title = $(button).attr("data-title");
+        // Lettura titolo e chiusura tooltip
+        let title = $(button).attr("data-title");
 
-    // Apertura modal
-    options = options ? options : "is_riga=1";
-    openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
-}
+        // Apertura modal
+        options = options ? options : "is_riga=1";
+        openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
+    }
 
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
- */
-function caricaRighe(id_riga) {
-    let container = $("#righe");
+    /**
+     * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
+     */
+    function caricaRighe(id_riga) {
+        let container = $("#righe");
 
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-        if (id_riga != null) {
-            $("tr[data-id="+ id_riga +"]").effect("highlight",1000);
-        }
-    });
-}
-
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
- */
-function caricaTecnici() {
-    let container = $("#tecnici");
-
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        caricaRighe(null);
-        container.html(data);
-        localLoading(container, false);
-    });
-}
-
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
- */
-function caricaCosti() {
-    let container = $("#costi");
-
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-    });
-}
-
-$(document).ready(function() {
-    caricaRighe(null);
-    caricaTecnici();
-    caricaCosti();
-
-    $("#id_articolo").on("change", function(e) {
-        if ($(this).val()) {
-            var data = $(this).selectData();
-
-            if (data.barcode) {
-                $("#barcode").val(data.barcode);
-            } else {
-                $("#barcode").val("");
+        localLoading(container, true);
+        return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+            container.html(data);
+            localLoading(container, false);
+            if (id_riga != null) {
+                $("tr[data-id="+ id_riga +"]").effect("highlight",1000);
             }
-        }
+        });
+    }
 
-        e.preventDefault();
+    /**
+     * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
+     */
+    function caricaTecnici() {
+        let container = $("#tecnici");
 
-        setTimeout(function(){
-            $("#barcode").focus();
-        }, 100);
+        localLoading(container, true);
+        return $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+            caricaRighe(null);
+            container.html(data);
+            localLoading(container, false);
+        });
+    }
+
+    /**
+     * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
+     */
+    function caricaCosti() {
+        let container = $("#costi");
+
+        localLoading(container, true);
+        return $.get("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+            container.html(data);
+            localLoading(container, false);
+        });
+    }
+
+    $(document).ready(function() {
+        caricaRighe(null);
+        caricaTecnici();
+        caricaCosti();
+
+        $("#idsede_partenza").trigger("change");
+
+        $("#id_articolo").on("change", function(e) {
+            if ($(this).val()) {
+                var data = $(this).selectData();
+
+                if (data.barcode) {
+                    $("#barcode").val(data.barcode);
+                } else {
+                    $("#barcode").val("");
+                }
+            }
+
+            e.preventDefault();
+
+            setTimeout(function(){
+                $("#barcode").focus();
+            }, 100);
+        });
+
+        $("#barcode").focus();
     });
-
-    $("#barcode").focus();
-});
 
     var anagrafica = input("idanagrafica");
     var sede = input("idsede_destinazione");
@@ -573,6 +575,7 @@ $(document).ready(function() {
     var ordine = input("idordine");
     var cliente_finale = input("idclientefinale");
     var referente = input("idreferente");
+    var sede_partenza = input("idsede_partenza");
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
@@ -676,6 +679,12 @@ $(document).ready(function() {
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();
 	});
+
+    // Impostazione della sede di partenza
+    sede_partenza.change(function() {
+        updateSelectOption("idsede_partenza", $(this).val());
+        session_set("superselect,idsede_partenza", $(this).val(), 0);
+    })
 
     $("#codice_cig, #codice_cup").bind("keyup change", function (e) {
         if ($("#codice_cig").val() == "" && $("#codice_cup").val() == "") {

@@ -7,7 +7,7 @@ CREATE TABLE `mg_marchi` (
     `deleted_at` timestamp NULL DEFAULT NULL,
 PRIMARY KEY (`id`)) ENGINE = InnoDB; 
 
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Marchi', 'marchi', 'SELECT |select| FROM `mg_marchi` WHERE 1=1 HAVING 2=2 ORDER BY `mg_marchi`.`name`', '', 'fa fa-angle-right', '2.5.6', '2.5.6', '7', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Articoli'), '1', '1', '1', '1');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Marchi', 'marchi', 'SELECT |select| FROM `mg_marchi` WHERE 1=1 HAVING 2=2 ORDER BY `mg_marchi`.`name`', '', 'fa fa-angle-right', '2.5.6', '2.5.6', '7', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Tabelle'), '1', '1', '1', '1');
 
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES ('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi'), 'Marchi');
 

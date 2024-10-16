@@ -23,13 +23,13 @@ $name = filter('name');
 $value = filter('value');
 
 switch ($name) {
-    case 'nome':
+    case 'name':
         $disponibile = $dbo->table('mg_marchi')->where([
-            ['nome', $value],
+            ['name', $value],
             ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Il nome è disponbile') : tr('Il nome è già utilizzato in un altro marchio');
+        $message = $disponibile ? tr('Il name è disponbile') : tr('Il name è già utilizzato in un altro marchio');
 
         $response = [
             'result' => $disponibile,

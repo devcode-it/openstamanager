@@ -34,7 +34,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "value":"$nome$", "required": 1, "validation": "nome" ]}
+					{[ "type": "text", "label": "<?php echo tr('name'); ?>", "name": "name", "value":"$name$", "required": 1, "validation": "name" ]}
 				</div>
 			</div>
 

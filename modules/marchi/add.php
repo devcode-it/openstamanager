@@ -27,7 +27,7 @@ $id_anagrafica = filter('id_anagrafica');
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "validation": "nome" ]}
+			{[ "type": "text", "label": "<?php echo tr('name'); ?>", "name": "name", "required": 1, "validation": "name" ]}
 		</div>
 	</div>
 

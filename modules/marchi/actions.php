@@ -24,7 +24,7 @@ switch (post('op')) {
     case 'update':
 
         $dbo->update('mg_marchi',[
-            'nome' => post('nome'),
+            'name' => post('name'),
         ],['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -35,7 +35,7 @@ switch (post('op')) {
     case 'add':
         
         $dbo->insert('mg_marchi',[
-            'nome' => post('nome'),
+            'name' => post('name'),
         ]);
         $id_record = $dbo->lastInsertedID();
 

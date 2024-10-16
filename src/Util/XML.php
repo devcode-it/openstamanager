@@ -157,7 +157,7 @@ class XML
     protected static function removeBOM($text)
     {
         $bom = pack('H*', 'EFBBBF');
-        $text = preg_replace("/^$bom/", '', $text);
+        $text = preg_replace("/^$bom/", '', (string) $text);
 
         return $text;
     }

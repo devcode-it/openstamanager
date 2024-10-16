@@ -116,15 +116,15 @@ if (Services::isEnabled()) {
             if (!$risorse_scadute->isEmpty()) {
                 echo '
                 <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
-                '_NUM_' => $risorse_scadute->count(),
+                    '_NUM_' => $risorse_scadute->count(),
                 ]).'</div>';
             }
 
             if (!$risorse_in_scadenza->isEmpty()) {
                 echo '
                 <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
-                '_NUM_' => $risorse_in_scadenza->count(),
-            ]).'</div>';
+                    '_NUM_' => $risorse_in_scadenza->count(),
+                ]).'</div>';
             }
         } else {
             /*echo '
@@ -145,17 +145,17 @@ if (Services::isEnabled()) {
                     
                     <tbody>';
 
-            foreach ($risorse_attive as $servizio) {
-                $scadenza = Carbon::parse($servizio['expiration_at']);
-                echo '
+        foreach ($risorse_attive as $servizio) {
+            $scadenza = Carbon::parse($servizio['expiration_at']);
+            echo '
                         <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
                             <td>'.$servizio['name'].'</td>
                             <td>'.(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').($servizio['credits'] ?? '-').(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '</b>' : '').'</td>
                             <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
                         </tr>';
-            }
+        }
 
-            echo '
+        echo '
                     </tbody>
                 </table>
             </div>';
@@ -171,19 +171,19 @@ if (Services::isEnabled()) {
                 <div class="card-body">
                     <div class="alert hidden" role="alert" id="spazio-fe">
                         <i id="spazio-fe-icon" class=""></i> <span>'.tr('Attenzione, spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ disponibili', [
-                            '_TEXT_' => '<span id="spazio-fe-text"></span>',
-                            '_NUM_' => '<span id="spazio-fe-occupato"></span>',
-                            '_TOT_' => '<span id="spazio-fe-totale"></span>',
-                        ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
+                '_TEXT_' => '<span id="spazio-fe-text"></span>',
+                '_NUM_' => '<span id="spazio-fe-occupato"></span>',
+                '_TOT_' => '<span id="spazio-fe-totale"></span>',
+            ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                     </div>
 
 
                     <div class="alert hidden" role="alert" id="numero-fe">
                         <i id="numero-fe-icon" class=""></i> <span>'.tr('Attenzione, numero di fatture elettroniche per l\'annualità _TEXT_: _NUM_ documenti transitati su _TOT_ disponibili', [
-                            '_TEXT_' => '<span id="numero-fe-text"></span>',
-                            '_NUM_' => '<span id="numero-fe-occupato"></span>',
-                            '_TOT_' => '<span id="numero-fe-totale"></span>',
-                        ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
+                '_TEXT_' => '<span id="numero-fe-text"></span>',
+                '_NUM_' => '<span id="numero-fe-occupato"></span>',
+                '_TOT_' => '<span id="numero-fe-totale"></span>',
+            ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                     </div>
 
 
@@ -234,7 +234,7 @@ if (Services::isEnabled()) {
     echo '
         </div>
     </div>';
-} 
+}
 
 echo '
 </div>

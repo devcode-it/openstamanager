@@ -151,7 +151,7 @@ foreach ($righe as $riga) {
                     '.nl2br($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', $r['descrizione']);
+        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
         $autofill->count($r['descrizione']);
     }
 

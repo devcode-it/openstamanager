@@ -35,14 +35,14 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="updatesede">';
 
-	if (!$utenti) {
-		echo'
+if (!$utenti) {
+    echo '
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>
 	</div>';
-	}
+}
 
-	echo'
+echo '
 	<div class="row">
 		<div class="col-md-12">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1, "value": "$nomesede$" ]}

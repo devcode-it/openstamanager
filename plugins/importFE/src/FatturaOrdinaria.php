@@ -482,7 +482,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $totale_documento = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['ImportoTotaleDocumento'];
         if (empty($totale_documento)) {
-            //se ImportoTotaleDocumento non è valorizzato recupero l'importo dal nodo ImportoPagamento
+            // se ImportoTotaleDocumento non è valorizzato recupero l'importo dal nodo ImportoPagamento
             $totale_documento = $this->getBody()['DatiPagamento']['DettaglioPagamento']['ImportoPagamento'];
         }
         $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);

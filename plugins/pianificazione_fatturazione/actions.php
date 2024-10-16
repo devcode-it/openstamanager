@@ -38,15 +38,15 @@ switch ($operazione) {
 
         if (post('scadenza') == 'Mensile') {
             $timeing = '+1 month';
-        } else if (post('scadenza') == 'Bimestrale') {
+        } elseif (post('scadenza') == 'Bimestrale') {
             $timeing = '+2 month';
-        } else if (post('scadenza') == 'Trimestrale') {
+        } elseif (post('scadenza') == 'Trimestrale') {
             $timeing = '+3 month';
-        } else if (post('scadenza') == 'Quadrimestrale') {
+        } elseif (post('scadenza') == 'Quadrimestrale') {
             $timeing = '+4 month';
-        } else if (post('scadenza') == 'Semestrale') {
+        } elseif (post('scadenza') == 'Semestrale') {
             $timeing = '+6 month';
-        } else if (post('scadenza') == 'Annuale') {
+        } elseif (post('scadenza') == 'Annuale') {
             $timeing = '+12 month';
         }
 

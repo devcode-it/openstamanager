@@ -19,7 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -51,8 +50,8 @@ if (!empty($elementi)) {
 <div class="card card-warning collapsable collapsed-card">
     <div class="card-header with-border">
         <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Articoli collegati: _NUM_', [
-            '_NUM_' => count($elementi),
-        ]).'</h3>
+        '_NUM_' => count($elementi),
+    ]).'</h3>
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>

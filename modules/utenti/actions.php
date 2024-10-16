@@ -108,7 +108,7 @@ switch (filter('op')) {
             $utente->save();
 
             $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
-            $sedi= post('idsede');
+            $sedi = post('idsede');
 
             if (empty($sedi)) {
                 $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE idanagrafica = '.prepare($id_azienda));

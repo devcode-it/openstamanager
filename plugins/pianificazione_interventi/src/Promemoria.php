@@ -152,20 +152,28 @@ class Promemoria extends Document
         return $this->hasMany(Components\Descrizione::class, 'id_promemoria');
     }
 
-    public function getModuleAttribute() {}
+    public function getModuleAttribute()
+    {
+    }
 
-    public function getReferenceName() {}
+    public function getReferenceName()
+    {
+    }
 
     public function getReferenceNumber()
     {
     }
 
-    public function getReferenceDate() {}
+    public function getReferenceDate()
+    {
+    }
 
     public function getReferenceRagioneSociale()
     {
         return $this->anagrafica->ragione_sociale;
     }
 
-    public function getReference() {}
+    public function getReference()
+    {
+    }
 }

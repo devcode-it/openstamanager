@@ -73,7 +73,7 @@ use Modules\Iva\Aliquota;
                         </div>
 
                         <div class="col-md-4">
-                            <?php echo ( !empty($record['id_marchio']) ? Modules::link('Marchi', $record['id_marchio'], null, null, 'class="pull-right"') : '' ) ?>
+                            <?php echo !empty($record['id_marchio']) ? Modules::link('Marchi', $record['id_marchio'], null, null, 'class="pull-right"') : ''; ?>
                             {[ "type": "select", "label": "<?php echo tr('Marchio'); ?>", "name": "id_marchio", "value":"$id_marchio$", "values": "query=SELECT id, name AS descrizione FROM mg_marchi ORDER BY descrizione ASC" ]}
                         </div>
                     </div>
@@ -88,7 +88,7 @@ use Modules\Iva\Aliquota;
                             'value' => $articolo->getTranslation('title'),
                             'charcounter' => 1,
                         ]);
-                        ?>
+?>
                         </div>
 				    </div>
 

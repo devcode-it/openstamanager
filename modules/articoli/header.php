@@ -20,7 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Categoria;
-use Modules\Anagrafiche\Sede;
 
 $immagine_articolo = $articolo->immagine ? base_path().'/files/articoli/'.$articolo->immagine : App::getPaths()['img'].'/logo_header.png';
 
@@ -74,8 +73,8 @@ echo '
                     </div>
 
                     <div class="col-md-6">
-                        <p><small> '.tr('Serial number').':</small> '.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ' ).'</p>
-                        <p><small> '.tr('Attivo').':</small> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ' ).'</p>
+                        <p><small> '.tr('Serial number').':</small> '.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
+                        <p><small> '.tr('Attivo').':</small> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
                         <p>'.($articolo->ubicazione ? '<small>Ubicazione:</Small> '.$articolo->ubicazione : '').'</p>
                         <p>'.($articolo->peso_lordo ? '<small>Peso lordo:</Small> '.numberFormat($articolo->peso_lordo, $decimals).' kg' : '').'</p>
                         <p>'.($articolo->volume ? '<small>Volume:</Small> '.numberFormat($articolo->volume, $decimals).' m3' : '').'</p>
@@ -101,10 +100,10 @@ echo '
                 <h3 class="card-title"><i class="fa fa-archive"></i> '.tr('Giacenze').'</h3>
             </div>
             <div class="card-body">';
-                foreach ($sedi as $sede) {
-                    echo '<p><small>'.$sede['nomesede'].':</small> '.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</p>';
-                }
-            echo'
+foreach ($sedi as $sede) {
+    echo '<p><small>'.$sede['nomesede'].':</small> '.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</p>';
+}
+echo '
             </div>
         </div>
     </div>            

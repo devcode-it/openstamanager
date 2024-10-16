@@ -22,19 +22,17 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     // Aggiorno informazioni di base impianto
     case 'update':
-
-        $dbo->update('mg_marchi',[
+        $dbo->update('mg_marchi', [
             'name' => post('name'),
-        ],['id' => $id_record]);
+        ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
-    // Aggiungo impianto
+        // Aggiungo impianto
     case 'add':
-        
-        $dbo->insert('mg_marchi',[
+        $dbo->insert('mg_marchi', [
             'name' => post('name'),
         ]);
         $id_record = $dbo->lastInsertedID();
@@ -43,8 +41,7 @@ switch (post('op')) {
 
         break;
 
-
-    // Rimuovo impianto e scollego tutti i suoi componenti
+        // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete':
         $dbo->query('DELETE FROM mg_marchi WHERE id='.prepare($id_record));
 

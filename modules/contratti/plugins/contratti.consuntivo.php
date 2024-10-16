@@ -163,8 +163,8 @@ if (!empty($interventi)) {
                 </tr>';
 
                 // Raggruppamento per articolo con lo stesso prezzo
-                $ricavo = (string)(($articolo->imponibile - $articolo->sconto) / ($articolo->qta > 0 ? $articolo->qta : 1));
-                $costo = (string)($articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1));
+                $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / ($articolo->qta > 0 ? $articolo->qta : 1));
+                $costo = (string) ($articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1));
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->descrizione;
 
                 $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->id;

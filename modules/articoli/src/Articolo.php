@@ -71,10 +71,10 @@ class Articolo extends Model
      *
      * @return bool
      */
-    public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $id_sede = null, $array = [], )
+    public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
         $data = ($data ?: date('Y-m-d H:i:s'));
-        $id = $this->registra($qta, $descrizone, $data, $manuale, $array, $id_sede);
+        $id = $this->registra($qta, $descrizone, $data, $manuale, $array, $array['idsede']);
 
         if (empty($this->servizio)) {
             $this->qta += $qta;
@@ -112,7 +112,6 @@ class Articolo extends Model
                 'movimento' => $descrizone,
                 'data' => $data,
                 'manuale' => $manuale,
-                'idsede' => $id_sede ?: 0,
                 'idutente' => $user->id,
             ]));
         }

@@ -27,9 +27,14 @@ use Modules\Iva\Aliquota;
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI ANAGRAFICI -->
-	<div class="card card-primary">
+    <div class="card card-primary collapsable collapsed-card">
 		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Articolo'); ?></h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
 		</div>
 
 		<div class="card-body">
@@ -40,12 +45,19 @@ use Modules\Iva\Aliquota;
 
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$", "validation": "codice" ]}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "$barcode$" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate.'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
+                        </div>
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                         </div>
                     </div>
 
@@ -62,115 +74,98 @@ use Modules\Iva\Aliquota;
 
                         <div class="col-md-4">
                             <?php echo ( !empty($record['id_marchio']) ? Modules::link('Marchi', $record['id_marchio'], null, null, 'class="pull-right"') : '' ) ?>
-                            {[ "type": "select", "label": "<?php echo tr('Marchio'); ?>", "name": "id_marchio", "value":"$id_marchio$", "values": "query=SELECT id, nome AS descrizione FROM mg_marchi ORDER BY descrizione ASC" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Marchio'); ?>", "name": "id_marchio", "value":"$id_marchio$", "values": "query=SELECT id, name AS descrizione FROM mg_marchi ORDER BY descrizione ASC" ]}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                        <?php
+                        echo input([
+                            'type' => 'textarea',
+                            'label' => tr('Descrizione'),
+                            'name' => 'descrizione',
+                            'required' => 1,
+                            'value' => $articolo->getTranslation('title'),
+                            'charcounter' => 1,
+                        ]);
+                        ?>
+                        </div>
+				    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
+                        </div>
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "$um_secondaria$", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "$fattore_um_secondaria$", "decimals": "10", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "number", "label": "<?php echo tr('Q.tà multipla'); ?>", "name": "qta_multipla", "value": "$qta_multipla$", "decimals": "qta", "help": "<?php echo tr('Quantità multipla di scorta da tenere a magazzino.'); ?>" ]}
                         </div>
                     </div>
                 </div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-                    <?php
-                    echo input([
-                        'type' => 'textarea',
-                        'label' => tr('Descrizione'),
-                        'name' => 'descrizione',
-                        'required' => 1,
-                        'value' => $articolo->getTranslation('title'),
-                        'charcounter' => 1,
-                    ]);
-?>
-				</div>
-			</div>
-
-            <div class="row">
-                <div class="col-md-6">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
-                </div>
-
-                <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
-                </div>
-
-            </div>
-
-			<div class="row">
-                <div class="col-md-8">
-                    {[ "type": "text", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
-                </div>
             </div>
 
             <div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
-				</div>
-			</div>
+                <div class="col-md-12">
+                    {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
+                </div>
+            </div>
 		</div>
 	</div>
 
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">
-                <?php echo tr('Giacenza totale'); ?>
-            </h3>
-        </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#servizio').click(function() {
+                $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
+            });
 
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined", "icon-after": "<?php echo !empty($record['um']) ? $record['um'] : ''; ?>" ]}
-                    <input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
-                </div>
+            $('#qta_manuale').click(function() {
+                $("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
+                if($('#qta_manuale').is(":checked")){
+                    $("#div_modifica_manuale").show();
+                    $("#div_modifica_manuale").show();
+                    $("#descrizione_movimento").attr('required', true);
+                    $("#data_movimento").attr('required', true);
+                }else{
+                    $("#div_modifica_manuale").hide();
+                    $('#qta').val($('#old_qta').val());
+                    $("#descrizione_movimento").attr('required', false);
+                    $("#data_movimento").attr('required', false);
+                }
+            });
 
-                <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($record['servizio']) ? 'disabled' : ''; ?>" ]}
-                </div>
-            </div>
-
-            <div class='row' id="div_modifica_manuale" style="display:none;">
-                <div class='col-md-8'>
-                    {[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento" ]}
-                </div>
-                <div class='col-md-4'>
-                    {[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}
-                </div>
-            </div>
-
-            <div class="alert alert-info">
-                <p><?php echo tr('Le modifiche alle quantità in questa schermata prevedono la generazione di un movimento relativo alla sede legale'); ?>. <?php echo tr('Se si desidera effettuare movimenti per altre sedi, utilizzare il modulo _MODULO_ ', [
-                    '_MODULO_' => Modules::link('Movimenti', null, tr('Movimenti')),
-                ]); ?>.</p>
-            </div>
-
-            <script type="text/javascript">
-                $(document).ready(function() {
-                    $('#servizio').click(function() {
-                        $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
-                    });
-
-                    $('#qta_manuale').click(function() {
-                        $("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
-                        if($('#qta_manuale').is(":checked")){
-                            $("#div_modifica_manuale").show();
-                            $("#div_modifica_manuale").show();
-                            $("#descrizione_movimento").attr('required', true);
-                            $("#data_movimento").attr('required', true);
-                        }else{
-                            $("#div_modifica_manuale").hide();
-                            $('#qta').val($('#old_qta').val());
-                            $("#descrizione_movimento").attr('required', false);
-                            $("#data_movimento").attr('required', false);
-                        }
-                    });
-
-                });
-            </script>
-        </div>
-    </div>
+        });
+    </script>
 
     <!-- informazioni Acquisto/Vendita -->
     <div class="row">
@@ -182,15 +177,11 @@ use Modules\Iva\Aliquota;
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo tr('Prezzo di acquisto previsto per i fornitori i cui dati non sono stati inseriti nel plugin Fornitori'); ?>." ]}
                         </div>
 
-                        <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Coefficiente di vendita'); ?>", "name": "coefficiente", "value": "$coefficiente$", "help": "<?php echo tr('Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando cambia il prezzo di acquisto'); ?>." ]}
-                        </div>
-
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
                         </div>
                     </div>
@@ -206,20 +197,6 @@ use Modules\Iva\Aliquota;
                     <div class="row">
                         <div class="col-md-12">
                             {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "value": "$idconto_acquisto$", "ajax-source": "conti-acquisti" ]}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "$um_secondaria$", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "$fattore_um_secondaria$", "decimals": "10", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Q.tà multipla'); ?>", "name": "qta_multipla", "value": "$qta_multipla$", "decimals": "qta", "help": "<?php echo tr('Quantità multipla di scorta da tenere a magazzino.'); ?>" ]}
                         </div>
                     </div>
                 </div>
@@ -238,6 +215,10 @@ use Modules\Iva\Aliquota;
                     <div class="clearfix"></div>
 
                     <div class="row">
+                        
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Coefficiente di vendita'); ?>", "name": "coefficiente", "value": "$coefficiente$", "help": "<?php echo tr('Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando cambia il prezzo di acquisto'); ?>." ]}
+                        </div>
                         <div class="col-md-6">
 <?php
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -255,7 +236,10 @@ echo '
                         </div>';
 
 ?>
-
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo $prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita; ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo $prezzi_ivati ? tr('Importo IVA inclusa') : ''; ?>" ]}
+                        </div>
+                        
                         <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "value": "$idiva_vendita$", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                             <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
@@ -264,32 +248,8 @@ echo '
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate.'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "value": "$idconto_vendita$", "ajax-source": "conti-vendite" ]}
-                        </div>
-
-                        <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo $prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita; ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo $prezzi_ivati ? tr('Importo IVA inclusa') : ''; ?>" ]}
                         </div>
                     </div>
                 </div>

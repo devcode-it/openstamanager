@@ -24,49 +24,30 @@ $immagine_articolo = $articolo->immagine ? base_path().'/files/articoli/'.$artic
 echo '
 <hr>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card card-info card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Articolo').'</h3>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <img src="'.$immagine_articolo.'" " class="img-fluid">
                     </div>
                     
-                    <div class="col-md-10">';
+                    <div class="col-md-9">';
 
+$marchio = $dbo->fetchOne('SELECT `link`, `name` FROM mg_marchi WHERE id = '.$articolo->id_marchio);
 // Articolo
 echo '
+                        '.($articolo->id_marchio ? '<p class="float-right"><i class="fa fa-tag"></i> '.($marchio['link']? '<a href="'.$marchio['link'].'" target="_blank" rel="noopener noreferrer"> '.$marchio['name'].'</a>' : $marchio['name']).'</p>' : '').                    
+                        ($articolo->id_categoria ? '<p class="text-muted"> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
                         <h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4>
-                        <p>'.tr('COD').'. '.$articolo->codice.' '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
-                        '.($articolo->id_categoria ? '<p> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <i class="fa fa-chevron-right"></i> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
-                        '.($articolo->id_marchio ? '<p><i class="fa fa-tag"></i> '.$dbo->fetchOne('select name from mg_marchi where id = '.$articolo->id_marchio)['name'] : '').'</p>
+                        <p><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
                         '.($articolo->note ? '<p class="text-danger"><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
+                        
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>';
-
-// Panoramica
-echo '
-    <div class="col-md-4">
-        <div class="card card-info card-outline shadow">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-info-circle"></i> '.tr('Informazioni').'</h3>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p>'.($articolo->gg_garanzia ? '<small>'.tr('Garanzia').':</Small> '.$articolo->gg_garanzia.' giorni' : '').'</p>
-                        <p><small> '.tr('Serial number').':</small> '.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
-                        <p>'.($articolo->ubicazione ? '<small>'.tr('Ubicazione').':</Small> '.$articolo->ubicazione : '').'</p>
-                        <p>'.($articolo->peso_lordo ? '<small>'.tr('Peso lordo').':</Small> '.numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</p>
-                        <p>'.($articolo->volume ? '<small>'.tr('Volume').':</Small> '.numberFormat($articolo->volume, $decimals).' '.tr('m3') : '').'</p>
-                    </div>
-                </div>  
             </div>
         </div>
     </div>';
@@ -89,24 +70,24 @@ echo '
             <div class="card-body">';
             if ($articolo->servizio) {
                 echo'
-                <tr><td><p class="text-info"><i class="fa fa-warning"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
+                <tr><td><p class="text-center"><i class="fa fa-info"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
             } else {
                 echo '
-                <table class="table table-condensed">
+                <table class="table table-sm">
                     <thead>
                         <tr>
                             <th>Sede</th>
-                            <th>Giacenza</th>
-                            '.($articolo->fattore_um_secondaria != 0 ? '<th>Unità di misura secondaria</th>' : '').'
+                            <th class="text-right">Giacenza</th>
+                            '.($articolo->fattore_um_secondaria != 0 ? '<th class="text-right">'.tr('U.m. secondaria').'</th>' : '').'
                         </tr>
                     </thead>
                     <tbody>';
                 foreach ($sedi as $sede) {
                 echo '
-                        <tr>
+                        <tr class="'.($giacenze[$sede['id']][0]<$articolo->threshold_qta ? 'text-danger' : '').'">
                             <td>'.$sede['nomesede'].'</td>
-                            <td>'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
-                            '.($articolo->fattore_um_secondaria != 0 ? '<td><i class="fa fa-chevron-right"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
+                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
+                            '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
                         </tr>';
                 }
                 echo '
@@ -116,5 +97,40 @@ echo '
                 echo'
             </div>
         </div>
-    </div>            
+    </div>';   
+// Panoramica
+echo '
+    <div class="col-md-2">
+        <div class="card card-info card-outline shadow">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-info-circle"></i> '.tr('Informazioni').'</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>'. tr('Garanzia') .'</td>
+                            <td class="text-right">'. ($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '') .'</td>
+                        </tr>
+                        <tr>
+                            <td>'. tr('Serial number') .'</td>
+                            <td class="text-right">'. ($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') .'</td>
+                        </tr>
+                        <tr>
+                            <td>'. tr('Ubicazione') .'</td>
+                            <td class="text-right">'. ($articolo->ubicazione ? $articolo->ubicazione : '') .'</td>
+                        </tr>
+                        <tr>
+                            <td>'. tr('Peso lordo') .'</td>
+                            <td class="text-right">'. ($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '') .'</td>
+                        </tr>
+                        <tr>
+                            <td>'. tr('Volume') .'</td>
+                            <td class="text-right">'. ($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '') .'</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>  
 </div>';

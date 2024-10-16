@@ -135,7 +135,7 @@ foreach ($primo_livello as $conto_primo) {
     echo '
     </div>
 
-        <table class="table table-condensed table-hover totali">';
+        <table class="table table-sm table-hover totali">';
 
     // Riepiloghi
     if ($conto_primo['descrizione'] == 'Patrimoniale') {

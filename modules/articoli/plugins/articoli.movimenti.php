@@ -103,7 +103,7 @@ $giacenze = $articolo->getGiacenze();
 $movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
 if (!empty($movimenti)) {
     echo '
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="table table-striped table-sm table-bordered">
             <tr>
                  <th class="text-center" width="40">#</th>
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>

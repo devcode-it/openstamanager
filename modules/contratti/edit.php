@@ -231,7 +231,7 @@ $rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiinterven
 
 if (!empty($rs)) {
     echo '
-                    <table class="table table-striped table-condensed table-bordered">
+                    <table class="table table-striped table-sm table-bordered">
                         <tr>
                             <th width="300">'.tr('Tipo attività').'</th>
 
@@ -283,7 +283,7 @@ $rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `
 if (!empty($rs)) {
     echo '
                         <div class="clearfix">&nbsp;</div>
-						<table class="table table-striped table-condensed table-bordered">
+						<table class="table table-striped table-sm table-bordered">
 							<tr>
 								<th width="300">'.tr('Tipo attività').'</th>
 

@@ -11,7 +11,7 @@ $rs_art = $dbo->fetchArray($q_art);
 if (!empty($rs_art)) {
     echo '
 <div style="max-height: 300px; overflow: auto;">
-    <table class="table table-striped table-hover table-condensed">
+    <table class="table table-striped table-hover table-sm">
         <tr>
             <th>'.tr('Tecnico').'</th>
             <th width="25%">'.tr('Dal').'</th>

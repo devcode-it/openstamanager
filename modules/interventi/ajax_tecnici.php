@@ -67,7 +67,7 @@ if (!empty($sessioni)) {
 
             echo '
 <div class="table-responsive">
-    <table class="table table-striped table-hover table-condensed">
+    <table class="table table-striped table-hover table-sm">
         <tr><th>';
 
             if ($sessione['id_user']) {
@@ -155,7 +155,7 @@ if (!empty($sessioni)) {
             {[ "type": "number", "name": "ore_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
 
                 <div class="extra hide">
-                    <table class="table table-condensed table-bordered">
+                    <table class="table table-sm table-bordered">
                         <tr>
                             <th class="text-danger">'.tr('Costo').':</th>
                             <td class="text-right">
@@ -184,7 +184,7 @@ if (!empty($sessioni)) {
                 {[ "type": "number", "name": "sessione_km_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($sessione['km'], 'qta').'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.$block_edit.'" ]}
 
                 <div class="extra hide">
-                    <table class="table table-condensed table-bordered">
+                    <table class="table table-sm table-bordered">
                     <tr>
                         <th class="text-danger">'.tr('Costo').':</th>
                         <td class="text-right">

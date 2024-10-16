@@ -10,7 +10,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 $fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (`in_fasceorarie_lang`.`title`, ' (', DATE_FORMAT(`ora_inizio`, '%H:%i'), '-', DATE_FORMAT(`ora_fine`, '%H:%i'), ')') AS descrizione FROM `in_fasceorarie_tipiintervento` INNER JOIN `in_fasceorarie` ON `in_fasceorarie_tipiintervento`.`idfasciaoraria` = `in_fasceorarie`.`id` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `idtipointervento`='.prepare($id_record));
 
 echo '
-    <table class="table table-striped table-condensed table-hover table-bordered">
+    <table class="table table-striped table-sm table-hover table-bordered">
         <tr>
             <th>'.tr('Fascia oraria').'</th>
             <th width="12%">'.tr('Addebito orario').'</th>

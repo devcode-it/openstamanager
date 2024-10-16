@@ -43,7 +43,7 @@ if (Services::isEnabled()) {
     $servizi = Services::getServiziAttivi()->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
-                <table class="card-body table table-striped table-hover table-condensed">
+                <table class="card-body table table-striped table-hover table-sm">
                     <thead>
                         <tr>
                             <th width="50%">'.tr('Nome').'</th>
@@ -134,7 +134,7 @@ if (Services::isEnabled()) {
         }
 
         echo '
-                <table class="card-body table table-striped table-hover table-condensed">
+                <table class="card-body table table-striped table-hover table-sm">
                     <thead>
                         <tr>
                             <th width="50%">'.tr('Nome').'</th>
@@ -187,7 +187,7 @@ if (Services::isEnabled()) {
                     </div>
 
 
-                    <table class="card-body table table-striped table-hover table-condensed">
+                    <table class="card-body table table-striped table-hover table-sm">
                         <thead>
                             <tr>
                                 <th>'.tr('Anno').'</th>

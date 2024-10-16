@@ -70,7 +70,7 @@ echo '
 
 				<!-- Info scadenza -->
 				<div class="col-md-6">
-					<table class="table table-striped table-hover table-condensed table-bordered">
+					<table class="table table-striped table-hover table-sm table-bordered">
                         <tr>
                             <th width="125">'.($dir == 'entrata' ? tr('Cliente') : ($dir == 'uscita' ? tr('Fornitore') : tr('Anagrafica'))).':</th>
                             <td>
@@ -90,7 +90,7 @@ if (!empty($documento)) {
                         </tr>
                     </table>    
 
-                    <table class="table table-striped table-hover table-condensed table-bordered">
+                    <table class="table table-striped table-hover table-sm table-bordered">
                         <tr>
                             <th>'.tr('Data').':</th>
                             <td>'.Translator::dateToLocale($documento->data).'</td>
@@ -113,7 +113,7 @@ if (!empty($documento)) {
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
     echo '          
-                    <table class="table table-striped table-hover table-condensed table-bordered">
+                    <table class="table table-striped table-hover table-sm table-bordered">
                         <tr>
                             <td>';
     echo input([
@@ -133,7 +133,7 @@ if (!empty($documento)) {
 
 echo '
                 <div class="col-md-6">
-                    <table class="table table-striped table-hover table-condensed table-bordered">
+                    <table class="table table-striped table-hover table-sm table-bordered">
                         <tr>
                             <td>';
 echo input([
@@ -175,7 +175,7 @@ echo '
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-hover table-condensed table-bordered">
+                    <table class="table table-hover table-sm table-bordered">
                         <thead>
                             <tr>
                                 <th style="width:17%;">'.tr('Banca accredito').'</th> 

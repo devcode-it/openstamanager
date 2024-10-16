@@ -9,7 +9,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 $righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($id_record));
 
 echo '
-    <table class="table table-striped table-condensed table-hover table-bordered">
+    <table class="table table-striped table-sm table-hover table-bordered">
         <tr>
             <th>'.tr('Descrizione').'</th>
             <th width="8%">'.tr('Q.tà').'</th>

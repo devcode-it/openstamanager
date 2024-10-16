@@ -54,7 +54,7 @@ $clienti = DettaglioPrezzo::where('id_articolo', $id_articolo)
     ->groupBy('id_anagrafica');
 if (!$clienti->isEmpty()) {
     echo '
-<table class="table table-striped table-condensed table-bordered">
+<table class="table table-striped table-sm table-bordered">
     <tbody>
         <tr>
             <th>'.tr('Cliente').'</th>

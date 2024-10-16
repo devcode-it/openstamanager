@@ -66,7 +66,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
 
     <h4>'.$nome.'</h4>
 
-    <table class="table table-striped table-condensed table-hover table-bordered scadenze">
+    <table class="table table-striped table-sm table-hover table-bordered scadenze">
         <thead>
             <tr>
                 <th>'.tr('Conto').'</th>

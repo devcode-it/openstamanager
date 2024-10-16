@@ -37,7 +37,7 @@ if (!empty($movimenti)) {
     $totale = 0;
     echo '
     <div style="max-height:400px; overflow:auto;">
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="table table-striped table-sm table-bordered">
             <tr>
                 <th class="text-center">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>

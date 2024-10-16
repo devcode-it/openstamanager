@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 if (setting('Attiva notifica di presenza utenti sul record')) {
     echo '
-<table class="table table-hover table-condensed">
+<table class="table table-hover table-sm">
     <thead>
         <tr>
             <th>'.tr('Modulo').'</th>

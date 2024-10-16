@@ -85,7 +85,7 @@ if ($fornitore['codice_fornitore'] == '') {
 }
 
 echo '
-<table class="table table-striped table-condensed table-bordered">
+<table class="table table-striped table-sm table-bordered">
     <tr>
         <th class="text-center col-md-4">'.($direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
         <th class="text-center col-md-4">'.tr('Prezzo predefinito').'</th>';
@@ -188,7 +188,7 @@ echo '
             <p>'.tr("Inserire i prezzi da associare all'articolo e all'anagrafica in relazione alla quantità di acquisto").'.</p>
             <p>'.tr('Per impostare un prezzo generale per quantità non incluse in questi limiti, utilizzare il campo sopra indicato').'.</p>
 
-            <table class="table table-condensed">
+            <table class="table table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">'.tr('Quantità minima').'</th>

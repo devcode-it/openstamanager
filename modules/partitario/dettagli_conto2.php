@@ -48,7 +48,7 @@ $terzo_livello = $dbo->fetchArray($query3);
 if (!empty($terzo_livello)) {
     echo '
     <div class="table-responsive">
-        <table class="table table-striped table-hover table-condensed">
+        <table class="table table-striped table-hover table-sm">
             <thead>
                 <tr>
                     <th>'.tr('Descrizione').'</th>

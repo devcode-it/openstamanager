@@ -33,7 +33,7 @@ $source_id = filter('source_id');
 $riferimenti = (array) filter('riferimenti');
 
 echo '
-<table class="table table-striped table-hover table-condensed table-bordered">
+<table class="table table-striped table-hover table-sm table-bordered">
     <tr>
         <th>'.tr('Descrizione').'</th>
         <th>'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>

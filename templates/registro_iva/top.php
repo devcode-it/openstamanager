@@ -45,7 +45,7 @@ $i = 0;
 
 echo '<h4><b>'.$titolo.'</b></h4>
 
-<table class="table table-condensed table-striped" border="0">
+<table class="table table-sm table-striped" border="0">
     <thead>
         <tr>
             <th>'.tr('N° Prot.').'</th>

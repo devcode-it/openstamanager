@@ -35,7 +35,7 @@ echo '
 
         <div class="card-body">
 
-        <table class="table table-striped table-condensed">
+        <table class="table table-striped table-sm">
 
         <tr>
             <th>'.tr('Attività').'</th>

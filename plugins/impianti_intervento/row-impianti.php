@@ -84,7 +84,7 @@ echo '
 <div class="row">
 <div class="col-md-12">
 <div class="card ">
-    <table class="table table-hover table-condensed table-striped">
+    <table class="table table-hover table-sm table-striped">
     <tr>
         <th class="text-center" width="1%"></th>
         <th class="text-center" width="10%">'.tr('Matricola').'</th>

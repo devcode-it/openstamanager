@@ -29,7 +29,7 @@ $righe = $promemoria->getRighe();
 
 if (!$righe->isEmpty()) {
     echo '
-<table class="table table-striped table-hover table-condensed table-bordered">
+<table class="table table-striped table-hover table-sm table-bordered">
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>

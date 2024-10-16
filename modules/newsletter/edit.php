@@ -169,7 +169,7 @@ echo '
     </div>
 
     <div class="card-body">
-        <table class="table table-hover table-condensed table-bordered" id="destinatari">
+        <table class="table table-hover table-sm table-bordered" id="destinatari">
             <thead>
                 <tr>
                     <th>'.tr('Ragione sociale').'</th>

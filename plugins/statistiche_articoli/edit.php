@@ -51,7 +51,7 @@ echo '
     </div>
 
     <div class="card-body">
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="table table-striped table-sm table-bordered">
             <thead>
                 <tr>
                     <th class="text-center">#</th>
@@ -80,7 +80,7 @@ echo '
     </div>
 
     <div class="card-body">
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="table table-striped table-sm table-bordered">
             <thead>
                 <tr>
                     <th>#</th>

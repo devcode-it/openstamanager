@@ -46,7 +46,7 @@ $pianificazioni = $contratto->pianificazioni;
 if (!$pianificazioni->isEmpty()) {
     echo '
     <hr>
-    <table class="table table-bordered table-striped table-hover table-condensed">
+    <table class="table table-bordered table-striped table-hover table-sm">
         <thead>
             <tr>
                 <th width="10%">'.tr('Scadenza').'</th>

@@ -97,6 +97,9 @@ $(document).ready(function () {
             $('input').trigger('blur');
         });
     }, 1000);
+
+    alignMaxHeight(".module-header .card");
+
 });
 
 /*
@@ -123,4 +126,14 @@ function sendWhatsAppMessage(phoneNumber, message) {
     var text = message ? "&text=" + encodeURIComponent(message) : "";
     var url = "https://api.whatsapp.com/send?phone=" + phoneNumber + text;
     window.open(url);
+}
+
+function alignMaxHeight(element){
+    max_height = 0;
+    $(element).each( function(){
+        if($(this).height() > max_height){
+            max_height = $(this).height();
+        }
+    });
+    $(element).height(max_height);
 }

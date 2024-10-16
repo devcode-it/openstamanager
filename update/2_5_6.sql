@@ -4,6 +4,7 @@ ALTER TABLE `mg_articoli` ADD `id_marchio` INT NULL DEFAULT NULL;
 CREATE TABLE `mg_marchi` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
+    `link` varchar(255) NOT NULL,
     `deleted_at` timestamp NULL DEFAULT NULL,
 PRIMARY KEY (`id`)) ENGINE = InnoDB; 
 
@@ -13,8 +14,10 @@ INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES ('1', (SE
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi'), 'id', 'mg_marchi.id', '0', '0', '0', '0', '0', '', '', '0', '0', '0'),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi'), 'Nome', 'mg_marchi.name', '1', '0', '0', '0', '0', '', '', '1', '0', '0');
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi'), 'Nome', 'mg_marchi.name', '1', '0', '0', '0', '0', '', '', '1', '0', '0'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi'), 'Link', 'mg_marchi.link', '2', '0', '0', '0', '0', '', '', '1', '0', '0');
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'id'),
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'Nome');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'Nome'),
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Link' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'Link');

@@ -83,7 +83,7 @@ use Modules\Iva\Aliquota;
                             'value' => $articolo->getTranslation('title'),
                             'charcounter' => 1,
                         ]);
-                        ?>
+?>
                         </div>
 				    </div>
 

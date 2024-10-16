@@ -701,12 +701,12 @@ class FatturaElettronica implements \Stringable
         // Codice fiscale
         // TODO: Nella fattura elettronica, emessa nei confronti di soggetti titolari di partita IVA (nodo CessionarioCommittente), non va indicato il codice fiscale se è già presente la partita iva.
         if (!empty($anagrafica['codice_fiscale'])) {
-            $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
+            $result['CodiceFiscale'] = preg_replace('/\s+/', '', (string) $anagrafica['codice_fiscale']);
 
             // $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
 
             // Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
-            $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', $anagrafica['codice_fiscale']);
+            $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', (string) $anagrafica['codice_fiscale']);
         }
 
         // Partita IVA: se privato estero non va considerato il codice fiscale ma la partita iva con 9 zeri
@@ -1666,7 +1666,7 @@ class FatturaElettronica implements \Stringable
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenziario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
-            $banca = ($co_pagamenti && $co_pagamenti->isRiBa()) ? Banca::find($scadenza['id_banca_controparte']): ($scadenza['id_banca_azienda'] ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first());
+            $banca = ($co_pagamenti && $co_pagamenti->isRiBa()) ? Banca::find($scadenza['id_banca_controparte']) : ($scadenza['id_banca_azienda'] ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first());
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],

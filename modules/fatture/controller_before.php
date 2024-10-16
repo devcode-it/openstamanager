@@ -55,7 +55,6 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
             if ($documento->codice_stato_fe == 'NS' && ($documento->stato != Stato::where('name', 'Bozza')->first()->id) && ($documento->stato != Stato::where('name', 'Non valida')->first()->id)) {
                 $ricevuta_principale = $documento->getRicevutaPrincipale();
 
-
                 if (!empty($ricevuta_principale)) {
                     $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/'.$ricevuta_principale->filename);
                     $lista_errori = $contenuto_ricevuta['ListaErrori'];

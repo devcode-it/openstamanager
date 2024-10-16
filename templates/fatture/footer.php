@@ -21,7 +21,6 @@ if (!$is_last_page) {
     return;
 }
 
-
 $imponibile = 0;
 foreach ($v_totale as $key => $v) {
     $totale_scontato += $v;
@@ -32,7 +31,7 @@ foreach ($righe as $riga) {
     $sconto += floatval($riga->sconto);
 }
 
-$imponibile = $totale_scontato+$sconto;
+$imponibile = $totale_scontato + $sconto;
 
 $rivalsa = 0;
 foreach ($righe as $riga) {
@@ -44,7 +43,7 @@ $totale_imponibile = $totale_scontato + $rivalsa;
 $totale_iva = 0;
 foreach ($righe as $riga) {
     $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
-    $totale_iva += $riga['iva'] + $riga['rivalsainps'] * $aliquota / 100;;
+    $totale_iva += $riga['iva'] + $riga['rivalsainps'] * $aliquota / 100;
 }
 
 $totale = $totale_iva + $totale_imponibile;
@@ -209,11 +208,11 @@ echo '
  * Altrimenti: Imponibile | Totale IVA | Totale
  */
 if ($has_ritenuta || $show_sconto || $has_rivalsa) {
-echo "
+    echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile', [], ['upper' => true])."
-        </th>";
+            ".tr('Imponibile', [], ['upper' => true]).'
+        </th>';
 } else {
     echo "
     <tr>
@@ -231,10 +230,10 @@ if ($show_sconto) {
         </th>';
 }
 if ($has_rivalsa) {
-echo "
+    echo "
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Cassa Previdenziale', [], ['upper' => true])."
-        </th>";
+            ".tr('Cassa Previdenziale', [], ['upper' => true]).'
+        </th>';
 } else {
     echo "
         <th class='text-center small' style='width:".$width."'>
@@ -242,9 +241,9 @@ echo "
 }
 echo "
         <th class='text-center small' style='width:".$width."'>
-            ".(($show_sconto) ? $etichette['totale_parziale'] : $etichette['totale'])."
+            ".(($show_sconto) ? $etichette['totale_parziale'] : $etichette['totale']).'
         </th>
-    </tr>";
+    </tr>';
 
 if ($has_ritenuta || $show_sconto || $has_rivalsa) {
     echo "
@@ -267,7 +266,7 @@ if ($show_sconto) {
         <td class='cell-padded text-center'>
             ".moneyFormat($totale_scontato, $d_totali).'
         </td>';
-} else if (!$has_rivalsa) {
+} elseif (!$has_rivalsa) {
     echo "
         <td class='cell-padded text-center'>
         </td>";
@@ -283,7 +282,7 @@ if ($has_rivalsa) {
     foreach ($rs2 as $rs) {
         $descrizione .= '<p class="text-muted small-bold">'.$rs['descrizione'].'</p>';
     }
-    
+
     echo '
         <td class="cell-padded text-center">
             '.moneyFormat($rivalsa, 2).'
@@ -293,8 +292,7 @@ if ($has_rivalsa) {
             '.moneyFormat($totale_imponibile, $d_totali).'
         </td>
     </tr>';
-
-} else if ($show_sconto) {
+} elseif ($show_sconto) {
     echo '
         <td class="cell-padded text-center">
         </td>
@@ -332,18 +330,17 @@ echo '
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($totale_iva, $d_totali).'
         </td>';
-        if ($has_ritenuta || $show_sconto || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
-            echo'<td class="cell-padded text-center" colspan="'.$second_colspan.'">
+if ($has_ritenuta || $show_sconto || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
+    echo '<td class="cell-padded text-center" colspan="'.$second_colspan.'">
             '.moneyFormat($totale, $d_total);
-        } else {
-            echo'
+} else {
+    echo '
             <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
             <b>'.moneyFormat($totale, $d_total).'</b>';
-        }
-        echo'
+}
+echo '
         </td>
 </tr>';
-
 
 /*
  * Riga di riepilogo di Ritenuta d'acconto e Ritenuta contributi.

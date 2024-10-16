@@ -96,7 +96,7 @@ echo '
                         <div class="row">
                             <div class="col-md-3">';
 if ($record['idagente'] != 0) {
-                                echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
 

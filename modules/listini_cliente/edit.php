@@ -76,7 +76,7 @@ echo '
 				</div>
 			</div>
 
-			<table class="table table-hover table-condensed table-bordered" id="tablelistini" width="100%">
+			<table class="table table-hover table-sm table-bordered" id="tablelistini" width="100%">
 				<thead>
 					<tr>
 						<th class="text-center">

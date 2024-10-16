@@ -45,7 +45,7 @@ if (empty($_GET['visualizza_movimenti'])) {
 
     if (!empty($movimenti)) {
         echo '
-        <table class="table table-hover table-condensed table-bordered table-striped" style="font-size:11pt;">
+        <table class="table table-hover table-sm table-bordered table-striped" style="font-size:11pt;">
             <thead>
                 <tr>
                     <th width="160">'.tr('Data').'</th>

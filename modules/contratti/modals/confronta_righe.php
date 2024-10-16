@@ -41,7 +41,7 @@ $righe = $dbo->fetchArray(
 );
 ?>
 <form action="" method="post" id="add-form">
-    <table class="table table-striped table-hover table-condensed table-bordered m-3">
+    <table class="table table-striped table-hover table-sm table-bordered m-3">
         <thead>
             <tr>
                 <th width="35" class="text-center" ><?php echo tr('Codice'); ?></th>

@@ -30,7 +30,7 @@ $colspan = $dir == 'entrata' ? '8' : '7';
 
 echo '
 <div class="table-responsive row-list">
-    <table class="table table-striped table-hover table-condensed table-bordered">
+    <table class="table table-striped table-hover table-sm table-bordered">
         <thead>
             <tr>
                 <th width="5" class="text-center">';

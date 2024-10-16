@@ -63,7 +63,7 @@ echo '
 
 if (!empty($id_contratto_precedente)) {
     echo '
-<table class="table table-hover table-condensed table-bordered table-striped">
+<table class="table table-hover table-sm table-bordered table-striped">
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>

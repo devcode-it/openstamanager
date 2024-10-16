@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<table class="table table-hover table-bordered table-condensed">
+<table class="table table-hover table-bordered table-sm">
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>

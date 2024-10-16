@@ -286,7 +286,7 @@ echo '
             <h3 class="card-title">'.tr('Righe da importare').'</h3>
         </div>
 
-        <table class="card-body table table-striped table-hover table-condensed">
+        <table class="card-body table table-striped table-hover table-sm">
             <thead>
                 <tr>
                     <th width="2%"><input id="import_all" type="checkbox" checked/></th>
@@ -436,7 +436,7 @@ if (!$righe_evase->isEmpty()) {
             </div>
         </div>
 
-        <table class="card-body table table-striped table-hover table-condensed">
+        <table class="card-body table table-striped table-hover table-sm">
             <thead>
                 <tr>
                     <th>'.tr('Descrizione').'</th>
@@ -462,7 +462,7 @@ if (!$righe_evase->isEmpty()) {
 // Gestione articolo sottoscorta
 echo '
     <div class="card alert hidden" id="articoli_sottoscorta">
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
                 <tr>
                     <th>'.tr('Articolo').'</th>

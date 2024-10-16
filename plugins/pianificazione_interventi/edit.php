@@ -61,7 +61,7 @@ echo '
 // Nessun intervento pianificato
 if (!$elenco_promemoria->isEmpty()) {
     echo '
-<table class="table table-condensed table-striped table-hover">
+<table class="table table-sm table-striped table-hover">
     <thead>
         <tr>
             <th>'.tr('Data').'</th>

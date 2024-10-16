@@ -57,7 +57,7 @@ echo '
 if (!empty($utenti)) {
     echo '
         <div class="table-responsive">
-		<table class="table table-hover table-condensed table-striped">
+		<table class="table table-hover table-sm table-striped">
 		<tr>
 			<th>'.tr('Nome utente').'</th>
             <th>'.tr('Email').'</th>
@@ -196,7 +196,7 @@ echo '
 if ($record['nome'] != 'Amministratori') {
     echo '
 			<div class="table-responsive">
-            <table class="table table-hover table-condensed table-striped">
+            <table class="table table-hover table-sm table-striped">
 				<tr>
 					<th>'.tr('Modulo').'</th>
 					<th>'.tr('Permessi').'</th>

@@ -116,7 +116,7 @@ if (empty(get('modal'))) {
     $rs2 = $dbo->fetchArray($query);
 
     echo '
-    <table id="table-serials" class="table table-striped table-hover table-condensed table-bordered text-center datatables">
+    <table id="table-serials" class="table table-striped table-hover table-sm table-bordered text-center datatables">
         <thead>
             <tr>
                 <th>'.tr('Serial').'</th>

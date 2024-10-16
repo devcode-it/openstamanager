@@ -44,7 +44,7 @@ $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {
     echo '
-<table class="table table-bordered table-hover table-condensed table-striped">
+<table class="table table-bordered table-hover table-sm table-striped">
     <tr>
         <th>'.tr('Causale').'</th>
         <th width="100">'.tr('Data').'</th>

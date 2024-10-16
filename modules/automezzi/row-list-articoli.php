@@ -28,7 +28,7 @@ $rs2 = $dbo->fetchArray('SELECT
 if (!empty($rs2)) {
     echo '
 <div style="max-height: 300px; overflow: auto;">
-    <table class="table table-striped table-hover table-condensed">
+    <table class="table table-striped table-hover table-sm">
         <tr>
             <th>'.tr('Articolo').'</th>
             <th width="25%">'.tr('Q.tà').'</th>

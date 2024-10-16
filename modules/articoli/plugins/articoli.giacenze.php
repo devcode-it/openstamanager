@@ -82,7 +82,7 @@ $ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
 $impegnato = sum(array_column($ordini, 'qta_impegnata'));
 if (!empty($ordini)) {
     echo '
-                <table class="table table-bordered table-condensed table-striped">
+                <table class="table table-bordered table-sm table-striped">
                     <thead>
                         <tr>
                             <th>'.tr('Descrizione').'</th>
@@ -149,7 +149,7 @@ $ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
 if (!empty($ordini)) {
     $ordinato = sum(array_column($ordini, 'qta_ordinata'));
     echo '
-                <table class="table table-bordered table-condensed table-striped">
+                <table class="table table-bordered table-sm table-striped">
                     <thead>
                         <tr>
                             <th>'.tr('Descrizione').'</th>
@@ -260,7 +260,7 @@ echo '
             </div>
 
             <div class="card-body">
-                <table class="table table-striped table-condensed table-bordered">
+                <table class="table table-striped table-sm table-bordered">
                     <thead>
                         <tr>
                             <th>'.tr('Sede').'</th>

@@ -96,7 +96,7 @@ class FileManager implements ManagerInterface
         </div>
     </div>
     <div class="card-body no-padding table-responsive">
-    <table class="table table-striped table-condensed ">
+    <table class="table table-striped table-sm ">
 	  <thead>
         <tr>
             <th scope="col" width="5%" class="text-center"></th>

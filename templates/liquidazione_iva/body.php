@@ -54,7 +54,7 @@ if ($periodo == 'Trimestrale') {
 
 echo '
 <h5 class="text-center">VENDITE</h5>
-<table class="table table-condensed table-striped table-bordered">
+<table class="table table-sm table-striped table-bordered">
 <thead>
     <tr>
         <th width="15%">Aliquota</th>
@@ -168,7 +168,7 @@ echo '
 
 
 <h5 class="text-center">ACQUISTI</h5>
-<table class="table table-condensed table-striped table-bordered">
+<table class="table table-sm table-striped table-bordered">
 <thead>
     <tr>
         <th width="15%">Aliquota</th>
@@ -285,7 +285,7 @@ echo '
 
 <br>
 <br>
-<table class="table table-condensed table-striped table-bordered">
+<table class="table table-sm table-striped table-bordered">
 <thead>
     <tr>
         <th class="text-center" colspan="2">PROSPETTO RIEPILOGATIVO DI LIQUIDAZIONE IVA</th>

@@ -110,7 +110,7 @@ echo '
             </h3>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-striped table-hover table-condensed">
+            <table class="table table-bordered table-striped table-hover table-sm">
                 <thead>
                     <tr>
                         <th width="40%">'.tr('Descrizione').'</th>

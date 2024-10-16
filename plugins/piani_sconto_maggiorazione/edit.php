@@ -31,7 +31,7 @@ $listini = $dbo->fetchArray('SELECT * FROM mg_piani_sconto ORDER BY id ASC');
 
 if (!empty($listini)) {
     echo '
-<table class="table table-striped table-condensed table-bordered">
+<table class="table table-striped table-sm table-bordered">
                 <tr>
                     <th>'.tr('Piano di sconto/magg.').'</th>
                     <th>'.tr('Prezzo di vendita finale').'</th>

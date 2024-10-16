@@ -403,16 +403,4 @@ echo '
     
         map.setView([lat, lng], 10);
     }
-
-    function alignMaxHeight(element){
-        max_height = 0;
-        $(element).each( function(){
-            if($(this).height() > max_height){
-                max_height = $(this).height();
-            }
-        });
-        $(element).height(max_height);
-    }
-
-    alignMaxHeight(".module-header .card");
 </script>';

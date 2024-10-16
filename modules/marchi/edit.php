@@ -27,13 +27,16 @@ include_once __DIR__.'/../../core.php';
 	<!-- DATI ANAGRAFICI -->
 	<div class="card card-primary">
 		<div class="card-header">
-			<h3 class="panel-title"><?php echo tr('Dati marchio'); ?></h3>
+			<h3 class="card-title"><?php echo tr('Dati marchio'); ?></h3>
 		</div>
 
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('name'); ?>", "name": "name", "value":"$name$", "required": 1, "validation": "name" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value":"$name$", "required": 1, "validation": "name" ]}
+				</div>
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}
 				</div>
 			</div>
 

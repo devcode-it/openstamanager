@@ -29,6 +29,9 @@ $id_anagrafica = filter('id_anagrafica');
 		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('name'); ?>", "name": "name", "required": 1, "validation": "name" ]}
 		</div>
+		<div class="col-md-4">
+			{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}
+		</div>
 	</div>
 
 	<!-- PULSANTI -->

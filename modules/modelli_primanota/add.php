@@ -80,7 +80,7 @@ echo '
         <i class="fa fa-plus"></i> '.tr('Aggiungi riga').'
     </button>
     <br><br>
-    <table class="table table-striped table-condensed table-hover table-bordered"
+    <table class="table table-striped table-sm table-hover table-bordered"
         <tr>
 			<th width="60%">'.tr('Conto').'</th>
 			<th width="20%">'.tr('Dare').'</th>

@@ -50,7 +50,7 @@ echo '
     </div>
 </div>
 <br>
-<table class="table table-striped table-hover table-condensed table-bordered">
+<table class="table table-striped table-hover table-sm table-bordered">
     <tr>
         <th>'.tr('Descrizione').'</th>
         <th class="text-center" width="120">

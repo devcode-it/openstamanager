@@ -32,7 +32,7 @@ $interventi = Intervento::where('id_contratto', $id_record)->get();
 $totale_ore_completate = 0;
 if (!empty($interventi)) {
     echo '
-<table class="table table-bordered table-condensed">
+<table class="table table-bordered table-sm">
     <tr>
         <th>'.tr('Attività').'</th>
         <th width="125">'.tr('Ore').'</th>
@@ -82,7 +82,7 @@ if (!empty($interventi)) {
         $sessioni = $intervento->sessioni;
         if (!empty($sessioni)) {
             echo '
-            <table class="table table-striped table-condensed table-bordered">
+            <table class="table table-striped table-sm table-bordered">
                 <tr>
                     <th>'.tr('Tecnico').'</th>
                     <th width="210">'.tr('Tipo attività').'</th>
@@ -141,7 +141,7 @@ if (!empty($interventi)) {
         $articoli = $intervento->articoli;
         if (!$articoli->isEmpty()) {
             echo '
-            <table class="table table-striped table-condensed table-bordered">
+            <table class="table table-striped table-sm table-bordered">
                 <tr>
                     <th>'.tr('Materiale').'</th>
                     <th width="120">'.tr('Q.tà').'</th>
@@ -181,7 +181,7 @@ if (!empty($interventi)) {
         $righe = $intervento->righe;
         if (!$righe->isEmpty()) {
             echo '
-            <table class="table table-striped table-condensed table-bordered">
+            <table class="table table-striped table-sm table-bordered">
                 <tr>
                     <th>'.tr('Altre spese').'</th>
                     <th width="120">'.tr('Q.tà').'</th>

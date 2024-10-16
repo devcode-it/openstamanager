@@ -73,7 +73,7 @@ echo '
 <div class="row">
     <div class="col-md-4">
         <h4>'.tr('Destinatari').'</h4>
-        <table class="table table-condensed table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>'.tr('Tipo').'</th>
@@ -101,7 +101,7 @@ $prints = $mail->prints;
 echo '
     <div class="col-md-4">
         <h4>'.tr('Stampe').'</h4>
-        <table class="table table-condensed table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>'.tr('Stampa').'</th>
@@ -131,7 +131,7 @@ $uploads = $mail->uploads;
 echo '
     <div class="col-md-4">
         <h4>'.tr('Allegati').'</h4>
-        <table class="table table-condensed table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>'.tr('Allegato').'</th>

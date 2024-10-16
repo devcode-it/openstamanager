@@ -54,7 +54,7 @@ echo '
             <div class="card-body">';
 if ($interventi_da_firmare) {
     echo '
-                <table class="table table-hover table-bordered table-condensed">
+                <table class="table table-hover table-bordered table-sm">
                     <thead>
                         <tr>
                             <th>'.tr('Interventi').'</th>
@@ -96,7 +96,7 @@ echo '
             <div class="card-body">';
 if ($interventi_firmati) {
     echo '
-                <table class="table table-hover table-bordered table-condensed">
+                <table class="table table-hover table-bordered table-sm">
                     <thead>
                         <tr>
                             <th>'.tr('Interventi').'</th>
@@ -138,7 +138,7 @@ echo '
             <div class="card-body">';
 if ($interventi_completati) {
     echo '
-                <table class="table table-hover table-bordered table-condensed">
+                <table class="table table-hover table-bordered table-sm">
                     <thead>
                         <tr>
                             <th>'.tr('Interventi').'</th>

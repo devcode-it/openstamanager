@@ -86,7 +86,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
 
     echo '
 </h3>
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <thead>
         <tr>
             <th>'.tr('Causale').'</th>

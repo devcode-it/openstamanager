@@ -35,7 +35,7 @@ echo "
         <i class='fa fa-info-circle'></i> ".tr('Seleziona la spunta e clicca salva per cambiare la revisione del preventivo')."
     </div>
 
-    <table class='table table-condensed table-bordered'>
+    <table class='table table-sm table-bordered'>
         <tr>
             <th style='width:50px;' class='text-center'>#</th>
             <th>Descrizione</th>

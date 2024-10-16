@@ -101,7 +101,7 @@ echo '
         <h3 class="card-title">'.tr('⚠️ Sono presenti dei conflitti con le sessioni di lavoro di alcuni tecnici').'</h3>
     </div>
     <div class="card-body">
-        <table class="table table-condensed table-striped">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>'.tr('Tecnico').'</th>

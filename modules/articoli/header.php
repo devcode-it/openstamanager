@@ -42,11 +42,9 @@ echo '
 // Articolo
 echo '
                         <h4><b>'.$articolo->getTranslation('title').'</b></h4>
-                        '.($articolo->codice ? '<p><small>Codice:</small> '.$articolo->codice.'</p>' : '').'
-                        '.($articolo->barcode ? '<p><i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'
-                        '.($articolo->id_categoria ? '<p><small>Categoria:</small> '.Categoria::where('id', $articolo->id_categoria)->first()->getTranslation('title') : '').'</p>
-                        '.($articolo->id_sottocategoria ? '<p><small>Sottocategoria:</small> '.Categoria::where('id', $articolo->id_sottocategoria)->first()->getTranslation('title') : '').'</p>
-                        '.($articolo->id_marchio ? '<p><small>Marchio:</Small> '.$dbo->fetchOne('select name from mg_marchi where id = '.$articolo->id_marchio)['name'] : '').'</p>
+                        <p><small>'.tr('Codice').':</small> '.$articolo->codice.' '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
+                        '.($articolo->id_categoria ? '<p><small>'.tr('Categoria').':</small> '.Categoria::where('id', $articolo->id_categoria)->first()->getTranslation('title') : '').($articolo->id_sottocategoria ? ' - <small>'.('Sottocategoria').':</small> '.Categoria::where('id', $articolo->id_sottocategoria)->first()->getTranslation('title') : '').'</p>
+                        '.($articolo->id_marchio ? '<p><small>'.tr('Marchio').':</Small> '.$dbo->fetchOne('select name from mg_marchi where id = '.$articolo->id_marchio)['name'] : '').'</p>
                         '.($articolo->note ? '<p><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
                     </div>
                 </div>
@@ -65,19 +63,19 @@ echo '
                 <div class="row">
                     <div class="col-md-6">
 
-                        <p>'.($articolo->um ? '<small>Unità di misura:</Small> '.$articolo->um : '').'</p>
-                        <p>'.($articolo->gg_garanzia ? '<small>Garanzia:</Small> '.$articolo->gg_garanzia.' giorni' : '').'</p>
-                        <p>'.($articolo->um_secondaria ? '<small>Unità di misura secondaria:</Small> '.$articolo->um_secondaria : '').'</p>
-                        <p>'.($articolo->fattore_um_secondaria ? '<small>Fattore:</Small> '.numberFormat($articolo->fattore_um_secondaria, $decimals) : '').'</p>
-                        <p>'.($articolo->qta_multipla ? '<small>Quantità multipla:</Small> '.numberFormat($articolo->qta_multipla, $decimals) : '').'</p>
+                        <p>'.($articolo->um ? '<small>'.tr('Unità di misura').':</Small> '.$articolo->um : '').'</p>
+                        <p>'.($articolo->gg_garanzia ? '<small>'.tr('Garanzia').':</Small> '.$articolo->gg_garanzia.' giorni' : '').'</p>
+                        <p>'.($articolo->um_secondaria ? '<small>'.tr('Unità di misura secondaria').':</Small> '.$articolo->um_secondaria : '').'</p>
+                        <p>'.($articolo->fattore_um_secondaria ? '<small>'.tr('Fattore').':</Small> '.numberFormat($articolo->fattore_um_secondaria, $decimals) : '').'</p>
+                        <p>'.($articolo->qta_multipla ? '<small>'.tr('Quantità multipla').':</Small> '.numberFormat($articolo->qta_multipla, $decimals) : '').'</p>
                     </div>
 
                     <div class="col-md-6">
                         <p><small> '.tr('Serial number').':</small> '.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
                         <p><small> '.tr('Attivo').':</small> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</p>
-                        <p>'.($articolo->ubicazione ? '<small>Ubicazione:</Small> '.$articolo->ubicazione : '').'</p>
-                        <p>'.($articolo->peso_lordo ? '<small>Peso lordo:</Small> '.numberFormat($articolo->peso_lordo, $decimals).' kg' : '').'</p>
-                        <p>'.($articolo->volume ? '<small>Volume:</Small> '.numberFormat($articolo->volume, $decimals).' m3' : '').'</p>
+                        <p>'.($articolo->ubicazione ? '<small>'.tr('Ubicazione').':</Small> '.$articolo->ubicazione : '').'</p>
+                        <p>'.($articolo->peso_lordo ? '<small>'.tr('Peso lordo').':</Small> '.numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</p>
+                        <p>'.($articolo->volume ? '<small>'.tr('Volume').':</Small> '.numberFormat($articolo->volume, $decimals).' '.tr('m3') : '').'</p>
                     </div>
                 </div>  
             </div>

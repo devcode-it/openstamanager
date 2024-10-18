@@ -272,12 +272,12 @@ class FatturaOrdinaria extends FatturaElettronica
                     $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
                     if (empty($categoria)) {
                         $categoria = Categoria::build();
-                        $categoria->setTranslation('nome', $nome_categoria);
+                        $categoria->setTranslation('title', $nome_categoria);
                         $categoria->save();
                     }
 
                     $articolo = ArticoloOriginale::build($codice, $categoria);
-                    $articolo->setTranslation('descrizione', $riga['Descrizione']);
+                    $articolo->setTranslation('title', $riga['Descrizione']);
                     $articolo->um = $riga['UnitaMisura'];
                     $articolo->idconto_acquisto = $conto[$key];
                     $articolo->abilita_serial = setting('Serial number abilitato di default');

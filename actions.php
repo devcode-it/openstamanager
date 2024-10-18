@@ -292,7 +292,7 @@ elseif (filter('op') == 'rimuovi-nota') {
 
     $nota->delete();
 
-    flash()->info(tr('Nota interna aggiunta correttamente!'));
+    flash()->info(tr('Nota interna rimossa correttamente!'));
 }
 
 // Clonazione di una checklist

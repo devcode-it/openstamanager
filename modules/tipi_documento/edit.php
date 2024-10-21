@@ -59,7 +59,7 @@ $id_module_vendite = Module::where('name', 'Fatture di vendita')->first()->id;
 echo '
 		<div class="col-md-3">
         
-			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $record['dir'] == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1]).', "value": "$id_segment$" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $record['dir'] == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1, 'tipo' => $record['codice_tipo_documento_fe']]).', "value": "$id_segment$" ]}
 		</div>
 
         <div class="col-md-12">

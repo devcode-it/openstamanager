@@ -100,6 +100,7 @@
             "Modules\\Scadenzario\\": ["modules/scadenzario/custom/src/", "modules/scadenzario/src/"],
             "Modules\\PrimaNota\\": ["modules/primanota/custom/src/", "modules/primanota/src/"],
             "Modules\\Utenti\\": ["modules/utenti/custom/src/", "modules/utenti/src/"],
+            "Modules\\Segmenti\\": ["modules/segmenti/custom/src/", "modules/segmenti/src/"],
             "Modules\\StatoServizi\\": ["modules/stato_servizi/custom/src/", "modules/stato_servizi/src/"],
             "Modules\\StatiIntervento\\": ["modules/stati_intervento/custom/src/", "modules/stati_intervento/src/"],
             "Modules\\StatiPreventivo\\": ["modules/stati_preventivo/custom/src/", "modules/stati_preventivo/src/"],

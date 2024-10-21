@@ -21,3 +21,7 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'id'),
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'Nome'),
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Link' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Marchi')), 'Link');
+
+-- Rimozione impostazioni deprecate per sezionale predefinito autofatture
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Sezionale per autofatture di vendita';
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Sezionale per autofatture di acquisto';

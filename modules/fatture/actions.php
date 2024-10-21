@@ -77,8 +77,8 @@ switch ($op) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
-        $idtipodocumento = post('idtipodocumento');
-        $id_segment = post('id_segment');
+        $idtipodocumento = post('idtipodocumento_add');
+        $id_segment = post('id_segment_add');
 
         if ($dir == 'uscita') {
             $numero_esterno = post('numero_esterno');
@@ -882,10 +882,12 @@ switch ($op) {
         $imponibile = 0;
         $sconto = 0;
 
-        $id_segment = post('id_segment');
+
         $data = date('Y-m-d');
         $anagrafica = $fattura->anagrafica;
-        $tipo = Tipo::find(post('idtipodocumento'));
+
+        $id_segment = post('id_segment_autofattura');
+        $tipo = Tipo::find(post('idtipodocumento_autofattura'));
         $iva = Aliquota::find(setting('Iva predefinita'));
 
         $imponibile = $database->table('co_righe_documenti')

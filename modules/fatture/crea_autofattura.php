@@ -19,9 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Segmenti\Segmento;
 
 $id_module_fatture_vendita = Module::where('name', 'Fatture di vendita')->first()->id;
-$id_segment = setting('Sezionale per autofatture di vendita');
+$id_segment = Segmento::where('name', 'Autofatture')->where('id_module', $id_module_fatture_vendita)->first()->id;
 
 echo '
 <form action="" method="post" id="crea-autofattura">

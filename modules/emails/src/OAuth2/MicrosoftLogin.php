@@ -48,6 +48,6 @@ class MicrosoftLogin extends Azure implements ProviderInterface
     {
         $me = $this->get('https://graph.microsoft.com/v1.0/me', $access_token);
 
-        return $me['mail'];
+        return $me['userPrincipalName'];
     }
 }

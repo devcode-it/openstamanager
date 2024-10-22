@@ -365,7 +365,7 @@ if (Auth::check()) {
     echo '
             <!-- Loader principale -->
 			<!-- Preloader -->
-            <div id="main_loading" class="preloader flex-column justify-content-center align-items-center">
+            <div id="main_loading" class="flex-column justify-content-center align-items-center">
                 <img class="animation__shake" src="'.$rootdir.'/assets/dist/img/logo.png" alt="OSM" height="60" width="60">
             </div>
 

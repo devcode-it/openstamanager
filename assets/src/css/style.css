@@ -38,8 +38,26 @@
     color: #000;
 }
 
-.preloader{
-    background-color: #f4f6f9de ;
+#main_loading {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+}
+
+#main_loading > img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -30px;
+    margin-left: -30px;
+    z-index: 9999;
 }
 
 html {
@@ -214,25 +232,15 @@ a:focus {
 }
 
 
-#mini-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9000;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.15);
-}
-
-#mini-loader>div {
+#mini-loader > div{
     position: fixed;
     bottom: 20px;
-    left: auto;
     right: 20px;
-    width: 100px;
-    height: 100px;
     margin-top: -50px;
     margin-left: -50px;
+    z-index: 9000;
+    width: 100px;
+    height: 100px;
     background: transparent url(../img/ajax-loader.gif) top left no-repeat;
 }
 
@@ -473,7 +481,7 @@ span.form-control {
 
 .select2-search,
 .select2-search__field {
-    width: 100%;
+    width: 100% !important;
 }
 
 .select2-results__option[aria-selected=true] {

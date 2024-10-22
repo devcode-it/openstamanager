@@ -18,7 +18,7 @@
 
 // Aggiunta dell'ingranaggio all'unload della pagina
 $(window).on("beforeunload", function () {
-    $("#main_loading").css('height', '100vh').find('img').show().removeClass('animation__shake').addClass('animation__shake');
+    $("#main_loading").show().find('img').show().removeClass('animation__shake').addClass('animation__shake');
 });
 
 // Fix multi-modal
@@ -100,6 +100,7 @@ $(document).ready(function () {
 
     alignMaxHeight(".module-header .card");
 
+    $("#main_loading").fadeOut()
 });
 
 /*

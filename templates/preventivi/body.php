@@ -320,17 +320,17 @@ foreach ($righe as $key => $riga) {
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 4).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right">
                 <b>'.tr('Subtotale', [], ['upper' => true]).':</b>
             </td>
-            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2 ) : (($has_image) ? 2 : 1)).'" class="text-right">
                 '.moneyFormat($subtotale_gruppo, $d_totali).'
             </td>
         </tr>';
         if (!$options['no-iva']) {
             echo '
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 6 : 5)).'" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 1)).'" class="text-right">
@@ -338,7 +338,7 @@ foreach ($righe as $key => $riga) {
             </td>
         </tr>
         <tr>
-            <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right">
+            <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 6 : 5)).'" class="text-right">
                 <b>'.tr('Subtotale ivato', [], ['upper' => true]).':</b>
             </td>
             <td colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 1)).'" class="text-right">

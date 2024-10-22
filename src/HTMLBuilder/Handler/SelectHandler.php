@@ -173,8 +173,7 @@ class SelectHandler implements HandlerInterface
 
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc
             unset($element['optgroup']);
-            $attributes[] = "data-select-attributes='".replace(json_encode($element), ["'" => "\'"])."'";
-
+            $attributes[] = "data-select-attributes='".htmlspecialchars(json_encode($element), ENT_QUOTES)."'";
             $html .= '
         <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).(!empty($element['disabled']) ? 'disabled' : '').'>'.$element['text'].'</option>';
         }
@@ -226,8 +225,7 @@ class SelectHandler implements HandlerInterface
 
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc
             unset($element['optgroup']);
-            $attributes[] = "data-select-attributes='".replace(json_encode($element), ["'" => "\'"])."'";
-
+            $attributes[] = "data-select-attributes='".htmlspecialchars(json_encode($element), ENT_QUOTES)."'";
             $result .= '
         <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
         }

@@ -4,8 +4,10 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.5.5 (2024-09-27))](#255-2024-09-27)
-- [2.5.4 (2024-08-28))](#254-2024-08-28)
+
+- [2.5.6 (2024-10-30)](#256-2024-10-30)
+- [2.5.5 (2024-09-27)](#255-2024-09-27)
+- [2.5.4 (2024-08-28)](#254-2024-08-28)
 - [2.5.3 (2024-08-07)](#253-2024-08-07)
 - [2.5.2 (2024-05-31)](#252-2024-05-31)
 - [2.5.1 (2024-04-24)](#251-2024-04-24)
@@ -70,6 +72,49 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.5.6 (2024-10-30)
+### Modificato (Changed)
+- Migliorato il footer fatture di vendita
+- Migliorata la gestione del tempo di esecuzione del file cron.php
+- Rimozione impostazioni deprecate
+- Rimozione commenti TODO
+- Miglioria modulo Articoli
+- Migliorata la visualizzazione delle tabelle con table-sm
+- Migliorata la gestione dei segmenti con introduzione della classe Segmento
+- Migliorata l'animazione delle pagine
+
+### Fixed
+- Corretto il grafico degli interventi
+- Corretta la generazione delle scadenze
+- Corretto lo stato dei servizi
+- Corretta la modifica alle sottocategorie impianti e articoli
+- Corretta l'importazione della fattura di acquisto quando il nodo ImportoTotaleDocumento non è valorizzato
+- Corretta la visualizzazione del plugin consuntivo
+- Corretta la gestione dei template email
+- Corrette le azioni di gruppo in Attività
+- Corretta la stampa di fatture con cassa previdenziale multipla
+- Corretta la generazione di fatture con caratteri speciali
+- Corretto il filtro per tipo di attività in statistiche
+- Corretto l'aggiornamento di impianti collegati a contratti
+- Corretta la modifica di giorni di preavviso contratti e del tacito rinnovo in aggiunta Contratto
+- Corretta l'aggiunta di una categoria articolo
+- Corretto il caricamento di immagini in ckeditor
+- Corretta l'impostazione automatica del pagamento predefinito
+- Corretta la descrizione del tipo di attività in Contratti
+- Corretta la modifica della percentuale di deducibilità nei conti
+- Corretta la movimentazione e creazione articoli fra sedi abilitate
+- Corretta la creazione di utenti senza sede e l'avviso di creazione sede senza accesso
+- Corretta la stampa di fatture con split payment
+- Corretta l'impostazione della sede di partenza in fatture e interventi
+- Corretta l'importazione di un articolo con seriale in importazione fatture di acquisto
+- Corretta l'autenticazione con Microsoft
+- Corretta la selezione del sezionale dei documenti
+- Corretto il template di stampa dei preventivi
+- Corretta l'indicazione della scadenza da pagare in Fatture
+- Corretta la creazione di una nota di debito
+- Corretto il controllo su stati contratti omonimi al salvataggio
+
 
 ## 2.5.5 (2024-09-27)
 ### Aggiunto (Added)

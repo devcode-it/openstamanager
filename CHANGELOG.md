@@ -76,6 +76,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.6 (2024--)
 ### Aggiunto (Added)
 - Aggiunto il modulo Marchi
+- Aggiunto il modulo Stati dei DDT
 
 ## 2.5.6 (2024-10-30)
 ### Modificato (Changed)

@@ -513,15 +513,15 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                     <strike>';
         }
 
-        echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
+        echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat(abs($scadenza->da_pagare));
 
         if ($pagamento_iniziato) {
             echo '
                     </strike>';
         }
 
-        if ($pagamento_iniziato && $scadenza->pagato != $scadenza->da_pagare) {
-            echo ' ('.moneyFormat($scadenza->da_pagare - $scadenza->pagato).')';
+        if ($pagamento_iniziato && abs($scadenza->pagato) != abs($scadenza->da_pagare)) {
+            echo ' ('.moneyFormat(abs($scadenza->da_pagare) - abs($scadenza->pagato)).')';
         }
 
         echo '

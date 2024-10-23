@@ -87,7 +87,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "'.tr('Rinnovo automatico').'", "name": "rinnovo_automatico_add", "id": "rinnovo_automatico_add", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "disabled": 1 ]}
+                    {[ "type": "checkbox", "label": "'.tr('Tacito rinnovo').'", "name": "rinnovo_automatico_add", "id": "rinnovo_automatico_add", "help": "'.tr('Il contratto è da rinnovare automaticamente alla scadenza').'", "disabled": 1 ]}
                 </div>
 
                 <div class="col-md-6">
@@ -117,7 +117,7 @@ echo '
 
         input("giorni_preavviso_rinnovo").setDisabled(disabled);
         input("ore_preavviso_rinnovo").setDisabled(disabled);
-        input("rinnovo_automatico").setDisabled(disabled);
+        input("rinnovo_automatico_add").setDisabled(disabled);
     });
 
     $("#data_conclusione").on("dp.change", function (e) {

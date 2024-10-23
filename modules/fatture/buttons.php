@@ -39,10 +39,10 @@ if ($dir == 'entrata' || !empty($abilita_autofattura)) {
     if ($dir == 'entrata') {
         echo '
     <ul class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" data-href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
+        <a class="dropdown-item" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
             '.tr('Nota di debito').'
         </a>
-
+        
         <a class="dropdown-item" data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
             '.tr('Nota di credito').'
         </a>

@@ -34,11 +34,7 @@ class Impianti extends AppResource
             ->select('zz_operations.id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->leftJoin('zz_modules_lang', function ($join) {
-                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
-            })
-            ->where('zz_modules_lang.name', '=', 'Impianti')
+            ->where('zz_modules.name', '=', 'Impianti')
             ->where('zz_operations.op', '=', 'delete')
             ->whereNotNull('zz_operations.options')
             ->where('zz_operations.created_at', '>', $last_sync_at)
@@ -77,28 +73,39 @@ class Impianti extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT 
-            `my_impianti`.`id`,
-            `my_impianti`.`idanagrafica` AS id_cliente,
-            `my_impianti`.`idsede` AS id_sede,
-            `my_impianti`.`matricola`,
-            `my_impianti`.`nome`,
-            `my_impianti`.`descrizione`,
-            `my_impianti`.`data` AS data_installazione,
-            `my_impianti`.`proprietario`,
-            `my_impianti`.`ubicazione`,
-            `my_impianti`.`palazzo`,
-            `my_impianti`.`scala`,
-            `my_impianti`.`piano`,
-            `my_impianti`.`interno`,
-            `my_impianti`.`occupante`,
-            `categorie_lang`.`title` AS categoria
+            `impianti`.`id`,
+            `impianti`.`idanagrafica` AS id_cliente,
+            `impianti`.`idsede` AS id_sede,
+            `impianti`.`matricola`,
+            `impianti`.`nome`,
+            `impianti`.`descrizione`,
+            `impianti`.`data` AS data_installazione,
+            `impianti`.`proprietario`,
+            `impianti`.`ubicazione`,
+            `impianti`.`palazzo`,
+            `impianti`.`scala`,
+            `impianti`.`piano`,
+            `impianti`.`interno`,
+            `impianti`.`occupante`,
+            `categorie_lang`.`title` AS categoria,
             `sottocategorie_lang`.`title` AS sottocategoria
-        FROM `my_impianti`
-            LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
-            LEFT JOIN `my_impianti_categorie_lang` as categorie_lang ON (`categorie_lang`.`id_record` = `my_impianti_categorie`.`id` AND `categorie_lang`.|lang|)
-            LEFT JOIN `my_impianti_categorie` as sottocategorie ON (`sottocategorie`.`id` = `my_impianti_categorie`.`id_sottocategoria`)
-            LEFT JOIN `my_impianti_categorie_lang` as sottocategorie_lang ON (`sottocategorie_lang`.`id_record` = `sottocategorie`.`id` AND `sottocategorie_lang`.|lang|)
-        WHERE `my_impianti`.`id` = '.prepare($id);
+        FROM 
+            my_impianti AS impianti
+        LEFT JOIN 
+            my_impianti_categorie AS categorie 
+            ON categorie.id = impianti.id_categoria
+        LEFT JOIN 
+            my_impianti_categorie_lang AS categorie_lang 
+            ON categorie_lang.id_record = categorie.id 
+            AND categorie_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
+        LEFT JOIN 
+            my_impianti_categorie AS sottocategorie 
+            ON sottocategorie.id = impianti.id_sottocategoria
+        LEFT JOIN 
+            my_impianti_categorie_lang AS sottocategorie_lang 
+            ON sottocategorie_lang.id_record = sottocategorie.id 
+            AND sottocategorie_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
+        WHERE `impianti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

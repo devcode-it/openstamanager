@@ -95,11 +95,7 @@ class Checklists extends AppResource
             ->select('zz_operations.id_record')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
-            ->leftJoin('zz_modules_lang', function ($join) {
-                $join->on('zz_modules.id', '=', 'zz_modules_lang.id_record')
-                    ->where('zz_modules_lang.id_lang', '=', \Models\Locale::getDefault()->id);
-            })
-            ->where('zz_modules_lang.name', '=', 'Interventi')
+            ->where('zz_modules.name', '=', 'Interventi')
             ->where('zz_operations.op', '=', 'delete_check')
             ->where('zz_operations.created_at', '>', $last_sync_at)
             ->pluck('id_record')

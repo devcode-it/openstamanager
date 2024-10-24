@@ -12,7 +12,7 @@ INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `v
 
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Marchi';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES 
-('1', @id_module, 'Marchi')
+('1', @id_module, 'Marchi'),
 ('2', @id_module, 'Marchi');
 
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Marchi';

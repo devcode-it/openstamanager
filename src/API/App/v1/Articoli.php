@@ -58,12 +58,12 @@ class Articoli extends AppResource
             `categoria_lang`.`title` AS categoria,
             `sottocategoria_lang`.`title` AS sottocategoria
         FROM 
-            `mg_articoli`
-            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-            LEFT JOIN `mg_categorie` as categoria ON (`mg_articoli`.`id_categoria` = `mg_categorie`.`id`)
-            LEFT JOIN `mg_categorie_lang` as categoria_lang ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-            LEFT JOIN `mg_categorie` as sottocategoria ON (`mg_articoli`.`id_sottocategoria` = `mg_categorie`.`id`)
-            LEFT JOIN `mg_categorie_lang` as sottocategoria_lang ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            `mg_articoli` 
+            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            LEFT JOIN `mg_categorie` as categoria ON (`mg_articoli`.`id_categoria` = `categoria`.`id`) 
+            LEFT JOIN `mg_categorie_lang` as categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            LEFT JOIN `mg_categorie` as sottocategoria ON (`mg_articoli`.`id_sottocategoria` = `sottocategoria`.`id`) 
+            LEFT JOIN `mg_categorie_lang` as sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `mg_articoli`.`id` = '.prepare($id);
 

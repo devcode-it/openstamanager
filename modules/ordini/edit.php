@@ -90,48 +90,46 @@ echo '
         </div>
 
         <div class="card-body">
-            <div class="card-body">
-                <!-- RIGA 1 -->
-                <div class="row">
-                    <div class="col-md-3">';
+            <!-- RIGA 1 -->
+            <div class="row">
+                <div class="col-md-3">';
 echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
 if ($dir == 'entrata') {
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
 } else {
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
 }
 echo '
-                    </div>
+                </div>
 
-                    <div class="col-md-3">';
+                <div class="col-md-3">';
 if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                        {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
-                    </div>
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede'].'} ]}
+                </div>
                     
-                    <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
-                    </div>';
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
+                </div>';
 
 if ($dir == 'entrata') {
     echo '
-                    <div class="col-md-3">';
+                <div class="col-md-3">';
     if ($record['idagente'] != 0) {
         echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
     }
     echo '
-                        {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
-                    </div>';
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                </div>';
 }
 echo '
-                </div>
             </div>
         </div>
     </div>';

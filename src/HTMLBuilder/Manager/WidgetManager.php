@@ -45,7 +45,7 @@ class WidgetManager implements ManagerInterface
         $database = database();
 
         // Widget richiesto
-        $widget = $database->fetchArray('SELECT * FROM `zz_widgets` LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `zz_widgets`.`id` = '.prepare($options['id']))[0];
+        $widget = $database->fetchArray('SELECT `zz_widgets`.*, `zz_widgets_lang`.`text` FROM `zz_widgets` LEFT JOIN `zz_widgets_lang` ON (`zz_widgets`.`id` = `zz_widgets_lang`.`id_record` AND `zz_widgets_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `zz_widgets`.`id` = '.prepare($options['id']))[0];
 
         $result = ' ';
 

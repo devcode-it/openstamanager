@@ -82,16 +82,15 @@ class FatturaElettronica
 
     public static function getImportDirectory()
     {
-        if (!isset(self::$directory)) {
-            $module = Module::where('name', 'Fatture di vendita')->first();
+        $module = Module::where('name', 'Fatture di acquisto')->first();
 
-            $plugins = $module->plugins;
-            if (!empty($plugins)) {
-                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == 'Fatturazione Elettronica');
+        $plugins = $module->plugins;
+        if (!empty($plugins)) {
+            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == 'Fatturazione Elettronica');
 
-                self::$directory = base_dir().'/'.$plugin->upload_directory;
-            }
+            self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
+
 
         return self::$directory;
     }

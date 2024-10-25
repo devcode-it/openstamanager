@@ -254,11 +254,11 @@ if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornit
         $confermato = $result['confermato'];
     }
     echo '
-    <div class="card card-info collapsable collapsed-card">
+    <div class="card card-info collapsed-card"> 
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Informazioni aggiuntive').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
             </div>
         </div>
 
@@ -303,7 +303,7 @@ if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornit
                 input("ora_evasione").set();
             }
         });
-        </script>';
+    </script>';
 }
 
 if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {

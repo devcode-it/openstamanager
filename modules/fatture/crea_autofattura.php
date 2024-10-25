@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
-use Modules\Fatture\Tipo;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Tipo;
 
 $fattura = Fattura::find($id_record);
 

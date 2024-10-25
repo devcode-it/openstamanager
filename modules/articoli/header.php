@@ -37,7 +37,6 @@ echo '
                     
                     <div class="col-md-9">';
 
-
 // Articolo
 echo '
                         '.($articolo->id_categoria ? '<p class="text-muted"> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
@@ -67,11 +66,11 @@ echo '
                 <h3 class="card-title"><i class="fa fa-archive"></i> '.tr('Giacenze').'</h3>
             </div>
             <div class="card-body">';
-            if ($articolo->servizio) {
-                echo'
+if ($articolo->servizio) {
+    echo '
                 <tr><td><p class="text-center"><i class="fa fa-info"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
-            } else {
-                echo '
+} else {
+    echo '
                 <table class="table table-sm">
                     <thead>
                         <tr>
@@ -81,22 +80,22 @@ echo '
                         </tr>
                     </thead>
                     <tbody>';
-                foreach ($sedi as $sede) {
-                echo '
-                        <tr class="'.($giacenze[$sede['id']][0]<$articolo->threshold_qta ? 'text-danger' : '').'">
+    foreach ($sedi as $sede) {
+        echo '
+                        <tr class="'.($giacenze[$sede['id']][0] < $articolo->threshold_qta ? 'text-danger' : '').'">
                             <td>'.$sede['nomesede'].'</td>
                             <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
                             '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
                         </tr>';
-                }
-                echo '
+    }
+    echo '
                     </tbody>
                 </table>';
-            }
-                echo'
+}
+echo '
             </div>
         </div>
-    </div>';   
+    </div>';
 // Panoramica
 echo '
     <div class="col-md-2">
@@ -108,24 +107,24 @@ echo '
                 <table class="table table-sm">
                     <tbody>
                         <tr>
-                            <td>'. tr('Garanzia') .'</td>
-                            <td class="text-right">'. ($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '') .'</td>
+                            <td>'.tr('Garanzia').'</td>
+                            <td class="text-right">'.($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '').'</td>
                         </tr>
                         <tr>
-                            <td>'. tr('Serial number') .'</td>
-                            <td class="text-right">'. ($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') .'</td>
+                            <td>'.tr('Serial number').'</td>
+                            <td class="text-right">'.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>').'</td>
                         </tr>
                         <tr>
-                            <td>'. tr('Ubicazione') .'</td>
-                            <td class="text-right">'. ($articolo->ubicazione ? $articolo->ubicazione : '') .'</td>
+                            <td>'.tr('Ubicazione').'</td>
+                            <td class="text-right">'.($articolo->ubicazione ?: '').'</td>
                         </tr>
                         <tr>
-                            <td>'. tr('Peso lordo') .'</td>
-                            <td class="text-right">'. ($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '') .'</td>
+                            <td>'.tr('Peso lordo').'</td>
+                            <td class="text-right">'.($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</td>
                         </tr>
                         <tr>
-                            <td>'. tr('Volume') .'</td>
-                            <td class="text-right">'. ($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '') .'</td>
+                            <td>'.tr('Volume').'</td>
+                            <td class="text-right">'.($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '').'</td>
                         </tr>
                     </tbody>
                 </table>

@@ -71,7 +71,7 @@ if (count($preventivo->revisioni) > 1) {
                 </div>';
 
 if (!empty($record['idreferente'])) {
-echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
                 <div class="col-md-3">
@@ -80,7 +80,7 @@ echo '
 
                 <div class="col-md-3">';
 if ($record['idagente'] != 0) {
-echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
                     {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}

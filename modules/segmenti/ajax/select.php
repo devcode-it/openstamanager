@@ -73,7 +73,6 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`zz_segments_lang`.`title` LIKE '.prepare('%'.$search.'%');
             }
-
         }
 
         break;

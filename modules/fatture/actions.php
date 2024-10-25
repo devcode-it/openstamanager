@@ -882,7 +882,6 @@ switch ($op) {
         $imponibile = 0;
         $sconto = 0;
 
-
         $data = date('Y-m-d');
         $anagrafica = $fattura->anagrafica;
 

@@ -41,19 +41,19 @@ $query = Modules::replaceAdditionals($structure->id, $query);
 
 // Modifiche alla query principale
 $query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM `mg_articoli` LEFT JOIN (SELECT `idarticolo`, SUM(`qta`) AS qta_totale FROM `mg_movimenti` WHERE `data` <='.prepare($period_end).' GROUP BY `idarticolo`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id` ', (string) $query);
-$query = preg_replace('/^SELECT/', 'SELECT `movimenti`.`qta_totale`, ', $query);
+$query = preg_replace('/^SELECT/', 'SELECT `movimenti`.`qta_totale`, ', (string) $query);
 
 if (post('acquisto') == 'standard') {
-    $query = preg_replace('/^SELECT/', 'SELECT `mg_articoli`.`prezzo_acquisto` AS acquisto, ', $query);
+    $query = preg_replace('/^SELECT/', 'SELECT `mg_articoli`.`prezzo_acquisto` AS acquisto, ', (string) $query);
     $text = 'al prezzo presente nella scheda articolo';
 } elseif (post('acquisto') == 'first') {
-    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (`prezzo_unitario`-`sconto_unitario`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `dir`="uscita" AND `idarticolo`=`mg_articoli`.`id` ORDER BY `co_righe_documenti`.`id`  ASC LIMIT 0,1) AS acquisto, ', $query);
+    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (`prezzo_unitario`-`sconto_unitario`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `dir`="uscita" AND `idarticolo`=`mg_articoli`.`id` ORDER BY `co_righe_documenti`.`id`  ASC LIMIT 0,1) AS acquisto, ', (string) $query);
     $text = 'al primo articolo acquistato';
 } elseif (post('acquisto') == 'last') {
-    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (`prezzo_unitario`-`sconto_unitario`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `dir`="uscita") AND `idarticolo`=`mg_articoli`.`id` ORDER BY `co_righe_documenti`.`id`  DESC LIMIT 0,1) AS acquisto, ', $query);
+    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (`prezzo_unitario`-`sconto_unitario`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `dir`="uscita") AND `idarticolo`=`mg_articoli`.`id` ORDER BY `co_righe_documenti`.`id`  DESC LIMIT 0,1) AS acquisto, ', (string) $query);
     $text = "all'ultimo articolo acquistato";
 } else {
-    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (SUM((`prezzo_unitario`-`sconto_unitario`)*`qta`)/SUM(`qta`)) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE dir="uscita" AND `idarticolo`=`mg_articoli`.`id`) AS acquisto, ', $query);
+    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (SUM((`prezzo_unitario`-`sconto_unitario`)*`qta`)/SUM(`qta`)) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE dir="uscita" AND `idarticolo`=`mg_articoli`.`id`) AS acquisto, ', (string) $query);
     $text = "alla media ponderata dell'articolo";
 }
 

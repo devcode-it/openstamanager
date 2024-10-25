@@ -91,7 +91,6 @@ class FatturaElettronica
             self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
 
-
         return self::$directory;
     }
 

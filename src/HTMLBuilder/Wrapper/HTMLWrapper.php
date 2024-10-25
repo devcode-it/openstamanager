@@ -54,7 +54,7 @@ class HTMLWrapper implements WrapperInterface
         }
 
         $result .= '
-        <div class="input-group">';
+        <div class="'.($values['type'] == 'ckeditor' ? '' : 'input-group').'">';
 
         if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             $result .= '

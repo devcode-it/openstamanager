@@ -29,9 +29,10 @@ class Autofill
     protected $space = 0;
     protected $current = 0;
 
-    protected $max_rows = 20;
-    protected $max_rows_first_page = 20;
-    protected $max_additional = 15;
+    protected $max_rows = 26;
+    protected $max_rows_first_page = 38;
+    protected $max_additional = 0;
+
 
     public function __construct(protected $column_number, protected $char_number = 70)
     {
@@ -41,32 +42,25 @@ class Autofill
     {
         $this->max_rows = $rows;
 
-        $this->max_additional = $additional ?? floor($this->max_rows - $this->max_rows / 4);
-        $this->max_rows_first_page = $first_page ?? $rows;
+        $this->max_additional = $additional ?: $this->max_rows;
+        $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
     public function count($text, $small = false)
     {
         $count = ceil(strlen((string) $text) / $this->char_number);
-        $count += substr_count((string) $text, PHP_EOL);
-        $count += substr_count((string) $text, '<br>');
 
         // Ricerca dei caratteri a capo
         preg_match_all("/(\r\n|\r|\n)/", (string) $text, $matches);
         $count += count($matches[0]);
-
-        if ($small) {
-            $count = $count / 3;
-        }
+        $count = ($count == 1 ? $count : $count / 1.538461538 );
 
         $this->set($count);
     }
 
     public function set($count)
     {
-        if ($count > $this->current) {
-            $this->current = $count;
-        }
+        $this->current += $count;
     }
 
     public function next()
@@ -77,11 +71,20 @@ class Autofill
 
     public function getAdditionalNumber()
     {
-        $page = ceil($this->space / $this->max_rows_first_page);
-        if ($page > 1) {
-            $rows = floor($this->space) % $this->max_rows;
+        if ($this->space <= $this->max_rows) {
+            $page = 1;
         } else {
-            $rows = floor($this->space) % $this->max_rows_first_page;
+            if ($this->space <= $this->max_rows_first_page) {
+                $page = 2;
+            } else {
+                $page = ceil(1 + (($this->space - $this->max_rows_first_page) / $this->max_rows));
+            }
+        }
+        
+        if ($page > 1) {
+            $rows = $this->space - $this->max_rows_first_page * ($page - 1);
+        } else {
+            $rows = floor($this->space);
         }
 
         $number = $this->max_additional - $rows;

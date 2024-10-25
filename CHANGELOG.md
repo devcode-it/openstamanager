@@ -119,7 +119,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta l'indicazione della scadenza da pagare in Fatture
 - Corretta la creazione di una nota di debito
 - Corretto il controllo su stati contratti omonimi al salvataggio
-
+- Corrette le api dell'applicazione
+- Corretta la generazione di righe vuote nelle stampe delle fatture
+- Corretta la cartella di riferimento in fase di importazione delle fatture di acquisto
+- Corretti gli arrotondamenti automatici in fase di importazione fatture di acquisto
 
 ## 2.5.5 (2024-09-27)
 ### Aggiunto (Added)

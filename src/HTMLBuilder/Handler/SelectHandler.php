@@ -168,7 +168,7 @@ class SelectHandler implements HandlerInterface
             }
 
             if (!empty($element['_bgcolor_'])) {
-                $attributes[] = 'style="background:'.$element['_bgcolor_'].'; color:'.color_inverse($element['_bgcolor_'].';"');
+                $attributes[] = 'style="background:'.$element['_bgcolor_'].'; color:'.color_inverse($element['_bgcolor_']).'"';
             }
 
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc

@@ -169,7 +169,7 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-        if ($elemento['tipo_documento'] == 'Intervento') {
+        if ($elemento['tipo_documento'] == 'Attività') {
             $modulo = 'Interventi';
         } else {
             $modulo = 'Contratti';

@@ -60,6 +60,13 @@ echo '
                 </td>
             </tr>
         </table>
+        <table>
+            <tr>
+                <td valign="top" class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Metodo di pagamento', [], ['upper' => true]).'</p>
+                    <p>'.$record['pagamento'].'</p>
+                </td>
+        </table>
     </div>
 
 	<div class="col-xs-6 pull-right">

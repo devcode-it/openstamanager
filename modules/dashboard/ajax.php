@@ -134,10 +134,10 @@ switch (filter('op')) {
                 `co_statipreventivi_lang`.`title` as stato,
                 `co_statipreventivi`.`is_completato`,
                 `an_anagrafiche`. `ragione_sociale` AS cliente,
-                `zz_files`.`id` AS have_attachments
+                IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
             FROM `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-                LEFT JOIN `zz_files` ON `zz_files`.`id_record` = `co_preventivi`.`id` AND `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).'
+                LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
@@ -374,11 +374,11 @@ switch (filter('op')) {
                 `co_preventivi`.`data_accettazione`,
                 `co_preventivi`.`data_conclusione`,
                 `an_anagrafiche`.`ragione_sociale` AS cliente,
-                `zz_files`.`id` AS have_attachments
+                IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
             FROM 
                 `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-                LEFT JOIN zz_files ON zz_files.id_record = co_preventivi.id AND zz_files.id_module = '.prepare($modulo_preventivi->id).'
+                LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE 

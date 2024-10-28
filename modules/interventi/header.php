@@ -37,7 +37,7 @@ $anagrafica = $intervento->anagrafica;
 if ($intervento->idsede_destinazione) {
     $sede = $dbo->selectOne('an_sedi', '*', ['id' => $intervento->idsede_destinazione]);
 } else {
-    $sede = $anagrafica->toArray();
+    $sede = $anagrafica ? $anagrafica->toArray() : null;
 }
 
 // Referente

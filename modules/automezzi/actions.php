@@ -12,7 +12,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         if ($dbo->fetchNum('SELECT targa FROM an_sedi WHERE targa='.prepare($targa).' AND NOT id='.prepare($id_record)) == 0) {
-            $query = 'UPDATE an_sedi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).' WHERE id='.prepare($id_record);
+            $query = 'UPDATE an_sedi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).', nomesede='.prepare($nome.' - '.$targa).' WHERE id='.prepare($id_record);
             if ($dbo->query($query)) {
                 flash()->info(tr('Informazioni salvate correttamente!'));
             }

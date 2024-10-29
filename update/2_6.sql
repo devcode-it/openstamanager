@@ -63,3 +63,22 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'), 
 ('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'color_Colore' AND `id_module` = @id_module), 'color_Colore'), 
 ('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'color_Colore' AND `id_module` = @id_module), 'color_Color');
+
+-- Mandati SEPA
+CREATE TABLE IF NOT EXISTS `co_mandati_sepa` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_banca` int(11) NOT NULL,
+  `id_mandato` varchar(255) NOT NULL,
+  `data_firma_mandato` DATE NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_banca`) REFERENCES `co_banche`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE `co_mandati_sepa` ADD `singola_disposizione` TINYINT(1) NOT NULL AFTER `data_firma_mandato`;
+
+-- Aggiunta del plugin
+INSERT INTO `zz_plugins` (`id`, `name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES
+(NULL, 'Mandati SEPA', (SELECT `id` FROM `zz_modules` WHERE `name`='Banche'), (SELECT `id` FROM `zz_modules` WHERE `name`='Banche'), 'tab', '', 1, 1, 0, '2.*', '', NULL, 'custom', 'mandati_sepa', '');
+
+INSERT INTO `zz_plugins_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
+(NULL, 1, (SELECT `id` FROM `zz_plugins` WHERE `name`='Mandati SEPA'), 'Mandati SEPA');

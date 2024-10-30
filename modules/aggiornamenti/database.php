@@ -133,12 +133,13 @@ $info = Update::getDatabaseStructure();
 $results = integrity_diff($data, $info);
 $results_added = integrity_diff($info, $data);
 
+
 $contents = file_get_contents(base_dir().'/settings.json');
-$data = json_decode($contents, true);
+$data_settings = json_decode($contents, true);
 
 $settings = Update::getSettings();
-$results_settings = settings_diff($data, $settings);
-$results_settings_added = settings_diff($settings, $data);
+$results_settings = settings_diff($data_settings, $settings);
+$results_settings_added = settings_diff($settings, $data_settings);
 
 // Schermata di visualizzazione degli errori
 if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
@@ -178,19 +179,37 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
         </thead>
 
         <tbody>';
-
                 foreach ($errors as $name => $diff) {
+                    $query = '';
+                    $null = '';
+                    if (array_key_exists('key', $diff)) {
+                        if ($diff['key']['expected'] == '') {
+                            $query = 'Chiave non prevista';
+                        } else {
+                            $query = 'Chiave mancante';
+                        }
+                    } else {
+                        $query .= 'ALTER TABLE `'.$table.'` CHANGE `'.$name.'` `'.$name.'` '.$data[$table][$name]['type'];
+                        if ($data[$table][$name]['null'] == 'NO') {
+                            $null = 'NOT NULL';
+                        } else {
+                            $null = 'NULL';
+                        }
+                        $query .= str_replace('DEFAULT_GENERATED', ' ', $data[$table][$name]['extra']).' '.$null.' DEFAULT '.$data[$table][$name]['default'].';';
+                    }
+
                     echo '
             <tr class="bg-warning" >
                 <td>
                     '.$name.'
                 </td>
                 <td>
-                    '.json_encode($diff).'
+                    '.$query.'
                 </td>
             </tr>';
+                    
                 }
-
+                
                 echo '
         </tbody>
     </table>';
@@ -215,7 +234,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     '.($name ?: $diff['expected']['title']).'
                 </td>
                 <td>
-                    QUERY DA ESEGUIRE:<br>
                     ALTER TABLE '.$table.' ADD  CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';
                 </td>
             </tr>';
@@ -230,74 +248,88 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
     if (!empty($results_added)) {
         foreach ($results_added as $table => $errors) {
+            if ($results[$table] && array_keys($results[$table]) != array_keys($errors)) {
+                echo '
+        <h3>'.$table.'</h3>';
+
+                if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                    echo '
+        <div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
+                    continue;
+                }
+
+                $foreign_keys = $errors['foreign_keys'] ?: [];
+                unset($errors['foreign_keys']);
+
+                if (!empty($errors)) {
+                    echo '
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>'.tr('Colonna').'</th>
+                    <th>'.tr('Conflitto').'</th>
+                </tr>
+            </thead>
+
+            <tbody>';
+
+            foreach ($errors as $name => $diff) {
+                $query = '';
+                if ((!isset($results[$table][$name]))) {
+                    if (isset($diff['key'])) {
+                        if ($diff['key']['expected'] == '') {
+                            $query = 'Chiave non prevista';
+                        } else {
+                            $query = 'Chiave mancante';
+                        }
+                    } else {
+                        $query = 'Campo non previsto';
+                    }
+
+                    echo '
+                <tr class="bg-info" >
+                    <td>
+                        '.$name.'
+                    </td>
+                    <td>
+                        '.$query.'
+                    </td>
+                </tr>';
+                } 
+            }
             echo '
-    <h3>'.$table.'</h3>';
-
-            if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                echo '
-    <div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'</div>';
-                continue;
-            }
-
-            $foreign_keys = $errors['foreign_keys'] ?: [];
-            unset($errors['foreign_keys']);
-
-            if (!empty($errors)) {
-                echo '
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>'.tr('Colonna').'</th>
-                <th>'.tr('Conflitto').'</th>
-            </tr>
-        </thead>
-
-        <tbody>';
-
-                foreach ($errors as $name => $diff) {
-                    echo '
-            <tr class="bg-info" >
-                <td>
-                    '.$name.'
-                </td>
-                <td>
-                    Campo non previsto
-                </td>
-            </tr>';
+            </tbody>
+        </table>';
                 }
 
-                echo '
-        </tbody>
-    </table>';
-            }
-
-            if (!empty($foreign_keys)) {
-                echo '
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>'.tr('Foreign keys').'</th>
-                <th>'.tr('Conflitto').'</th>
-            </tr>
-        </thead>
-
-        <tbody>';
-
-                foreach ($foreign_keys as $name => $diff) {
+                if (!empty($foreign_keys)) {
                     echo '
-            <tr class="bg-info" >
-                <td>
-                    '.$name.'
-                </td>
-                <td>
-                    Chiave esterna non prevista
-                </td>
-            </tr>';
-                }
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>'.tr('Foreign keys').'</th>
+                    <th>'.tr('Conflitto').'</th>
+                </tr>
+            </thead>
 
-                echo '
-        </tbody>
-    </table>';
+            <tbody>';
+
+                    foreach ($foreign_keys as $name => $diff) {
+                        echo '
+                <tr class="bg-info" >
+                    <td>
+                        '.$name.'
+                    </td>
+                    <td>
+                        Chiave esterna non prevista
+                    </td>
+                </tr>';
+                    }
+
+                    echo '
+            </tbody>
+        </table>';
+                }
             }
         }
     }

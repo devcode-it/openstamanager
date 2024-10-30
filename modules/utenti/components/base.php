@@ -46,7 +46,7 @@ echo '
 
     <div class="row">
 		<div class="col-md-12">
-		{[ "type": "email", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$utente['email'].'", "validation": "email" ]}
+		{[ "type": "text", "class": "email-mask", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$utente['email'].'", "validation": "email" ]}
 		</div>
     </div>';
 

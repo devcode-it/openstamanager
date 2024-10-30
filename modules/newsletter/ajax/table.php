@@ -80,11 +80,10 @@ foreach ($destinatari_filtrati as $destinatario) {
         '<div class="text-center">'.
         (!empty($origine->email) ?
             input([
-                'type' => 'text',
+                'type' => 'email',
                 'name' => 'email',
                 'id' => 'email_'.random_int(0, 99999),
                 'readonly' => '1',
-                'class' => 'email-mask',
                 'value' => $origine->email,
                 'validation' => 'email|'.$id_modulo_anagrafiche.'|'.$destinatario->record_id,
             ]) :

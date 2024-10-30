@@ -162,7 +162,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                     </div>
 
                     <div class="col-md-4">
-                        {[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>", "validation": "email" ]}
+                        {[ "type": "email", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "placeholder":"pec@dominio.ext", "value": "$pec$", "validation": "email" ]}
                     </div>
 
                     <div class="col-md-4">
@@ -218,7 +218,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
+                                {[ "type": "email", "label": "<?php echo tr('Email'); ?>", "name": "email", "placeholder": "casella@dominio.ext", "value": "$email$", "validation": "email" ]}
                             </div>
                         </div>
 

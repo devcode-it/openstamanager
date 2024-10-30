@@ -261,6 +261,8 @@ class DefaultHandler implements HandlerInterface
 
         $values['type'] = 'text';
 
+        $values['icon-before'] = $values['value'] ? '<a href="mailto:'.$values['value'].'" target="_blank"><i class="fa fa-envelope"></i></a>' : '<i class="fa fa-envelope"></i>';
+
         // Delega al metodo "text", per la generazione del codice HTML
         return $this->text($values, $extras);
     }

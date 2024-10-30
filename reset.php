@@ -134,7 +134,7 @@ if (empty($token)) {
 
             {[ "type": "text", "label": "'.tr('Username').'", "placeholder": "'.tr('Username').'", "name": "username", "icon-before": "<i class=\"fa fa-user\"></i>", "required": 1 ]}
 
-            {[ "type": "email", "label": "'.tr('Email').'", "placeholder": "'.tr('Email').'", "name": "email", "icon-before": "<i class=\"fa fa-envelope\"></i>", "required": 1 ]}';
+            {[ "type": "text", "class": "email-mask", "label": "'.tr('Email').'", "placeholder": "'.tr('Email').'", "name": "email", "icon-before": "<i class=\"fa fa-envelope\"></i>", "required": 1 ]}';
 } else {
     echo '
             <input type="hidden" name="op" value="update">

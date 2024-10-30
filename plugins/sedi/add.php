@@ -78,7 +78,7 @@ echo '
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "class": "email-mask", "validation": "email" ]}
+			{[ "type": "email", "label": "'.tr('Indirizzo email').'", "name": "email", "validation": "email" ]}
 		</div>
 		<div class="col-md-3">
 			{[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter_add", "id": "disable_newsletter_m",  "value": "0", "help": "'.tr("Blocco per l'invio delle email.").'" ]}

@@ -118,14 +118,14 @@ $idx = 0;
 foreach ($emails as $email) {
     echo '
             <div class="col-md-12">
-                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
+                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
             </div>';
 }
 
 if (empty($emails)) {
     echo '
             <div class="col-md-12">
-                {[ "type": "email", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 0 ]}
+                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
             </div>';
 }
 echo '
@@ -197,7 +197,7 @@ echo '
 echo '
 <div class="hidden" id="template-destinatario">
     <div class="col-md-12">
-        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari" ]}
+        {[ "type": "text", "name": "destinatari[-id-]", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask" ]}
     </div>
 </div>';
 

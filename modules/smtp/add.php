@@ -35,7 +35,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "required": 1 ]}
+			{[ "type": "text", "class": "email-mask", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "required": 1 ]}
 		</div>
     </div>
 

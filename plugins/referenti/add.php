@@ -45,7 +45,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "class": "email-mask", "validation": "email"]}
+			{[ "type": "email", "label": "'.tr('Indirizzo email').'", "name": "email", "validation": "email"]}
 		</div>
 	</div>
 

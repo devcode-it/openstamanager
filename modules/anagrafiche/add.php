@@ -119,11 +119,11 @@ echo '
 			<div class="row">
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "icon-before": "<i class=\"fa fa-envelope\"></i>", "validation": "email" ]}
+					{[ "type": "email", "label": "'.tr('Email').'", "name": "email", "placeholder":"casella@dominio.ext", "validation": "email" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('PEC').'", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "icon-before": "<i class=\'fa fa-envelope-o\'></i>" ]}
+					{[ "type": "email", "label": "'.tr('PEC').'", "name": "pec", "placeholder":"pec@dominio.ext" ]}
 				</div>';
 
 $help_codice_destinatario = tr("Per impostare il codice specificare prima '<b>Tipologia</b>' e '<b>Nazione</b>' dell'anagrafica").':<br><br><ul><li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li><li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li><li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>Se non si conosce il codice destinatario lasciare vuoto il campo. Verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\').';

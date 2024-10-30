@@ -53,7 +53,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "email", "label": "'.tr('Email mittente').'", "name": "from_address", "value": "$from_address$", "required": 1 ]}
+                    {[ "type": "text", "class": "email-mask", "label": "'.tr('Email mittente').'", "name": "from_address", "value": "$from_address$", "required": 1 ]}
                 </div>
 
 				<div class="col-md-3">

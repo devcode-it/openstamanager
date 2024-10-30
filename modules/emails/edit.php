@@ -96,7 +96,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "email", "label": "<?php echo tr('Destinatario fisso'); ?>", "name": "reply_to", "value": "$reply_to$", "help": "<?php echo 'Rispondi a questo indirizzo e-mail.'; ?>" ]}
+                    {[ "type": "text", "class": "email-mask", "label": "<?php echo tr('Destinatario fisso'); ?>", "name": "reply_to", "value": "$reply_to$", "help": "<?php echo 'Rispondi a questo indirizzo e-mail.'; ?>" ]}
                 </div>
             </div>
 

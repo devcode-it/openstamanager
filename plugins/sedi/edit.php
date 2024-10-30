@@ -78,7 +78,7 @@ echo '
 			{[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
 		</div>
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$", "class": "email-mask", "validation": "email" ]}
+			{[ "type": "email", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$", "validation": "email" ]}
 		</div>
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Opt-out per newsletter').'", "name": "disable_newsletter", "id": "disable_newsletter_m", "value": "'.empty($record['enable_newsletter']).'", "help": "'.tr("Blocco per l'invio delle email.").'" ]}

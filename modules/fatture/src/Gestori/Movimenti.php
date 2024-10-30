@@ -78,6 +78,10 @@ class Movimenti
 
         // Totali utili per i movimenti
         $totale = $this->fattura->totale;
+        if ($totale == 0) {
+            return;
+        }
+
         $iva_indetraibile = $this->fattura->iva_indetraibile;
         $iva_detraibile = $this->fattura->iva - $iva_indetraibile;
 
@@ -91,7 +95,7 @@ class Movimenti
          *
          * Totale (Split Payment disabilitato), oppure Totale - IVA detraibile (Split Payment abilitato) -> DARE per Vendita, AVERE per Acquisto
          */
-        $anagrafica = \Modules\Anagrafiche\Anagrafica::find(post('idanagrafica'));
+        $anagrafica = $this->fattura->anagrafica;
 
         $id_conto = $is_acquisto ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente;
         if (empty($id_conto)) {

@@ -69,7 +69,7 @@ class Scadenze
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0 && empty($is_ritenuta_pagata)) {
-            $ultima_scadenza = $this->fattura->scadenze->last();
+            $ultima_scadenza = $this->fattura->scadenze()->orderBy('scadenza', 'desc')->first();
             $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
             $scadenza->setDate($scadenza->year, $scadenza->month, 15);
             $id_pagamento = $this->fattura->idpagamento;

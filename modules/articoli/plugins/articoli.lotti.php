@@ -277,7 +277,7 @@ if (empty(get('modal'))) {
                     $query = 'SELECT 
                             *, 
                             `dt_tipiddt_lang`.`title` AS tipo_documento,
-                            `dt_ddt`.`dir`,
+                            `dt_tipiddt`.`dir`,
                             `dt_ddt`.`numero`,
                             `dt_ddt`.`numero_esterno`,
                             `dt_ddt`.`data`

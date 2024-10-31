@@ -172,6 +172,41 @@ if (empty($record) || !$has_access) {
                         <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                     </a>';
 
+    // Pulsante Precedente e Successivo
+    // Aggiungo eventuali filtri applicati alla vista
+    if (count(getSearchValues($id_module)) > 0) {
+        foreach (getSearchValues($id_module) as $key => $value) {
+            $where[$key] = $value;
+        }
+    }
+
+    // Ricavo la posizione per questo id_record
+    $order = $_SESSION['module_'.$id_module]['order'] ?: [];
+    $module_query = Util\Query::getQuery($structure, $where, $order);
+    $posizioni = $dbo->fetchArray($module_query);
+    $key = array_search($id_record, array_column($posizioni, 'id'));
+
+    // Precedente
+    $prev = $posizioni[$key-1]['id'];
+
+    // Successivo
+    $next = $posizioni[$key+1]['id'];
+
+    if (isMobile()) {
+        echo '<div>';
+    } else {
+        echo '<div class="col-md-2 d-none d-sm-inline">';
+    }
+
+    echo '
+                <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
+                    <i class="fa fa-arrow-circle-left"></i>
+                </a>
+                <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>';
+
     if (isMobile()) {
         echo '<div>';
     } else {

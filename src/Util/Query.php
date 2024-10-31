@@ -478,7 +478,7 @@ class Query
 
         $select = empty($select) ? '*' : implode(', ', $select);
 
-        $query = str_replace('|select|', $select.', @posizione := @posizione + 1 AS `posizione`', $query);
+        $query = str_replace('|select|', $select, $query);
 
         return [
             'query' => self::replacePlaceholder($query),

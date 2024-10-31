@@ -39,17 +39,8 @@ echo '
 
 <button type="button" class="btn btn-primary '.(!empty($info_firma) ? 'tip' : '').'" title="'.$info_firma.'" onclick="anteprimaFirma()" '.($record['flag_completato'] ? 'disabled' : '').'>
     <i class="fa fa-'.(!empty($info_firma) ? 'refresh' : 'desktop').'"></i> '.$frase.'...
-</button>';
+</button>
 
-// TODO: da standardizzare in struttura per tutti i moduli di tipo table
-/*<a class="btn btn-info'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module=3&id_record='.$prev.'">
-    <i class="fa fa-arrow-circle-left"></i> '.tr('Precedente').'
-</a>
-<a class="btn btn-info'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module=3&id_record='.$next.'">
-    '.tr('Successivo').' <i class="fa fa-arrow-circle-right"></i>
-</a>*/
-
-echo '
 <script>
 function duplicaIntervento() {
     openModal("'.tr('Duplica attività').'", "'.$module->fileurl('modals/duplicazione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");

@@ -29,6 +29,7 @@ $draw_numer = intval(filter('draw'));
 if (!empty(filter('order'))) {
     $order['column'] = $order['column'] - 1;
 }
+$_SESSION['module_'.$id_module]['order'] = $order;
 array_shift($columns);
 
 $total = Query::readQuery($structure);

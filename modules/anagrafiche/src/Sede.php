@@ -120,17 +120,17 @@ class Sede extends Model
                 $this->lat = $data[0]->lat;
                 $this->lng = $data[0]->lon;
             } elseif (setting('Gestore mappa') == 'Google Maps') {
-                $curl = new CurlHttpAdapter();
-                $geocoder = new GoogleMaps($curl, 'IT-it', null, true, $google);
+                $apiKey = setting('Google Maps API key per Tecnici');
+                $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$indirizzo.'&key='.$apiKey;
 
-                // Ricerca indirizzo
-                $address = $geocoder->geocode($indirizzo)->first();
-                $coordinates = $address->getCoordinates();
+                $response = file_get_contents($url);
+                $data = json_decode($response, true);
 
-                // Salvataggio informazioni
-                $this->gaddress = $data[0]->display_name;
-                $this->lat = $coordinates->getLatitude();
-                $this->lng = $coordinates->getLongitude();
+                if ($data['status'] == 'OK') {
+                    $this->lat = $data['results'][0]['geometry']['location']['lat'];
+                    $this->lng = $data['results'][0]['geometry']['location']['lng'];
+                    $this->gaddress = $data['results'][0]['formatted_address'];
+                }
             }
         }
     }

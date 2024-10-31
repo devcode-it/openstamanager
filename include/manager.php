@@ -128,6 +128,10 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             $attr_td .= " width='30'";
             $name = str_replace('icon_', 'icon_title_', $name);
             $field = str_replace('icon_', '', $field);
+        } elseif (preg_match('/^mailto_/', (string) $field)) {
+            $field = str_replace('mailto_', '', $field);
+        } elseif (preg_match('/^tel_/', (string) $field)) {
+            $field = str_replace('tel_', '', $field);
         }
 
         if (isMobile()) {

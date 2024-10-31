@@ -46,14 +46,18 @@ class Autofill
         $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
-    public function count($text, $small = false)
+    public function count($text, $small = null)
     {
         $count = ceil(strlen((string) $text) / $this->char_number);
 
         // Ricerca dei caratteri a capo
         preg_match_all("/(\r\n|\r|\n)/", (string) $text, $matches);
         $count += count($matches[0]);
-        $count = ($count == 1 ? $count : $count / 1.538461538 );
+        if ($small) {
+            $count *= 1.5;
+        } elseif ($count != 1) {
+            $count /= 1.538461538;
+        }
 
         $this->set($count);
     }

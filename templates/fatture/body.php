@@ -253,6 +253,7 @@ if (!empty($record['note'])) {
     echo '
             <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
             <p>'.nl2br((string) $record['note']).'</p>';
+            $autofill->count($record['note'], true);
 }
 
 echo '

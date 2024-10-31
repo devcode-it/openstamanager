@@ -28,7 +28,7 @@ $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
 if (!empty($list)) {
     echo '
-<table class="table table-striped table-hover table-sm table-bordered datatables">
+<table class="table table-striped table-hover table-sm table-bordered">
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>

@@ -195,7 +195,10 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         } else {
                             $null = 'NULL';
                         }
-                        $query .= str_replace('DEFAULT_GENERATED', ' ', $data[$table][$name]['extra']).' '.$null.' DEFAULT '.$data[$table][$name]['default'].';';
+                        $query .= str_replace('DEFAULT_GENERATED', ' ', $data[$table][$name]['extra']).' '.$null;
+                        if ($data[$table][$name]['default']) {
+                            $query .= ' DEFAULT '.$data[$table][$name]['default'];
+                        }
                     }
 
                     echo '
@@ -204,7 +207,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     '.$name.'
                 </td>
                 <td>
-                    '.$query.'
+                    '.$query.';
                 </td>
             </tr>';
                     

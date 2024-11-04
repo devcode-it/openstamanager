@@ -172,7 +172,7 @@ class Gestore
 
         if (in_array($pagamento->codice_modalita_pagamento_fe, ['MP19', 'MP21'])) {
             $method = 'B2B';
-        } elseif (in_array($pagamento->codice_modalita_pagamento_fe, ['MP20'])) {
+        } elseif (in_array($pagamento->codice_modalita_pagamento_fe, ['MP20', 'MP09'])) {
             $method = 'CORE';
         }
 

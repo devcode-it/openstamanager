@@ -23,6 +23,7 @@ if (!function_exists('geolocalizzazione')) {
     function geolocalizzazione($id_record, $is_sede = false)
     {
         $dbo = database();
+        $lang = \Models\Locale::find(setting('Lingua'))->language_code;
 
         if ($is_sede) {
             $sede = $dbo->table('an_sedi')->where('id', $id_record)->first();
@@ -69,6 +70,7 @@ if (!function_exists('geolocalizzazione')) {
                 } else {
                     $ch = curl_init();
                 }
+
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);

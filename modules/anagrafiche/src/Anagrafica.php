@@ -462,6 +462,8 @@ class Anagrafica extends Model
                 } else {
                     $ch = curl_init();
                 }
+
+                $lang = \Models\Locale::find(setting('Lingua'))->language_code;
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);

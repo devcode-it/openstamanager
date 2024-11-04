@@ -102,6 +102,15 @@ echo '
                 <td class="text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
+            </tr>
+
+            <tr>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Partenza merce', [], ['upper' => true]).'</p>
+                </td>
+                <td class="border-bottom text-right">
+                    <p><small>'.$partenza.'</small></p>
+                </td>
             </tr>';
 
 if (!empty($destinazione)) {

@@ -393,8 +393,10 @@ switch ($resource) {
 
         $where[] = '`idanagrafica`='.prepare($id_azienda);
 
-        // filtro in base alle sedi abilitate all'anagrafica
-        $filter[] = '`id` IN('.implode(',', $user->sedi).')';
+        // filtro in base alle sedi abilitate dell'utente
+        if ($user->gruppo != 'Amministratori') {
+            $filter[] = '`id` IN('.implode(',', $user->sedi).')';
+        }
 
         if (!empty($search)) {
             $search_fields[] = '`nomesede` LIKE '.prepare('%'.$search.'%');

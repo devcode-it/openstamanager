@@ -489,6 +489,9 @@ if ($read_only || !empty($block_edit)) {
 
             var content_was_modified = false;
 
+            // Forzatura per annullare il cambio da eventi subito dopo il caricamento iniziale
+            setTimeout(function() { content_was_modified = false; }, 1000);
+
             // Controllo se digito qualche valore o cambio qualche select
             $(".content input, .content textarea, .content select").bind("change paste keyup", function(event) {
                 if (event.keyCode >= 32) {

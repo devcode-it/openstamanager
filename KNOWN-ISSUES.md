@@ -1,6 +1,15 @@
 In questo file verranno riassunte le problematiche del gestionale che sono già note alla community.
 Le problematiche saranno raggruppate per release e le relative correzioni (se applicabili) saranno riportate sotto la sezione **Soluzione**.
 
+#### 2.5.6 - 31/10/2021
+
+##### Problemi noti
+- registrazioni contabili con conto impostato Riepilogativo clienti o Riepilogativo fornitori
+
+##### Soluzione
+Aggiornare alla versione 2.6 o eseguire lo script: https://github.com/devcode-it/openstamanager/commit/37d8c7c34fc4e81f3a4f2f79c180365b7d447891
+
+
 #### 2.5.3 - 07/08/2024
 
 ##### Problemi noti

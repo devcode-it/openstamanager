@@ -183,8 +183,8 @@ if (empty($record) || !$has_access) {
     // Ricavo la posizione per questo id_record
     $order = $_SESSION['module_'.$id_module]['order'] ?: [];
     $module_query = Util\Query::getQuery($structure, $where, $order);
-    $posizioni = $dbo->fetchArray($module_query);
-    $key = array_search($id_record, array_column($posizioni, 'id'));
+    $posizioni = $module_query ? $dbo->fetchArray($module_query) : 0;
+    $key = $posizioni ? array_search($id_record, array_column($posizioni, 'id')) : 0;
 
     // Precedente
     $prev = $posizioni[$key-1]['id'];

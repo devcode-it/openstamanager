@@ -1,7 +1,7 @@
 In questo file verranno riassunte le problematiche del gestionale che sono già note alla community.
 Le problematiche saranno raggruppate per release e le relative correzioni (se applicabili) saranno riportate sotto la sezione **Soluzione**.
 
-#### 2.5.6 - 31/10/2021
+#### 2.5.6 - 31/10/2024
 
 ##### Problemi noti
 - registrazioni contabili con conto impostato Riepilogativo clienti o Riepilogativo fornitori

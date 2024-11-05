@@ -402,6 +402,9 @@ switch ($op) {
             $new_riga->save();
         }
 
+        // Forzo il salvataggio della fattura per far scattare gli automatismi legati alle righe
+        $new->save();
+
         flash()->info(tr('Fattura duplicata correttamente!'));
 
         break;

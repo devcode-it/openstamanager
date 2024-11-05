@@ -1162,7 +1162,7 @@ class FatturaElettronica implements \Stringable
             if (!empty($element['riferimento_linea']['id'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea']['id'];
             } elseif (!empty($element['riferimento_linea'])) {
-                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'][0];
             }
 
             $dati['IdDocumento'] = $element['id_documento'];

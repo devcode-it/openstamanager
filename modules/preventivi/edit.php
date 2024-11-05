@@ -413,6 +413,7 @@ $(document).ready(function() {
     });
 
     $("#barcode").focus();
+    content_was_modified = false;
 });
 
 async function salvaArticolo() {

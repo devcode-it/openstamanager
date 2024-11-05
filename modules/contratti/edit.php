@@ -481,6 +481,7 @@ $(document).ready(function() {
     $("#barcode").focus();
 
     caricaRighe(null);
+    content_was_modified = false;
 });
 
 $("#idanagrafica_c").change(function() {

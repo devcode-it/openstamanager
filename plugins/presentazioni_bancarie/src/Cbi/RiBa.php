@@ -95,8 +95,9 @@ class RiBa
         if ($intestazione->soggetto_veicolatore != '') {
             $ib->tipo_flusso = 1;
             $ib->qualificatore_flusso = '$';
+            $ib->soggetto_veicolatore = $intestazione->soggetto_veicolatore;
         }
-        $ib->soggetto_veicolatore = $intestazione->soggetto_veicolatore;
+    
         $contenuto .= $ib->toCBI().$eol;
 
         // Iterazione tra le ricevute interne al RiBa
@@ -154,7 +155,7 @@ class RiBa
             $r50->numero_progressivo = $progressivo;
             $r50->partita_iva_o_codice_fiscale_creditore = $intestazione->partita_iva_o_codice_fiscale_creditore;
             $r50->riferimento_debito_1 = $ricevuta->descrizione;
-            $r50->riferimento_debito_2 = $ricevuta->descrizione_origine;
+            $r50->riferimento_debito_2 = $ricevuta->descrizione_origine ?: '';
             $contenuto .= $r50->toCBI().$eol;
 
             // Record 51

@@ -192,7 +192,7 @@ if ($utile_perdita < 0) {
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($totale_passivita) + abs($utile_perdita), 2).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.($totale_passivita ? numberFormat(abs($totale_passivita), 2) : '').'</b></td>
                         </tr>';
 }
 echo '

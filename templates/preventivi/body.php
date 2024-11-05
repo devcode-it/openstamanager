@@ -65,7 +65,7 @@ if ($has_image) {
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(20, 10);
+$autofill->setRows(26, 0);
 
 echo '
 <div class="col-xs-5">

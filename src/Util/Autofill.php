@@ -41,8 +41,7 @@ class Autofill
     public function setRows($rows, $additional = null, $first_page = null)
     {
         $this->max_rows = $rows;
-
-        $this->max_additional = $additional ?: $this->max_rows;
+        $this->max_additional = isset($additional) ? $additional: $this->max_rows;
         $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
@@ -88,12 +87,12 @@ class Autofill
         if ($page > 1) {
             $rows = $this->space - $this->max_rows_first_page * ($page - 1);
         } else {
-            $rows = floor($this->space);
+            $rows = ceil($this->space);
         }
 
-        $number = $this->max_additional - $rows;
+        $number = $this->max_rows - $rows;
 
-        return $number > 0 ? $number : 0;
+        return $number;
     }
 
     public function generate()

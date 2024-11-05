@@ -82,12 +82,14 @@ echo '
                     </thead>
                     <tbody>';
                 foreach ($sedi as $sede) {
-                echo '
+                    if ($giacenze[$sede['id']][0] != 0) {
+                        echo '
                         <tr class="'.($giacenze[$sede['id']][0]<$articolo->threshold_qta ? 'text-danger' : '').'">
                             <td>'.$sede['nomesede'].'</td>
                             <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
                             '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
                         </tr>';
+                    }
                 }
                 echo '
                     </tbody>

@@ -1215,6 +1215,8 @@ if ($dir == 'entrata') {
         });
 
         bolloAutomatico();
+        content_was_modified = false;
+
     });
     input("bollo_automatico").change(function () {
         bolloAutomatico();

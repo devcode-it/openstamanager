@@ -597,6 +597,7 @@ $(document).ready(function() {
     });
 
     $("#barcode").focus();
+    content_was_modified = false;
 });
 
 $("#idanagrafica").change(function() {

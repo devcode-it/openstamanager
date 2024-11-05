@@ -566,6 +566,7 @@ echo '
         });
 
         $("#barcode").focus();
+        content_was_modified = false;
     });
 
     var anagrafica = input("idanagrafica");

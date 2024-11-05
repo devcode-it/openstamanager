@@ -49,7 +49,7 @@ class Articoli extends AppResource
             `mg_articoli`.`id` AS id,
             `mg_articoli`.`codice`,
             `mg_articoli`.`barcode`,
-            `mg_articoli_lang`.`title`,
+            `mg_articoli_lang`.`title` AS descrizione,
             `mg_articoli`.`prezzo_vendita`,
             `mg_articoli`.`prezzo_acquisto`,
             `mg_articoli`.`qta`,

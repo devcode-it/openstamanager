@@ -791,7 +791,11 @@ $(".shorten").shorten({
 });
 
 $("#idtipiintervento").change(function(){
-    let idtipi = JSON.stringify($(this).val());
+    let tipi = "";
+    if( $(this).val() ){
+        idtipi = JSON.stringify($(this).val());
+    }
+    
     session_set("superselect,idtipiintervento",idtipi,0);
     location.reload();
 });

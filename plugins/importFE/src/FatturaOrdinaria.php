@@ -314,7 +314,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 [$riferimento_precedente, $nuovo_riferimento] = $obj->impostaOrigine($riga_origine);
 
                 // Correzione della descrizione
-                $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);
+                $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';
                 $obj->descrizione .= $nuovo_riferimento;
 
                 $serials_rif = $riga_origine->serials;

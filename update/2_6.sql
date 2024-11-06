@@ -94,3 +94,6 @@ UPDATE `zz_views_lang` SET `title` = 'emailto_Email' WHERE `zz_views_lang`.`id_r
 
 -- Aggiunta campo modello
 ALTER TABLE `mg_articoli` ADD `modello` VARCHAR(255) NULL AFTER `id_marchio`; 
+
+-- Fix filtro segmento Non completate in Attività
+UPDATE `zz_segments` SET `clause` = 'in_interventi.idstatointervento NOT IN(SELECT in_statiintervento.id FROM in_statiintervento WHERE is_completato=1)' WHERE `zz_segments`.`name` = 'Non completate' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'); 

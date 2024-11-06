@@ -29,13 +29,23 @@ class Upload extends Model
 {
     use SimpleModelTrait;
 
-    /** @var array Elenco delle estensioni file per mime type */
+    /**
+     * Elenco delle estensioni file per mime type.
+     * Fonte: https://www.iana.org/assignments/media-types/media-types.xhtml
+     * 
+     * @var array $extension_association
+     * 
+     */
     protected static $extension_association = [
         'image/gif' => 'gif',
         'image/bmp' => 'bmp',
         'image/jpg' => 'jpg',
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
+        'image/heic' => 'heic',
+        'image/webp' => 'webp',
+        'image/svg+xml' => 'svg',
+        'image/tiff' => 'tiff',
     ];
 
     protected $table = 'zz_files';

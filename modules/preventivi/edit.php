@@ -133,7 +133,7 @@ echo '
                 echo Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"');
             }
 ?>
-                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `title` ORDER BY `title`", "value": "$idpagamento$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                 </div>
 
 				<div class="col-md-2">

@@ -36,15 +36,24 @@ echo '
                     </div>
                     
                     <div class="col-md-9">';
-
-// Articolo
-echo '
-                        '.($articolo->id_marchio ? '<p class="float-right"><i class="fa fa-tag"></i> '.($articolo->marchio->name? '<a href="'.$articolo->marchio->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marchio->name.'</a>' : $articolo->marchio->name).'</p>' : '').                    
-                        ($articolo->id_categoria ? '<p class="text-muted"> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
-                        <h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4>
+                        // Articolo
+                        if ($articolo->marchio || $articolo->modello) {
+                            echo'
+                            <p class="float-right"><i class="fa fa-tag"></i>
+                                '.($articolo->marchio ? ($articolo->marchio->link ? '<a href="'.$articolo->marchio->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marchio->name.'</a>' : $articolo->marchio->name.' ') : '').
+                                ($articolo->modello ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->modello.' ' : '')
+                            .'</p>';
+                        }
+                        if ($articolo->id_categoria) {
+                            echo'
+                            <p class="text-muted">'.$articolo->categoria->getTranslation('title').
+                            ($articolo->sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').
+                            '</p>';
+                        }
+                        echo'
+                        <p><h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4></p>
                         <p><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
                         '.($articolo->note ? '<p class="text-danger"><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
-                        
                     </div>
                 </div>
             </div>

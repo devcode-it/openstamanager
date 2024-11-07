@@ -49,7 +49,7 @@ $has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !==
 
 if ($has_image) {
     ++$columns;
-    $char_number = $options['pricing'] ? 26 : 63;
+
 }
 
 if ($documento->direzione == 'uscita') {
@@ -60,7 +60,7 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(30, 0, 34);
+$autofill->setRows(27, 0, 31);
 
 // Intestazione tabella per righe
 echo "
@@ -408,5 +408,5 @@ if (!empty($documento['note'])) {
     echo '
 <br>
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
-<p>'.nl2br((string) $documento['note']).'</p>';
+<p><small>'.nl2br((string) $documento['note']).'</small></p>';
 }

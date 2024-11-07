@@ -54,15 +54,13 @@ if ($has_image) {
 
 if ($documento->direzione == 'uscita') {
     $columns += 2;
-    $char_number = $options['pricing'] ? 26 : 63;
-} else {
-    $char_number = $options['pricing'] ? 45 : 82;
-}
+} 
+
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(20, 10);
+$autofill->setRows(30, 0, 34);
 
 // Intestazione tabella per righe
 echo "
@@ -107,8 +105,6 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
     echo '
         <tr>
             <td class="text-center" style="vertical-align: middle">';
@@ -122,11 +118,11 @@ foreach ($righe as $riga) {
                 if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
                     $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                 }
-                $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
+                $r['descrizione'] = str_replace("\nRif. ".strtolower((string) $key), '', $r['descrizione']);
 
                 if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
-                    $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
-                    $text .= '<b>'.$rif2[0].'</b>';
+                    $r['descrizione'] = str_replace('\nRif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
+                    $text .= '<b>'.$rif2[0].'</b><br>';
                 }
 
                 $text .= '<b>'.$key.'</b></td>';
@@ -151,7 +147,7 @@ foreach ($righe as $riga) {
                     '.nl2br($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
+        $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
         $autofill->count($r['descrizione']);
     }
 
@@ -172,6 +168,7 @@ foreach ($righe as $riga) {
         echo '
             <td>'.$r['descrizione'];
     } else {
+        $autofill->count($r['descrizione']);
         echo $num.'
             </td>';
         if ($has_image) {
@@ -280,6 +277,7 @@ foreach ($righe as $riga) {
 
         if ($options['pricing']) {
             echo '
+            <td></td>
             <td></td>
             <td></td>
             <td></td>';

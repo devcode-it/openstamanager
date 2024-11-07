@@ -77,8 +77,6 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
     $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
@@ -97,11 +95,11 @@ foreach ($righe as $riga) {
                         $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                     }
                 }
-                $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
+                $r['descrizione'] = str_replace("\nRif. ".strtolower((string) $key), '', $r['descrizione']);
 
                 if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
-                    $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
-                    $text .= '<b>'.$rif2[0].'</b>';
+                    $r['descrizione'] = str_replace('\nRif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
+                    $text .= '<b>'.$rif2[0].'</b><br>';
                 }
 
                 $text .= '<b>'.$key.'</b></td><td></td><td></td><td></td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
@@ -111,26 +109,23 @@ foreach ($righe as $riga) {
             
                     <td>
                         '.nl2br($text);
+                        $autofill->count($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", ' ', (string) $r['descrizione']);
-        $autofill->count($r['descrizione']);
+        $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
     }
 
     $source_type = $riga::class;
-    if (setting('Visualizza riferimento su ogni riga in stampa')) {
+
+    $autofill->count($r['descrizione']);
         echo $num.'
-            </td>
-            <td>'.nl2br((string) $r['descrizione']).'<br>';
-    } else {
-        echo $num.'
-            </td>
-            <td>'.nl2br((string) $r['descrizione']);
-    }
+    </td>
+    <td>'.nl2br((string) $r['descrizione']);
 
     if ($riga->isArticolo()) {
-        echo '<small>'.$riga->codice.'</small>';
-    }
+        echo '<small><br>'.$riga->codice.'</small>';
+        $autofill->count($riga->codice, true);
+    } 
 
     if ($riga->isArticolo()) {
         // Seriali
@@ -252,7 +247,7 @@ echo '
 if (!empty($record['note'])) {
     echo '
             <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
-            <p>'.nl2br((string) $record['note']).'</p>';
+            <p><small>'.nl2br((string) $record['note']).'</small></p>';
             $autofill->count($record['note'], true);
 }
 

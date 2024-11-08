@@ -100,3 +100,6 @@ UPDATE `zz_segments` SET `clause` = 'in_interventi.idstatointervento NOT IN(SELE
 
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL,	'v1',	'retrieve',	'pagamenti',	'Modules\\Pagamenti\\API\\v1\\Pagamenti',	1);
+
+-- Aggiunto spedizione porto e vettore in ordini
+ALTER TABLE `or_ordini` ADD `idspedizione` TINYINT NULL AFTER `codice_commessa`, ADD `idporto` TINYINT NULL AFTER `idspedizione`, ADD `idvettore` INT NULL AFTER `idporto`;

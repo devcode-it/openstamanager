@@ -304,6 +304,12 @@ switch (filter('op')) {
             $ddt->idreferente = $documento->idreferente;
             $ddt->idagente = $documento->idagente;
 
+            if (filter('op') == 'add_ordine') {
+                $ddt->idspedizione = $documento->idspedizione;
+                $ddt->idporto = $documento->idporto;
+                $ddt->idvettore = $documento->idvettore;
+            }
+
             $ddt->save();
 
             $id_record = $ddt->id;

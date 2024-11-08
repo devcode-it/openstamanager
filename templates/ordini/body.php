@@ -62,6 +62,38 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 $autofill = new Util\Autofill($columns);
 $autofill->setRows(27, 0, 31);
 
+// Informazioni aggiuntive
+echo '
+<table class="table table-striped border-bottom">
+    <tr>
+        <td class="small-bold text-muted" style="width:33%">
+            '.tr('Porto', [], ['upper' => true]).'
+        </td>
+
+        <td class="small-bold text-muted" style="width:33%">
+            '.tr('Tipo di spedizione', [], ['upper' => true]).'
+        </td>
+
+        <td class="small-bold text-muted" style="width:33%">
+            '.tr('Vettore', [], ['upper' => true]).'
+        </td>
+    </tr>
+
+    <tr>
+        <td class="cell-padded">
+            $porto$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $spedizione$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $vettore$ &nbsp;
+        </td>
+    </tr>
+</table>';
+
 // Intestazione tabella per righe
 echo "
 <table class='table table-striped border-bottom' id='contents'>

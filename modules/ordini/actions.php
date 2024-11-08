@@ -94,6 +94,9 @@ switch (post('op')) {
             $ordine->idagente = post('idagente');
             $ordine->idstatoordine = $idstatoordine;
             $ordine->idpagamento = $idpagamento;
+            $ordine->idspedizione = post('idspedizione');
+            $ordine->idporto = post('idporto');
+            $ordine->idvettore = post('idvettore');
             $ordine->idsede = $idsede;
             $ordine->idconto = post('idconto');
             $ordine->idrivalsainps = $idrivalsainps;

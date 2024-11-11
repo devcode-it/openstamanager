@@ -60,39 +60,7 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(27, 0, 31);
-
-// Informazioni aggiuntive
-echo '
-<table class="table table-striped border-bottom">
-    <tr>
-        <td class="small-bold text-muted" style="width:33%">
-            '.tr('Porto', [], ['upper' => true]).'
-        </td>
-
-        <td class="small-bold text-muted" style="width:33%">
-            '.tr('Tipo di spedizione', [], ['upper' => true]).'
-        </td>
-
-        <td class="small-bold text-muted" style="width:33%">
-            '.tr('Vettore', [], ['upper' => true]).'
-        </td>
-    </tr>
-
-    <tr>
-        <td class="cell-padded">
-            $porto$ &nbsp;
-        </td>
-
-        <td class="cell-padded">
-            $spedizione$ &nbsp;
-        </td>
-
-        <td class="cell-padded">
-            $vettore$ &nbsp;
-        </td>
-    </tr>
-</table>';
+$autofill->setRows(27, 0, 32);
 
 // Intestazione tabella per righe
 echo "
@@ -177,46 +145,31 @@ foreach ($righe as $riga) {
                 echo '
                 <td>
                     '.nl2br($text);
+                $autofill->count($text);
             }
         }
         $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
-        $autofill->count($r['descrizione']);
     }
 
     $source_type = $riga::class;
-    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
-        echo $num.'</td>';
-        if ($has_image) {
-            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-                echo '
-                <td align="center">
-                    <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-                </td>';
-            } else {
-                echo '
-                <td></td>';
-            }
-        }
-        echo '
-            <td>'.$r['descrizione'];
-    } else {
-        $autofill->count($r['descrizione']);
-        echo $num.'
+    $autofill->count($r['descrizione']);
+
+    echo $num.'</td>';
+    if ($has_image) {
+        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+            echo '
+            <td align="center">
+                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
             </td>';
-        if ($has_image) {
-            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-                echo '
-                    <td align="center">
-                        <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-                    </td>';
-            } else {
-                echo '
-                    <td></td>';
-            }
+        } else {
+            echo '
+            <td></td>';
         }
-        echo '
-            <td>'.nl2br((string) $r['descrizione']);
     }
+
+    echo '
+        <td>'.nl2br((string) $r['descrizione']);
+
 
     if ($documento->direzione == 'uscita') {
         echo '

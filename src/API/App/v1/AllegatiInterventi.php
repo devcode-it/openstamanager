@@ -105,9 +105,6 @@ class AllegatiInterventi extends AppResource
             'id_record' => $data['id_intervento'],
         ], $data['nome'], $data['categoria']);
 
-        // Chiusura e rimozione del file temporaneo
-        delete($file);
-
         return [
             'id' => $upload->id,
             'tipo' => $upload->extension,

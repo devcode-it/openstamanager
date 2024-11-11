@@ -212,6 +212,10 @@ foreach ($righe as $riga) {
     $autofill->next();
 }
 
+foreach ($v_iva as $desc_iva => $tot_iva) {
+    $autofill->count($desc_iva, true);
+}
+
 echo '
         |autofill|
     </tbody>

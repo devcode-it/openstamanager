@@ -710,29 +710,31 @@ $operations['exportFE-bulk'] = [
     ],
 ];
 
+
+$operations['export-ricevute-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+
+$operations['export-xml-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
 if ($module->getTranslation('title') == 'Fatture di vendita') {
-    $operations['export-ricevute-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
-    $operations['export-xml-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
     $operations['genera-xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [

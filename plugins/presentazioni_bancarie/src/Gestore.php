@@ -191,7 +191,7 @@ class Gestore
         return false;
     }
 
-    public function aggiungiRiBa(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, int $totale, \DateTime $data_prevista)
+    public function aggiungiRiBa(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, float $totale, \DateTime $data_prevista)
     {
         $data_scadenza = $data_prevista->format('dmy');
 

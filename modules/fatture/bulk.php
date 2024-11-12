@@ -212,7 +212,7 @@ switch (post('op')) {
                         $dst = $fe->getFilename();
                         $src = $dbo->selectOne('zz_files', 'filename', ['original' => $dst])['filename'];
                     } else {
-                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath);
+                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filename);
                         $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
@@ -271,7 +271,7 @@ switch (post('op')) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
                 $zz_file = $dbo->table('zz_files')->where('id_module', '=', $id_module)->where('id_record', '=', $fattura->id)->where('name', 'like', 'Ricevuta%')->first();
-                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filepath);
+                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filename);
                 $dst = basename($fattura->uploads()->where('id', $zz_file->id)->first()->original_name);
 
                 $file = slashes($module->upload_directory.'/'.$src);

@@ -40,9 +40,13 @@ class FatturaSemplificata extends FatturaElettronica
         }
     }
 
-    public function getAnagrafe()
+    public function getAnagrafe($tipo = null)
     {
-        $anagrafe = $this->getHeader()['CedentePrestatore'];
+        if ($tipo == 'Cliente') {
+            $anagrafe = $this->getHeader()['CessionarioCommittente'];
+        } else {
+            $anagrafe = $this->getHeader()['CedentePrestatore'];
+        }
 
         $rea = $anagrafe['IscrizioneREA'];
         $sede = $anagrafe['Sede'];

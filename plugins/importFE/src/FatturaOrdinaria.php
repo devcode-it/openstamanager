@@ -37,18 +37,22 @@ use Util\XML;
  */
 class FatturaOrdinaria extends FatturaElettronica
 {
-    public function __construct($name)
+    public function __construct($name, $directory = null, $plugin = null)
     {
-        parent::__construct($name);
+        parent::__construct($name, $directory, $plugin);
 
         if ($this->getHeader()['DatiTrasmissione']['FormatoTrasmissione'] == 'FSM10') {
             throw new \UnexpectedValueException();
         }
     }
 
-    public function getAnagrafe()
+    public function getAnagrafe($tipo = null)
     {
-        $dati = $this->getHeader()['CedentePrestatore'];
+        if ($tipo == 'Cliente') {
+            $dati = $this->getHeader()['CessionarioCommittente'];
+        } else {
+            $dati = $this->getHeader()['CedentePrestatore'];
+        }
 
         $anagrafe = $dati['DatiAnagrafici'];
         $rea = $dati['IscrizioneREA'];
@@ -510,9 +514,9 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
-    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)
+    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
-        $fattura = parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura);
+        $fattura = parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo);
         $database = database();
 
         $righe = $this->getRighe();

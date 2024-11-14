@@ -127,6 +127,7 @@ const JS = gulp.parallel(() => {
         'leaflet.fullscreen/Control.FullScreen.js',
         'ismobilejs/dist/isMobile.min.js',
         'ua-parser-js/dist/ua-parser.min.js',
+        'readmore.js/readmore.js',
     ];
 
     for (const i in vendor) {

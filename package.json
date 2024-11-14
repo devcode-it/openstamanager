@@ -42,6 +42,7 @@
         "pdfjs-viewer-element": "2.5.4",
         "popper.js": "^1.16.1",
         "pwstrength-bootstrap": "^3.0.4",
+        "readmore.js": "^2.0.4",
         "select2": "^4.0.3",
         "signature_pad": "^2.3.0",
         "smartwizard": "^4.2.2",

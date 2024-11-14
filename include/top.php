@@ -124,6 +124,8 @@ if (Auth::check()) {
         'singleCalendar' => tr("E' presente un solo periodo."),
         'noResults' => tr('Nessun elemento trovato'),
         'signatureMissing' => tr('Firma mancante.'),
+        'readmore' => tr('Mostra tutto'),
+        'readless' => tr('Mostra meno'),
     ];
     foreach ($translations as $key => $value) {
         echo '

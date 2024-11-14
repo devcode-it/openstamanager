@@ -153,6 +153,19 @@ if (!empty($query)) {
             if (preg_match('/^color_(.+?)$/', $field, $m)) {
                 $value = isset($r['color_title_'.$m[1]]) ? $r['color_title_'.$m[1]] : '';
 
+                // Formattazione automatica
+                if (!empty($total['format'][$pos]) && !empty($value)) {
+                    if (formatter()->isStandardTimestamp($value)) {
+                        $value = Translator::timestampToLocale($value);
+                    } elseif (formatter()->isStandardDate($value)) {
+                        $value = Translator::dateToLocale($value);
+                    } elseif (formatter()->isStandardTime($value)) {
+                        $value = Translator::timeToLocale($value);
+                    } elseif (formatter()->isStandardNumber($value)) {
+                        $value = Translator::numberToLocale($value);
+                    }
+                }
+
                 $column['class'] = 'text-center small';
                 $column['data-background'] = $r[$field];
             }

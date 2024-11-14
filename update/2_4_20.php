@@ -29,7 +29,6 @@ delete($files);
  * in quanto veniva calcolato lo sconto ivato erroneamente.
  */
 
-// TODO: aggiornare procedura con query SQL esplicite invece che con i metodi che possono cambiare nel tempo
 // Fix sconti contratti
 $righe = $dbo->fetchArray('SELECT id, idiva, sconto_percentuale, sconto_unitario, tipo_sconto, prezzo_unitario FROM co_righe_contratti WHERE sconto_percentuale != 0 AND tipo_sconto="PRC"');
 

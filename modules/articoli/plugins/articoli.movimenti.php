@@ -22,25 +22,6 @@ include_once __DIR__.'/../../../core.php';
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 
-echo '
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title">'.tr('Articolo').'</h3>
-    </div>
-
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <span><b>'.tr('Codice: ').'</b>'.$articolo->codice.'</span>
-            </div>
-
-            <div class="col-md-6">
-                <span><b>'.tr('Descrizione: ').'</b>'.$articolo->getTranslation('title').'</span>
-            </div>
-        </div>
-    </div>
-</div>';
-
 // Movimentazione degli articoli
 echo '
 <div class="card">

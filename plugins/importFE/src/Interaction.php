@@ -34,12 +34,12 @@ class Interaction extends Services
         return parent::isEnabled() && self::verificaRisorsaAttiva('Fatturazione Elettronica');
     }
 
-    public static function getInvoiceList()
+    public static function getInvoiceList($directory = null, $plugin = null)
     {
         $list = self::getRemoteList();
 
         // Ricerca fisica
-        $result = self::getFileList($list);
+        $result = self::getFileList($list, $directory, $plugin);
 
         // Aggiornamento cache hook
         Cache::where('name', 'Fatture Elettroniche')->first()->set($result);
@@ -64,12 +64,12 @@ class Interaction extends Services
         return $list;
     }
 
-    public static function getFileList($list = [])
+    public static function getFileList($list = [], $directory = null, $plugin = null)
     {
         $names = array_column($list, 'name');
 
         // Ricerca fisica
-        $directory = FatturaElettronica::getImportDirectory();
+        $directory = FatturaElettronica::getImportDirectory($directory, $plugin);
 
         $files = glob($directory.'/*.xml*');
         foreach ($files as $id => $file) {

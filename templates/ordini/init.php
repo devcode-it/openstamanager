@@ -66,10 +66,17 @@ if (!empty($documento->idsede)) {
 $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
 $pagamento = $dbo->fetchOne('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id` = '.prepare($documento->idpagamento));
 
+$porto = $dbo->fetchOne('SELECT `dt_porto`.*, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['idporto']));
+$spedizione = $dbo->fetchOne('SELECT `dt_spedizione`.*, `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['idspedizione']));
+$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
+
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($documento->tipo->getTranslation('title'))->toUpperCase(),
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
     'pagamento' => $pagamento['descrizione'],
+    'porto' => $porto['descrizione'],
+    'spedizione' => $spedizione['descrizione'],
+    'vettore' => $vettore['ragione_sociale']
 ];

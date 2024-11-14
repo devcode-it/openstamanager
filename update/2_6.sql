@@ -97,3 +97,25 @@ ALTER TABLE `mg_articoli` ADD `modello` VARCHAR(255) NULL AFTER `id_marchio`;
 
 -- Fix filtro segmento Non completate in Attività
 UPDATE `zz_segments` SET `clause` = 'in_interventi.idstatointervento NOT IN(SELECT in_statiintervento.id FROM in_statiintervento WHERE is_completato=1)' WHERE `zz_segments`.`name` = 'Non completate' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'); 
+
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL,	'v1',	'retrieve',	'pagamenti',	'Modules\\Pagamenti\\API\\v1\\Pagamenti',	1);
+
+-- Aggiunto spedizione porto e vettore in ordini
+ALTER TABLE `or_ordini` ADD `idspedizione` TINYINT NULL AFTER `codice_commessa`, ADD `idporto` TINYINT NULL AFTER `idspedizione`, ADD `idvettore` INT NULL AFTER `idporto`;
+
+-- Aggiunta del plugin Importazione FE
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita';
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES
+('Importazione FE', @id_module, @id_module, 'tab_main', '', 1, 1, 0, '2.6.*', '2.0', NULL, 'custom', 'importFE_ZIP', '');
+
+INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
+VALUES
+  (1, LAST_INSERT_ID(), 'Importazione FE'),
+  (2, LAST_INSERT_ID(), 'Importazione FE');
+
+-- Aggiunta impostazione per metodo di importazione XML fatture
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES ('Metodo di importazione XML fatture di vendita', 'Automatico', 'list[Automatico,Manuale]', '1', 'Fatturazione', NULL);
+INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES
+  (LAST_INSERT_ID(), 1, 'Metodo di importazione XML fatture di vendita'),
+  (LAST_INSERT_ID(), 2, 'Metodo di importazione XML fatture di vendita');

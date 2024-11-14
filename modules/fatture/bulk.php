@@ -212,7 +212,7 @@ switch (post('op')) {
                         $dst = $fe->getFilename();
                         $src = $dbo->selectOne('zz_files', 'filename', ['original' => $dst])['filename'];
                     } else {
-                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath);
+                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filename);
                         $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
@@ -271,7 +271,7 @@ switch (post('op')) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
                 $zz_file = $dbo->table('zz_files')->where('id_module', '=', $id_module)->where('id_record', '=', $fattura->id)->where('name', 'like', 'Ricevuta%')->first();
-                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filepath);
+                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filename);
                 $dst = basename($fattura->uploads()->where('id', $zz_file->id)->first()->original_name);
 
                 $file = slashes($module->upload_directory.'/'.$src);
@@ -710,29 +710,31 @@ $operations['exportFE-bulk'] = [
     ],
 ];
 
+
+$operations['export-ricevute-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+
+$operations['export-xml-bulk'] = [
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
+    'data' => [
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
 if ($module->getTranslation('title') == 'Fatture di vendita') {
-    $operations['export-ricevute-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
-    $operations['export-xml-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
-        'data' => [
-            'title' => '',
-            'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
-
     $operations['genera-xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [

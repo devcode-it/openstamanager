@@ -49,12 +49,10 @@ class Autofill
     {
         $count = ceil(strlen((string) $text) / $this->char_number);
 
-        // Ricerca dei caratteri a capo
-        preg_match_all("/(\r\n|\r|\n)/", (string) $text, $matches);
+        // Ricerca dei caratteri a capo e <br>
+        preg_match_all("/(\r\n|\r|\n|<br\s*\/?>)/", (string) $text, $matches);
         $count += count($matches[0]);
-        if ($small) {
-            $count *= 1.5;
-        } elseif ($count != 1) {
+        if ($small || $count != 1) {
             $count /= 1.538461538;
         }
 

@@ -47,9 +47,9 @@ class FatturaElettronica
     /** @var Fattura Fattura collegata */
     protected $fattura;
 
-    public function __construct($name)
+    public function __construct($name, $directory = null, $plugin = null)
     {
-        $this->file = static::getImportDirectory().'/'.$name;
+        $this->file = static::getImportDirectory($directory ?: 'Fatture di acquisto', $plugin).'/'.$name;
 
         if (string_ends_with($name, '.p7m')) {
             $file = XML::decodeP7M($this->file);
@@ -80,17 +80,16 @@ class FatturaElettronica
         }
     }
 
-    public static function getImportDirectory()
+    public static function getImportDirectory($name = null, $plugin = null)
     {
-        $module = Module::where('name', 'Fatture di acquisto')->first();
+        $module = Module::where('name', $name ?: 'Fatture di acquisto')->first();
 
         $plugins = $module->plugins;
         if (!empty($plugins)) {
-            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == 'Fatturazione Elettronica');
+            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == ($plugin ?: 'Fatturazione Elettronica'));
 
             self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
-
 
         return self::$directory;
     }
@@ -106,24 +105,24 @@ class FatturaElettronica
         return $filename;
     }
 
-    public static function isValid($name)
+    public static function isValid($name, $directory = null, $plugin = null)
     {
         try {
-            new static($name);
+            new static($name, $directory, $plugin);
 
             return true;
         } catch (\UnexpectedValueException) {
-            $file = static::getImportDirectory().'/'.$name;
+            $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
             delete($file);
 
             return false;
         }
     }
 
-    public static function manage($name)
+    public static function manage($name, $directory = null, $plugin = null)
     {
         try {
-            $manager = new FatturaOrdinaria($name);
+            $manager = new FatturaOrdinaria($name, $directory, $plugin);
 
             $tipo = $manager->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];
             if ($tipo == 'TD06') {
@@ -160,11 +159,11 @@ class FatturaElettronica
         return array_clean($result);
     }
 
-    public function saveAllegati()
+    public function saveAllegati($name = null)
     {
         $allegati = $this->getAllegati();
 
-        $id_module = Module::where('name', 'Fatture di acquisto')->first()->id;
+        $id_module = Module::where('name', $name ?: 'Fatture di acquisto')->first()->id;
 
         $info = [
             'category' => tr('Fattura Elettronica'),
@@ -201,9 +200,9 @@ class FatturaElettronica
         ]));
     }
 
-    public function findAnagrafica()
+    public function findAnagrafica($tipo = null)
     {
-        $info = $this->getAnagrafe();
+        $info = $this->getAnagrafe($tipo);
 
         if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('piva', $info['partita_iva'])
@@ -233,9 +232,9 @@ class FatturaElettronica
      *
      * @return Anagrafica
      */
-    public function saveAnagrafica($type = 'Fornitore')
+    public function saveAnagrafica($type = null)
     {
-        $anagrafica = $this->findAnagrafica();
+        $anagrafica = $this->findAnagrafica($type);
 
         if (!empty($anagrafica)) {
             return $anagrafica;
@@ -310,12 +309,12 @@ class FatturaElettronica
      *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura, $is_ritenuta_pagata = false)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura, $is_ritenuta_pagata = false, $tipo = null)
     {
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = self::parseDate($dati_generali['Data']);
 
-        $fattura = $this->prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura);
+        $fattura = $this->prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo);
         $this->fattura = $fattura;
 
         $numero_esterno = $dati_generali['Numero'];
@@ -385,9 +384,9 @@ class FatturaElettronica
         return $this->fattura;
     }
 
-    public function save($info = [])
+    public function save($info = [], $tipo = null)
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata']);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata'], $tipo);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info'], $info['serial']);
 
@@ -403,9 +402,9 @@ class FatturaElettronica
         return date('Y-m-d', strtotime((string) $data));
     }
 
-    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)
+    protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
-        $anagrafica = $this->saveAnagrafica();
+        $anagrafica = $this->saveAnagrafica($tipo);
 
         $tipo = TipoFattura::where('id', $id_tipo)->first();
 

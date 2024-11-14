@@ -1666,7 +1666,7 @@ class FatturaElettronica implements \Stringable
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenziario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
-            $banca = ($co_pagamenti && $co_pagamenti->isRiBa()) ? Banca::find($scadenza['id_banca_controparte']) : ($scadenza['id_banca_azienda'] ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first());
+            $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first();
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],

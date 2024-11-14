@@ -40,7 +40,7 @@ class Parcella extends FatturaOrdinaria
      *
      * @return Fattura
      */
-    public function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura)
+    public function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
         if (empty($ref_fattura)) {
             return parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura);

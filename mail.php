@@ -135,7 +135,7 @@ echo '
 
     <div class="row">
         <div class="col-md-8">
-            {[ "type": "text", "label": "'.tr('Oggetto').'", "name": "subject", "value": "'.$subject.'", "required": 1 ]}
+            {[ "type": "text", "label": "'.tr('Oggetto').'", "name": "subject", "value": "'.prepare($subject).'", "required": 1 ]}
         </div>
 
         <div class="col-md-4">

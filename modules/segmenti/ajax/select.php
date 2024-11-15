@@ -33,7 +33,7 @@ switch ($resource) {
         $predefined_addebito = Segmento::where('predefined_addebito', 1)->where('id_module', $id_module)->first();
 
         if (isset($id_module)) {
-            $query = 'SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `title` ASC';
+            $query = 'SELECT `zz_segments`.`id`, CONCAT(`zz_segments_lang`.`title`, " ", IF(`zz_segments`.`is_sezionale` = 1, "(Sezionale)", "(Segmento)")) AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `title` ASC';
 
             $where[] = '`zz_segments`.`id_module` = '.prepare($id_module);
             $where[] = '`zz_group_segment`.`id_gruppo` = '.prepare($user->idgruppo);

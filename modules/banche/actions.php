@@ -103,7 +103,7 @@ switch (filter('op')) {
             'id_nazione' => [
                 'id' => $nazione->id,
                 'iso2' => $nazione->iso2,
-                'text' => $nazione->nome,
+                'text' => $nazione->iso2.' - '.$nazione->getTranslation('title'),
             ],
             'bank_code' => $iban->getBankCode(),
             'branch_code' => $iban->getBranchCode(),

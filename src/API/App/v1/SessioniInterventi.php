@@ -29,7 +29,6 @@ class SessioniInterventi extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        // TODO: modificare introducendo deleted_at su sessioni
         return database()
             ->table('zz_operations')
             ->select('zz_operations.id_record')

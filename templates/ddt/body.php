@@ -22,9 +22,9 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
-$autofill = new Util\Autofill($options['pricing'] ? 6 : 3);
-$rows_per_page = $options['pricing'] ? 20 : 19;
-$autofill->setRows($rows_per_page, 0, $options['pricing'] ? 20 : 19);
+$autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
+$rows_per_page = $options['pricing'] ? 20 : 18;
+$autofill->setRows($rows_per_page, 0, $options['pricing'] ? 20 : 18);
 
 // Intestazione tabella per righe
 echo "
@@ -75,8 +75,6 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
     echo '
     <tr>
         <td class="text-center" style="vertical-align: middle">';
@@ -109,26 +107,23 @@ foreach ($righe as $riga) {
         
                 <td>
                     '.nl2br($text);
+                    $autofill->count($text);
             }
         }
         $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
-        $autofill->count($r['descrizione']);
     }
 
     $source_type = $riga::class;
-
-    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
-        echo $num.'
-            </td>
-            <td>'.$r['descrizione'];
-    } else {
-        echo $num.'
-            </td>
-            <td>'.nl2br((string) $r['descrizione']);
-    }
+    $autofill->count($r['descrizione']);
+    
+    echo $num.'
+        </td>
+        <td>'.nl2br((string) $r['descrizione']);
+    
 
     if ($riga->isArticolo()) {
         echo '<br><small>'.$riga->codice.'</small>';
+        $autofill->count($riga->codice);
     } else {
         echo '-';
     }

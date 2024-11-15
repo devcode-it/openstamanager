@@ -49,20 +49,18 @@ $has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !==
 
 if ($has_image) {
     ++$columns;
-    $char_number = $options['pricing'] ? 26 : 63;
+
 }
 
 if ($documento->direzione == 'uscita') {
     $columns += 2;
-    $char_number = $options['pricing'] ? 26 : 63;
-} else {
-    $char_number = $options['pricing'] ? 45 : 82;
-}
+} 
+
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(20, 10);
+$autofill->setRows(27, 0, 32);
 
 // Intestazione tabella per righe
 echo "
@@ -107,8 +105,6 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
     echo '
         <tr>
             <td class="text-center" style="vertical-align: middle">';
@@ -122,11 +118,11 @@ foreach ($righe as $riga) {
                 if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
                     $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                 }
-                $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
+                $r['descrizione'] = str_replace("\nRif. ".strtolower((string) $key), '', $r['descrizione']);
 
                 if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
-                    $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
-                    $text .= '<b>'.$rif2[0].'</b>';
+                    $r['descrizione'] = str_replace('\nRif.'.strtolower($rif2[1] ?: ''), '', $r['descrizione']);
+                    $text .= '<b>'.$rif2[0].'</b><br>';
                 }
 
                 $text .= '<b>'.$key.'</b></td>';
@@ -149,45 +145,31 @@ foreach ($righe as $riga) {
                 echo '
                 <td>
                     '.nl2br($text);
+                $autofill->count($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
-        $autofill->count($r['descrizione']);
+        $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
     }
 
     $source_type = $riga::class;
-    if (!setting('Visualizza riferimento su ogni riga in stampa')) {
-        echo $num.'</td>';
-        if ($has_image) {
-            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-                echo '
-                <td align="center">
-                    <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-                </td>';
-            } else {
-                echo '
-                <td></td>';
-            }
-        }
-        echo '
-            <td>'.$r['descrizione'];
-    } else {
-        echo $num.'
+    $autofill->count($r['descrizione']);
+
+    echo $num.'</td>';
+    if ($has_image) {
+        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
+            echo '
+            <td align="center">
+                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
             </td>';
-        if ($has_image) {
-            if ($riga->isArticolo() && !empty($riga->articolo->image)) {
-                echo '
-                    <td align="center">
-                        <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
-                    </td>';
-            } else {
-                echo '
-                    <td></td>';
-            }
+        } else {
+            echo '
+            <td></td>';
         }
-        echo '
-            <td>'.nl2br((string) $r['descrizione']);
     }
+
+    echo '
+        <td>'.nl2br((string) $r['descrizione']);
+
 
     if ($documento->direzione == 'uscita') {
         echo '
@@ -280,6 +262,7 @@ foreach ($righe as $riga) {
 
         if ($options['pricing']) {
             echo '
+            <td></td>
             <td></td>
             <td></td>
             <td></td>';
@@ -410,5 +393,5 @@ if (!empty($documento['note'])) {
     echo '
 <br>
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
-<p>'.nl2br((string) $documento['note']).'</p>';
+<p><small>'.nl2br((string) $documento['note']).'</small></p>';
 }

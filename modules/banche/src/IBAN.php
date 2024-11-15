@@ -392,8 +392,7 @@ class IBAN
         $this->nation = $nation = substr($iban, 0, 2);
         $info = self::$countries[$nation];
 
-        $structure = $info['structure'];
-        $structure = str_replace(' ', '', $structure);
+        $structure = $info['structure'] ? str_replace(' ', '', $info['structure']) : '';
 
         $regex = $nation;
         $keys = array_keys(self::$parsers);

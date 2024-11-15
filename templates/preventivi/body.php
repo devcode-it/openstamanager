@@ -65,7 +65,7 @@ if ($has_image) {
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(26, 0);
+$autofill->setRows(22, 0, 36);
 
 echo '
 <div class="col-xs-5">
@@ -385,7 +385,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right text-muted">
+        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) :((($has_image) ? 6 : 5))).'" class="text-right text-muted">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -397,7 +397,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right text-muted">
+        <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : ((($has_image) ? 6 : 5))).'" class="text-right text-muted">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -435,7 +435,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // SCONTO IN FATTURA
             echo '
             <tr>
-                <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right border-top">
+                <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : ((($has_image) ? 6 : 5))).'" class="text-right border-top">
                     <b>'.tr('Sconto in fattura', [], ['upper' => true]).':</b>
                 </td>
                 <th colspan="1" class="text-right">
@@ -446,7 +446,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             // NETTO A PAGARE
             echo '
             <tr>
-                <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right border-top">
+                <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : ((($has_image) ? 6 : 5))).'" class="text-right border-top">
                     <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
                 </td>
                 <th colspan="1" class="text-right">

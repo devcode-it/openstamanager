@@ -28,7 +28,6 @@ class Impianti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        // TODO: modificare introducendo deleted_at su my_impianti
         return database()
             ->table('zz_operations')
             ->select('zz_operations.id_record')

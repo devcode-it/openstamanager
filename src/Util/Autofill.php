@@ -33,6 +33,7 @@ class Autofill
     protected $max_rows_first_page = 38;
     protected $max_additional = 0;
 
+
     public function __construct(protected $column_number, protected $char_number = 70)
     {
     }
@@ -44,14 +45,16 @@ class Autofill
         $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
-    public function count($text, $small = false)
+    public function count($text, $small = null)
     {
         $count = ceil(strlen((string) $text) / $this->char_number);
 
-        // Ricerca dei caratteri a capo
-        preg_match_all("/(\r\n|\r|\n)/", (string) $text, $matches);
+        // Ricerca dei caratteri a capo e <br>
+        preg_match_all("/(\r\n|\r|\n|<br\s*\/?>)/", (string) $text, $matches);
         $count += count($matches[0]);
-        $count = ($count == 1 ? $count : $count / 1.538461538);
+        if ($small || $count != 1) {
+            $count /= 1.538461538;
+        }
 
         $this->set($count);
     }
@@ -78,7 +81,7 @@ class Autofill
                 $page = ceil(1 + (($this->space - $this->max_rows_first_page) / $this->max_rows));
             }
         }
-
+        
         if ($page > 1) {
             $rows = $this->space - $this->max_rows_first_page * ($page - 1);
         } else {

@@ -36,14 +36,23 @@ echo '
                     </div>
                     
                     <div class="col-md-9">';
-
-// Articolo
-echo '
-                        '.($articolo->id_categoria ? '<p class="text-muted"> '.$articolo->categoria->getTranslation('title') : '').($articolo->id_sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').'</p>
-                        <h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4>
+                        // Articolo
+                        if ($articolo->marchio) {
+                            echo'
+                            <p class="float-right"><i class="fa fa-tag"></i>
+                                '.$articolo->marchio->link ? '<a href="'.$articolo->marchio->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marchio->name.'</a>' : $articolo->marchio->name.'
+                            </p>';
+                        }
+                        if ($articolo->id_categoria) {
+                            echo'
+                            <p class="text-muted">'.$articolo->categoria->getTranslation('title').
+                            ($articolo->sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').
+                            '</p>';
+                        }
+                        echo'
+                        <p><h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4></p>
                         <p><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
                         '.($articolo->note ? '<p class="text-danger"><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
-                        
                     </div>
                 </div>
             </div>
@@ -66,11 +75,11 @@ echo '
                 <h3 class="card-title"><i class="fa fa-archive"></i> '.tr('Giacenze').'</h3>
             </div>
             <div class="card-body">';
-if ($articolo->servizio) {
-    echo '
+            if ($articolo->servizio) {
+                echo'
                 <tr><td><p class="text-center"><i class="fa fa-info"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
-} else {
-    echo '
+            } else {
+                echo '
                 <table class="table table-sm">
                     <thead>
                         <tr>
@@ -93,11 +102,11 @@ if ($articolo->servizio) {
                 echo '
                     </tbody>
                 </table>';
-}
-echo '
+            }
+                echo'
             </div>
         </div>
-    </div>';
+    </div>';   
 // Panoramica
 echo '
     <div class="col-md-2">
@@ -109,24 +118,24 @@ echo '
                 <table class="table table-sm">
                     <tbody>
                         <tr>
-                            <td>'.tr('Garanzia').'</td>
-                            <td class="text-right">'.($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '').'</td>
+                            <td>'. tr('Garanzia') .'</td>
+                            <td class="text-right">'. ($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '') .'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Serial number').'</td>
-                            <td class="text-right">'.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>').'</td>
+                            <td>'. tr('Serial number') .'</td>
+                            <td class="text-right">'. ($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') .'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Ubicazione').'</td>
-                            <td class="text-right">'.($articolo->ubicazione ?: '').'</td>
+                            <td>'. tr('Ubicazione') .'</td>
+                            <td class="text-right">'. ($articolo->ubicazione ? $articolo->ubicazione : '') .'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Peso lordo').'</td>
-                            <td class="text-right">'.($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</td>
+                            <td>'. tr('Peso lordo') .'</td>
+                            <td class="text-right">'. ($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '') .'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Volume').'</td>
-                            <td class="text-right">'.($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '').'</td>
+                            <td>'. tr('Volume') .'</td>
+                            <td class="text-right">'. ($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '') .'</td>
                         </tr>
                     </tbody>
                 </table>

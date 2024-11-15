@@ -49,12 +49,11 @@ $has_image = $righe->search(fn ($item) => !empty($item->articolo->immagine)) !==
 
 if ($has_image) {
     ++$columns;
-
 }
 
 if ($documento->direzione == 'uscita') {
     $columns += 2;
-} 
+}
 
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
@@ -169,7 +168,6 @@ foreach ($righe as $riga) {
 
     echo '
         <td>'.nl2br((string) $r['descrizione']);
-
 
     if ($documento->direzione == 'uscita') {
         echo '

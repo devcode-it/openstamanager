@@ -23,14 +23,14 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
+use Models\Plugin;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
+use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
-use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
-use Models\Plugin;
 
 class Articolo extends Model
 {
@@ -384,6 +384,7 @@ class Articolo extends Model
     {
         return self::$translated_fields;
     }
+
     /**
      * @version distinta_base
      */
@@ -391,10 +392,12 @@ class Articolo extends Model
     {
         return $this->belongsToMany(Articolo::class, 'mg_articoli_distinte', 'id_articolo', 'id_figlio')->withPivot('qta');
     }
+
     public function parti()
     {
         return $this->belongsToMany(Articolo::class, 'mg_articoli_distinte', 'id_figlio', 'id_articolo')->withPivot('qta');
     }
+
     /**
      * @version distinta_base
      */
@@ -408,6 +411,7 @@ class Articolo extends Model
         }
         $this->save();
     }
+
     /**
      * @version distinta_base
      */
@@ -429,11 +433,13 @@ class Articolo extends Model
                 $parte->pivot->qta = 1; // Fix per le quantità inverse
                 $parte->triggerChange($this);
             }
+
             return $result;
         } else {
             return parent::save($attributes);
         }
     }
+
     /**
      * Funzione per inserire i movimenti di magazzino.
      *
@@ -456,6 +462,7 @@ class Articolo extends Model
             $componente->movimenta($qta_componente, $descrizone, $data, $manuale, $array);
         }
     }
+
     public function getTotaleAcquistoAttribute()
     {
         $componenti = $this->componenti;
@@ -463,8 +470,10 @@ class Articolo extends Model
         foreach ($componenti as $componente) {
             $prezzo_acquisto += $componente->prezzo_acquisto * $componente->pivot->qta;
         }
+
         return $prezzo_acquisto;
     }
+
     public function getTotaleVenditaAttribute()
     {
         $componenti = $this->componenti;
@@ -472,8 +481,10 @@ class Articolo extends Model
         foreach ($componenti as $componente) {
             $prezzo_vendita += $componente->prezzo_vendita * $componente->pivot->qta;
         }
+
         return $prezzo_vendita;
     }
+
     /**
      * @version distinta_base
      */
@@ -484,6 +495,7 @@ class Articolo extends Model
             'id_articolo' => $this->id,
         ]);
     }
+
     public function triggerChangePreventivo($idrigapreventivo)
     {
         $riga = ArticoloPreventivo::find($idrigapreventivo);

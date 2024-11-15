@@ -109,7 +109,7 @@ foreach ($righe as $riga) {
             
                     <td>
                         '.nl2br($text);
-                        $autofill->count($text);
+                $autofill->count($text);
             }
         }
         $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
@@ -118,14 +118,14 @@ foreach ($righe as $riga) {
     $source_type = $riga::class;
 
     $autofill->count($r['descrizione']);
-        echo $num.'
+    echo $num.'
     </td>
     <td>'.nl2br((string) $r['descrizione']);
 
     if ($riga->isArticolo()) {
         echo '<small><br>'.$riga->codice.'</small>';
         $autofill->count($riga->codice, true);
-    } 
+    }
 
     if ($riga->isArticolo()) {
         // Seriali

@@ -132,7 +132,6 @@ $info = Update::getDatabaseStructure();
 $results = integrity_diff($data, $info);
 $results_added = integrity_diff($info, $data);
 
-
 $contents = file_get_contents(base_dir().'/settings.json');
 $data_settings = json_decode($contents, true);
 
@@ -210,9 +209,8 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 '.$query.';
             </td>
         </tr>';
-                    
                 }
-                
+
                 echo '
     </tbody>
 </table>';
@@ -277,20 +275,20 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
     <tbody>';
 
-            foreach ($errors as $name => $diff) {
-                $query = '';
-                if ((!isset($results[$table][$name]))) {
-                    if (isset($diff['key'])) {
-                        if ($diff['key']['expected'] == '') {
-                            $query = 'Chiave non prevista';
-                        } else {
-                            $query = 'Chiave mancante';
-                        }
-                    } else {
-                        $query = 'Campo non previsto';
-                    }
+                    foreach ($errors as $name => $diff) {
+                        $query = '';
+                        if (!isset($results[$table][$name])) {
+                            if (isset($diff['key'])) {
+                                if ($diff['key']['expected'] == '') {
+                                    $query = 'Chiave non prevista';
+                                } else {
+                                    $query = 'Chiave mancante';
+                                }
+                            } else {
+                                $query = 'Campo non previsto';
+                            }
 
-                    echo '
+                            echo '
         <tr class="bg-info" >
             <td>
                 '.$name.'
@@ -299,9 +297,9 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 '.$query.'
             </td>
         </tr>';
-                } 
-            }
-            echo '
+                        }
+                    }
+                    echo '
     </tbody>
 </table>';
                 }

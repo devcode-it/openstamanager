@@ -20,9 +20,7 @@
 namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
-use Geocoder\Provider\GoogleMaps;
 use Illuminate\Database\Eloquent\Model;
-use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class Sede extends Model
 {

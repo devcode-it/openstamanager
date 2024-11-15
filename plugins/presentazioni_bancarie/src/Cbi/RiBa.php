@@ -97,7 +97,7 @@ class RiBa
             $ib->qualificatore_flusso = '$';
             $ib->soggetto_veicolatore = $intestazione->soggetto_veicolatore;
         }
-    
+
         $contenuto .= $ib->toCBI().$eol;
 
         // Iterazione tra le ricevute interne al RiBa

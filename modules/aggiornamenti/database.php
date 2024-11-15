@@ -104,9 +104,9 @@ switch ($database->getType()) {
         $file_to_check_database = 'mariadb_10_x.json';
         break;
     case 'MySQL':
-        $mysql_min_version = '8.0.0';
-        $mysql_max_version = '8.3.99';
-        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
+        $mysql_min_version = '5.7.0';
+        $mysql_max_version = '5.7.99';
+        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql_5_7.json' : 'mysql.json');
         break;
     default:
         $file_to_check_database = 'mysql.json';

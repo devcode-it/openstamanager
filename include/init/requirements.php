@@ -220,8 +220,8 @@ if ($database->isInstalled()) {
             'mysql_version' => [
                 'type' => 'version',
                 'warning' => $database->isMySQL() ? false : true,
-                'description' => $database->isMySQL() ? '8.0.x - 8.3.x' : '10.x',
-                'minimum' => $database->isMySQL() ? '8.0.0' : '10.1.0',
+                'description' => $database->isMySQL() ? '5.7.x - 8.0.x' : '10.x',
+                'minimum' => $database->isMySQL() ? '5.7.0' : '10.1.0',
                 'maximum' => $database->isMySQL() ? '8.3.99' : '10.6.99',
             ],
 
@@ -339,7 +339,7 @@ foreach ($dirs_to_check as $name => $description) {
 $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
     'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x'),
-    'mysql_8_3.json' => tr('Necessario per il controllo integrità con database MySQL 8.3.x'),
+    'mysql_5_7.json' => tr('Necessario per il controllo integrità con database MySQL 5.7.x'),
     'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),

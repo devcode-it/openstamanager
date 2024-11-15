@@ -1,0 +1,2 @@
+-- Fix filtro segmento Non completate in Attività
+UPDATE `zz_segments` SET `clause` = 'in_interventi.idstatointervento NOT IN(SELECT in_statiintervento.id FROM in_statiintervento WHERE is_completato=1)' WHERE `zz_segments`.`name` = 'Non completate' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'); 

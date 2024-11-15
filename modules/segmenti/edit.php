@@ -47,7 +47,7 @@ use Models\Module;
 				</div>
 
                 <div class="col-md-2">
-					{[ "type": "checkbox", "label": "<?php echo tr('Sezionale'); ?>", "help": "<?php echo tr('Se attivo verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$", "extra": "readonly" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Tipologia'); ?>", "help": "<?php echo tr('Se sezionale verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$", "extra": "readonly", "values": "Sezionale,Segmento" ]}
 				</div>
 
                 <div class="col-md-2">

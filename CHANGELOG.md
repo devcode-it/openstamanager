@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-
+- [2.5.7 (2024-11-20)](#257-2024-11-20)
 - [2.5.6 (2024-10-30)](#256-2024-10-30)
 - [2.5.5 (2024-09-27)](#255-2024-09-27)
 - [2.5.4 (2024-08-28)](#254-2024-08-28)
@@ -72,6 +72,36 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.5.7 (2024-11-20)
+### Modificato (Changed)
+- Ripristinato il campo partenza merce in stampa ddt
+- Migliorata la duplicazione delle fatture
+- Migliorato il widget Note interne con la visualizzazione delle note dello Scadenzario
+- Ripristinata la funzionalità di esportazione degli XML delle fatture di acquisto tramite azioni di gruppo
+
+### Fixed
+- Corretta la geolocalizzazione della sede
+- Corretta la duplicazione di fatture con marca da bollo
+- Corretto il filtro delle sedi in base al gruppo di utenti
+- Corretta la registrazione contabile associata ai conti riepilogativi
+- Corretta la stampa della fattura accompagnatoria
+- Corretta la generazione delle presentazioni bancarie
+- Corretto l'avviso di modifica del contenuto della pagina
+- Corretta la visualizzazione del plugin e l'esportazione di presentazioni bancarie
+- Corretta la visualizzazione di giacenze nell'header articoli solo per sedi movimentate
+- Corretta l'impostazione del RiferimentoNumeroLinea nella generazione delle fatture elettroniche
+- Corretta la stampa bilancio in assenza di passività
+- Corretti i controlli a database
+- Corretta la generazione di righe vuote nelle stampe ddt, preventivi, ordini e fatture
+- Corretta la visualizzazione della descrizione articoli sull'app
+- Corretta l'importazione di fatture di acquisto
+- Corretto il filtro Tipologia in statistiche
+- Corretto il segmento Non completate in Attività
+- Corretto il selettore del metodo di pagamento al cambio del cliente nei preventivi
+- Corretto il caricamento degli allegati da app
+- Corretta la visualizzazione dell'Oggetto delle email in presenta di apici
+- Corretta la colorazione delle celle sui campi formattabili
 
 ## 2.5.6 (2024-10-30)
 ### Modificato (Changed)

@@ -61,9 +61,9 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)');
+    $sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 } else {
-    $sedi = $dbo->fetchArray('SELECT nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($user['id']).' GROUP BY id_user, nomesede');
+    $sedi = $dbo->fetchArray('SELECT nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($user['id']).' GROUP BY id_user, nomesede');
 }
 
 $giacenze = $articolo->getGiacenze();

@@ -60,9 +60,9 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT idsede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).')');
 } else {
-    $sedi = $dbo->fetchArray('SELECT nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($user['id']).' GROUP BY id_user, nomesede');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT idsede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).') AND id IN(SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
 }
 
 $giacenze = $articolo->getGiacenze();
@@ -83,23 +83,21 @@ if ($articolo->servizio) {
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Sede</th>
-                            <th class="text-right">Giacenza</th>
+                            <th>'.tr('Sede').'</th>
+                            <th class="text-right">'.tr('Giacenza').'</th>
                             '.($articolo->fattore_um_secondaria != 0 ? '<th class="text-right">'.tr('U.m. secondaria').'</th>' : '').'
                         </tr>
                     </thead>
                     <tbody>';
-    foreach ($sedi as $sede) {
-        if ($giacenze[$sede['id']][0] != 0) {
-            echo '
-                        <tr class="'.($giacenze[$sede['id']][0] < $articolo->threshold_qta ? 'text-danger' : '').'">
-                            <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
-                            '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
-                        </tr>';
-        }
-    }
-    echo '
+                foreach ($sedi as $sede) {
+                    echo '
+                    <tr class="'.($giacenze[$sede['id']][0]<$articolo->threshold_qta ? 'text-danger' : '').'">
+                        <td>'.$sede['nomesede'].'</td>
+                        <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
+                        '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
+                    </tr>';
+                }
+                echo '
                     </tbody>
                 </table>';
 }

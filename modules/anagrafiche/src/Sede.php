@@ -93,7 +93,18 @@ class Sede extends Model
 
     protected function geolocalizzazione()
     {
-        if (!empty($this->indirizzo) && !empty($this->citta) && !empty($this->provincia) && empty($this->gaddress)) {
+        $new_indirizzo = $this->indirizzo.', '.$this->citta.', '.$this->provincia;
+        $prev_indirizzo = $this->original['indirizzo'].', '.$this->original['citta'].', '.$this->original['provincia'];
+
+        if (
+            !empty($this->indirizzo)
+            &&
+            !empty($this->citta)
+            &&
+            !empty($this->provincia)
+            &&
+            $new_indirizzo != $prev_indirizzo
+        ) {
             $indirizzo = urlencode($this->indirizzo.', '.$this->citta.', '.$this->provincia);
 
             if (setting('Gestore mappa') == 'OpenStreetMap') {

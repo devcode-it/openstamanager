@@ -449,7 +449,18 @@ class Anagrafica extends Model
 
     protected function geolocalizzazione()
     {
-        if (!empty($this->sedeLegale->indirizzo) && !empty($this->sedeLegale->citta) && !empty($this->sedeLegale->provincia)) {
+        $new_indirizzo = $this->sedeLegale->indirizzo.', '.$this->sedeLegale->citta.', '.$this->sedeLegale->provincia;
+        $prev_indirizzo = $this->sedeLegale->original['indirizzo'].', '.$this->sedeLegale->original['citta'].', '.$this->sedeLegale->original['provincia'];
+
+        if (
+            !empty($this->sedeLegale->indirizzo)
+            &&
+            !empty($this->sedeLegale->citta)
+            &&
+            !empty($this->sedeLegale->provincia)
+            &&
+            $new_indirizzo != $prev_indirizzo
+        ) {
             $indirizzo = urlencode($this->sedeLegale->indirizzo.', '.$this->sedeLegale->citta.', '.$this->sedeLegale->provincia);
 
             if (setting('Gestore mappa') == 'OpenStreetMap') {

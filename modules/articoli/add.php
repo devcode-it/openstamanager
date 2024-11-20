@@ -96,7 +96,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "decimals": "qta", "min-value": "undefined" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial_add", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "value": "<?php echo setting('Serial number abilitato di default'); ?>","placeholder": "<?php echo tr('Serial number'); ?>" ]}
                 </div>
             </div>
 
@@ -126,12 +126,6 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
                     {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "valore_predefinito": "Iva predefinita", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                     <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
                     <input type="hidden" name="aliquota_predefinita" value="<?php echo $aliquota_predefinita; ?>">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial_add", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "value": "<?php echo setting('Serial number abilitato di default'); ?>","placeholder": "<?php echo tr('Serial number'); ?>" ]}
                 </div>
             </div>
         </div>

@@ -61,7 +61,6 @@ switch (post('op')) {
             $articolo->name = post('descrizione');
         }
         $articolo->barcode = post('barcode');
-        $articolo->threshold_qta = post('threshold_qta');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -138,7 +137,6 @@ switch (post('op')) {
         $articolo->id_sottocategoria = post('subcategoria');
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
-        $articolo->threshold_qta = post('threshold_qta');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -404,6 +402,57 @@ switch (post('op')) {
                 'idsede' => $idsede_partenza,
             ]);
         }
+
+        break;
+
+    case 'update_soglia_minima':
+        $has_soglia_minima = $dbo->selectOne('mg_scorte_sedi', '*', ['id_articolo' => $id_record, 'id_sede' => post('id_sede')])['threshold_qta'];
+
+        if ($has_soglia_minima) {
+            if (post('threshold_qta')) {
+                $dbo->update('mg_scorte_sedi', [
+                    'threshold_qta' => post('threshold_qta'),
+                ],[
+                    'id_articolo' => $id_record,
+                    'id_sede' => post('id_sede'),
+                ]);
+            } else {
+                $dbo->delete('mg_scorte_sedi', [
+                    'id_articolo' => $id_record,
+                    'id_sede' => post('id_sede'),
+                ]);
+            }
+        } else {
+            $dbo->insert('mg_scorte_sedi', [
+                'id_articolo' => $id_record,
+                'id_sede' => post('id_sede'),
+                'threshold_qta' => post('threshold_qta'),
+            ]);
+        }
+
+        flash()->info(tr('Soglia minima aggiornata!'));
+
+        break;
+
+    case 'update_giacenza':
+        $data = date('Y-m-d');
+        
+        $qta = post('qta') ?: 0;
+        $new_qta = post('new_qta') ?: 0;
+
+        $qta_movimento = $new_qta - $qta;
+        if ($qta_movimento > 0) {
+            $descrizione = tr('Carico manuale');
+        } elseif ($qta_movimento < 0) {
+            $descrizione = tr('Scarico manuale');
+        }
+
+        // Registrazione del movimento con variazione della quantità
+        $articolo->movimenta($qta_movimento, $descrizione, $data, 1, [
+            'idsede' => post('id_sede')
+        ]);
+
+        flash()->info(tr('Giacenza aggiornata!'));
 
         break;
 }

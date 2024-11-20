@@ -246,7 +246,8 @@ echo '
                     <thead>
                         <tr>
                             <th>'.tr('Sede').'</th>
-                            <th width="20%" class="text-center">'.tr('Q.tà').'</th>
+                            <th class="text-center" width="20%">'.tr('Soglia minima quantità').'</th>
+                            <th width="20%" class="text-center">'.tr('Giacenza').'</th>
                             <th width="5%" class="text-center">#</th>
                         </tr>
                     </thead>
@@ -254,10 +255,16 @@ echo '
                     <tbody>';
 
 foreach ($sedi as $sede) {
+    $scorta = $dbo->selectOne('mg_scorte_sedi', '*', ['id_sede' => $sede['id'], 'id_articolo' => $id_record]);
     echo '
-                        <tr>
+                        <tr data-id="'.$sede['id'].'">
                             <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
+                            <td>
+                                {[ "type": "number", "decimals": "qta", "name": "scorta_'.$sede['id'].'", "value": "'.$scorta['threshold_qta'].'", "onchange": "aggiornaSogliaMinima($(this).closest(\'tr\').data(\'id\'))" ]}
+                            </td>
+                            <td class="text-right">
+                                {[ "type": "number", "decimals": "qta", "name": "giacenza_'.$sede['id'].'", "value": "'.$giacenze[$sede['id']][0].'", "onchange": "aggiornaGiacenza($(this).closest(\'tr\').data(\'id\'),\''.$giacenze[$sede['id']][0].'\')" ]}
+                            </td>
                             <td class="text-center">
                                 <a class="btn btn-xs btn-info" title="Dettagli" onclick="getDettagli('.$sede['id'].');">
                                     <i class="fa fa-eye"></i>
@@ -282,4 +289,45 @@ function getDettagli(idsede) {
     openModal("'.tr('Dettagli').'", "'.$rootdir.'/modules/articoli/plugins/dettagli_giacenze.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idsede=" + idsede );
 }
 
+function aggiornaSogliaMinima(id_sede) {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_soglia_minima",
+            id_sede: id_sede,
+            threshold_qta: $("#scorta_"+id_sede).val()
+        },
+        success: function(response) {
+            renderMessages();
+        },
+        error: function(xhr, status, error) {
+            renderMessages();
+        }
+    });
+}
+
+function aggiornaGiacenza(id_sede, giacenza) {
+    content_was_modified = false;
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_giacenza",
+            id_sede: id_sede,
+            qta: giacenza,
+            new_qta: $("#giacenza_"+id_sede).val()
+        },
+        success: function(response) {
+            location.reload();
+        },
+        error: function(xhr, status, error) {
+            location.reload();
+        }
+    });
+}
 </script>';

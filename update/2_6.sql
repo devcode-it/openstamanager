@@ -116,3 +116,13 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_record`, `id_lang`, `title`) VALUES
   (LAST_INSERT_ID(), 1, 'Metodo di importazione XML fatture di vendita'),
   (LAST_INSERT_ID(), 2, 'Metodo di importazione XML fatture di vendita');
+
+-- Gestione sottoscorta per sede
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(mg_articoli.id) AS dato, scorte_sedi.id_sede, IFNULL(movimenti.tot, 0), IFNULL(scorte_sedi.threshold_qta, 0)\nFROM `mg_articoli` LEFT JOIN ( SELECT sedi.id AS id_sede, mg_scorte_sedi.id_articolo, IFNULL(threshold_qta, 0) AS threshold_qta FROM ( SELECT \'0\' AS id UNION SELECT id FROM an_sedi ) sedi LEFT JOIN `mg_scorte_sedi` ON sedi.id = mg_scorte_sedi.id_sede GROUP BY sedi.id, mg_scorte_sedi.id_articolo, IFNULL(threshold_qta, 0) ) scorte_sedi ON ( scorte_sedi.id_articolo = mg_articoli.id OR scorte_sedi.id_articolo IS NULL ) LEFT JOIN( SELECT IFNULL(SUM(qta), 0) AS tot, idarticolo, idsede FROM mg_movimenti GROUP BY idarticolo, idsede ) movimenti ON movimenti.idsede = scorte_sedi.id_sede AND movimenti.idarticolo = mg_articoli.id\nWHERE `attivo` = 1 AND `deleted_at` IS NULL AND IFNULL(movimenti.tot,0)<IFNULL(scorte_sedi.threshold_qta,0)' WHERE `zz_widgets`.`name` = 'Articoli in esaurimento';
+
+CREATE TABLE `mg_scorte_sedi` ( 
+  `id` INT NOT NULL AUTO_INCREMENT, 
+  `id_articolo` INT NOT NULL, 
+  `id_sede` INT NOT NULL,
+  `threshold_qta` DECIMAL(15,6) NOT NULL, 
+PRIMARY KEY (`id`));

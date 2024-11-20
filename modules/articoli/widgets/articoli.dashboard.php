@@ -19,28 +19,49 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`title` as descrizione, `qta`, `threshold_qta`, `codice`, `um` AS unitamisura FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `qta` < `threshold_qta` AND `attivo` = 1 AND `deleted_at` IS NULL ORDER BY `qta` ASC');
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
+use Modules\Articoli\Articolo;
+
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`title` as descrizione, `codice`, `um`, mg_scorte_sedi.threshold_qta, mg_scorte_sedi.id_sede FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `mg_scorte_sedi` ON `mg_articoli`.`id` = `mg_scorte_sedi`.`id_articolo` WHERE `attivo` = 1 AND `deleted_at` IS NULL ORDER BY `codice` ASC');
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 if (!empty($rs)) {
     echo '
 <table class="table table-hover table-striped">
     <tr>
-        <th width="80%">'.tr('Articolo').'</th>
-        <th width="20%">'.tr('Q.tà').'</th>
+        <th>'.tr('Articolo').'</th>
+        <th width="25%">'.tr('Sede').'</th>
+        <th class="text-center" width="14%">'.tr('Soglia minima').'</th>
+        <th class="text-center" width="14%">'.tr('Q.tà').'</th>
     </tr>';
 
-    foreach ($rs as $r) {
+foreach ($rs as $r) {
+    $articolo = Articolo::find($r['id']);
+    $giacenze = $articolo->getGiacenze();
+    if ($giacenze[$r['id_sede']][0] < $r['threshold_qta']) {
+        if (!empty($r['id_sede'])) {
+            $sede = Sede::find($r['id_sede'])->nomesede;
+        } else {
+            $sede = 'Sede Legale';
+        }
         echo '
-    <tr>
-        <td>
-            '.Modules::link('Articoli', $r['id'], $r['descrizione']).'
-            <br><small>'.$r['codice'].'</small>
-        </td>
-        <td>
-            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['unitamisura'].'
-        </td>
-    </tr>';
+        <tr>
+            <td>
+                '.Modules::link('Articoli', $r['id'], $r['codice'].' - '.$r['descrizione']).'
+            </td>
+            <td>
+                '.$sede.'
+            </td>
+            <td class="text-right">
+                '.Translator::numberToLocale($r['threshold_qta'], 'qta').' '.$articolo->um.'
+            </td>
+            <td class="text-right">
+                '.Translator::numberToLocale($giacenze[$r['id_sede']][0], 'qta').' '.$articolo->um.'
+            </td>
+        </tr>';
     }
+}
 
     echo '
 </table>';

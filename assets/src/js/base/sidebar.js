@@ -53,12 +53,13 @@ $(document).ready(function () {
     });
 
     // Barra plugin laterale
-    const pluginToggle = $(".control-sidebar-toggle");
+    const pluginToggle = $(".control-sidebar-button");
     const largeScreen = screen.width > 1280;
 
     // Gestione click sul pulsante per il toggle
     pluginToggle.on("click", function () {
-        $("aside.content-sidebar, section.content, .main-footer").toggleClass("with-control-sidebar");
+        $("aside.content-sidebar, section.content, .main-footer, .control-sidebar-button").toggleClass("with-control-sidebar");
+        $(".control-sidebar-button i").toggleClass("fa-chevron-right").toggleClass("fa-chevron-left");
 
         toggleControlSidebar();
     });
@@ -79,10 +80,6 @@ $(document).ready(function () {
     if (largeScreen && !globals.collapse_plugin_sidebar) {
         pluginToggle.click();
     }
-
-    $('.control-sidebar-button').on("click", function(){
-        toggleControlSidebar();
-    });
 
     $('.control-sidebar .nav-item > a').on("click", function(){
         toggleControlSidebar();

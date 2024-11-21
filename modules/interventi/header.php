@@ -31,7 +31,7 @@ use Modules\Preventivi\Preventivo;
 use Modules\Scadenzario\Scadenza;
 
 // Anagrafica
-$anagrafica = $intervento->anagrafica;
+$anagrafica = $anagrafica = Anagrafica::withTrashed()->find($intervento->idanagrafica);
 
 // Sede
 if ($intervento->idsede_destinazione) {
@@ -114,7 +114,7 @@ echo '
 
 // Cliente
 echo '
-                        <h4><b>'.Modules::link('Anagrafiche', $intervento->idanagrafica, $intervento->anagrafica->ragione_sociale, $intervento->anagrafica->ragione_sociale).'</b></h4>
+                        <h4><b>'.Modules::link('Anagrafiche', $anagrafica->idaangrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
 
                         <p>
                             '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'

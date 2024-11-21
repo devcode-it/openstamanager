@@ -424,10 +424,8 @@ abstract class Accounting extends Component
         $this->attributes['iva'] = $this->iva;
 
         $iva = Aliquota::Find($this->idiva);
-        $descrizione = $iva ? $iva->getTranslation('title') : '';
-
-        if (!empty($descrizione)) {
-            $this->attributes['desc_iva'] = $descrizione;
+        if (database()->isConnected() && database()->tableExists('co_iva_lang')) {
+            $this->attributes['desc_iva'] = $iva ? $iva->getTranslation('title') : '';
         }
 
         $this->fixIvaIndetraibile();

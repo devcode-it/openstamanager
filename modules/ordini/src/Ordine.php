@@ -167,17 +167,22 @@ class Ordine extends Document
             $parziale = $qta != $qta_evasa;
 
             $stato_attuale = $this->stato;
+            $nome_stato = (database()->isConnected() && database()->tableExists('or_statiordine_lang') ? $stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id) : $stato_attuale->descrizione);
 
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Accettato';
-            } elseif (!in_array($stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id), ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
+            } elseif (!in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            $stato = Stato::where('name', $descrizione)->first()->id;
+            if(database()->isConnected() && database()->tableExists('or_statiordine_lang')){
+                $stato = Stato::where('name', $descrizione)->first()->id;
+            } else {
+                $stato = Stato::where('descrizione', $descrizione)->first()->id;
+            }
             $this->stato()->associate($stato);
             $this->save();
         }

@@ -114,7 +114,7 @@ echo '
 
 // Cliente
 echo '
-                        <h4><b>'.Modules::link('Anagrafiche', $anagrafica->idaangrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
+                        <h4><b>'.Modules::link('Anagrafiche', $anagrafica->idanagrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
 
                         <p>
                             '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'

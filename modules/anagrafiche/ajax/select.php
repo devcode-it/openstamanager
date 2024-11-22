@@ -389,7 +389,7 @@ switch ($resource) {
         $user = Auth::user();
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nomesede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nomesede`, CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi`) AS tab |filter| ORDER BY descrizione";
+        $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nomesede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nomesede`, CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab |filter| ORDER BY descrizione";
 
         $where[] = '`idanagrafica`='.prepare($id_azienda);
 

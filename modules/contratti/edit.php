@@ -131,6 +131,17 @@ echo '
 
             </div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    <?php echo (!empty($record['id_categoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : '');?>
+                    {[ "type": "select", "label": "<?php echo tr('Categoria');?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti" ]}      
+                </div>
+                <div class="col-md-3">
+                    <?php echo (!empty($record['id_sottocategoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : '');?>
+                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria');?>", "name": "id_sottocategoria", "required": 0, "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]);?> ]}                  
+                </div>
+            </div>
+
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$", "extra": "rows='5'" ]}
@@ -662,5 +673,11 @@ input("ordinamento").on("change", function(){
             caricaRighe(null);
         });
     }
+});
+
+$("#id_categoria").change(function() {
+    updateSelectOption("id_categoria", $(this).val());
+
+    $("#id_sottocategoria").val(null).trigger("change");
 });
 </script>';

@@ -51,6 +51,8 @@ switch (post('op')) {
         $contratto->rinnovo_automatico = post('rinnovo_automatico_add');
         $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
         $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
+        $contratto->id_categoria = post('id_categoria');
+        $contratto->id_sottocategoria = post('id_sottocategoria');
         $contratto->save();
 
         $id_record = $contratto->id;
@@ -87,6 +89,8 @@ switch (post('op')) {
             $contratto->idreferente = post('idreferente');
             $contratto->condizioni_fornitura = post('condizioni_fornitura');
             $contratto->informazioniaggiuntive = post('informazioniaggiuntive');
+            $contratto->id_categoria = post('id_categoria');
+            $contratto->id_sottocategoria = post('id_sottocategoria');
 
             // Informazioni sulle date del documento
             $contratto->data_bozza = post('data_bozza') ?: null;

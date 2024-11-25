@@ -76,4 +76,39 @@ switch ($resource) {
         }
 
         break;
+
+    case 'categorie_contratti':
+        $query = 'SELECT `co_categorie_contratti`.`id`, `title` AS descrizione FROM `co_categorie_contratti` LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id` = `co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+
+        foreach ($elements as $element) {
+            $filter[] = '`co_categorie_contratti`.`id`='.prepare($element);
+        }
+
+        $where[] = '`parent` IS NULL';
+
+        if (!empty($search)) {
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
+        /*
+            * Opzioni utilizzate:
+            * - id_categoria
+            */
+    case 'sottocategorie_contratti':
+        if (isset($superselect['id_categoria'])) {
+            $query = 'SELECT `co_categorie_contratti`.`id`, `title` AS descrizione FROM `co_categorie_contratti` LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id` = `co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+
+            foreach ($elements as $element) {
+                $filter[] = '`co_categorie_contratti`.`id`='.prepare($element);
+            }
+
+            $where[] = '`parent`='.prepare($superselect['id_categoria']);
+
+            if (!empty($search)) {
+                $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+            }
+        }
+        break;
 }

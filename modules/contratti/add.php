@@ -56,6 +56,15 @@ echo '
     </div>
 
     <div class="row">
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti" ]}      
+        </div>
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "id_sottocategoria", "required": 0, "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": '.json_encode(['id_categoria' => null]).' ]}                  
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-4">
             {[ "type": "date", "label": "'.tr('Data accettazione').'", "name": "data_accettazione" ]}
         </div>
@@ -128,4 +137,10 @@ echo '
             data_accettazione.data("DateTimePicker").date(e.date);
         }
     });
+
+    $("#id_categoria").change(function() {
+		updateSelectOption("id_categoria", $(this).val());
+
+		$("#id_sottocategoria").val(null).trigger("change");
+	});
 </script>';

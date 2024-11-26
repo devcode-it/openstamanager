@@ -459,65 +459,6 @@ $("#link_form").bind("keypress", function(e) {
 });
 </script>';
 
-// Fatture, ordini collegate a questo preventivo
-$elementi = $dbo->fetchArray('
-    SELECT 
-        `co_documenti`.`id`, 
-        `co_documenti`.`data`, 
-        `co_documenti`.`numero`, 
-        `co_documenti`.`numero_esterno`, 
-        `co_tipidocumento_lang`.`title` AS tipo_documento, 
-        IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo 
-    FROM `co_documenti` 
-    INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-    INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
-    WHERE `co_righe_documenti`.`idpreventivo` = '.prepare($id_record).'
-
-    UNION
-
-    SELECT 
-        `or_ordini`.`id`, 
-        `or_ordini`.`data`, 
-        `or_ordini`.`numero`, 
-        `or_ordini`.`numero_esterno`, 
-        `or_tipiordine_lang`.`title`, 
-        IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\') 
-    FROM `or_ordini` 
-    JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` 
-    INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` 
-    LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-    WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_record).'
-
-    UNION
-
-    SELECT 
-        `dt_ddt`.`id`, 
-        `dt_ddt`.`data`, 
-        `dt_ddt`.`numero`, 
-        `dt_ddt`.`numero_esterno`, 
-        `dt_tipiddt_lang`.`title`, 
-        IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') 
-    FROM `dt_ddt` 
-    JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
-    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` 
-    LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-    WHERE `dt_righe_ddt`.`original_document_id` = '.prepare($preventivo->id).' AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
-UNION
-
-    SELECT 
-        `in_interventi`.`id`, 
-        `in_interventi`.`data_richiesta`, 
-        `in_interventi`.`codice`, 
-        NULL, 
-        \'Attività\', 
-        \'Interventi\' 
-    FROM `in_interventi` 
-    JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
-    WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($preventivo->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare($preventivo::class).') OR `in_interventi`.`id_preventivo` = '.prepare($id_record).'
-
-ORDER BY `data`');
-
 if (!empty($elementi)) {
     echo '
 <div class="card card-warning collapsable collapsed-card">

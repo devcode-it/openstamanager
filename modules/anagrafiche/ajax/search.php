@@ -104,18 +104,72 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-// $query .= Modules::getAdditionalsQuery('Anagrafiche');
-
 $rs = $dbo->fetchArray($query);
 
-$plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Referenti'");
+$plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` WHERE `name`="Referenti"');
 
 foreach ($rs as $r) {
     $result = [];
 
     $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
-    $result['title'] = $r['nome'];
+    $result['title'] = $r['Nome'];
     $result['category'] = 'Referenti';
+
+    // Campi da evidenziare
+    $result['labels'] = [];
+    foreach ($fields as $name => $value) {
+        if (string_contains($r[$name], $term)) {
+            $text = str_replace($term, "<span class='highlight'>".$term.'</span>', $r[$name]);
+
+            $result['labels'][] = $name.': '.$text.'<br/>';
+        }
+    }
+
+    // Aggiunta nome anagrafica come ultimo campo
+    if (sizeof($ragioni_sociali) > 1) {
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+    }
+
+    $results[] = $result;
+}
+
+
+// Sedi anagrafiche
+$fields = [
+    'Nome' => 'nomesede',
+    'Indirizzo' => 'indirizzo',
+    'Città' => 'citta',
+    'C.A.P.' => 'cap',
+    'Provincia' => 'provincia',
+    'Telefono' => 'telefono',
+    'Fax' => 'fax',
+    'Cellulare' => 'cellulare',
+    'Email' => 'email',
+    'Note' => 'note'
+];
+
+$query = 'SELECT *, idanagrafica as id';
+
+foreach ($fields as $name => $value) {
+    $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
+}
+
+$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+
+foreach ($fields as $name => $value) {
+    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+}
+
+$rs = $dbo->fetchArray($query);
+
+$plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` WHERE `name`="Sedi"');
+
+foreach ($rs as $r) {
+    $result = [];
+
+    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
+    $result['title'] = $r['Nome'];
+    $result['category'] = 'Sedi';
 
     // Campi da evidenziare
     $result['labels'] = [];

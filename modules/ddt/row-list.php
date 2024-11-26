@@ -26,6 +26,11 @@ $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $ddt->getRighe()->sortByDesc('created_at') : $ddt->getRighe();
 $colspan = $dir == 'entrata' ? '7' : '6';
 
+$evasione_bar = [
+    'Fatture di vendita' => 'success',
+    'Interventi' => 'warning',
+];
+
 echo '
 <div class="table-responsive row-list">
     <table class="table table-striped table-hover table-sm table-bordered">
@@ -162,18 +167,24 @@ foreach ($righe as $riga) {
                     {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'", "decimals": "qta" ]}
                     <div class="progress" style="height:4px;">';
         // Visualizzazione evasione righe per documento
-        $evasione_bar = [];
-        $evasione_bar['dt_righe_ddt'] = 'info';
-        $evasione_bar['co_righe_documenti'] = 'primary';
-        $evasione_bar['in_righe_interventi'] = 'warning';
-        $evasione_bar['or_righe_ordini'] = 'success';
-        foreach ($evasione_bar as $table => $color) {
-            $righe_ev = $dbo->table($table)->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
-            if ($righe_ev->count() > 0) {
-                $perc_ev = $righe_ev->sum('qta') * 100 / ($riga->qta ?: 1);
-                if ($perc_ev > 0) {
-                    echo '
-                                <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+        $color = '';
+        $valore_evaso = 0;
+        foreach ($elementi as $elemento) {
+            $righe_evase = explode(', ', $elemento['righe']);
+            $righe_evase_array = array_reduce($righe_evase, function($carry, $riga_evasa) {
+                list($id, $qta) = explode(' - ', $riga_evasa);
+                $carry[$id] = $qta;
+                return $carry;
+            }, []);
+            foreach ($righe_evase_array as $id => $qta) {
+                if ($id == $riga->id) {
+                    $color = $evasione_bar[$elemento['modulo']];
+                    $valore_evaso = $qta;
+                    $perc_ev = $valore_evaso * 100 / ($riga->qta ?: 1);
+                    if ($perc_ev > 0) {
+                        echo '
+                                <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                    }
                 }
             }
         }
@@ -423,6 +434,22 @@ if (!$block_edit && sizeof($righe) > 0) {
     </div>';
 }
 echo '
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <h5>'.tr('Quantità evasa in').':</h5>
+        </div>
+        <div class="col-md-2">
+            <span class="pull-left icon" style="background-color:#28a745;"></span>
+            <span class="text">&nbsp;'.tr('Fattura').'</span>
+        </div>
+        <div class="col-md-2">
+            <span class="pull-left icon" style="background-color:#ffc107;"></span>
+            <span class="text">&nbsp;'.tr('Attività').'</span>
+        </div>
+    </div>
 </div>
 
 <script>

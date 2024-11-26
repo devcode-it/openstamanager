@@ -172,3 +172,13 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ALTER TABLE `co_contratti` 
   ADD `id_categoria` INT NULL DEFAULT NULL , 
   ADD `id_sottocategoria` INT NULL DEFAULT NULL ; 
+
+-- Aggiunta colonna IVA in vista Fatture di vendita
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
+(@id_module, 'IVA', '(righe.iva)*IF(co_tipidocumento.reversed, -1, 1)', '16', '1', '0', '1', '0', '', '', '0', '0', '0');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'IVA' AND `id_module` = @id_module), 'IVA'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'IVA' AND `id_module` = @id_module), 'IVA');

@@ -25,6 +25,8 @@ return [
     'an_pagamenti_anagrafiche',
     'an_sedi_tecnici',
     'co_banche',
+    'co_categorie_contratti',
+    'co_categorie_contratti_lang',
     'co_contratti',
     'co_dichiarazioni_intento',
     'co_promemoria',

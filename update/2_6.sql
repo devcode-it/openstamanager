@@ -131,9 +131,7 @@ PRIMARY KEY (`id`));
 CREATE TABLE `co_categorie_contratti` (
   `id` int NOT NULL,
   `colore` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `parent` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `parent` int DEFAULT NULL
 );
 
 CREATE TABLE `co_categorie_contratti_lang` (
@@ -141,10 +139,9 @@ CREATE TABLE `co_categorie_contratti_lang` (
   `id_lang` int NOT NULL,
   `id_record` int NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 );
+
 ALTER TABLE `co_categorie_contratti`
   ADD PRIMARY KEY (`id`),
   ADD KEY `parent` (`parent`),
@@ -160,13 +157,17 @@ INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `v
 ('Categorie contratti', 'categorie_contratti', '\r\nSELECT\r\n |select|\r\nFROM \r\n `co_categorie_contratti`\r\n    LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id` = `co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.|lang|)\r\nWHERE \r\n    1=1 AND `parent` IS NULL \r\nHAVING \r\n    2=2', '', 'fa fa-briefcase', '2.5.5', '2.5.5', 1, 40, 1, 1, 0, 0);
 INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES (NULL, '1', (SELECT `id` FROM `zz_modules` WHERE name='Categorie contratti'), 'Categorie contratti');
 
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie contratti';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE name='Categorie contratti'), 'id', '`co_categorie_contratti`.`id`', 3, 1, 0, 0, 0, NULL, NULL, 0, 0, 0, 0),
-((SELECT `id` FROM `zz_modules` WHERE name='Categorie contratti'), 'Nome', '`co_categorie_contratti_lang`.`title`', 2, 1, 0, 0, 0, NULL, NULL, 1, 0, 0, 0);
+(@id_module, 'id', '`co_categorie_contratti`.`id`', 3, 1, 0, 0, 0, NULL, NULL, 0, 0, 0, 0),
+(@id_module, 'Nome', '`co_categorie_contratti_lang`.`title`', 2, 1, 0, 0, 0, NULL, NULL, 1, 0, 0, 0);
 
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie contratti';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Categorie contratti')), 'id'),
-(1, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'Nome' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Categorie contratti')), 'Nome');
+(1, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = @id_module), 'id'),
+(1, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'Nome' AND `zz_views`.`id_module` = @id_module), 'Nome'),
+(2, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = @id_module), 'id'),
+(2, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name` = 'Nome' AND `zz_views`.`id_module` = @id_module), 'Name');
 
 ALTER TABLE `co_contratti` 
   ADD `id_categoria` INT NULL DEFAULT NULL , 

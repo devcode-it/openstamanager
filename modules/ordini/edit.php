@@ -555,40 +555,6 @@ input("ordinamento").on("change", function(){
 
 // Collegamenti diretti
 // Fatture o ddt collegati a questo ordine
-$elementi = $dbo->fetchArray('
-    SELECT 
-        `co_documenti`.`id`, 
-        `co_documenti`.`data`, 
-        `co_documenti`.`numero`, 
-        `co_documenti`.`numero_esterno`, 
-        `co_tipidocumento_lang`.`title` AS tipo_documento, 
-        `co_tipidocumento`.`dir` 
-    FROM 
-        `co_documenti` 
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
-        LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
-    WHERE 
-        `co_righe_documenti`.`idordine` = '.prepare($id_record).'
-
-UNION 
-    SELECT 
-        `dt_ddt`.`id`, 
-        `dt_ddt`.`data`, 
-        `dt_ddt`.`numero`, 
-        `dt_ddt`.`numero_esterno`, 
-        `dt_tipiddt_lang`.`title` AS tipo_documento, 
-        `dt_tipiddt`.`dir` 
-    FROM 
-        `dt_ddt` 
-        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` 
-        LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
-    WHERE 
-        `dt_righe_ddt`.`idordine` = '.prepare($id_record).'
-    ORDER BY 
-        `data`');
-
 if (!empty($elementi)) {
     echo '
 <div class="card card-warning collapsable collapsed-card">
@@ -603,30 +569,22 @@ if (!empty($elementi)) {
     <div class="card-body">
         <ul>';
 
-    foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-            '_DOC_' => $elemento['tipo_documento'],
-            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
-        ]);
-
-        if (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        } else {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
+        foreach ($elementi as $elemento) {
+            $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => $elemento['tipo_documento'],
+                '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+                '_DATE_' => Translator::dateToLocale($elemento['data']),
+            ]);
+    
+            echo '
+            <li>'.Modules::link($elemento['modulo'], $elemento['id'], $descrizione).'</li>';
         }
-
-        $id = $elemento['id'];
-
+    
         echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+            </ul>
+        </div>
+    </div>';
     }
-
-    echo '
-        </ul>
-    </div>
-</div>';
-}
 
 if (!empty($elementi)) {
     echo '

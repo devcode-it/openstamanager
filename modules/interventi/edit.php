@@ -237,19 +237,21 @@ echo input([
     'extra' => 'style=\'max-height:40px;\'',
 ]);
 echo '
-</div>
-</div>';
+                </div>
+            </div>';
 // Nascondo le note interne ai clienti
 if ($user->gruppo != 'Clienti') {
     echo '
             <div class="row">
                 <div class="col-md-12">
-                {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-            </div>
-        </div>
-    </div>
-</div>';
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                </div>
+            </div>';
 }
+echo '
+        </div>
+    </div>';
+
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
 if (!empty($record['idcontratto'])) {
     $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));

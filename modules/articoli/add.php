@@ -42,7 +42,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
     <div class="row">
 		<div class="col-md-12">
-			{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
+			{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>", "maxlength": "255", "charcounter": 1 ]}
 		</div>
 
 		<div class="col-md-6">

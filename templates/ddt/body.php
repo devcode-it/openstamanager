@@ -23,8 +23,8 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
-$rows_per_page = $options['pricing'] ? 20 : 18;
-$autofill->setRows($rows_per_page, 0, $options['pricing'] ? 20 : 18);
+$rows_per_page = ($documento['note'] || $options['pricing'] ? 19 : 27);
+$autofill->setRows($rows_per_page, 0, 32 );
 
 // Intestazione tabella per righe
 echo "
@@ -119,13 +119,10 @@ foreach ($righe as $riga) {
     echo $num.'
         </td>
         <td>'.nl2br((string) $r['descrizione']);
-    
 
     if ($riga->isArticolo()) {
         echo '<br><small>'.$riga->codice.'</small>';
-        $autofill->count($riga->codice);
-    } else {
-        echo '-';
+        $autofill->count($riga->codice, true);
     }
 
     if ($riga->isArticolo()) {

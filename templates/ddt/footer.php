@@ -115,7 +115,7 @@ if ($options['pricing']) {
             </td>
         </tr>';
     }
-} else {
+} else if ($documento['note']){
     // Riga 1
     echo "
     <tr>

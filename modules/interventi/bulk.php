@@ -321,27 +321,56 @@ switch (post('op')) {
         break;
 
     case 'delete-bulk':
+        $count = 0;
+        $count_tot = sizeof($id_records);
+
         foreach ($id_records as $id) {
             $intervento = Intervento::find($id);
-            try {
-                // Eliminazione associazioni tra interventi e contratti
-                $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
-                $intervento->delete();
+            $elementi = $dbo->fetchArray('
+            SELECT 
+                `co_documenti`.`id`
+            FROM 
+                `co_documenti` 
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+            WHERE 
+                `co_righe_documenti`.`idintervento` = '.prepare($id).' OR 
+                (`co_righe_documenti`.`original_document_id` = '.prepare($id).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\')
+            GROUP BY id
+            
+            ORDER BY `data`');
 
-                // Elimino il collegamento al componente
-                $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
+            if (empty($elementi)) {
+                try {
+                    // Eliminazione associazioni tra interventi e contratti
+                    $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
-                // Eliminazione associazione tecnici collegati all'intervento
-                $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
+                    $intervento->delete();
 
-                // Eliminazione associazione interventi e my_impianti
-                $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
-            } catch (InvalidArgumentException) {
+                    // Elimino il collegamento al componente
+                    $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
+
+                    // Eliminazione associazione tecnici collegati all'intervento
+                    $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
+
+                    // Eliminazione associazione interventi e my_impianti
+                    $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+                } catch (InvalidArgumentException) {
+                }
+            } else {
+                ++$count;
             }
         }
+        $count_eliminati = $count_tot - $count;
+        flash()->info(tr('_NUM_ Interventi eliminati!', [
+            '_NUM_' => $count_eliminati,
+        ]));
 
-        flash()->info(tr('Interventi eliminati!'));
+        if ($count > 0) {
+            flash()->warning(tr('_NUM_ Interventi non eliminati perchè sono collegati ad almeno un documento!', [
+                '_NUM_' => $count,
+            ]));
+        }
 
         break;
 
@@ -439,12 +468,10 @@ $operations['copy-bulk'] = [
     ],
 ];
 
-// TODO: 06/08/2024 Migliorare e portare in versione stabile
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
-    ];
-}
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+];
+
 
 $operations['export-bulk'] = [
     'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),

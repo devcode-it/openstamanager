@@ -189,7 +189,16 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                             $query = 'Chiave mancante';
                         }
                     } else {
-                        $query .= 'ALTER TABLE `'.$table.'` CHANGE `'.$name.'` `'.$name.'` '.$data[$table][$name]['type'];
+                        $query .= 'ALTER TABLE `'.$table;
+
+                        if (array_key_exists('current', $diff) && is_null($diff['current'])) {
+                            $query .= '` ADD `'.$name.'`';
+                        } else {
+                        $query .= '` CHANGE `'.$name.'` `'.$name.'` ';
+                        }
+
+                        $query .= $data[$table][$name]['type'];;
+
                         if ($data[$table][$name]['null'] == 'NO') {
                             $null = 'NOT NULL';
                         } else {
@@ -257,7 +266,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
                 if (array_key_exists('current', $errors) && $errors['current'] == null) {
                     echo '
-<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'
+<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella non prevista').'
 </div>';
                     continue;
                 }

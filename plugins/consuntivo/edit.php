@@ -20,6 +20,10 @@
 include_once __DIR__.'/../../../core.php';
 
 use Modules\Interventi\Intervento;
+use Models\Module;
+use Modules\Preventivi\Preventivo;
+use Modules\Contratti\Contratto;
+use Modules\Ordini\Ordine;
 
 $tipologie = [];
 $tecnici = [];
@@ -28,8 +32,22 @@ $materiali_art = [];
 $materiali_righe = [];
 
 // Tabella con riepilogo interventi
-$interventi = Intervento::where('id_contratto', $id_record)->get();
-$totale_ore_completate = 0;
+if ($id_module == Module::where('name', 'Preventivi')->first()->id) {
+    $documento = Preventivo::find($id_record);
+    $id_documento = 'id_preventivo';
+    $text = tr('Preventivo');
+} else if ($id_module == Module::where('name', 'Contratti')->first()->id) {
+    $documento = Contratto::find($id_record);
+    $id_documento = 'id_contratto';
+    $text = tr('Contratto');
+} else if ($id_module == Module::where('name', 'Ordini cliente')->first()->id) {
+    $documento = Ordine::find($id_record);
+    $id_documento = 'id_ordine';
+    $text = tr('Ordine');
+}
+
+$interventi = Intervento::where($id_documento, $id_record)->get();
+
 if (!empty($interventi)) {
     echo '
 <table class="table table-bordered table-sm">
@@ -43,8 +61,6 @@ if (!empty($interventi)) {
 
     // Tabella con i dati
     foreach ($interventi as $intervento) {
-        $totale_ore_completate += !empty($intervento->stato->is_completato) ? $intervento->ore_totali : 0;
-
         // Riga per il singolo intervento
         echo '
     <tr style="background:'.$intervento->stato->colore.';">
@@ -254,99 +270,44 @@ if (!empty($interventi)) {
 </table>';
 }
 
-/*
-    Bilancio del contratto
-*/
-$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
-$budget = $rs[0]['budget'];
-
-$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
-$totale_ore_contratto = $rs[0]['totale_ore'];
-
-$diff = sum($budget, -$totale) - $contratto->provvigione;
-
-if ($diff > 0) {
-    $bilancio = '<span class="text-success"><big>'.moneyFormat($diff).'</big></span>';
-} elseif ($diff < 0) {
-    $bilancio = '<span class="text-danger"><big>'.moneyFormat($diff).'</big></span>';
-} else {
-    $bilancio = '<span><big>'.moneyFormat($diff).'</big></span>';
-}
+// Bilancio del documento
+$budget = $documento->totale_imponibile;
+$diff = sum($budget, -$totale) - $documento->provvigione;
 
 echo '
 <div class="well text-center">
-    <big>
-        <b>'.tr('Rapporto budget/spesa').'</b>:<br>
-        '.$bilancio.'
-    </big>
-    <br><br>';
+    <br><span><big>
+        <b>'.tr('Budget rimanente').':<br>';
+if ($diff > 0) {
+    echo '
+        <span class="text-success"><big>+'.moneyFormat($diff).'</big></span>';
+} elseif ($diff < 0) {
+    echo '
+        <span class="text-danger"><big>'.moneyFormat($diff).'</big></span>';
+} else {
+    echo '
+        <span><big>'.moneyFormat($diff).'</big></span>';
+}
+echo '
+    </b></big></span>
+    <br><br>
 
-echo '
-    <div class="row">
-        <big class="col-md-4 offset-md-4 text-center">
-            <table class="table text-left table-striped table-bordered">';
-if (!empty($totale_ore_contratto)) {
-    echo '
-                <tr>
-                    <td>'.tr('Ore a contratto').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
-                </tr>';
-}
-echo '
-                <tr>
-                    <td>'.tr('Ore erogate totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
-                </tr>';
-if (!empty($totale_ore_contratto)) {
-    echo '
-                <tr>
-                    <td>'.tr('Ore residue totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
-                </tr>';
-}
-echo '
-                <tr>
-                    <td>'.tr('Ore erogate concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
-                </tr>';
-if (!empty($totale_ore_contratto)) {
-    echo '
-                <tr>
-                    <td>'.tr('Ore residue concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
-                </tr>';
-}
-echo '
-            </table>
-        </big>
-    </div>';
-
-if (empty($totale_ore_contratto)) {
-    echo '
-    <div class="alert alert-info">
-        <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
-    </div>';
-}
-echo '
     <div class="row">
         <div class="col-md-6">
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Tipologia').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
 ksort($tipologie);
 foreach ($tipologie as $key => $tipologia) {
     $margine = $tipologia['ricavo'] - $tipologia['costo'];
-    if ($tipologia['ricavo']) {
-        $margine_prc = (int) (1 - ($tipologia['costo'] / ($tipologia['ricavo'] > 0 ? $tipologia['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / ($tipologia['costo'] > 0 ? $tipologia['costo'] : 1)) - 1) * 100) : 100;
-    }
-
+    $margine_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) (1 - ($tipologia['costo'] / ($tipologia['ricavo'] > 0 ? $tipologia['ricavo'] : 1))) * 100 : 100;
+    $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / ($tipologia['costo'] > 0 ? $tipologia['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td>'.$key.'</td>
@@ -365,24 +326,22 @@ echo '
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Tecnici').'</th>
-                    <th width="7%">'.tr('km').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Km').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
 ksort($tecnici);
 foreach ($tecnici as $key => $tecnico) {
     $margine = $tecnico['ricavo'] - $tecnico['costo'];
-    if ($tecnico['ricavo']) {
-        $margine_prc = (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] > 0 ? $tecnico['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / ($tecnico['costo'] > 0 ? $tecnico['costo'] : 1)) - 1) * 100) : 100;
-    }
+    $margine_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] > 0 ? $tecnico['ricavo'] : 1))) * 100 : 100;
+    $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / ($tecnico['costo'] > 0 ? $tecnico['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td>'.$key.'</td>
-                    <td class="text-right">'.(int) $tecnico['km'].'</td>
+                    <td class="text-right">'.Translator::numberToLocale($tecnico['km']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
                     <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
@@ -400,19 +359,17 @@ echo '
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Stato').'</th>
-                    <th width="10%">'.tr('Ore').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Ore').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
 ksort($stati_intervento);
 foreach ($stati_intervento as $key => $stato) {
     $margine = $stato['ricavo'] - $stato['costo'];
-    if ($stato['ricavo']) {
-        $margine_prc = (int) (1 - ($stato['costo'] / ($stato['ricavo'] > 0 ? $stato['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / ($stato['costo'] > 0 ? $stato['costo'] : 1)) - 1) * 100) : 100;
-    }
+    $margine_prc = ($stato['ricavo'] && $stato['costo']) ? (int) (1 - ($stato['costo'] / ($stato['ricavo'] > 0 ? $stato['ricavo'] : 1))) * 100 : 100;
+    $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / ($stato['costo'] > 0 ? $stato['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
@@ -431,18 +388,18 @@ echo '
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <th>'.tr('Materiale').'</th>
-                    <th width="8%">'.tr('Qtà').'</th>
-                    <th width="16%">'.tr('Costo').'</th>
-                    <th width="16%">'.tr('Ricavo').'</th>
-                    <th width="10%">'.tr('Margine').'</th>
-                    <th width="10%">'.tr('Ricarico').'</th>
+                    <th width="11%">'.tr('Qtà').'</th>
+                    <th width="15%">'.tr('Costo').'</th>
+                    <th width="15%">'.tr('Ricavo').'</th>
+                    <th width="15%">'.tr('Margine').'</th>
+                    <th width="15%">'.tr('Ricarico').'</th>
                 </tr>';
 ksort($materiali_art);
 foreach ($materiali_art as $key => $materiali_array1) {
     foreach ($materiali_array1 as $materiali_array2) {
         foreach ($materiali_array2 as $materiale) {
             $margine = $materiale['ricavo'] - $materiale['costo'];
-            $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100;
+            $margine_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100 : 100;
             $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] > 0 ? $materiale['costo'] : 1)) - 1) * 100) : 100;
             echo '
                 <tr>
@@ -460,7 +417,7 @@ foreach ($materiali_art as $key => $materiali_array1) {
 ksort($materiali_righe);
 foreach ($materiali_righe as $key => $materiale) {
     $margine = $materiale['ricavo'] - $materiale['costo'];
-    $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100;
+    $margine_prc = ($materiale['ricavo']) ? (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100 : 0;
     $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] > 0 ? $materiale['costo'] : 1)) - 1) * 100) : 100;
     echo '
                 <tr>
@@ -483,5 +440,30 @@ echo '
 */
 echo '
 <div class="text-center">
-    '.Prints::getLink('Consuntivo contratto', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
+    '.Prints::getLink('Consuntivo '.$text, $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
+
+// Aggiunta interventi se il documento é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
+$query = 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE '.$id_documento.' IS NULL AND id_contratto IS NULL AND id_ordine IS NULL AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']);
+
+$count = $dbo->fetchNum($query);
+
+echo '<hr>
+<form action="" method="post" id="aggiungi-intervento">
+    <input type="hidden" name="op" value="addintervento">
+    <input type="hidden" name="backto" value="record-edit">
+
+    <div class="row">
+        <div class="col-md-8">
+            {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo documento').' ('.$count.')", "name": "idintervento", "values": "query='.$query.'", "required":"1" ]}
+        </div>
+
+    <!-- PULSANTI -->
+		<div class="col-md-4">
+            <p style="margin-top:-5px;" >&nbsp;</p>
+            <button type="button" class="btn btn-primary" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al documento?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.(($record['is_pianificabile'] && !$block_edit) ? '' : 'disabled').'>
+                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+            </button>
+		</div>
+    </div>
+</form>';

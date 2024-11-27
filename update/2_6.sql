@@ -216,3 +216,6 @@ HAVING
     2=2
 ORDER BY 
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `zz_modules`.`name` = 'Interventi';
+
+-- Allineamento plugin consuntivo
+UPDATE `zz_plugins` SET `directory` = 'consuntivo', `script` = '', `options` = 'custom' WHERE `name` LIKE '%consuntivo%'

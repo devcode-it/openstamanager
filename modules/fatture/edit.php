@@ -390,7 +390,7 @@ echo '
 <?php
 // Conteggio numero articoli fatture
 $articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`) WHERE `co_documenti`.`id`='.prepare($id_record));
-$id_plugin_sedi = Plugin::where('name', 'Sedi')->first()->id;
+$id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">

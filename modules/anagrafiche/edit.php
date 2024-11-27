@@ -32,7 +32,7 @@ $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
 if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
-    $ignore = Plugin::where('name', 'Sedi')
+    $ignore = Plugin::where('name', 'Sedi aggiuntive')
         ->orWhere('name', 'Referenti')
         ->orWhere('name', 'Dichiarazioni d\'intento')
         ->get();

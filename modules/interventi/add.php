@@ -31,7 +31,7 @@ $id_tipo = filter('id_tipo');
 
 $origine_dashboard = get('ref') == 'dashboard' ? true : false;
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
-$id_plugin_sedi = Plugin::where('name', 'Sedi')->first()->id;
+$id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;
 
 // Calcolo dell'orario di inizio e di fine sulla base delle informazioni fornite
 $orario_inizio = filter('orario_inizio');

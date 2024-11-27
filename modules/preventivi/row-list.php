@@ -67,7 +67,7 @@ $evasione_bar = [
     'Interventi' => 'warning',
     'Ordini cliente' => 'primary',
     'Ordini fornitore' => 'primary',
-    'Contratti' => 'danger',
+    'Contratti' => 'orange',
 ];
 
 foreach ($righe as $key => $riga) {
@@ -524,7 +524,7 @@ echo '
             <span class="text">&nbsp;'.tr('Ordine').'</span>
         </div>
         <div class="col-md-2">
-            <span class="pull-left icon" style="background-color:#dc3545;"></span>
+            <span class="pull-left icon" style="background-color:#fd7e14;"></span>
             <span class="text">&nbsp;'.tr('Contratto').'</span>
         </div>
     </div>

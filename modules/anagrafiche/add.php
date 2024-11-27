@@ -23,14 +23,15 @@ use Modules\Anagrafiche\Tipo;
 include_once __DIR__.'/../../core.php';
 
 $id_nazione_italia = (new Nazione())->getByField('title', 'Italia', Models\Locale::getPredefined()->id);
-$tipo = get('tipoanagrafica');
-$id_tipo = Tipo::where('name', $tipo)->first()->id;
+
+if ($idtipoanagrafica) {
+	$tipo = Tipo::where('name', $idtipoanagrafica)->first()->id;
+} else {
+	$tipo = get('tipoanagrafica');
+}
+
 $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
-if (!empty($tipo)) {
-    $rs = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id`, `an_tipianagrafiche_lang`.`title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id`='.prepare($id_tipo));
-    $idtipoanagrafica = $rs[0]['id'];
-}
 
 echo '
 <form action="" method="post" id="add-form">

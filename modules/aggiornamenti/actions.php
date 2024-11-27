@@ -24,6 +24,7 @@ use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Aggiornamenti\Controlli\PianoConti;
+use Modules\Aggiornamenti\Controlli\PianoContiRagioneSociale;
 use Modules\Aggiornamenti\Controlli\PluginDuplicati;
 use Modules\Aggiornamenti\Controlli\ReaValidi;
 use Modules\Aggiornamenti\UpdateHook;
@@ -56,6 +57,7 @@ switch (filter('op')) {
     case 'controlli-disponibili':
         $controlli = [
             PianoConti::class,
+            PianoContiRagioneSociale::class,
             DatiFattureElettroniche::class,
             ColonneDuplicateViste::class,
             PluginDuplicati::class,

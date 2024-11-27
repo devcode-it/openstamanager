@@ -461,7 +461,7 @@ if (!$righe_evase->isEmpty()) {
 
 // Gestione articolo sottoscorta
 echo '
-    <div class="card alert hidden" id="articoli_sottoscorta">
+    <div class="card alert-warning hidden" id="articoli_sottoscorta">
         <table class="table table-sm">
             <thead>
                 <tr>
@@ -472,7 +472,7 @@ echo '
                 </tr>
             </thead>
 
-            <tbody class="alert-warning"></tbody>
+            <tbody></tbody>
         </table>
     </div>';
 

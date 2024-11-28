@@ -18,6 +18,7 @@
  */
 
 use Models\Module;
+use Models\Plugin;
 use Util\FileSystem;
 
 include_once __DIR__.'/../core.php';
@@ -63,6 +64,8 @@ foreach (App::getAssets()['print'] as $style) {
 }
 
 if (Auth::check()) {
+    $has_plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->count();
+
     echo '
 		<script>
             search = []';
@@ -217,7 +220,7 @@ if (Auth::check()) {
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
-                collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
+                collapse_plugin_sidebar: '.($has_plugins ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor", "EmojiPanel" ],

@@ -436,15 +436,34 @@ switch (post('op')) {
         break;
 
     case 'delete-bulk':
+        $count = 0;
+        $count_tot = sizeof($id_records);
+
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
-            try {
-                $documento->delete();
-            } catch (InvalidArgumentException) {
+            $emails = database()->fetchOne("SELECT COUNT(id) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id." GROUP BY `em_emails`.`id_record`")['count'];
+
+            if (($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == '') && empty($emails)) {
+                try {
+                    $documento->delete();
+                } catch (InvalidArgumentException) {
+                }
+            } else {
+                ++$count;
             }
         }
 
-        flash()->info(tr('Fatture eliminate!'));
+        $count_eliminati = $count_tot - $count;
+        flash()->info(tr('_NUM_ Fatture eliminate!', [
+            '_NUM_' => $count_eliminati,
+        ]));
+
+        if ($count > 0) {
+            flash()->warning(tr('_NUM_ Fatture non eliminate in quanto sono già state inviate allo SDI, o via email!', [
+                '_NUM_' => $count,
+            ]));
+        }
+
         break;
 
     case 'change-bank':
@@ -658,12 +677,9 @@ $operations['copy-bulk'] = [
     ],
 ];
 
-// TODO: 06/08/2024 Migliorare introducendo controlli e portare in versione stabile
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
-    ];
-}
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
+];
 
 if ($dir == 'entrata') {
     $operations['change-stato'] = [

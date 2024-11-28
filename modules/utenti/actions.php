@@ -317,4 +317,23 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'update_setting':
+
+        $id = filter('id');
+        $valore = filter('valore', null, 1);
+
+        $user_options = json_decode($user->options, true) ?: [];
+        $user_options['settings'][$id] = $valore;
+
+        $user->options = json_encode($user_options);
+        $user->save();
+
+        echo json_encode([
+            'result' => true,
+        ]);
+
+        flash()->info('Impostazione modificata con successo!');
+
+        break;
 }

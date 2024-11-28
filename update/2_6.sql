@@ -219,3 +219,12 @@ ORDER BY
 
 -- Allineamento plugin consuntivo
 UPDATE `zz_plugins` SET `directory` = 'consuntivo', `script` = '', `options` = 'custom' WHERE `name` = 'Consuntivo';
+
+-- Aggiunta gestione impostazioni per utente
+ALTER TABLE `zz_users` ADD `options` TEXT NOT NULL; 
+ALTER TABLE `zz_settings` ADD `is_user_setting` BOOLEAN NOT NULL;
+UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Nascondere la barra dei plugin di default';
+UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Nascondere la barra sinistra di default';
+UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Sistema di firma ';
+UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Inizio periodo calendario';
+UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Fine periodo calendario';

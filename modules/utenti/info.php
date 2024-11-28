@@ -18,6 +18,7 @@
  */
 
 use Models\Module;
+use Models\Setting;
 
 $skip_permissions = true;
 include_once __DIR__.'/../../core.php';
@@ -108,19 +109,9 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Calendario interventi').'</h3>
-            </div>
-
-            <div class="card-body">
-            <p>'.tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link").':</p>
-            <a href="'.$link.'" target="_blank">'.$link.'</a>
-            </div>
-
-            <div class="card-header">
                 <h3 class="card-title">'.tr('Configurazione').'</h3>
             </div>
             <div class="card-body">
-            <div>
                 <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
     '_ANDROID_' => '<b>'.tr('Android').'</b>',
     '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
@@ -136,7 +127,101 @@ echo '
             </div>
         </div>
     </div>
+</div>
 
-</div>';
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Impostazioni').'</h3>
+            </div>
+
+            <div class="card-body">';
+                $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
+                ->where('is_user_setting', 1)
+                ->groupBy(['sezione'])
+                ->orderBy('sezione')
+                ->get();
+
+                foreach ($gruppi as $key => $gruppo) {
+                    echo '
+                <!-- Impostazioni della singola sezione -->
+                <div class="card card-primary collapsed-card" title="'.$gruppo->nome.'">
+                    <div class="card-header clickable" title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
+                        <div class="card-title">'.tr('_SEZIONE_', [
+                        '_SEZIONE_' => $gruppo->nome,
+                    ]).'</div>
+                        <div class="card-tools pull-right">
+                            <div class="badge">'.$gruppo->numero.'</div>
+                        </div>
+                    </div>
+                
+                    <div class="card-body row"></div>
+                </div>';
+                }
+            echo '
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">'.tr('Calendario interventi').'</h3>
+            </div>
+
+            <div class="card-body">
+                <p>'.tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link").':</p>
+                <a href="'.$link.'" target="_blank">'.$link.'</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$("[id^=impostazioni]").click(function() {
+    caricaSezione(this);
+});
+
+function caricaSezione(header) {
+    let card = $(header).closest(".card");
+    card.toggleClass("collapsed-card");
+
+    // Controllo sul caricamento già effettuato
+    let container = card.find(".card-body");
+    if (container.html()){
+        return ;
+    }
+
+    // Caricamento della sezione di impostazioni
+    let sezione = card.attr("title");
+    localLoading(container, true);
+    return $.get("'.$module->fileurl('sezione.php').'?id_module='.$module->id.'&sezione=" + sezione, function(data) {
+        container.html(data);
+        localLoading(container, false);
+    });
+}
+
+function salvaImpostazione(id, valore){
+    $.ajax({
+        url: "'.$module->fileurl('actions.php').'",
+        cache: false,
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            op: "update_setting",
+            id_module: '.$module->id.',
+            id: id,
+            valore: valore,
+        },
+        success: function(data) {
+            renderMessages();
+        },
+        error: function(data) {
+            swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
+        }
+    });
+}
+</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

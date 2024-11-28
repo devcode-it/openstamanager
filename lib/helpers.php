@@ -106,7 +106,20 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return Setting::where('nome', '=', $name)->first()->valore;
+    $setting = Setting::where('nome', '=', $name)->first();
+
+    $user = Auth::user();
+    if ($user) {
+        $user_options = json_decode($user->options, true) ?: [];
+    }
+
+    if ($user_options['settings'][$setting->id] !== null) {
+        $value = $user_options['settings'][$setting->id];
+    } else {
+        $value = $setting->valore;
+    }
+
+    return $value;
 }
 
 /**

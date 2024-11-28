@@ -1158,11 +1158,12 @@ class FatturaElettronica implements \Stringable
             }
 
             $dati = [];
-
             if (!empty($element['riferimento_linea']['id'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea']['id'];
-            } elseif (!empty($element['riferimento_linea'])) {
+            } elseif (!empty($element['riferimento_linea'][0])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'][0];
+            } elseif (!empty($element['riferimento_linea'])) {
+                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 
             $dati['IdDocumento'] = $element['id_documento'];

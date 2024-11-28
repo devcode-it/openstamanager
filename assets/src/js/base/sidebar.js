@@ -62,6 +62,7 @@ $(document).ready(function () {
         $(".control-sidebar-button i").toggleClass("fa-chevron-right").toggleClass("fa-chevron-left");
 
         toggleControlSidebar();
+        $(window).resize();
     });
 
     // Gestione click sulla sidebar per evitare chiusura

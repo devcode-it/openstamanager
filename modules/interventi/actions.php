@@ -970,6 +970,11 @@ switch (post('op')) {
                 }
             }
         }
+        
+        //Trigger aggiornamento intervento
+        $intervento = Intervento::find($id_record);
+        $intervento->updated_at = date('Y-m-d H:i:s');
+        $intervento->save();
 
         break;
 
@@ -1002,6 +1007,11 @@ switch (post('op')) {
 
         $sessione->save();
 
+        //Trigger aggiornamento intervento
+        $intervento = Intervento::find($id_record);
+        $intervento->updated_at = date('Y-m-d H:i:s');
+        $intervento->save();
+
         break;
 
     case 'update_inline_sessione':
@@ -1018,6 +1028,12 @@ switch (post('op')) {
         $sessione->scontokm_unitario = post('scontokm_unitario');
         $sessione->tipo_scontokm = post('tipo_sconto_km');
         $sessione->save();
+
+        //Trigger aggiornamento intervento
+        $intervento = Intervento::find($id_record);
+        $intervento->updated_at = date('Y-m-d H:i:s');
+        $intervento->save();
+
         break;
 
         // Duplica intervento

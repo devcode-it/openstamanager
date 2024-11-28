@@ -134,6 +134,10 @@ if (!function_exists('add_tecnico')) {
             $riga->save();
         }
 
+        //Trigger aggiornamento intervento
+        $intervento->updated_at = date('Y-m-d H:i:s');
+        $intervento->save();
+
         return true;
     }
 }

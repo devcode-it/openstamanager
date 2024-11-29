@@ -71,6 +71,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunto blocco su numero caratteri descrizione articolo
 - Aggiunta l'**eliminazione massiva** di interventi con righe non evase in altri documenti, e fatture non inviate allo SDI o via email
 - Aggiunta gestione **Impostazioni per utente**
+- Aggiunto avviso per prezzo minimo consigliato in fattura
 
 ### Modificato (Changed)
 - Migliorata la visualizzazione della quantità per sede

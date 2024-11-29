@@ -81,7 +81,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 | 8.2 | 14/12/2023 | ✔️ |
 | 8.1 | 25/10/2023 | ✔️ |
 | 8.0 | 30/04/2026 | ✔️ |
-| 5.7 | 31/10/2023 | ✔️ |
+| 5.7 | 31/10/2023 | ❌ |
 | 5.6 | 28/02/2021 | ❌ |
 
     

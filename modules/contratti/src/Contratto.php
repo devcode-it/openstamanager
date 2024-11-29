@@ -230,32 +230,33 @@ class Contratto extends Document
     {
         parent::triggerEvasione($trigger);
 
-        $righe = $this->getRighe();
+        if (setting('Cambia automaticamente stato contratti fatturati')) {
+            $righe = $this->getRighe();
+            $qta_evasa = $righe->sum('qta_evasa');
+            $qta = $righe->sum('qta');
+            $parziale = $qta != $qta_evasa;
 
-        $qta_evasa = $righe->sum('qta_evasa');
-        $qta = $righe->sum('qta');
-        $parziale = $qta != $qta_evasa;
+            // Impostazione del nuovo stato
+            if ($qta_evasa == 0) {
+                $descrizione = 'In lavorazione';
+                $codice_intervento = 'OK';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+                $codice_intervento = 'FAT';
+            }
 
-        // Impostazione del nuovo stato
-        if ($qta_evasa == 0) {
-            $descrizione = 'In lavorazione';
-            $codice_intervento = 'OK';
-        } else {
-            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-            $codice_intervento = 'FAT';
-        }
+            $stato = Stato::where('name', $descrizione)->first()->id;
+            $this->stato()->associate($stato);
+            $this->save();
 
-        $stato = Stato::where('name', $descrizione)->first()->id;
-        $this->stato()->associate($stato);
-        $this->save();
-
-        // Trasferimento degli interventi collegati
-        $interventi = $this->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
-        foreach ($interventi as $intervento) {
-            if ($intervento->stato->is_completato == 1) {
-                $intervento->stato()->associate($stato_intervento);
-                $intervento->save();
+            // Trasferimento degli interventi collegati
+            $interventi = $this->interventi;
+            $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
+            foreach ($interventi as $intervento) {
+                if ($intervento->stato->is_completato == 1) {
+                    $intervento->stato()->associate($stato_intervento);
+                    $intervento->save();
+                }
             }
         }
     }

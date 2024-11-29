@@ -47,7 +47,7 @@ foreach ($fields as $name => $value) {
 }
 $query .= ')';
 
-$query .= Modules::getAdditionalsQuery('Articoli');
+$query .= Modules::getAdditionalsQuery(Module::where('name', 'Articoli')->first()->id);
 
 $rs = $dbo->fetchArray($query);
 

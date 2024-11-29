@@ -438,9 +438,8 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery($element['attributes']['name'], null, self::$segments), $query);
+        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery(\Models\Module::where('name', $element['attributes']['name'])->first()->id, null, self::$segments), $query);
         $views = self::getViews($element);
-
         $select = [];
 
         foreach ($views as $view) {

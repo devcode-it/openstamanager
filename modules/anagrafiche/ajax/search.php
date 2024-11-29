@@ -59,7 +59,7 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-$query .= Modules::getAdditionalsQuery('Anagrafiche');
+$query .= Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id);
 
 $rs = $dbo->fetchArray($query);
 

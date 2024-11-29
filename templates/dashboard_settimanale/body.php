@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Models\Module;
 
 ?>
 <style type="text/css">
@@ -81,7 +82,7 @@ $query = "SELECT
         ".$where.'
         `idtecnico` IN('.implode(',', $tecnici).') AND
         `in_interventi`.`idstatointervento` IN('.implode(',', $stati).') AND
-        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
+        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
     GROUP BY 
         `in_interventi`.`id`, `data`
     ORDER BY 

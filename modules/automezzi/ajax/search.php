@@ -17,7 +17,7 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
-$query .= Modules::getAdditionalsQuery('Automezzi');
+$query .= Modules::getAdditionalsQuery(Module::where('name', 'Automezzi')->first()->id);
 
 $rs = $dbo->fetchArray($query);
 

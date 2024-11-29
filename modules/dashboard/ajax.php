@@ -90,7 +90,7 @@ switch (filter('op')) {
             AND `idtecnico` IN('.implode(',', $tecnici).')
             AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
             AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
-            '.Modules::getAdditionalsQuery('Interventi').'
+            '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
         HAVING
             `idzona` IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);
@@ -248,7 +248,7 @@ switch (filter('op')) {
                 LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id` 
             WHERE 
                 `in_interventi`.`id`='.prepare($idintervento).' AND 
-                `in_statiintervento`.`is_completato` = 0 '.Modules::getAdditionalsQuery('Interventi');
+                `in_statiintervento`.`is_completato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -278,7 +278,7 @@ switch (filter('op')) {
 
         if ($allDay == 'false') {
             // Lettura dati intervento di riferimento
-            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
+            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
             $rs = $dbo->fetchArray($query);
 
             if (!empty($rs)) {
@@ -307,7 +307,7 @@ switch (filter('op')) {
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento` 
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` 
                     WHERE 
-                        `in_interventi`.`id`='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi', null, false);
+                        `in_interventi`.`id`='.prepare($id).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
                 $rs = $dbo->fetchArray($query);
 
                 // correggo info indirizzo citta cap provincia con quelle della sede di destinazione

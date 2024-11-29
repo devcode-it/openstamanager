@@ -42,7 +42,7 @@ FROM
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE 
-    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery('Interventi', null, false).'
+    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
 GROUP BY 
     `an_anagrafiche`.`idanagrafica`
 ORDER BY 

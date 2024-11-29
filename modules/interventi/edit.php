@@ -21,6 +21,7 @@ use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
+use Modules\Interventi\Stato;
 
 include_once __DIR__.'/../../core.php';
 
@@ -187,7 +188,21 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` =<?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}
+<?php
+                if (setting('Cambia automaticamente stato attività fatturate')) {
+                    $id_stato_fatt = Stato::where('codice', 'FAT')->first()->id;
+                    if ($intervento->stato->id == $id_stato_fatt) {
+                        echo '
+                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                    } else {
+                        echo '
+                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`id`!='.prepare($id_stato_fatt).' AND `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                    }
+                } else {
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                }
+?>
                 </div>
             </div>
 

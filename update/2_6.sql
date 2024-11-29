@@ -237,3 +237,9 @@ INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) V
 
 -- Aggiunte note in Preventivi
 ALTER TABLE `co_preventivi` ADD `note` TEXT NOT NULL;
+
+-- Aggiunta impostazione cambio stato interventi fatturati
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `is_user_setting`) VALUES (NULL, 'Cambia automaticamente stato attività fatturate', '1', 'boolean', '1', 'Attività', NULL, NULL, NULL, '0');
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
+(NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato attività fatturate'), 'Cambia automaticamente stato attività fatturate', ''), 
+(NULL, '2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato attività fatturate'), 'Automatically change the status of billed activities', '');

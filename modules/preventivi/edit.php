@@ -168,15 +168,16 @@ echo '
                         'value' => $record['condizioni_fornitura'],
                     ]);
 echo '
-                </div>';
-
+                </div>
+                
+                <div class="col-md-6">
+                    {[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "class": "autosize", "value": "$note$", "extra": "rows=\'5\'" ]}';
 if ($user->gruppo != 'Clienti') {
     echo '
-                <div class="col-md-6">
-                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-                </div>';
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}';
 }
 ?>
+                </div>
 			</div>
 
             <!--div class="pull-right">

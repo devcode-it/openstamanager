@@ -234,3 +234,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
 (NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato contratti fatturati'), 'Cambia automaticamente stato contratti fatturati', ''), 
 (NULL, '2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato contratti fatturati'), 'Automatically change the status of billed contracts', '');
+
+-- Aggiunte note in Preventivi
+ALTER TABLE `co_preventivi` ADD `note` TEXT NOT NULL;

@@ -75,6 +75,7 @@ switch (post('op')) {
             $preventivo->numero = post('numero');
             $preventivo->condizioni_fornitura = post('condizioni_fornitura');
             $preventivo->informazioniaggiuntive = post('informazioniaggiuntive');
+            $preventivo->note = post('note');
 
             // Informazioni sulle date del documento
             $preventivo->data_bozza = post('data_bozza') ?: null;

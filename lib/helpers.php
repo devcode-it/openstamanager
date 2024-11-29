@@ -110,11 +110,12 @@ function setting($name, $again = false)
 
     $user = Auth::user();
     if ($user) {
-        $user_options = json_decode($user->options, true) ?: [];
+        $user_options = json_decode($user->options ?: '', true) ?: [];
     }
 
     if ($user_options['settings'][$setting->id] !== null) {
         $value = $user_options['settings'][$setting->id];
+        $value = is_array($value) ? implode(',', $value) : $value;
     } else {
         $value = $setting->valore;
     }

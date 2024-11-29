@@ -228,3 +228,9 @@ UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'N
 UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Sistema di firma ';
 UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Inizio periodo calendario';
 UPDATE `zz_settings` SET `is_user_setting` = '1' WHERE `zz_settings`.`nome` = 'Fine periodo calendario';
+
+-- Aggiunta impostazione cambio stato contratti fatturati
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `is_user_setting`) VALUES (NULL, 'Cambia automaticamente stato contratti fatturati', '1', 'boolean', '1', 'Contratti', NULL, NULL, NULL, '0');
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
+(NULL, '1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato contratti fatturati'), 'Cambia automaticamente stato contratti fatturati', ''), 
+(NULL, '2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Cambia automaticamente stato contratti fatturati'), 'Automatically change the status of billed contracts', '');

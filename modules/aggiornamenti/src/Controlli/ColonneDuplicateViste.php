@@ -41,10 +41,10 @@ class ColonneDuplicateViste extends Controllo
             $modulo = Module::find($colonna['id_module']);
 
             $this->addResult([
-                'id' => $colonna['name'],
-                'nome' => $modulo->getTranslation('title').': '.$colonna['name'],
+                'id' => $colonna['title'],
+                'nome' => $modulo->getTranslation('title').': '.$colonna['title'],
                 'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste più volte', [
-                    '_NAME_' => $colonna['name'],
+                    '_NAME_' => $colonna['title'],
                     '_MODULE_' => $modulo->getTranslation('title'),
                 ]),
             ]);

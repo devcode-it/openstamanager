@@ -65,7 +65,13 @@ foreach (App::getAssets()['print'] as $style) {
 }
 
 if (Auth::check()) {
-    $has_plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->count();
+    if ($id_record) {
+        $position = 'tab';
+    } else {
+        $position = 'tab_main';
+    }
+
+    $has_plugins = Plugin::where('idmodule_to', $id_module)->where('position', $position)->where('enabled', 1)->count();
 
     echo '
 		<script>

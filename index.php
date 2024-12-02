@@ -196,8 +196,9 @@ if ($microsoft) {
                         </div>';
 }
 echo '
+                        </div>
                     </div>
-				</div>
+                </div>
 			</form>
 			<!-- /.box -->
 

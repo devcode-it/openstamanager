@@ -187,10 +187,10 @@ if (empty($record) || !$has_access) {
     $key = $posizioni ? array_search($id_record, array_column($posizioni, 'id')) : 0;
 
     // Precedente
-    $prev = $posizioni[$key-1]['id'];
+    $prev = $posizioni[$key - 1]['id'];
 
     // Successivo
-    $next = $posizioni[$key+1]['id'];
+    $next = $posizioni[$key + 1]['id'];
 
     if (isMobile()) {
         echo '<div>';

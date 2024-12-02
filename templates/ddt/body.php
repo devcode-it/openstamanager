@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -24,7 +25,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 // Creazione righe fantasma
 $autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
 $rows_per_page = ($documento['note'] || $options['pricing'] ? 19 : 27);
-$autofill->setRows($rows_per_page, 0, 32 );
+$autofill->setRows($rows_per_page, 0, 32);
 
 // Intestazione tabella per righe
 echo "
@@ -107,7 +108,7 @@ foreach ($righe as $riga) {
         
                 <td>
                     '.nl2br($text);
-                    $autofill->count($text);
+                $autofill->count($text);
             }
         }
         $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
@@ -115,7 +116,7 @@ foreach ($righe as $riga) {
 
     $source_type = $riga::class;
     $autofill->count($r['descrizione']);
-    
+
     echo $num.'
         </td>
         <td>'.nl2br((string) $r['descrizione']);

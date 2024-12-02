@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -109,7 +110,7 @@ foreach ($righe as $riga) {
             
                     <td>
                         '.nl2br($text);
-                        $autofill->count($text);
+                $autofill->count($text);
             }
         }
         $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
@@ -118,14 +119,14 @@ foreach ($righe as $riga) {
     $source_type = $riga::class;
 
     $autofill->count($r['descrizione']);
-        echo $num.'
+    echo $num.'
     </td>
     <td>'.nl2br((string) $r['descrizione']);
 
     if ($riga->isArticolo()) {
         echo '<small><br>'.$riga->codice.'</small>';
         $autofill->count($riga->codice, true);
-    } 
+    }
 
     if ($riga->isArticolo()) {
         // Seriali
@@ -252,7 +253,7 @@ if (!empty($record['note'])) {
     echo '
             <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
             <p><small>'.nl2br((string) $record['note']).'</small></p>';
-            $autofill->count($record['note'], true);
+    $autofill->count($record['note'], true);
 }
 
 echo '

@@ -38,23 +38,23 @@ echo '
 
     <div class="row">
         <div class="col-md-2 offset-md-10">';
-        if (setting('Cambia automaticamente stato contratti fatturati')) {
-            $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
-            $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
-        
-            if ($contratto->stato->id == $id_stato_fatt || $contratto->stato->id == $id_stato_parz_fatt) {
-                echo '
+if (setting('Cambia automaticamente stato contratti fatturati')) {
+    $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
+    $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
+
+    if ($contratto->stato->id == $id_stato_fatt || $contratto->stato->id == $id_stato_parz_fatt) {
+        echo '
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}';
-            } else {
-                echo '
+    } else {
+        echo '
                     {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` NOT IN ('.implode(',', [$id_stato_fatt, $id_stato_parz_fatt]).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}';
-            }
-        } else {
-            echo '
+    }
+} else {
+    echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
         </div>';
-        }
-        echo '
+}
+echo '
         </div>
     </div>
 
@@ -88,14 +88,14 @@ echo '
 
                 <div class="col-md-3">';
 if ($record['idagente'] != 0) {
-echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "' . tr('Agente') . '", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": ' . $record['idanagrafica'] . '}, "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                 </div>
             </div>
         </div>
-    </div>';            
+    </div>';
 ?>
 	<div class="card card-primary">
 		<div class="card-header">
@@ -150,12 +150,12 @@ echo '
 
             <div class="row">
                 <div class="col-md-3">
-                    <?php echo (!empty($record['id_categoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : '');?>
-                    {[ "type": "select", "label": "<?php echo tr('Categoria');?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti" ]}      
+                    <?php echo !empty($record['id_categoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+                    {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti" ]}      
                 </div>
                 <div class="col-md-3">
-                    <?php echo (!empty($record['id_sottocategoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : '');?>
-                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria');?>", "name": "id_sottocategoria", "required": 0, "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]);?> ]}                  
+                    <?php echo !empty($record['id_sottocategoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "required": 0, "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?> ]}                  
                 </div>
             </div>
 

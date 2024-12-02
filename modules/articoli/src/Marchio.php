@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -31,7 +32,6 @@ class Marchio extends Model
     use RecordTrait;
 
     protected $table = 'mg_marchi';
-
 
     public static function build($nome = null)
     {

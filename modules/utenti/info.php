@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -137,20 +138,20 @@ echo '
             </div>
 
             <div class="card-body">';
-                $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
-                ->where('is_user_setting', 1)
-                ->groupBy(['sezione'])
-                ->orderBy('sezione')
-                ->get();
+$gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
+->where('is_user_setting', 1)
+->groupBy(['sezione'])
+->orderBy('sezione')
+->get();
 
-                foreach ($gruppi as $key => $gruppo) {
-                    echo '
+foreach ($gruppi as $key => $gruppo) {
+    echo '
                 <!-- Impostazioni della singola sezione -->
                 <div class="card card-primary collapsed-card" title="'.$gruppo->nome.'">
                     <div class="card-header clickable" title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
                         <div class="card-title">'.tr('_SEZIONE_', [
-                        '_SEZIONE_' => $gruppo->nome,
-                    ]).'</div>
+        '_SEZIONE_' => $gruppo->nome,
+    ]).'</div>
                         <div class="card-tools pull-right">
                             <div class="badge">'.$gruppo->numero.'</div>
                         </div>
@@ -158,8 +159,8 @@ echo '
                 
                     <div class="card-body row"></div>
                 </div>';
-                }
-            echo '
+}
+echo '
             </div>
         </div>
     </div>

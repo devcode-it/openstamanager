@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -441,7 +442,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
-            $emails = database()->fetchOne("SELECT COUNT(id) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id." GROUP BY `em_emails`.`id_record`")['count'];
+            $emails = database()->fetchOne("SELECT COUNT(id) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id.' GROUP BY `em_emails`.`id_record`')['count'];
 
             if (($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == '') && empty($emails)) {
                 try {
@@ -726,7 +727,6 @@ $operations['exportFE-bulk'] = [
     ],
 ];
 
-
 $operations['export-ricevute-bulk'] = [
     'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
     'data' => [
@@ -737,7 +737,6 @@ $operations['export-ricevute-bulk'] = [
         'blank' => true,
     ],
 ];
-
 
 $operations['export-xml-bulk'] = [
     'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',

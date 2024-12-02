@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -46,8 +47,7 @@ switch (post('op')) {
 
         break;
 
-
-    // Aggiungo marchio
+        // Aggiungo marchio
     case 'add':
         $nome = filter('name');
         $link = filter('link');
@@ -71,7 +71,7 @@ switch (post('op')) {
 
         break;
 
-    // Rimuovo marchio
+        // Rimuovo marchio
     case 'delete':
         $dbo->query('DELETE FROM mg_marchi WHERE id='.prepare($id_record));
 

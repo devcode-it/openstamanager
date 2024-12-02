@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -412,7 +413,7 @@ switch (post('op')) {
             if (post('threshold_qta')) {
                 $dbo->update('mg_scorte_sedi', [
                     'threshold_qta' => post('threshold_qta'),
-                ],[
+                ], [
                     'id_articolo' => $id_record,
                     'id_sede' => post('id_sede'),
                 ]);
@@ -436,7 +437,7 @@ switch (post('op')) {
 
     case 'update_giacenza':
         $data = date('Y-m-d');
-        
+
         $qta = post('qta') ?: 0;
         $new_qta = post('new_qta') ?: 0;
 
@@ -449,7 +450,7 @@ switch (post('op')) {
 
         // Registrazione del movimento con variazione della quantità
         $articolo->movimenta($qta_movimento, $descrizione, $data, 1, [
-            'idsede' => post('id_sede')
+            'idsede' => post('id_sede'),
         ]);
 
         flash()->info(tr('Giacenza aggiornata!'));

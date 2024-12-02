@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -56,7 +57,7 @@ switch (post('op')) {
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato DDT.'));
         } else {
-            $stato = Stato::build($icona, $colore, $completato, $is_fatturabile);
+            $stato = Stato::build();
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $stato->name = $descrizione;
             }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -20,9 +21,7 @@
 namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
-use Geocoder\Provider\GoogleMaps;
 use Illuminate\Database\Eloquent\Model;
-use Ivory\HttpAdapter\CurlHttpAdapter;
 
 class Sede extends Model
 {
@@ -98,12 +97,9 @@ class Sede extends Model
 
         if (
             !empty($this->indirizzo)
-            &&
-            !empty($this->citta)
-            &&
-            !empty($this->provincia)
-            &&
-            $new_indirizzo != $prev_indirizzo
+            && !empty($this->citta)
+            && !empty($this->provincia)
+            && $new_indirizzo != $prev_indirizzo
         ) {
             $indirizzo = urlencode($this->indirizzo.', '.$this->citta.', '.$this->provincia);
 
@@ -117,7 +113,7 @@ class Sede extends Model
                 } else {
                     $ch = curl_init();
                 }
-                
+
                 $lang = \Models\Locale::find(setting('Lingua'))->language_code;
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';

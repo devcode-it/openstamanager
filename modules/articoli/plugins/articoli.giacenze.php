@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -45,7 +46,6 @@ $query = 'SELECT
         `or_ordini`.`id`
     HAVING 
         `qta_ordinata` > 0";
-
 
 /*
  ** Impegnato

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -19,11 +20,11 @@
 
 include_once __DIR__.'/../../../core.php';
 
-use Modules\Interventi\Intervento;
 use Models\Module;
-use Modules\Preventivi\Preventivo;
 use Modules\Contratti\Contratto;
+use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Modules\Preventivi\Preventivo;
 
 $tipologie = [];
 $tecnici = [];
@@ -36,11 +37,11 @@ if ($id_module == Module::where('name', 'Preventivi')->first()->id) {
     $documento = Preventivo::find($id_record);
     $id_documento = 'id_preventivo';
     $text = tr('Preventivo');
-} else if ($id_module == Module::where('name', 'Contratti')->first()->id) {
+} elseif ($id_module == Module::where('name', 'Contratti')->first()->id) {
     $documento = Contratto::find($id_record);
     $id_documento = 'id_contratto';
     $text = tr('Contratto');
-} else if ($id_module == Module::where('name', 'Ordini cliente')->first()->id) {
+} elseif ($id_module == Module::where('name', 'Ordini cliente')->first()->id) {
     $documento = Ordine::find($id_record);
     $id_documento = 'id_ordine';
     $text = tr('Ordine');

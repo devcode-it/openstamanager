@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -18,7 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\Contratti\CategoriaContratto AS Categoria;
+use Modules\Contratti\CategoriaContratto as Categoria;
 
 switch (filter('op')) {
     case 'update':

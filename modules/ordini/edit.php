@@ -175,10 +175,10 @@ echo '
                     if (!empty($record['idvettore'])) {
                         echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
                     }
-                    $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-                        'id' => $record['idspedizione'],
-                    ])['esterno'];
-                ?>
+$esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
+    'id' => $record['idspedizione'],
+])['esterno'];
+?>
 					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
@@ -569,22 +569,22 @@ if (!empty($elementi)) {
     <div class="card-body">
         <ul>';
 
-        foreach ($elementi as $elemento) {
-            $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $elemento['tipo_documento'],
-                '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-                '_DATE_' => Translator::dateToLocale($elemento['data']),
-            ]);
-    
-            echo '
-            <li>'.Modules::link($elemento['modulo'], $elemento['id'], $descrizione).'</li>';
-        }
-    
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+
         echo '
+            <li>'.Modules::link($elemento['modulo'], $elemento['id'], $descrizione).'</li>';
+    }
+
+    echo '
             </ul>
         </div>
     </div>';
-    }
+}
 
 if (!empty($elementi)) {
     echo '

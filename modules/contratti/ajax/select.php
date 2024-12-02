@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -54,7 +55,7 @@ switch ($resource) {
             $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
             $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste ?: 1) : 0;
 
-            if( $ore_previste ){
+            if ($ore_previste) {
                 if ($perc_ore < 75) {
                     $color = '#81f794';
                 } elseif ($perc_ore <= 100) {
@@ -62,9 +63,9 @@ switch ($resource) {
                 }
             }
 
-            $descrizione = ($ore_previste>0 ? $r['descrizione']." - ".tr('_EROGATE_/_PREVISTE_ ore',[
-                '_EROGATE_' => Translator::numberToLocale($ore_erogate,2),
-                '_PREVISTE_' => Translator::numberToLocale($ore_previste,2),
+            $descrizione = ($ore_previste > 0 ? $r['descrizione'].' - '.tr('_EROGATE_/_PREVISTE_ ore', [
+                '_EROGATE_' => Translator::numberToLocale($ore_erogate, 2),
+                '_PREVISTE_' => Translator::numberToLocale($ore_previste, 2),
             ]) : $r['descrizione']);
 
             $results[] = [

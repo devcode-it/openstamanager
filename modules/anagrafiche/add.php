@@ -25,14 +25,13 @@ include_once __DIR__.'/../../core.php';
 $id_nazione_italia = (new Nazione())->getByField('title', 'Italia', Models\Locale::getPredefined()->id);
 
 if ($idtipoanagrafica) {
-	$tipo = Tipo::where('name', $idtipoanagrafica)->first();
+    $tipo = Tipo::where('name', $idtipoanagrafica)->first();
 } else {
-	$tipo =  Tipo::where('name', get('tipoanagrafica'))->first() ?: get('tipoanagrafica');
-	$idtipoanagrafica = $tipo->id;
+    $tipo = Tipo::where('name', get('tipoanagrafica'))->first() ?: get('tipoanagrafica');
+    $idtipoanagrafica = $tipo->id;
 }
 
 $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
-
 
 echo '
 <form action="" method="post" id="add-form">

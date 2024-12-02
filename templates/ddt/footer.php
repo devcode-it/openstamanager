@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -115,7 +116,7 @@ if ($options['pricing']) {
             </td>
         </tr>';
     }
-} else if ($documento['note']){
+} elseif ($documento['note']) {
     // Riga 1
     echo "
     <tr>

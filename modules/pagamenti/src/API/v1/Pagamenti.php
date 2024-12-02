@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -21,7 +22,6 @@ namespace Modules\Pagamenti\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
-use Modules\Pagamenti\Pagamento;
 
 class Pagamenti extends Resource implements RetrieveInterface
 {
@@ -33,7 +33,7 @@ class Pagamenti extends Resource implements RetrieveInterface
         $table = 'co_pagamenti';
 
         $select = [
-            'co_pagamenti.*'
+            'co_pagamenti.*',
         ];
 
         $where = [];

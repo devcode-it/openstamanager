@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -134,7 +135,7 @@ if (!function_exists('add_tecnico')) {
             $riga->save();
         }
 
-        //Trigger aggiornamento intervento
+        // Trigger aggiornamento intervento
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
 

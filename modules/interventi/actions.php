@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -970,8 +971,8 @@ switch (post('op')) {
                 }
             }
         }
-        
-        //Trigger aggiornamento intervento
+
+        // Trigger aggiornamento intervento
         $intervento = Intervento::find($id_record);
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
@@ -1007,7 +1008,7 @@ switch (post('op')) {
 
         $sessione->save();
 
-        //Trigger aggiornamento intervento
+        // Trigger aggiornamento intervento
         $intervento = Intervento::find($id_record);
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
@@ -1029,7 +1030,7 @@ switch (post('op')) {
         $sessione->tipo_scontokm = post('tipo_sconto_km');
         $sessione->save();
 
-        //Trigger aggiornamento intervento
+        // Trigger aggiornamento intervento
         $intervento = Intervento::find($id_record);
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();

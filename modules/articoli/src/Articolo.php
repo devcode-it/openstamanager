@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -23,15 +24,14 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
+use Models\Plugin;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
+use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
 use Traits\RecordTrait;
-use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
-use Models\Plugin;
-
 
 class Articolo extends Model
 {
@@ -393,6 +393,7 @@ class Articolo extends Model
     {
         return self::$translated_fields;
     }
+
     /**
      * @version distinta_base
      */

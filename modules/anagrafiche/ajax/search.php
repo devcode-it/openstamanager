@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -133,7 +134,6 @@ foreach ($rs as $r) {
     $results[] = $result;
 }
 
-
 // Sedi anagrafiche
 $fields = [
     'Nome' => 'nomesede',
@@ -145,7 +145,7 @@ $fields = [
     'Fax' => 'fax',
     'Cellulare' => 'cellulare',
     'Email' => 'email',
-    'Note' => 'note'
+    'Note' => 'note',
 ];
 
 $query = 'SELECT *, idanagrafica as id';

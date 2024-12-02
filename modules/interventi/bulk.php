@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -471,7 +472,6 @@ $operations['copy-bulk'] = [
 $operations['delete-bulk'] = [
     'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
 ];
-
 
 $operations['export-bulk'] = [
     'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),

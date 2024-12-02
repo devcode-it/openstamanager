@@ -143,19 +143,19 @@ echo '
                     {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                 </div>';
 if ($dir == 'entrata') {
-echo '
+    echo '
                 <div class="col-md-3">';
-if ($record['idagente'] != 0) {
-    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-}
-echo '
+    if ($record['idagente'] != 0) {
+        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
+    }
+    echo '
                     {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                 </div>';
 }
 echo '
                 <div class="col-md-3">';
 if (!empty($record['idreferente'])) {
-echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.$record['idsede_destinazione'].'} ]}

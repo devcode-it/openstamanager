@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -18,8 +19,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Contratti\CategoriaContratto as Categoria;
 use Modules\Contratti\Contratto;
-use Modules\Contratti\CategoriaContratto AS Categoria;
 
 $subcategorie = Categoria::where('parent', '=', $id_record)->get();
 

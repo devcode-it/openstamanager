@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -69,7 +70,7 @@ class PianoContiRagioneSociale extends Controllo
         foreach ($anagrafiche_interessate as $anagrafica) {
             if ($anagrafica['nome_conto'] != $anagrafica['ragione_sociale']) {
                 $descrizione = tr("Il conto collegato all'anagrafica corrente (_NOME_) non corrisponde alla ragione sociale dell'anagrafica", [
-                    '_NOME_' => $anagrafica['nome_conto']
+                    '_NOME_' => $anagrafica['nome_conto'],
                 ]);
 
                 $this->addResult([
@@ -77,7 +78,7 @@ class PianoContiRagioneSociale extends Controllo
                     'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
                     'descrizione' => $descrizione,
                 ]);
-            } 
+            }
         }
     }
 
@@ -88,15 +89,15 @@ class PianoContiRagioneSociale extends Controllo
         $anagrafica = Anagrafica::find($record['id']);
 
         database()->update('co_pianodeiconti3', [
-            'descrizione' => $anagrafica->ragione_sociale
+            'descrizione' => $anagrafica->ragione_sociale,
         ], [
-            'id' => $anagrafica->idconto_cliente
+            'id' => $anagrafica->idconto_cliente,
         ]);
 
         database()->update('co_pianodeiconti3', [
-            'descrizione' => $anagrafica->ragione_sociale
+            'descrizione' => $anagrafica->ragione_sociale,
         ], [
-            'id' => $anagrafica->idconto_fornitore
+            'id' => $anagrafica->idconto_fornitore,
         ]);
 
         return true;

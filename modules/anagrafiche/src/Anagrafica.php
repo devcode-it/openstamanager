@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -454,12 +455,9 @@ class Anagrafica extends Model
 
         if (
             !empty($this->sedeLegale->indirizzo)
-            &&
-            !empty($this->sedeLegale->citta)
-            &&
-            !empty($this->sedeLegale->provincia)
-            &&
-            $new_indirizzo != $prev_indirizzo
+            && !empty($this->sedeLegale->citta)
+            && !empty($this->sedeLegale->provincia)
+            && $new_indirizzo != $prev_indirizzo
         ) {
             $indirizzo = urlencode($this->sedeLegale->indirizzo.', '.$this->sedeLegale->citta.', '.$this->sedeLegale->provincia);
 

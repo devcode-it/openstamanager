@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -31,10 +32,9 @@ class Upload extends Model
 
     /**
      * Elenco delle estensioni file per mime type.
-     * Fonte: https://www.iana.org/assignments/media-types/media-types.xhtml
-     * 
-     * @var array $extension_association
-     * 
+     * Fonte: https://www.iana.org/assignments/media-types/media-types.xhtml.
+     *
+     * @var array
      */
     protected static $extension_association = [
         'image/gif' => 'gif',

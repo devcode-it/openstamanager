@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -188,14 +189,10 @@ if (!empty($query)) {
             // Colore del testo
             if (!empty($column['data-background'])) {
                 $column['data-color'] = isset($column['data-color']) ? $column['data-color'] : color_inverse(trim($column['data-background']));
-            }
-
-            elseif (preg_match('/^mailto_(.+?)$/', trim($field), $m)) {
+            } elseif (preg_match('/^mailto_(.+?)$/', trim($field), $m)) {
                 $column['class'] = '';
                 $value = ($r[$field] ? '<a class="btn btn-default btn-sm btn-block" style="font-weight:normal;" href="mailto:'.$r[$field].'" target="_blank"><i class="fa fa-envelope text-primary"></i> '.$r[$field].'</a>' : '');
-            }
-
-            elseif (preg_match('/^tel_(.+?)$/', trim($field), $m)) {
+            } elseif (preg_match('/^tel_(.+?)$/', trim($field), $m)) {
                 $column['class'] = '';
                 $value = ($r[$field] ? '<a class="btn btn-default btn-sm btn-block"  href="tel:'.$r[$field].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$r[$field].'</a>' : '');
             }

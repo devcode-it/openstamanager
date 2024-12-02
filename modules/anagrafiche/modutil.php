@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -23,7 +24,7 @@ if (!function_exists('geolocalizzazione')) {
     function geolocalizzazione($id_record, $is_sede = false)
     {
         $dbo = database();
-        $lang = \Models\Locale::find(setting('Lingua'))->language_code;
+        $lang = Models\Locale::find(setting('Lingua'))->language_code;
 
         if ($is_sede) {
             $sede = $dbo->table('an_sedi')->where('id', $id_record)->first();

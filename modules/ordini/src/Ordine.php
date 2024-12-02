@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -178,7 +179,7 @@ class Ordine extends Document
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
-            if(database()->isConnected() && database()->tableExists('or_statiordine_lang')){
+            if (database()->isConnected() && database()->tableExists('or_statiordine_lang')) {
                 $stato = Stato::where('name', $descrizione)->first()->id;
             } else {
                 $stato = Stato::where('descrizione', $descrizione)->first()->id;

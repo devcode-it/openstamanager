@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -319,7 +320,6 @@ switch (filter('op')) {
         break;
 
     case 'update_setting':
-
         $id = filter('id');
         $valore = filter('valore', null, 1);
 

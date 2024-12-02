@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -188,9 +189,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     protected function mapModifiedRecords($records)
     {
         if ($records instanceof Collection) {
-            return $records->mapWithKeys(function ($item) {
-                return [$item['id'] => $item];
-            })->toArray();
+            return $records->mapWithKeys(fn ($item) => [$item['id'] => $item])->toArray();
         }
 
         return array_reduce($records, function ($accumulator, $item) {

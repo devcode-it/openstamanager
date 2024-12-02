@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -227,10 +228,11 @@ foreach ($righe as $riga) {
         $color = '';
         $valore_evaso = 0;
         foreach ($elementi as $elemento) {
-            $righe_evase = explode(', ', $elemento['righe']);
-            $righe_evase_array = array_reduce($righe_evase, function($carry, $riga_evasa) {
-                list($id, $qta) = explode(' - ', $riga_evasa);
+            $righe_evase = explode(', ', (string) $elemento['righe']);
+            $righe_evase_array = array_reduce($righe_evase, function ($carry, $riga_evasa) {
+                [$id, $qta] = explode(' - ', $riga_evasa);
                 $carry[$id] = $qta;
+
                 return $carry;
             }, []);
             foreach ($righe_evase_array as $id => $qta) {
@@ -277,13 +279,12 @@ foreach ($righe as $riga) {
                     '.($show_notifica['show_notifica_prezzo'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
                     {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}';
 
-                        // Prezzo inferiore al minimo consigliato
-                    if ($riga->isArticolo()) {
-                        echo 
-                        ($riga->articolo->minimo_vendita > $riga->prezzo_unitario_corrente ? '<small><i class="fa fa-info-circle text-danger"></i> '.tr('Consigliato: ').numberFormat($riga->articolo->minimo_vendita, 2).'</small>' : '');
-                    }
-                echo '</td>';
+            // Prezzo inferiore al minimo consigliato
+            if ($riga->isArticolo()) {
+                echo $riga->articolo->minimo_vendita > $riga->prezzo_unitario_corrente ? '<small><i class="fa fa-info-circle text-danger"></i> '.tr('Consigliato: ').numberFormat($riga->articolo->minimo_vendita, 2).'</small>' : '';
             }
+            echo '</td>';
+        }
 
         // Sconto unitario
         $tipo_sconto = '';

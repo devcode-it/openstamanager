@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -121,7 +122,7 @@ switch (filter('op')) {
                             $pagamenti = $fattura_body['DatiPagamento'];
                             $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
                         }
-                        $metodi = isset($pagamenti[0]['DettaglioPagamento']) ? $pagamenti[0]['DettaglioPagamento'] : [];
+                        $metodi = $pagamenti[0]['DettaglioPagamento'] ?? [];
                         $metodi = isset($metodi[0]) ? $metodi : [$metodi];
                         $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
                         $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();

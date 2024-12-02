@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -18,7 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\Contratti\CategoriaContratto AS Categoria;
+use Modules\Contratti\CategoriaContratto as Categoria;
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_categorie_contratti` LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id`=`co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_categorie_contratti`.`id`='.prepare($id_record));

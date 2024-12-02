@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -73,7 +74,6 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`zz_segments_lang`.`title` LIKE '.prepare('%'.$search.'%');
             }
-
         }
 
         break;

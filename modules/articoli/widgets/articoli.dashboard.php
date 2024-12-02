@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -36,16 +37,16 @@ if (!empty($rs)) {
         <th class="text-center" width="14%">'.tr('Q.tà').'</th>
     </tr>';
 
-foreach ($rs as $r) {
-    $articolo = Articolo::find($r['id']);
-    $giacenze = $articolo->getGiacenze();
-    if ($giacenze[$r['id_sede']][0] < $r['threshold_qta']) {
-        if (!empty($r['id_sede'])) {
-            $sede = Sede::find($r['id_sede'])->nomesede;
-        } else {
-            $sede = 'Sede Legale';
-        }
-        echo '
+    foreach ($rs as $r) {
+        $articolo = Articolo::find($r['id']);
+        $giacenze = $articolo->getGiacenze();
+        if ($giacenze[$r['id_sede']][0] < $r['threshold_qta']) {
+            if (!empty($r['id_sede'])) {
+                $sede = Sede::find($r['id_sede'])->nomesede;
+            } else {
+                $sede = 'Sede Legale';
+            }
+            echo '
         <tr>
             <td>
                 '.Modules::link('Articoli', $r['id'], $r['codice'].' - '.$r['descrizione']).'
@@ -60,8 +61,8 @@ foreach ($rs as $r) {
                 '.Translator::numberToLocale($giacenze[$r['id_sede']][0], 'qta').' '.$articolo->um.'
             </td>
         </tr>';
+        }
     }
-}
 
     echo '
 </table>';

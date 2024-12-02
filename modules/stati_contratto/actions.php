@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -24,7 +25,7 @@ use Modules\Contratti\Stato;
 switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
-        $stato_new = Stato::where('name', $descrizione)->where('id','!=', $id_record)->first();
+        $stato_new = Stato::where('name', $descrizione)->where('id', '!=', $id_record)->first();
 
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei contratti.'));

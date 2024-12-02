@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -56,7 +57,7 @@ switch (post('op')) {
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
         $anagrafica->tipo = post('tipo');
-        $anagrafica->data_nascita = post('data_nascita') ?: NULL;
+        $anagrafica->data_nascita = post('data_nascita') ?: null;
         $anagrafica->luogo_nascita = post('luogo_nascita');
         $anagrafica->sesso = post('sesso');
         $anagrafica->capitale_sociale = post('capitale_sociale');

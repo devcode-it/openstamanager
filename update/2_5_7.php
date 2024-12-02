@@ -20,5 +20,4 @@ foreach ($fatture as $fattura) {
     if ($conto_cliente) {
         $dbo->query('UPDATE co_movimenti SET idconto = '.$conto_cliente.' WHERE iddocumento = '.$fattura->id.' AND idconto = '.$riepilogativo_clienti);
     }
-
 }

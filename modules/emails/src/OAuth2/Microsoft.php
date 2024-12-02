@@ -13,7 +13,7 @@ class Microsoft extends Azure implements ProviderInterface
      *
      * @source https://github.com/decomplexity/SendOauth2/blob/main/MSFT%20OAuth2%20quirks.md
      *
-     * @var \string[][]
+     * @var string[][]
      */
     protected static $options = [
         'scope' => [

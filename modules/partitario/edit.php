@@ -291,7 +291,7 @@ echo '
             }
         });
 
-        $("button[id^=conto2-]").each(function() {
+        $("button[id^=conto2-], span[id^=conto2-]").each(function() {
             $(this).on("click", function() {
                 let conto3 = $(this).parent().find("div[id^=conto2_]");
 

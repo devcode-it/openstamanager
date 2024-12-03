@@ -679,7 +679,7 @@ $operations['copy-bulk'] = [
 ];
 
 $operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="badge badge-danger">beta</span>',
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
 ];
 
 if ($dir == 'entrata') {

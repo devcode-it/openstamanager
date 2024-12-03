@@ -98,7 +98,7 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
@@ -110,6 +110,17 @@ class CSV extends CSVImporter
         }
 
         if (!empty($anagrafica)) {
+            $impianto = null;
+            // Ricerca sulla base della chiave primaria se presente
+            if (!empty($primary_key)) {
+                $impianto = Impianto::where($primary_key, $record[$primary_key])->first();
+            }
+
+            // Controllo se creare o aggiornare il record
+            if (($impianto && !$update_record) || (!$impianto && !$add_record)) {
+                return;
+            }
+
             $url = $record['immagine'];
             unset($record['immagine']);
 
@@ -154,21 +165,15 @@ class CSV extends CSVImporter
             }
 
             // Individuazione impianto e generazione
-            $impianto = null;
-
-            // Ricerca sulla base della chiave primaria se presente
-            if (!empty($primary_key)) {
-                $impianto = Impianto::where($primary_key, $record[$primary_key])->first();
-                $impianto->nome = $record['nome'];
-            }
             if (empty($impianto)) {
-                $impianto = Impianto::build($record['matricola'], $record['nome'], $categoria, $record['cliente']);
+                $impianto = Impianto::build($record['matricola'], $record['nome'], $categoria, $anagrafica->id);
             }
 
             if (!empty($record['data'])) {
                 $impianto->data = $record['data'];
             }
 
+            $impianto->nome = $record['nome'];
             $impianto->idanagrafica = $anagrafica->idanagrafica;
             $impianto->id_marca = $id_marca;
             $impianto->id_modello = $record['modello'];

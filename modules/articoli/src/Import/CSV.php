@@ -260,10 +260,23 @@ class CSV extends CSVImporter
         }
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
+
+        // Individuazione articolo e generazione
+        $articolo = null;
+        // Ricerca sulla base della chiave primaria se presente
+        if (!empty($primary_key)) {
+            $articolo = Articolo::where($primary_key, $record[$primary_key])->withTrashed()->first();
+        }
+
+        // Controllo se creare o aggiornare il record
+        if (($articolo && !$update_record) || (!$articolo && !$add_record)) {
+            return;
+        }
+
         $url = $record['immagine'];
         unset($record['immagine']);
 
@@ -308,12 +321,6 @@ class CSV extends CSVImporter
             }
         }
 
-        // Individuazione articolo e generazione
-        $articolo = null;
-        // Ricerca sulla base della chiave primaria se presente
-        if (!empty($primary_key)) {
-            $articolo = Articolo::where($primary_key, $record[$primary_key])->withTrashed()->first();
-        }
         if (empty($articolo)) {
             $articolo = Articolo::build($record['codice'], $categoria, $sottocategoria);
             $articolo->setTranslation('title', $record['descrizione']);

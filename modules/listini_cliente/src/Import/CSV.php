@@ -58,7 +58,7 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $id_listino = $database->fetchOne('SELECT id FROM mg_listini WHERE nome = '.prepare($record['nome_listino']))['id'];
@@ -70,6 +70,11 @@ class CSV extends CSVImporter
             $prezzo_unitario = $prezzi_ivati ? $articolo_originale->prezzo_vendita_ivato : $articolo_originale->prezzo_vendita;
 
             $articolo_listino = Articolo::where('id_articolo', $id_articolo)->where('id_listino', $id_listino)->first();
+
+            // Controllo se creare o aggiornare il record
+            if (($articolo_listino && !$update_record) || (!$articolo_listino && !$add_record)) {
+                return;
+            }
 
             if (!$articolo_listino) {
                 $articolo_listino = Articolo::build($articolo_originale, $id_listino);

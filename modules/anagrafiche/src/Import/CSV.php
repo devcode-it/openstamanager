@@ -235,7 +235,7 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
@@ -247,6 +247,21 @@ class CSV extends CSVImporter
         }
         unset($record['cognome']);
         unset($record['nome']);
+
+        // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
+        if (!empty($primary_key)) {
+            $anagrafica = Anagrafica::where($primary_key, '=', trim((string) $record[$primary_key]))->first();
+        }
+
+        // Controllo se creare o aggiornare il record
+        if (($anagrafica && !$update_record) || (!$anagrafica && !$add_record)) {
+            return;
+        }
+
+        // Se non trovo nessuna anagrafica corrispondente, allora la creo
+        if (empty($anagrafica)) {
+            $anagrafica = Anagrafica::build($record['ragione_sociale']);
+        }
 
         // Individuazione del tipo dell'anagrafica
         $tipologie = [];
@@ -329,16 +344,6 @@ class CSV extends CSVImporter
                     unset($record[$field]);
                 }
             }
-        }
-
-        // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
-        if (!empty($primary_key)) {
-            $anagrafica = Anagrafica::where($primary_key, '=', trim((string) $record[$primary_key]))->first();
-        }
-
-        // Se non trovo nessuna anagrafica corrispondente, allora la creo
-        if (empty($anagrafica)) {
-            $anagrafica = Anagrafica::build($record['ragione_sociale']);
         }
 
         // Impedisco di aggiornare l'anagrafica Azienda

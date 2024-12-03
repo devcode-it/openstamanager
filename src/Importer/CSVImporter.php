@@ -92,7 +92,7 @@ abstract class CSVImporter implements ImporterInterface
         return $rows;
     }
 
-    public function importRows($offset, $length)
+    public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $rows = $this->getRows($offset, $length);
         foreach ($rows as $row) {
@@ -100,13 +100,13 @@ abstract class CSVImporter implements ImporterInterface
             $record = $this->getRecord($row);
 
             // Importazione del record
-            $this->import($record);
+            $this->import($record, $update_record, $add_record);
         }
 
         return count($rows);
     }
 
-    abstract public function import($record);
+    abstract public function import($record, $update_record, $add_record);
 
     public function getPrimaryKey()
     {

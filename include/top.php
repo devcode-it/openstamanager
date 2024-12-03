@@ -576,8 +576,8 @@ if (Auth::check()) {
 
             // Tab per le checklist
             if ($structure->permission != '-' && $structure->use_checklists) {
-                $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null);
-                $checklists_total = $structure->recordChecks($id_record);
+                $checklists_unchecked = $structure->recordChecks($id_record)->where('checked_at', null)->where('is_titolo', 0);
+                $checklists_total = $structure->recordChecks($id_record)->where('is_titolo', 0);
 
                 echo '
                     <li data-toggle="control-sidebar" class="btn-default nav-item">

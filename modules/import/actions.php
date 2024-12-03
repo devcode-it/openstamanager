@@ -97,7 +97,7 @@ switch (filter('op')) {
             $csv->init();
         }
 
-        $count = $csv->importRows($offset, $limit);
+        $count = $csv->importRows($offset, $limit, post('update_record'), post('add_record'));
         $more = $count == $limit;
 
         // Operazioni di finalizzazione per l'importazione

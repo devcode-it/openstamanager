@@ -69,14 +69,14 @@ interface ImporterInterface
      *
      * @return int
      */
-    public function importRows($offset, $length);
+    public function importRows($offset, $length, $update_record, $add_record);
 
     /**
      * Gestisce le operazioni di importazione per un singolo record.
      *
      * @return bool
      */
-    public function import($record);
+    public function import($record, $update_record, $add_record);
 
     /**
      * Restituisce la chiave primaria impostata dall'utente.

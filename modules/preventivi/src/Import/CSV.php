@@ -84,13 +84,18 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
         $id_preventivo = $database->fetchOne('SELECT id FROM `co_preventivi` WHERE `numero`='.prepare($record['numero']))['id'];
         $preventivo = Preventivo::find($id_preventivo);
+
+        // Controllo se creare o aggiornare il record
+        if (($preventivo && !$update_record) || (!$preventivo && !$add_record)) {
+            return;
+        }
 
         if (empty($preventivo)) {
             $anagrafica = Anagrafica::where('ragione_sociale', $record['ragione_sociale'])->first();

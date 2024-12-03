@@ -99,7 +99,7 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
@@ -116,10 +116,14 @@ class CSV extends CSVImporter
 
         if (!empty($anagrafica)) {
             $intervento = null;
-
             // Ricerca sulla base della chiave primaria se presente
             if (!empty($primary_key)) {
                 $intervento = Intervento::where($primary_key, $record[$primary_key])->first();
+            }
+
+            // Controllo se creare o aggiornare il record
+            if (($intervento && !$update_record) || (!$intervento && !$add_record)) {
+                return;
             }
 
             // Verifico tipo e stato per creare l'intervento

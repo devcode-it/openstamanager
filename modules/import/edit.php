@@ -56,11 +56,19 @@ if (empty($id_record)) {
     <input type="hidden" name="op" value="import">
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "include_first_row", "extra":"", "value": "1"  ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Aggiorna record esistenti').'", "name": "update_record", "extra":"", "value": "1"  ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Crea record mancanti').'", "name": "add_record", "extra":"", "value": "1"  ]}
+        </div>
+
+        <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Chiave primaria').'", "name": "primary_key", "values": '.json_encode($campi_disponibili).', "value": "'.$primary_key.'" ]}
         </div>
     </div>';

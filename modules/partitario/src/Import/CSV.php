@@ -57,7 +57,7 @@ class CSV extends CSVImporter
         ];
     }
 
-    public function import($record)
+    public function import($record, $update_record = true, $add_record = true)
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
@@ -72,23 +72,44 @@ class CSV extends CSVImporter
         // Estraggo il conto,
         $idpianodeiconti2 = $database->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE numero='.prepare($codice_conto2))['id'];
 
-        if (empty($idpianodeiconti2) && empty($codice_conto3)) {
-            $database->insert('co_pianodeiconti2', [
-                'numero' => $codice_conto2,
-                'descrizione' => $record['descrizione'],
-                'idpianodeiconti1' => $idpianodeiconti1,
-                'dir' => $record['dir'],
-            ]);
-        } elseif (!empty($idpianodeiconti2) && !empty($codice_conto3)) {
-            $idpianodeiconti3 = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2))['id'];
-
-            if (empty($idpianodeiconti3)) {
-                $database->insert('co_pianodeiconti3', [
-                    'numero' => $codice_conto3,
+        if ($add_record) {
+            if (empty($idpianodeiconti2) && empty($codice_conto3)) {
+                $database->insert('co_pianodeiconti2', [
+                    'numero' => $codice_conto2,
                     'descrizione' => $record['descrizione'],
-                    'idpianodeiconti2' => $idpianodeiconti2,
+                    'idpianodeiconti1' => $idpianodeiconti1,
                     'dir' => $record['dir'],
                 ]);
+            } elseif (!empty($idpianodeiconti2) && !empty($codice_conto3)) {
+                $idpianodeiconti3 = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2))['id'];
+
+                if (empty($idpianodeiconti3)) {
+                    $database->insert('co_pianodeiconti3', [
+                        'numero' => $codice_conto3,
+                        'descrizione' => $record['descrizione'],
+                        'idpianodeiconti2' => $idpianodeiconti2,
+                        'dir' => $record['dir'],
+                    ]);
+                }
+            }
+        } 
+        if ($update_record) {
+            if (!empty($idpianodeiconti2) && empty($codice_conto3)) {
+                $database->update('co_pianodeiconti2', [
+                    'descrizione' => $record['descrizione'],
+                ], [
+                    'id' => $idpianodeiconti2,
+                ]);
+            } elseif (!empty($idpianodeiconti2) && !empty($codice_conto3)) {
+                $idpianodeiconti3 = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2))['id'];
+
+                if (!empty($idpianodeiconti3)) {
+                    $database->update('co_pianodeiconti3', [
+                        'descrizione' => $record['descrizione'],
+                    ], [
+                        'id' => $idpianodeiconti3,
+                    ]);
+                }
             }
         }
     }

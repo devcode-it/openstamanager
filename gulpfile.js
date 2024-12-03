@@ -473,7 +473,7 @@ function release(done) {
         '**/*',
         '!checksum.json',
         '!mysql.json',
-        '!mysql_5_7.json',
+        '!mysql_8_3.json',
         '!mariadb_10_x.json',
         '!settings.json',
         '!manifest.json',

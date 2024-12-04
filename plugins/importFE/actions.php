@@ -1,5 +1,4 @@
 <?php
-
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -555,7 +554,7 @@ switch (filter('op')) {
                         `or_righe_ordini`.`idarticolo`, 
                         `or_righe_ordini`.`is_sconto`, 
                         'ordine' AS ref,
-                        CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM or_stati`ordine WHERE `id` = `idstatoordine`)  , ']') AS opzione
+                        CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `idstatoordine`)  , ']') AS opzione
                     FROM 
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
@@ -566,7 +565,7 @@ switch (filter('op')) {
                         `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
                         |where_ordini| AND 
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
-                        `or_statiordine_lang` WHERE `title` != 'Fatturato' AND
+                        `or_statiordine_lang`.`title` != 'Fatturato' AND
                         `or_tipiordine`.`dir` ='uscita'";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo

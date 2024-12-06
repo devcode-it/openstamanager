@@ -43,7 +43,7 @@ use Models\Module;
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "<?php echo $categoria->getTranslation('note'); ?>" ]}
 				</div>
 			</div>
 		</div>
@@ -65,7 +65,7 @@ use Models\Module;
 
 		<div class="row">
 			<div class="col-md-12">
-				<table class="table table-striped table-hover table-condensed">
+				<table class="table table-striped table-hover table-sm">
 				<tr>
 					<th><?php echo tr('Nome'); ?></th>
 					<th><?php echo tr('Colore'); ?></th>
@@ -89,7 +89,41 @@ use Models\Module;
     });
 </script>
 <?php
+
+$elementi = $dbo->fetchArray('SELECT `co_contratti`.`id`, `co_contratti`.`numero` FROM `co_contratti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).' OR `id_sottocategoria` IN (SELECT `id` FROM `co_categorie_contratti` WHERE `parent`='.prepare($id_record).')) ');
+
+if (!empty($elementi)) {
+    echo '
+<div class="card card-warning collapsable collapsed-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Contratti collegati: _NUM_', [
+        '_NUM_' => count($elementi),
+    ]).'</h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('Contratto _NUMERO_', [
+            '_NUMERO_' => $elemento['numero'],
+        ]);
+        $modulo = 'Contratti';
+        $id = $elemento['id'];
+
+        echo '
+		<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+	</ul>
+</div>
+</div>';
+} else {
     echo '
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> '.tr('Elimina').'
     </a>';
+}

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\CategoriaContratto as Categoria;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_categorie_contratti` LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id`=`co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_categorie_contratti`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT `co_categorie_contratti`.*, `co_categorie_contratti_lang`.`title` FROM `co_categorie_contratti` LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id`=`co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_categorie_contratti`.`id`='.prepare($id_record));
 
     $categoria = Categoria::find($id_record);
 }

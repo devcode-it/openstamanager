@@ -267,6 +267,9 @@ echo '
 
         <div class="card-body">
             <div id="map-add" style="height: 300px;width: 100%;display: flex;align-items: center;justify-content: center;"></div>
+            <div id="map-warning" class="hide alert alert-warning">
+                La posizione non è stata definita. Impossibile caricare la mappa.
+            </div>
         </div>
     </div>';
 
@@ -805,11 +808,11 @@ echo '
             return false;
         }
 
-        //console.log(lat, lng);
         if (typeof lat === "undefined" || typeof lng === "undefined"){
-            swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
-            return false;
-        }
+                $("#map-warning").removeClass("hide");
+            } else {
+                $("#map-warning").addClass("hide");
+            }
         
         if (input("idanagrafica").getData("select-options")) {
             var container = L.DomUtil.get("map-add");

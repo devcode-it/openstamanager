@@ -797,7 +797,7 @@ if (!empty($elementi)) {
 
 if (!empty($elementi)) {
     echo '
-<div class="alert alert-error">
+<div class="alert alert-danger">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
 }

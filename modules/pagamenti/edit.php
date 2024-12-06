@@ -281,7 +281,7 @@ echo '
 
 if (!empty($elementi)) {
     echo '
-<div class="alert alert-error">
+<div class="alert alert-danger">
     '.tr('Eliminando questo metodo di pagamento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>
 <a class="btn btn-danger ask disabled" data-backto="record-list">

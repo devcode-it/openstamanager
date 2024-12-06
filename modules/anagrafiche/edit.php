@@ -815,7 +815,7 @@ if (empty($record['deleted_at'])) {
     if (!in_array($id_azienda, $tipi_anagrafica)) {
         if (!empty($elementi)) {
             echo '
-<div class="alert alert-error">
+<div class="alert alert-danger">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
         }

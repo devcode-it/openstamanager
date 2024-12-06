@@ -216,7 +216,7 @@ if ($dir == 'entrata') {
 
     if ($fattura->codice_stato_fe == 'NS' && $fattura->stato->id != $id_stato_non_valida && ($differenza > setting('Giorni validità fattura scartata'))) {
         echo '
-<div class="alert alert-error">
+<div class="alert alert-danger">
     <i class="fa fa-warning"></i> '.tr('Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è necessario invalidare il documento.').'</b>
     <button type="button" class="btn btn-xs btn-success" onclick="risolviStato()"><i class="fa fa-cog"></i> '.tr('Invalida il documento').'</button>
 </div>';

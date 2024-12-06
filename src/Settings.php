@@ -229,7 +229,7 @@ class Settings
         elseif ($setting->tipo == 'ckeditor') {
             $result = input([
                 'type' => 'ckeditor',
-                'label' => json_encode($setting->getTranslation('title')),
+                'label' => trim(json_encode($setting->getTranslation('title')), '"'),
                 'readonly' => !$setting->editable,
                 'name' => 'setting['.$setting->id.']',
                 'value' => $input_value,

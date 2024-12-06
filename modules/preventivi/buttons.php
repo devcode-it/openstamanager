@@ -51,9 +51,8 @@ foreach ($stati_abilitati as $stato) {
 
 // Creazione altri documenti
 echo '
-<div class="btn-group tip" data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
-    '_STATE_LIST_' => implode(', ', $stati),
-]).'">
+<div class="btn-group tip" '.(!$disabled ? ' data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: ').implode(', ', $stati).'"' : '').'">
+
     <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
         <span class="caret"></span>

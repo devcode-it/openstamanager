@@ -28,7 +28,7 @@ switch (post('op')) {
         $nome = filter('name');
         $link = filter('link');
 
-        $marchio_new = Marchio::where('name', '=', $nome)->first();
+        $marchio_new = Marchio::where('name', '=', $nome)->where('id', '!=', $id_record)->first();
 
         if (!empty($marchio_new)) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro marchio.'));

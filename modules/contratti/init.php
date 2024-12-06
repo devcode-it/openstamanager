@@ -32,7 +32,9 @@ if (!empty($id_record)) {
         `co_staticontratti`.`is_pianificabile` AS is_pianificabile,
         `co_staticontratti`.`is_completato` AS is_completato,
         `co_staticontratti_lang`.`title` AS stato,
-        GROUP_CONCAT(`my_impianti_contratti`.`idimpianto`) AS idimpianti
+        GROUP_CONCAT(`my_impianti_contratti`.`idimpianto`) AS idimpianti,
+        `co_contratti`.`id_categoria` as id_categoria,
+        `co_contratti`.`id_sottocategoria` as id_sottocategoria
     FROM 
         `co_contratti`
         INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`

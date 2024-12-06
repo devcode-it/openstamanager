@@ -48,7 +48,7 @@ include_once __DIR__.'/../../core.php';
 $articoli = $marchio->articoli;
 $class = '';
 
-if (!empty($articoli)) {
+if (!empty(count($articoli))) {
     echo '
 <div class="card card-warning collapsable collapsed-card">
     <div class="card-header with-border">

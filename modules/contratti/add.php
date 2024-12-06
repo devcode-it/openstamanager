@@ -57,12 +57,13 @@ echo '
     </div>
 
     <div class="row">
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti" ]}      
-        </div>
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "id_sottocategoria", "required": 0, "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": '.json_encode(['id_categoria' => null]).' ]}                  
-        </div>
+		<div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria_add", "required": 0, "ajax-source": "categorie_contratti", "icon-after": "add|'.Module::where("name", "Categorie contratti")->first()->id.'" ]}
+		</div>
+
+		<div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Sottocategoria').'", "name": "id_sottocategoria_add", "ajax-source": "sottocategorie_contratti", "icon-after": "add|'.Module::where('name', 'Categorie contratti')->first()->id.'||hide" ]}
+		</div>
     </div>
 
     <div class="row">

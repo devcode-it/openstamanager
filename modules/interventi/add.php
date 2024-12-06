@@ -496,7 +496,7 @@ echo '
         }
             
         let data = anagrafica.getData();
-        if (data) {
+        if (data && contratto.get() === "") {
             input("idcontratto").getElement().selectSetNew(data.id_contratto, data.descrizione_contratto);
         }
 

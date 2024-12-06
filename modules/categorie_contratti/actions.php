@@ -95,8 +95,8 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT * FROM `co_contratti` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `co_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
-            $dbo->query('DELETE FROM `co_categorie` WHERE `id`='.prepare($id));
+        if ($dbo->fetchNum('SELECT `mg_articoli`.* FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `co_categorie_contratti` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
+            $dbo->query('DELETE FROM `co_categorie_contratti` WHERE `id`='.prepare($id));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',

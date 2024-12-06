@@ -36,6 +36,10 @@ class XML
      */
     public static function read($string)
     {
+        if (empty($string)) {
+            return [];
+        }
+
         $content = $string;
 
         libxml_use_internal_errors(true);

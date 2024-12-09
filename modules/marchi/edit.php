@@ -19,11 +19,21 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
+if (!empty($record['immagine'])) {
+	$fileinfo = Uploads::fileInfo($record['immagine']);
+
+	$directory = '/'.$module->upload_directory.'/';
+	$image = $directory.$record['immagine'];
+	$image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+	$url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
+}
+?>
+
+<form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="matricola" value="<?php echo $id_record; ?>">
-
+    <input type="hidden" name="matricola" value="<?php echo $id_record; ?>">
 	<!-- DATI ANAGRAFICI -->
 	<div class="card card-primary">
 		<div class="card-header">
@@ -32,6 +42,9 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="card-body">
 			<div class="row">
+                <div class="col-md-4">
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $url; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
+				</div>
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value":"$name$", "required": 1, "validation": "name" ]}
 				</div>
@@ -43,7 +56,6 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
-
 <?php
 $articoli = $marchio->articoli;
 $class = '';

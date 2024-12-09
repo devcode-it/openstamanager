@@ -1,5 +1,4 @@
 <?php
-
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -49,8 +48,7 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
     $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->get();
 
     foreach ($documenti as $documento) {
-        $stato_fe = StatoFE::find($documento->codice_stato_fe)->id_record;
-
+        $stato_fe = StatoFE::find($documento->codice_stato_fe);
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
             if ($documento->codice_stato_fe == 'NS' && ($documento->stato != Stato::where('name', 'Bozza')->first()->id) && ($documento->stato != Stato::where('name', 'Non valida')->first()->id)) {
@@ -69,10 +67,10 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
                 }
             }
             $documenti_scarto[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
-                '_ICON_' => '<i class="'.$stato_fe['icon'].'"></i>',
+                '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
                 '_NUM_' => $documento->numero_esterno,
                 '_DATE_' => dateFormat($documento->data),
-                '_STATO_' => $stato_fe['descrizione'],
+                '_STATO_' => $stato_fe->name,
             ]));
 
             $show_avviso = $show_avviso ?: ($documento->data_stato_fe < (new Carbon())->subDays(4) ? 1 : 0);
@@ -85,10 +83,10 @@ if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable
 
             if ($documento->data <= $data_limite_invio && !$is_estera) {
                 $documenti_invio[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b> _ANTICIPATA_', [
-                    '_ICON_' => '<i class="'.$stato_fe['icon'].'"></i>',
+                    '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
                     '_NUM_' => $documento->numero_esterno,
                     '_DATE_' => dateFormat($documento->data),
-                    '_STATO_' => $stato_fe['descrizione'],
+                    '_STATO_' => $stato_fe->name,
                     '_ANTICIPATA_' => (($documento->data->diffInDays($data_limite_invio) < 10) ? '(Anticipata)' : ''),
                 ]));
             }

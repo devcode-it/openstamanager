@@ -45,6 +45,45 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);
         }
 
+        // Upload file
+        if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
+            $upload = Uploads::upload($_FILES['immagine'], [
+                'name' => 'Immagine',
+                'category' => 'Immagini',
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+            ], [
+                'thumbnails' => true,
+            ]);
+            $filename = $upload->filename;
+
+            if (!empty($filename)) {
+                $dbo->update('mg_marchi', [
+                    'immagine' => $filename,
+                ], [
+                    'id' => $id_record,
+                ]);
+            } else {
+                flash()->warning(tr("Errore durante il caricamento dell'immagine!"));
+            }
+        }
+
+        // Eliminazione file
+        if (post('delete_immagine')) {
+            Uploads::delete($record['immagine'], [
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+            ]);
+
+            $dbo->update('mg_marchi', [
+                'immagine' => null,
+            ], [
+                'id' => $id_record,
+            ]);
+        }
+
+        flash()->info(tr('Salvataggio completato!'));
+
         break;
 
         // Aggiungo marchio
@@ -70,7 +109,7 @@ switch (post('op')) {
         }
 
         break;
-
+    
         // Rimuovo marchio
     case 'delete':
         $dbo->query('DELETE FROM mg_marchi WHERE id='.prepare($id_record));

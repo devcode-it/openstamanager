@@ -62,3 +62,24 @@ echo '
 		</div>
 	</div>
 </form>';
+
+echo '
+<script>$(document).ready(init)</script>';
+
+echo '
+<script>
+$(document).ready(function () {
+
+    $("#data_inizio").on("dp.change", function (e) {
+        if($("#data_fine").data("DateTimePicker").date() < e.date){
+            $("#data_fine").data("DateTimePicker").date(e.date);
+        }
+    });
+
+    $("#data_fine").on("dp.change", function (e) {
+        if($("#data_inizio").data("DateTimePicker").date() > e.date){
+            $("#data_inizio").data("DateTimePicker").date(e.date);
+        }
+    });
+});
+</script>';

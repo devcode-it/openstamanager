@@ -68,13 +68,13 @@ if (count($preventivo->revisioni) > 1) {
 
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
-                </div>';
+                </div>
 
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
-echo '
-                <div class="col-md-3">
+                <div class="col-md-3">';
+                if (!empty($record['idreferente'])) {
+                    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                }
+                echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
                 </div>
 

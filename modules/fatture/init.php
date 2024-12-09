@@ -73,7 +73,7 @@ if (!empty($id_record)) {
 
     // Blocco gestito dallo stato della Fattura Elettronica
     $stato_fe = StatoFE::find($fattura->codice_stato_fe);
-    $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
+    $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe->is_generabile);
 
     // Controllo autofattura e gestione avvisi
     $reverse_charge = null;

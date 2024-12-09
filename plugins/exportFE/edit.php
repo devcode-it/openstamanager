@@ -95,7 +95,7 @@ if ($fattura !== null) {
         </a>';
 
     // Scelgo quando posso inviarla
-    $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe['is_inviabile']);
+    $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe->is_inviabile);
 
     echo '
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
@@ -126,7 +126,7 @@ if ($fattura !== null) {
     // Messaggio informativo sulla ricevuta principale impostata
     if (!empty($ricevuta_principale)) {
         echo '
-    <div class="alert alert-'.$stato_fe['tipo'].'">
+    <div class="alert alert-'.$stato_fe->tipo.'">
         <div class="float-right d-none d-sm-inline">
             <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
 
@@ -141,8 +141,8 @@ if ($fattura !== null) {
         </div>
 
         <big>
-            <i class="'.$stato_fe['icon'].'" style="color:#fff;"></i>
-            <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'
+            <i class="'.$stato_fe->icon.'" style="color:#fff;"></i>
+            <b>'.$stato_fe->codice.'</b> - '.$stato_fe->name.'
         </big>';
 
         if (!empty($record['descrizione_ricevuta_fe'])) {

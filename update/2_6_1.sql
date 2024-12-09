@@ -39,4 +39,9 @@ UPDATE `zz_settings_lang` SET `help` = 'This text will be proposed as a supply c
 UPDATE `zz_settings_lang` SET `help` = 'Quanto qui definito verrà proposto come condizione di fornitura per tutti i preventivi' WHERE `zz_settings_lang`.`id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Condizioni generali di fornitura preventivi') AND `zz_settings_lang`.`id_lang` = 1;
 UPDATE `zz_settings_lang` SET `help` = 'This text will be proposed as a supply condition for all quotations.' WHERE `zz_settings_lang`.`id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Condizioni generali di fornitura preventivi') AND `zz_settings_lang`.`id_lang` = 2;
   
+-- Allineamento modulo Marchi
 ALTER TABLE `mg_marchi` ADD `immagine` VARCHAR(255) NOT NULL;
+
+-- Spostamento Adattatori di archiviazione in Strumenti
+SET @id_strumenti = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Strumenti');
+UPDATE `zz_modules` SET `parent` = @id_strumenti WHERE `name` = 'Adattatori di archiviazione';

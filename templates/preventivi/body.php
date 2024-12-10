@@ -68,88 +68,8 @@ if ($has_image) {
 $autofill = new Util\Autofill($columns);
 $autofill->setRows(22, 0, 36);
 
-echo '
-<div class="col-xs-5">
-    <div class="text-center" style="height:5mm;">
-        <b>PREVENTIVO</b>
-    </div>
-    <br>
-
-    <table class="table text-center">
-        <tr>
-            <td valign="top" class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
-                <p>'.$documento['numero'].'</p>
-            </td>
-
-            <td class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
-                <p>'.Translator::dateToLocale($documento['data_bozza']).'</p>
-            </td>
-
-            <td class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
-                <p> {PAGENO}/{nb} </p>
-            </td>
-        </tr>';
-if (!empty($impianti)) {
-    $list = [];
-    foreach ($impianti as $impianto) {
-        $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
-    }
-
-    echo '
-                <br>
-                <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
-                <p><small>'.implode(', ', $list).'</small></p>';
-}
-echo '
-    </table>
-</div>
-	<div class="col-xs-6 pull-right">
-        <table class="table border-bottom">
-            <tr>
-                <td colspan=2 style="height:16mm;">
-                    <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
-                    <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$</p>
-                    <p>$c_citta_full$</p>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="border-bottom">
-                    <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-bottom text-right">
-                    <small>$c_piva$</small>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="border-bottom">
-                    <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-bottom text-right">
-                    <small>$c_codicefiscale$</small>
-                </td>
-            </tr>';
-
-if (!empty($destinazione)) {
-    echo '
-            <tr>
-                <td class="border-bottom">
-                    <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-bottom text-right">
-                    <small>'.$destinazione.'</small>
-                </td>
-            </tr>';
-}
-echo '
-        </table>
-    </div>
-</div>';
+// Conteggio righe destinazione diversa
+$autofill->count($destinazione);
 
 // Descrizione
 if (!empty($documento['descrizione'])) {
@@ -215,7 +135,7 @@ foreach ($righe as $key => $riga) {
     $subtotale_gruppo += $riga->totale_imponibile;
     $iva_gruppo += $riga->iva;
 
-    $autofill->count($r['descrizione']);
+    $autofill->count($descrizione);
 
     echo '
         <tr>
@@ -278,7 +198,6 @@ foreach ($righe as $key => $riga) {
 
                     echo '
                     <br><small class="text-muted">'.$text.'</small>';
-
                     $autofill->count($text, true);
                 }
 
@@ -316,9 +235,6 @@ foreach ($righe as $key => $riga) {
     echo '
         </tr>';
 
-    $autofill->next();
-
-    $next = $righe->flatten()[$num];
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>
@@ -348,10 +264,9 @@ foreach ($righe as $key => $riga) {
             </td>
         </tr>';
         }
-        $autofill->next();
-        $autofill->next();
-        $autofill->next();
     }
+
+    $autofill->next();
 }
 
 echo '

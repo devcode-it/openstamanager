@@ -30,8 +30,8 @@ class Autofill
     protected $space = 0;
     protected $current = 0;
 
-    protected $max_rows = 26;
-    protected $max_rows_first_page = 38;
+    protected $max_rows = 27;
+    protected $max_rows_first_page = 39;
     protected $max_additional = 0;
 
     public function __construct(protected $column_number, protected $char_number = 70)

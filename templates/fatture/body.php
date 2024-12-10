@@ -27,7 +27,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill(6, 70);
-$rows_per_page = $rows_per_page ?: ($fattura_accompagnatoria ? 24 : 26);
+$rows_per_page = ($fattura_accompagnatoria ? 24 : 26);
 $autofill->setRows($rows_per_page, 0);
 
 // Intestazione tabella per righe
@@ -214,8 +214,10 @@ foreach ($righe as $riga) {
 }
 
 foreach ($v_iva as $desc_iva => $tot_iva) {
-    $autofill->count($desc_iva, true);
+    $autofill->count($desc_iva);
 }
+$autofill->count($record['note']);
+$autofill->next();
 
 echo '
         |autofill|
@@ -253,7 +255,6 @@ if (!empty($record['note'])) {
     echo '
             <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
             <p><small>'.nl2br((string) $record['note']).'</small></p>';
-    $autofill->count($record['note'], true);
 }
 
 echo '

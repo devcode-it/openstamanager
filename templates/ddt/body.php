@@ -24,8 +24,12 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
-$rows_per_page = ($documento['note'] || $options['pricing'] ? 19 : 27);
-$autofill->setRows($rows_per_page, 0, 32);
+$rows_per_page = ($documento['note'] || $options['pricing'] ? ($tipo_doc == 'Ddt in uscita' ? 20 : 22) : 27);
+$autofill->setRows($rows_per_page, 0, $options['last-page-footer'] ? 34 : $rows_per_page);
+
+// Conteggio righe destinazione diversa
+$autofill->count($destinazione);
+$autofill->count($partenza);
 
 // Intestazione tabella per righe
 echo "

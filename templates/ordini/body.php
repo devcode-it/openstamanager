@@ -60,7 +60,12 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(27, 0, 32);
+$autofill->setRows(31, 0, 34);
+
+// Conteggio righe destinazione diversa
+$autofill->count($destinazione);
+$autofill->count($codice_destinatario);
+
 
 // Intestazione tabella per righe
 echo "

@@ -39,100 +39,20 @@ if ($has_image) {
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(20, 10);
+$autofill->setRows(23, 0, 38);
+
+// Conteggio righe destinazione diversa
+$autofill->count($destinazione);
 
 // Elenco impianti
 $impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($documento['id']).')');
-
-echo '
-<div class="col-xs-5">
-    <div class="text-center" style="height:5mm;">
-        <b>CONTRATTO</b>
-    </div>
-    <br>
-
-    <table class="table text-center">
-        <tr>
-            <td valign="top" class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
-                <p>'.$documento['numero'].'</p>
-            </td>
-
-            <td class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Data documento', [], ['upper' => true]).'</p>
-                <p>'.Translator::dateToLocale($documento['data_bozza']).'</p>
-            </td>
-
-            <td class="border-bottom border-top">
-                <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
-                <p> {PAGENO}/{nb} </p>
-            </td>
-        </tr>';
-if (!empty($impianti)) {
-    $list = [];
-    foreach ($impianti as $impianto) {
-        $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
-    }
-
-    echo '
-                <br>
-                <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
-                <p><small>'.implode(', ', $list).'</small></p>';
-}
-echo '
-    </table>
-</div>
-
-<div class="col-xs-6 pull-right">
-    <table class="table border-bottom">
-        <tr>
-            <td colspan=2 style="height:16mm;">
-                <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>
-                <p>$c_ragionesociale$</p>
-                <p>$c_indirizzo$</p>
-                <p>$c_citta_full$</p>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="border-bottom">
-                <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
-            </td>
-            <td class="border-bottom text-right">
-                <small>$c_piva$</small>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="border-bottom">
-                <p class="small-bold text-muted">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
-            </td>
-            <td class="border-bottom text-right">
-                <small>$c_codicefiscale$</small>
-            </td>
-        </tr>';
-
-if (!empty($destinazione)) {
-    echo '
-        <tr>
-            <td class="border-bottom">
-                <p class="small-bold text-muted">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-            </td>
-            <td class="border-bottom text-right">
-                <small>'.$destinazione.'</small>
-            </td>
-        </tr>';
-}
-echo '
-        </table>
-    </div>
-</div>';
 
 // Descrizione
 if (!empty($documento['descrizione'])) {
     echo '
 <p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
+$autofill->count($documento['descrizione']);
 }
 
 // Intestazione tabella per righe
@@ -191,8 +111,6 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $autofill->count($r['descrizione']);
-
     echo '
     <tr>
         <td class="text-center" nowrap="nowrap" style="vertical-align: middle" width="25">
@@ -234,12 +152,14 @@ foreach ($righe as $riga) {
                 $text = $text.'</td><td></td></tr><tr><td>';
 
                 echo nl2br($text);
+                $autofill->count($text);
             }
         }
         $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
     }
 
     $source_type = $riga::class;
+    $autofill->count($r['descrizione']);
 
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
         echo $r['descrizione'];
@@ -249,8 +169,7 @@ foreach ($righe as $riga) {
 
     if ($riga->isArticolo()) {
         echo nl2br('<br><small>'.$riga->codice.'</small>');
-    } else {
-        echo '-';
+        $autofill->count($riga->codice, true);
     }
 
     if ($riga->isArticolo()) {

@@ -198,7 +198,7 @@ switch (filter('op')) {
             WHERE
                 `zz_events`.`is_bank_holiday` = 0
             AND (`zz_events`.`is_recurring` = 1 AND
-                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end.'-1 day'))).')) 
+                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).')) 
                 )
             OR 
                 (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
@@ -541,7 +541,7 @@ switch (filter('op')) {
             WHERE `zz_events`.`is_bank_holiday` = 1 
             AND 
             (`zz_events`.`is_recurring` = 1 
-            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), DAYOFYEAR('.prepare(date('Y-m-d', strtotime($end.'-1 day'))).')) )
+            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).')) )
             OR 
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
@@ -551,7 +551,7 @@ switch (filter('op')) {
         foreach ($eventi as $evento) {
             $results[] = [
                 'id' => $evento['id'],
-                'title' => $evento['nome'],
+                'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
                 'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $evento['data'])) : $evento['data']),
                 // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
                 'display' => 'background',

@@ -20,6 +20,7 @@
 
 use Models\Setting;
 
+$skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
 $sezione = filter('sezione');

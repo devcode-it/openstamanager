@@ -96,7 +96,7 @@ foreach ($righe as $riga) {
                 $r['descrizione'] = str_replace('Rif. '.strtolower((string) $key), '', $r['descrizione']);
 
                 if (preg_match("/Rif\.(.*)/s", $r['descrizione'], $rif2)) {
-                    $r['descrizione'] = str_replace('Rif.'.strtolower($rif2[1]), '', $r['descrizione']);
+                    $r['descrizione'] = str_replace('\nRif.'.strtolower($rif2[1]), '', $r['descrizione']);
                     $text .= '<b>'.$rif2[0].'</b>';
                 }
 
@@ -115,7 +115,7 @@ foreach ($righe as $riga) {
                 $autofill->count($text);
             }
         }
-        $r['descrizione'] = preg_replace("/Rif\.(.*)/s", '', (string) $r['descrizione']);
+        $r['descrizione'] = preg_replace("/(\r\n|\r|\n)Rif\.(.*)/s", '', (string) $r['descrizione']);
     }
 
     $source_type = $riga::class;
@@ -162,8 +162,6 @@ foreach ($righe as $riga) {
 
                 echo '
                 <br><small class="text-muted">'.$text.'</small>';
-
-                $autofill->count($text, true);
             }
 
             echo '

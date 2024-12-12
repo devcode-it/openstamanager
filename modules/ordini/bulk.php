@@ -233,7 +233,7 @@ if ($module->getTranslation('title') == 'Ordini cliente') {
                 'title' => tr('Unire gli ordini selezionati?'),
                 'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'
                 {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'", "select-options-escape": true ]}
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `title` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}
                 {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
                 'button' => tr('Procedi'),
                 'class' => 'btn btn-lg btn-warning',

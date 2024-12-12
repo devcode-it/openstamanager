@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+$skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
 use Models\Group;

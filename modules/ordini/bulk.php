@@ -210,7 +210,8 @@ switch (post('op')) {
         break;
 }
 if ($module->getTranslation('title') == 'Ordini cliente') {
-    $module_fatture = Module::find($id_modulo_fatture)->getTranslation('title');
+    // Fix per modulo Fatture di vendita disabilitato
+    $module_fatture = $id_modulo_fatture ? Module::find($id_modulo_fatture)->getTranslation('title') : '';
     $module_fatture ? strtolower((string) $module_fatture) : '';
     $operations['crea_fattura'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),

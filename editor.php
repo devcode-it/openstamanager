@@ -239,7 +239,7 @@ if (empty($record) || !$has_access) {
                             <button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
-                            <div class="dropdown-menu" role="menu">
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
                                 <a class="dropdown-item" href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
                                     <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
                                     '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'

@@ -109,7 +109,7 @@ switch (post('op')) {
         }
 
         break;
-    
+
         // Rimuovo marchio
     case 'delete':
         $dbo->query('DELETE FROM mg_marchi WHERE id='.prepare($id_record));

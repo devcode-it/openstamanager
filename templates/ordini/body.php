@@ -66,7 +66,6 @@ $autofill->setRows(31, 0, 34);
 $autofill->count($destinazione);
 $autofill->count($codice_destinatario);
 
-
 // Intestazione tabella per righe
 echo "
 <table class='table table-striped border-bottom' id='contents'>

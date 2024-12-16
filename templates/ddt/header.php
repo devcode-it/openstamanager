@@ -105,7 +105,7 @@ echo '
                 </td>
             </tr>';
 if (!empty($partenza)) {
-    echo'
+    echo '
             <tr>
                 <td class="border-bottom">
                     <p class="small-bold text-muted">'.tr('Partenza merce', [], ['upper' => true]).'</p>

@@ -58,7 +58,7 @@ echo '
 
     <div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria_add", "required": 0, "ajax-source": "categorie_contratti", "icon-after": "add|'.Module::where("name", "Categorie contratti")->first()->id.'" ]}
+			{[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria_add", "required": 0, "ajax-source": "categorie_contratti", "icon-after": "add|'.Module::where('name', 'Categorie contratti')->first()->id.'" ]}
 		</div>
 
 		<div class="col-md-6">

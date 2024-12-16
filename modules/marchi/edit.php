@@ -20,13 +20,13 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty($record['immagine'])) {
-	$fileinfo = Uploads::fileInfo($record['immagine']);
+    $fileinfo = Uploads::fileInfo($record['immagine']);
 
-	$directory = '/'.$module->upload_directory.'/';
-	$image = $directory.$record['immagine'];
-	$image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+    $directory = '/'.$module->upload_directory.'/';
+    $image = $directory.$record['immagine'];
+    $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-	$url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
+    $url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
 }
 ?>
 

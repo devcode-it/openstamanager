@@ -92,7 +92,7 @@ class CSV extends CSVImporter
                     ]);
                 }
             }
-        } 
+        }
         if ($update_record) {
             if (!empty($idpianodeiconti2) && empty($codice_conto3)) {
                 $database->update('co_pianodeiconti2', [

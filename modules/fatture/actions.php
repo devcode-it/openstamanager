@@ -1035,8 +1035,8 @@ switch ($op) {
 
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
 
-                $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita')?: '';
-                $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita')?: '';
+                $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: '';
+                $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: '';
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 $articolo->setSconto($sconto, 'PRC');
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');

@@ -52,7 +52,7 @@ if (!empty($documento['descrizione'])) {
     echo '
 <p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
-$autofill->count($documento['descrizione']);
+    $autofill->count($documento['descrizione']);
 }
 
 // Intestazione tabella per righe

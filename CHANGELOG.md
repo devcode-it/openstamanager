@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.6.1 (2024-12-18)](#261-2024-12-18)
 - [2.6 (2024-12-04)](#26-2024-12-04)
 - [2.5.7 (2024-11-20)](#257-2024-11-20)
 - [2.5.6 (2024-10-30)](#256-2024-10-30)
@@ -47,6 +48,33 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.6.1 (2024-12-18)
+### Modificato (Changed)
+- Spostato il modulo Adattatori di archiviazione in Strumenti
+- Modificato il conteggio delle righe delle note nei preventivi
+
+### Fixed
+- Corretta la modifica dei Marchi
+- Corretta l'impostazione di Categoria e Sottocategoria contratti
+- Corretta l'impostazione del contratto in creazione di attività da promemoria
+- Corrette le impostazioni con valore testuale, indicate con doppi apici
+- Corretto l'avvis odi caricamento posizione in aggiunta attività
+- Corretti i tooltip del tasto crea in preventivi e ordini
+- Corretto problema grafico sugli avvisi
+- Corretta la gestione di XML vuoti o non leggibili
+- Corretta la selezione dello stato in duplicazione ordine
+- Corretto il link al referente nel preventivo
+- Corretto il controllo sulla data validità dell'assicurazione crediti
+- Corretto il modulo Marchi per sincronizzazione
+- Corretti i riferimenti alle ricevute FE
+- Corretti i template di stampa dei documenti
+- Corretta la gestione degli eventi ricorrenti in Dashboard
+- Corretta l'impostazione dei permessi degli utenti
+- Corretta l'applicazione della cassa previdenziale predefinita agli articoli in fattura
+- Corretta la selezione dello stato in unisci RDO da azioni di gruppo
+- Corretto il caricamento di ordini nel caso in cui il modulo Fatture di vendita sia disabilitato
+- Corretto il pulsante salva e chiudi
 
 ## 2.6 (2024-12-04)
 ### Aggiunto (Added)

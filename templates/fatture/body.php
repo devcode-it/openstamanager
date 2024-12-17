@@ -213,10 +213,29 @@ foreach ($righe as $riga) {
     $autofill->next();
 }
 
+// Conteggio righe delle note
+$autofill->count($record['note']);
+
+// Conteggio righe relative alle aliquote IVA
 foreach ($v_iva as $desc_iva => $tot_iva) {
     $autofill->count($desc_iva);
 }
-$autofill->count($record['note']);
+
+$diciture = [];
+
+// Aggiungo diciture particolari per l'anagrafica cliente
+$diciture[] = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id_cliente))['dicitura'];
+
+// Aggiungo diciture per condizioni iva particolari
+foreach ($v_iva as $key => $value) {
+    $diciture[] = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = '.prepare($key))['dicitura'];
+}
+
+// Conteggio righe per dicitura condizioni IVA
+foreach ($diciture as $dicitura) {
+    $autofill->count($dicitura);
+}
+
 $autofill->next();
 
 echo '
@@ -224,24 +243,12 @@ echo '
     </tbody>
 </table>';
 
-// Aggiungo diciture particolari per l'anagrafica cliente
-$dicitura = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id_cliente));
-
-if (!empty($dicitura['dicitura'])) {
-    echo '
-<p class="text-left">
-    <span>'.nl2br((string) $dicitura['dicitura']).'</span>
-</p>';
-}
-
 // Aggiungo diciture per condizioni iva particolari
-foreach ($v_iva as $key => $value) {
-    $dicitura = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = '.prepare($key));
-
-    if (!empty($dicitura['dicitura'])) {
+foreach ($diciture as $dicitura) {
+    if (!empty($dicitura)) {
         echo '
 <p class="text-center">
-    <b>'.nl2br((string) $dicitura['dicitura']).'</b>
+    <b>'.nl2br((string) $dicitura).'</b>
 </p>';
     }
 }

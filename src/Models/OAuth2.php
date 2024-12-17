@@ -1,5 +1,4 @@
 <?php
-
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -148,7 +147,7 @@ class OAuth2 extends Model
     {
         $this->checkTokens();
 
-        return unserialize($this->attributes['access_token']);
+        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token']) : '';
     }
 
     /**
@@ -190,7 +189,7 @@ class OAuth2 extends Model
      */
     protected function checkTokens()
     {
-        $access_token = unserialize($this->access_token);
+        $access_token = $this->access_token ? unserialize($this->access_token) : '';
 
         if (!empty($access_token) && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso

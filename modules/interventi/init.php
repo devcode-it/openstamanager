@@ -44,4 +44,6 @@ if (!empty($id_record)) {
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
+
+    $is_anagrafica_deleted = !$intervento->anagrafica;
 }

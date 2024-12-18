@@ -92,4 +92,6 @@ if (!empty($id_record)) {
     }
 
     $superselect['idtipodocumento'] = $record['idtipodocumento'];
+
+    $is_anagrafica_deleted = !$fattura->anagrafica;
 }

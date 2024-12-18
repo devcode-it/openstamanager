@@ -47,40 +47,42 @@ foreach ($stati_abilitati as $stato) {
     $stati[] = $stato->getTranslation('title');
 }
 
-// Creazione altri documenti
-echo '
-<div class="btn-group tip" '.(!$disabled ? ' data-widget="tooltip" title="'.tr('Per creare un documento lo stato del preventivo deve essere tra: ').implode(', ', $stati).'"' : '').'">
+if (!$is_anagrafica_deleted) {
+    // Creazione altri documenti
+    echo '
+    <div class="btn-group tip" '.(!$disabled ? ' data-widget="tooltip" title="'.tr('Per creare un documento lo stato del preventivo deve essere tra: ').implode(', ', $stati).'"' : '').'">
 
-    <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
-        <span class="caret"></span>
-    </button>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=contratto" data-widget="modal" data-title="'.tr('Crea contratto').'">
-            <i class="fa fa-file-o"></i> '.tr('Contratto').'
-        </a>
+        <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=contratto" data-widget="modal" data-title="'.tr('Crea contratto').'">
+                <i class="fa fa-file-o"></i> '.tr('Contratto').'
+            </a>
 
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
-            <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
-        </a>
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_cliente" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
+                <i class="fa fa-file-o"></i> '.tr('Ordine cliente').'
+            </a>
 
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-widget="modal" data-title="'.tr('Crea ordine fornitore').'">
-            <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
-        </a>
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-widget="modal" data-title="'.tr('Crea ordine fornitore').'">
+                <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
+            </a>
 
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-widget="modal" data-title="'.tr('Crea attività').'">
-            <i class="fa fa-file-o"></i> '.tr('Attività').'
-        </a>
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-widget="modal" data-title="'.tr('Crea attività').'">
+                <i class="fa fa-file-o"></i> '.tr('Attività').'
+            </a>
 
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
-            <i class="fa fa-truck"></i> '.tr('DDT in uscita').'
-        </a>
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
+                <i class="fa fa-truck"></i> '.tr('DDT in uscita').'
+            </a>
 
-        <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
-            <i class="fa fa-file"></i> '.tr('Fattura').'
-        </a>
-	</div>
-</div>';
+            <a class="'.($disabled ? '' : 'disabled').' dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
+                <i class="fa fa-file"></i> '.tr('Fattura').'
+            </a>
+        </div>
+    </div>';
+}
 
 // Duplica preventivo
 echo '

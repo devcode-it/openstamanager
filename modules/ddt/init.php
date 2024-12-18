@@ -101,4 +101,6 @@ if (!empty($id_record)) {
         id
 
     ORDER BY `data`');
+
+    $is_anagrafica_deleted = !$ddt->anagrafica;
 }

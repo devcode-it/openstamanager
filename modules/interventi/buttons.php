@@ -53,43 +53,46 @@ function anteprimaFirma() {
 }
 </script>';
 
-// Creazione altri documenti
-$where = '';
-// Lettura interventi non collegati a preventivi, ordini e contratti
-if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
-    $where = ' AND in_interventi.id_contratto IS NULL';
-}
-if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
-    $where .= ' AND in_interventi.id_ordine IS NULL';
-}
-if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
-    $where .= ' AND in_interventi.id_preventivo IS NULL';
-}
+if (!$is_anagrafica_deleted) {
+    // Creazione altri documenti
+    $where = '';
+    if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
+        $where = ' AND in_interventi.id_contratto IS NULL';
+    }
+    if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
+        $where .= ' AND in_interventi.id_ordine IS NULL';
+    }
+    if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
+        $where .= ' AND in_interventi.id_preventivo IS NULL';
+    }
 
-$is_fatturabile = $dbo->fetchOne('SELECT
-    `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
-WHERE
-    `in_interventi`.`id`='.prepare($id_record).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where)['id'];
+    $is_fatturabile = $dbo->fetchOne('SELECT
+        `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+    WHERE
+        `in_interventi`.`id`='.prepare($id_record).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) 
+        '.$where
+    )['id'];
 
-$stati_fatturabili = Stato::where('is_fatturabile', '=', '1')->get();
-$stati = [];
+    $stati_fatturabili = Stato::where('is_fatturabile', '=', '1')->get();
+    $stati = [];
 
-foreach ($stati_fatturabili as $stato) {
-    $stati[] = $stato->getTranslation('title');
+    foreach ($stati_fatturabili as $stato) {
+        $stati[] = $stato->getTranslation('title');
+    }
+
+    echo '
+    <div class="tip btn-group" data-widget="tooltip" title="'.tr('Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell\'attività deve essere tra: _STATE_LIST_', [
+        '_CONTROLLO_DOCUMENTI_' => (!setting('Permetti fatturazione delle attività collegate a contratti') || !setting('Permetti fatturazione delle attività collegate a ordini') ||!setting('Permetti fatturazione delle attività collegate a preventivi') ? tr('l\'attività non deve essere collegata ai seguenti documenti').': '.(!setting('Permetti fatturazione delle attività collegate a contratti') ? '<b>Contratti</b>' : '').(!setting('Permetti fatturazione delle attività collegate a ordini') ? ' <b>Ordini</b>' : '').(!setting('Permetti fatturazione delle attività collegate a preventivi') ? ' <b>Preventivi</b>' : '').'<br> e' : ''),
+        '_STATE_LIST_' => implode(', ', (array)$stati),
+    ]).'">
+        <button class="btn btn-info dropdown-toggle '.($is_fatturabile ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-magic"></i> '.tr('Crea').'
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
+                <i class="fa fa-file"></i> '.tr('Fattura di vendita').'
+            </a>
+        </div>
+    </div>';
 }
-
-echo '
-<div class="tip btn-group" data-widget="tooltip" title="'.tr('Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell\'attività deve essere tra: _STATE_LIST_', [
-    '_CONTROLLO_DOCUMENTI_' => (!setting('Permetti fatturazione delle attività collegate a contratti') || !setting('Permetti fatturazione delle attività collegate a ordini') ||!setting('Permetti fatturazione delle attività collegate a preventivi') ? tr('l\'attività non deve essere collegata ai seguenti documenti').': '.(!setting('Permetti fatturazione delle attività collegate a contratti') ? '<b>Contratti</b>' : '').(!setting('Permetti fatturazione delle attività collegate a ordini') ? ' <b>Ordini</b>' : '').(!setting('Permetti fatturazione delle attività collegate a preventivi') ? ' <b>Preventivi</b>' : '').'<br> e' : ''),
-    '_STATE_LIST_' => implode(', ', (array)$stati),
-]).'">
-    <button class="btn btn-info dropdown-toggle '.($is_fatturabile ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-expanded="false">
-        <i class="fa fa-magic"></i> '.tr('Crea').'
-        <span class="caret"></span>
-    </button>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
-            <i class="fa fa-file"></i> '.tr('Fattura di vendita').'
-        </a>
-    </div>
-</div>';

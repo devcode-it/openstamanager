@@ -76,4 +76,6 @@ if (!empty($id_record)) {
     GROUP BY id
     
     ORDER BY `data`');
+
+    $is_anagrafica_deleted = !$contratto->anagrafica;
 }

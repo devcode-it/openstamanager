@@ -30,34 +30,36 @@ if ($module->getTranslation('title') == 'Fatture di vendita') {
 </a>';
 }
 
-if ($dir == 'entrata' || !empty($abilita_autofattura)) {
-    echo '
-<div class="btn-group">
-    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-magic"></i> '.tr('Crea').'
-        <span class="caret"></span>
-    </button>';
-    if ($dir == 'entrata') {
+if (!$is_anagrafica_deleted) {
+    if ($dir == 'entrata' || !empty($abilita_autofattura)) {
         echo '
-    <ul class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
-            '.tr('Nota di debito').'
-        </a>
-        
-        <a class="dropdown-item" data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
-            '.tr('Nota di credito').'
-        </a>
-    </ul>';
-    } elseif (!empty($abilita_autofattura)) {
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and (empty($record['is_reversed']) || !empty($abilita_autofattura))) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-magic"></i> '.tr('Crea').'
+            <span class="caret"></span>
+        </button>';
+        if ($dir == 'entrata') {
+            echo '
+        <ul class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
+                '.tr('Nota di debito').'
+            </a>
+            
+            <a class="dropdown-item" data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
+                '.tr('Nota di credito').'
+            </a>
+        </ul>';
+        } elseif (!empty($abilita_autofattura)) {
+            echo '
+        <ul class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" data-href="'.base_path().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi autofattura">
+                '.tr('Autofattura').'
+            </a>
+        </ul>';
+        }
         echo '
-    <ul class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" data-href="'.base_path().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi autofattura">
-            '.tr('Autofattura').'
-        </a>
-    </ul>';
+    </div>';
     }
-    echo '
-</div>';
 }
 
 if (empty($record['is_fiscale'])) {

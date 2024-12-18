@@ -119,4 +119,6 @@ if (!empty($id_record)) {
 
     ORDER BY 
         `data`');
+
+    $is_anagrafica_deleted = !$ordine->anagrafica;
 }

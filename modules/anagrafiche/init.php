@@ -56,4 +56,6 @@ if (!empty($id_record)) {
         $tipi_anagrafica = $anagrafica->tipi->toArray();
         $tipi_anagrafica = array_column($tipi_anagrafica, 'id');
     }
+
+    $is_anagrafica_deleted = $anagrafica->deleted_at;
 }

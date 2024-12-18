@@ -779,7 +779,7 @@ echo '
         input("tecnici_assegnati").getElement().selectReset();
     }
 
-    $("#ricorsiva").on("change", function(){
+    $("#ricorsiva_add").on("change", function(){
         if ($(this).is(":checked")) {
             $(".ricorrenza").removeClass("hidden");
             $("#data_inizio_ricorrenza").attr("required", true);

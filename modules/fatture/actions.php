@@ -789,6 +789,26 @@ switch ($op) {
         $id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
         $id_conto = post('id_conto');
 
+        if ($class == 'Modules\Interventi\Intervento') {
+            $riga = Descrizione::build($fattura);
+            $riga->descrizione = post('descrizione_intervento');
+            $riga->idintervento = $documento->id;
+            $riga->save();
+
+            $copia_descrizione = post('copia_descrizione');
+            if (!empty($copia_descrizione) && !empty($documento->descrizione)) {
+                $riga = Descrizione::build($fattura);
+                $riga->descrizione = $documento->descrizione;
+                $riga->idintervento = $documento->id;
+                $riga->save();
+            }
+
+            if (post('importa_sessioni')) {
+                $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
+                aggiungi_sessioni_in_fattura($documento->id, $fattura->id, $id_iva, $id_conto, $id_rivalsa_inps, $id_ritenuta_acconto, $calcolo_ritenuta_acconto);
+            }
+        }
+
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {

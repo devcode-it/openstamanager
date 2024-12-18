@@ -262,7 +262,44 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
                 <div class="col-md-'.$width.'">
                     {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "'.($dir == 'entrata' ? 'conti-vendite' : 'conti-acquisti').'" ]}
                 </div>
-            </div>
+            </div>';
+
+        $block_input = false;
+        if ($original_module->name == 'Interventi') {
+            $block_input = true;
+
+            $rs = $dbo->fetchOne('SELECT
+                `in_interventi`.`id`,
+                CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
+                CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
+                CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
+                IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
+            FROM
+                `in_interventi` 
+                INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+                LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            WHERE
+                `in_interventi`.`id` = '.prepare($documento->id));
+
+            $descrizione_intervento = str_replace("'", ' ', strip_tags((string) $original_module->replacePlaceholders($documento->id, setting('Descrizione personalizzata in fatturazione')))) ?: $rs['info'];
+
+            // Intervento
+            echo '
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione_intervento", "required": "1", "value": "'.$descrizione_intervento.'" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "placeholder": "'.tr('Copia anche la descrizione dell\'intervento').'." ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Importa sessioni').'", "name": "importa_sessioni", "value": "1", "disabled": "'.($block_input ? '1' : '0').'" ]}
+                </div>
+            </div>';
+        }
+        echo '
         </div>
     </div>';
 }
@@ -290,7 +327,7 @@ echo '
         <table class="card-body table table-striped table-hover table-sm">
             <thead>
                 <tr>
-                    <th width="2%"><input id="import_all" type="checkbox" checked/></th>
+                    <th width="2%"><input id="import_all" type="checkbox" class="'.($block_input ? 'disabled' : '').'" checked/></th>
                     <th>'.tr('Descrizione').'</th>
                     <th width="10%" class="text-center">'.tr('Q.tà').'</th>
                     <th width="15%">'.tr('Q.tà da evadere').'</th>
@@ -324,7 +361,7 @@ foreach ($righe as $i => $riga) {
     echo '
                 <tr data-local_id="'.$i.'">
                     <td style="vertical-align:middle">
-                        <input class="check" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
+                        <input class="check '.($block_input ? 'disabled' : '').'" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
                     </td>
                     <td style="vertical-align:middle">
                         <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
@@ -373,7 +410,7 @@ foreach ($righe as $i => $riga) {
     // Q.tà da evadere
     echo '
                     <td style="vertical-align:middle">
-                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
+                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"", "disabled": "'.($block_input ? '1' : '0').'" ]}
                     </td>';
 
     echo '
@@ -433,7 +470,7 @@ if (!$righe_evase->isEmpty()) {
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Righe evase completamente').'</h3>
             <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
             </div>
         </div>
 

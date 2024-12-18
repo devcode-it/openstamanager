@@ -130,25 +130,28 @@ echo '
             </div>
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Nome contratto'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
                 </div>
 
+                <div class="col-md-6">
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+				</div>
+
+                <div class="col-md-2">
+                    {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $contratto->sconto_finale_percentuale ?: $contratto->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($contratto->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
+				</div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `descrizione` FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) GROUP BY `descrizione` ORDER BY `descrizione`", "value": "$idpagamento$" ]}
                 </div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
-				</div>
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "idtipointervento", "ajax-source": "tipiintervento", "value": "$idtipointervento$" ]}
+                </div>
 
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $contratto->sconto_finale_percentuale ?: $contratto->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($contratto->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
-				</div>
-
-            </div>
-
-            <div class="row">
                 <div class="col-md-3">
                     <?php echo (!empty($record['id_categoria'])) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
                     {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti", "icon-after": "add|<?php echo Module::where('name', 'Categorie contratti')->first()->id; ?>" ]}

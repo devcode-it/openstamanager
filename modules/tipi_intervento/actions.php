@@ -27,6 +27,8 @@ switch (post('op')) {
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
             $tipo->name = $descrizione;
         }
+        $tipo->note = post('note');
+        $tipo->non_conteggiare = post('non_conteggiare');
         $tipo->calcola_km = post('calcola_km');
         $tipo->tempo_standard = post('tempo_standard');
         $tipo->costo_orario = post('costo_orario');

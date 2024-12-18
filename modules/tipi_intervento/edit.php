@@ -25,12 +25,16 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 		</div>
 
-		<div class="col-md-5">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
+		</div>
+
+		<div class="col-md-2">
+			{[ "type": "checkbox", "label": "<?php echo tr('Non conteggiare'); ?>", "name": "non_conteggiare", "help": "<?php echo tr('Specifica se scalare dal consuntivo collegato'); ?>.", "value": "$non_conteggiare$"  ]}
 		</div>
 
 		<div class="col-md-2">
@@ -40,7 +44,12 @@ include_once __DIR__.'/../../core.php';
 		<div class="col-md-2">
 			{[ "type": "number", "label": "<?php echo tr('Tempo standard'); ?>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0,25 - 24 ore. <br><small>Esempi: <em><ul><li>60 minuti = 1 ora</li><li>30 minuti = 0,5 ore</li><li>15 minuti = 0,25 ore</li></ul></em></small> Suggerisce il tempo solitamente impiegato per questa tipologia di attivita'); ?>.", "min-value": "0", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore"  ]}
 		</div>
+	</div>
 
+	<div class="row">
+		<div class="col-md-12">
+			{[ "type": "textarea", "label": "<?php echo tr('Note da riportare nella stampa attività'); ?>", "name": "note", "value": "$note$" ]}
+		</div>
 	</div>
 
 	<div class="card card-primary">

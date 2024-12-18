@@ -111,6 +111,7 @@ switch (post('op')) {
             $contratto->codice_cup = post('codice_cup');
 
             $contratto->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
+            $contratto->idtipointervento = post('idtipointervento');
 
             $contratto->save();
 

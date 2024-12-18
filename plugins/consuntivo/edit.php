@@ -96,7 +96,7 @@ if (!empty($interventi)) {
         <td colspan="5">';
 
         // Lettura sessioni di lavoro
-        $sessioni = $intervento->sessioni;
+        $sessioni = $intervento->sessioni()->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')->where('non_conteggiare', 0)->get();
         if (!empty($sessioni)) {
             echo '
             <table class="table table-striped table-sm table-bordered">

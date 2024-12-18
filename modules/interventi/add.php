@@ -663,6 +663,11 @@ echo '
             ordine.getElement().selectReset();
 
             $("input[name=idcontratto_riga]").val("");
+
+            if ($(this).selectData().idtipointervento) {
+                input("idtipointervento").getElement()
+                    .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            }
         }
 	});
 

@@ -29,7 +29,23 @@ switch ($resource) {
      * - stato
      */
     case 'contratti':
-        $query = 'SELECT `co_contratti`.`id` AS id, CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `idstato`) , "]") AS descrizione, (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS totale, (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS sconto, (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS n_righe FROM `co_contratti` INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` |where| ORDER BY `co_contratti`.`id`';
+        $query = 'SELECT
+                `co_contratti`.`id` AS id,
+                CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `idstato`) , "]") AS descrizione,
+                (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS totale,
+                (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS sconto,
+                (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS n_righe,
+                `co_contratti`.`idtipointervento`,
+                `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
+                `in_tipiintervento`.`tempo_standard` AS tempo_standard
+            FROM
+                `co_contratti` 
+                INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+                LEFT JOIN `in_tipiintervento` ON (`co_contratti`.`idtipointervento`=`in_tipiintervento`.`id`)
+                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+            |where| 
+            ORDER BY
+                `co_contratti`.`id`';
 
         foreach ($elements as $element) {
             $filter[] = '`co_contratti`.`id`='.prepare($element);
@@ -73,6 +89,8 @@ switch ($resource) {
                 'text' => $descrizione,
                 'descrizione' => $descrizione,
                 '_bgcolor_' => $color,
+                'idtipointervento' => $r['idtipointervento'],
+                'idtipointervento_descrizione' => $r['idtipointervento_descrizione']
             ];
         }
 

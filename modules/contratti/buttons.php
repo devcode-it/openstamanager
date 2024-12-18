@@ -20,15 +20,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-$rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
-
-$is_fatturabile = $record['is_fatturabile'] && !empty($rs_documento);
-
+$is_fatturabile = $record['is_fatturabile'];
 $stati_fatturabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_abilitati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1')['stati_abilitati'];
 
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */
 echo '
-<div class="tip" data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del contratto deve essere tra: _STATE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Per creare un documento lo stato del contratto deve essere tra: _STATE_LIST_', [
     '_STATE_LIST_' => $stati_fatturabili,
 ]).'">
     <button type="button" class="btn btn-info '.($is_fatturabile ? '' : 'disabled').' " data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">

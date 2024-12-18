@@ -61,13 +61,6 @@ if ($final_module->id == $id_module_interventi) {
     $righe_evase = $righe_totali->where('qta_rimanente', '=', 0);
 }
 
-if ($righe->isEmpty()) {
-    echo '
-<p>'.tr('Non ci sono elementi da evadere').'...</p>';
-
-    return;
-}
-
 $link = !empty($documento_finale) ? base_path().'/editor.php?id_module='.$final_module->id.'&id_record='.$documento_finale->id : base_path().'/controller.php?id_module='.$final_module->id;
 
 echo '
@@ -549,7 +542,6 @@ foreach ($articoli as $elenco) {
 echo '
 <script type="text/javascript">
     var scorte = '.json_encode($scorte).';
-    var permetti_documento_vuoto = '.intval(!empty($options['allow-empty'])).';
     var abilita_scorte = '.intval(!$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino).';
 
     function controllaMagazzino() {
@@ -670,14 +662,6 @@ echo '
         });
 
         $("#totale").html((totale.toLocale()) + " " + globals.currency);
-
-        if (!permetti_documento_vuoto) {
-            if (totale_qta > 0) {
-                $("#submit_btn").show();
-            } else {
-                $("#submit_btn").hide();
-            }
-        }
 
         controllaMagazzino();
     }

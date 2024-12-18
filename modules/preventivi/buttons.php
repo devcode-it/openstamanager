@@ -38,9 +38,7 @@ echo '
     </button>
 </div>';
 
-$rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record));
-
-$disabled = ($record['is_fatturabile'] || $record['is_completato']) && !empty($rs_documento);
+$disabled = ($record['is_fatturabile'] || $record['is_completato']);
 
 $stati_abilitati = Stato::where('is_fatturabile', '=', '1')->orWhere('is_completato', '=', '1')->get();
 $stati = [];
@@ -51,7 +49,7 @@ foreach ($stati_abilitati as $stato) {
 
 // Creazione altri documenti
 echo '
-<div class="btn-group tip" '.(!$disabled ? ' data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: ').implode(', ', $stati).'"' : '').'">
+<div class="btn-group tip" '.(!$disabled ? ' data-widget="tooltip" title="'.tr('Per creare un documento lo stato del preventivo deve essere tra: ').implode(', ', $stati).'"' : '').'">
 
     <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...

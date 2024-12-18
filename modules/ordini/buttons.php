@@ -38,7 +38,7 @@ foreach ($stati as $stato) {
 }
 
 echo '
-<div class="btn-group tip" '.(!in_array($record['stato'], $stati_importabili) ? ' data-widget="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato dell\'ordine deve essere tra: ').implode(', ', $stati_importabili).'"' : '').'">
+<div class="btn-group tip" '.(!in_array($record['stato'], $stati_importabili) ? ' data-widget="tooltip" title="'.tr('Per creare un documento lo stato dell\'ordine deve essere tra: ').implode(', ', $stati_importabili).'"' : '').'">
 	<button class="btn btn-info dropdown-toggle '.(in_array($record['stato'], $stati_importabili) ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<i class="fa fa-magic"></i> '.tr('Crea').'
 		<span class="caret"></span>

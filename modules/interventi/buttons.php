@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Interventi\Stato;
+
 if (empty($record['firma_file'])) {
     $frase = tr('Anteprima e firma');
     $info_firma = '';
@@ -69,8 +71,18 @@ $is_fatturabile = $dbo->fetchOne('SELECT
 WHERE
     `in_interventi`.`id`='.prepare($id_record).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where)['id'];
 
+$stati_fatturabili = Stato::where('is_fatturabile', '=', '1')->get();
+$stati = [];
+
+foreach ($stati_fatturabili as $stato) {
+    $stati[] = $stato->getTranslation('title');
+}
+
 echo '
-<div class="btn-group">
+<div class="tip btn-group" data-widget="tooltip" title="'.tr('Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell\'attività deve essere tra: _STATE_LIST_', [
+    '_CONTROLLO_DOCUMENTI_' => (!setting('Permetti fatturazione delle attività collegate a contratti') || !setting('Permetti fatturazione delle attività collegate a ordini') ||!setting('Permetti fatturazione delle attività collegate a preventivi') ? tr('l\'attività non deve essere collegata ai seguenti documenti').': '.(!setting('Permetti fatturazione delle attività collegate a contratti') ? '<b>Contratti</b>' : '').(!setting('Permetti fatturazione delle attività collegate a ordini') ? ' <b>Ordini</b>' : '').(!setting('Permetti fatturazione delle attività collegate a preventivi') ? ' <b>Preventivi</b>' : '').'<br> e' : ''),
+    '_STATE_LIST_' => implode(', ', (array)$stati),
+]).'">
     <button class="btn btn-info dropdown-toggle '.($is_fatturabile ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').'
         <span class="caret"></span>

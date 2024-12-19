@@ -235,6 +235,10 @@ foreach ($righe as $key => $riga) {
     echo '
         </tr>';
 
+    $autofill->next();
+
+    $next = $righe->flatten()[$num];
+    
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>
@@ -264,9 +268,10 @@ foreach ($righe as $key => $riga) {
             </td>
         </tr>';
         }
+        $autofill->next();
+        $autofill->next();
+        $autofill->next();
     }
-
-    $autofill->next();
 }
 
 echo '

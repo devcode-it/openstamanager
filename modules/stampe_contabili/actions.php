@@ -23,10 +23,11 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'crea_definitiva':
         $year = date('Y', strtotime(post('date_start')));
-        $print = Prints::render(post('id_print'), null, null, true);
-        $pages = count($print['pages']);
 
         $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page'] + 1;
+
+        $print = Prints::render(post('id_print'), null, null, true, true, ['reset' => $first_page-1, 'suppress' => 0]);
+        $pages = count($print['pages']);
         $last_page = $first_page + $pages - 1;
 
         $result = $dbo->table('co_stampecontabili')->insertGetId([
@@ -38,7 +39,7 @@ switch (filter('op')) {
             'dir' => post('dir'),
         ]);
 
-        $print = Prints::render(post('id_print'), null, null, true);
+        $print = Prints::render(post('id_print'), null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
         $name = 'Registro_iva_'.(post('dir') == 'entrata' ? 'vendite' : 'acquisti').'_del_'.post('date_start');
         $upload = Uploads::upload($print['pdf'], [
             'name' => $name,

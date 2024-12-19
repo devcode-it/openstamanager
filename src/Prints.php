@@ -144,7 +144,7 @@ class Prints
      * @param bool       $return_string
      * @param bool       $overwrite
      */
-    public static function render($print, $id_record, $directory = null, $return_string = false, $overwrite = true)
+    public static function render($print, $id_record = null, $directory = null, $return_string = false, $overwrite = true, $mpdfPageNumSubstitutions = [])
     {
         // ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
         $dbo = $database = database();
@@ -193,7 +193,7 @@ class Prints
         } elseif (self::isOldStandard($print)) {
             return self::oldLoader($infos['id'], $id_record, $directory, $return_string, $overwrite);
         } else {
-            return self::loader($infos['id'], $id_record, $directory, $return_string, $overwrite);
+            return self::loader($infos['id'], $id_record, $directory, $return_string, $overwrite, $mpdfPageNumSubstitutions);
         }
     }
 
@@ -481,7 +481,7 @@ class Prints
      * @param string     $directory
      * @param bool       $return_string
      */
-    protected static function loader($id_print, $id_record, $directory = null, $return_string = false, $overwrite = true)
+    protected static function loader($id_print, $id_record, $directory = null, $return_string = false, $overwrite = true, $mpdfPageNumSubstitutions = [])
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -537,6 +537,10 @@ class Prints
             // 'PDFA' => true,
             // 'PDFAauto' => true,
         ]);
+
+        if (!empty($mpdfPageNumSubstitutions)) {
+            $mpdf->PageNumSubstitutions[] = $mpdfPageNumSubstitutions;
+        }
 
         if (setting('Filigrana stampe')) {
             $mpdf->SetWatermarkImage(

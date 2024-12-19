@@ -18,14 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!empty($page)) {
-    echo '
-    <p class="text-right">
-        '.tr('_YEAR_/_PAGE_', [
-        '_PAGE_' => $page++,
-        '_YEAR_' => date('Y'),
-    ]).'
-    </p>';
-} else {
-    echo '<p></p>';
-}
+ echo '
+ <p class="text-right">
+     '.tr('_YEAR_/_PAGE_', [
+     '_PAGE_' => '{PAGENO}',
+     '_YEAR_' => date('Y'),
+ ]).'
+ </p>';

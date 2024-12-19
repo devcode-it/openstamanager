@@ -110,3 +110,15 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 ('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Raggruppamento fatturazione massiva preventivi', ''), 
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Massive quotes billing grouping', '');
+
+-- Aggiunta colonna Da rinnovare in Contratti
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
+(@id_module, 'Da rinnovare', "IF(rinnovabile,IF(DATEDIFF(data_conclusione,NOW()) BETWEEN 0 AND giorni_preavviso_rinnovo,'Sì',IF(DATEDIFF(data_conclusione,NOW()) <= 0,'Sì','No')),'No')", '19', '1', '0', '0', '0', '', '', '1', '0', '0');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = @id_module), 'Da rinnovare'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = @id_module), 'Renewable');
+
+UPDATE `zz_views` SET `query` = "IF(`co_contratti`.`rinnovabile`=1, 'Sì', 'No')" WHERE `zz_views`.`name` = "Rinnovabile" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Contratti");

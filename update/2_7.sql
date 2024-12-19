@@ -84,3 +84,29 @@ HAVING
     2=2
 ORDER BY 
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `zz_modules`.`name` = 'Interventi';
+
+-- Aggiunte impostazioni per raggruppamento fatturazione massiva
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva ddt', '', 'list[cliente,sede]', '1', 'Ddt', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ddt'), 'Raggruppamento fatturazione massiva ddt', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ddt'), 'Massive ddt billing grouping', '');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva attività', '', 'list[cliente,sede]', '1', 'Attività', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva attività'), 'Raggruppamento fatturazione massiva attività', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva attività'), 'Massive activities billing grouping', '');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva contratti', '', 'list[cliente,sede]', '1', 'Contratti', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva contratti'), 'Raggruppamento fatturazione massiva contratti', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva contratti'), 'Massive contracts billing grouping', '');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva ordini', '', 'list[cliente,sede]', '1', 'Ordini', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ordini'), 'Raggruppamento fatturazione massiva ordini', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ordini'), 'Massive orders billing grouping', '');
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva preventivi', '', 'list[cliente,sede]', '1', 'Preventivi', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Raggruppamento fatturazione massiva preventivi', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Massive quotes billing grouping', '');

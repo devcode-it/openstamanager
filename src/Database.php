@@ -142,7 +142,7 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return DebugBar\DataCollector\PDO\TraceablePDO|PDO
+     * @return PDO
      */
     public function getPDO()
     {

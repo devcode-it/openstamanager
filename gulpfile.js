@@ -442,15 +442,6 @@ function i18n() {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/i18n'));
 }
 
-// PHP DebugBar assets
-function phpDebugBar() {
-    return gulp.src([
-        './vendor/maximebf/debugbar/src/DebugBar/Resources/**/*',
-        '!./vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/**/*',
-    ])
-        .pipe(gulpIf('*.css', minifyCSS(), gulpIf('*.js', minifyJS())))
-        .pipe(gulp.dest(config.production + '/php-debugbar'));
-}
 
 // Operazioni per la release
 function release(done) {
@@ -500,7 +491,6 @@ function release(done) {
         '!vendor/mpdf/mpdf/ttfonts/*',
         'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
         'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
-        '!vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/**',
         '!vendor/respect/validation/tests/**',
         '!vendor/willdurand/geocoder/tests/**',
     ], {
@@ -605,7 +595,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

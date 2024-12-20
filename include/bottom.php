@@ -47,11 +47,6 @@ if (Auth::check()) {
 
     if (App::debug()) {
         echo '
-        <!-- Fix per le icone di debug -->
-        <style>div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
-            font-family: FontAwesome;
-        }</style>
-
         <!-- Rimozione del messaggio automatico riguardante la modifica di valori nella pagina -->
         <script>
             window.onbeforeunload = null;

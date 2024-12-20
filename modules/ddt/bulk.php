@@ -89,12 +89,12 @@ switch (post('op')) {
                             $fattura = Fattura::where('idanagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
+                                ->where('idsede_destinazione', $id_sede)
                                 ->first();
                         } else {
                             $fattura = Fattura::where('idanagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_standard->id)
-                                ->where('idsede_destinazione', $id_sede)
                                 ->first();
                         }
 

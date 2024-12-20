@@ -27,7 +27,7 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-$pageTitle = !empty($pageTitle) ? $pageTitle : $structure->getTranslation('title');
+$pageTitle = !empty($pageTitle) ? $pageTitle : ($structure ? $structure->getTranslation('title') : tr('OpenSTAManager'));
 
 $lang = (empty($lang) || $lang == '|lang|') ? 'it_IT' : $lang;
 

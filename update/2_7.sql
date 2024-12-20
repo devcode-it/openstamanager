@@ -126,7 +126,7 @@ UPDATE `zz_views` SET `query` = "IF(`co_contratti`.`rinnovabile`=1, 'Sì', 'No')
 -- Gestione spese d'incasso
 ALTER TABLE `co_pagamenti` ADD `descrizione_incasso` TEXT NOT NULL, ADD `importo_fisso_incasso` DECIMAL(15,6) NOT NULL, ADD `importo_percentuale_incasso` DECIMAL(15,6) NOT NULL;
 
-ALTER TABLE `co_documenti` ADD `id_riga_spese_incasso` INT NOT NULL;
+ALTER TABLE `co_documenti` ADD `id_riga_spese_incasso` INT NULL;
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
 ("Conto predefinito per le spese d'incasso", (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`='Ricavi vari'), "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')", "1", "Fatturazione", NULL, 0);

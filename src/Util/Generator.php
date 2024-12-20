@@ -94,6 +94,10 @@ class Generator
      */
     public static function complete($pattern, $values = [], $date = null)
     {
+        if ($pattern == null) {
+            return null;
+        }
+        
         // Costruzione del pattern
         $replaces = array_merge(self::getReplaces($date), $values);
 

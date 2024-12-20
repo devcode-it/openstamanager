@@ -44,7 +44,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
 
         $previous = null;
         for ($i = 0; $i < 10000; $i = $i + $step) {
-            $value = $prefix_value.$this->pad($i + 1, $length).$suffix_value;
+            $value = $prefix_value.($i + 1).$suffix_value;
             $this->assertEquals($value, Generator::generate($pattern, $previous, $step, $info));
 
             $previous = $value;

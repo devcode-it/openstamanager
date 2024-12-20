@@ -122,3 +122,16 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = @id_module), 'Renewable');
 
 UPDATE `zz_views` SET `query` = "IF(`co_contratti`.`rinnovabile`=1, 'Sì', 'No')" WHERE `zz_views`.`name` = "Rinnovabile" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Contratti");
+
+-- Gestione spese d'incasso
+ALTER TABLE `co_pagamenti` ADD `descrizione_incasso` TEXT NOT NULL, ADD `importo_fisso_incasso` DECIMAL(15,6) NOT NULL, ADD `importo_percentuale_incasso` DECIMAL(15,6) NOT NULL;
+
+ALTER TABLE `co_documenti` ADD `id_riga_spese_incasso` INT NOT NULL;
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
+("Conto predefinito per le spese d'incasso", (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`='Ricavi vari'), "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')", "1", "Fatturazione", NULL, 0);
+
+SELECT @id_record := `id` FROM `zz_settings` WHERE `nome` = "Conto predefinito per le spese d'incasso";
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', @id_record, "Conto predefinito per le spese d'incasso", ''), 
+('2', @id_record, 'Default account for collection costs', '');

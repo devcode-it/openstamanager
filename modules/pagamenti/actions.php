@@ -60,6 +60,9 @@ switch (filter('op')) {
                 $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
                 $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
                 $pagamento->setTranslation('title', $descrizione);
+                $pagamento->descrizione_incasso = post('descrizione_incasso');
+                $pagamento->importo_fisso_incasso = post('importo_fisso_incasso');
+                $pagamento->importo_percentuale_incasso = post('importo_percentuale_incasso');
                 $pagamento->save();
             }
 

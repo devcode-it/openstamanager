@@ -52,6 +52,28 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 
+    <div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"><?php echo tr('Spese di incasso in fattura'); ?></h3>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione riga'); ?>", "name": "descrizione_incasso", "value": "$descrizione_incasso$" ]}
+                </div>
+
+                <div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Importo fisso'); ?>", "name": "importo_fisso_incasso", "value": "$importo_fisso_incasso$", "icon-after": "<?php echo currency(); ?>" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo tr('Importo percentuale'); ?>", "name": "importo_percentuale_incasso", "value": "$importo_percentuale_incasso$", "icon-after": "%" ]}
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Rate'); ?></h3>

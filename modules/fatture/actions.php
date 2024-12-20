@@ -714,6 +714,9 @@ switch ($op) {
             $riga = null;
         }
 
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+
         flash()->info(tr('Righe duplicate!'));
 
         break;
@@ -1064,6 +1067,9 @@ switch ($op) {
 
                 flash()->info(tr('Nuovo articolo aggiunto!'));
             }
+
+            // Ricalcolo inps, ritenuta e bollo
+            ricalcola_costiagg_fattura($id_record);
         } else {
             $response['error'] = tr('Nessun articolo corrispondente a magazzino');
             echo json_encode($response);
@@ -1112,6 +1118,9 @@ switch ($op) {
                 ++$numero_totale;
             }
         }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
 
         if ($numero_totale > 1) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
@@ -1169,6 +1178,9 @@ switch ($op) {
             ++$numero_totale;
         }
 
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+
         if ($numero_totale > 1) {
             flash()->info(tr('_NUM_ prezzi modificati!', [
                 '_NUM_' => $numero_totale,
@@ -1202,6 +1214,9 @@ switch ($op) {
 
             flash()->info(tr('Riga aggiornata!'));
         }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
 
         break;
 

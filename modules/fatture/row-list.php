@@ -66,6 +66,8 @@ foreach ($righe as $riga) {
     $mancanti = 0;
     $delete = 'delete_riga';
 
+    $row_disable = in_array($riga->id, [$fattura->rigaBollo->id, $fattura->id_riga_spese_incasso]);
+
     // Individuazione dei seriali
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         $serials = $riga->serials;
@@ -115,7 +117,7 @@ foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.$riga::class.'" '.$extra.'>
             <td class="text-center">';
-    if (!$block_edit) {
+    if (!$block_edit && !$row_disable) {
         echo '
                 <input class="check" type="checkbox"/>';
     }
@@ -220,7 +222,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
             <td>
-                {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'", "decimals": "qta" ]}
+                {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto() || $row_disable).'", "decimals": "qta" ]}
             </td>';
 
         if ($riga->isArticolo()) {
@@ -236,7 +238,7 @@ foreach ($righe as $riga) {
             } else {
                 echo '
             <td>
-                {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}
+                {[ "type": "number", "name": "costo_'.$riga->id.'", "value": "'.$riga->costo_unitario.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.currency().'", "disabled": "'.($block_edit || $row_disable).'" ]}
             </td>';
             }
         }
@@ -249,7 +251,7 @@ foreach ($righe as $riga) {
             echo '
             <td class="text-center">
                 '.($show_notifica['show_notifica_prezzo'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
-                {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.$block_edit.'" ]}';
+                {[ "type": "number", "name": "prezzo_'.$riga->id.'", "value": "'.$riga->prezzo_unitario_corrente.'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.(abs($riga->provvigione_unitaria) > 0 ? '<span class=\'tip text-info\' title=\''.provvigioneInfo($riga).'\'><small><i class=\'fa fa-handshake-o\'></i></small></span>' : '').'", "icon-after": "'.currency().'", "disabled": "'.($block_edit || $row_disable).'" ]}';
 
             // Prezzo inferiore al minimo consigliato
             if ($riga->isArticolo()) {
@@ -303,7 +305,7 @@ foreach ($righe as $riga) {
     }
 
     if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
-        if ($riga->id != $fattura->rigaBollo->id) {
+        if (!$row_disable) {
             echo '
                     <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga').'" onclick="apriInformazioniFE(this)">
                         <i class="fa fa-file-code-o"></i>

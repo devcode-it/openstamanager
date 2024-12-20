@@ -441,6 +441,12 @@ class Fattura extends Document
         return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
+    public function rigaSpeseIncasso()
+    {
+        return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_spese_incasso);
+    }
+
+
     public function scadenze()
     {
         return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
@@ -585,6 +591,7 @@ class Fattura extends Document
 
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
+        $this->id_riga_spese_incasso = $this->manageRigaSpeseIncasso();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
@@ -721,6 +728,46 @@ class Fattura extends Document
         $new->stato()->associate($id_stato_attuale);
 
         return $new;
+    }
+
+    public function manageRigaSpeseIncasso() {
+        $riga = $this->rigaSpeseIncasso;
+        $first_riga_fattura = $this->getRighe()->where('id', '!=', $riga->id)->where('is_descrizione', '0')->first();
+
+        // Elimino la riga se non c'è più la descrizione dell'incasso o se la fattura non ha righe
+        if (!$this->pagamento->descrizione_incasso || !$first_riga_fattura) {
+            if (!empty($riga)) {
+                $riga->delete();
+            }
+
+            return null;
+        }
+
+        // Creazione riga se non presente
+        if (empty($riga)) {
+            $riga = Components\Riga::build($this);
+        }
+
+        $prezzo_unitario = $this->pagamento->importo_fisso_incasso;
+        if ($this->pagamento->importo_percentuale_incasso && ($this->totale - $riga->totale)) {
+            $prezzo_unitario += ($this->totale - $riga->totale) * $this->pagamento->importo_percentuale_incasso / 100;
+        }
+
+        if ($riga->tipo_sconto == 'PRC') {
+            $sconto = $riga->sconto_percentuale ?: 0;
+        } else {
+            $sconto = $riga->sconto_unitario;
+        }
+
+        $riga->qta = 1;
+        $riga->descrizione = $this->pagamento->descrizione_incasso;
+        $riga->id_iva = $first_riga_fattura->idiva;
+        $riga->idconto = setting("Conto predefinito per le spese d'incasso");
+        $riga->setPrezzoUnitario($prezzo_unitario, $first_riga_fattura->idiva);
+        $riga->setSconto($sconto, $riga->tipo_sconto);
+        $riga->save();
+
+        return $riga->id;
     }
 
     /**

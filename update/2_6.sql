@@ -1,7 +1,7 @@
 -- Aggiunta Marchio articolo
 ALTER TABLE `mg_articoli` ADD `id_marchio` INT NULL DEFAULT NULL;
 
-CREATE TABLE `mg_marchi` (
+CREATE TABLE IF NOT EXISTS `mg_marchi` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `link` varchar(255) NOT NULL,

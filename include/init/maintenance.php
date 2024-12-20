@@ -25,7 +25,7 @@ if ($config['maintenance_ip'] != $_SERVER['REMOTE_ADDR']) {
     $img = App::getPaths()['img'];
 
     echo '
-    <div class="card card-center-large card-danger">
+    <div class="card card-center-large card-warning">
         <div class="card-header with-border text-center">
             <img src="'.$img.'/logo_completo.png" width="300" alt="'.tr('OSM Logo').'">
         </div>

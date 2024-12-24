@@ -78,90 +78,90 @@ switch (post('op')) {
         $template = Template::where('name', 'Sollecito di pagamento raggruppato per anagrafica')->first();
 
         $list = [];
+        $id_records_inviati = [];
         $anagrafiche = [];
         $id_anagrafica = 0;
 
-        foreach ($id_records as $id) {
-            $scadenze = $database->FetchArray('SELECT * FROM co_scadenziario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenziario.iddocumento = nota.ref_documento WHERE co_scadenziario.id = '.$id.' AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
-            foreach ($scadenze as $key => $scadenza) {
-                $scadenza = Scadenza::find($scadenza['id']);
-                $documento = Fattura::find($scadenza['iddocumento']);
+        $scadenze = $database->FetchArray('SELECT * FROM co_scadenziario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenziario.iddocumento = nota.ref_documento WHERE co_scadenziario.id IN ('.implode(',', $id_records).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
+        foreach ($scadenze as $key => $scadenza) {
+            $scadenza = Scadenza::find($scadenza['id']);
+            $documento = Fattura::find($scadenza['iddocumento']);
 
-                // Controllo se è una fattura di vendita
-                if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')) {
-                    $id_documento = $documento->id;
-                    $id_anagrafica = $documento->idanagrafica;
+            // Controllo se è una fattura di vendita
+            if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')) {
+                $id_documento = $documento->id;
+                $id_anagrafica = $documento->idanagrafica;
+
+                $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
+
+                // Allego stampa della fattura se non presente
+                if (empty($fattura_allegata)) {
+                    $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', Module::where('name', 'Fatture di vendita')->first()->id)->first();
+
+                    $print = Prints::render($print_predefined->id, $id_documento, null, true);
+                    $upload = Uploads::upload($print['pdf'], [
+                        'name' => $scadenza->descrizione,
+                        'original_name' => $scadenza->descrizione.'.pdf',
+                        'category' => 'Generale',
+                        'id_module' => $id_module,
+                        'id_record' => $scadenza->id,
+                    ]);
 
                     $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
+                }
 
-                    // Allego stampa della fattura se non presente
-                    if (empty($fattura_allegata)) {
-                        $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', Module::where('name', 'Fatture di vendita')->first()->id)->first();
+                // Selezione destinatari e invio mail
+                if (!empty($template)) {
+                    // Invio unico per scadenze della stessa anagrafica
+                    if (!in_array($documento->idanagrafica, $anagrafiche)) {
+                        $creata_mail = false;
+                        $emails = [];
 
-                        $print = Prints::render($print_predefined->id, $id_documento, null, true);
-                        $upload = Uploads::upload($print['pdf'], [
-                            'name' => $scadenza->descrizione,
-                            'original_name' => $scadenza->descrizione.'.pdf',
-                            'category' => 'Generale',
-                            'id_module' => $id_module,
-                            'id_record' => $scadenza->id,
-                        ]);
+                        // Aggiungo email anagrafica
+                        if (!empty($documento->anagrafica->email)) {
+                            $emails[] = $documento->anagrafica->email;
+                            $mail = Mail::build(auth()->getUser(), $template, $scadenza->id);
+                            $mail->addReceiver($documento->anagrafica->email);
+                            $creata_mail = true;
+                        }
 
-                        $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
-                    }
-
-                    // Selezione destinatari e invio mail
-                    if (!empty($template)) {
-                        // Invio unico per scadenze della stessa anagrafica
-                        if (!in_array($documento->idanagrafica, $anagrafiche)) {
-                            $creata_mail = false;
-                            $emails = [];
-
-                            // Aggiungo email anagrafica
-                            if (!empty($documento->anagrafica->email)) {
-                                $emails[] = $documento->anagrafica->email;
-                                $mail = Mail::build(auth()->getUser(), $template, $scadenza->id);
-                                $mail->addReceiver($documento->anagrafica->email);
+                        // Aggiungo email referenti in base alla mansione impostata nel template
+                        $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
+                        foreach ($mansioni as $mansione) {
+                            $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                            if (!$referenti->isEmpty() && $creata_mail == false) {
+                                $mail = Mail::build(auth()->getUser(), $template, $id);
                                 $creata_mail = true;
                             }
 
-                            // Aggiungo email referenti in base alla mansione impostata nel template
-                            $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
-                            foreach ($mansioni as $mansione) {
-                                $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
-                                if (!$referenti->isEmpty() && $creata_mail == false) {
-                                    $mail = Mail::build(auth()->getUser(), $template, $id);
-                                    $creata_mail = true;
-                                }
-
-                                foreach ($referenti as $referente) {
-                                    if (!in_array($referente->email, $emails)) {
-                                        $emails[] = $referente->email;
-                                        $mail->addReceiver($referente->email);
-                                    }
+                            foreach ($referenti as $referente) {
+                                if (!in_array($referente->email, $emails)) {
+                                    $emails[] = $referente->email;
+                                    $mail->addReceiver($referente->email);
                                 }
                             }
                         }
                     }
+                }
 
-                    if (!empty($emails)) {
-                        OperationLog::setInfo('id_email', $mail->id);
-                        OperationLog::setInfo('id_module', $id_module);
-                        OperationLog::setInfo('id_record', $scadenza->id);
-                        OperationLog::build('send-email');
+                if (!empty($emails)) {
+                    OperationLog::setInfo('id_email', $mail->id);
+                    OperationLog::setInfo('id_module', $id_module);
+                    OperationLog::setInfo('id_record', $scadenza->id);
+                    OperationLog::build('send-email');
 
-                        array_push($list, $documento->numero_esterno);
-                        array_push($anagrafiche, $scadenza->idanagrafica);
+                    array_push($list, $documento->numero_esterno);
+                    array_push($id_records_inviati, $scadenza->id);
+                    array_push($anagrafiche, $scadenza->idanagrafica);
 
-                        $next_scadenza = $scadenze[$key + 1];
-                        // Allego unica fattura per più scadenze collegate
-                        if (!empty($fattura_allegata) && $scadenza->iddocumento != $next_scadenza->iddocumento) {
-                            $mail->addUpload($fattura_allegata);
-                        }
-                        // Invio unico per scadenze della stessa anagrafica
-                        if ($scadenza->idanagrafica != $next_scadenza->idanagrafica) {
-                            $mail->save();
-                        }
+                    $next_scadenza = $scadenze[$key + 1];
+                    // Allego unica fattura per più scadenze collegate
+                    if (!empty($fattura_allegata) && $scadenza->iddocumento != $next_scadenza['iddocumento']) {
+                        $mail->addUpload($fattura_allegata);
+                    }
+                    // Invio unico per scadenze della stessa anagrafica
+                    if ($scadenza->idanagrafica != $next_scadenza['idanagrafica']) {
+                        $mail->save();
                     }
                 }
             }
@@ -174,9 +174,9 @@ switch (post('op')) {
         }
 
         // Se non sono stati inviati alcuni i solleciti, mostro un messaggio di avviso
-        if (!empty(array_diff($id_records, $list))) {
+        if (!empty(array_diff($id_records, $id_records_inviati))) {
             flash()->warning(tr('_NUM_ solleciti non sono stati inviati.', [
-                '_NUM_' => sizeof(array_diff($id_records, $list)),
+                '_NUM_' => sizeof(array_diff($id_records, $id_records_inviati)),
             ]));
         }
 

@@ -56,7 +56,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = Tipo::where('id', post('idtipodocumento'))->first();
 
-        $stato_documenti_accodabili = Stato::where('name', 'Bozza')->first()->id;
+        $stato_documenti_accodabili = Stato::where('name', 'Bozza')->first();
         $accodare = post('accodare');
 
         $data = date('Y-m-d');
@@ -94,7 +94,7 @@ switch (post('op')) {
                         } else {
                             $fattura = Fattura::where('idanagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
-                                ->where('idtipodocumento', $tipo_standard->id)
+                                ->where('idtipodocumento', $tipo_documento->id)
                                 ->first();
                         }
 

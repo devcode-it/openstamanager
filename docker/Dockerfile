@@ -1,0 +1,61 @@
+# Usa l'immagine ufficiale di PHP con Apache
+FROM php:8.3-apache
+
+# Abilita i moduli richiesti
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libicu-dev \
+    libcurl4-openssl-dev \
+    libxml2-dev \
+    libpng-dev \
+    libonig-dev \
+    unzip \
+    libxml2-dev \ 
+    libxslt-dev \  
+    git && \
+    docker-php-ext-install zip mbstring pdo_mysql intl soap curl && \
+    a2enmod rewrite 
+
+RUN docker-php-ext-install xsl ftp
+
+RUN docker-php-ext-enable xsl ftp
+
+RUN apt-get install -y libpng-dev libjpeg-dev \
+    && docker-php-ext-configure gd --with-jpeg \
+    && docker-php-ext-install gd
+
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+    
+
+# Configura i parametri di PHP
+COPY php.ini /usr/local/etc/php/
+
+# Installa Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Configura l'applicazione
+WORKDIR /var/www/html
+# Esponi la porta per Apache
+EXPOSE 80
+
+# Clona il repository
+RUN git clone https://github.com/devcode-it/openstamanager.git /var/www/html
+
+RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
+RUN chmod -R 777 /var/www/html/files /var/www/html/logs
+RUN touch /var/www/html/manifest.json \
+    /var/www/html/mariadb_10_x.json \
+    /var/www/html/mysql_8_3.json \
+    /var/www/html/mysql.json \
+    /var/www/html/checksum.json \
+    /var/www/html/settings.json
+
+RUN chown -R $USER:www-data *
+RUN curl -sS https://getcomposer.org/installer | php
+RUN git config --global --add safe.directory /var/www/html
+RUN corepack enable
+RUN corepack prepare yarn@stable --activate
+
+RUN  yarn run develop-OSM
+

@@ -15,12 +15,14 @@
   </p>
 </p>
 
-<br>
 
 [![GitHub release](https://img.shields.io/github/release/devcode-it/openstamanager/all.svg)](https://github.com/devcode-it/openstamanager/releases)
 [![Downloads](https://img.shields.io/github/downloads/devcode-it/openstamanager/total.svg)](https://github.com/devcode-it/openstamanager/releases)
 [![SourceForge](https://img.shields.io/sourceforge/dt/openstamanager.svg?label=SourceForge)](https://sourceforge.net/projects/openstamanager/)
 [![license](https://img.shields.io/github/license/devcode-it/openstamanager.svg)](https://github.com/devcode-it/openstamanager/blob/master/LICENSE)
+
+![Screenshot](assets/src/img/screenshot.jpg)
+
 
 Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica [DevCode](https://www.devcode.it/) di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
 Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open-source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
@@ -164,6 +166,18 @@ yarn run develop-OSM
 ```
 
 Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstamanager.com/docs/base/assets) e [Framework](https://docs.openstamanager.com/docs/base/framework) della documentazione.
+
+### Docker
+
+E' disponibile un'immagine Docker con Apache e MySQL preconfigurati con PHP 8.3. Per creare un container con l'ultima versione in sviluppo è necessario eseguire questi comandi:
+
+```bash
+docker compose up --build -d
+```
+
+**IMPORTANTE:**
+- al momento viene scaricata sempre la versione all'ultimo commit che può non essere stabile
+- è suggerito cambiare i dati di connessione al database contenuti nel file `docker/docker-compose.yml` (almeno `DB_PASSWORD`)
 
 ## Strumenti di sviluppo e debug
 

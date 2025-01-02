@@ -333,11 +333,11 @@ echo '
         </td>';
 if ($has_ritenuta || $show_sconto || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
     echo '<td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale, $d_total);
+            '.moneyFormat($totale, $d_totali);
 } else {
     echo '
             <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
-            <b>'.moneyFormat($totale, $d_total).'</b>';
+            <b>'.moneyFormat($totale, $d_totali).'</b>';
 }
 echo '
         </td>

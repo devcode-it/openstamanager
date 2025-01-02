@@ -52,20 +52,6 @@ RUN touch /var/www/html/manifest.json \
     /var/www/html/settings.json
 
 RUN chown -R $USER:www-data *
-
-# Installa le dipendenze PHP con Composer
-#RUN composer install
-
-# Installa Gulp globalmente con Yarn
-#RUN yarn global add gulp
-#RUN npm install -g gulp  husky
-
-
-# Installa le dipendenze Node.js
-#RUN npm install
-
-# Esegui Gulp per la build
-#RUN gulp
 RUN curl -sS https://getcomposer.org/installer | php
 RUN git config --global --add safe.directory /var/www/html
 RUN corepack enable

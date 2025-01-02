@@ -70,10 +70,10 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->fir
 
 <script type="text/javascript">
 $(document).ready(function () {
-    var sub = $('#add-form').find('#sottocategoria_add');
+    var sub = $('#sottocategoria_add');
     var original = sub.parent().find(".input-group-append button").attr("onclick");
 
-    $('#add-form').find('#id_categoria').change(function() {
+    $('#id_categoria').change(function() {
         updateSelectOption("id_categoria", $(this).val());
         session_set('superselect,id_categoria', $(this).val(), 0);
 

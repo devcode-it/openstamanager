@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: openstamanager
+    ports:
+      - "8090:80"
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=local
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=openstamanager
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+
+  db:
+    image: mysql:8.4
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: openstamanager
+    ports:
+      - "3306:3306"

@@ -89,7 +89,6 @@ use Modules\Iva\Aliquota;
                             'name' => 'descrizione',
                             'required' => 1,
                             'value' => $articolo->getTranslation('title'),
-                            'maxlength' => 255,
                             'charcounter' => 1,
                         ]);
 ?>

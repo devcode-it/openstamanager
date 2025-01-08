@@ -244,7 +244,7 @@ class Fattura extends Document
         // Calcolo dei numeri fattura
         if ($value != $previous) {
             $direzione = $this->tipo->dir;
-            $data = $this->data_registrazione;
+            $data = $this->data_competenza;
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
@@ -829,7 +829,7 @@ class Fattura extends Document
         $maschera = Generator::getMaschera($id_segment);
 
         $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
-            'YEAR(data_registrazione) = '.prepare(date('Y', strtotime($data))),
+            'YEAR(data_competenza) = '.prepare(date('Y', strtotime($data))),
             'id_segment = '.prepare($id_segment),
         ]);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));

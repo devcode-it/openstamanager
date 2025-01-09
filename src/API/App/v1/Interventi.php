@@ -22,7 +22,6 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Carbon\Carbon;
-use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;

@@ -42,8 +42,8 @@ class Promemoria extends Document
      *
      * @var array
      */
-    protected $dates = [
-        'data_richiesta',
+    protected $casts = [
+        'data_richiesta' => 'date',
     ];
 
     /**

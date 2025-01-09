@@ -32,9 +32,9 @@ class Scadenza extends Model
 
     protected $table = 'co_scadenziario';
 
-    protected $dates = [
-        'scadenza',
-        'data_pagamento',
+    protected $casts = [
+        'scadenza' => 'date',
+        'data_pagamento' => 'date',
     ];
 
     public static function build($idanagrafica = null, $descrizione = null, $importo = null, $data_scadenza = null, $id_pagamento = null, $id_banca_azienda = null, $id_banca_controparte = null, $type = 'fattura', $is_pagato = false)

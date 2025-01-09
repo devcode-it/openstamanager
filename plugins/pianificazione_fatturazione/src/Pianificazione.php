@@ -33,8 +33,8 @@ class Pianificazione extends Document
      *
      * @var array
      */
-    protected $dates = [
-        'data_scadenza',
+    protected $casts = [
+        'data_scadenza' => 'date',
     ];
 
     /**

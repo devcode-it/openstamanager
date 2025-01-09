@@ -44,10 +44,7 @@ class Cache extends Model
     ];
     protected $casts = [
         'content' => 'array',
-    ];
-
-    protected $dates = [
-        'expire_at',
+        'expire_at' => 'date',
     ];
 
     public static function build($name = null, $valid_time = null, $expire_at = null)

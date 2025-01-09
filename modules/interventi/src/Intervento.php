@@ -41,9 +41,9 @@ class Intervento extends Document
 
     protected $info = [];
 
-    protected $dates = [
-        'data_richiesta',
-        'data_scadenza',
+    protected $casts = [
+        'data_richiesta' => 'date',
+        'data_scadenza' => 'date',
     ];
 
     protected static $translated_fields = [];

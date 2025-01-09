@@ -19,8 +19,6 @@
  */
 
 use API\Services;
-use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
-use Mpociot\VatCalculator\VatCalculator;
 use Respect\Validation\Validator as v;
 
 /**
@@ -86,6 +84,9 @@ class Validate
         }
 
         /*
+        // mpociot/vat-calculator
+        use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
+        use Mpociot\VatCalculator\VatCalculator;
         // Controllo con API europea ufficiale
         if (extension_loaded('soap')) {
             try {
@@ -96,7 +97,8 @@ class Validate
                 }
             } catch (VATCheckUnavailableException $e) {
             }
-        } */
+        }
+        */
 
         // Controllo attraverso apilayer
         $access_key = setting('apilayer API key for VAT number');

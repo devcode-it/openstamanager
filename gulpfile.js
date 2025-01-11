@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 // Librerie NPM richieste per l'esecuzione
-const gulp = require('gulp');
-const merge = require('merge-stream');
+import gulp from 'gulp';
 const del = require('del');
 const gulpIf = require('gulp-if');
 const babel = require('gulp-babel');
@@ -26,13 +27,12 @@ const babel = require('gulp-babel');
 // Minificatori
 const minifyJS = require('gulp-uglify');
 const minifyCSS = require('gulp-clean-css');
-const minifyJSON = require('gulp-json-minify');
+import autoprefixer from 'gulp-autoprefixer';
 
 // Interpretatori CSS
 const sass = require('gulp-sass')(require('sass'));
 const less = require('gulp-less');
 const stylus = require('gulp-stylus');
-const autoprefixer = require('gulp-autoprefixer');
 
 // Concatenatore
 const concat = require('gulp-concat');
@@ -42,13 +42,13 @@ const flatten = require('gulp-flatten');
 const rename = require('gulp-rename');
 
 // Release
-const glob = require('globby');
 const md5File = require('md5-file')
-const fs = require('fs');
 const archiver = require('archiver');
 const shell = require('shelljs');
-const inquirer = require('inquirer');
 const { Readable } = require('stream');
+import * as fs from 'fs';
+import inquirer from 'inquirer';
+import { globby as glob } from 'globby';
 
 // Configurazione
 const config = {
@@ -77,6 +77,16 @@ const config = {
     }
 };
 config.babelOptions.compact = !config.debug;
+
+function waitPipes(pipes, done) {
+    return Promise.all(
+        pipes.map(pipe => new Promise((resolve, reject) => {
+            pipe.on('end', resolve)
+        }))
+    ).then(function () {
+        done();
+    });
+}
 
 // Elaborazione e minificazione di JS
 const JS = gulp.parallel(() => {
@@ -139,12 +149,12 @@ const JS = gulp.parallel(() => {
     })
         .pipe(babel(config.babelOptions))
         .pipe(concat('app.min.js'))
-        .pipe(gulpIf(!config.debug, minifyJS({compress:false})))
+        .pipe(gulpIf(!config.debug, minifyJS({ compress: false })))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 }, srcJS);
 
 // Elaborazione e minificazione di JS personalizzati
-function srcJS() {
+export function srcJS(done) {
     const js = gulp.src([
         config.development + '/' + config.paths.js + '/base/*.js',
     ])
@@ -161,7 +171,7 @@ function srcJS() {
         .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
-    return merge(js, functions);
+    return waitPipes([js, functions], done);
 }
 
 // Elaborazione e minificazione di CSS
@@ -208,7 +218,7 @@ const CSS = gulp.parallel(() => {
 }, srcCSS);
 
 // Elaborazione e minificazione di CSS personalizzati
-function srcCSS() {
+export function srcCSS(done) {
     const css = gulp.src([
         config.development + '/' + config.paths.css + '/*.{css,scss,less,styl}',
     ])
@@ -230,17 +240,17 @@ function srcCSS() {
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
     const themes = gulp.src([
-            config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
-            config.nodeDirectory + '/admin-lte/dist/css/adminlte.min.css',
-        ])
-            .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
-            .pipe(autoprefixer())
-            .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
-            .pipe(concat('themes.min.css'))
-            .pipe(flatten())
-            .pipe(gulp.dest(config.production + '/' + config.paths.css));
+        config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
+        config.nodeDirectory + '/admin-lte/dist/css/adminlte.min.css',
+    ])
+        .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
+        .pipe(autoprefixer())
+        .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
+        .pipe(concat('themes.min.css'))
+        .pipe(flatten())
+        .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
-    return merge(css, print, themes);
+    return waitPipes([css, print, themes], done);
 }
 
 
@@ -271,7 +281,7 @@ function leaflet() {
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
 }
 
-function wacom(){
+function wacom() {
     const vendor = [
         'modules/clipper-lib/clipper.js',
         'modules/js-md5/build/md5.min.js',
@@ -282,7 +292,7 @@ function wacom(){
         'modules/rbush/rbush.min.js',
         'modules/js-ext/js-ext-min.js',
         'modules/digital-ink/digital-ink-min.js',
-        'common/will/tools.js',	
+        'common/will/tools.js',
         'modules/sjcl/sjcl.js',
         'common/libs/signature_sdk.js',
         'common/libs/signature_sdk_helper.js',
@@ -308,7 +318,7 @@ function wacom(){
         .pipe(concat('wacom.min.js'))
         .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
-        
+
 }
 
 // Elaborazione dei fonts
@@ -345,21 +355,20 @@ function srcFonts() {
         .pipe(gulp.dest(config.production + '/' + config.paths.fonts));
 }
 
-function ckeditor() {
-    
-    const ckeditor =  gulp.src([
-        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
-        config.nodeDirectory + '/ckeditor4/*.{js,css}',
+function ckeditor(done) {
+    const ckeditor = gulp.src([
+        config.nodeDirectory + '/ckeditor4-full/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
+        config.nodeDirectory + '/ckeditor4-full/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 
     const plugins = gulp.src([
-        config.nodeDirectory + '/ckeditor/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
-        config.nodeDirectory + '/ckeditor-image-to-base/*.{js,json,css,png,gif,html}',
+        config.nodeDirectory + '/ckeditor4/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
+        //config.nodeDirectory + '/ckeditor-image-to-base/*.{js,json,css,png,gif,html}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins'));
 
-    return merge(ckeditor, plugins);
+    return waitPipes([ckeditor, plugins], done);
 }
 
 function colorpicker() {
@@ -403,7 +412,7 @@ function csrf() {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/csrf'));
 }
 
-function pdfjs() {
+function pdfjs(done) {
     const web = gulp.src([
         config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/**/*',
         '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/cmaps/*',
@@ -418,21 +427,20 @@ function pdfjs() {
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 
-    return merge(web, build);
+    return waitPipes([web, build], done);
 }
 
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
 function i18n() {
     return gulp.src([
         config.nodeDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
-        config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
+        //config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
         config.nodeDirectory + '/moment/min/locales.js',
         '!' + config.nodeDirectory + '/**/{src,plugins}/**',
-        '!' + config.nodeDirectory + '/ckeditor4/**',
-        '!' + config.nodeDirectory + '/summernote/**',
+        '!' + config.nodeDirectory + '/ckeditor4-full/**',
+        //'!' + config.nodeDirectory + '/summernote/**',
         '!' + config.nodeDirectory + '/jquery-ui/**',
     ])
-        //.pipe(gulpIf('*.js', minifyJS(), gulpIf('*.json', minifyJSON())))
         .pipe(gulpIf('!*.min.*', rename({
             suffix: '.min'
         })))
@@ -444,9 +452,9 @@ function i18n() {
 
 
 // Operazioni per la release
-function release(done) {
+export function release(done) {
     // Impostazione dello zip
-    let output = fs.createWriteStream('./release.zip', {flags: 'w'});
+    let output = fs.createWriteStream('./release.zip', { flags: 'w' });
     let archive = archiver('zip');
 
     output.on('close', function () {
@@ -517,14 +525,14 @@ function release(done) {
         archive.file('logs/.htaccess', {});
 
         // Aggiunta del file dei checksum
-        let checksumFile = fs.createWriteStream('./checksum.json', {flags: 'w'});
+        let checksumFile = fs.createWriteStream('./checksum.json', { flags: 'w' });
         checksumFile.write(JSON.stringify(checksum));
         checksumFile.close();
         archive.file('checksum.json', {});
 
         // Aggiunta del file per il controllo di integrità del database
         var bufferStream = new Readable();
-        
+
         bufferStream.push(shell.exec('php update/structure.php', {
             silent: true
         }).stdout);
@@ -585,25 +593,18 @@ function release(done) {
         }).catch(err => {
             console.error('Si è verificato un errore:', err);
         });
-
     });
 }
 
 // Pulizia
-function clean() {
+export function clean() {
     return del([config.production]);
-}
+};
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
+export const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
 
-// Debug su CSS e JS
-exports.srcJS = srcJS;
-exports.srcCSS = srcCSS;
-
-exports.bower = bower;
-exports.release = release;
-exports.default = bower;
+export default bower;
 
 // Watch task - lanciato con `gulp watch`, resta in attesa e ogni volta che viene modificato un asset in src
 // viene aggiornata la dist

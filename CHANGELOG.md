@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.6.2 (2025-01-15)](#262-2025-01-15)
 - [2.6.1 (2024-12-18)](#261-2024-12-18)
 - [2.6 (2024-12-04)](#26-2024-12-04)
 - [2.5.7 (2024-11-20)](#257-2024-11-20)
@@ -48,6 +49,23 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.6.2 (2025-01-15)
+### Modificato (Changed)
+- Allineata la tabella marchi ai moduli aggiuntivi
+- Rimozione del blocco per conteggio caratteri in descrizione articolo
+
+### Fixed
+- Corretta l'importazione di fatture con iva mancante
+- Corretta la stampa preventivo con subtotale
+- Corretta la numerazione delle stampa definitiva del registro IVA
+- Corretta la schermata maintenance
+- Corretta la fatturazione dei ddt massiva da azioni di gruppo
+- Corretto l'invio di solleciti da azioni di gruppo raggruppati per anagrafica
+- Corretta la fatturazione massiva da azioni di gruppo dei documenti
+- Corretta l'impostazione di decimali in stampa
+- Corretta la selezione di sottocategorie in aggiunta impianto
+- Corretta la generazione del numero di protocollo delle fatture in base alla data di competenza
 
 ## 2.6.1 (2024-12-18)
 ### Modificato (Changed)

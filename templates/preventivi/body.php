@@ -238,7 +238,7 @@ foreach ($righe as $key => $riga) {
     $autofill->next();
 
     $next = $righe->flatten()[$num];
-    
+
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>

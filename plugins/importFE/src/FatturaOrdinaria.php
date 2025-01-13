@@ -157,7 +157,7 @@ class FatturaOrdinaria extends FatturaElettronica
         // Calcolo la differenza IVA per aliquota, per creare una riga relativa all'arrotondamento IVA
         foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
-            $differenza_iva = ($totale_imposta[$riepilogo['AliquotaIVA']] ? round((float) $riepilogo['Imposta'] - round($totale_imposta[$riepilogo['AliquotaIVA']], 2), 2): 0);
+            $differenza_iva = ($totale_imposta[$riepilogo['AliquotaIVA']] ? round((float) $riepilogo['Imposta'] - round($totale_imposta[$riepilogo['AliquotaIVA']], 2), 2) : 0);
 
             if ($differenza_iva) {
                 $valore = $differenza_iva * 100 / ($riepilogo['AliquotaIVA'] ?: 1);

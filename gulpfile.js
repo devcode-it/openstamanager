@@ -493,6 +493,7 @@ function release(done) {
         'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
         '!vendor/respect/validation/tests/**',
         '!vendor/willdurand/geocoder/tests/**',
+        '!docker/**',
     ], {
         dot: true,
     }).then(function (files) {

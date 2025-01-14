@@ -161,7 +161,7 @@ class Ricevuta
         $module = $fattura->getModule();
         $upload_esistente = $module
             ->files($fattura->id)
-            ->where('original_name', $filename)
+            ->where('original_name', $filename.'.xml')
             ->first();
         if (!empty($upload_esistente)) {
             return $upload_esistente;
@@ -171,7 +171,7 @@ class Ricevuta
         $upload = Upload::build($this->file, [
             'id_module' => $module->id,
             'id_record' => $fattura->id,
-            'original' => $filename,
+            'original' => $filename.'.xml',
         ], tr('Ricevuta _TYPE_', [
             '_TYPE_' => $codice,
         ]), tr('Fattura Elettronica'));

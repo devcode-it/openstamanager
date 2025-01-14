@@ -49,7 +49,7 @@
         "sweetalert2": "^6.11.4",
         "toastr": "^2.1.4",
         "tooltipster": "^4.2.5",
-        "ua-parser-js": "^1.0.37"
+        "ua-parser-js": "^2.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.11.1",

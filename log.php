@@ -98,6 +98,7 @@ echo '
 <script>
 $(document).ready(function() {
     var parser = new UAParser();
+    var icons_path = globals.rootdir + '/assets/dist/img/icons';
 
     $('tr').each(function(){
         user_agent_cell = $(this).find('.user-agent');
@@ -107,7 +108,52 @@ $(document).ready(function() {
             parser.setUA(user_agent);
             device = parser.getResult();
 
-            user_agent_cell.html('<strong>' + (device.browser.name || '') + '</strong> ' + (device.browser.version || '') + ' | <strong>' + (device.os.name || '') + '</strong> ' + (device.os.version || ''));
+            var device_info = [];
+
+            // Browser
+            if (device.browser.name) {
+                device_info['browser'] = {};
+                device_info['browser']['text'] = '<strong>' + device.browser.name + '</strong> ' + (device.browser.version || '');
+                device_info['browser']['icon'] = icons_path + '/browser/' + device.browser.name.toLowerCase().replace(' ', '-');
+            }
+
+            // OS
+            if (device.os.name) {
+                device_info['os'] = {};
+                device_info['os']['text'] = '<strong>' + device.os.name + '</strong> ' + (device.os.version || '');
+                device_info['os']['icon'] = icons_path + '/os/' + device.os.name.toLowerCase();
+            }
+
+            // Device
+            if (device.device.name) {
+                device_info['device'] = {};
+                device_info['device']['text'] = '<strong>' + device.device.vendor + '</strong> ' + (device.device.model || '');
+                device_info['device']['icon'] = icons_path + '/device/' + device.device.name.toLowerCase();
+            }
+
+            // Preparazione user-agent riscritto
+            if (device_info.browser || device_info.os) {
+                user_agent_cell.html('');
+            }
+
+            // Sostituzione user-agent con formato più amichevole
+            for (var key in device_info) {
+                var icon = device_info[key]['icon'];
+                var text = device_info[key]['text'];
+
+                if (icon) {
+                    var img = new Image();
+                    img.src = icon + '.svg';
+
+                    const imgElement = document.createElement('img');
+                    imgElement.src = img.src;
+                    imgElement.width = 14;
+                    imgElement.height = 14;
+                    user_agent_cell.append(imgElement).append(' ');
+                }
+
+                user_agent_cell.append(text + ' | ');
+            }
         }
     })
 })

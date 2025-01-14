@@ -421,6 +421,14 @@ function pdfjs() {
     return merge(web, build);
 }
 
+function uaparser() {
+    return gulp.src([
+        config.nodeDirectory + '/ua-parser-js/dist/icons/mono/**/*',
+        '!' + config.nodeDirectory + '/ua-parser-js/dist/icons/mono/LICENSE.md',
+    ])
+        .pipe(gulp.dest(config.production + '/img/icons/'));
+}
+
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
 function i18n() {
     return gulp.src([
@@ -596,7 +604,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, uaparser, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

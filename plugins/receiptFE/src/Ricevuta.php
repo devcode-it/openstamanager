@@ -171,7 +171,7 @@ class Ricevuta
         $upload = Upload::build($this->file, [
             'id_module' => $module->id,
             'id_record' => $fattura->id,
-            'original' => $filename.'.xml',
+            'original_name' => $filename.'.xml',
         ], tr('Ricevuta _TYPE_', [
             '_TYPE_' => $codice,
         ]), tr('Fattura Elettronica'));

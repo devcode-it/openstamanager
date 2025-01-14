@@ -37,7 +37,7 @@ if (get('op') == 'getmappa') {
 
     if (is_array($_SESSION['module_'.$id_module])) {
         foreach ($_SESSION['module_'.$id_module] as $field_name => $field_value) {
-            if ($field_value != '' && $field_name != 'selected' && $field_name != 'id_segment') {
+            if ($field_value != '' && $field_name != 'selected' && $field_name != 'id_segment' && $field_name != 'order') {
                 $field_name = str_replace('search_', '', $field_name);
                 $field_name = str_replace('__', ' ', $field_name);
                 $field_name = str_replace('-', ' ', $field_name);

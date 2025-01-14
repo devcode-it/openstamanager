@@ -291,9 +291,6 @@ class DefaultHandler implements HandlerInterface
             } elseif (string_starts_with($values['decimals'], 'qta')) {
                 $decimals = setting('Cifre decimali per quantità');
                 $values['decimals'] = $decimals;
-
-                // Se non è previsto un valore minimo, lo imposta a 1
-                $values['min-value'] ??= '0.'.str_repeat('0', $decimals - 1).'1';
             }
         }
 

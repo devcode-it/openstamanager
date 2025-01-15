@@ -406,7 +406,7 @@ class Upload extends Model
 
         $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
 
-        if (!in_array(mime_content_type($filepath), ['image/x-png', 'image/gif', 'image/jpeg'])) {
+        if (!in_array(mime_content_type($filepath), ['image/png', 'image/gif', 'image/jpeg'])) {
             return;
         }
 

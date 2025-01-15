@@ -21,6 +21,7 @@
 namespace Extensions;
 
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\LogRecord;
 
 /**
  * Gestore dei messaggi di avvertenza in caso di malfunzionamento del gestionale.
@@ -29,7 +30,7 @@ use Monolog\Handler\AbstractProcessingHandler;
  */
 class MessageHandler extends AbstractProcessingHandler
 {
-    protected function write(array $record): void
+    protected function write(LogRecord $record): void
     {
         // Controlla se la richiesta è AJAX
         if (\Whoops\Util\Misc::isAjaxRequest()) {

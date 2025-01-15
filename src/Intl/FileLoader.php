@@ -33,7 +33,7 @@ class FileLoader extends \Symfony\Component\Translation\Loader\FileLoader
     {
     }
 
-    protected function loadResource($resource)
+    protected function loadResource(string $resource) : array
     {
         $result = [];
 

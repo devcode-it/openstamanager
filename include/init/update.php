@@ -154,6 +154,22 @@ if (filter('action') == 'do_update') {
     } else {
         echo '
                 <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
+        
+        // Lista aggiornamenti da applicare
+        $updates = Update::getTodoUpdates();
+
+        if (!empty($updates)) {
+            echo '
+                <p>'.tr('Verranno applicati i seguenti aggiornamenti').':</p>
+            <ul>';
+
+            foreach ($updates as $update) {
+                echo '<i class="fa fa-upload text-primary"></i> <span>'.$update['version'].'</span><br>';
+            }
+
+            echo '
+                </ul>';
+        }
     }
     echo '
                 <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')).'!', [

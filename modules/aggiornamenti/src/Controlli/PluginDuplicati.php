@@ -21,6 +21,7 @@
 namespace Modules\Aggiornamenti\Controlli;
 
 use Models\Module;
+use Models\Plugin;
 
 class PluginDuplicati extends Controllo
 {
@@ -36,13 +37,14 @@ class PluginDuplicati extends Controllo
 
     public function check()
     {
-        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `title` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') GROUP BY `idmodule_to`, `title` HAVING COUNT(`title`) > 1');
+        $duplicati = database()->fetchArray('SELECT `idmodule_to`, `title`, `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') GROUP BY `idmodule_to`, `title` HAVING COUNT(`title`) > 1');
 
         foreach ($duplicati as $plugin) {
             $modulo = Module::find($plugin['idmodule_to']);
+            $plugin = Plugin::find($plugin['id']);
 
             $this->addResult([
-                'id' => $plugin->getTranslation('title'),
+                'id' => $plugin->id,
                 'nome' => $modulo->getTranslation('title').': '.$plugin->getTranslation('title'),
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste più volte', [
                     '_NAME_' => $plugin->getTranslation('title'),

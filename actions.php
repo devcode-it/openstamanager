@@ -377,7 +377,7 @@ elseif (post('op') == 'send-email') {
     }
 
     // Contenuti
-    $mail->subject = post('subject');
+    $mail->subject = $_POST['subject'];
     $mail->content = $_POST['body']; // post('body', true);
 
     // Conferma di lettura

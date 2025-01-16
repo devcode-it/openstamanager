@@ -159,7 +159,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         }
 
         // Oggetto
-        $this->Subject = $mail->subject;
+        $this->Subject = trim(html_entity_decode(\Filter::getPurifier()->purify($mail->subject)));
 
         // Contenuto
         $this->Body = $mail->content;

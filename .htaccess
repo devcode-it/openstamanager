@@ -3,23 +3,20 @@
     IndexIgnore */*
 </IfModule>
 
-# Deny access to files starting with dot
-<FilesMatch "^\.">
-     Order allow,deny
-     Deny from all
-</FilesMatch>
+# Deny access to files starting with a dot (e.g. .htaccess, .git)  
+<FilesMatch "^\.">  
+    Require all denied  
+</FilesMatch>  
 
-# Deny access to log, sql, htaccess ecc..
-<FilesMatch "\.(ini|psd|log|sh|sql|md|lock|phar)$">
-     Order allow,deny
-     Deny from all
-</FilesMatch>
+# Deny access to certain file types like log, sql, htaccess, etc.  
+<FilesMatch "\.(ini|psd|log|sh|sql|md|lock|phar)$">  
+    Require all denied  
+</FilesMatch>  
 
-# Deny access to VERSION, REVISION and config file
-<Files ~ "(VERSION$|REVISION$|LICENSE|(config.inc|config.example).php|(composer|package).json|gulpfile.js)">
-     Order allow,deny
-     Deny from all
-</Files>
+# Deny access to VERSION, REVISION, LICENSE, and config files  
+<Files ~ "(VERSION$|REVISION$|LICENSE|(config.inc|config.example).php|(composer|package).json|gulpfile.js)">  
+    Require all denied  
+</Files> 
 
 # Disable indexing of php, html, htm, pdf files
 ServerSignature Off
@@ -73,10 +70,15 @@ ServerSignature Off
 	# Block out any script trying to modify a _REQUEST variable via URL
 	RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
 
-    # Block visitors referred from indicated domains
-	SetEnvIfNoCase ^User-Agent$ .*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures) HTTP_SAFE_BADBOT
-	SetEnvIfNoCase ^User-Agent$ .*(libwww-perl|aesop_com_spiderman) HTTP_SAFE_BADBOT
-	Deny from env=HTTP_SAFE_BADBOT
+    # Set an environment variable for bad bots using user-agent patterns  
+    SetEnvIfNoCase User-Agent ".*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures).*" HTTP_SAFE_BADBOT  
+    SetEnvIfNoCase User-Agent ".*(libwww-perl|aesop_com_spiderman).*" HTTP_SAFE_BADBOT  
+
+    # Deny access to requests from this environment variable  
+    <RequireAll>  
+        Require all granted  
+        Require not env HTTP_SAFE_BADBOT  
+    </RequireAll>  
 </ifModule>
 
 # Compress text, html, javascript, css, ecc...

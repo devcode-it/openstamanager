@@ -22,6 +22,8 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
 use Modules\DDT\Stato as StatoDDT;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato as StatoIntervento;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Stato as StatoOrdine;
 
@@ -81,6 +83,19 @@ foreach ($ordini as $elemento) {
         'id' => $elemento::class.'|'.$elemento->id,
         'text' => $elemento->getReference(1),
         'optgroup' => tr('Ordini ').$tipo_ordini,
+    ]);
+}
+
+// Individuazione attività disponibili
+$interventi = Intervento::whereHas('stato', function ($query) {
+    $stati = StatoIntervento::where('is_completato', '0')->get();
+    $query->whereIn('id', $stati->pluck('id'));
+})->get();
+foreach ($interventi as $elemento) {
+    $documenti_disponibili->push([
+        'id' => $elemento::class.'|'.$elemento->id,
+        'text' => $elemento->getReference(1),
+        'optgroup' => tr('Attività'),
     ]);
 }
 

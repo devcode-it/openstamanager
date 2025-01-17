@@ -153,9 +153,9 @@ ALTER TABLE `co_categorie_contratti_lang`
   ADD KEY `mg_categorie_lang_ibfk_2` (`id_lang`),
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
-SET @id_modulo := (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle');
+SELECT @id_module := (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle');
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) 
-VALUES ('Categorie contratti', 'categorie_contratti', '\r\nSELECT\r\n |select|\r\nFROM \r\n `co_categorie_contratti`\r\n    LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id` = `co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.|lang|)\r\nWHERE \r\n    1=1 AND `parent` IS NULL \r\nHAVING \r\n    2=2', '', 'fa fa-briefcase', '2.5.5', '2.5.5', 1, @id_modulo, 1, 1, 0, 0);
+VALUES ('Categorie contratti', 'categorie_contratti', '\r\nSELECT\r\n |select|\r\nFROM \r\n `co_categorie_contratti`\r\n    LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti`.`id` = `co_categorie_contratti_lang`.`id_record` AND `co_categorie_contratti_lang`.|lang|)\r\nWHERE \r\n    1=1 AND `parent` IS NULL \r\nHAVING \r\n    2=2', '', 'fa fa-briefcase', '2.5.5', '2.5.5', 1, @id_module, 1, 1, 0, 0);
 INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES (NULL, '1', (SELECT `id` FROM `zz_modules` WHERE name='Categorie contratti'), 'Categorie contratti');
 
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie contratti';

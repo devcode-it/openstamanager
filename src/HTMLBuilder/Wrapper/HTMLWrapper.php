@@ -184,7 +184,7 @@ class HTMLWrapper implements WrapperInterface
                         message.tooltipster("content", "'.tr('Validazione').'");
                     } else {
                         if(data.result) {
-                            icon.attr("class", "fa fa-check");
+                            icon.attr("class", "fa fa-check text-success");
                             parent.addClass("has-success").removeClass("has-error");
                         } else {
                             icon.attr("class", "fa fa-close text-danger");

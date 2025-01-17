@@ -221,7 +221,7 @@ class Intervento extends Document
 
         // $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        if ((!str_contains($maschera, 'YYYY')) or (!str_contains($maschera, 'yy'))) {
+        if (str_contains($maschera, 'YYYY') || str_contains($maschera, 'yy')) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
                 'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
             ], $data);

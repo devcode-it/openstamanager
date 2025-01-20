@@ -50,7 +50,8 @@ use Modules\Iva\Aliquota;
                         </div>
 
                         <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "value": "$barcode$" ]}
+                            <button type="button" class="btn btn-default btn-xs tip pull-right" id="generaBarcode"><i class="fa fa-refresh"></i> <?php echo tr('Genera'); ?></button>
+                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "validation": "barcode", "class": "text-center", "value": "$barcode$" ]}
                         </div>
 
                         <div class="col-md-3">
@@ -358,6 +359,29 @@ function scorporaIva() {
 
 $("#scorporaIva").click( function() {
 	scorporaIva();
+});
+
+function generaBarcode() {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "generate-barcode"
+        },
+        success: function(response) {
+            response = JSON.parse(response);
+            let input = $("#barcode");
+            input.val(response.barcode);
+        },
+        error: function(xhr, status, error) {
+        }
+    });
+}
+
+$("#generaBarcode").click( function() {
+	generaBarcode();
 });
 </script>
 

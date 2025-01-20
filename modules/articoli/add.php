@@ -36,6 +36,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
         <div class="col-md-6">
+            <span class="pull-right tip text-muted"><input type="checkbox" id="genera_barcode" name="genera_barcode" /> <?php echo tr('Generazione automatica'); ?></span>
             {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "required": 0, "value": "<?php echo htmlentities(filter('barcode')) ?: ''; ?>", "validation": "barcode" ]}
 		</div>
     </div>
@@ -223,4 +224,8 @@ function scorpora_iva_add() {
     let scorporato = prezzo * 100 / (100 + percentuale);
     input.val(scorporato);
 }
+
+$("#genera_barcode").click(function(){    
+    $(".modal #barcode").attr("disabled", $(this).is(":checked")).val("");
+});
 </script>

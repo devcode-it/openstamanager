@@ -442,6 +442,20 @@ switch (post('op')) {
         flash()->info(tr('Listino aggiornato correttamente!'));
 
         break;
+
+    case 'generate-barcode-bulk':
+        foreach ($id_records as $id) {
+            $codice = "200".str_pad($id, 9, "0", STR_PAD_LEFT);
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+
+            $articolo = Articolo::find($id);
+            $articolo->barcode = $barcode;
+            $articolo->save();
+        }
+
+        flash()->info(tr('Barcode generati correttamente!'));
+
+        break;
 }
 
 $operations['change-iva'] = [
@@ -629,6 +643,17 @@ $operations['stampa-etichette'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
+    ],
+];
+
+$operations['generate-barcode-bulk'] = [
+    'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',
+    'data' => [
+        'title' => tr('Generare il barcode per gli articoli selezionati?'),
+        'msg' => 'Il barcode sarà generato in maniera random con tipologia EAN-13',
+        'button' => tr('Genera'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => false,
     ],
 ];
 

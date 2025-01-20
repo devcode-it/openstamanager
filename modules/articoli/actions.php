@@ -61,7 +61,12 @@ switch (post('op')) {
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
             $articolo->name = post('descrizione');
         }
-        $articolo->barcode = post('barcode');
+
+        if (post('genera_barcode')) {
+            $codice = "200".str_pad($articolo->id, 9, "0", STR_PAD_LEFT);
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+        }
+        $articolo->barcode = $barcode ?: post('barcode');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -454,6 +459,16 @@ switch (post('op')) {
         ]);
 
         flash()->info(tr('Giacenza aggiornata!'));
+
+        break;
+
+    case 'generate-barcode':
+        $codice = "200".str_pad($id_record, 9, "0", STR_PAD_LEFT);
+        $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+
+        echo json_encode([
+            'barcode' => $barcode
+        ]);
 
         break;
 }

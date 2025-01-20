@@ -66,7 +66,12 @@ class CSV extends CSVImporter
             ],
             [
                 'field' => 'qta',
-                'label' => 'Quantità',
+                'label' => 'Quantit&agrave;',
+                'names' => [
+                    'Quantita',
+                    'Quantità',
+                    'Qta',
+                ],
             ],
             [
                 'field' => 'data_qta',

@@ -105,7 +105,7 @@ echo '
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$", "icon-after": "<?php echo $numero_contratto_originale; ?>" ]}
 				</div>
 
                 <div class="col-md-2">

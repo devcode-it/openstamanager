@@ -131,6 +131,14 @@ switch (filter('op')) {
                 $check->id_plugin = null;
                 $check->note = $check_categoria['note'];
                 $check->save();
+
+                //Riporto anche i permessi della check
+                $users = [];
+                $utenti = $dbo->table('zz_check_user')->where('id_check',$check_categoria['id'])->get();
+                foreach($utenti as $utente){
+                    $users[] = $utente->id_utente;
+                }
+                $check->setAccess($users, null);
             }
         }
         flash()->info(tr('Impianti sincronizzati correttamente!'));

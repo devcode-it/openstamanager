@@ -14,6 +14,9 @@ services:
       - DB_DATABASE=openstamanager
       - DB_USERNAME=root
       - DB_PASSWORD=secret
+    volumes:
+      - ./files:/var/www/html/files
+      - ./backup:/var/www/html/backup
 
   db:
     image: mysql:8.3

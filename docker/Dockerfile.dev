@@ -43,7 +43,8 @@ EXPOSE 80
 RUN git clone https://github.com/devcode-it/openstamanager.git /var/www/html
 
 RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
-RUN chmod -R 777 /var/www/html/files /var/www/html/logs
+RUN chown -R $USER:www-data /var/www/html/
+RUN chmod -R 770 /var/www/html/
 RUN touch /var/www/html/manifest.json \
     /var/www/html/mariadb_10_x.json \
     /var/www/html/mysql_8_3.json \
@@ -51,7 +52,6 @@ RUN touch /var/www/html/manifest.json \
     /var/www/html/checksum.json \
     /var/www/html/settings.json
 
-RUN chown -R $USER:www-data *
 RUN curl -sS https://getcomposer.org/installer | php
 RUN git config --global --add safe.directory /var/www/html
 RUN corepack enable

@@ -46,7 +46,7 @@ switch ($operazione) {
 
                 //Riporto anche i permessi della check
                 $users = [];
-                $utenti = $dbo->table('zz_check_user')->where('id_check',$check_categoria['id'])->get();
+                $utenti = $dbo->table('zz_check_user')->where('id_check',$check_impianto['id'])->get();
                 foreach($utenti as $utente){
                     $users[] = $utente->id_utente;
                 }

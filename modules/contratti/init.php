@@ -75,7 +75,7 @@ if (!empty($id_record)) {
     WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_record).' AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\Contratti\\\\Contratto\') OR `in_interventi`.`id_contratto` = '.prepare($id_record).'
     GROUP BY id
     
-    ORDER BY `data`');
+    ORDER BY `modulo`');
 
     $is_anagrafica_deleted = !$contratto->anagrafica;
 

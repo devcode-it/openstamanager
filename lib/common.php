@@ -24,6 +24,11 @@
  * @since 2.4.2
  */
 use Common\Components\Accounting;
+use Modules\Contratti\Contratto;
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
+use Modules\Ordini\Ordine;
 
 /**
  * Esegue una somma precisa tra due interi/array.
@@ -192,6 +197,39 @@ function reference($document, $text = null)
     ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
+}
+
+function getDestinationComponents($riga)
+{
+    $documents = [];
+
+    $contratti = database()->table('co_righe_contratti')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    foreach ($contratti as $contratto) {
+        $documents['documento'][] = Contratto::find($contratto->idcontratto);
+        $documents['qta'][] = $contratto->qta;
+    }
+    $fatture = database()->table('co_righe_documenti')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    foreach ($fatture as $fattura) {
+        $documents['documento'][] = Fattura::find($fattura->iddocumento);
+        $documents['qta'][] = $fattura->qta;
+    }
+    $ddts = database()->table('dt_righe_ddt')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    foreach ($ddts as $ddt) {
+        $documents['documento'][] = Ddt::find($ddt->idddt);
+        $documents['qta'][] = $ddt->qta;
+    }
+    $interventi = database()->table('in_righe_interventi')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    foreach ($interventi as $intervento) {
+        $documents['documento'][] = Intervento::find($intervento->idintervento);
+        $documents['qta'][] = $intervento->qta;
+    }
+    $ordini = database()->table('or_righe_ordini')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    foreach ($ordini as $ordine) {
+        $documents['documento'][] = Ordine::find($ordine->idordine);
+        $documents['qta'][] = $ordine->qta;
+    }
+
+    return $documents;
 }
 
 /**

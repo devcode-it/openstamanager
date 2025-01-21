@@ -24,9 +24,13 @@ use Models\Plugin;
 
 $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
-$colspan = '6';
+$colspan = '7';
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+
+$evasione_bar = [
+    'Fatture di vendita' => 'success'
+];
 
 echo '
 <div class="table-responsive row-list">
@@ -41,6 +45,7 @@ if (!$block_edit && sizeof($righe) > 0) {
 echo '
                 </th>
                 <th>'.tr('Descrizione').'</th>
+                <th width="100">'.tr('Documenti').'</th>
                 <th class="text-center" width="150">'.tr('Q.tà').'</th>';
 
 if ($show_prezzi) {
@@ -51,7 +56,7 @@ if ($show_prezzi) {
                 <th class="text-center" width="130">'.tr('Importo').'</th>';
 }
 echo '
-                <th class="text-center" width="60" class="text-center">'.tr('&nbsp;').'</th>';
+                <th class="text-center" width="80" class="text-center">'.tr('&nbsp;').'</th>';
 echo '
             </tr>
         </thead>
@@ -77,22 +82,7 @@ foreach ($righe as $riga) {
     echo '
                 </td>
                 <td>';
-
-    // Informazioni aggiuntive sulla destra
-    echo '
-                <small class="pull-right text-right text-muted">';
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginalComponent()) {
-        echo '
-                    '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
-    }
-
-    echo '
-                </small>';
-
-    echo '
-                    '.Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+                    echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
         if (!empty($mancanti)) {
@@ -119,12 +109,52 @@ foreach ($righe as $riga) {
                     <br><span class="right badge badge-default">'.nl2br($riga->note).'</small>';
     }
     echo '
+                </td>
+
+                <td>';
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginalComponent()) {
+        echo '
+                    <button type="button" class="btn btn-xs btn-default btn-block">
+                        <i class="fa fa-file-text-o"></i> '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'
+                    </button>';
+    }
+    echo '
                 </td>';
 
     // Quantità e unità di misura
     echo '
                 <td>
-                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->um ?: '&nbsp;').'", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'","decimals": "qta" ]}
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.$riga->um.'", "disabled": "'.($block_edit || $riga->isSconto()).'","decimals": "qta" ]}
+
+                    <span class="tip" title="'.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'">
+                        <div class="progress clickable" style="height:4px;" onclick="apriDocumenti(this)">';
+    // Visualizzazione evasione righe per documento
+    $color = '';
+    $valore_evaso = 0;
+    foreach ($elementi as $elemento) {
+        $righe_evase = explode(', ', (string) $elemento['righe']);
+        $righe_evase_array = array_reduce($righe_evase, function ($carry, $riga_evasa) {
+            [$id, $qta] = explode(' - ', $riga_evasa);
+            $carry[$id] = $qta;
+
+            return $carry;
+        }, []);
+        foreach ($righe_evase_array as $id => $qta) {
+            if ($id == $riga->id) {
+                $color = $evasione_bar[$elemento['modulo']];
+                $valore_evaso = $qta;
+                $perc_ev = $valore_evaso * 100 / ($riga->qta ?: 1);
+                if ($perc_ev > 0) {
+                    echo '
+                            <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                }
+            }
+        }
+    }
+    echo '
+                        </div>
+                    </span>
                 </td>';
 
     if ($show_prezzi) {
@@ -298,6 +328,17 @@ if (!$block_edit && sizeof($righe) > 0) {
     </div>';
 }
 echo '
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <h5>'.tr('Quantità evasa in').':</h5>
+        </div>
+        <div class="col-md-2">
+            <span class="pull-left icon" style="background-color:#28a745;"></span>
+            <span class="text">&nbsp;'.tr('Fattura').'</span>
+        </div>
+    </div>
 </div>
     
 <script type="text/javascript">
@@ -535,5 +576,13 @@ if (Plugin::where('name', 'Distinta base')->first()->id) {
         openModal("'.tr('Distinta base').'", "'.Plugin::where('name', 'Distinta base')->first()->fileurl('view.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_articolo=" + id_articolo);
     }';
 }
+
 echo '
+function apriDocumenti(div) {
+    let riga = $(div).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
+
+    openModal("'.tr('Documenti collegati').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_documenti_collegati&riga_id=" + id + "&riga_type=" + type)
+}
 </script>';

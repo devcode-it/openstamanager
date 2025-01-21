@@ -424,6 +424,8 @@ elseif (post('op') == 'send-email') {
     }
 } elseif (filter('op') == 'visualizza_righe_riferimenti') {
     include_once base_dir().'/include/riferimenti/riferimenti.php';
+} elseif (filter('op') == 'visualizza_documenti_collegati') {
+    include_once base_dir().'/include/riferimenti/documenti_collegati.php';
 } elseif (filter('op') == 'visualizza_righe_documento') {
     include_once base_dir().'/include/riferimenti/righe_documento.php';
 } elseif (filter('op') == 'salva_riferimento_riga') {

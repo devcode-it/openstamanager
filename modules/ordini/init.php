@@ -118,7 +118,7 @@ if (!empty($id_record)) {
     GROUP BY id
 
     ORDER BY 
-        `data`');
+        `modulo`');
 
     $is_anagrafica_deleted = !$ordine->anagrafica;
 }

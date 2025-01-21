@@ -28,7 +28,7 @@ $block_edit = $record['flag_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $ordine->getRighe()->sortByDesc('created_at') : $ordine->getRighe();
 $dir = $ordine->direzione;
-$colspan = $dir == 'entrata' ? '8' : '7';
+$colspan = $dir == 'entrata' ? '9' : '8';
 
 $evasione_bar = [
     'Ddt in entrata' => 'info',
@@ -53,6 +53,7 @@ echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
+                <th width="100">'.tr('Documenti').'</th>
                 <th width="105">'.tr('Prev. evasione').'</th>
                 <th class="text-center tip" width="160">'.tr('Q.tà').'</th>';
 if ($dir == 'entrata') {
@@ -111,22 +112,6 @@ foreach ($righe as $riga) {
 
                 <td>';
 
-    $numero_riferimenti_riga = $riga->referenceTargets()->count();
-    $numero_riferimenti_collegati = $riga->referenceSources()->count();
-    $riferimenti_presenti = $numero_riferimenti_riga;
-    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
-
-    echo '
-    <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right text-right" onclick="apriRiferimenti(this)">
-        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
-    </button>';
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginalComponent()) {
-        echo '
-                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
-    }
-
     if ($riga->isArticolo()) {
         $articolo_riga = Articolo::find($riga->idarticolo);
 
@@ -167,6 +152,26 @@ foreach ($righe as $riga) {
     if (!empty($riga->note)) {
         echo '
                     <br><span class="right badge badge-default">'.nl2br($riga->note).'</small>';
+    }
+    echo '
+                </td>';
+
+    $numero_riferimenti_riga = $riga->referenceTargets()->count();
+    $numero_riferimenti_collegati = $riga->referenceSources()->count();
+    $riferimenti_presenti = $numero_riferimenti_riga;
+    $testo_aggiuntivo = $riferimenti_presenti ? '<span class="badge bg-info">'.$numero_riferimenti_riga.'</span>' : '';
+    echo '
+                <td>
+                    <button type="button" class="btn btn-xs btn-default btn-block" onclick="apriRiferimenti(this)">
+                        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+                    </button>';
+                
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginalComponent()) {
+        echo '
+                    <button type="button" class="btn btn-xs btn-default btn-block">
+                        <i class="fa fa-file-text-o"></i> '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'
+                    </button>';
     }
     echo '
                 </td>';
@@ -222,8 +227,10 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
                 <td>
-                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "<span class=\'tip\' title=\''.($riga->confermato ? tr('Articolo confermato') : tr('Articolo non confermato')).'\'><i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i></span>", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'", "decimals": "qta" ]}
-                    <div class="progress" style="height:4px;">';
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.($riga->confermato ? tr('Articolo confermato') : tr('Articolo non confermato')).'\'><i class=\''.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'\'></i></span>", "icon-before": "'.$riga->um.'", "disabled": "'.($block_edit || $riga->isSconto()).'", "decimals": "qta" ]}
+
+                    <span class="tip" title="'.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'">
+                        <div class="progress clickable" style="height:4px;" onclick="apriDocumenti(this)">';
         // Visualizzazione evasione righe per documento
         $color = '';
         $valore_evaso = 0;
@@ -242,13 +249,14 @@ foreach ($righe as $riga) {
                     $perc_ev = $valore_evaso * 100 / ($riga->qta ?: 1);
                     if ($perc_ev > 0) {
                         echo '
-                                <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                            <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
                     }
                 }
             }
         }
         echo '
-                    </div>
+                        </div>
+                    </span>
                 </td>';
 
         if ($riga->isArticolo()) {
@@ -553,10 +561,6 @@ echo '
             <span class="pull-left icon" style="background-color:#ffc107;"></span>
             <span class="text">&nbsp;'.tr('Attività').'</span>
         </div>
-        <div class="col-md-2">
-            <span class="pull-left icon" style="background-color:#007bff;;"></span>
-            <span class="text">&nbsp;'.tr('Ordine').'</span>
-        </div>
     </div>
 </div>
 
@@ -696,6 +700,14 @@ function apriRiferimenti(button) {
     let type = riga.data("type");
 
     openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_righe_riferimenti&riga_id=" + id + "&riga_type=" + type)
+}
+
+function apriDocumenti(div) {
+    let riga = $(div).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
+
+    openModal("'.tr('Documenti collegati').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_documenti_collegati&riga_id=" + id + "&riga_type=" + type)
 }
 
 $(document).ready(function() {

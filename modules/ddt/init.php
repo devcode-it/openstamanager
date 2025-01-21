@@ -100,7 +100,7 @@ if (!empty($id_record)) {
     GROUP BY 
         id
 
-    ORDER BY `data`');
+    ORDER BY `modulo`');
 
     $is_anagrafica_deleted = !$ddt->anagrafica;
 }

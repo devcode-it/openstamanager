@@ -120,7 +120,7 @@ if (!empty($id_record)) {
     WHERE `co_righe_contratti`.`original_document_id` = '.prepare($id_record).' AND `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
     GROUP BY id
     
-    ORDER BY `data`');
+    ORDER BY `modulo`');
 
     $is_anagrafica_deleted = !$preventivo->anagrafica;
 }

@@ -25,7 +25,7 @@ use Models\Plugin;
 $block_edit = $record['is_completato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $contratto->getRighe()->sortByDesc('created_at') : $contratto->getRighe();
-$colspan = '7';
+$colspan = '8';
 
 $evasione_bar = [
     'Fatture di vendita' => 'success',
@@ -46,6 +46,7 @@ echo '
                 </th>
                 <th width="35" class="text-center">'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
+                <th width="100">'.tr('Documenti').'</th>
                 <th class="text-center tip" width="150">'.tr('Q.tà').'</th>
                 <th class="text-center" width="150">'.tr('Costo unitario').'</th>
                 <th class="text-center" width="180">'.tr('Prezzo unitario').'</th>
@@ -93,12 +94,6 @@ foreach ($righe as $riga) {
 
                 <td>';
 
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginalComponent()) {
-        echo '
-                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
-    }
-
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
     if ($riga->isArticolo()) {
@@ -131,6 +126,17 @@ foreach ($righe as $riga) {
                     <br><span class="right badge badge-default">'.nl2br($riga->note).'</small>';
     }
     echo '
+                </td>
+                
+                <td>';
+                // Aggiunta dei riferimenti ai documenti
+                if ($riga->hasOriginalComponent()) {
+                    echo '
+                    <button type="button" class="btn btn-xs btn-default btn-block">
+                        <i class="fa fa-file-text-o"></i> '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'
+                    </button>';
+                }
+                echo '
                 </td>';
 
     if ($riga->isDescrizione()) {
@@ -144,8 +150,10 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
                 <td>
-                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "decimals": "qta", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "<span class=\'tip\' title=\''.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'\'>'.$riga->um.' <small><i class=\'text-muted fa fa-info-circle\'></i></small></span>", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'" ]}
-                    <div class="progress" style="height:4px;">';
+                    {[ "type": "number", "name": "qta_'.$riga->id.'", "value": "'.$riga->qta.'", "decimals": "qta", "min-value": "0", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-before": "'.$riga->um.'", "disabled": "'.($riga->isSconto() ? 1 : 0).'", "disabled": "'.($block_edit || $riga->isSconto()).'" ]}
+
+                    <span class="tip" title="'.tr('Quantità evasa').' / '.tr('totale').': '.tr('_QTA_ / _TOT_', ['_QTA_' => numberFormat($riga->qta_evasa, 'qta'), '_TOT_' => numberFormat($riga->qta, 'qta')]).'">
+                        <div class="progress clickable" style="height:4px;" onclick="apriDocumenti(this)">';
         // Visualizzazione evasione righe per documento
         $color = '';
         $valore_evaso = 0;
@@ -164,13 +172,14 @@ foreach ($righe as $riga) {
                     $perc_ev = $valore_evaso * 100 / ($riga->qta ?: 1);
                     if ($perc_ev > 0) {
                         echo '
-                                <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
+                            <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ev.'%"></div>';
                     }
                 }
             }
         }
         echo '
-                    </div>
+                        </div>
+                    </span>
                 </td>';
 
         if ($riga->isArticolo()) {
@@ -662,4 +671,12 @@ if (Plugin::where('name', 'Distinta base')->first()->id) {
     }';
 }
 echo '
+
+function apriDocumenti(div) {
+    let riga = $(div).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
+
+    openModal("'.tr('Documenti collegati').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_documenti_collegati&riga_id=" + id + "&riga_type=" + type)
+}
 </script>';

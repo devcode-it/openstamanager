@@ -135,3 +135,6 @@ SELECT @id_record := `id` FROM `zz_settings` WHERE `nome` = "Conto predefinito p
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 ('1', @id_record, "Conto predefinito per le spese d'incasso", ''), 
 ('2', @id_record, 'Default account for collection costs', '');
+
+-- Gestione meta title dei moduli
+ALTER TABLE `zz_modules_lang` ADD `meta_title` VARCHAR(255) NOT NULL AFTER `title`;

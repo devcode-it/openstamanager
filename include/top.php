@@ -27,7 +27,15 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-$pageTitle = !empty($pageTitle) ? $pageTitle : ($structure ? $structure->getTranslation('title') : tr('OpenSTAManager'));
+if (empty($pageTitle)) {
+    if ($structure->getTranslation('meta_title') && !empty($id_record)) {
+        $pageTitle = $structure->replacePlaceholders($id_record, $structure->getTranslation('meta_title'));
+    } elseif ($structure) {
+        $pageTitle = $structure->getTranslation('title');
+    } else {
+        $pageTitle = tr('OpenSTAManager');
+    }
+}
 
 $lang = (empty($lang) || $lang == '|lang|') ? 'it_IT' : $lang;
 
@@ -37,7 +45,7 @@ echo '<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>'.$pageTitle.' - '.tr('OpenSTAManager').'</title>
+        <title>'.$pageTitle.'</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 

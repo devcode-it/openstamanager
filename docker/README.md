@@ -30,6 +30,10 @@
 Con questo comando si scarica e avvia l'ultima versione stabile disponibile e l'immagine di MySQL su cui salvare i dati:
 
 ```bash
+# Download file per Docker compose
+wget https://raw.githubusercontent.com/devcode-it/openstamanager/refs/heads/master/docker/docker-compose.yml
+
+# Avvio
 docker compose up -d
 ```
 

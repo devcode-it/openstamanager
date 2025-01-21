@@ -813,11 +813,13 @@ echo '
             return false;
         }
 
+        var lat = lat ? lat : input("idanagrafica").getData("select-options").lat;
+        var lng = lng ? lng :input("idanagrafica").getData("select-options").lng;
         if (typeof lat === "undefined" || typeof lng === "undefined"){
-                $("#map-warning").removeClass("hide");
-            } else {
-                $("#map-warning").addClass("hide");
-            }
+            $("#map-warning").removeClass("hide");
+        } else {
+            $("#map-warning").addClass("hide");
+        }
         
         if (input("idanagrafica").getData("select-options")) {
             var container = L.DomUtil.get("map-add");
@@ -837,21 +839,23 @@ echo '
                     attribution: "© OpenStreetMap"
                 }).addTo(map); 
             }
-        
-            var icon = new L.Icon({
-                iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-                shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
-            
-            var marker = L.marker([lat, lng], {
-                icon: icon
-            }).addTo(map);
-            
-            map.setView([lat, lng], 14);
+
+            if (lat && lng) {
+                var icon = new L.Icon({
+                    iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+                
+                var marker = L.marker([lat, lng], {
+                    icon: icon
+                }).addTo(map);
+                
+                map.setView([parseFloat(lat), parseFloat(lng)], 14);
+            }
         }
     }
 </script>';

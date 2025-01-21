@@ -64,27 +64,28 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | PHP | EOL | Supportato |
 |-----|-----|:----------:|
-| 8.3 | 31/12/2027 | ✔️ |
-| 8.2 | 31/12/2026 | ✔️ |
-| 8.1 | 31/12/2025 | ✔️ |
-| 8.0 | 26/11/2023 | ❌ |
-| 7.4 | 28/11/2022 | ❌ |
-| 7.3 | 06/12/2021 | ❌ |
+| 8.4 | 31/12/2028 | 🟡 |
+| 8.3 | 31/12/2027 | 🟢 |
+| 8.2 | 31/12/2026 | 🟢 |
+| 8.1 | 31/12/2025 | 🟢 |
+| 8.0 | 26/11/2023 | 🔴 |
+| 7.4 | 28/11/2022 | 🔴 |
+| 7.3 | 06/12/2021 | 🔴 |
     
 </td>
 <td valign="top">
     
 | MYSQL | EOL | Supportato |
 |-----|-----|:----------:|
-| 9.1 | - | ❌ |
-| 9.0 | 15/10/2024 | ❌ |
-| 8.4 | 30/04/2032 | ✔️ |
-| 8.3 | 10/04/2024 | ✔️ |
-| 8.2 | 14/12/2023 | ✔️ |
-| 8.1 | 25/10/2023 | ✔️ |
-| 8.0 | 30/04/2026 | ✔️ |
-| 5.7 | 31/10/2023 | ❌ |
-| 5.6 | 28/02/2021 | ❌ |
+| 9.1 | - | 🔴 |
+| 9.0 | 15/10/2024 | 🔴 |
+| 8.4 (LTS) | 30/04/2032 | 🔴 |
+| 8.3 | 10/04/2024 | 🟢 |
+| 8.2 | 14/12/2023 | 🟢 |
+| 8.1 | 25/10/2023 | 🟢 |
+| 8.0 (LTS) | 30/04/2026 | 🟢 |
+| 5.7 | 31/10/2023 | 🔴 |
+| 5.6 | 28/02/2021 | 🔴 |
 
     
 </td>
@@ -92,6 +93,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 </table>
 
 Fonte EOL PHP: [https://endoflife.date/php](https://endoflife.date/php)
+
 Fonte EOL MYSQL: [https://endoflife.date/mysql](https://endoflife.date/mysql)
 
 ❗Alcune dipendenze presenti dalla versione 2.5 non sono più compatibili con PHP 7.4 e PHP 8.0, dalla versione 2.5.3 sarà quindi richiesta una versione di php >= 8.1.

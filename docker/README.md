@@ -81,7 +81,7 @@ services:
       - /percorso-locale-backup:/var/www/html/backup
 
   db:
-    image: mysql:8.3
+    image: mysql:8.0
     container_name: mysql
     restart: always
     environment:

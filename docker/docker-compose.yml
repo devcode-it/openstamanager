@@ -1,8 +1,8 @@
 services:
   app:
-    build:
-      context: .
+    image: devcodesrl/openstamanager:latest
     container_name: openstamanager
+    restart: unless-stopped
     ports:
       - "8090:80"
     depends_on:
@@ -21,7 +21,7 @@ services:
   db:
     image: mysql:8.0
     container_name: mysql
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: openstamanager

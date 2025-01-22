@@ -138,3 +138,20 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 
 -- Gestione meta title dei moduli
 ALTER TABLE `zz_modules_lang` ADD `meta_title` VARCHAR(255) NOT NULL AFTER `title`;
+
+-- Aggiunta colonna per gestione cartella allegati alternativa nei moduli
+ALTER TABLE `zz_modules` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`; 
+
+UPDATE `zz_modules` SET `attachments_directory` = `directory`;
+UPDATE `zz_modules` SET `attachments_directory` = 'fatture/vendite' WHERE `zz_modules`.`name` = 'Fatture di vendita'; 
+
+-- Aggiunta colonna per gestione cartella allegati alternativa nei plugin
+ALTER TABLE `zz_plugins` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`; 
+
+UPDATE `zz_plugins` SET `attachments_directory` = `directory`;
+
+-- Aggiunta impostazione per generare nomi casuali agli allegati
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Rendi casuale il nome dei file allegati', '1', 'boolean', '1', 'Generali', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Rendi casuale il nome dei file allegati', ''), 
+('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Randomize attachments name', '');

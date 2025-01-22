@@ -294,6 +294,12 @@ class FatturaElettronica implements \Stringable
         return \Uploads::getDirectory(Module::where('name', 'Fatture di vendita')->first()->id);
     }
 
+    public static function getAttachmentsDirectory()
+    {
+        return \Uploads::getAttachmentsDirectory(Module::where('name', 'Fatture di vendita')->first()->id);
+    }
+
+
     /**
      * Salva il file XML.
      *

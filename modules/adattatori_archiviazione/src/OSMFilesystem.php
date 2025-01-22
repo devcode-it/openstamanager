@@ -38,6 +38,7 @@ class OSMFilesystem extends Filesystem
         // Verifico se l'esensione non è consentita
         $extension = pathinfo((string) $filename, PATHINFO_EXTENSION);
         $extension = strtolower($extension);
+        $name = pathinfo((string) $filename, PATHINFO_FILENAME);
 
         // Controllo sulle estensioni permesse
         $allowed = self::isSupportedType($extension);
@@ -57,8 +58,16 @@ class OSMFilesystem extends Filesystem
             }
         }
 
+        $i = 0;
         do {
-            $filename = random_string().'.'.$extension;
+            if (setting('Rendi casuale il nome dei file allegati')) {
+                $filename = random_string().'.'.$extension;
+            } else {
+                if ($i > 0) {
+                    $filename = $name.'_'.$i.'.'.$extension;
+                }
+                $i++;
+            }
         } while ($this->fileExists($directory.'/'.$filename));
 
         $this->write($directory.'/'.$filename, $contents);

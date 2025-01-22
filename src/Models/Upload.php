@@ -122,7 +122,7 @@ class Upload extends Model
         if (is_array($source)) {
             // Caricamento con l'interfaccia di upload
             try {
-                $file = $filesystem->upload($model->directory, $original_name, file_get_contents($source['tmp_name']));
+                $file = $filesystem->upload($model->attachments_directory, $original_name, file_get_contents($source['tmp_name']));
             } catch (\Exception) {
                 flash()->error(tr('Impossibile creare il file!'));
 
@@ -134,7 +134,7 @@ class Upload extends Model
         } else {
             // Caricamento con l'interfaccia di upload
             try {
-                $file = $filesystem->upload($model->directory, $original_name, file_exists($source) ? file_get_contents($source) : $source);
+                $file = $filesystem->upload($model->attachments_directory, $original_name, file_exists($source) ? file_get_contents($source) : $source);
                 $model->size = $file['size'];
             } catch (\Exception) {
                 flash()->error(tr('Impossibile creare il file!'));
@@ -168,6 +168,16 @@ class Upload extends Model
         $parent = $this->plugin ?: $this->module;
 
         return strtolower($parent ? $parent->directory : '');
+    }
+
+        /**
+     * @return string
+     */
+    public function getAttachmentsDirectoryAttribute()
+    {
+        $parent = $this->plugin ?: $this->module;
+
+        return strtolower($parent ? $parent->attachments_directory : '');
     }
 
     /**
@@ -238,7 +248,7 @@ class Upload extends Model
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
-        $filesystem->delete($this->directory.'/'.$this->filename);
+        $filesystem->delete($this->attachments_directory.'/'.$this->filename);
 
         return parent::delete();
     }
@@ -269,7 +279,7 @@ class Upload extends Model
 
         $source = $this->get_contents();
 
-        $file = $filesystem->read($this->directory.'/'.$this->filename);
+        $file = $filesystem->read($this->attachments_directory.'/'.$this->filename);
 
         $result = self::build($file, $data, $this->name, $this->category);
 
@@ -302,7 +312,7 @@ class Upload extends Model
         $adapter = new $class($adapter_config->options);
         $filesystem = new OSMFilesystem($adapter);
 
-        return $filesystem->read($this->directory.'/'.$this->filename);
+        return $filesystem->read($this->attachments_directory.'/'.$this->filename);
     }
 
     /**
@@ -370,7 +380,7 @@ class Upload extends Model
     protected static function generateThumbnails($upload)
     {
         $info = $upload->info;
-        $directory = $upload->directory;
+        $directory = $upload->attachments_directory;
 
         $filepath = $upload->filepath;
 
@@ -402,7 +412,7 @@ class Upload extends Model
     protected static function ridimensionaImmagini($upload)
     {
         $info = $upload->info;
-        $directory = $upload->directory;
+        $directory = $upload->attachments_directory;
 
         $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
 

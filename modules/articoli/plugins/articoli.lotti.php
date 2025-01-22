@@ -302,7 +302,7 @@ if (empty(get('modal'))) {
                     $query = 'SELECT 
                             *, 
                             `or_tipiordine_lang`.`title` AS tipo_ordine,
-                            `or_ordini`.`dir`,
+                            `or_tipiordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
                             `or_ordini`.`data`

@@ -28,8 +28,12 @@ $paths = App::getPaths();
 $user = Auth::user();
 
 if (empty($pageTitle)) {
-    if ($structure->getTranslation('meta_title') && !empty($id_record)) {
-        $pageTitle = $structure->replacePlaceholders($id_record, $structure->getTranslation('meta_title'));
+    if ($structure instanceof Module) {
+        if ($structure->getTranslation('meta_title') && !empty($id_record)) {
+            $pageTitle = $structure->replacePlaceholders($id_record, $structure->getTranslation('meta_title'));
+        } else {
+            $pageTitle = $structure->getTranslation('title');
+        }
     } elseif ($structure) {
         $pageTitle = $structure->getTranslation('title');
     } else {

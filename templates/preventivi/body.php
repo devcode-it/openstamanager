@@ -468,6 +468,7 @@ echo '
     </tr>
     ';
 if ($banca) {
+    $autofill->count($banca);
     echo '
     <tr>
         <td class="text-muted border-bottom small-bold text-muted"></td>

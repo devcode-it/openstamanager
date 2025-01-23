@@ -68,6 +68,7 @@ switch (filter('op')) {
 
                 $title = post('name')[$c];
 
+                $id = null;
                 if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
 
@@ -79,11 +80,13 @@ switch (filter('op')) {
                 }
 
                 // Aggiornamento traduzione nome campo
-                $vista = View::find($id);
-                $vista->setTranslation('title', $title);
+                if ($id) {
+                    $vista = View::find($id);
+                    $vista->setTranslation('title', $title);
 
-                // Aggiornamento dei permessi relativi
-                $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
+                    // Aggiornamento dei permessi relativi
+                    $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
+                }
             } else {
                 $rs = false;
             }

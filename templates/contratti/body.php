@@ -341,6 +341,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
                     <b>'.moneyFormat($netto_a_pagare, $d_totali).'</b>
                 </th>
             </tr>';
+            $autofill->set(2);
         }
     }
 }

@@ -241,7 +241,7 @@ class FatturaElettronica
             return $anagrafica;
         }
 
-        $info = $this->getAnagrafe();
+        $info = $this->getAnagrafe($type);
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
             TipoAnagrafica::where('name', $type)->first()->id,

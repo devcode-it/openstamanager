@@ -155,3 +155,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 ('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Rendi casuale il nome dei file allegati', ''), 
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Randomize attachments name', '');
+
+-- Firma in stampa preventivi solo totali
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Preventivi';
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show-only-total\":true, \"images\": true, \"last-page-footer\": true }' WHERE `zz_prints`.`id_module` = @id_module AND `zz_prints`.`name` = 'Preventivo (solo totale)';

@@ -56,44 +56,43 @@ echo '
                 </td>
 
                 <td class="border-bottom border-top center text-center">
-                    <p class="small-bold text-muted">'.tr('Foglio', [], ['upper' => true]).'</p>
-                    <p>{PAGENO}/{nb}</p>
+                    <p class="small-bold text-muted">'.tr('Pagamento', [], ['upper' => true]).'</p>
+                    <p>$pagamento$ </p>
                 </td>
             </tr>
-        </table>
-
-
-        <table class="table table-striped border-bottom">
-            <tr>
-                <td class="small-bold text-muted" style="width:33%">
-                    '.tr('Porto', [], ['upper' => true]).'
-                </td>
-
-                <td class="small-bold text-muted" style="width:33%">
-                    '.tr('Tipo di spedizione', [], ['upper' => true]).'
-                </td>
-
-                <td class="small-bold text-muted" style="width:33%">
-                    '.tr('Vettore', [], ['upper' => true]).'
-                </td>
+        </table>';
+        if ($porto || $spedizione || $vettore) {
+echo'           
+		<table class="table">
+            <tr>';
+            if ($porto ) {
+                echo '
+                <td valign="top" class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Porto', [], ['upper' => true]).'</p>
+                    <p>$porto$</p>
+                </td>';
+            }
+            if ($spedizione) {
+                echo '
+                <td class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Tipo di spedizione', [], ['upper' => true]).'</p>
+                    <p>$spedizione$</p>
+                </td>';
+            }
+            if ($vettore) {
+                echo '
+                <td class="border-bottom border-top center text-center">
+                    <p class="small-bold text-muted">'.tr('Vettore', [], ['upper' => true]).'</p>
+                    <p>$vettore$ </p>
+                </td>';
+            }
+            echo '
             </tr>
-
-            <tr>
-                <td class="cell-padded">
-                    $porto$ &nbsp;
-                </td>
-
-                <td class="cell-padded">
-                    $spedizione$ &nbsp;
-                </td>
-
-                <td class="cell-padded">
-                    $vettore$ &nbsp;
-                </td>
-            </tr>
-        </table>
+        </table>';
+        }
+    
+    echo'
     </div>
-
 	<!-- Dati Cliente/Fornitore -->
 		<div class="col-xs-6 pull-right">
         <table class="table border-bottom" >

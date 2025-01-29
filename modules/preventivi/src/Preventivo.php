@@ -153,7 +153,7 @@ class Preventivo extends Document
      */
     public function isDataConclusioneAutomatica()
     {
-        return !empty($this->validita) && !empty($this->tipo_validita) && !empty($this->data_accettazione);
+        return !empty($this->validita) && !empty($this->tipo_validita) && !empty($this->data_bozza);
     }
 
     /**
@@ -221,7 +221,7 @@ class Preventivo extends Document
         // Calcolo della data di conclusione in base alla validità
         if ($this->isDataConclusioneAutomatica()) {
             $intervallo = CarbonInterval::make($this->validita.' '.$this->tipo_validita);
-            $this->data_conclusione = Carbon::make($this->data_accettazione)->add($intervallo);
+            $this->data_conclusione = Carbon::make($this->data_bozza)->add($intervallo);
         }
     }
 

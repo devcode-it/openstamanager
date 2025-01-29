@@ -4,6 +4,7 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\Fatture\Stato;
 use Modules\Preventivi\Preventivo;
 
@@ -15,6 +16,9 @@ $numero_documenti = 5;
 
 switch ($op) {
     case 'dettagli':
+        echo '
+        <div class="row">';
+
         // Informazioni sui contratti
         $modulo_contratti = Module::where('name', 'Contratti')->first();
         if ($modulo_contratti->permission != '-') {
@@ -26,13 +30,12 @@ switch ($op) {
                 ->latest()->take($numero_documenti)->get();
 
             echo '
-        <div class="row">
-            <div class="col-md-4">
-                <b>'.tr('Contratti').':</b><ul>';
+            <div class="col-md-6">
+                <b>'.tr('Ultimi _NUM_ Contratti', ['_NUM_' => $numero_documenti]).':</b><ul>';
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
                     echo '
-                    <li>'.$contratto->getReference().' ['.$contratto->stato->getTranslation('title').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione).'</li>';
+                    <li>'.Modules::link('Contratti', $contratto->id, $contratto->getReference().' ['.$contratto->stato->getTranslation('title').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione)).'</li>';
                 }
             } else {
                 echo '
@@ -53,12 +56,12 @@ switch ($op) {
                 })
                 ->latest()->take($numero_documenti)->get();
             echo '
-            <div class="col-md-4">
-                <b>'.tr('Preventivi').':</b><ul>';
+            <div class="col-md-6">
+                <b>'.tr('Ultimi _NUM_ Preventivi', ['_NUM_' => $numero_documenti]).':</b><ul>';
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
                     echo '
-                    <li>'.$preventivo->getReference().' ['.$preventivo->stato->getTranslation('title').']</li>';
+                    <li>'.Modules::link('Preventivi', $preventivo->id, $preventivo->getReference().' ['.$preventivo->stato->getTranslation('title').']').'</li>';
                 }
             } else {
                 echo '
@@ -68,8 +71,35 @@ switch ($op) {
                 </ul>
             </div>';
         }
+        echo '
+        </div>
+        
+        <div class="row">';
 
-        // Informazioni sui preventivi
+        // Informazioni sulle attività
+        $modulo_interventi = Module::where('name', 'Interventi')->first();
+        if ($modulo_interventi->permission != '-') {
+            // Preventivi attivi
+            $interventi = Intervento::where('idanagrafica', '=', $id_anagrafica)
+                ->latest()->take($numero_documenti)->get();
+            echo '
+            <div class="col-md-6">
+                <b>'.tr('Ultime _NUM_ Attività', ['_NUM_' => $numero_documenti]).':</b><ul>';
+            if (!$interventi->isEmpty()) {
+                foreach ($interventi as $intervento) {
+                    echo '
+                    <li>'.Modules::link('Interventi', $intervento->id, $intervento->getReference().' ['.$intervento->stato->getTranslation('title').']').'</li>';
+                }
+            } else {
+                echo '
+                    <li>'.tr('Nessun intervento per questo cliente').'</li>';
+            }
+            echo '
+                </ul>
+            </div>';
+        }
+
+        // Informazioni sulle fatture
         $modulo_fatture_vendita = Module::where('name', 'Fatture di vendita')->first();
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
@@ -81,14 +111,14 @@ switch ($op) {
                 })
                 ->latest()->take($numero_documenti)->get();
             echo '
-            <div class="col-md-4">
-                <b>'.tr('Fatture').':</b><ul>';
+            <div class="col-md-6">
+                <b>'.tr('Ultime _NUM_ Fatture', ['_NUM_' => $numero_documenti]).':</b><ul>';
             if (!$fatture->isEmpty()) {
                 foreach ($fatture as $fattura) {
                     $scadenze = $fattura->scadenze;
                     $da_pagare = $scadenze->sum('da_pagare') - $scadenze->sum('pagato');
                     echo '
-                    <li>'.$fattura->getReference().': '.moneyFormat($da_pagare).'</li>';
+                    <li>'.Modules::link('Fatture di vendita', $fattura->id, $fattura->getReference().': '.moneyFormat($da_pagare)).'</li>';
                 }
             } else {
                 echo '

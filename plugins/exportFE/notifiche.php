@@ -70,14 +70,14 @@ foreach ($recepits as $nome) {
 
     if (empty($upload)) {
         echo '
-                <button type="button" class="btn btn-info btn-sm" onclick="scaricaRicevuta(this)">
+                <button type="button" class="btn btn-info btn-sm tip" onclick="scaricaRicevuta(this)" title="'.tr('Scarica la ricevuta e la imposta come principale aggiornando lo stato FE del documento').'">
                     <i class="fa fa-download"></i>
                 </button>';
     }
 
     if (empty($upload) || $upload->id != $documento->id_ricevuta_principale) {
         echo '
-                <button type="button" class="btn btn-warning btn-sm" onclick="impostaRicevuta(this)">
+                <button type="button" class="btn btn-warning btn-sm tip" onclick="impostaRicevuta(this)" title="'.tr('Imposta la ricevuta come principale aggiornando lo stato FE del documento').'">
                     <i class="fa fa-check-circle"></i>
                 </button>';
     } elseif ($upload->id == $documento->id_ricevuta_principale) {

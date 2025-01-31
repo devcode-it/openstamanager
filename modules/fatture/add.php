@@ -23,7 +23,7 @@ use Modules\Fatture\Tipo;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $dir = 'entrata';
     $tipo_anagrafica = tr('Cliente');
 } else {

@@ -159,3 +159,7 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 -- Firma in stampa preventivi solo totali
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Preventivi';
 UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show-only-total\":true, \"images\": true, \"last-page-footer\": true }' WHERE `zz_prints`.`id_module` = @id_module AND `zz_prints`.`name` = 'Preventivo (solo totale)';
+
+-- Rimozione campo deprecato
+ALTER TABLE `mg_articoli` DROP `threshold_qta`;
+DELETE FROM `zz_views` WHERE `zz_views`.`name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');

@@ -92,8 +92,10 @@ if ($articolo->servizio) {
                     </thead>
                     <tbody>';
     foreach ($sedi as $sede) {
+        $threshold_sede = $dbo->fetchOne('SELECT `threshold_qta` FROM `mg_scorte_sedi` WHERE `id_sede` = '.prepare($sede['id']).' AND `id_articolo` = '.prepare($articolo->id))['threshold_qta'];
+
         echo '
-                    <tr class="'.($giacenze[$sede['id']][0] < $articolo->threshold_qta ? 'text-danger' : '').'">
+                    <tr class="'.($giacenze[$sede['id']][0] < $threshold_sede ? 'text-danger' : '').'">
                         <td>'.$sede['nomesede'].'</td>
                         <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
                         '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'

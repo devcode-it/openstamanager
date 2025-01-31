@@ -89,7 +89,7 @@ switch (post('op')) {
 
         $module = Module::find($id_module);
 
-        if ($module->getTranslation('title') == 'Fatture di vendita') {
+        if ($module->name == 'Fatture di vendita') {
             $print_name = 'Fattura elettronica di vendita';
         } else {
             $print_name = 'Fattura elettronica di acquisto';
@@ -656,7 +656,7 @@ if (Interaction::isEnabled()) {
     ];
 }
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $operations['check-bulk'] = [
         'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
         'data' => [
@@ -704,7 +704,7 @@ $operations['export-csv'] = [
     ],
 ];
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $operations['export-bulk'] = [
         'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
         'data' => [
@@ -749,7 +749,7 @@ $operations['export-xml-bulk'] = [
     ],
 ];
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $operations['genera-xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [

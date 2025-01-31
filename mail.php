@@ -156,7 +156,7 @@ echo '
         </div>';
 
 $uploads = [];
-if ($smtp['pec'] == 1 && $module->getTranslation('title') == 'Fatture di vendita') {
+if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
     $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
     $uploads = array_column($uploads, 'id');
 }

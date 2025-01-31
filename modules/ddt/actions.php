@@ -34,7 +34,7 @@ use Modules\Iva\Aliquota;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Ddt in uscita') {
+if ($module->name == 'Ddt in uscita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

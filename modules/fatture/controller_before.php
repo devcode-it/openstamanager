@@ -28,7 +28,7 @@ use Util\XML;
 
 $services_enable = Interaction::isEnabled();
 
-if ($module->getTranslation('title') == 'Fatture di vendita' && $services_enable) {
+if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti_scarto = [];
     $documenti_invio = [];
     $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];

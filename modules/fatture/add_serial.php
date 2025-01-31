@@ -75,9 +75,9 @@ if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture d
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
 } elseif (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
-} elseif ($module->getTranslation('title') == 'Attività') {
+} elseif ($module->name == 'Interventi') {
     $modulo = 'int';
-} elseif ($module->getTranslation('title') == 'Contratti') {
+} elseif ($module->name == 'Contratti') {
     $modulo = 'con';
 } else {
     $modulo = 'veb';

@@ -23,7 +23,7 @@ use Modules\Fatture\StatoFE;
 
 include_once __DIR__.'/../../core.php';
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

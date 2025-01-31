@@ -209,7 +209,7 @@ switch (post('op')) {
 
         break;
 }
-if ($module->getTranslation('title') == 'Ordini cliente') {
+if ($module->name == 'Ordini cliente') {
     // Fix per modulo Fatture di vendita disabilitato
     $module_fatture = $id_modulo_fatture ? Module::find($id_modulo_fatture)->getTranslation('title') : '';
     $module_fatture ? strtolower((string) $module_fatture) : '';

@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
 
     echo '

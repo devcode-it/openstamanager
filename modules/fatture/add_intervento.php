@@ -26,7 +26,7 @@ use Modules\Fatture\Fattura;
 $module = Module::find($id_module);
 $module_interventi = Module::where('name', 'Interventi')->first();
 
-if ($module->getTranslation('title') == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
 } else {

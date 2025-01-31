@@ -36,7 +36,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title') == 'Ordini cliente') {
+if ($module->name == 'Ordini cliente') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

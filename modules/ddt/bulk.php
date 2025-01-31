@@ -27,7 +27,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 
-if ($module->getTranslation('title') == 'Ddt in uscita') {
+if ($module->name == 'Ddt in uscita') {
     $dir = 'entrata';
     $module_fatture = 'Fatture di vendita';
 } else {

@@ -491,7 +491,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $totale_documento = $this->getBody()['DatiPagamento']['DettaglioPagamento']['ImportoPagamento'];
         }
         $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);
-        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - abs($totale_documento), 2);
+        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - ($totale_documento ? abs($totale_documento):0), 2);
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
         if ($diff || $differenza_iva) {

@@ -171,7 +171,7 @@ echo '
                     '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
                 </p>
 
-                <p><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : 'Attività aperte:');
+                <p><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : tr('Attività aperte').': ');
 if (count($interventi_programmati) != 0) {
     echo ' <div class="readmore" data-height="50">';
     foreach ($interventi_programmati as $intervento_programmato) {

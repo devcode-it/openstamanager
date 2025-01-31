@@ -33,7 +33,7 @@ $uscite = [
     'Ordini fornitore',
 ];
 
-if (in_array($module->getTranslation('title'), $uscite)) {
+if (in_array($module->name, $uscite)) {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';
@@ -67,13 +67,13 @@ $data = [
 ];
 
 // Individuazione delle tabelle interessate
-if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     $modulo = 'fat';
-} elseif (in_array($module->getTranslation('title'), ['Ddt in uscita', 'Ddt in entrata'])) {
+} elseif (in_array($module->name, ['Ddt in uscita', 'Ddt in entrata'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
     $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
-} elseif (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore'])) {
+} elseif (in_array($module->name, ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
 } elseif ($module->name == 'Interventi') {
     $modulo = 'int';

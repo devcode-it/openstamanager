@@ -242,7 +242,7 @@ if ($options['dir'] == 'entrata') {
 
 // Data prevista evasione (per ordini)
 
-if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
+if (in_array($module->name, ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
     if ($options['action'] == 'add') {
         if ($module->name == 'Ordini cliente') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
@@ -307,7 +307,7 @@ if (in_array($module->getTranslation('title'), ['Ordini cliente', 'Ordini fornit
     </script>';
 }
 
-if (in_array($module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     echo '
     <script>
         $(document).ready(function() {

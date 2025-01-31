@@ -46,15 +46,17 @@ class Task extends Model
 
     public function log($level, $message, $context = [])
     {
-        $log = new Log();
-
-        $log->level = $level;
-        $log->message = $message;
-        $log->context = $context;
-
-        $log->task()->associate($this);
-
-        $log->save();
+        if (!empty($context)) {
+            $log = new Log();
+    
+            $log->level = $level;
+            $log->message = $message;
+            $log->context = $context;
+    
+            $log->task()->associate($this);
+    
+            $log->save();
+        }
     }
 
     public function execute()

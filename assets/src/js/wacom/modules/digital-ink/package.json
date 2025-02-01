@@ -35,7 +35,7 @@
     "jszip": "^3.9.1",
     "long": "^5.2.0",
     "poly2tri": "^1.5.0",
-    "protobufjs": "^6.11.2",
+    "protobufjs": "^6.11.4",
     "rbush": "^3.0.1",
     "systeminformation": "^5.11.9"
   },

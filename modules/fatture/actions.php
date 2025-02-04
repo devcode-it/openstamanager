@@ -536,7 +536,7 @@ switch ($op) {
         }
         $articolo->save();
 
-        $database->query('UPDATE `co_righe_documenti` SET `descrizione` = '.prepare(post('descrizione')).' WHERE `iddocumento` = '.$fattura->id.' AND `idarticolo` = '.$articolo->idarticolo.';');
+        $database->query('UPDATE `co_righe_documenti` SET `descrizione` = '.prepare(post('descrizione')).' WHERE `iddocumento` = '.$fattura->id.' AND `id` = '.post('idriga').' AND `idarticolo` = '.$articolo->idarticolo.';');
 
         if (post('idriga') != null) {
             flash()->info(tr('Articolo modificato!'));

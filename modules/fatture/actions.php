@@ -511,6 +511,7 @@ switch ($op) {
 
         $qta = post('qta');
 
+        $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
 
@@ -535,8 +536,6 @@ switch ($op) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
         $articolo->save();
-
-        $database->query('UPDATE `co_righe_documenti` SET `descrizione` = '.prepare(post('descrizione')).' WHERE `iddocumento` = '.$fattura->id.' AND `id` = '.post('idriga').' AND `idarticolo` = '.$articolo->idarticolo.';');
 
         if (post('idriga') != null) {
             flash()->info(tr('Articolo modificato!'));

@@ -442,6 +442,17 @@ switch (post('op')) {
         flash()->info(tr('Listino aggiornato correttamente!'));
 
         break;
+    
+    case 'change-attivo':
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $articolo->attivo = post('attivo');
+            $articolo->save();
+        }
+
+        flash()->info(tr('Articoli '.(post('attivo') ? 'attivati' : 'disattivati').' correttamente!'));
+
+        break;
 }
 
 $operations['change-iva'] = [
@@ -630,6 +641,17 @@ $operations['stampa-etichette'] = [
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
     ],
+
+    $operations['change-attivo'] = [
+        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Attiva/Disattiva articoli').'</span>',
+        'data' => [
+            'title' => tr('Attivazione/Disattivazione articoli selezionati'),
+            'msg' => 'Per ciascun articolo selezionato...<br><br>
+            {[ "type": "checkbox", "label": "'.tr('Attivo').'", "name": "attivo", "value": "0", "placeholder": "'.tr('Articolo attivo').'" ]}<br>',
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-success',
+            'blank' => false,
+        ],
 ];
 
 return $operations;

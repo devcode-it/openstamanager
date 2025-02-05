@@ -83,7 +83,7 @@ switch (filter('op')) {
             $oauth2->class = post('provider');
             $oauth2->client_id = post('client_id');
             $oauth2->client_secret = post('client_secret');
-            $oauth2->config = post('config');
+            $oauth2->config = post('config') ?: null;
 
             // Link di redirect dopo la configurazione
             $id_modulo_account_email = Module::where('name', 'Account email')->first()->id;

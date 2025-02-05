@@ -166,7 +166,7 @@ foreach ($providers as $key => $provider) {
     $config = $provider['class']::getConfigInputs();
     foreach ($config as $name => $field) {
         $field['name'] = 'config['.$name.']';
-        $field['value'] = $oauth2 ? $oauth2->config[$name] : null;
+        $field['value'] = $oauth2->config ? $oauth2->config[$name] : null;
 
         echo '
     <div class="col-md-6">'.input($field).'</div>';

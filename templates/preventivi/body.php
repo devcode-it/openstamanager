@@ -268,10 +268,9 @@ foreach ($righe as $key => $riga) {
             </td>
         </tr>';
         }
-        $autofill->next();
-        $autofill->next();
-        $autofill->next();
     }
+    $autofill->count(3);
+    $autofill->next();
 }
 
 echo '

@@ -30,7 +30,7 @@
         "inputmask": "^3.3.9",
         "ismobilejs": "^1.1.1",
         "jquery": "^3.5.1",
-        "jquery-form": "^4.2.1",
+        "jquery-form": "^4.3.0",
         "jquery-ui-touch-punch": "^0.2.3",
         "jquery.shorten": "^1.0.0",
         "leaflet": "^1.9.4",

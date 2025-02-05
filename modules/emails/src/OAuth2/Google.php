@@ -8,7 +8,7 @@ class Google extends OriginalProvider implements ProviderInterface
 {
     protected static $options = [
         'scope' => ['https://mail.google.com/'],
-        'accessType' => 'offline',
+        'access_type' => 'offline',
     ];
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -29,5 +29,9 @@ class Google extends OriginalProvider implements ProviderInterface
     public static function getConfigInputs()
     {
         return [];
+    }
+
+    protected function getDefaultScopes(): array {
+        return ['https://mail.google.com/'];
     }
 }

@@ -117,7 +117,7 @@ if (!empty($list)) {
 
         echo '
 
-                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
+                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_vendita(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>
@@ -134,7 +134,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function import_fe(button, file, data_registrazione) {
+function import_fe_vendita(button, file, data_registrazione) {
     var restore = buttonLoading(button);
 
     $.ajax({

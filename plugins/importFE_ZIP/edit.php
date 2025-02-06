@@ -121,7 +121,7 @@ echo '
     <div class="card-body" id="upload1">
         <div class="row">
             <div class="col-md-9">
-                <label><input type="file" name="blob1" id="blob1"></label>
+                {[ "type": "file", "name": "blob1", "id":"blob1", "required": 1 ]}
             </div>
 
             <div class="col-md-3">

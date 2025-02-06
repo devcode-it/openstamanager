@@ -61,7 +61,7 @@ if (!empty($list)) {
             <td class="text-center">-</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-danger" onclick="delete_fe_zip(this, \''.$element['id'].'\')">
+                <button type="button" class="btn btn-danger" onclick="delete_fe_vendita(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
@@ -103,21 +103,21 @@ if (!empty($list)) {
             <td class="text-right">'.moneyFormat($element['amount']).'</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-info tip" onclick="process_fe_zip(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
+                <button type="button" class="btn btn-info tip" onclick="process_fe_vendita(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
                     <i class="fa fa-upload"></i>
                 </button>';
         }
 
         if (file_exists($directory.'/'.$name)) {
             echo '
-                <button type="button" class="btn btn-primary tip" onclick="download_fe_zip(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
+                <button type="button" class="btn btn-primary tip" onclick="download_fe_vendita(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
                     <i class="fa fa-download"></i>
                 </button>';
         }
 
         echo '
 
-                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_zip(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
+                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_vendita(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>
@@ -134,7 +134,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function import_fe_zip(button, file, data_registrazione) {
+function import_fe_vendita(button, file, data_registrazione) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -170,7 +170,7 @@ function import_fe_zip(button, file, data_registrazione) {
     });
 }
 
-function process_fe_zip(button, file) {
+function process_fe_vendita(button, file) {
     swal({
         title: "'.tr('Segnare la fattura come processata?').'",
         html: "'.tr("Non sarà possibile individuarla nuovamente in modo automatico: l'unico modo per recuperarla sarà contattare l'assistenza").'",
@@ -198,7 +198,7 @@ function process_fe_zip(button, file) {
     });
 }
 
-function delete_fe_zip(button, file_id) {
+function delete_fe_vendita(button, file_id) {
     swal({
         title: "'.tr('Rimuovere la fattura salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
@@ -226,7 +226,7 @@ function delete_fe_zip(button, file_id) {
     });
 }
 
-function download_fe_zip(button, file_id) {
+function download_fe_vendita(button, file_id) {
     redirect(globals.rootdir + "/actions.php", {
         id_module: globals.id_module,
         id_plugin: '.$id_plugin.',

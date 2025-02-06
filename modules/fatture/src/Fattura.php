@@ -489,7 +489,7 @@ class Fattura extends Document
             throw new \InvalidArgumentException('Fattura Elettronica non trovata');
         }
 
-        return $file->getContent();
+        return $file->get_contents();
     }
 
     /**

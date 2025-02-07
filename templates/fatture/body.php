@@ -36,6 +36,7 @@ $documento['note'] ? $c += 3 : null;
 foreach ($v_iva as $desc_iva => $tot_iva) {
     ++$c;
 }
+$destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0);

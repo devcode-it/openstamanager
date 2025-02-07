@@ -79,12 +79,12 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                 <td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
                 <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
-        if ($r['idsede'] == '-1') {
+        if ($r['idsede_destinazione'] == '-1') {
             echo '- Nessuna -';
-        } elseif (empty($r['idsede'])) {
+        } elseif (empty($r['idsede_destinazione'])) {
             echo tr('Sede legale');
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede_destinazione']));
 
             echo $rsp2[0]['descrizione'];
         }

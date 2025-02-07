@@ -163,3 +163,15 @@ UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show-only-total\":true
 -- Rimozione campo deprecato
 ALTER TABLE `mg_articoli` DROP `threshold_qta`;
 DELETE FROM `zz_views` WHERE `zz_views`.`name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
+-- Agginta sede partenza in preventivi
+ALTER TABLE `co_preventivi` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
+ALTER TABLE `co_preventivi` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`; 
+
+-- Agginta sede partenza in contratti
+ALTER TABLE `co_contratti` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
+ALTER TABLE `co_contratti` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`;
+
+-- Agginta sede partenza in ordini
+ALTER TABLE `or_ordini` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
+ALTER TABLE `or_ordini` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`; 

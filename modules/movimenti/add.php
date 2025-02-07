@@ -67,11 +67,11 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede partenza'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
         </div>
     </div>
 

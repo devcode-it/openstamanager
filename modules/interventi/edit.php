@@ -221,7 +221,7 @@ echo '
 $articoli = $intervento->articoli;
 echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}

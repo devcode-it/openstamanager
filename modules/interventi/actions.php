@@ -640,9 +640,9 @@ switch (post('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
+        $idsede_partenza = $documento->idsede_partenza ?: 0;
+        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $idsede_destinazione = $idsede_destinazione ?: 0;
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
@@ -652,7 +652,8 @@ switch (post('op')) {
             $anagrafica = post('idanagrafica') ? Anagrafica::find(post('idanagrafica')) : $documento->anagrafica;
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'), post('id_segment'));
-            $intervento->idsede_destinazione = $id_sede;
+            $intervento->idsede_partenza = $idsede_partenza;
+            $intervento->idsede_destinazione = $idsede_destinazione;
 
             if (!empty($documento->idpagamento)) {
                 $intervento->idpagamento = $documento->idpagamento;

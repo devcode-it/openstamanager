@@ -47,7 +47,7 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 	<div class="row">
 
 		<div class="col-md-4">
-				{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
+				{[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -78,6 +78,7 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 
 <script>
 	$('#modals > div #idanagrafica').change(function() {
+		$(".modal #idsede_destinazione").selectReset();
         updateSelectOption("idanagrafica", $(this).val());
         session_set('superselect,idanagrafica', $(this).val(), 0);
 	});

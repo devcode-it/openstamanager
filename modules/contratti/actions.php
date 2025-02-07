@@ -80,7 +80,8 @@ switch (post('op')) {
             }
 
             $contratto->idanagrafica = post('idanagrafica');
-            $contratto->idsede = post('idsede');
+            $contratto->idsede_partenza = post('idsede_partenza');
+            $contratto->idsede_destinazione = post('idsede_destinazione');
             $contratto->idstato = post('idstato');
             $contratto->nome = post('nome');
             $contratto->idagente = post('idagente');
@@ -535,16 +536,18 @@ switch (post('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
+        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
+        $idsede_partenza = $idsede_partenza ?: 0;
+        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $idsede_destinazione = $idsede_destinazione ?: 0;
 
         // Creazione del contratto al volo
         if (post('create_document') == 'on') {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
             $contratto->idpagamento = $documento->idpagamento;
-            $contratto->idsede = $id_sede;
+            $contratto->idsede_partenza = $idsede_partenza;
+            $contratto->idsede_destinazione = $idsede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
             $contratto->giorni_preavviso_rinnovo = setting('Giorni di preavviso di default');
             $contratto->id_documento_fe = $documento->id_documento_fe;

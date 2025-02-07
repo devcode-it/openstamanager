@@ -749,9 +749,10 @@ switch ($op) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
+        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
+        $idsede_partenza = $idsede_partenza ?: 0;
+        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $idsede_destinazione = $idsede_destinazione ?: 0;
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
@@ -765,9 +766,8 @@ switch ($op) {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $idsede = ($documento->idsede_destinazione ?: $documento->idsede);
-
-            $fattura->idsede_destinazione = $idsede;
+            $fattura->idsede_partenza = $idsede_partenza;
+            $fattura->idsede_destinazione = $idsede_destinazione;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->idreferente = $documento->idreferente;
             $fattura->idagente = $documento->idagente ?: '';

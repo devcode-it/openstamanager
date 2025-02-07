@@ -284,9 +284,10 @@ switch (filter('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
+        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
+        $idsede_partenza = $idsede_partenza ?: 0;
+        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $idsede_destinazione = $idsede_destinazione ?: 0;
 
         // Creazione del ddt al volo
         if (post('create_document') == 'on') {
@@ -299,7 +300,8 @@ switch (filter('op')) {
             $ddt->codice_cup = $documento->codice_cup;
             $ddt->codice_cig = $documento->codice_cig;
             $ddt->num_item = $documento->num_item;
-            $ddt->idsede_destinazione = $id_sede;
+            $ddt->idsede_partenza = $idsede_partenza;
+            $ddt->idsede_destinazione = $idsede_destinazione;
 
             $ddt->idcausalet = post('id_causale_trasporto');
             $ddt->idreferente = $documento->idreferente;

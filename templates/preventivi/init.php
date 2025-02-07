@@ -32,8 +32,8 @@ $id_cliente = $documento['idanagrafica'];
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
-if (!empty($documento->idsede)) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede));
+if (!empty($documento->idsede_destinazione)) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede_destinazione));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';

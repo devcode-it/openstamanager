@@ -73,20 +73,27 @@ echo '
         <div class="card-body">
             <!-- RIGA 1 -->
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                 '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
                     '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 
-                <div class="col-md-3">';
+                <div class="col-md-4">';
 if ($record['idagente'] != 0) {
     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
@@ -519,7 +526,7 @@ $("#idanagrafica_c").change(function() {
     updateSelectOption("idanagrafica", $(this).val());
     session_set("superselect,idanagrafica", $(this).val(), 0);
 
-    $("#idsede").selectReset();
+    $("#idsede_destinazione").selectReset();
     $("#matricolaimpianto").selectReset();
     $("#idpagamento").selectReset();
 
@@ -647,7 +654,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#idsede").change(function(){
+    $("#idsede_destinazione").change(function(){
         updateSelectOption("idsede_destinazione", $(this).val());
         $("#idreferente").selectReset();
     });

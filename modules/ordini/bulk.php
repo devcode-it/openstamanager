@@ -71,7 +71,7 @@ switch (post('op')) {
                     ++$numero_totale;
 
                     // Ricerca fattura per anagrafica tra le registrate
-                    $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede : 0;
+                    $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede_destinazione : 0;
                     if ($raggruppamento == 'sede') {
                         $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
                     } else {
@@ -84,7 +84,7 @@ switch (post('op')) {
                             $fattura = Fattura::where('idanagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
-                                ->where('idsede', $id_sede)
+                                ->where('idsede_destinazione', $id_sede)
                                 ->first();
                         } else {
                             $fattura = Fattura::where('idanagrafica', $id_anagrafica)

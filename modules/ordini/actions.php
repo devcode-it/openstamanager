@@ -64,8 +64,6 @@ switch (post('op')) {
         if (!empty($id_record)) {
             $idstatoordine = post('idstatoordine');
             $idpagamento = post('idpagamento');
-            $idsede = post('idsede');
-
             $totale_imponibile = get_imponibile_ordine($id_record);
             $totale_ordine = get_totale_ordine($id_record);
 
@@ -98,7 +96,8 @@ switch (post('op')) {
             $ordine->idspedizione = post('idspedizione');
             $ordine->idporto = post('idporto');
             $ordine->idvettore = post('idvettore');
-            $ordine->idsede = $idsede;
+            $ordine->idsede_partenza = post('idsede_partenza');
+            $ordine->idsede_destinazione = post('idsede_destinazione');
             $ordine->idconto = post('idconto');
             $ordine->idrivalsainps = $idrivalsainps;
             $ordine->idritenutaacconto = $idritenutaacconto;
@@ -418,9 +417,10 @@ switch (post('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
+        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
+        $idsede_partenza = $idsede_partenza ?: 0;
+        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $idsede_destinazione = $idsede_destinazione ?: 0;
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
@@ -428,7 +428,8 @@ switch (post('op')) {
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
             $ordine->idpagamento = $documento->idpagamento;
-            $ordine->idsede = $id_sede;
+            $ordine->idsede_partenza = $idsede_partenza;
+            $ordine->idsede_destinazione = $idsede_destinazione;
 
             $ordine->id_documento_fe = $documento->id_documento_fe;
             $ordine->numero_cliente = $documento->id_documento_fe;

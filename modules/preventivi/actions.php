@@ -38,13 +38,13 @@ switch (post('op')) {
         $nome = post('nome');
         $idtipointervento = post('idtipointervento');
         $data_bozza = post('data_bozza');
-        $id_sede = post('idsede');
+        $idsede_destinazione = post('idsede_destinazione');
         $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede, $id_segment);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $idsede_destinazione, $id_segment);
 
         $preventivo->esclusioni = setting('Esclusioni default preventivi');
         $preventivo->idstato = post('idstato');
@@ -67,7 +67,8 @@ switch (post('op')) {
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
             $preventivo->idanagrafica = post('idanagrafica');
-            $preventivo->idsede = post('idsede');
+            $preventivo->idsede_partenza = post('idsede_partenza');
+            $preventivo->idsede_destinazione = post('idsede_destinazione');
             $preventivo->idagente = post('idagente');
             $preventivo->idreferente = post('idreferente');
             $preventivo->idpagamento = post('idpagamento');

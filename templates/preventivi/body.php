@@ -205,7 +205,6 @@ foreach ($righe as $key => $riga) {
 
                     echo '
                     <br><small class="text-muted">'.$text.'</small>';
-                    $autofill->count($text, true);
                 }
 
                 echo '

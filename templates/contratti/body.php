@@ -39,10 +39,17 @@ if ($has_image) {
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(23, 0, 38);
+$rows_per_page = 23;
+$rows_first_page = 36;
+$autofill->setRows($rows_per_page, 0, $rows_first_page);
 
-// Conteggio righe destinazione diversa
-$autofill->count($destinazione);
+// Conteggio righe intestazione
+$c = 0;
+($f_sitoweb || $f_pec) ? ++$c : null; 
+$destinazione ? $c += 2 : null;
+
+// Diminuisco le righe disponibili per pagina
+$autofill->setRows($rows_per_page - $c, 0, $rows_first_page - $c);
 
 // Elenco impianti
 $impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($documento['id']).')');
@@ -373,7 +380,7 @@ echo '
         </td>
 
         <td class="border-bottom">
-            '.$pagamento->getTranslation('title').'
+            '.($pagamento ? $pagamento->getTranslation('title') : '').'
         </td>
     </tr>
 

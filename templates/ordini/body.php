@@ -60,12 +60,21 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
-$autofill->setRows(31, 0, 34);
+$rows_per_page = 31;
+$rows_first_page = $rows_per_page +3;
+$autofill->setRows($rows_per_page, 0, $rows_first_page);
 
-// Conteggio righe destinazione diversa
-$autofill->count($destinazione);
-$autofill->count($codice_destinatario);
+// Conteggio righe intestazione
+$c = 0;
+$n = 0;
+($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null; 
+$destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
+$documento['note'] ? $n += 3 : null;
 
+$rows_first_page -= $c;
+$rows_per_page = $rows_first_page - $n;
+// Diminuisco le righe disponibili per pagina
+$autofill->setRows($rows_per_page, 0, $rows_first_page);
 
 // Intestazione tabella per righe
 echo "

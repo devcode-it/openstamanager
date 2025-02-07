@@ -30,6 +30,16 @@ $autofill = new Util\Autofill(6, 70);
 $rows_per_page = ($fattura_accompagnatoria ? 24 : 26);
 $autofill->setRows($rows_per_page, 0);
 
+// Conteggio le righe da sottrarre al totale
+$c = 0;
+$documento['note'] ? $c += 3 : null;
+foreach ($v_iva as $desc_iva => $tot_iva) {
+    ++$c;
+}
+
+// Diminuisco le righe disponibili per pagina
+$autofill->setRows($rows_per_page - $c, 0);
+
 // Intestazione tabella per righe
 echo "
 <table class='table table-striped' id='contents'>
@@ -211,14 +221,6 @@ foreach ($righe as $riga) {
         </tr>';
 
     $autofill->next();
-}
-
-// Conteggio righe delle note
-$autofill->count($record['note']);
-
-// Conteggio righe relative alle aliquote IVA
-foreach ($v_iva as $desc_iva => $tot_iva) {
-    $autofill->count($desc_iva);
 }
 
 $diciture = [];

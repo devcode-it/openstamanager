@@ -72,7 +72,7 @@ $destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
 $documento['note'] ? $n += 3 : null;
 
 $rows_first_page -= $c;
-$rows_per_page = $rows_first_page - $n;
+$rows_per_page = $rows_per_page - $c - $n;
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page, 0, $rows_first_page);
 

@@ -195,3 +195,13 @@ SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
 (2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+
+-- Aggiunta colonna Note interne in DDT in uscita
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
+(@id_module, 'Note interne', "`dt_ddt`.`note_aggiuntive`", '19', '1', '0', '0', '0', '', '', '0', '0', '0');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');

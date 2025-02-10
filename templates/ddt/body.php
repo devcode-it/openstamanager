@@ -143,9 +143,8 @@ foreach ($righe as $riga) {
         echo '<td>-</td>';
     }
 
-    echo'
+    echo '
         <td>'.nl2br((string) $r['descrizione']);
-
 
     if ($riga->isArticolo()) {
         // Seriali

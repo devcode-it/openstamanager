@@ -35,11 +35,12 @@ WORKDIR /var/www/html
 EXPOSE 80
 
 # Clona il repository
-RUN wget https://github.com/devcode-it/openstamanager/releases/download/v2.6.2/openstamanager-2.6.2.zip && unzip openstamanager-2.6.2.zip
+RUN wget -O openstamanager.zip https://github.com/devcode-it/openstamanager/releases/download/v2.7-beta/openstamanager-2.7.zip && unzip openstamanager.zip
 
 RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
 RUN chown -R $USER:www-data /var/www/html/
 RUN chmod -R 770 /var/www/html/
+RUN rm openstamanager.zip
 
 # Pulizia file temporanei
 RUN apt autoclean && rm -rf /var/lib/apt/lists/*

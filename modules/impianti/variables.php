@@ -27,7 +27,6 @@ $r = $dbo->fetchOne('SELECT
     WHERE 
         `my_impianti`.`id`='.prepare($id_record));
 
-
 // Variabili da sostituire
 return [
     'matricola' => $r['matricola'],

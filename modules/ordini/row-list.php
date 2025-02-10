@@ -165,7 +165,7 @@ foreach ($righe as $riga) {
                     <button type="button" class="btn btn-xs btn-default btn-block" onclick="apriRiferimenti(this)">
                         <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
                     </button>';
-                
+
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {
         echo '

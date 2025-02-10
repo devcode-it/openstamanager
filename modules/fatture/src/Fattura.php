@@ -446,7 +446,6 @@ class Fattura extends Document
         return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_spese_incasso);
     }
 
-
     public function scadenze()
     {
         return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
@@ -730,7 +729,8 @@ class Fattura extends Document
         return $new;
     }
 
-    public function manageRigaSpeseIncasso() {
+    public function manageRigaSpeseIncasso()
+    {
         $riga = $this->rigaSpeseIncasso;
         $first_riga_fattura = $this->getRighe()->where('id', '!=', $riga->id)->where('is_descrizione', '0')->first();
 

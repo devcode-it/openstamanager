@@ -108,7 +108,7 @@ echo '
                 </div>';
 
 if ($dir == 'entrata') {
-                echo '
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
@@ -117,7 +117,7 @@ if ($dir == 'entrata') {
                     {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'" ]}
                 </div>';
 } else {
-                echo '
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'" ]}
                 </div>

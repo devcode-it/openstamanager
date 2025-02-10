@@ -31,7 +31,8 @@ class Google extends OriginalProvider implements ProviderInterface
         return [];
     }
 
-    protected function getDefaultScopes(): array {
+    protected function getDefaultScopes(): array
+    {
         return ['https://mail.google.com/'];
     }
 }

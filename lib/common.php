@@ -215,7 +215,7 @@ function getDestinationComponents($riga)
     }
     $ddts = database()->table('dt_righe_ddt')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
     foreach ($ddts as $ddt) {
-        $documents['documento'][] = Ddt::find($ddt->idddt);
+        $documents['documento'][] = DDT::find($ddt->idddt);
         $documents['qta'][] = $ddt->qta;
     }
     $interventi = database()->table('in_righe_interventi')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();

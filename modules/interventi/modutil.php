@@ -228,7 +228,8 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
 }
 
 if (!function_exists('aggiungi_sessioni_in_fattura')) {
-    function aggiungi_sessioni_in_fattura($id_intervento, $id_fattura, $id_iva, $id_conto, $id_rivalsa_inps, $id_ritenuta_acconto, $calcolo_ritenuta_acconto) {
+    function aggiungi_sessioni_in_fattura($id_intervento, $id_fattura, $id_iva, $id_conto, $id_rivalsa_inps, $id_ritenuta_acconto, $calcolo_ritenuta_acconto)
+    {
         $fattura = Fattura::find($id_fattura);
         $intervento = Intervento::find($id_intervento);
         $sessioni = $intervento->sessioni;

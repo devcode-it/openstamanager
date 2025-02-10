@@ -77,10 +77,10 @@ if (count($preventivo->revisioni) > 1) {
 
             <div class="row">
                 <div class="col-md-4">';
-                if (!empty($record['idreferente'])) {
-                    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                }
-                echo '
+if (!empty($record['idreferente'])) {
+    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+}
+echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 

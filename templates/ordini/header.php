@@ -61,37 +61,37 @@ echo '
                 </td>
             </tr>
         </table>';
-        if ($porto || $spedizione || $vettore) {
-echo'           
+if ($porto || $spedizione || $vettore) {
+    echo '           
 		<table class="table">
             <tr>';
-            if ($porto ) {
-                echo '
+    if ($porto) {
+        echo '
                 <td valign="top" class="border-bottom border-top text-center">
                     <p class="small-bold text-muted">'.tr('Porto', [], ['upper' => true]).'</p>
                     <p>$porto$</p>
                 </td>';
-            }
-            if ($spedizione) {
-                echo '
+    }
+    if ($spedizione) {
+        echo '
                 <td class="border-bottom border-top text-center">
                     <p class="small-bold text-muted">'.tr('Tipo di spedizione', [], ['upper' => true]).'</p>
                     <p>$spedizione$</p>
                 </td>';
-            }
-            if ($vettore) {
-                echo '
+    }
+    if ($vettore) {
+        echo '
                 <td class="border-bottom border-top center text-center">
                     <p class="small-bold text-muted">'.tr('Vettore', [], ['upper' => true]).'</p>
                     <p>$vettore$ </p>
                 </td>';
-            }
-            echo '
+    }
+    echo '
             </tr>
         </table>';
-        }
-    
-    echo'
+}
+
+echo '
     </div>
 	<!-- Dati Cliente/Fornitore -->
 		<div class="col-xs-6 pull-right">

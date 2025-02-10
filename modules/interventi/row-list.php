@@ -29,7 +29,7 @@ $colspan = '7';
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $evasione_bar = [
-    'Fatture di vendita' => 'success'
+    'Fatture di vendita' => 'success',
 ];
 
 echo '
@@ -82,7 +82,7 @@ foreach ($righe as $riga) {
     echo '
                 </td>
                 <td>';
-                    echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+    echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
         if (!empty($mancanti)) {

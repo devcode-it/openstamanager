@@ -445,7 +445,7 @@ switch (post('op')) {
 
     case 'generate-barcode-bulk':
         foreach ($id_records as $id) {
-            $codice = "200".str_pad($id, 9, "0", STR_PAD_LEFT);
+            $codice = '200'.str_pad((string) $id, 9, '0', STR_PAD_LEFT);
             $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
 
             $articolo = Articolo::find($id);

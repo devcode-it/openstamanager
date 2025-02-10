@@ -120,7 +120,7 @@ switch ($operazione) {
                         if ($cadenza_fatturazione == 'Fine') {
                             $fine = Carbon\Carbon::parse($fine)->endOfMonth()->format('Y-m-d');
                         }
-                        $prezzo_unitario = setting('Utilizza prezzi di vendita comprensivi di IVA') ? (($r->subtotale + $r->iva) / ($r->qta ?: 1)) : ($r->subtotale  / ($r->qta ?: 1));
+                        $prezzo_unitario = setting('Utilizza prezzi di vendita comprensivi di IVA') ? (($r->subtotale + $r->iva) / ($r->qta ?: 1)) : ($r->subtotale / ($r->qta ?: 1));
 
                         if (!empty($r->idarticolo)) {
                             $articolo = ArticoloOriginale::find($r->idarticolo);

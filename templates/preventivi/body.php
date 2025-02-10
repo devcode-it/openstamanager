@@ -70,7 +70,6 @@ $rows_per_page = 22;
 $rows_first_page = 36;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
-
 // Conto le righe da diminuire
 $c = 0;
 $destinazione ? $c += 2 : null;
@@ -244,7 +243,7 @@ foreach ($righe as $key => $riga) {
     $autofill->next();
 
     $next = $righe->flatten()[$num];
-    
+
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
         <tr>

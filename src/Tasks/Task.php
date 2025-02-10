@@ -48,13 +48,13 @@ class Task extends Model
     {
         if (!empty($context)) {
             $log = new Log();
-    
+
             $log->level = $level;
             $log->message = $message;
             $log->context = $context;
-    
+
             $log->task()->associate($this);
-    
+
             $log->save();
         }
     }

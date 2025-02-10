@@ -90,7 +90,7 @@ switch ($resource) {
                 'descrizione' => $descrizione,
                 '_bgcolor_' => $color,
                 'idtipointervento' => $r['idtipointervento'],
-                'idtipointervento_descrizione' => $r['idtipointervento_descrizione']
+                'idtipointervento_descrizione' => $r['idtipointervento_descrizione'],
             ];
         }
 

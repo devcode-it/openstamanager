@@ -21,7 +21,7 @@ foreach ($modules as $module) {
         'Impianti' => 'Impianto {matricola} - {ragione_sociale}',
         'Anagrafiche' => 'Anagrafica - {ragione_sociale}',
         'Articoli' => 'Articolo - {codice} {descrizione}',
-        default => $module->getTranslation('title')
+        default => $module->getTranslation('title'),
     };
 
     $module->setTranslation('meta_title', $metaTitle);

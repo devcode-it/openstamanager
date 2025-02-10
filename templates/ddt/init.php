@@ -54,7 +54,7 @@ $destinazione = '';
 if (!empty($documento['idsede_destinazione'])) {
     if ($tipo_doc == 'Ddt in uscita') {
         $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($documento['idanagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
-    }else{
+    } else {
         $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
     }
 
@@ -95,7 +95,7 @@ $partenza = '';
 if (!empty($documento['idsede_partenza'])) {
     if ($tipo_doc != 'Ddt in uscita') {
         $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($documento['idanagrafica']).' AND id='.prepare($documento['idsede_partenza']));
-    }else{
+    } else {
         $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
     }
 

@@ -97,7 +97,7 @@ class Generator
         if ($pattern == null) {
             return null;
         }
-        
+
         // Costruzione del pattern
         $replaces = array_merge(self::getReplaces($date), $values);
 

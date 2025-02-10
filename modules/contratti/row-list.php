@@ -129,14 +129,14 @@ foreach ($righe as $riga) {
                 </td>
                 
                 <td>';
-                // Aggiunta dei riferimenti ai documenti
-                if ($riga->hasOriginalComponent()) {
-                    echo '
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginalComponent()) {
+        echo '
                     <button type="button" class="btn btn-xs btn-default btn-block">
                         <i class="fa fa-file-text-o"></i> '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'
                     </button>';
-                }
-                echo '
+    }
+    echo '
                 </td>';
 
     if ($riga->isDescrizione()) {

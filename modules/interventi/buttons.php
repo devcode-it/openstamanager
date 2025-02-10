@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -82,8 +83,8 @@ if (!$is_anagrafica_deleted) {
 
     echo '
     <div class="tip btn-group" data-widget="tooltip" title="'.tr('Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell\'attività deve essere tra: _STATE_LIST_', [
-        '_CONTROLLO_DOCUMENTI_' => (!setting('Permetti fatturazione delle attività collegate a contratti') || !setting('Permetti fatturazione delle attività collegate a ordini') ||!setting('Permetti fatturazione delle attività collegate a preventivi') ? tr('l\'attività non deve essere collegata ai seguenti documenti').': '.(!setting('Permetti fatturazione delle attività collegate a contratti') ? '<b>Contratti</b>' : '').(!setting('Permetti fatturazione delle attività collegate a ordini') ? ' <b>Ordini</b>' : '').(!setting('Permetti fatturazione delle attività collegate a preventivi') ? ' <b>Preventivi</b>' : '').'<br> e' : ''),
-        '_STATE_LIST_' => implode(', ', (array)$stati),
+        '_CONTROLLO_DOCUMENTI_' => (!setting('Permetti fatturazione delle attività collegate a contratti') || !setting('Permetti fatturazione delle attività collegate a ordini') || !setting('Permetti fatturazione delle attività collegate a preventivi') ? tr('l\'attività non deve essere collegata ai seguenti documenti').': '.(!setting('Permetti fatturazione delle attività collegate a contratti') ? '<b>Contratti</b>' : '').(!setting('Permetti fatturazione delle attività collegate a ordini') ? ' <b>Ordini</b>' : '').(!setting('Permetti fatturazione delle attività collegate a preventivi') ? ' <b>Preventivi</b>' : '').'<br> e' : ''),
+        '_STATE_LIST_' => implode(', ', (array) $stati),
     ]).'">
         <button class="btn btn-info dropdown-toggle '.($is_fatturabile ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-expanded="false">
             <i class="fa fa-magic"></i> '.tr('Crea').'

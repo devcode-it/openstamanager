@@ -170,7 +170,7 @@ class Upload extends Model
         return strtolower($parent ? $parent->directory : '');
     }
 
-        /**
+    /**
      * @return string
      */
     public function getAttachmentsDirectoryAttribute()

@@ -44,10 +44,10 @@ switch ($operazione) {
                 $check->note = $check_impianto['note'];
                 $check->save();
 
-                //Riporto anche i permessi della check
+                // Riporto anche i permessi della check
                 $users = [];
-                $utenti = $dbo->table('zz_check_user')->where('id_check',$check_impianto['id'])->get();
-                foreach($utenti as $utente){
+                $utenti = $dbo->table('zz_check_user')->where('id_check', $check_impianto['id'])->get();
+                foreach ($utenti as $utente) {
                     $users[] = $utente->id_utente;
                 }
                 $check->setAccess($users, null);

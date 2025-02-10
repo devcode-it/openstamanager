@@ -388,10 +388,10 @@ if (count($sessioni) > 0) {
             <td class="text-center">
                 '.$sessione->anagrafica->ragione_sociale.'
                 ('.$sessione->tipo->getTranslation('title').')';
-                if ($sessione->tipo->note) {
-                    echo '<br><small class="text-muted">'.$sessione->tipo->note.'</small>';
-                }
-            echo '
+        if ($sessione->tipo->note) {
+            echo '<br><small class="text-muted">'.$sessione->tipo->note.'</small>';
+        }
+        echo '
             </td>';
 
         $inizio = new Carbon($sessione['orario_inizio']);

@@ -61,13 +61,13 @@ $columns = $options['pricing'] ? $columns : $columns - 3;
 // Creazione righe fantasma
 $autofill = new Util\Autofill($columns);
 $rows_per_page = 31;
-$rows_first_page = $rows_per_page +3;
+$rows_first_page = $rows_per_page + 3;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
 // Conteggio righe intestazione
 $c = 0;
 $n = 0;
-($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null; 
+($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null;
 $destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
 $documento['note'] ? $n += 3 : null;
 

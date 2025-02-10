@@ -135,7 +135,6 @@ foreach ($righe as $key => $riga) {
     echo '
                 </td>';
 
-                
     // Data prevista evasione
     $info_evasione = '';
     if (!empty($riga->data_evasione)) {

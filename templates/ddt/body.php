@@ -27,10 +27,10 @@ $autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
 $rows_per_page = ($documento['note'] || $options['pricing'] ? ($tipo_doc == 'Ddt in uscita' ? 22 : 24) : 27);
 $autofill->setRows($rows_per_page, 0, $options['last-page-footer'] ? 34 : $rows_per_page);
 
-//conteggio delle righe occupate dall'intestazione
+// conteggio delle righe occupate dall'intestazione
 $c = 0;
 ($f_sitoweb || $f_pec) ? ++$c : null;
-($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null; 
+($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null;
 ($destinazione && $partenza) ? $c += 3 : (($destinazione || $partenza) ? ++$c : null);
 
 // Diminuisco le righe disponibili per pagina

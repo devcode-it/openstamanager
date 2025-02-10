@@ -257,11 +257,11 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
                 </div>
             </div>';
 
-        $block_input = false;
-        if ($original_module->name == 'Interventi') {
-            $block_input = true;
+    $block_input = false;
+    if ($original_module->name == 'Interventi') {
+        $block_input = true;
 
-            $rs = $dbo->fetchOne('SELECT
+        $rs = $dbo->fetchOne('SELECT
                 `in_interventi`.`id`,
                 CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
                 CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
@@ -274,10 +274,10 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
             WHERE
                 `in_interventi`.`id` = '.prepare($documento->id));
 
-            $descrizione_intervento = str_replace("'", ' ', strip_tags((string) $original_module->replacePlaceholders($documento->id, setting('Descrizione personalizzata in fatturazione')))) ?: $rs['info'];
+        $descrizione_intervento = str_replace("'", ' ', strip_tags((string) $original_module->replacePlaceholders($documento->id, setting('Descrizione personalizzata in fatturazione')))) ?: $rs['info'];
 
-            // Intervento
-            echo '
+        // Intervento
+        echo '
             <div class="row">
                 <div class="col-md-6">
                     {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione_intervento", "required": "1", "value": "'.$descrizione_intervento.'" ]}
@@ -291,8 +291,8 @@ if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fat
                     {[ "type": "checkbox", "label": "'.tr('Importa sessioni').'", "name": "importa_sessioni", "value": "1", "disabled": "'.($block_input ? '1' : '0').'" ]}
                 </div>
             </div>';
-        }
-        echo '
+    }
+    echo '
         </div>
     </div>';
 }

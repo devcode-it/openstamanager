@@ -528,9 +528,9 @@ switch (post('op')) {
                 $copia->save();
 
                 $dbo->insert('co_riferimenti_righe', [
-                    'source_type' => get_class($copia),
+                    'source_type' => $copia::class,
                     'source_id' => $copia->id,
-                    'target_type' => get_class($riga),
+                    'target_type' => $riga::class,
                     'target_id' => $riga->id,
                 ]);
             }

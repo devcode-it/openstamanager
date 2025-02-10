@@ -27,7 +27,6 @@ $r = $dbo->fetchOne('SELECT
     WHERE 
         `mg_articoli`.`id`='.prepare($id_record));
 
-
 // Variabili da sostituire
 return [
     'codice' => $r['codice'],

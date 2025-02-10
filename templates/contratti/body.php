@@ -45,7 +45,7 @@ $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
 // Conteggio righe intestazione
 $c = 0;
-($f_sitoweb || $f_pec) ? ++$c : null; 
+($f_sitoweb || $f_pec) ? ++$c : null;
 $destinazione ? $c += 2 : null;
 
 // Diminuisco le righe disponibili per pagina
@@ -59,7 +59,7 @@ if (!empty($documento['descrizione'])) {
     echo '
 <p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
-$autofill->count($documento['descrizione']);
+    $autofill->count($documento['descrizione']);
 }
 
 // Intestazione tabella per righe

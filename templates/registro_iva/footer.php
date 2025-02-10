@@ -18,10 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- echo '
+echo '
  <p class="text-right">
      '.tr('_YEAR_/_PAGE_', [
-     '_PAGE_' => '{PAGENO}',
-     '_YEAR_' => date('Y'),
- ]).'
+    '_PAGE_' => '{PAGENO}',
+    '_YEAR_' => date('Y'),
+]).'
  </p>';

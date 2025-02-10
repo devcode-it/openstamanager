@@ -196,14 +196,13 @@ class Translator extends Util\Singleton
         return self::$currency;
     }
 
-
     public static function setCurrency($valuta)
     {
         self::$currency = $valuta;
 
         return self::$currency;
     }
-    
+
     /**
      * Converte il numero dalla formattazione locale a quella inglese.
      *

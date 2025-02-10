@@ -154,7 +154,7 @@ if (filter('action') == 'do_update') {
     } else {
         echo '
                 <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
-        
+
         // Lista aggiornamenti da applicare
         $updates = Update::getTodoUpdates();
 

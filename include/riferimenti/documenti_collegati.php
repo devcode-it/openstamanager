@@ -36,13 +36,13 @@ echo '
 <div class="card card-primary collapsable">
     <div class="card-header with-border">
         <h3 class="card-title">';
-            if ($source->isArticolo()) {
-                $articolo_riga = Articolo::find($source->idarticolo);
-                echo $articolo_riga->codice.' - '.$source->descrizione;
-            } else {
-                echo nl2br($source->descrizione);
-            }
-        echo '
+if ($source->isArticolo()) {
+    $articolo_riga = Articolo::find($source->idarticolo);
+    echo $articolo_riga->codice.' - '.$source->descrizione;
+} else {
+    echo nl2br($source->descrizione);
+}
+echo '
         </h3>
         <div class="card-tools pull-right">
             '.tr('Quantità evasa / Totale').': <b>'.numberFormat($source->qta_evasa, 'qta').' / '.numberFormat($source->qta, 'qta').'</b>
@@ -50,8 +50,8 @@ echo '
     </div>
 
     <div class="card-body">';
-    if ($documenti_destinazione) {
-        echo '
+if ($documenti_destinazione) {
+    echo '
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -62,9 +62,9 @@ echo '
 
             <tbody>';
 
-            $documenti_destinazione = getDestinationComponents($source);
-            foreach ($documenti_destinazione['documento'] as $key => $destinazione) {
-                echo '
+    $documenti_destinazione = getDestinationComponents($source);
+    foreach ($documenti_destinazione['documento'] as $key => $destinazione) {
+        echo '
                 <tr>
                     <td>
                         '.reference($destinazione).'
@@ -73,16 +73,16 @@ echo '
                         '.numberFormat($documenti_destinazione['qta'][$key], 'qta').'
                     </td>
                 </tr>';
-            }
-            echo '
+    }
+    echo '
             </tbody>
         </table>';
-    } else {
-        echo '
+} else {
+    echo '
         <div class="alert alert-info">
             <i class="fa fa-info-circle"></i> '.tr('Nessun documento collegato').'.
         </div>';
-    }
-    echo '
+}
+echo '
     </div>
 </div>';

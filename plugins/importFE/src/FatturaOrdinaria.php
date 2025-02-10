@@ -157,7 +157,7 @@ class FatturaOrdinaria extends FatturaElettronica
         // Calcolo la differenza IVA per aliquota, per creare una riga relativa all'arrotondamento IVA
         foreach ($riepiloghi_raggruppati as $riepilogo) {
             $valore = 0;
-            $differenza_iva = ($totale_imposta[$riepilogo['AliquotaIVA']] ? round((float) $riepilogo['Imposta'] - round($totale_imposta[$riepilogo['AliquotaIVA']], 2), 2): 0);
+            $differenza_iva = ($totale_imposta[$riepilogo['AliquotaIVA']] ? round((float) $riepilogo['Imposta'] - round($totale_imposta[$riepilogo['AliquotaIVA']], 2), 2) : 0);
 
             if ($differenza_iva) {
                 $valore = $differenza_iva * 100 / ($riepilogo['AliquotaIVA'] ?: 1);
@@ -491,7 +491,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $totale_documento = $this->getBody()['DatiPagamento']['DettaglioPagamento']['ImportoPagamento'];
         }
         $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);
-        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - ($totale_documento ? abs($totale_documento):0), 2);
+        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - ($totale_documento ? abs($totale_documento) : 0), 2);
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
         if ($diff || $differenza_iva) {

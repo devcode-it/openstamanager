@@ -4,8 +4,8 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
-use Modules\Interventi\Intervento;
 use Modules\Fatture\Stato;
+use Modules\Interventi\Intervento;
 use Modules\Preventivi\Preventivo;
 
 include_once __DIR__.'/../../core.php';

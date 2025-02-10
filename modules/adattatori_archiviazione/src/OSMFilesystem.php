@@ -66,7 +66,7 @@ class OSMFilesystem extends Filesystem
                 if ($i > 0) {
                     $filename = $name.'_'.$i.'.'.$extension;
                 }
-                $i++;
+                ++$i;
             }
         } while ($this->fileExists($directory.'/'.$filename));
 

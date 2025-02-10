@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma
-$autofill = new Util\Autofill($options['pricing'] ? 6 : 3, 70);
+$autofill = new Util\Autofill($options['pricing'] ? 7 : 4, 70);
 $rows_per_page = ($documento['note'] || $options['pricing'] ? ($tipo_doc == 'Ddt in uscita' ? 22 : 24) : 27);
 $autofill->setRows($rows_per_page, 0, $options['last-page-footer'] ? 34 : $rows_per_page);
 
@@ -42,6 +42,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -110,7 +111,14 @@ foreach ($righe as $riga) {
                 if ($options['pricing']) {
                     $text .= '</td><td></td><td></td><td>';
                 }
-                $text .= '</td><td></td></tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
+
+                if ($riga->isArticolo()) {
+                    echo '</td><td>'.$riga->codice.'</td>';
+                } else {
+                    $text .= '</td><td></td>';
+                }
+
+                $text .= '</tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
                 echo '
                 </td>
@@ -127,13 +135,17 @@ foreach ($righe as $riga) {
     $autofill->count($r['descrizione']);
 
     echo $num.'
-        </td>
-        <td>'.nl2br((string) $r['descrizione']);
+        </td>';
 
     if ($riga->isArticolo()) {
-        echo '<br><small>'.$riga->codice.'</small>';
-        $autofill->count($riga->codice, true);
+        echo '<td class="text-center">'.$riga->codice.'</td>';
+    } else {
+        echo '<td>-</td>';
     }
+
+    echo'
+        <td>'.nl2br((string) $r['descrizione']);
+
 
     if ($riga->isArticolo()) {
         // Seriali

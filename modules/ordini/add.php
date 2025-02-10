@@ -22,7 +22,7 @@ use Models\Module;
 
 $module = Module::find($id_module);
 
-if ($module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Ordini cliente') {
+if ($module->name == 'Ordini cliente') {
     $dir = 'entrata';
 
     $tipo_anagrafica = 'Cliente';

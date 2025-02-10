@@ -48,24 +48,46 @@ echo '
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                '.input([
-    'type' => 'textarea',
-    'label' => tr('Query dinamica'),
-    'name' => 'query',
-    'required' => 0,
-    'value' => $lista->query,
-    'help' => tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. <br>'.tr('Per esempio: _SQL_', [
-        '_SQL_' => 'SELECT idanagrafica AS id, \'Modules\\\\Anagrafiche\\\\Anagrafica\' AS tipo FROM an_anagrafiche',
-    ]).'. <br>'.tr('Sono supportati i seguenti oggetti: _LIST_', [
-        '_LIST_' => implode(', ', [
-            slashes(Modules\Anagrafiche\Anagrafica::class),
-            slashes(Modules\Anagrafiche\Sede::class),
-            slashes(Modules\Anagrafiche\Referente::class),
-        ]),
-    ]).'.',
-]).'
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">'.tr('Generazione query dinamica').'</h3>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            {[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipologia", "required": 0, "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "help": "Seleziona una tipologia per generare la query dinamica che estrae tutte le anagrafiche di quella tipologia" ]}
+                        </div>
+
+                        <div class="col-md-2">
+                            <buttton type="button" class="btn btn-primary" style="margin-top: 25px" onclick="generaQuery()">
+                                <i class="fa fa-magic"></i> '.tr('Genera').'
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                        '.input([
+            'type' => 'textarea',
+            'label' => tr('Query dinamica'),
+            'name' => 'query',
+            'required' => 0,
+            'value' => $lista->query,
+            'help' => tr("La query SQL deve restituire gli identificativi delle anagrafiche da inserire nella lista, sotto un campo di nome ''id''").'. <br>'.tr('Per esempio: _SQL_', [
+                '_SQL_' => 'SELECT idanagrafica AS id, \'Modules\\\\Anagrafiche\\\\Anagrafica\' AS tipo FROM an_anagrafiche',
+            ]).'. <br>'.tr('Sono supportati i seguenti oggetti: _LIST_', [
+                '_LIST_' => implode(', ', [
+                    slashes(Modules\Anagrafiche\Anagrafica::class),
+                    slashes(Modules\Anagrafiche\Sede::class),
+                    slashes(Modules\Anagrafiche\Referente::class),
+                ]),
+            ]).'.',
+        ]).'
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -183,3 +205,21 @@ if ($lista) {
     });
     </script>';
 }
+
+?>
+
+<script>
+
+function generaQuery() {
+    var tipologia = $("#tipologia").val();
+
+
+    var query = "SELECT an_anagrafiche.idanagrafica AS id, 'Modules\\\\Anagrafiche\\\\Anagrafica' AS tipo FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.id WHERE deleted_at IS NULL AND email!=''";
+
+    if(tipologia) {
+        query += " AND an_tipianagrafiche.id="+tipologia;
+    }
+
+    $('#query').val(query);
+}
+</script>';

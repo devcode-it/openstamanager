@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.7 (2025-02-12)](#27-2025-02-12)
 - [2.6.2 (2025-01-15)](#262-2025-01-15)
 - [2.6.1 (2024-12-18)](#261-2024-12-18)
 - [2.6 (2024-12-04)](#26-2024-12-04)
@@ -49,6 +50,56 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.7 (2025-02-12)
+### Aggiunto (Added)
+- Aggiunto tasto di creazione fattura in **Attività**
+- Aggiunte le opzioni Non conteggiare e Note in tipologie **Attività** e tipo di attività predefinita in **Contratti**
+- Aggiunta la possibilità di creare documenti collegati senza evadere necessariamente delle righe
+- Aggiunte impostazioni per gestire la fatturazione massiva da azioni di gruppo
+- Aggiunta la gestione delle spese di incasso in fattura
+- Aggiunta del progetto in Docker
+- Aggiunte sottocartelle temporanee in files 
+- Aggiunta la lista di aggiornamenti da applicare
+- Aggiunti i riferimenti alle attività nei documenti
+- Aggiunta la generazione automatica del barcode in articoli
+- Aggiunta la visualizzazione nelle righe dei documenti in cui sono state evase le righe
+- Aggiunta la gestione dei meta title nei moduli
+- Aggiunta la gestione della cartella allegati nei moduli e plugin e impostazione per generare nomi casuali
+- Aggiunta riferimento riga da ordine cliente a ordine fornitore
+- Aggiunto file FUNDING.yml
+- Aggiunta la gestione della sede partenza e destinazione per tutti i documenti
+- Aggiunta la generazione automatica della query dinamica liste per tipologia
+- Aggiunta colonna zone in **Anagrafiche** e **Attività**
+- Aggiunta colonna Da rinnovare in vista **Contratti**
+- Aggiunta la colonna Note interne in **Fatture**, **DDT** e **Ordini**
+
+### Modificato (Changed)
+- Inibita la possibità di creare documenti da anagrafiche eliminate
+- Ripristinati i test base integrati
+- Aggiornamento logs di accesso con icone
+- Ripristinata la colonna Codice nella stampa DDT
+
+### Fixed
+- Corretta la verifica di plugin duplicati
+- Corretto il ridimensionamento delle immagini png
+- Corretti i caratteri speciali in invio mail
+- Corretta la configurazione.htaccess per Apache 2.4+
+- Corretto il calcolo delle rate in pianificazione fatturazione
+- Corretto il calcolo del codice attività
+- Corretta la classe di validazione
+- Corretti i filtri sul selettore del tecnico
+- Corretta la mappatura del campo qtà in importazione articoli
+- Corretta la perdita di permessi in importazione checklist da documento precedente
+- Corretti i riferimenti ai permessi delle check
+- Corretta la visualizzazione della mappa in fase di creazione attività
+- Corretta la stampa di preventivo con banca
+- Corretta l'associazione dell'anagrafica in importazione automatica FE
+- Corretta l'aggiunta di campi dalle **Viste**
+- Corrette le logiche di validità del preventivo
+- Corretta vulnerabilità legata a protobufjs
+- Corretto il salvataggio dei dati oauth2
+- Corretta l'importazione delle fatture elettroniche da zip
 
 ## 2.6.2 (2025-01-15)
 ### Modificato (Changed)

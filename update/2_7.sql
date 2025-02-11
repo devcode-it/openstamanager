@@ -225,3 +225,6 @@ SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
 (2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+
+-- Aggiunto sezionale in stampe definitive
+ALTER TABLE `co_stampecontabili` ADD `id_sezionale` INT NOT NULL;

@@ -28,12 +28,13 @@ $id_print = get('id_print');
 $ptype = get('ptype');
 if (!empty($ptype)) {
     $print = PrintTemplate::where('directory', $ptype)->orderBy('predefined', 'DESC')->first();
-    $id_print = $print[0]->id;
+    $id_print = $print->id;
 
-    $id_record = !empty($id_record) ? $id_record : get($print[0]->previous);
+    $id_record = !empty($id_record) ? $id_record : get($print->previous);
 }
 
-$result = Prints::render($id_print, $id_record, $directory);
+$mpdfPageNumSubstitutions = get('first_page') ? ['reset' => get('first_page'), 'suppress' => 0] : [];
+$result = Prints::render($id_print, $id_record, $directory, false, true, $mpdfPageNumSubstitutions);
 
 if (empty($result)) {
     echo '

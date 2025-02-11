@@ -21,4 +21,4 @@
 include_once __DIR__.'/init.php';
 
 $file = $fattura->getFatturaElettronica();
-download(base_dir().'/files/'.$file->directory.'/'.$file->filename, $file->original_name);
+download(base_dir().'/files/'.$file->attachments_directory.'/'.$file->filename, $file->original_name);

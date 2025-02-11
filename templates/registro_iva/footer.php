@@ -21,7 +21,7 @@
 echo '
 <p class="text-right">
     '.tr('_YEAR_/_PAGE_', [
-    '_PAGE_' => '{PAGENO}',
-    '_YEAR_' => date('Y'),
-]).'
+        '_PAGE_' => '{PAGENO}',
+        '_YEAR_' => date('Y'),
+    ]).'
 </p>';

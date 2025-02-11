@@ -25,9 +25,10 @@ switch ($resource) {
         $date_start = get('date_start');
         $date_end = get('date_end');
         $id_print = get('id_print');
+        $id_sezionale = get('id_sezionale');
         $dir = get('dir');
 
-        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampecontabili WHERE id_print='.prepare($id_print).' AND dir='.prepare($dir).' AND date_start='.prepare($date_start).' AND date_end='.prepare($date_end))['id'];
+        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampecontabili WHERE id_print='.prepare($id_print).' AND id_sezionale='.prepare($id_sezionale).' AND dir='.prepare($dir).' AND date_start='.prepare($date_start).' AND date_end='.prepare($date_end))['id'];
 
         echo json_encode($stampa_definitiva ?: 0);
 

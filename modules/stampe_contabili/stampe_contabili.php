@@ -94,7 +94,7 @@ echo '
 
 echo '
 	<div class="row">';
-if ($nome_stampa != 'Liquidazione IVA') {
+if ($nome_stampa != 'Liquidazione IVA' && $nome_stampa != 'Libro giornale') {
     echo '
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = \"'.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\" AND `id_lang` = '.prepare(Models\Locale::getDefault()->id).') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \"Tutti i sezionali\" AS descrizione" ]}
@@ -130,13 +130,15 @@ echo '
 if ($nome_stampa != 'Liquidazione IVA') {
     $elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
     echo '
-	<div class="card card-primary collapsable collapsed-card">
+	<div class="card card-info collapsable collapsed-card">
 		<div class="card-header with-border">
-			<h3 class="card-title"><i class="fa fa-print"></i> '.tr('Stampe definitive registro iva _DIR_ dal _START_ al _END_', [
-        '_DIR_' => $dir == 'entrata' ? 'vendite' : 'acquisti',
-        '_START_' => dateFormat($_SESSION['period_start']),
-        '_END_' => dateFormat($_SESSION['period_end']),
-    ]).'</h3>
+			<h3 class="card-title"><i class="fa fa-print"></i> '.tr('Stampe definitive _NOME_ _DIR_ dal _START_ al _END_', [
+				'_NOME_' => $nome_stampa,
+				'_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
+				'_START_' => dateFormat($_SESSION['period_start']),
+				'_END_' => dateFormat($_SESSION['period_end']),
+			]).'
+			</h3>
 			<div class="card-tools pull-right">
 				<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
 			</div>
@@ -145,9 +147,12 @@ if ($nome_stampa != 'Liquidazione IVA') {
 			<ul>';
 
     foreach ($elementi as $elemento) {
-        $descrizione = tr('Stampa definitiva dal _START_ al _END_ (_FIRST_-_LAST_)', [
+		$sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
+
+        $descrizione = tr('Stampa definitiva dal _START_ al _END_ _SEZIONALE_ (_FIRST_-_LAST_)', [
             '_START_' => dateFormat($elemento['date_start']),
             '_END_' => dateFormat($elemento['date_end']),
+			'_SEZIONALE_' => $sezionale_stampa ? '['.$sezionale_stampa.']' : '',
             '_FIRST_' => $elemento['first_page'],
             '_LAST_' => $elemento['last_page'],
         ]);
@@ -182,6 +187,10 @@ if ($nome_stampa != 'Liquidazione IVA') {
 		});
 
 		$("#date_end").on("blur", function(){
+			eseguiControlli();
+		});
+
+		$("#id_sezionale").on("change", function(){
 			eseguiControlli();
 		});
 
@@ -242,7 +251,7 @@ if ($nome_stampa != 'Liquidazione IVA') {
 
 		// Controllo se è già stata creata una stampa definitiva nel periodo selezionato
 		function controllaStampa(date_start, date_end) {
-			$(document).load(globals.rootdir + "/ajax_complete.php?module=stampe_contabili&op=controlla_stampa&dir='.$dir.'&id_print='.$id_print.'&date_start=" + date_start + "&date_end=" + date_end, function(response) {
+			$(document).load(globals.rootdir + "/ajax_complete.php?module=stampe_contabili&op=controlla_stampa&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&id_print='.$id_print.'&date_start=" + date_start + "&date_end=" + date_end, function(response) {
 				let stampa_definitiva = response;
 
 				if (stampa_definitiva==0) {
@@ -280,7 +289,8 @@ echo '
 					dir: "'.$dir.'",
 				},
 				success: function(result) {
-					window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
+					result = JSON.parse(result);
+					window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"&first_page="+result.first_page+"");
 					$("#modals > div").modal("hide");
 				}
 			});

@@ -24,7 +24,7 @@ switch (filter('op')) {
     case 'crea_definitiva':
         $year = date('Y', strtotime(post('date_start')));
 
-        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page'] + 1;
+        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND `id_sezionale`='.prepare(post('id_sezionale')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page'] + 1;
 
         $print = Prints::render(post('id_print'), null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
         $pages = count($print['pages']);
@@ -32,6 +32,7 @@ switch (filter('op')) {
 
         $result = $dbo->table('co_stampecontabili')->insertGetId([
             'id_print' => post('id_print'),
+            'id_sezionale' => post('id_sezionale') ?: '',
             'date_start' => post('date_start'),
             'date_end' => post('date_end'),
             'first_page' => $first_page,
@@ -49,7 +50,7 @@ switch (filter('op')) {
             'id_record' => $result,
         ]);
 
-        echo json_encode($result);
+        echo json_encode(['first_page' => $first_page - 1]);
 
         break;
 }

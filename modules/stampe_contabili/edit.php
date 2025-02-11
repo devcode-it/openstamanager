@@ -108,7 +108,7 @@ echo '
 
             <div class="card-body">
                 <div class="col-md-6">
-                    '.Prints::getLink('Libro giornale', 2, 'btn-primary col-md-12', '<br>'.tr('Libro').'<br>'.tr('giornale'), '|default| fa-2x').'
+                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Libro giornale').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Libro giornale&id_record='.$id_record.'"><i class="fa fa-print fa-2x"></i><br>'.tr('Libro').'<br>'.tr('giornale').'</button>
                 </div>
             </div>
         </div>

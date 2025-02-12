@@ -133,11 +133,11 @@ if ($nome_stampa != 'Liquidazione IVA') {
 	<div class="card card-info collapsable collapsed-card">
 		<div class="card-header with-border">
 			<h3 class="card-title"><i class="fa fa-print"></i> '.tr('Stampe definitive _NOME_ _DIR_ dal _START_ al _END_', [
-				'_NOME_' => $nome_stampa,
-				'_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
-				'_START_' => dateFormat($_SESSION['period_start']),
-				'_END_' => dateFormat($_SESSION['period_end']),
-			]).'
+        '_NOME_' => $nome_stampa,
+        '_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
+        '_START_' => dateFormat($_SESSION['period_start']),
+        '_END_' => dateFormat($_SESSION['period_end']),
+    ]).'
 			</h3>
 			<div class="card-tools pull-right">
 				<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
@@ -147,12 +147,12 @@ if ($nome_stampa != 'Liquidazione IVA') {
 			<ul>';
 
     foreach ($elementi as $elemento) {
-		$sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
+        $sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
 
         $descrizione = tr('Stampa definitiva dal _START_ al _END_ _SEZIONALE_ (_FIRST_-_LAST_)', [
             '_START_' => dateFormat($elemento['date_start']),
             '_END_' => dateFormat($elemento['date_end']),
-			'_SEZIONALE_' => $sezionale_stampa ? '['.$sezionale_stampa.']' : '',
+            '_SEZIONALE_' => $sezionale_stampa ? '['.$sezionale_stampa.']' : '',
             '_FIRST_' => $elemento['first_page'],
             '_LAST_' => $elemento['last_page'],
         ]);

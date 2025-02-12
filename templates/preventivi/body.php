@@ -98,8 +98,8 @@ if ($has_image) {
 }
 
 echo "
-            <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:45%'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
     echo "
@@ -277,6 +277,9 @@ foreach ($righe as $key => $riga) {
         $autofill->next();
     }
 }
+
+$banca ? $autofill->set(3) : '';
+$autofill->next();
 
 echo '
         |autofill|
@@ -472,7 +475,6 @@ echo '
     </tr>
     ';
 if ($banca) {
-    $autofill->count($banca);
     echo '
     <tr>
         <td class="text-muted border-bottom small-bold text-muted"></td>

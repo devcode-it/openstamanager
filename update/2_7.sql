@@ -228,3 +228,5 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Aggiunto sezionale in stampe definitive
 ALTER TABLE `co_stampecontabili` ADD `id_sezionale` INT NOT NULL;
+
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"last-page-footer\":true, \"show-only-total\":true, \"images\": true}' WHERE `zz_prints`.`name` = 'Preventivo (solo totale)'; 

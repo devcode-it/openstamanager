@@ -212,7 +212,7 @@ function initcard(controllo, success) {
     if (!success) {
         card += `
     <div class="card-body">
-        <div class="table-responsive">
+        <div class="table-responsive text-nowrap">
             <table class="table table-striped table-hover table-sm table-bordered">
                 <thead>
                     <tr>

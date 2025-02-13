@@ -33,7 +33,7 @@ $evasione_bar = [
 ];
 
 echo '
-<div class="table-responsive row-list">
+<div class="table-responsive text-nowrap row-list">
     <table class="table table-striped table-hover table-sm table-bordered">
         <thead>
             <tr>

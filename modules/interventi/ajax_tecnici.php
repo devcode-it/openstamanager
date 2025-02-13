@@ -67,7 +67,7 @@ if (!empty($sessioni)) {
             $prev_tecnico = $sessione['ragione_sociale'];
 
             echo '
-<div class="table-responsive">
+<div class="table-responsive text-nowrap">
     <table class="table table-striped table-hover table-sm">
         <tr><th>';
 

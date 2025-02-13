@@ -258,9 +258,15 @@ switch (filter('op')) {
             ->where('id', '=', $id)
             ->update(['location' => $location]);
 
+        $name = $database->table('zz_widgets_lang')
+            ->where('id_record', '=', $id)
+            ->where('id_lang', '=', Models\Locale::getDefault()->id)
+            ->first()
+            ->title;
+
         // Messaggio informativo
         flash()->info(tr('Posizione del widget "_NAME_" aggiornata!', [
-            '_NAME_' => $widget->getTranslation('title'),
+            '_NAME_' => $name,
         ]));
 
         echo json_encode([]);

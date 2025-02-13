@@ -362,7 +362,7 @@ if (!empty($righe)) {
         <div class="clearfix"></div>
     </h4>
 
-    <div class="table-responsive">
+    <div class="table-responsive text-nowrap">
         <table class="table table-striped table-hover table-sm table-bordered">
             <thead>
                 <tr>

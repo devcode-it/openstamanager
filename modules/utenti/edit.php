@@ -57,7 +57,7 @@ echo '
 
 if (!empty($utenti)) {
     echo '
-        <div class="table-responsive">
+        <div class="table-responsive text-nowrap">
 		<table class="table table-hover table-sm table-striped">
 		<tr>
 			<th>'.tr('Nome utente').'</th>
@@ -196,7 +196,7 @@ echo '
 		<div class="card-body">';
 if ($record['nome'] != 'Amministratori') {
     echo '
-			<div class="table-responsive">
+			<div class="table-responsive text-nowrap">
             <table class="table table-hover table-sm table-striped">
 				<tr>
 					<th>'.tr('Modulo').'</th>

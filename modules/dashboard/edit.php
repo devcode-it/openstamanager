@@ -110,8 +110,10 @@ foreach ($stati_intervento as $stato) {
             <li>
                 <input type="checkbox" id="stato_'.$stato['id'].'" class="dashboard_stato" value="'.$stato['id'].'" '.$attr.'>
                 <label for="stato_'.$stato['id'].'">
-                    '.$stato['descrizione'].'&nbsp;<span class="pull-right" style="background-color:'.$stato['colore'].';"></span>
+                    '.$stato['descrizione'].'
                 </label>
+                <span class="img-circle square pull-right" style="'.(setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico' ? 'box-shadow:none; background-color:'.$stato['colore'] : 'box-shadow:0 0 0 2px '.$stato['colore']).';"></span>
+
             </li>';
 }
 
@@ -183,8 +185,9 @@ foreach ($tecnici_disponibili as $tecnico) {
             <li>
                 <input type="checkbox" id="tecnico_'.$tecnico['id'].'" class="dashboard_tecnico" value="'.$tecnico['id'].'" '.$attr.'>
                 <label for="tecnico_'.$tecnico['id'].'">
-                    '.$tecnico['ragione_sociale'].'&nbsp;<span class="pull-right" style="background-color:'.$tecnico['colore'].';"></span>
+                    '.$tecnico['ragione_sociale'].'
                 </label>
+                <span class="img-circle square pull-right" style="'.(setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico' ? 'box-shadow:0 0 0 2px '.$tecnico['colore'] : 'box-shadow:none; background-color:'.$tecnico['colore']).';"></span>
             </li>';
 }
 

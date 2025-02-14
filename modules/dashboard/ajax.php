@@ -101,7 +101,7 @@ switch (filter('op')) {
             if (setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico') {
                 $backgroundcolor = strtoupper((string) $sessione['colore']);
                 $bordercolor = strtoupper((string) $sessione['colore_tecnico']);
-            } else {
+            } else if (setting('Visualizzazione colori sessioni') == 'Sfondo colore tecnico - bordo colore stato') {
                 $backgroundcolor = strtoupper((string) $sessione['colore_tecnico']);
                 $bordercolor = strtoupper((string) $sessione['colore']);
             }

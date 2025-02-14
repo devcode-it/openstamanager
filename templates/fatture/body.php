@@ -32,7 +32,6 @@ $autofill->setRows($rows_per_page, 0);
 
 // Conteggio le righe da sottrarre al totale
 $c = 0;
-$documento['note'] ? $c += 3 : null;
 foreach ($v_iva as $desc_iva => $tot_iva) {
     ++$c;
 }
@@ -237,6 +236,10 @@ foreach ($diciture as $dicitura) {
     $autofill->count($dicitura);
 }
 
+if ($documento['note']) {
+    $autofill->count($documento['note']);
+    $autofill->count(1);
+}
 $autofill->next();
 
 echo '

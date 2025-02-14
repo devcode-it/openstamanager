@@ -47,13 +47,21 @@ class Autofill
 
     public function count($text, $small = null)
     {
-        $text = strip_tags((string) $text);
-        $count = ceil(strlen($text) / $this->char_number);
+        $count = 0; 
+        $textLines = explode("\n", (string)$text); 
+
+        foreach ($textLines as $line) {
+            $count += ceil(strlen($line) / $this->char_number); 
+        }
+
+        if ($count > 1) {
+            $count /= 1.25;
+        }
 
         if ($small) {
             $count /= 1.538461538;
-        }
-
+        } 
+        
         $this->set($count);
     }
 

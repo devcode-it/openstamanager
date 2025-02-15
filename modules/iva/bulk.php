@@ -51,7 +51,7 @@ switch (post('op')) {
 }
 
 $bulk = [
-    'delete-bulk' => tr('Elimina selezionati'),
+    'delete-bulk' => tr('Elimina'),
 ];
 
 return $bulk;

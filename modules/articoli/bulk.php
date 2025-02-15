@@ -597,27 +597,6 @@ $operations['crea-preventivo'] = [
     ],
 ];
 
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-        ],
-    ];
-}
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
-
 $operations['set-acquisto-ifzero'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta prezzo di acquisto da fattura ').'</span>',
     'data' => [
@@ -673,6 +652,25 @@ $operations['change-attivo'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => false,
+    ],
+];
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
     ],
 ];
 

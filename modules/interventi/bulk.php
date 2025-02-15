@@ -452,27 +452,6 @@ $operations['cambia_stato'] = [
     ],
 ];
 
-$operations['copy-bulk'] = [
-    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
-    'data' => [
-        'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
-        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
-            <style>.swal2-modal{ width:600px !important; }</style>',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-];
-
 $operations['export-bulk'] = [
     'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
     'data' => [
@@ -529,6 +508,27 @@ $operations['stampa-riepilogo'] = [
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
     ],
+];
+
+$operations['copy-bulk'] = [
+    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
+        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
 ];
 
 return $operations;

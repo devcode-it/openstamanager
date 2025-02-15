@@ -65,7 +65,7 @@ switch (post('op')) {
 }
 
 $operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
     'data' => [
         'msg' => tr('Vuoi esportare un CSV con tutti gli impianti?'),
         'button' => tr('Procedi'),
@@ -75,7 +75,7 @@ $operations['export-csv'] = [
 ];
 
 $operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero eliminare gli impianti selezionati?'),
         'button' => tr('Procedi'),

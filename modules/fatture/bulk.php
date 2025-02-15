@@ -669,19 +669,6 @@ if ($module->name == 'Fatture di vendita') {
     ];
 }
 
-$operations['copy-bulk'] = [
-    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-];
-
 if ($dir == 'entrata') {
     $operations['change-stato'] = [
         'text' => '<span><i class="fa fa-refresh"></i> '.tr('Emetti fatture').'</span>',
@@ -693,16 +680,6 @@ if ($dir == 'entrata') {
         ],
     ];
 }
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
 
 if ($module->name == 'Fatture di vendita') {
     $operations['export-bulk'] = [
@@ -784,5 +761,29 @@ if (Interaction::isEnabled()) {
         ],
     ];
 }
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+$operations['copy-bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+];
+
 
 return $operations;

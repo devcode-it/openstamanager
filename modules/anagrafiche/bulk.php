@@ -99,25 +99,6 @@ switch (post('op')) {
 
 $operations = [];
 
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-danger',
-    ],
-];
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
-
 $operations['ricerca-coordinate'] = [
     'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
     'data' => [
@@ -144,5 +125,26 @@ $operations['aggiorna-listino'] = [
         'class' => 'btn btn-lg btn-warning',
     ],
 ];
+
+$operations['export-csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+
 
 return $operations;

@@ -179,17 +179,6 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
-    $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
-        'data' => [
-            'msg' => tr('Vuoi davvero eliminare i ddt selezionati?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-danger',
-        ],
-    ];
-}
-
 $operations['crea_fattura'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
@@ -213,6 +202,15 @@ $operations['cambia_stato'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
+    ],
+];
+
+$operations['delete-bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare i ddt selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
     ],
 ];
 

@@ -456,6 +456,13 @@ switch (post('op')) {
         flash()->info(tr('Barcode generati correttamente!'));
 
         break;
+
+    case 'change-attivo':
+        Articolo::whereIn('id', $id_records)->update(['attivo' => post('attivo')]);
+        
+        flash()->info(tr('Articoli '.(post('attivo') ? 'attivati' : 'disattivati').' correttamente!'));
+
+        break;
 }
 
 $operations['change-iva'] = [
@@ -652,6 +659,18 @@ $operations['generate-barcode-bulk'] = [
         'title' => tr('Generare il barcode per gli articoli selezionati?'),
         'msg' => 'Il barcode sarà generato in maniera random con tipologia EAN-13',
         'button' => tr('Genera'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => false,
+    ],
+];
+
+$operations['change-attivo'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Attiva/disattiva articoli').'</span>',
+    'data' => [
+        'title' => tr('Attiva/disattiva articoli selezionati'),
+        'msg' => '
+        {[ "type": "checkbox", "label": "'.tr('Stato').'", "name": "attivo", "value": "0", "placeholder": "'.tr('Attivo').'" ]}<br>',
+        'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => false,
     ],

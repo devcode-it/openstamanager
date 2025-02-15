@@ -37,6 +37,13 @@ wget https://raw.githubusercontent.com/devcode-it/openstamanager/refs/heads/mast
 docker compose up -d
 ```
 
+Una volta scaricato puoi aprire il tuo browser all'indirizzo http://localhost:8090 e completare la configurazione con i dati di connessione al database al punto 3:
+- **Host del database:** db
+- **Username dell'utente MySQL:** root
+- **Password dell'utente MySQL:** secret
+- **Nome del database:** openstamanager
+
+
 ### Avvio rapido senza MySQL
 
 Con questo comando si scarica e avvia solo l'immagine di OpenSTAManager, senza il database (dovrai creare autonomamente un container con MySQL):

@@ -22,7 +22,6 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Intervention\Image\ImageManagerStatic;
 use Modules\FileAdapters\FileAdapter;
 use Modules\FileAdapters\OSMFilesystem;
 
@@ -388,10 +387,7 @@ class Upload extends Model
             return;
         }
 
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = ImageManagerStatic::make($filepath);
+        $img = getImageManager()->read($filepath);
 
         $img->resize(600, null, function ($constraint) {
             $constraint->aspectRatio();
@@ -420,10 +416,7 @@ class Upload extends Model
             return;
         }
 
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = ImageManagerStatic::make($filepath);
+        $img = getImageManager()->read($filepath);
 
         $img->resize(setting('Larghezza per ridimensionamento immagini'), null, function ($constraint) {
             $constraint->aspectRatio();

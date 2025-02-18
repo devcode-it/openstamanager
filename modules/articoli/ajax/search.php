@@ -27,6 +27,7 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $fields = [
+    'idarticolo' => '`mg_articoli`.`id`',
     'codice' => '`mg_articoli`.`codice`',
     'barcode' => '`mg_articoli`.`barcode`',
     'descrizione' => '`mg_articoli_lang`.`title`',
@@ -55,7 +56,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
+    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['idarticolo'];
     $result['title'] = $r['codice'].' - '.$r['descrizione'].'<br>
         <small>'.
             ($show_prezzi ? '<strong>'.tr('Prezzo di vendita').':</strong> '.moneyFormat($prezzi_ivati ? $r['prezzo_vendita_ivato'] : $r['prezzo_vendita']).'<br>' : '').'

@@ -48,11 +48,13 @@ if (!empty($id_record)) {
         `co_documenti`.`numero_esterno`, 
         `co_tipidocumento_lang`.`title` AS tipo_documento, 
         IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
-        GROUP_CONCAT(CONCAT(`co_righe_documenti`.`original_id`, " - ", `co_righe_documenti`.`qta`) SEPARATOR ", ") AS righe
+        GROUP_CONCAT(CONCAT(`co_righe_documenti`.`original_id`, " - ", `co_righe_documenti`.`qta`) SEPARATOR ", ") AS righe,
+        `co_statidocumento_lang`.`title` AS stato_documento
     FROM `co_documenti` 
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+    LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE `co_righe_documenti`.`idpreventivo` = '.prepare($id_record).'
     GROUP BY id
 
@@ -65,11 +67,13 @@ if (!empty($id_record)) {
         `or_ordini`.`numero_esterno`, 
         `or_tipiordine_lang`.`title`, 
         IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\'),
-        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe
+        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe,
+        `or_statiordine_lang`.`title` AS stato_documento
     FROM `or_ordini` 
     JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` 
     INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` 
     LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+    LEFT JOIN or_statiordine ON or_ordini.idstatoordine=or_statiordine.id LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_record).'
     GROUP BY id
 
@@ -82,11 +86,13 @@ if (!empty($id_record)) {
         `dt_ddt`.`numero_esterno`, 
         `dt_tipiddt_lang`.`title`, 
         IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\'),
-        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe
+        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe,
+        `dt_statiddt_lang`.`title` AS stato_documento
     FROM `dt_ddt` 
     JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` 
     LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+    LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE `dt_righe_ddt`.`original_document_id` = '.prepare($id_record).' AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
     GROUP BY id
 
@@ -99,9 +105,11 @@ if (!empty($id_record)) {
         NULL, 
         \'Attività\', 
         \'Interventi\' ,
-        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe
+        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe,
+        `in_statiintervento_lang`.`title` AS stato_documento
     FROM `in_interventi` 
     JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
+    LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($preventivo->id).' AND `in_righe_interventi`.`original_document_type` = '.prepare($preventivo::class).') OR `in_interventi`.`id_preventivo` = '.prepare($id_record).'
     GROUP BY id
 
@@ -114,9 +122,11 @@ if (!empty($id_record)) {
         NULL,
         \'Contratti\', 
         \'Contratti\' AS modulo,
-        GROUP_CONCAT(CONCAT(`co_righe_contratti`.`original_id`, " - ", `co_righe_contratti`.`qta`) SEPARATOR ", ") AS righe
+        GROUP_CONCAT(CONCAT(`co_righe_contratti`.`original_id`, " - ", `co_righe_contratti`.`qta`) SEPARATOR ", ") AS righe,
+        `co_staticontratti_lang`.`title` AS stato_documento
     FROM `co_contratti` 
     INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` 
+    LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE `co_righe_contratti`.`original_document_id` = '.prepare($id_record).' AND `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
     GROUP BY id
     

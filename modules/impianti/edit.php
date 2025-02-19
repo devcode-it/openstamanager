@@ -143,9 +143,9 @@ if (!empty($record['immagine'])) {
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
-$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` AS numero, `data_richiesta` AS data, "Attività" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
+$elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `codice` AS numero, `data_richiesta` AS data, `in_statiintervento_lang`.`title` AS stato_documento, "Attività" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
 UNION 
-SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
+SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, `co_staticontratti_lang`.`title` AS stato_documento, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
 $class = '';
 
 if (!empty($elementi)) {
@@ -163,10 +163,11 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
+			'_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
         ]);
 
         if ($elemento['tipo_documento'] == 'Attività') {

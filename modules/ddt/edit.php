@@ -677,10 +677,11 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
         ]);
 
         echo '

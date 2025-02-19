@@ -775,11 +775,11 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $fattura) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
             '_DOC_' => $fattura['tipo_documento'],
             '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
             '_DATE_' => Translator::dateToLocale($fattura['data']),
-            '_STATE_' => $fattura['stato_documento'],
+			'_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
         ]);
 
         $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';

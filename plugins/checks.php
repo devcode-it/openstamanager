@@ -59,7 +59,7 @@ if ($structure->permission == 'rw') {
 
 $checks = $structure->mainChecks($id_record);
 
-echo "      <table class='table'>
+echo "      <table class='table table-sm'>
                 <tbody class='sort' data-sonof='0'>";
 foreach ($checks as $check) {
     echo renderChecklist($check);
@@ -106,8 +106,8 @@ for(i=0; i<sortable_table; i++){
 }
 
 $("textarea[name=\'note_checklist\']").keyup(function() {
-    $(this).parent().parent().parent().find(".save-nota").removeClass("btn-default");
-    $(this).parent().parent().parent().find(".save-nota").addClass("btn-success");
+    $(this).closest("tr").find(".save-nota").removeClass("btn-default");
+    $(this).closest("tr").find(".save-nota").addClass("btn-success");
 });
 
 function saveNota(id) {
@@ -117,8 +117,9 @@ function saveNota(id) {
         id: id
     }, function() {
         renderMessages();
-        $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
-        $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
+        content_was_modified = false;
+        $("#note_" + id).closest("tr").find(".save-nota").removeClass("btn-success");
+        $("#note_" + id).closest("tr").find(".save-nota").addClass("btn-default");
     });
 }
 

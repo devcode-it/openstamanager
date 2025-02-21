@@ -232,8 +232,9 @@ function saveNota(id) {
         id: id
     }, function() {
         renderMessages();
-        $("#note_" + id).parent().parent().parent().find(".save-nota").removeClass("btn-success");
-        $("#note_" + id).parent().parent().parent().find(".save-nota").addClass("btn-default");
+        content_was_modified = false;
+        $("#note_" + id).closest("tr").find(".save-nota").removeClass("btn-success");
+        $("#note_" + id).closest("tr").find(".save-nota").addClass("btn-default");
     });
 }
 

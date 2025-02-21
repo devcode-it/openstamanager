@@ -36,7 +36,7 @@ if (!function_exists('renderChecklist')) {
         if ($check->is_titolo) {
             $result .= '
                         <td style="width:40px;"></td>
-                        <td colspan="3" style="border-top:0px;">
+                        <td colspan="4" style="border-top:0px;">
                             <span class="text unblockable"><big>'.$check->content.'</big></span>
                         </td>';
         } else {
@@ -52,27 +52,28 @@ if (!function_exists('renderChecklist')) {
 
             $result .= '
                         <td style="border-top:0px;">
-                            <span class="badge badge-default pull-right verificato '.(!$check->checked_at ? 'hidden' : '').'" style="margin-right:5px;padding:6px 8px;">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
-                '_NAME_' => $check->checkUser->username,
-                '_DATE_' => timestampFormat($check->checked_at),
-            ]) : '').'
+                            <span class="badge text-muted pull-right verificato '.(!$check->checked_at ? 'hidden' : '').'" style="margin-right:5px;padding:6px 8px;">
+                                '.(!empty($check->checked_at) ? tr('Verificato da _NAME_ _DATE_', [
+                                    '_NAME_' => $check->checkUser->username.' <br>',
+                                    '_DATE_' => timestampFormat($check->checked_at),
+                                ]) : '').'
                             </span>
                         </td>';
 
             $result .= '
-                        <td style="width:500px;border-top:0px;"> 
-                        '.input([
-                'type' => 'textarea',
-                'name' => '',
-                'id' => 'note_'.$check->id,
-                'class' => 'unblockable',
-                'placeholder' => tr('Note').'...',
-                'value' => $check->note,
-            ]).'
+                        <td style="width:400px;border-top:0px;"> 
+                            '.input([
+                                'type' => 'textarea',
+                                'name' => 'note_checklist',
+                                'id' => 'note_'.$check->id,
+                                'class' => 'unblockable',
+                                'placeholder' => tr('Note').'...',
+                                'value' => $check->note,
+                            ]).'
                         </td>';
 
             $result .= '
-                        <td style="width:150px;border-top:0px;">
+                        <td style="width:110px;border-top:0px;">
                             <button class="btn btn-default btn-xs '.(!$enabled ? 'disabled' : '').' save-nota" onclick="saveNota(\''.$check->id.'\')"><i class="fa fa-check"></i> '.tr('Salva nota').'</button>';
 
             if (intval($check->assignedUsers->pluck('id')->toArray()) > 0) {
@@ -86,7 +87,7 @@ if (!function_exists('renderChecklist')) {
         }
 
         $result .= '
-                        <td style="width:10px;text-align:center;border-top:0px;">
+                        <td style="width:80px;text-align:center;border-top:0px;">
                             <div class="input-group-btn">
                                 <button class="btn btn-warning btn-xs '.(!$enabled ? 'disabled' : '').'" onclick="edit_check(\''.$check->id.'\')"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-danger btn-xs '.(!$enabled ? 'disabled' : '').'" onclick="delete_check(\''.$check->id.'\')"><i class="fa fa-trash"></i></button>

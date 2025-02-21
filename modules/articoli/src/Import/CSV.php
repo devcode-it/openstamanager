@@ -375,6 +375,15 @@ class CSV extends CSVImporter
             $file_content = file_get_contents($url);
 
             if (!empty($file_content)) {
+
+                /**
+                 * Import immagine options:
+                 * 
+                 * - 1: Permette di importare l'immagine come principale dell'articolo mantenendo gli altri allegati già presenti.
+                 * - 2: Permette di importare l'immagine come principale dell'articolo rimuovendo tutti gli allegati presenti.
+                 * - 3: Permette di importare l'immagine come allegato dell'articolo.
+                 * - 4: Permette di importare l'immagine come allegato dell'articolo rimuovendo tutti gli allegati presenti.
+                 */
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     \Uploads::deleteLinked([
                         'id_module' => Module::where('name', 'Articoli')->first()->id,
@@ -499,7 +508,7 @@ class CSV extends CSVImporter
             $dettaglio_predefinito->sconto_percentuale = $dettagli['sconto_listino'];
             $dettaglio_predefinito->setPrezzoUnitario($dettagli['prezzo_listino']);
 
-            if ($dettagli['qta_minima'] !== null && !empty($dettagli['qta_massima'])) {
+            if (!empty($dettagli['qta_minima']) && !empty($dettagli['qta_massima'])) {
                 $dettaglio_predefinito->minimo = $dettagli['qta_minima'];
                 $dettaglio_predefinito->massimo = $dettagli['qta_massima'];
             }

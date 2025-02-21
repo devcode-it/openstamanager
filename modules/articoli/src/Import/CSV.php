@@ -140,9 +140,6 @@ class CSV extends CSVImporter
                 'field' => 'id_fornitore',
                 'label' => 'Fornitore predefinito',
                 'names' => [
-                    'id_fornitore',
-                    'Id Fornitore',
-                    'Fornitore',
                     'Fornitore predefinito',
                 ],
             ],

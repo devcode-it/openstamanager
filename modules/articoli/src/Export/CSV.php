@@ -72,11 +72,11 @@ class CSV extends CSVExporter
                 'type' => 'number',
             ],
             [
-                'field' => 'categoria.nome',
+                'field' => 'mg_categorie_lang.title',
                 'label' => 'Categoria',
             ],
             [
-                'field' => 'sottocategoria.nome',
+                'field' => 'sottocategorie_lang.title',
                 'label' => 'Sottocategoria',
             ],
             [
@@ -84,7 +84,7 @@ class CSV extends CSVExporter
                 'label' => 'Barcode',
             ],
             [
-                'field' => 'id_fornitore',
+                'field' => 'an_anagrafiche.ragione_sociale',
                 'label' => 'Fornitore predefinito',
             ],
             [

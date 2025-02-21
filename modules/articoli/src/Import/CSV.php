@@ -453,8 +453,8 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Barcode', 'Fornitore', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
-            ['001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget', '1', '2023-11-28', 'PZ', '180.00', '180.00', '', '', 'Licenze', 'Moduli aggiuntivi', '0001', 'DevCode s.r.l.', '05024030289', '', '', '', '', 'Budget', '', 'Modulo Budget', '', '', '', '', 'Fornitore', 'Sede'],
+            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
+            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', '', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '', '', '180', '20', 'Fornitore', 'Sede'],
         ];
     }
 

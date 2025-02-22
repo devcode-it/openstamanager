@@ -79,7 +79,9 @@ echo '
             <div class="card-body">';
 if ($articolo->servizio) {
     echo '
-                <tr><td><p class="text-center"><i class="fa fa-info"></i> '.tr('Questo articolo è un servizio').'</td></tr>';
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fa fa-info-circle"></i> '.tr('Questo articolo è un servizio').'.
+                </div>';
 } else {
     echo '
                 <table class="table table-sm">

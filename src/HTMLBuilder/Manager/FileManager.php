@@ -86,7 +86,7 @@ class FileManager implements ManagerInterface
 
             if (!empty($rs)) {
                 $result .= '
-<div class="card card-success">
+<div class="card card-info">
     <div class="card-header with-border">
         <h3 class="card-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
 

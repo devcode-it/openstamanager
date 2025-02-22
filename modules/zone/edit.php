@@ -25,13 +25,20 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-	<div class="row">
-		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask", "value": "$nome$" ]}
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask", "value": "$nome$" ]}
+				</div>
 
-		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+				<div class="col-md-8">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+				</div>
+			</div>
 		</div>
 	</div>
 </form>

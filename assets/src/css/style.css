@@ -1654,6 +1654,25 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     border: none !important;
 }
 
+/** Styles for the modal dialog within a large modal **/
+.large-modal .modal-dialog {
+    width: 90%;
+    max-width: 90%;
+    height: 90%;
+    max-height: 90%;
+}
+
+.large-modal .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.large-modal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
 .info-active ul.list{
     list-style: none;
 }

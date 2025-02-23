@@ -41,7 +41,7 @@ function openModal(title, href) {
     } while ($(id).length !== 0);
 
     if ($(id).length === 0) {
-        $('#modals').append('<div class="modal fade" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
+        $('#modals').append('<div class="modal fade large-modal" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
     }
 
     $(id).on('hidden.bs.modal', function () {

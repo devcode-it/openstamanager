@@ -11,7 +11,7 @@ if (empty($combinazione)) {
     echo '
 <script>
 $(document).ready(function (){
-    $("#link-tab_'.$id_plugin.'").addClass("disabled");
+    $("li.btn-default.nav-item:has(#link-tab_'.$id_plugin.')").addClass("disabled");
 })
 </script>';
 

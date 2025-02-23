@@ -1654,6 +1654,31 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     border: none !important;
 }
 
+/** Styles for the modal dialog within a large modal **/
+@media screen and (min-width: 576px) {
+    .large-modal .modal-dialog {
+        width: 98%;
+        max-width: 98%;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .large-modal .modal-dialog {
+        width: 80%;
+        max-width: 80%;
+    }
+}
+
+.modal-footer{
+    margin: 15px -12px -10px -12px;
+    padding: 10px 0px 5px 0px;
+}
+
+/** Grigio chiaro per voci plugin non disponibili **/
+.btn-default.disabled a{
+    color: #bdbdbd;
+}
+
 .info-active ul.list{
     list-style: none;
 }

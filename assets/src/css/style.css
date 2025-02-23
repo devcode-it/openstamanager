@@ -1658,8 +1658,6 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 .large-modal .modal-dialog {
     width: 90%;
     max-width: 90%;
-    height: 90%;
-    max-height: 90%;
 }
 
 .large-modal .modal-content {
@@ -1671,6 +1669,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 .large-modal .modal-body {
     flex: 1;
     overflow-y: auto;
+}
+
+.modal-footer{
+    margin: 15px -12px -10px -12px;
+    padding: 10px 0px 5px 0px;
 }
 
 .info-active ul.list{

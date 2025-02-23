@@ -35,7 +35,6 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 	<input type="hidden" name="id_record" value="0">
 
 	<div class="row">
-
 		<div class="col-md-6">
 			 {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
@@ -69,11 +68,14 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+	<div class="modal-footer">
+		<div class="row">
+			<div class="col-md-12 text-right">
+				<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+			</div>
 		</div>
 	</div>
+
 </form>
 
 <script>

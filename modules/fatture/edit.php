@@ -265,7 +265,7 @@ if (empty($record['is_fiscale'])) {
     $query .= " WHERE `co_statidocumento`.`id` = $id_stato_bozza";
 
     $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
-    echo '<script>   $("li.btn-default.nav-item:has(#link-tab_'.$plugin[0]['id'].')").addClass("disabled"); </script>';
+    echo '<script>  $("li.btn-default.nav-item:has(#link-tab_'.$plugin[0]['id'].')").addClass("disabled"); </script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($fattura->stato->id == $id_stato_bozza) {
@@ -282,14 +282,15 @@ $query .= ' ORDER BY `title`';
 
 
     <div class="row">
+   
     <?php if ($dir == 'entrata') { ?>
-        <div class="col-md-2 offset-md-8" <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
+        <div class="col-md-4 col-lg-2 offset-md-4 offset-lg-8 " <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
             {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
         </div>
 
     <?php }
     echo '
-        <div class="col-md-2'.($dir == 'uscita' ? ' offset-md-10' : '').'">
+        <div class="col-md-4 col-lg-2'.($dir == 'uscita' ? ' offset-md-8 offset-lg-10' : '').'">
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
         </div>
     </div>

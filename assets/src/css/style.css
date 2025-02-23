@@ -1669,10 +1669,14 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     }
 }
 
-
 .modal-footer{
     margin: 15px -12px -10px -12px;
     padding: 10px 0px 5px 0px;
+}
+
+/** Grigio chiaro per voci plugin non disponibili **/
+.btn-default.disabled a{
+    color: #bdbdbd;
 }
 
 .info-active ul.list{

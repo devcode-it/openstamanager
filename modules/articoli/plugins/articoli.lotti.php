@@ -23,7 +23,9 @@ include_once __DIR__.'/../../../core.php';
 $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
 if (empty($record['abilita_serial'])) {
     echo '
-<script>$("#link-tab_'.$plugin['id'].'").addClass("disabled");</script>';
+<script>$("li.btn-default.nav-item:has(#link-tab_'.$plugin['id'].')").addClass("disabled");</script>';
+
+
 }
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato

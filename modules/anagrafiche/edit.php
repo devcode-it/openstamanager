@@ -40,7 +40,7 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
     foreach ($ignore as $plugin) {
         echo '
         <script>
-            $("#link-tab_'.$plugin->id.'").addClass("disabled");
+            $("li.btn-default.nav-item:has(#link-tab_'.$plugin->id.')").addClass("disabled");
         </script>';
     }
 }
@@ -54,7 +54,7 @@ if (!$is_cliente) {
     foreach ($ignore as $plugin) {
         echo '
         <script>
-            $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+            $("li.btn-default.nav-item:has(#link-tab_'.$plugin->id.')").addClass("disabled");
         </script>';
     }
 }

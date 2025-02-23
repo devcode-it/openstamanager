@@ -265,7 +265,7 @@ if (empty($record['is_fiscale'])) {
     $query .= " WHERE `co_statidocumento`.`id` = $id_stato_bozza";
 
     $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title`='Fatturazione Elettronica' AND `idmodule_to` = ".prepare($id_module));
-    echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
+    echo '<script>   $("li.btn-default.nav-item:has(#link-tab_'.$plugin[0]['id'].')").addClass("disabled"); </script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($fattura->stato->id == $id_stato_bozza) {

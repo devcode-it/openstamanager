@@ -193,7 +193,7 @@ if (empty($record) || !$has_access) {
     $next = $posizioni[$key + 1]['id'];
 
     if (isMobile()) {
-        echo '<div>';
+        echo '<div class="float-right" >';
     } else {
         echo '<div class="col-md-2 d-none d-sm-inline">';
     }
@@ -208,9 +208,9 @@ if (empty($record) || !$has_access) {
             </div>';
 
     if (isMobile()) {
-        echo '<div>';
+        echo '<div class="extra-buttons">';
     } else {
-        echo '<div class="float-right d-none d-sm-inline">';
+        echo '<div class="extra-buttons">';
     }
 
     // Pulsanti personalizzati

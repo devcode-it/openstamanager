@@ -1679,6 +1679,23 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     color: #bdbdbd;
 }
 
+/** Fix pulsanti extra per la scheda del modulo **/
+@media screen and (max-width: 1920px) {
+    .extra-buttons{
+        padding-top: 10px;
+        line-height: 3;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .extra-buttons{
+        padding-top: 0;
+        line-height: 0;
+        float: right;
+       
+    }
+}
+
 .info-active ul.list{
     list-style: none;
 }

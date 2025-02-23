@@ -1655,21 +1655,20 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 }
 
 /** Styles for the modal dialog within a large modal **/
-.large-modal .modal-dialog {
-    width: 90%;
-    max-width: 90%;
+@media screen and (min-width: 576px) {
+    .large-modal .modal-dialog {
+        width: 98%;
+        max-width: 98%;
+    }
 }
 
-.large-modal .modal-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+@media screen and (min-width: 1920px) {
+    .large-modal .modal-dialog {
+        width: 80%;
+        max-width: 80%;
+    }
 }
 
-.large-modal .modal-body {
-    flex: 1;
-    overflow-y: auto;
-}
 
 .modal-footer{
     margin: 15px -12px -10px -12px;

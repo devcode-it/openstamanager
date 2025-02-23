@@ -34,7 +34,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12 text-right">
 			<button id="example" type="button" class="btn btn-info hidden">
                 <i class="fa fa-file"></i> <?php echo tr('Scarica esempio CSV'); ?>

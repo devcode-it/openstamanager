@@ -45,7 +45,7 @@ if (isset($id_original)) {
     </div>
 
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12 text-right">
 	<?php
 if (!empty($id_record)) {

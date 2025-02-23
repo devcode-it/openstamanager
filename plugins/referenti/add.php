@@ -61,7 +61,7 @@ echo '
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>

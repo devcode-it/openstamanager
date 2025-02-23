@@ -50,7 +50,7 @@ echo '
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12">
             <a class="btn btn-danger ask" data-backto="record-edit" data-op="delete" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_parent="'.$id_parent.'">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'

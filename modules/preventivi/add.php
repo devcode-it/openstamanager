@@ -69,12 +69,11 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 
 	<!-- PULSANTI -->
 	<div class="modal-footer">
-		<div class="row">
-			<div class="col-md-12 text-right">
-				<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
-			</div>
+		<div class="col-md-12 text-right">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
+
 
 </form>
 

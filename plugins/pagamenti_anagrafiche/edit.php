@@ -69,7 +69,7 @@ echo '
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12">
             <button type="button" class="btn btn-danger '.$disabled.'" onclick="rimuoviPagamento(this)">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'

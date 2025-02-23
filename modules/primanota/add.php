@@ -343,7 +343,7 @@ if (empty($id_documenti) && !empty($id_scadenze)) {
 
 echo '
 	<!-- PULSANTI -->
-	<div class="row">
+	<div class="modal-footer">
 		<div class="col-md-12 text-right">
 			<button type="button" class="btn btn-info" disabled id="modello-button">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi e crea modello').'

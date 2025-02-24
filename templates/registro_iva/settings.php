@@ -24,5 +24,4 @@ $orientation = $_SESSION['stampe_contabili']['orientation'] ?? 'L';
 return [
     'format' => $format,
     'orientation' => $orientation,
-    'font-size' => '11pt',
 ];

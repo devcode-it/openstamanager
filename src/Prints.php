@@ -496,7 +496,7 @@ class Prints
         // Impostazioni di default
         $default = include App::filepath('templates/base|custom|', 'settings.php');
 
-        // Impostazioni personalizzate della stampa
+        // Impostazioni personalizzate della stampa definite su file settings.php
         $print_settings = self::filepath($id_print, 'settings.php');
         if (!empty($print_settings)) {
             $custom = include $print_settings;

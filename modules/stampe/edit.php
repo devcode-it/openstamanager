@@ -120,10 +120,18 @@ echo '
 
     <div class="card-body">';
 
-if (!empty($record['available_options'])) {
-    $available_options = json_decode((string) $record['available_options']);
-    $available_options->{"font-size"} = "Dimensione del font";
-    $available_options->{"header-font-size"} = "Dimensione del font dell'intestazione";
+    $available_options = json_decode((string) $record['available_options'], true) ?? [];
+
+    // Add the additional options
+    $additional_options = [
+        "font-size" => "Dimensione del font",
+        "header-font-size" => "Dimensione del font dell'intestazione",
+        "orientation" => "Orientamento pagina",
+        "format" => "Formato pagina"
+    ];
+
+    $available_options = array_merge($available_options, $additional_options);
+
     echo '
         <p>'.tr('Puoi utilizzare le seguenti opzioni per generare la stampa').':</p>
         <ul>';
@@ -135,10 +143,6 @@ if (!empty($record['available_options'])) {
 
     echo '
         </ul>';
-} else {
-    echo '
-        <p><i class="fa fa-warning"></i> '.tr('Non sono state definite opzioni da utilizzare per la stampa').'.</p>';
-}
 
 echo '
     </div>

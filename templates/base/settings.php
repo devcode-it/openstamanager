@@ -21,7 +21,7 @@
 $settings = [
     'orientation' => 'P',
     'format' => 'A4',
-    'font-size' => 9,
+    'font-size' => 8.5,
     'margins' => [
         'top' => 'auto',
         'bottom' => 'auto',

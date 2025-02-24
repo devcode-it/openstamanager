@@ -122,6 +122,8 @@ echo '
 
 if (!empty($record['available_options'])) {
     $available_options = json_decode((string) $record['available_options']);
+    $available_options->{"font-size"} = "Dimensione del font";
+    $available_options->{"header-font-size"} = "Dimensione del font dell'intestazione";
     echo '
         <p>'.tr('Puoi utilizzare le seguenti opzioni per generare la stampa').':</p>
         <ul>';

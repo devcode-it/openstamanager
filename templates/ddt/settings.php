@@ -18,8 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$settings = [
-    'font-size' => 8.5,
+// Restituisce un array con le impostazioni per l'altezza del footer, la dimensione del carattere e la dimensione del carattere dell'intestazione
+return [    
+    // Imposta la dimensione del carattere, utilizzando il valore da $options se disponibile, altrimenti utilizza il valore da $settings
+    'font-size' => isset($options['font-size']) && $options['font-size'] ? $options['font-size'] : $settings['font-size'],
+    
+    // Imposta la dimensione del carattere dell'intestazione, utilizzando il valore da $options se disponibile, altrimenti utilizza il valore da $settings
+    'header-font-size' => isset($options['header-font-size']) && $options['header-font-size'] ? $options['header-font-size'] : $settings['header-font-size'],
 ];
-
-return $settings;

@@ -20,9 +20,6 @@
 
 // Restituisce un array con le impostazioni per l'altezza del footer, la dimensione del carattere e la dimensione del carattere dell'intestazione
 return [
-    // Imposta l'altezza del footer a 35
-    'footer-height' => 35,
-    
     // Imposta la dimensione del carattere, utilizzando il valore da $options se disponibile, altrimenti utilizza il valore da $settings
     'font-size' => isset($options['font-size']) && $options['font-size'] ? $options['font-size'] : $settings['font-size'],
     

@@ -152,7 +152,3 @@ $custom = [
 if ((Auth::user()['gruppo'] == 'Clienti' && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($module_name) == '-') {
     exit(tr('Non hai i permessi per questa stampa!'));
 }
-
-if ($fattura_accompagnatoria) {
-    $settings['footer-height'] += 40;
-}

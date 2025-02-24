@@ -29,7 +29,7 @@ if (Auth::check()) {
                 <a class="hidden-xs" href="'.tr('https://www.openstamanager.com').'" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'." target="_blank"><strong>'.tr('OpenSTAManager').'</strong></a>
 				<span class="pull-right hidden-xs">
                     <strong>'.tr('Versione').'</strong> '.$version.'
-                    <small class="text-muted">('.(!empty($revision) ? $revision : tr('In sviluppo')).')</small>
+                    <small class="text-secondary">('.(!empty($revision) ? $revision : tr('In sviluppo')).')</small>
                 </span>
 			</footer>
 

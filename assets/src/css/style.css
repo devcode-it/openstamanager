@@ -330,9 +330,11 @@ span.form-control {
 #pulsanti {
     position: sticky;
     top: 0;
-    padding: 6px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     z-index: 999;
     background: #f6f6f6;
+    line-height: 3;
 }
 
 
@@ -1683,14 +1685,12 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 @media screen and (max-width: 1920px) {
     .extra-buttons{
         padding-top: 10px;
-        line-height: 3;
     }
 }
 
 @media screen and (min-width: 1920px) {
     .extra-buttons{
         padding-top: 0;
-        line-height: 0;
         float: right;
        
     }

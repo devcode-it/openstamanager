@@ -192,11 +192,9 @@ if (empty($record) || !$has_access) {
     // Successivo
     $next = $posizioni[$key + 1]['id'];
 
-    if (isMobile()) {
-        echo '<div class="float-right" >';
-    } else {
-        echo '<div class="col-md-2 d-none d-sm-inline">';
-    }
+ 
+    echo '<span class="d-sm-inline">';
+   
 
     echo '
                 <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
@@ -205,13 +203,11 @@ if (empty($record) || !$has_access) {
                 <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
                     <i class="fa fa-arrow-circle-right"></i>
                 </a>
-            </div>';
+            </span>';
 
-    if (isMobile()) {
-        echo '<div class="extra-buttons">';
-    } else {
-        echo '<div class="extra-buttons">';
-    }
+   
+    echo '<div class="extra-buttons d-sm-inline">';
+  
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');

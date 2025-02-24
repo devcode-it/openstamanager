@@ -51,7 +51,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
             <div class="col-md-4">
                 <p><b>'.tr('Sito web').':</b> <a href="https://www.openstamanager.com" target="_blank" title="'.tr('Software gestionale open source per assistenza tecnica e fatturazione').'" >www.openstamanager.com</a></p>
 
-                <p><b>'.tr('Versione').':</b> '.$version.' <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small></p>
+                <p><b>'.tr('Versione').':</b> '.$version.' <small class="text-secondary">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small></p>
 
                 <p><b>'.tr('Licenza').':</b> <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank" title="'.tr('Vai al sito per leggere la licenza').'">GPLv3</a></p>
             </div>

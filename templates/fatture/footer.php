@@ -322,7 +322,7 @@ echo '
         '.tr('Totale IVA', [], ['upper' => true]).'
     </th>
 
-    <th class="text-center small" colspan="'.$second_colspan.'">
+    <th class="text-center small" colspan="'.$second_colspan.'" style="background-color:#C0C0C0;">
         '.(!$has_ritenuta && !$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
     </th>
 </tr>
@@ -336,7 +336,7 @@ if ($has_ritenuta || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
             '.moneyFormat($totale, $d_totali);
 } else {
     echo '
-            <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+            <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
             <b>'.moneyFormat($totale, $d_totali).'</b>';
 }
 echo '
@@ -394,7 +394,7 @@ if ($has_ritenuta) {
     }
 
     echo '
-        <th class="text-center small" colspan="'.$second_colspan.'">
+        <th class="text-center small" colspan="'.$second_colspan.'" style="background-color:#C0C0C0;">
             '.(!$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
 		</th>';
 
@@ -419,7 +419,7 @@ if ($has_ritenuta) {
     $totale = $totale - ($ritenuta_acconto_totale + $ritenuta_contributi_totale);
     echo '
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
             <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';
@@ -439,7 +439,7 @@ if ($has_split_payment) {
             '.tr('IVA a carico del destinatario', [], ['upper' => true]).'
         </th>
 
-        <th class="text-center small" colspan="'.$second_colspan.'">
+        <th class="text-center small" colspan="'.$second_colspan.'" style="background-color:#C0C0C0;">
             '.(!$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
         </th>
     </tr>';
@@ -451,7 +451,7 @@ if ($has_split_payment) {
             '.moneyFormat($totale_iva, 2).'
         </td>
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:#77dd77;">
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
             <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';

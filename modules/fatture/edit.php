@@ -493,7 +493,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                         '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
 
     // Ricalcola scadenze disponibile solo per fatture di acquisto
-    if ($fattura->isFE() && $ricalcola && !empty($module->where('name', 'Fatture di acquisto')->first()->id)) {
+    if ($fattura->isFE() && $ricalcola && Module::find($id_module)->name == 'Fatture di acquisto') {
         echo '
                     <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>
@@ -503,11 +503,17 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                     </div>
                     <div class="clearfix"></div>';
 
+                 
+
     foreach ($scadenze as $scadenza) {
         $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
 
         echo '
-                    <p>'.dateFormat($scadenza['scadenza']).': ';
+                    <p>'.dateFormat($scadenza['scadenza']);
+                    if (!empty($scadenza['data_concordata'])) {
+                        echo ' <small>('.dateFormat($scadenza['data_concordata']).')</small>';
+                    }
+        echo '      : ';
 
         if ($pagamento_iniziato) {
             echo '

@@ -51,6 +51,7 @@ class Fattura extends Document
         'bollo' => 'float',
         'peso' => 'float',
         'volume' => 'float',
+        'data' => 'date',
 
         'sconto_finale' => 'float',
         'sconto_finale_percentuale' => 'float',
@@ -58,10 +59,6 @@ class Fattura extends Document
 
     protected $with = [
         'tipo',
-    ];
-
-    protected $dates = [
-        'data',
     ];
 
     /** @var GestoreScadenze */

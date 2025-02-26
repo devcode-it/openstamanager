@@ -68,7 +68,7 @@ echo '
 
             <div class="col-sm-4 border-right">
                 <div class="description-block">
-                    <a class="btn btn-info btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? ($module->fileurl('self.php').'?id_module='.$module->id) : '#').'&resource=photo" data-widget="modal" data-title="'.tr('Cambia foto utente').'">
+                    <a class="btn btn-primary btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? ($module->fileurl('self.php').'?id_module='.$module->id) : '#').'&resource=photo" data-widget="modal" data-title="'.tr('Cambia foto utente').'">
                         <i class="fa fa-picture-o"></i> '.tr('Cambia foto utente').'
                     </a>
                 </div>
@@ -89,7 +89,7 @@ echo '
 <div class="row">
     <div class="col-md-6">
 
-        <div class="card card-success">
+        <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">'.tr('API').'</h3>
             </div>
@@ -132,7 +132,7 @@ echo '
 
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-success">
+        <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">'.tr('Impostazioni').'</h3>
             </div>

@@ -189,10 +189,10 @@ foreach ($righe as $riga) {
         if (strlen($riga->note) > 50) {
             $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
             $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
-            $stringa_modificata = '<span class="right badge badge-default">'.$prima_parte.'</small>
-                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="right badge badge-default">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
+            $stringa_modificata = '<span class="text-xs">'.$prima_parte.'</small>
+                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="text-xs">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {
-            $stringa_modificata = '<span class="right badge badge-default">'.$riga->note.'</small>';
+            $stringa_modificata = '<span class="text-xs">'.$riga->note.'</small>';
         }
 
         echo '

@@ -369,12 +369,12 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
                 div_prezzi.css("margin-bottom", "20px");
-                div.html(`<span class="right badge badge-default" >'.tr('Sconto').'</small>`);
+                div.html(`<span class="text-xs" >'.tr('Sconto').'</small>`);
             } else if (sconto < 0) {
                 div_margine.css("margin-top", "-20px");
                 div_prezzi.css("margin-top", "-20px");
                 div_prezzi.css("margin-bottom", "20px");
-                div.html(`<span class="right badge badge-default" >'.tr('Maggiorazione').'</small>`);
+                div.html(`<span class="text-xs" >'.tr('Maggiorazione').'</small>`);
             } else {
                 div_margine.css("margin-top", "0px");
                 div_prezzi.css("margin-top", "0px");

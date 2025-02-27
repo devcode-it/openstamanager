@@ -128,7 +128,7 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="right badge badge-default">'.nl2br($riga->note).'</small>';
+                    <br><span class="text-xs">'.nl2br($riga->note).'</small>';
     }
     echo '
                 </td>';

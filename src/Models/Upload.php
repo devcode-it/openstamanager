@@ -253,9 +253,9 @@ class Upload extends Model
         return parent::delete();
     }
 
-    public function save(array $options = [])
+    public function save(array $options = [], $skip_resize = false)
     {
-        if ($this->isImage()) {
+        if ($this->isImage() && !$skip_resize) {
             // self::generateThumbnails($this);
 
             if (setting('Ridimensiona automaticamente le immagini caricate')) {
@@ -409,7 +409,7 @@ class Upload extends Model
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
     }
 
-    protected static function ridimensionaImmagini($upload)
+    public static function ridimensionaImmagini($upload)
     {
         $info = $upload->info;
         $directory = $upload->attachments_directory;
@@ -425,9 +425,16 @@ class Upload extends Model
 
         $img = ImageManagerStatic::make($filepath);
 
+        // Correggi automaticamente l'orientamento dell'immagine
+        $img->orientate();
+
         $img->resize(setting('Larghezza per ridimensionamento immagini'), null, function ($constraint) {
             $constraint->aspectRatio();
         });
         $img->save(slashes($filepath));
+
+        clearstatcache();
+        $upload->size = filesize(slashes($filepath));
+        $upload->save([],true);
     }
 }

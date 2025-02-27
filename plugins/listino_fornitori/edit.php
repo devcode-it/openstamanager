@@ -177,7 +177,7 @@ if (!$fornitori_disponibili->isEmpty()) {
 
             <td class="text-right">
                 '.moneyFormat($dettaglio->prezzo_unitario).'
-                <p><span class="right badge badge-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.$dettaglio->updated_at->diffForHumans().'</small></p>
+                <p><span class="text-xs tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.$dettaglio->updated_at->diffForHumans().'</small></p>
             </td>
 
             <td class="text-right">

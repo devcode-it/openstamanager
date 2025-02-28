@@ -51,11 +51,8 @@ switch ($resource) {
             $filter[] = '`co_contratti`.`id`='.prepare($element);
         }
 
-        if (!empty($superselect['idanagrafica'])) {
-            $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
-        }
-
         if (empty($elements)) {
+            $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
             $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'is_pianificabile';
             $where[] = '`idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE '.$stato.' = 1)';
         }
@@ -64,8 +61,8 @@ switch ($resource) {
             $search_fields[] = '`co_contratti`.`nome` LIKE '.prepare('%'.$search.'%');
         }
 
-        $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
-        $rs = $dbo->fetchArray($query);
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
 
         foreach ($rs as $r) {
             $contratto = Contratto::find($r['id']);

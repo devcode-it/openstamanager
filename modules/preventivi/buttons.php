@@ -19,6 +19,8 @@
  */
 
 include_once __DIR__.'/../../core.php';
+
+use Modules\Interventi\Intervento;
 use Modules\Preventivi\Stato;
 
 $stati_abilitati = Stato::where('is_revisionabile', '=', '1')->get();
@@ -28,12 +30,14 @@ foreach ($stati_abilitati as $stato) {
     $stati[] = $stato->getTranslation('title');
 }
 
+$interventi_collegati = Intervento::where('id_preventivo', '=', $id_record)->count();
+
 // Crea revisione
 echo '
-<div class="tip" data-widget="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
+<div class="tip" data-widget="tooltip" title="'.tr('Per creare una nuova revisione il preventivo non deve essere collegato ad attività e lo stato del preventivo deve essere tra: _STATE_LIST_', [
     '_STATE_LIST_' => implode(', ', $stati),
 ]).'">
-    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="openModal(\''.tr('Crea revisione').'\', \''.$module->fileurl('crea_revisione.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
+    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] && !$interventi_collegati ? '' : 'disabled').'" onclick="openModal(\''.tr('Crea revisione').'\', \''.$module->fileurl('crea_revisione.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
         <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'
     </button>
 </div>';

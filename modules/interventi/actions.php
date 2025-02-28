@@ -674,7 +674,7 @@ switch (post('op')) {
             }
             if ($class == Modules\Ordini\Ordine::class) {
                 $intervento->id_ordine = $documento->id;
-                $intervento->richiesta = 'Attività creata da ordine num. '.$documento->numero_esterno;
+                $intervento->richiesta = 'Attività creata da ordine num. '.(setting('Visualizza numero ordine cliente') ? $documento->numero_cliente : $documento->numero_esterno);
             }
 
             $intervento->save();

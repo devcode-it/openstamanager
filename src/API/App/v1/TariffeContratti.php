@@ -55,7 +55,7 @@ class TariffeContratti extends AppResource
         $id_contratti = array_keys($contratti);
 
         $query = 'SELECT
-            CONCAT(`idtipointervento`, "-", `idcontratto`) AS id,
+            CONCAT(`co_contratti_tipiintervento`.`idtipointervento`, "-", `idcontratto`) AS id,
             `co_contratti_tipiintervento`.`updated_at`
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`

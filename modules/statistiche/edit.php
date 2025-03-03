@@ -36,6 +36,20 @@ $end = $_SESSION['period_end'];
 
 $translated_months = [tr('Gennaio'), tr('Febbraio'), tr('Marzo'), tr('Aprile'), tr('Maggio'), tr('Giugno'), tr('Luglio'), tr('Agosto'), tr('Settembre'), tr('Ottobre'), tr('Novembre'), tr('Dicembre')];
 
+$months = [];
+$start_date = new DateTime($start);
+$end_date = new DateTime($end);
+
+while ($start_date <= $end_date) {
+    $months[] = $start_date->format('F');
+    $start_date->modify('+1 month');
+}
+
+foreach ($months as $key => $month) {
+    $month_number = date('n', strtotime($month));
+    $months[$key] = $translated_months[$month_number - 1];
+}
+
 // Fatturato
 echo '
 <div class="card card-info">
@@ -415,7 +429,7 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
-    var translatedMonths = '.json_encode($translated_months).';
+    var translatedMonths = '.json_encode($months).';
 
     new Chart(document.getElementById("interventi_n_tipologia").getContext("2d"), {
         type: "bar",
@@ -471,7 +485,7 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
-    var translatedMonths = '.json_encode($translated_months).';
+    var translatedMonths = '.json_encode($months).';
     new Chart(document.getElementById("interventi_ore_tipologia").getContext("2d"), {
         type: "bar",
         data: {
@@ -557,7 +571,7 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
-    var translatedMonths = '.json_encode($translated_months).';
+    var translatedMonths = '.json_encode($months).';
 
     new Chart(document.getElementById("sessioni").getContext("2d"), {
         type: "bar",
@@ -725,7 +739,7 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
-    var translatedMonths = '.json_encode($translated_months).';
+    var translatedMonths = '.json_encode($months).';
 
     new Chart(document.getElementById("n_anagrafiche").getContext("2d"), {
         type: "line",

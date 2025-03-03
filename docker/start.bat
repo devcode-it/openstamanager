@@ -30,7 +30,16 @@ if "%scelta%"=="1" (
     echo Avvio dei container in corso...
     docker-compose up -d
     echo.
-    echo Container avviati! OpenSTAManager è accessibile su http://localhost:8090
+    echo ================================
+    echo Container avviati correttamente!
+    echo.
+    echo Accedi a OpenSTAManager:
+    echo - URL: http://localhost:8090
+    echo - Host del database: db
+    echo - Username dell'utente MySQL: root
+    echo - Password dell'utente MySQL: secret
+    echo - Nome del database: openstamanager
+    echo ================================
     pause
     goto menu
 )

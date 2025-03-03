@@ -3,7 +3,9 @@ name: OSM
 services:
 
   openstamanager:
-    image: devcodesrl/openstamanager:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: openstamanager
     restart: unless-stopped
     ports:

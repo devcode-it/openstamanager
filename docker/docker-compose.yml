@@ -1,5 +1,8 @@
+name: OSM
+
 services:
-  app:
+
+  openstamanager:
     image: devcodesrl/openstamanager:latest
     container_name: openstamanager
     restart: unless-stopped
@@ -26,4 +29,11 @@ services:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: openstamanager
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+
+volumes:
+  db:
+    driver: local

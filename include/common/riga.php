@@ -88,7 +88,7 @@ echo '
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
 
-if ($options['dir'] == 'entrata') {
+if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
     // Prezzo di acquisto unitario
     echo '
         <div class="col-md-'.$width.'">

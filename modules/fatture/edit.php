@@ -503,16 +503,14 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                     </div>
                     <div class="clearfix"></div>';
 
-                 
-
     foreach ($scadenze as $scadenza) {
         $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
 
         echo '
                     <p>'.dateFormat($scadenza['scadenza']);
-                    if (!empty($scadenza['data_concordata'])) {
-                        echo ' <small>('.dateFormat($scadenza['data_concordata']).')</small>';
-                    }
+        if (!empty($scadenza['data_concordata'])) {
+            echo ' <small>('.dateFormat($scadenza['data_concordata']).')</small>';
+        }
         echo '      : ';
 
         if ($pagamento_iniziato) {

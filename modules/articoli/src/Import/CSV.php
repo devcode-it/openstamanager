@@ -375,10 +375,9 @@ class CSV extends CSVImporter
             $file_content = file_get_contents($url);
 
             if (!empty($file_content)) {
-
-                /**
+                /*
                  * Import immagine options:
-                 * 
+                 *
                  * - 1: Permette di importare l'immagine come principale dell'articolo mantenendo gli altri allegati già presenti.
                  * - 2: Permette di importare l'immagine come principale dell'articolo rimuovendo tutti gli allegati presenti.
                  * - 3: Permette di importare l'immagine come allegato dell'articolo.

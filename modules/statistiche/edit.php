@@ -515,7 +515,7 @@ ORDER BY
     `ragione_sociale` ASC");
 
 $dataset = '';
-if ($_SESSION['superselect']['idtipiintervento'] != "[]") {
+if ($_SESSION['superselect']['idtipiintervento'] != '[]') {
     $where = '`in_interventi_tecnici`.`id` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')';
 } else {
     $where = '1=1';

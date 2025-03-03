@@ -374,6 +374,35 @@ class Upload extends Model
         return pathinfo((string) $file);
     }
 
+    public static function ridimensionaImmagini($upload)
+    {
+        $info = $upload->info;
+        $directory = $upload->attachments_directory;
+
+        $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
+
+        if (!in_array(mime_content_type($filepath), ['image/png', 'image/gif', 'image/jpeg'])) {
+            return;
+        }
+
+        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
+        ImageManagerStatic::configure(['driver' => $driver]);
+
+        $img = ImageManagerStatic::make($filepath);
+
+        // Correggi automaticamente l'orientamento dell'immagine
+        $img->orientate();
+
+        $img->resize(setting('Larghezza per ridimensionamento immagini'), null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($filepath));
+
+        clearstatcache();
+        $upload->size = filesize(slashes($filepath));
+        $upload->save([], true);
+    }
+
     /**
      * Genera le thumbnails per le immagini.
      */
@@ -407,34 +436,5 @@ class Upload extends Model
             $constraint->aspectRatio();
         });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
-    }
-
-    public static function ridimensionaImmagini($upload)
-    {
-        $info = $upload->info;
-        $directory = $upload->attachments_directory;
-
-        $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
-
-        if (!in_array(mime_content_type($filepath), ['image/png', 'image/gif', 'image/jpeg'])) {
-            return;
-        }
-
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = ImageManagerStatic::make($filepath);
-
-        // Correggi automaticamente l'orientamento dell'immagine
-        $img->orientate();
-
-        $img->resize(setting('Larghezza per ridimensionamento immagini'), null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($filepath));
-
-        clearstatcache();
-        $upload->size = filesize(slashes($filepath));
-        $upload->save([],true);
     }
 }

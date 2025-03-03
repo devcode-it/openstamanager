@@ -78,7 +78,7 @@ class Preventivi extends AppResource implements RetrieveInterface
         $query = 'SELECT 
             `co_preventivi`.`id`,
             `co_preventivi`.`idanagrafica` AS id_cliente,
-            IF(`co_preventivi`.`idsede` = 0, NULL, `co_preventivi`.`idsede`) AS id_sede,
+            IF(`co_preventivi`.`idsede_destinazione` = 0, NULL, `co_preventivi`.`idsede_destinazione`) AS id_sede,
             `co_preventivi`.`nome`,
             `co_preventivi`.`numero`,
             `co_preventivi`.`data_bozza`,

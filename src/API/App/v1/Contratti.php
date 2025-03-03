@@ -73,7 +73,7 @@ class Contratti extends AppResource implements RetrieveInterface
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `co_contratti`.`id`,
             `co_contratti`.`idanagrafica` AS id_cliente,
-            IF(`co_contratti`.`idsede` = 0, NULL, `co_contratti`.`idsede`) AS id_sede,
+            IF(`co_contratti`.`idsede_destinazione` = 0, NULL, `co_contratti`.`idsede_destinazione`) AS id_sede,
             `co_contratti`.`nome`,
             `co_contratti`.`numero`,
             `co_contratti`.`data_bozza`,

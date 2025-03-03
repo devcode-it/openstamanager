@@ -70,11 +70,7 @@ class Pagamento extends Model
             // X giorni esatti
             if ($rata->giorno == 0) {
                 // Offset della rata
-                if ($rata->num_giorni % 30 == 0) {
-                    $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
-                } else {
-                    $date->addDay();
-                }
+                $date->addDays($rata->num_giorni);
             }
 
             // Ultimo del mese

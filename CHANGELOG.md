@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.7.1 (2025-03-05)](#271-2025-03-05)
 - [2.7 (2025-02-12)](#27-2025-02-12)
 - [2.6.2 (2025-01-15)](#262-2025-01-15)
 - [2.6.1 (2024-12-18)](#261-2024-12-18)
@@ -50,6 +51,37 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.7 (2025-02-12)
+### Modificato (Changed)
+- Ripristinato il conteggio ore nel plugin consuntivo
+- Modificata la colonna Fornitore in Fornitore predefinito in Articoli
+- Uniformati i colori sulla pagina informazioni utente
+- Aggiornamento delle traduzioni
+
+### Fixed
+- Corretta la stampa del footer del preventivo con solo totale
+- Corretto lo spostamento dei widget da stato dei servizi
+- Corretta la visualizzazione delle tabelle da mobile
+- Corretta la stampa dei documenti con rimandi a capo nelle righe
+- Corretta la stampa liquidazione IVA
+- Corretto il colore degli stati attività e tecnici
+- Corretta la ricerca di articoli
+- Corretto il caricamento degli elementi negli impianti
+- Corretta la visualizzazione delle checklist
+- Corretta la visualizzazione di metodo di pagamento e banche in rate scadenze fatture
+- Corretto il caricamento dei contratti collegati ad Attività
+- Corretto l'orientamento dell'immagine ridimensionata e aggiornamento dimensioni
+- Corretta l'esclusione da ore rimanenti in contratto delle attività con tipo da non conteggiare
+- Corretta la visualizzazione del numero ordine in attività
+- Corretta la logica di creazione della revisione del preventivo
+- Corrette le api dell'applicazione
+- Corretta la disposizione dei campi in dati appalto
+- Corretta la selezione del tipo di attività in statistiche e filtro per data
+- Corretta la generazione di una rata scadenza in giorni
+- Corretta la visualizzazione di guadagno e margine per i tecnici
+- Corretta la vista della relazione in Anagrafiche
+- Corrette le aliquote iva con codice assente
 
 ## 2.7 (2025-02-12)
 ### Aggiunto (Added)

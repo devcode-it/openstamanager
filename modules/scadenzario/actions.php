@@ -104,7 +104,7 @@ switch (post('op')) {
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
                     'scadenza' => $data_scadenza,
-                    'data_concordata' => $data_concordata,
+                    'data_concordata' => $data_concordata ?: null,
                     'id_pagamento' => $id_pagamento,
                     'id_banca_azienda' => $id_banca_azienda,
                     'id_banca_controparte' => $id_banca_controparte,

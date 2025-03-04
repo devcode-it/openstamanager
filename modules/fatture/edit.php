@@ -511,7 +511,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
         if (!empty($scadenza['data_concordata'])) {
             echo ' <small>('.dateFormat($scadenza['data_concordata']).')</small>';
         }
-        echo '      : ';
+        echo ': ';
 
         if ($pagamento_iniziato) {
             echo '

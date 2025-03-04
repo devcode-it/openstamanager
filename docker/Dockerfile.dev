@@ -1,5 +1,5 @@
 # Usa l'immagine ufficiale di PHP con Apache
-FROM php:8.3-apache
+FROM php:8.3.17-apache
 
 # Abilita i moduli richiesti
 RUN apt-get update && apt-get install -y \
@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     unzip \
     libxml2-dev \ 
-    libxslt-dev \  
+    libxslt-dev \ 
+    wget \ 
     git && \
     docker-php-ext-install zip mbstring pdo_mysql intl soap curl && \
     a2enmod rewrite 

@@ -3,7 +3,9 @@ name: OSM
 services:
 
   openstamanager:
-    image: devcodesrl/openstamanager:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: openstamanager
     restart: unless-stopped
     ports:
@@ -26,14 +28,14 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: openstamanager
-    ports:
-      - "3307:3306"
+      MYSQL_ROOT_PASSWORD: secret
+    command: 
+      - --sort_buffer_size=2M
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     volumes:
       - db:/var/lib/mysql
 
-
 volumes:
   db:
-    driver: local

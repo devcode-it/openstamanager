@@ -210,7 +210,7 @@ if ($preventivo) {
 if ($ordine) {
     echo '
                 <p><i class="fa fa-book text-info"></i>
-                '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
+                '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero_esterno, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
                 </p>';
 }
 echo '                

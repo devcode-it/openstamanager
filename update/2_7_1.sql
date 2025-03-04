@@ -40,3 +40,7 @@ HAVING
 
 -- Fix per vista duplicata relazione
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_relazioni_lang`.`title`' WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'color_title_Relazione';
+
+-- Fix codice iva assente
+SELECT @codice := MAX(CAST(codice AS UNSIGNED))+1 FROM co_iva WHERE deleted_at IS NULL;
+UPDATE `co_iva` SET `codice` = @codice WHERE `name` = 'Art. 71 DPR 633/1972';

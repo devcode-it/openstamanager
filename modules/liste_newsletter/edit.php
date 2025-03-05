@@ -222,4 +222,4 @@ function generaQuery() {
 
     $('#query').val(query);
 }
-</script>';
+</script>

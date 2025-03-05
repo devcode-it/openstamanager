@@ -82,7 +82,6 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="update_prezzi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-
     <input type="hidden" name="dir" value="'.$direzione.'">
     <input type="hidden" name="id_anagrafica" value="'.$id_anagrafica.'">
     <input type="hidden" name="id_articolo" value="'.$id_articolo.'">
@@ -97,7 +96,7 @@ echo '
         <div class="row">
             <div class="col-md-6">
                 {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
-                <button type="button" style="margin-top:-10px;" class="btn btn-xs btn-info pull-right '.($prezzo_predefinito > 0 ? '' : 'disabled').'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
+                <button type="button" style="margin-top:-10px;" class="btn btn-info pull-right '.($prezzo_predefinito > 0 ? '' : 'disabled').'" onclick="copiaPrezzoPredefinito()"><i class="fa fa-refresh"></i> '.tr('Importa').'</button>
             </div>
 
             <div class="col-md-6">
@@ -158,7 +157,7 @@ foreach ($dettagli as $key => $dettaglio) {
                            {[ "type": "number", "name": "prezzo_unitario['.$key.']", "icon-after": "'.currency().'", "value": "'.($prezzi_ivati ? $dettaglio->prezzo_unitario_ivato : $dettaglio->prezzo_unitario).'" ]}
                         </td>
                         <td>
-                           {[ "type": "number", "name": "sconto['.$key.']", "min-value": 0, "value": "'.$dettaglio->sconto_percentuale.'", "icon-after":"%" ]}
+                           {[ "type": "number", "name": "sconto['.$key.']", "min-value": 0, "value": "'.$dettaglio->sconto.'", "icon-after":"%" ]}
                         <td>
                             <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviPrezzo(this)">
                                 <i class="fa fa-trash"></i>
@@ -227,7 +226,7 @@ function aggiungiPrezzo(button) {
     let text = replaceAll($("#prezzi-template").html(), "-id-", "" + key);
     key++;
 
-    let body = $(button).closest(".box").find("table > tbody");
+    let body = $(button).closest(".card").find("table > tbody");
     let lastRow = body.find("tr").last();
     if (lastRow.length) {
         lastRow.after(text);

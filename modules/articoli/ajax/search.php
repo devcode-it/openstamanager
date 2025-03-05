@@ -34,6 +34,7 @@ $fields = [
     'categoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
     'subcategoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
+    'serial' => '`mg_prodotti`.`serial`',
 ];
 
 $query = 'SELECT *';
@@ -42,7 +43,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE deleted_at IS NULL AND (1=0 ';
+$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` WHERE deleted_at IS NULL AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

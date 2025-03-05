@@ -450,6 +450,80 @@ echo '
         </table>
     </div>
 </div>';
+
+//Tabella totale delle ore,km,costi e totale scontato suddivisi per i mesi in cui sono stati effettuati gli interventi
+echo '
+<div class="row">
+    <div class="col-md-12">
+        <table class="table text-left table-striped table-bordered">
+            <tr>
+                <th>' . tr('Mese') . '</th>
+                <th width="10%">' . tr('Ore') . '</th>
+                <th width="10%">' . tr('Km') . '</th>
+                <th width="16%">' . tr('Costo') . '</th>
+                <th width="16%">' . tr('Totale scontato') . '</th>
+            </tr>';
+$interventi_per_mese = [];
+$totals = ['ore' => 0, 'km' => 0, 'costo' => 0, 'totale' => 0];
+
+foreach ($interventi as $intervento) {
+    // Ottieni le sessioni di lavoro per questo intervento
+    $sessioni = $intervento->sessioni()
+        ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
+        ->where('non_conteggiare', 0)
+        ->get();
+
+    foreach ($sessioni as $sessione) {
+        $mese = date('Y-m', strtotime($sessione->orario_inizio));
+        if (!isset($interventi_per_mese[$mese])) {
+            $interventi_per_mese[$mese] = [
+                'ore' => 0,
+                'km' => 0,
+                'costo' => 0,
+                'totale' => 0,
+            ];
+        }
+        $interventi_per_mese[$mese]['ore'] += $sessione->ore;
+        $interventi_per_mese[$mese]['km'] += $sessione->km;
+        $interventi_per_mese[$mese]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+        $interventi_per_mese[$mese]['totale'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + 
+                                                $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + 
+                                                $sessione->prezzo_diritto_chiamata;
+        
+        $totals['ore'] += $sessione->ore;
+        $totals['km'] += $sessione->km;
+        $totals['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
+        $totals['totale'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + 
+                            $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + 
+                            $sessione->prezzo_diritto_chiamata;
+    }
+}
+
+ksort($interventi_per_mese);
+foreach ($interventi_per_mese as $mese => $dati) {
+    echo '
+            <tr>
+                <td>' . ucfirst(Carbon\Carbon::createFromFormat('Y-m', $mese)->translatedFormat('F Y')) . '</td>
+                <td class="text-right">' . Translator::numberToLocale($dati['ore']) . '</td>
+                <td class="text-right">' . Translator::numberToLocale($dati['km']) . '</td>
+                <td class="text-right">' . Translator::numberToLocale($dati['costo']) . ' €</td>
+                <td class="text-right">' . Translator::numberToLocale($dati['totale']) . ' €</td>
+            </tr>';
+}
+
+echo '
+            <tr class="table-info font-weight-bold">
+                <td>' . tr('Totali') . '</td>
+                <td class="text-right">' . Translator::numberToLocale($totals['ore']) . '</td>
+                <td class="text-right">' . Translator::numberToLocale($totals['km']) . '</td>
+                <td class="text-right">' . Translator::numberToLocale($totals['costo']) . ' €</td>
+                <td class="text-right">' . Translator::numberToLocale($totals['totale']) . ' €</td>
+            </tr>';
+echo '
+        </table>
+    </div>
+</div>';
+
 /*
     Stampa consuntivo
 */

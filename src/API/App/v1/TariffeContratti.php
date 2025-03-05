@@ -26,7 +26,7 @@ class TariffeContratti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT CONCAT(`idtipointervento`, "-", `idcontratto`) AS id
+        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`idtipointervento`, "-", `idcontratto`) AS id
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`

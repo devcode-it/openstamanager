@@ -38,7 +38,7 @@ switch (post('op')) {
 
         break;
 
-        // Rimuovo impianto e scollego tutti i suoi componenti
+    // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete-bulk':
         $n_impianti = 0;
 
@@ -62,6 +62,18 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'change-cliente':
+        foreach ($id_records as $id) {
+            $impianto = Impianto::find($id);
+            $impianto->idanagrafica = post('idanagrafica');
+            $impianto->idsede = post('idsede');
+            $impianto->save();
+        }
+
+        flash()->info(tr('Impianti aggiornati correttamente!'));
+
+        break;
 }
 
 $operations['export-csv'] = [
@@ -80,6 +92,18 @@ $operations['delete-bulk'] = [
         'msg' => tr('Vuoi davvero eliminare gli impianti selezionati?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+$operations['change-cliente'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna cliente').'</span>',
+    'data' => [
+        'title' => tr('Cambiare l\'anagrafica degli impianti?'),
+        'msg' => tr('Per ciascun impianto selezionato, verrà aggiornato il cliente').'
+        <br><br>{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "ajax-source": "clienti", "required": 1, "extra": "onchange=\"$(\'#idsede\').enable();updateSelectOption(\'idanagrafica\', $(\'#idanagrafica\').val());session_set(\'superselect,idanagrafica\', $(\'#idanagrafica\').val(), 0);$(\'#idsede\').val(null).trigger(\'change\');\"" ]}<br>
+        {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale", "disabled": "1" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
     ],
 ];
 

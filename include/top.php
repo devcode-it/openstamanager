@@ -541,7 +541,7 @@ if (Auth::check()) {
             <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
             <ul class="nav nav-tabs nav-pills nav-stacked">
                 <li data-toggle="control-sidebar" class="active btn-default nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tab_0">
+                    <a class="nav-link active" data-toggle="tab" href="#tab_0">
                         '.$structure->getTranslation('title').'
                     </a>
                 </li>';

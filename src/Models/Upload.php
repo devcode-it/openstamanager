@@ -366,7 +366,7 @@ class Upload extends Model
      */
     public function getContent()
     {
-        return file_get_contents(base_dir().'/'.$this->local_filepath);
+        return file_get_contents(base_dir().'/files/'.$this->attachments_directory.'/'.$this->filename);
     }
 
     public static function getInfo($file)

@@ -145,7 +145,7 @@ if (!empty($record['immagine'])) {
 <?php
 $elementi = $dbo->fetchArray('SELECT `in_interventi`.`id`, `in_interventi`.`codice` AS numero, `data_richiesta` AS data, `in_statiintervento_lang`.`title` AS stato_documento, "Attività" AS tipo_documento FROM `in_interventi` INNER JOIN `my_impianti_interventi` ON `in_interventi`.`id`=`my_impianti_interventi`.`idintervento` LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id_record).'
 UNION 
-SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
+SELECT `co_contratti`.`id`, `numero` AS numero, `data_bozza` AS data, `co_staticontratti_lang`.`title` AS stato_documento, "Contratto" AS tipo_documento FROM `co_contratti` INNER JOIN `my_impianti_contratti` ON `co_contratti`.`id`=`my_impianti_contratti`.`idcontratto` LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id_record));
 $class = '';
 
 if (!empty($elementi)) {

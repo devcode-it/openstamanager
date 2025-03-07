@@ -21,6 +21,7 @@
 include_once __DIR__.'/core.php';
 
 use Util\Query;
+use Models\Module;
 
 // Informazioni fondamentali
 $columns = (array) filter('columns', null, true);
@@ -179,6 +180,22 @@ if (!empty($query)) {
                 $print_url = Prints::getHref($print, $r['id']);
 
                 $value = '<a href="'.$print_url.'" target="_blank"><i class="fa fa-2x fa-print"></i></a>';
+            }
+
+            // Immagine
+            elseif ($field == '_img_') {
+                $module = Module::where('id', $id_module)->first();
+                if( !empty($r['_img_']) ){
+                    $fileinfo = \Uploads::fileInfo($r['_img_']);
+        
+                    $directory = '/'.$module->upload_directory.'/';
+                    $image = $directory.$r['_img_'];
+                    $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+            
+                    $url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
+    
+                    $value = '<img src="'.$url.'" style="max-height: 80px; max-width:120px">';
+                }
             }
 
             // Icona

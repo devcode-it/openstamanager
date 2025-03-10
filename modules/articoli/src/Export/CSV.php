@@ -39,7 +39,7 @@ class CSV extends CSVExporter
                 'primary_key' => true,
             ],
             [
-                'field' => 'descrizione',
+                'field' => 'name',
                 'label' => 'Descrizione',
             ],
             [

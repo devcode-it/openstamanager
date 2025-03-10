@@ -31,7 +31,7 @@ return '
 <table style="color:#aaa; font-size:8px;">
 <tr>
     <td align="left" style="width:97mm;">
-        '.tr('Stampato con OpenSTAManager').'
+        '.tr('Generato con OpenSTAManager').'
     </td>
 
     <td class="text-right" style="width:97mm;">

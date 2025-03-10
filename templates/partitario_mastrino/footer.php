@@ -22,7 +22,7 @@ echo '
 <table style="color:#aaa; font-size:8px;">
 <tr>
     <td align="left" style="width:97mm;">
-        '.tr('Stampato con OpenSTAManager il _DATE_', ['_DATE_' => date('d/m/Y')]).'
+        '.tr('Generato con OpenSTAManager il _DATE_', ['_DATE_' => date('d/m/Y')]).'
     </td>
 
     <td class="text-right" style="width:97mm;">

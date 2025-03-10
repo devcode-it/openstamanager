@@ -17528,7 +17528,7 @@ msgid "Pagina _PAGE_ di _TOTAL_"
 msgstr "Page _PAGE_ of _TOTAL_"
 
 #: templates/base/footer.php:33
-msgid "Stampato con OpenSTAManager"
+msgid "Generato con OpenSTAManager"
 msgstr "Print with OpenSTAManager"
 
 #: templates/base/header.php:38 templates/dashboard/header.php:26
@@ -17829,7 +17829,7 @@ msgstr "Right of call"
 
 #: templates/libro_giornale/footer.php:24 templates/liquidazione_iva/footer.php:24
 #: templates/partitario_mastrino/footer.php:24 templates/scadenzario/footer.php:24
-msgid "Stampato con OpenSTAManager il _DATE_"
+msgid "Generato con OpenSTAManager il _DATE_"
 msgstr "Printed with OpenSTAManager the _DATA_"
 
 #: templates/liquidazione_iva/header.php:31 templates/registro_iva/top.php:25

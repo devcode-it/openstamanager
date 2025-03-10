@@ -14653,7 +14653,7 @@ msgid "Pagina _PAGE_ di _TOTAL_"
 msgstr ""
 
 #: templates/base/footer.php:34
-msgid "Stampato con OpenSTAManager"
+msgid "Generato con OpenSTAManager"
 msgstr ""
 
 #: templates/base/header.php:39 templates/dashboard/header.php:27 templates/dashboard_settimanale/header.php:27
@@ -14920,7 +14920,7 @@ msgstr ""
 
 #: templates/libro_giornale/footer.php:25 templates/liquidazione_iva/footer.php:25 templates/partitario_mastrino/footer.php:25
 #: templates/scadenzario/footer.php:25
-msgid "Stampato con OpenSTAManager il _DATE_"
+msgid "Generato con OpenSTAManager il _DATE_"
 msgstr ""
 
 #: templates/liquidazione_iva/header.php:32 templates/registro_iva/top.php:26

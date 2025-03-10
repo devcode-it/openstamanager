@@ -10323,7 +10323,7 @@ msgid "voce eliminata"
 msgstr ""
 
 #: templates/base/footer.php:33
-msgid "Stampato con OpenSTAManager"
+msgid "Generato con OpenSTAManager"
 msgstr ""
 
 #: templates/base/footer.php:37 templates/registro_iva/footer.php:28
@@ -10642,7 +10642,7 @@ msgstr ""
 #: templates/registro_iva/footer.php:24
 #: templates/riepilogo_interventi/footer.php:24
 #: templates/scadenzario/footer.php:24
-msgid "Stampato con OpenSTAManager il _DATE_"
+msgid "Generato con OpenSTAManager il _DATE_"
 msgstr ""
 
 #: templates/registro_iva/top.php:25

@@ -1,6 +1,7 @@
 <?php
 
-include __DIR__.'/../config.inc.php';
+include __DIR__.'/../core.php';
+
 $module = \Models\Module::where('name', 'Fatture di vendita')->first();
 
 $directory = 'files/fatture/';

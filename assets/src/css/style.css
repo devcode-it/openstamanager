@@ -1774,13 +1774,15 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 }
 
 
-
 @media (min-width: 1140px) {
     .modal-lg {
         max-width: 60vw;
     }
-}
 
+    .text-nowrap {
+        white-space: normal !important;
+    }
+}
 
 
 /*

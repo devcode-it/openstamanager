@@ -1,5 +1,5 @@
 # Usa l'immagine ufficiale di PHP con Apache
-FROM php:8.3.17-apache
+FROM php:8.3-apache-bullseye
 
 # Abilita i moduli richiesti
 RUN apt-get update && apt-get install -y \

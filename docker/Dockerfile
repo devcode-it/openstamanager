@@ -1,5 +1,5 @@
 # Usa l'immagine ufficiale di PHP con Apache
-FROM php:8.3-apache
+FROM php:8.3-apache-bullseye
 
 # Abilita i moduli richiesti
 RUN apt-get update && apt-get install -y \
@@ -35,7 +35,7 @@ WORKDIR /var/www/html
 EXPOSE 80
 
 # Clona il repository
-RUN wget -O openstamanager.zip https://github.com/devcode-it/openstamanager/releases/download/v2.7.1/openstamanager-2.7.1.zip && unzip openstamanager.zip
+RUN last_version_v=$(curl -s https://api.github.com/repos/devcode-it/openstamanager/releases/latest | grep tag_name | cut -d '"' -f 4) && last_version=$(echo $last_version_v | sed 's/^v//') && wget -O openstamanager.zip "https://github.com/devcode-it/openstamanager/releases/download/${last_version_v}/openstamanager-${last_version}.zip" && unzip openstamanager.zip
 
 RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
 RUN chown -R $USER:www-data /var/www/html/

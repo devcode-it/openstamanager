@@ -473,11 +473,11 @@ if (!$block_edit) {
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <a style="cursor:pointer" class="dropdown-item" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
+                            <a style="cursor:pointer" class="btn dropdown-item" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
                                 <i class="fa fa-plus"></i> '.tr('Descrizione').'
                             </a>
                             
-                            <a style="cursor:pointer"  class="dropdown-item" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                            <a style="cursor:pointer"  class="btn dropdown-item" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                             </a>
 

@@ -416,7 +416,7 @@ if (!$block_edit) {
                                 <ul class="dropdown-menu dropdown-menu-right">';
     echo '
 
-                                    <a class="dropdown-item" style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                                    <a class="btn dropdown-item" style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                                         <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                                     </a>
                                    

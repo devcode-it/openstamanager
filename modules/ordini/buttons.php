@@ -46,7 +46,7 @@ if (!$is_anagrafica_deleted) {
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
 
-            <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-toggle="modal" data-title="'.tr('Crea attività').'">
+            <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-toggle="modal" data-title="'.tr('Crea attività').'">
                 <i class="fa fa-wrench"></i> '.tr('Attività').'
             </a>
             ';
@@ -54,7 +54,7 @@ if (!$is_anagrafica_deleted) {
     if ($dir == 'entrata') {
         echo '
 
-            <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-toggle="modal" data-title="'.tr('Crea ordine fornitore').'">
+            <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-toggle="modal" data-title="'.tr('Crea ordine fornitore').'">
                 <i class="fa fa-file-o"></i> '.tr('Ordine fornitore').'
             </a>
             ';
@@ -62,11 +62,11 @@ if (!$is_anagrafica_deleted) {
 
     echo '  
 
-            <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'">
+            <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'">
                 <i class="fa fa-truck"></i> '.tr('Ddt').'
             </a>
 
-            <a class="dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+            <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
                 <i class="fa fa-file"></i> '.tr('Fattura').'
             </a>
 

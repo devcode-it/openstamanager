@@ -33,6 +33,7 @@ $id_sede = $documento['idsede'];
 if (!empty($documento['idsede_destinazione'])) {
     $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['idsede_destinazione']));
 
+    $s_nomesede = $sedi['nomesede'];
     $s_citta = $sedi['citta'];
     $s_indirizzo = $sedi['indirizzo'];
     $s_cap = $sedi['cap'];

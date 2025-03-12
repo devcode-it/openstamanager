@@ -37,23 +37,23 @@ echo '
 
 <table class="table border-bottom">
     <tr>
-        <th colspan="6" class="text-center bg-gray"><h4>'.tr('Cliente', [], ['upper' => true]).'</h4></th>
+        <th colspan="4" class="text-center bg-gray"><h4>'.tr('Cliente', [], ['upper' => true]).'</h4></th>
     </tr>
     <tr>
-        <td width="80">
+        <td width="100">
             <p class="text-muted">'.tr('Cliente', [], ['upper' => true]).':</p>
         </td>
-        <td width="150">
-            '.$c_ragionesociale.'
+        <td width="180">
+            '.$c_ragionesociale.($s_nomesede ? ' ('.$s_nomesede.')' : '').'
         </td>';
 // Indirizzo
 if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
     echo '
 
-        <td width="110">
+        <td width="100">
             <p class="text-muted">'.tr('Indirizzo', [], ['upper' => true]).':</p>
         </td>
-        <td>
+        <td width="180">
             '.$s_indirizzo.' '.$s_cap.' - '.$s_citta.' ('.strtoupper((string) $s_provincia).')
         </td>';
 } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
@@ -70,31 +70,31 @@ echo '
     </tr>
 
     <tr>
-        <td>
+        <td width="100">
             <p class="text-muted">'.tr('P.Iva', [], ['upper' => true]).':</p>
         </td>
-        <td>
+        <td width="180">
             '.strtoupper((string) $c_piva).'
         </td>
-        <td>
+        <td width="100">
             <p class="text-muted">'.tr('C.F.', [], ['upper' => true]).':</p>
         </td>
-        <td >
+        <td width="180">
             '.strtoupper((string) $c_codicefiscale).'
         </td>
     </tr>
 
     <tr>
-        <td>
+        <td width="100">
             <p class="text-muted">'.tr('Telefono', [], ['upper' => true]).':</p>
         </td>
-        <td>
+        <td width="180">
             '.$c_telefono.'
         </td>
-        <td>
+        <td width="100">
             <p class="text-muted">'.tr('Cellulare', [], ['upper' => true]).':</p>
         </td>
-        <td>
+        <td width="180">
             '.$c_cellulare.'
         </td>
     </tr>

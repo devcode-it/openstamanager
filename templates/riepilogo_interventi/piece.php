@@ -30,6 +30,24 @@ $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
+if (!empty($intervento['idsede_destinazione'])) {
+    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+
+    $nomesede = $sedi['nomesede'];
+    $citta = $sedi['citta'];
+    $indirizzo = $sedi['indirizzo'];
+    $cap = $sedi['cap'];
+    $provincia = $sedi['provincia'];
+} else {
+    $sedi = $dbo->fetchOne('SELECT cap, citta, indirizzo, provincia FROM an_anagrafiche WHERE idanagrafica = '.prepare($intervento['idanagrafica']));
+
+    $citta = $sedi['citta'];
+    $indirizzo = $sedi['indirizzo'];
+    $cap = $sedi['cap'];
+    $provincia = $sedi['provincia'];
+
+}
+
 $km = $sessioni->sum('km');
 $ore = $sessioni->sum('ore');
 $imponibile = $tipo == 'interno' ? $intervento->spesa : $intervento->imponibile;
@@ -65,8 +83,10 @@ if (dateFormat($intervento->inizio)) {
         '_NUM_' => $intervento->codice,
     ]).'</p>';
 }
+
 echo '
-        <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
+        <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.($nomesede ? ' ('.$nomesede.')' : '').'</small></p>
+        <p><small><b>'.tr('Indirizzo').':</b> '.$indirizzo.' '.$cap.' - '.$citta.' ('.strtoupper((string) $provincia).')</small></p>
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->getTranslation('title').'</small></p>
         <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
         <p><small><b>'.tr('Richiesta').':</b> '.strip_tags($intervento->richiesta).'</p>';

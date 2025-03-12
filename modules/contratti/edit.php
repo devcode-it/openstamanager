@@ -142,7 +142,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": <?php echo ($record['idanagrafica'] ?: '""'); ?>, "idsede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-2">
@@ -537,6 +537,12 @@ $("#idanagrafica_c").change(function() {
                 .selectSetNew(data.id_pagamento, data.desc_pagamento);
         }
     }
+});
+
+$("#idsede_destinazione").change(function() {
+    updateSelectOption("idsede_destinazione", $(this).val());
+    session_set("superselect,idsede_destinazione", $(this).val(), 0);
+    $("#matricolaimpianto").selectReset();
 });
 
 $("#codice_cig, #codice_cup").bind("keyup change", function(e) {

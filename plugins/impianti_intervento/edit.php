@@ -60,7 +60,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "name": "id_impianto_add", "label": "'.tr('Impianto').'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').', "idintervento": '.$id_record.'}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
+            {[ "type": "select", "name": "id_impianto_add", "label": "'.tr('Impianto').'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "idcontratto": "'.$record['idcontratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
         </div>
 
         <div class="col-md-3" style="margin-top: 25px">

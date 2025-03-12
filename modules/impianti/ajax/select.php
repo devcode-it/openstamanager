@@ -39,7 +39,12 @@ switch ($resource) {
          * - idanagrafica
          */
     case 'impianti-cliente':
-        $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.idanagrafica, an_anagrafiche.ragione_sociale, my_impianti.idsede, IFNULL(an_sedi.nomesede, "Sede legale") AS nomesede FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.idanagrafica=an_anagrafiche.idanagrafica LEFT JOIN an_sedi ON my_impianti.idsede=an_sedi.id |where| ORDER BY idsede';
+        $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.idanagrafica, an_anagrafiche.ragione_sociale, my_impianti.idsede, IFNULL(an_sedi.nomesede, "Sede legale") AS nomesede FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.idanagrafica=an_anagrafiche.idanagrafica LEFT JOIN an_sedi ON my_impianti.idsede=an_sedi.id';
+        if (!empty($superselect['idcontratto'])) {
+            $query .= ' INNER JOIN my_impianti_contratti ON my_impianti.id=my_impianti_contratti.idimpianto';
+            $where[] = 'my_impianti_contratti.idcontratto='.prepare($superselect['idcontratto']);
+        }
+        $query .= ' |where| ORDER BY idsede';
 
         foreach ($elements as $element) {
             $filter[] = 'my_impianti.id='.prepare($element);
@@ -47,6 +52,9 @@ switch ($resource) {
 
         if (!empty($superselect['idanagrafica'])) {
             $where[] = 'my_impianti.idanagrafica='.prepare($superselect['idanagrafica']);
+        }
+
+        if (isset($superselect['idsede_destinazione']) && $superselect['idsede_destinazione'] != "") {
             $where[] = 'my_impianti.idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
         }
 

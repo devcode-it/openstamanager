@@ -172,16 +172,16 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "placeholder": "'.tr('Seleziona prima un impianto').'", "ajax-source": "componenti" ]}
         </div>
-
-        <div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-		</div>
     </div>
 
     <div class="row">
@@ -190,12 +190,12 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
-        </div>
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+		</div>
     </div>
 
     <div class="row">
@@ -668,6 +668,9 @@ echo '
                 input("idtipointervento").getElement()
                     .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
             }
+
+            updateSelectOption("idcontratto", contratto.get());
+            session_set("superselect,idcontratto",contratto.get(), 0);
         }
 	});
 

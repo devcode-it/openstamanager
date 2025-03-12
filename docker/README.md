@@ -35,9 +35,12 @@ wget https://raw.githubusercontent.com/devcode-it/openstamanager/refs/heads/mast
 
 # Avvio
 docker compose up -d
+
+# se non funziona, esegui
+docker-compose up -d
 ```
 
-Una volta scaricato puoi aprire il tuo browser all'indirizzo http://localhost:8090 e completare la configurazione con i dati di connessione al database al punto 3:
+Una volta scaricato puoi aprire il tuo browser all'indirizzo http://localhost:8080 e completare la configurazione con i dati di connessione al database al punto 3:
 - **Host del database:** db
 - **Username dell'utente MySQL:** root
 - **Password dell'utente MySQL:** secret
@@ -70,14 +73,17 @@ docker run -d \
 
 oppure nel file `docker-compose.yml`:
 
-```bash
+```yaml
+name: OSM
+
 services:
-  app:
-    build:
-      context: .
+
+  openstamanager:
+    image: devcodesrl/openstamanager:latest
     container_name: openstamanager
+    restart: unless-stopped
     ports:
-      - "8090:80"
+      - "8080:80"
     depends_on:
       - db
     environment:
@@ -88,16 +94,23 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=secret
     volumes:
-      - /percorso-locale-files:/var/www/html/files
-      - /percorso-locale-backup:/var/www/html/backup
+      - ./percorso-locale-files:/var/www/html/files
+      - ./percorso-locale-backup:/var/www/html/backup
 
   db:
-    image: mysql:8.0
+    image: mysql:8.3
     container_name: mysql
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: openstamanager
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: secret
+    command: 
+      - --sort_buffer_size=2M
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
 ```

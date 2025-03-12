@@ -7,7 +7,7 @@ services:
     container_name: openstamanager
     restart: unless-stopped
     ports:
-      - "8090:80"
+      - "8080:80"
     depends_on:
       - db
     environment:
@@ -22,7 +22,7 @@ services:
       - ./backup:/var/www/html/backup
 
   db:
-    image: mysql:8.0
+    image: mysql:8.3
     container_name: mysql
     restart: unless-stopped
     environment:

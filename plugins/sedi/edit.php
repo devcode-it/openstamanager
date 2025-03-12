@@ -26,7 +26,9 @@ $referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'id
 $referenti = implode(',', array_column($referenti, 'id'));
 
 $id_azienda = setting('Azienda predefinita');
-$utenti = $dbo->fetchArray('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record).' AND id_user != '.prepare($id_azienda));
+if ($id_parent == $id_azienda) {
+	$utenti = $dbo->fetchArray('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record).' AND id_user != '.prepare($id_azienda));
+}
 
 echo '
 <form action="" method="post" role="form" id="form_sedi">
@@ -36,7 +38,7 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="updatesede">';
 
-if (!$utenti) {
+if (!$utenti && $id_parent == $id_azienda) {
     echo '
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>

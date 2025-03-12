@@ -9,6 +9,10 @@ $files = glob($directory.'*.xml');
 
 $new_folder = 'files/'.$module->attachments_directory.'/';
 
+if (!file_exists($new_folder)) {
+    mkdir($new_folder, 0755, true);
+}
+
 $attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `name` = "Fattura Elettronica" AND `id_module` = '.$module->id);
 
 $attachments_filenames = array_column($attachments, 'filename');

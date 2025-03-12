@@ -52,7 +52,7 @@ function start_datatables( $elements ) {
             const column_search = [];
             $this.find("th").each(function () {
                 const id = $(this).attr('id').replace("th_", "");
-                const single_value = search["search_" + id] ? search["search_" + id] : "";
+                const single_value = search[(id_plugin ? id_plugin : "") + "_search_" + id] ? search[(id_plugin ? id_plugin : "") + "_search_" + id] : "";
 
                 column_search.push({
                     "sSearch": single_value,
@@ -159,7 +159,10 @@ function searchFieldName(field) {
  * @param {string} value
  */
 function setTableSearch(module_id, field, value) {
-    session_set('module_' + module_id + ',' + 'search_' + searchFieldName(field), value, 0);
+    let ids = module_id.split("-");
+    let id_module = ids[0];
+    let id_plugin = ids[1];
+    session_set('module_' + id_module + ',' + id_plugin + '_search_' + searchFieldName(field), value, 0);
 }
 
 /**
@@ -282,10 +285,11 @@ function initComplete(settings) {
 
         // Valore predefinito della ricerca
         let tempo;
+        const id_plugin = $this.data('idplugin');
         const header = $(column.header());
         const name = header.attr('id').replace('th_', '');
 
-        const value = search['search_' + name] ? search['search_' + name] : '';
+        const value = search[(id_plugin ? id_plugin : "") + "_search_" + name] ? search[(id_plugin ? id_plugin : "") + "_search_" + name] : '';
 
         if (value !== '') {
             forceSearch = true;
@@ -325,7 +329,7 @@ function initComplete(settings) {
                 }
 
                 // Impostazione delle sessioni per le ricerche del modulo e del campo specificati
-                const module_id = $this.data('idmodule'); //+ "-" + $this.data('idplugin');
+                const module_id = $this.data('idmodule') + "-" + $this.data('idplugin');
                 const field = $(this).parent().attr('id').replace('th_', '');
                 const value = $(this).val();
                 if (e.keyCode == 13 || $(this).val() == '') {

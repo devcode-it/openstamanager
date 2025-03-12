@@ -397,9 +397,9 @@ function getSearchValues($id_module)
     if (isset($_SESSION['module_'.$id_module])) {
         // Itera su tutti i valori
         foreach ($_SESSION['module_'.$id_module] as $key => $value) {
-            // Controlla se la chiave inizia con "search_"
-            if (!empty($value) && string_starts_with($key, 'search_')) {
-                $result[str_replace(['search_', '-'], ['', ' '], $key)] = $value;
+            // Controlla se la chiave inizia con "_search_"
+            if (!empty($value) && string_starts_with($key, '_search_')) {
+                $result[str_replace(['_search_', '-'], ['', ' '], $key)] = $value;
             }
         }
     }

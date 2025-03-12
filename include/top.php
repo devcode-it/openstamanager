@@ -92,12 +92,10 @@ if (Auth::check()) {
     $array = $_SESSION['module_'.$id_module];
     if (!empty($array)) {
         foreach ($array as $field => $value) {
-            if (!empty($value) && string_starts_with($field, 'search_')) {
-                $field_name = str_replace('search_', '', $field);
-
+            if (!empty($value) && str_contains($field, 'search_')) {
                 echo '
-            search.push("search_'.$field_name.'");
-            search["search_'.$field_name.'"] = "'.addslashes((string) $value).'";';
+                search.push("'.$field.'");
+                search["'.$field.'"] = "'.addslashes((string) $value).'";';
             }
         }
     }

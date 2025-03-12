@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__.'/../core.php';
+include __DIR__.'/../config.inc.php';
 
 $module = \Models\Module::where('name', 'Fatture di vendita')->first();
 

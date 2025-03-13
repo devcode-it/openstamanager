@@ -34,6 +34,26 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Residuo contratto' AND `id_module` = @id_module), 'Contract Residual');
 
 
+-- Aggiunta colonna Note interne in Preventivi
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Preventivi';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
+(@id_module, 'Note interne', "`co_preventivi`.`informazioniaggiuntive`", '18', '1', '0', '0', '0', '', '', '0', '0', '0');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Preventivi';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+
+-- Aggiunta colonna Note interne in Contratti
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
+(@id_module, 'Note interne', "`co_contratti`.`informazioniaggiuntive`", '18', '1', '0', '0', '0', '', '', '0', '0', '0');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+
 -- Allineamento vista Articoli
 UPDATE `zz_modules` SET `options` = "
 SELECT

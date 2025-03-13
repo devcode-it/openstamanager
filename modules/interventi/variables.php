@@ -27,8 +27,11 @@ $r = $dbo->fetchOne('SELECT *,
         (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `idintervento`=`in_interventi`.`id`) AS data_fine,
         `in_statiintervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
-        `in_interventi`.`descrizione` AS descrizione
+        `in_interventi`.`descrizione` AS descrizione,
+        `an_sedi`.`nomesede` AS sede,
+        CONCAT(`an_sedi`.`indirizzo`, \' \', `an_sedi`.`cap`, \'  \', `an_sedi`.`citta`, \' (\', `an_sedi`.`provincia`, \')\') AS sede_indirizzo
     FROM `in_interventi`
+        LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`idsede_destinazione`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
@@ -50,4 +53,6 @@ return [
     'stato' => $r['stato'],
     'impianti' => $r['impianti'],
     'nome_referente' => $r['nome'],
+    'sede' => $r['sede'],
+    'sede_indirizzo' => $r['sede_indirizzo'],
 ];

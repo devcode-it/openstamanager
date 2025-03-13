@@ -18,18 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-echo '
-<table style="color:#aaa; font-size:8px;">
-<tr>
-    <td align="left" style="width:97mm;">
-        '.tr('Generato con OpenSTAManager il _DATE_', ['_DATE_' => date('d/m/Y')]).'
-    </td>
-
-    <td class="text-right" style="width:97mm;">
-        '.tr('Pagina _PAGE_ di _TOTAL_', [
-    '_PAGE_' => '{PAGENO}',
-    '_TOTAL_' => '{nb}',
-]).'
-    </td>
-</tr>
-</table>';
+ echo '
+ <p class="text-right">
+     '.tr('_YEAR_/_PAGE_', [
+     '_PAGE_' => '{PAGENO}',
+     '_YEAR_' => date('Y'),
+ ]).'
+ </p>';

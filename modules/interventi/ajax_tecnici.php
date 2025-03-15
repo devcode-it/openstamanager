@@ -241,7 +241,7 @@ if (!empty($sessioni)) {
                     <i class="fa fa-edit"></i>
                 </button>
 
-				<button type="button" class="btn btn-xs btn-danger tip" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="'.tr('Elimina sessione').'" class="only_rw"><i class="fa fa-trash"></i></button>
+				<button type="button" class="btn btn-xs btn-danger tip" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="'.tr('Elimina sessione').'"><i class="fa fa-trash"></i></button>
             </td>';
         }
 

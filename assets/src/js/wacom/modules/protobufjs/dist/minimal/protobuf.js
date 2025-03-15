@@ -1,6 +1,6 @@
 /*!
- * protobuf.js v6.11.0 (c) 2016, daniel wirtz
- * compiled thu, 29 apr 2021 02:20:44 utc
+ * protobuf.js v7.1.0 (c) 2016, daniel wirtz
+ * compiled fri, 09 sep 2022 03:02:57 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1334,7 +1334,7 @@ module.exports = {};
 /**
  * Named roots.
  * This is where pbjs stores generated structures (the option `-r, --root` specifies a name).
- * Can also be used manually to make roots available accross modules.
+ * Can also be used manually to make roots available across modules.
  * @name roots
  * @type {Object.<string,Root>}
  * @example
@@ -2014,13 +2014,30 @@ function newError(name) {
             merge(this, properties);
     }
 
-    (CustomError.prototype = Object.create(Error.prototype)).constructor = CustomError;
-
-    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
-
-    CustomError.prototype.toString = function toString() {
-        return this.name + ": " + this.message;
-    };
+    CustomError.prototype = Object.create(Error.prototype, {
+        constructor: {
+            value: CustomError,
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+        name: {
+            get() { return name; },
+            set: undefined,
+            enumerable: false,
+            // configurable: false would accurately preserve the behavior of
+            // the original, but I'm guessing that was not intentional.
+            // For an actual error subclass, this property would
+            // be configurable.
+            configurable: true,
+        },
+        toString: {
+            value() { return this.name + ": " + this.message; },
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+    });
 
     return CustomError;
 }

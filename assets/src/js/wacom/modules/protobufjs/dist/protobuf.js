@@ -1,6 +1,6 @@
 /*!
- * protobuf.js v6.11.0 (c) 2016, daniel wirtz
- * compiled thu, 29 apr 2021 02:20:44 utc
+ * protobuf.js v7.1.0 (c) 2016, daniel wirtz
+ * compiled fri, 09 sep 2022 03:02:57 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1535,8 +1535,14 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
         if (field.resolvedType instanceof Enum) { gen
             ("switch(d%s){", prop);
             for (var values = field.resolvedType.values, keys = Object.keys(values), i = 0; i < keys.length; ++i) {
-                if (field.repeated && values[keys[i]] === field.typeDefault) gen
-                ("default:");
+                // enum unknown values passthrough
+                if (values[keys[i]] === field.typeDefault) { gen
+                    ("default:")
+                        ("if(typeof(d%s)===\"number\"){m%s=d%s;break}", prop, prop, prop);
+                    if (!field.repeated) gen // fallback to default value only for
+                                             // arrays, to avoid leaving holes.
+                        ("break");           // for non-repeated fields, just ignore
+                }
                 gen
                 ("case%j:", keys[i])
                 ("case %i:", values[keys[i]])
@@ -1583,7 +1589,7 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             case "bytes": gen
                 ("if(typeof d%s===\"string\")", prop)
                     ("util.base64.decode(d%s,m%s=util.newBuffer(util.base64.length(d%s)),0)", prop, prop, prop)
-                ("else if(d%s.length)", prop)
+                ("else if(d%s.length >= 0)", prop)
                     ("m%s=d%s", prop, prop);
                 break;
             case "string": gen
@@ -1668,7 +1674,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     if (field.resolvedType) {
         if (field.resolvedType instanceof Enum) gen
-            ("d%s=o.enums===String?types[%i].values[m%s]:m%s", prop, fieldIndex, prop, prop);
+            ("d%s=o.enums===String?(types[%i].values[m%s]===undefined?m%s:types[%i].values[m%s]):m%s", prop, fieldIndex, prop, prop, fieldIndex, prop, prop);
         else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
@@ -1840,7 +1846,7 @@ function decoder(mtype) {
         var field = mtype._fieldsArray[i].resolve(),
             type  = field.resolvedType instanceof Enum ? "int32" : field.type,
             ref   = "m" + util.safeProp(field.name); gen
-            ("case %i:", field.id);
+            ("case %i: {", field.id);
 
         // Map fields
         if (field.map) { gen
@@ -1911,8 +1917,9 @@ function decoder(mtype) {
         else gen
                 ("%s=r.%s()", ref, type);
         gen
-                ("break");
-    // Unknown fields
+                ("break")
+            ("}");
+        // Unknown fields
     } gen
             ("default:")
                 ("r.skipType(t&7)")
@@ -2057,8 +2064,9 @@ var Namespace = require(23),
  * @param {Object.<string,*>} [options] Declared options
  * @param {string} [comment] The comment for this enum
  * @param {Object.<string,string>} [comments] The value comments for this enum
+ * @param {Object.<string,Object<string,*>>|undefined} [valuesOptions] The value options for this enum
  */
-function Enum(name, values, options, comment, comments) {
+function Enum(name, values, options, comment, comments, valuesOptions) {
     ReflectionObject.call(this, name, options);
 
     if (values && typeof values !== "object")
@@ -2087,6 +2095,12 @@ function Enum(name, values, options, comment, comments) {
      * @type {Object.<string,string>}
      */
     this.comments = comments || {};
+
+    /**
+     * Values options, if any
+     * @type {Object<string, Object<string, *>>|undefined}
+     */
+    this.valuesOptions = valuesOptions;
 
     /**
      * Reserved ranges, if any.
@@ -2132,11 +2146,12 @@ Enum.fromJSON = function fromJSON(name, json) {
 Enum.prototype.toJSON = function toJSON(toJSONOptions) {
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
-        "options"  , this.options,
-        "values"   , this.values,
-        "reserved" , this.reserved && this.reserved.length ? this.reserved : undefined,
-        "comment"  , keepComments ? this.comment : undefined,
-        "comments" , keepComments ? this.comments : undefined
+        "options"       , this.options,
+        "valuesOptions" , this.valuesOptions,
+        "values"        , this.values,
+        "reserved"      , this.reserved && this.reserved.length ? this.reserved : undefined,
+        "comment"       , keepComments ? this.comment : undefined,
+        "comments"      , keepComments ? this.comments : undefined
     ]);
 };
 
@@ -2145,11 +2160,12 @@ Enum.prototype.toJSON = function toJSON(toJSONOptions) {
  * @param {string} name Value name
  * @param {number} id Value id
  * @param {string} [comment] Comment, if any
+ * @param {Object.<string, *>|undefined} [options] Options, if any
  * @returns {Enum} `this`
  * @throws {TypeError} If arguments are invalid
  * @throws {Error} If there is already a value with this name or id
  */
-Enum.prototype.add = function add(name, id, comment) {
+Enum.prototype.add = function add(name, id, comment, options) {
     // utilized by the parser but not by .fromJSON
 
     if (!util.isString(name))
@@ -2174,6 +2190,12 @@ Enum.prototype.add = function add(name, id, comment) {
     } else
         this.valuesById[this.values[name] = id] = name;
 
+    if (options) {
+        if (this.valuesOptions === undefined)
+            this.valuesOptions = {};
+        this.valuesOptions[name] = options || null;
+    }
+
     this.comments[name] = comment || null;
     return this;
 };
@@ -2197,6 +2219,8 @@ Enum.prototype.remove = function remove(name) {
     delete this.valuesById[val];
     delete this.values[name];
     delete this.comments[name];
+    if (this.valuesOptions)
+        delete this.valuesOptions[name];
 
     return this;
 };
@@ -2492,6 +2516,9 @@ Field.prototype.resolve = function resolve() {
             this.typeDefault = null;
         else // instanceof Enum
             this.typeDefault = this.resolvedType.values[Object.keys(this.resolvedType.values)[0]]; // first defined
+    } else if (this.options && this.options.proto3_optional) {
+        // proto3 scalar value marked optional; should default to null
+        this.typeDefault = null;
     }
 
     // use explicitly set default value if present
@@ -3192,7 +3219,8 @@ var ReflectionObject = require(24);
 ((Namespace.prototype = Object.create(ReflectionObject.prototype)).constructor = Namespace).className = "Namespace";
 
 var Field    = require(16),
-    util     = require(37);
+    util     = require(37),
+    OneOf    = require(25);
 
 var Type,    // cyclic
     Service,
@@ -3403,7 +3431,7 @@ Namespace.prototype.getEnum = function getEnum(name) {
  */
 Namespace.prototype.add = function add(object) {
 
-    if (!(object instanceof Field && object.extend !== undefined || object instanceof Type || object instanceof Enum || object instanceof Service || object instanceof Namespace))
+    if (!(object instanceof Field && object.extend !== undefined || object instanceof Type  || object instanceof OneOf || object instanceof Enum || object instanceof Service || object instanceof Namespace))
         throw TypeError("object must be a valid nested object");
 
     if (!this.nested)
@@ -3618,7 +3646,7 @@ Namespace._configure = function(Type_, Service_, Enum_) {
     Enum    = Enum_;
 };
 
-},{"16":16,"24":24,"37":37}],24:[function(require,module,exports){
+},{"16":16,"24":24,"25":25,"37":37}],24:[function(require,module,exports){
 "use strict";
 module.exports = ReflectionObject;
 
@@ -4514,6 +4542,14 @@ function parse(source, root, options) {
                     }
                     break;
 
+                case "message":
+                    parseType(type, token);
+                    break;
+
+                case "enum":
+                    parseEnum(type, token);
+                    break;
+
                 /* istanbul ignore next */
                 default:
                     throw illegal(token); // there are no groups with proto3 semantics
@@ -4614,7 +4650,14 @@ function parse(source, root, options) {
 
         skip("=");
         var value = parseId(next(), true),
-            dummy = {};
+            dummy = {
+                options: undefined
+            };
+        dummy.setOption = function(name, value) {
+            if (this.options === undefined)
+                this.options = {};
+            this.options[name] = value;
+        };
         ifBlock(dummy, function parseEnumValue_block(token) {
 
             /* istanbul ignore else */
@@ -4627,7 +4670,7 @@ function parse(source, root, options) {
         }, function parseEnumValue_line() {
             parseInlineOptions(dummy); // skip
         });
-        parent.add(token, value, dummy.comment);
+        parent.add(token, value, dummy.comment, dummy.options);
     }
 
     function parseOption(parent, token) {
@@ -4647,7 +4690,7 @@ function parse(source, root, options) {
             option = name;
             token = peek();
             if (fqTypeRefRe.test(token)) {
-                propName = token.substr(1); //remove '.' before property name
+                propName = token.slice(1); //remove '.' before property name
                 name += token;
                 next();
             }
@@ -4658,33 +4701,57 @@ function parse(source, root, options) {
     }
 
     function parseOptionValue(parent, name) {
-        if (skip("{", true)) { // { a: "foo" b { c: "bar" } }
-            var result = {};
+        // { a: "foo" b { c: "bar" } }
+        if (skip("{", true)) {
+            var objectResult = {};
+
             while (!skip("}", true)) {
                 /* istanbul ignore if */
-                if (!nameRe.test(token = next()))
+                if (!nameRe.test(token = next())) {
                     throw illegal(token, "name");
+                }
 
                 var value;
                 var propName = token;
+
+                skip(":", true);
+
                 if (peek() === "{")
                     value = parseOptionValue(parent, name + "." + token);
-                else {
-                    skip(":");
-                    if (peek() === "{")
-                        value = parseOptionValue(parent, name + "." + token);
-                    else {
-                        value = readValue(true);
-                        setOption(parent, name + "." + token, value);
+                else if (peek() === "[") {
+                    // option (my_option) = {
+                    //     repeated_value: [ "foo", "bar" ]
+                    // };
+                    value = [];
+                    var lastValue;
+                    if (skip("[", true)) {
+                        do {
+                            lastValue = readValue(true);
+                            value.push(lastValue);
+                        } while (skip(",", true));
+                        skip("]");
+                        if (typeof lastValue !== "undefined") {
+                            setOption(parent, name + "." + token, lastValue);
+                        }
                     }
+                } else {
+                    value = readValue(true);
+                    setOption(parent, name + "." + token, value);
                 }
-                var prevValue = result[propName];
+
+                var prevValue = objectResult[propName];
+
                 if (prevValue)
                     value = [].concat(prevValue).concat(value);
-                result[propName] = value;
+
+                objectResult[propName] = value;
+
+                // Semicolons and commas can be optional
                 skip(",", true);
+                skip(";", true);
             }
-            return result;
+
+            return objectResult;
         }
 
         var simpleValue = readValue(true);
@@ -5728,7 +5795,7 @@ module.exports = {};
 /**
  * Named roots.
  * This is where pbjs stores generated structures (the option `-r, --root` specifies a name).
- * Can also be used manually to make roots available accross modules.
+ * Can also be used manually to make roots available across modules.
  * @name roots
  * @type {Object.<string,Root>}
  * @example
@@ -6198,11 +6265,8 @@ function tokenize(source, alternateCommentMode) {
     var offset = 0,
         length = source.length,
         line = 1,
-        commentType = null,
-        commentText = null,
-        commentLine = 0,
-        commentLineEmpty = false,
-        commentIsLeading = false;
+        lastCommentLine = 0,
+        comments = {};
 
     var stack = [];
 
@@ -6255,10 +6319,11 @@ function tokenize(source, alternateCommentMode) {
      * @inner
      */
     function setComment(start, end, isLeading) {
-        commentType = source.charAt(start++);
-        commentLine = line;
-        commentLineEmpty = false;
-        commentIsLeading = isLeading;
+        var comment = {
+            type: source.charAt(start++),
+            lineEmpty: false,
+            leading: isLeading,
+        };
         var lookback;
         if (alternateCommentMode) {
             lookback = 2;  // alternate comment parsing: "//" or "/*"
@@ -6270,7 +6335,7 @@ function tokenize(source, alternateCommentMode) {
         do {
             if (--commentOffset < 0 ||
                     (c = source.charAt(commentOffset)) === "\n") {
-                commentLineEmpty = true;
+                comment.lineEmpty = true;
                 break;
             }
         } while (c === " " || c === "\t");
@@ -6281,9 +6346,12 @@ function tokenize(source, alternateCommentMode) {
             lines[i] = lines[i]
                 .replace(alternateCommentMode ? setCommentAltRe : setCommentRe, "")
                 .trim();
-        commentText = lines
+        comment.text = lines
             .join("\n")
             .trim();
+
+        comments[line] = comment;
+        lastCommentLine = line;
     }
 
     function isDoubleSlashCommentLine(startOffset) {
@@ -6352,6 +6420,9 @@ function tokenize(source, alternateCommentMode) {
                         ++offset;
                         if (isDoc) {
                             setComment(start, offset - 1, isLeadingComment);
+                            // Trailing comment cannot not be multi-line,
+                            // so leading comment state should be reset to handle potential next comments
+                            isLeadingComment = true;
                         }
                         ++line;
                         repeat = true;
@@ -6367,12 +6438,17 @@ function tokenize(source, alternateCommentMode) {
                                     break;
                                 }
                                 offset++;
+                                if (!isLeadingComment) {
+                                    // Trailing comment cannot not be multi-line
+                                    break;
+                                }
                             } while (isDoubleSlashCommentLine(offset));
                         } else {
                             offset = Math.min(length, findEndOfLine(offset) + 1);
                         }
                         if (isDoc) {
                             setComment(start, offset, isLeadingComment);
+                            isLeadingComment = true;
                         }
                         line++;
                         repeat = true;
@@ -6394,6 +6470,7 @@ function tokenize(source, alternateCommentMode) {
                     ++offset;
                     if (isDoc) {
                         setComment(start, offset - 2, isLeadingComment);
+                        isLeadingComment = true;
                     }
                     repeat = true;
                 } else {
@@ -6469,17 +6546,22 @@ function tokenize(source, alternateCommentMode) {
      */
     function cmnt(trailingLine) {
         var ret = null;
+        var comment;
         if (trailingLine === undefined) {
-            if (commentLine === line - 1 && (alternateCommentMode || commentType === "*" || commentLineEmpty)) {
-                ret = commentIsLeading ? commentText : null;
+            comment = comments[line - 1];
+            delete comments[line - 1];
+            if (comment && (alternateCommentMode || comment.type === "*" || comment.lineEmpty)) {
+                ret = comment.leading ? comment.text : null;
             }
         } else {
             /* istanbul ignore else */
-            if (commentLine < trailingLine) {
+            if (lastCommentLine < trailingLine) {
                 peek();
             }
-            if (commentLine === trailingLine && !commentLineEmpty && (alternateCommentMode || commentType === "/")) {
-                ret = commentIsLeading ? null : commentText;
+            comment = comments[trailingLine];
+            delete comments[trailingLine];
+            if (comment && !comment.lineEmpty && (alternateCommentMode || comment.type === "/")) {
+                ret = comment.leading ? null : comment.text;
             }
         }
         return ret;
@@ -7465,6 +7547,9 @@ util.decorateEnum = function decorateEnum(object) {
 util.setProperty = function setProperty(dst, path, value) {
     function setProp(dst, path, value) {
         var part = path.shift();
+        if (part === "__proto__") {
+          return dst;
+        }
         if (path.length > 0) {
             dst[part] = setProp(dst[part] || {}, path, value);
         } else {
@@ -7982,13 +8067,30 @@ function newError(name) {
             merge(this, properties);
     }
 
-    (CustomError.prototype = Object.create(Error.prototype)).constructor = CustomError;
-
-    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
-
-    CustomError.prototype.toString = function toString() {
-        return this.name + ": " + this.message;
-    };
+    CustomError.prototype = Object.create(Error.prototype, {
+        constructor: {
+            value: CustomError,
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+        name: {
+            get() { return name; },
+            set: undefined,
+            enumerable: false,
+            // configurable: false would accurately preserve the behavior of
+            // the original, but I'm guessing that was not intentional.
+            // For an actual error subclass, this property would
+            // be configurable.
+            configurable: true,
+        },
+        toString: {
+            value() { return this.name + ": " + this.message; },
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+    });
 
     return CustomError;
 }
@@ -8352,7 +8454,7 @@ wrappers[".google.protobuf.Any"] = {
             if (type) {
                 // type_url does not accept leading "."
                 var type_url = object["@type"].charAt(0) === "." ?
-                    object["@type"].substr(1) : object["@type"];
+                    object["@type"].slice(1) : object["@type"];
                 // type_url prefix is optional, but path seperator is required
                 if (type_url.indexOf("/") === -1) {
                     type_url = "/" + type_url;
@@ -8390,7 +8492,7 @@ wrappers[".google.protobuf.Any"] = {
         if (!(message instanceof this.ctor) && message instanceof Message) {
             var object = message.$type.toObject(message, options);
             var messageName = message.$type.fullName[0] === "." ?
-                message.$type.fullName.substr(1) : message.$type.fullName;
+                message.$type.fullName.slice(1) : message.$type.fullName;
             // Default to type.googleapis.com prefix if no prefix is used
             if (prefix === "") {
                 prefix = googleApi;

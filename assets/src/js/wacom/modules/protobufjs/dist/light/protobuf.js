@@ -1,6 +1,6 @@
 /*!
- * protobuf.js v6.11.0 (c) 2016, daniel wirtz
- * compiled thu, 29 apr 2021 02:20:44 utc
+ * protobuf.js v7.1.0 (c) 2016, daniel wirtz
+ * compiled fri, 09 sep 2022 03:02:57 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1134,8 +1134,14 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
         if (field.resolvedType instanceof Enum) { gen
             ("switch(d%s){", prop);
             for (var values = field.resolvedType.values, keys = Object.keys(values), i = 0; i < keys.length; ++i) {
-                if (field.repeated && values[keys[i]] === field.typeDefault) gen
-                ("default:");
+                // enum unknown values passthrough
+                if (values[keys[i]] === field.typeDefault) { gen
+                    ("default:")
+                        ("if(typeof(d%s)===\"number\"){m%s=d%s;break}", prop, prop, prop);
+                    if (!field.repeated) gen // fallback to default value only for
+                                             // arrays, to avoid leaving holes.
+                        ("break");           // for non-repeated fields, just ignore
+                }
                 gen
                 ("case%j:", keys[i])
                 ("case %i:", values[keys[i]])
@@ -1182,7 +1188,7 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             case "bytes": gen
                 ("if(typeof d%s===\"string\")", prop)
                     ("util.base64.decode(d%s,m%s=util.newBuffer(util.base64.length(d%s)),0)", prop, prop, prop)
-                ("else if(d%s.length)", prop)
+                ("else if(d%s.length >= 0)", prop)
                     ("m%s=d%s", prop, prop);
                 break;
             case "string": gen
@@ -1267,7 +1273,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     if (field.resolvedType) {
         if (field.resolvedType instanceof Enum) gen
-            ("d%s=o.enums===String?types[%i].values[m%s]:m%s", prop, fieldIndex, prop, prop);
+            ("d%s=o.enums===String?(types[%i].values[m%s]===undefined?m%s:types[%i].values[m%s]):m%s", prop, fieldIndex, prop, prop, fieldIndex, prop, prop);
         else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
@@ -1439,7 +1445,7 @@ function decoder(mtype) {
         var field = mtype._fieldsArray[i].resolve(),
             type  = field.resolvedType instanceof Enum ? "int32" : field.type,
             ref   = "m" + util.safeProp(field.name); gen
-            ("case %i:", field.id);
+            ("case %i: {", field.id);
 
         // Map fields
         if (field.map) { gen
@@ -1510,8 +1516,9 @@ function decoder(mtype) {
         else gen
                 ("%s=r.%s()", ref, type);
         gen
-                ("break");
-    // Unknown fields
+                ("break")
+            ("}");
+        // Unknown fields
     } gen
             ("default:")
                 ("r.skipType(t&7)")
@@ -1656,8 +1663,9 @@ var Namespace = require(21),
  * @param {Object.<string,*>} [options] Declared options
  * @param {string} [comment] The comment for this enum
  * @param {Object.<string,string>} [comments] The value comments for this enum
+ * @param {Object.<string,Object<string,*>>|undefined} [valuesOptions] The value options for this enum
  */
-function Enum(name, values, options, comment, comments) {
+function Enum(name, values, options, comment, comments, valuesOptions) {
     ReflectionObject.call(this, name, options);
 
     if (values && typeof values !== "object")
@@ -1686,6 +1694,12 @@ function Enum(name, values, options, comment, comments) {
      * @type {Object.<string,string>}
      */
     this.comments = comments || {};
+
+    /**
+     * Values options, if any
+     * @type {Object<string, Object<string, *>>|undefined}
+     */
+    this.valuesOptions = valuesOptions;
 
     /**
      * Reserved ranges, if any.
@@ -1731,11 +1745,12 @@ Enum.fromJSON = function fromJSON(name, json) {
 Enum.prototype.toJSON = function toJSON(toJSONOptions) {
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
-        "options"  , this.options,
-        "values"   , this.values,
-        "reserved" , this.reserved && this.reserved.length ? this.reserved : undefined,
-        "comment"  , keepComments ? this.comment : undefined,
-        "comments" , keepComments ? this.comments : undefined
+        "options"       , this.options,
+        "valuesOptions" , this.valuesOptions,
+        "values"        , this.values,
+        "reserved"      , this.reserved && this.reserved.length ? this.reserved : undefined,
+        "comment"       , keepComments ? this.comment : undefined,
+        "comments"      , keepComments ? this.comments : undefined
     ]);
 };
 
@@ -1744,11 +1759,12 @@ Enum.prototype.toJSON = function toJSON(toJSONOptions) {
  * @param {string} name Value name
  * @param {number} id Value id
  * @param {string} [comment] Comment, if any
+ * @param {Object.<string, *>|undefined} [options] Options, if any
  * @returns {Enum} `this`
  * @throws {TypeError} If arguments are invalid
  * @throws {Error} If there is already a value with this name or id
  */
-Enum.prototype.add = function add(name, id, comment) {
+Enum.prototype.add = function add(name, id, comment, options) {
     // utilized by the parser but not by .fromJSON
 
     if (!util.isString(name))
@@ -1773,6 +1789,12 @@ Enum.prototype.add = function add(name, id, comment) {
     } else
         this.valuesById[this.values[name] = id] = name;
 
+    if (options) {
+        if (this.valuesOptions === undefined)
+            this.valuesOptions = {};
+        this.valuesOptions[name] = options || null;
+    }
+
     this.comments[name] = comment || null;
     return this;
 };
@@ -1796,6 +1818,8 @@ Enum.prototype.remove = function remove(name) {
     delete this.valuesById[val];
     delete this.values[name];
     delete this.comments[name];
+    if (this.valuesOptions)
+        delete this.valuesOptions[name];
 
     return this;
 };
@@ -2091,6 +2115,9 @@ Field.prototype.resolve = function resolve() {
             this.typeDefault = null;
         else // instanceof Enum
             this.typeDefault = this.resolvedType.values[Object.keys(this.resolvedType.values)[0]]; // first defined
+    } else if (this.options && this.options.proto3_optional) {
+        // proto3 scalar value marked optional; should default to null
+        this.typeDefault = null;
     }
 
     // use explicitly set default value if present
@@ -2777,7 +2804,8 @@ var ReflectionObject = require(22);
 ((Namespace.prototype = Object.create(ReflectionObject.prototype)).constructor = Namespace).className = "Namespace";
 
 var Field    = require(15),
-    util     = require(33);
+    util     = require(33),
+    OneOf    = require(23);
 
 var Type,    // cyclic
     Service,
@@ -2988,7 +3016,7 @@ Namespace.prototype.getEnum = function getEnum(name) {
  */
 Namespace.prototype.add = function add(object) {
 
-    if (!(object instanceof Field && object.extend !== undefined || object instanceof Type || object instanceof Enum || object instanceof Service || object instanceof Namespace))
+    if (!(object instanceof Field && object.extend !== undefined || object instanceof Type  || object instanceof OneOf || object instanceof Enum || object instanceof Service || object instanceof Namespace))
         throw TypeError("object must be a valid nested object");
 
     if (!this.nested)
@@ -3203,7 +3231,7 @@ Namespace._configure = function(Type_, Service_, Enum_) {
     Enum    = Enum_;
 };
 
-},{"15":15,"22":22,"33":33}],22:[function(require,module,exports){
+},{"15":15,"22":22,"23":23,"33":33}],22:[function(require,module,exports){
 "use strict";
 module.exports = ReflectionObject;
 
@@ -4491,7 +4519,7 @@ module.exports = {};
 /**
  * Named roots.
  * This is where pbjs stores generated structures (the option `-r, --root` specifies a name).
- * Can also be used manually to make roots available accross modules.
+ * Can also be used manually to make roots available across modules.
  * @name roots
  * @type {Object.<string,Root>}
  * @example
@@ -5823,6 +5851,9 @@ util.decorateEnum = function decorateEnum(object) {
 util.setProperty = function setProperty(dst, path, value) {
     function setProp(dst, path, value) {
         var part = path.shift();
+        if (part === "__proto__") {
+          return dst;
+        }
         if (path.length > 0) {
             dst[part] = setProp(dst[part] || {}, path, value);
         } else {
@@ -6340,13 +6371,30 @@ function newError(name) {
             merge(this, properties);
     }
 
-    (CustomError.prototype = Object.create(Error.prototype)).constructor = CustomError;
-
-    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
-
-    CustomError.prototype.toString = function toString() {
-        return this.name + ": " + this.message;
-    };
+    CustomError.prototype = Object.create(Error.prototype, {
+        constructor: {
+            value: CustomError,
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+        name: {
+            get() { return name; },
+            set: undefined,
+            enumerable: false,
+            // configurable: false would accurately preserve the behavior of
+            // the original, but I'm guessing that was not intentional.
+            // For an actual error subclass, this property would
+            // be configurable.
+            configurable: true,
+        },
+        toString: {
+            value() { return this.name + ": " + this.message; },
+            writable: true,
+            enumerable: false,
+            configurable: true,
+        },
+    });
 
     return CustomError;
 }
@@ -6710,7 +6758,7 @@ wrappers[".google.protobuf.Any"] = {
             if (type) {
                 // type_url does not accept leading "."
                 var type_url = object["@type"].charAt(0) === "." ?
-                    object["@type"].substr(1) : object["@type"];
+                    object["@type"].slice(1) : object["@type"];
                 // type_url prefix is optional, but path seperator is required
                 if (type_url.indexOf("/") === -1) {
                     type_url = "/" + type_url;
@@ -6748,7 +6796,7 @@ wrappers[".google.protobuf.Any"] = {
         if (!(message instanceof this.ctor) && message instanceof Message) {
             var object = message.$type.toObject(message, options);
             var messageName = message.$type.fullName[0] === "." ?
-                message.$type.fullName.substr(1) : message.$type.fullName;
+                message.$type.fullName.slice(1) : message.$type.fullName;
             // Default to type.googleapis.com prefix if no prefix is used
             if (prefix === "") {
                 prefix = googleApi;

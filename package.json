@@ -41,6 +41,7 @@
         "parsleyjs": "^2.7.2",
         "pdfjs-viewer-element": "2.5.4",
         "popper.js": "^1.16.1",
+        "protobufjs": "7.2.4",
         "pwstrength-bootstrap": "^3.0.4",
         "readmore.js": "^2.0.4",
         "select2": "^4.0.3",
@@ -88,7 +89,8 @@
         "dump-OSM": "php composer.phar dump-autoload",
         "windows-fix": "yarn global add windows-build-tools",
         "php-cs-fix": "vendor/bin/php-cs-fixer fix",
-        "rector": "vendor/bin/rector process"
+        "rector": "vendor/bin/rector process",
+        "setup-corepack": "npm install -g corepack && corepack enable"
     },
     "packageManager": "yarn@4.6.0"
 }

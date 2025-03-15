@@ -311,6 +311,13 @@ function wacom(){
         
 }
 
+function protobufjs() {
+    return gulp.src([
+        config.nodeDirectory + '/protobufjs/**/*',
+    ])
+        .pipe(gulp.dest(config.development + '/' + config.paths.js + '/wacom/modules/protobufjs'));
+}
+
 // Elaborazione dei fonts
 const fonts = gulp.parallel(() => {
     const vendor = [
@@ -604,7 +611,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, uaparser, hotkeys, chartjs, password_strength, csrf, leaflet, wacom));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, ckeditor, colorpicker, i18n, pdfjs, uaparser, hotkeys, chartjs, password_strength, csrf, leaflet, protobufjs, wacom));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

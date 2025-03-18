@@ -53,7 +53,7 @@ foreach ($fatture as $fattura) {
 }
 
 // Fix registrazioni contabili associate a conti rimossi
-$fatture_senzanome = $dbo->fetchArray('SELECT `iddocumento`, `idconto` FROM `co_movimenti` WHERE `idconto` NOT IN (SELECT `id` FROM `co_pianodeiconti3`)');
+$fatture_senzanome = $dbo->fetchArray('SELECT `iddocumento`, `idconto` FROM `co_movimenti` WHERE `idconto` NOT IN (SELECT `id` FROM `co_pianodeiconti3`) AND `iddocumento` != 0');
 foreach ($fatture_senzanome as $fattura) {
     $documento = Fattura::find($fattura['iddocumento']);
     $conto = ($documento->tipo->dir == 'uscita' ? $documento->anagrafica->idconto_fornitore : $documento->anagrafica->idconto_cliente);

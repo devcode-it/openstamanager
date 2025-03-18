@@ -119,6 +119,8 @@ if (Auth::check()) {
         'thisYear' => tr("Quest'anno"),
         'lastYear' => tr('Anno scorso'),
         'lastYear_thisYear' => tr("Quest'anno + prec."),
+        'lastDays' => tr('Ultimi 365 giorni'),
+        'customSettings' => tr('Da impostazioni'),
         'apply' => tr('Applica'),
         'cancel' => tr('Annulla'),
         'from' => tr('Da'),
@@ -233,8 +235,12 @@ if (Auth::check()) {
 
                 start_date: "'.$_SESSION['period_start'].'",
                 start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
+                start_date_settings: "'.Translator::dateToEnglish(setting('Inizio periodo calendario')).'",
+                start_date_settings_formatted: "'.setting('Inizio periodo calendario').'",
                 end_date: "'.$_SESSION['period_end'].'",
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
+                end_date_settings: "'.Translator::dateToEnglish(setting('Fine periodo calendario')).'",
+                end_date_settings_formatted: "'.setting('Fine periodo calendario').'",
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
                 collapse_plugin_sidebar: '.($has_plugins ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',

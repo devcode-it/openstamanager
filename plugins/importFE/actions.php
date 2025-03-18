@@ -145,7 +145,7 @@ switch (filter('op')) {
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);
-        $id_fattura = $fattura_pa->save($info);
+        $id_fattura = $fattura_pa->save($info, 'Fornitore');
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');

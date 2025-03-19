@@ -40,7 +40,7 @@ if (!$is_anagrafica_deleted) {
         </button>';
         if ($dir == 'entrata') {
             echo '
-        <ul class="dropdown-menu dropdown-menu-right">
+        <ul class="dropdown-menu dropdown-menu-left">
             <a class="btn dropdown-item" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
                 '.tr('Nota di debito').'
             </a>

@@ -29,7 +29,7 @@ if (!$is_anagrafica_deleted) {
             <i class="fa fa-magic"></i> 
             '.tr('Crea').'...
         </button>
-        <div class="dropdown-menu dropdown-menu-right">';
+        <div class="dropdown-menu dropdown-menu-left">';
 
         // Aggiunta utente per i tecnici
         if (in_array($id_tecnico, $tipi_anagrafica)) {

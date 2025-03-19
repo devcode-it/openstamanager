@@ -38,7 +38,7 @@ switch (post('op')) {
 
         break;
 
-    // Rimuovo impianto e scollego tutti i suoi componenti
+        // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete-bulk':
         $n_impianti = 0;
 

@@ -90,7 +90,7 @@ if (!$is_anagrafica_deleted) {
             <i class="fa fa-magic"></i> '.tr('Crea').'
             <span class="caret"></span>
         </button>
-        <div class="dropdown-menu dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-left">
             <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea fattura').'">
                 <i class="fa fa-file"></i> '.tr('Fattura di vendita').'
             </a>

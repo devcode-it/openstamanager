@@ -44,7 +44,7 @@ if (!$is_anagrafica_deleted) {
             <i class="fa fa-magic"></i> '.tr('Crea').'
             <span class="caret"></span>
         </button>
-        <ul class="dropdown-menu dropdown-menu-right">
+        <ul class="dropdown-menu dropdown-menu-left">
 
             <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=intervento" data-toggle="modal" data-title="'.tr('Crea attività').'">
                 <i class="fa fa-wrench"></i> '.tr('Attività').'

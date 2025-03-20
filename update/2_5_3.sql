@@ -85,32 +85,6 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 
 UPDATE `em_templates_lang` SET `body` = '<p>Spett.le {ragione_sociale},</p>\n\n<p>da un riscontro contabile, ci risulta che la fattura numero {numero} a Voi intestata, riporti il mancato pagamento delle seguenti rate:</p>\n\n<p>{scadenze_fatture_scadute}</p>\n\n<p>La sollecitiamo pertanto di provvedere quanto prima a regolarizzare la sua situazione contabile. A tal proposito, il pagamento potrà essere effettuato tramite {pagamento}.</p>\n\n<p>Se ha già provveduto al pagamento, ritenga nulla la presente.</p>\n\n<p> </p>\n\n<p>La ringraziamo e le porgiamo i nostri saluti.</p>' WHERE `em_templates_lang`.`title` = 'Sollecito di pagamento'; 
 
--- Allineamento vista Articoli
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `mg_articoli`
-    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_impegnata, `or_righe_ordini`.`idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `idarticolo`) a ON `a`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_ordinata, `or_righe_ordini`.`idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1
-    GROUP BY `idarticolo`) ordini_fornitore ON `ordini_fornitore`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN `mg_categorie` ON `mg_articoli`.`id_categoria` = `mg_categorie`.`id`
-    LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.|lang|)
-    LEFT JOIN `mg_categorie` AS sottocategorie ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`
-    LEFT JOIN `mg_categorie_lang` AS sottocategorie_lang ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.|lang|)
-    LEFT JOIN (SELECT `co_iva`.`percentuale` AS perc, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id`=`zz_settings`.`valore`)AS iva ON `iva`.`nome`= 'Iva predefinita' 
-WHERE
-    1=1 AND(`mg_articoli`.`deleted_at`) IS NULL
-GROUP BY
-    `mg_articoli`.`id`
-HAVING
-    2=2
-ORDER BY
-    `mg_articoli_lang`.`title`" WHERE `name` = 'Articoli';
-
 -- Aggiunte note sessioni
 ALTER TABLE `in_interventi_tecnici` ADD `note` TEXT NOT NULL AFTER `tipo_scontokm`; 
 

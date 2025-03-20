@@ -12,6 +12,11 @@ $files = [
     'templates/preventivi/settings.php',
     'templates/prima_nota/settings.php',
     'templates/scadenzario/settings.php',
+    'assets/src/js/wacom/modules/protobufjs/bin/',
+    'assets/src/js/wacom/modules/protobufjs/cli/',
+    'assets/src/js/wacom/modules/protobufjs/CHANGELOG.md',
+    'assets/src/js/wacom/modules/protobufjs/scripts/changelog.js',
+    'assets/src/js/wacom/modules/protobufjs/dist/minimal/README.md',
 ];
 
 foreach ($files as $key => $value) {

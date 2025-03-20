@@ -168,7 +168,7 @@ function updateHook(hook) {
 
             // Rimozione eventuale della rotella di caricamento
             var counter = $("#hooks-counter").text();
-            var number = $("#hooks > li").length;
+            var number = $("#hooks > div").length;
 
             if (number == 0) {
                 $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');

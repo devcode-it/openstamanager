@@ -255,4 +255,13 @@ $(document).ready(function () {
     });
 })
 </script>';
+} else {
+    echo '
+    <script>
+$(document).ready(function () {
+    input("idtipodocumento_add").change(function () {
+        $("#id_segment_add").selectSetNew($(this).selectData().id_segment, $(this).selectData().name_segment);
+    });
+})
+</script>';
 }

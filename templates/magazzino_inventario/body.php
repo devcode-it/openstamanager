@@ -28,7 +28,7 @@ $structure = Module::where('name', 'Articoli')->first();
 // Valori di ricerca
 $where['servizio'] = '0';
 
-foreach (getSearchValues($id_module) as $key => $value) {
+foreach (getSearchValues($structure->id) as $key => $value) {
     $where[$key] = $value;
 }
 

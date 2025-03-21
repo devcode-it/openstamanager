@@ -54,8 +54,8 @@ echo '
 foreach ($gruppi as $key => $gruppo) {
     echo '
 <!-- Impostazioni della singola sezione -->
-<div class="card card-primary collapsed-card" title="'.$gruppo->nome.'">
-    <div class="card-header clickable" title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
+<div class="card card-primary collapsed-card">
+    <div class="card-header clickable" data-title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
         <div class="card-title">'.tr('_SEZIONE_', [
         '_SEZIONE_' => $gruppo->nome,
     ]).'</div>
@@ -116,8 +116,8 @@ $("#search").on("click", function(){
 
             let sezioni = JSON.parse(data);
             for(const sezione of sezioni){
-                $(`.card-header[title="` + sezione + `"]`).removeClass("hidden")
-                let card = $(`.card-header[title="` + sezione + `"]`).removeClass("hidden")
+                $(`.card-header[data-title="` + sezione + `"]`).removeClass("hidden")
+                let card = $(`.card-header[data-title="` + sezione + `"]`).removeClass("hidden")
                 caricaSezione(card);
             }
         });
@@ -135,7 +135,7 @@ function caricaSezione(header) {
     }
 
     // Caricamento della sezione di impostazioni
-    let sezione = card.attr("title");
+    let sezione = card.find(".card-header").data("title");
     localLoading(container, true);
     return $.get("'.$structure->fileurl('sezione.php').'?id_module='.$id_module.'&sezione=" + sezione, function(data) {
         container.html(data);

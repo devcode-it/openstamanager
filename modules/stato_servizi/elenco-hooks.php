@@ -53,7 +53,8 @@ foreach ($gruppi as $modulo => $hooks) {
     <tbody>';
 
     foreach ($hooks as $hook) {
-        $hook = Hook::find($hook['id']);
+        $hook = Hook::where('id', '=', $hook['id'])->withoutGlobalScopes()->first();
+
         $class = $hook->enabled ? 'success' : 'warning';
         $nome_tipo = 'hook';
 

@@ -82,7 +82,7 @@ switch ($resource) {
         foreach ($rs as $k => $r) {
             $rs[$k] = array_merge($r, [
                 'text' => $r['descrizione'],
-                'disabled' => $r['is_bloccata'],
+                'disabled' => !empty($elements) ? 0 : $r['is_bloccata'],
             ]);
         }
 

@@ -685,7 +685,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
+                        {[ "type": "number", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$", "icon-after": "€" ]}
                     </div>
                 </div>
 

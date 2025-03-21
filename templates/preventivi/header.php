@@ -44,7 +44,9 @@ echo '
         <tr>
             <td valign="top" class="border-bottom border-top">
                 <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
-                <p>'.$documento['numero'].'</p>
+                    <b>'.tr('_NUM_', [
+                        '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
+                    ], ['upper' => true]).'</b>
             </td>
 
             <td class="border-bottom border-top">

@@ -313,7 +313,7 @@ $query .= ' ORDER BY `title`';
 
 if ($dir == 'entrata') {
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes((string) $database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "select-options": <?php echo json_encode(['force_selected' => $record['idanagrafica'] ? 'true' : 'false']); ?>, "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes((string) $database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
 <?php
 } else {
     ?>

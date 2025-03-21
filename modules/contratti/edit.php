@@ -75,7 +75,7 @@ echo '
             <div class="row">
                 <div class="col-md-4">
                 '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
-                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "select-options": '.json_encode(['force_selected' => $record['idanagrafica'] ? 'true' : 'false']).' ]}
                 </div>
 
                 <div class="col-md-4">

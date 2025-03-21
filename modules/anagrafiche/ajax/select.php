@@ -26,6 +26,8 @@ switch ($resource) {
     case 'clienti':
         $id_azienda = setting('Azienda predefinita');
         $tipologia = Tipo::where('name', 'Cliente')->first()->id;
+        $force_selected = $superselect['force_selected'] ?? false;
+
         $query = "SELECT
                 `an_anagrafiche`.`idanagrafica` AS id,
                 `an_anagrafiche`.`lat`,
@@ -82,7 +84,7 @@ switch ($resource) {
         foreach ($rs as $k => $r) {
             $rs[$k] = array_merge($r, [
                 'text' => $r['descrizione'],
-                'disabled' => $r['is_bloccata'],
+                'disabled' => $force_selected ? 0 : $r['is_bloccata'],
             ]);
         }
 

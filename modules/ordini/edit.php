@@ -96,9 +96,8 @@ echo '
 echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
 if ($dir == 'entrata') {
-    ?>
-                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
-					<?php
+                    echo'
+                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "select-options": '.json_encode(['force_selected' => $record['idanagrafica'] ? 'true' : 'false']).']}';
 } else {
     ?>
                     {[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}

@@ -65,26 +65,10 @@ $(document).ready(function () {
         $(window).resize();
     });
 
-    // Gestione click sulla sidebar per evitare chiusura
-    $(".control-sidebar").on("click", function (e) {
-        const target = $(e.target);
-        if (largeScreen && $(".main-footer").hasClass("with-control-sidebar")) {
-            if (e.target.tagName === 'A') {
-                toggleControlSidebar();
-            } else if (e.target.tagName === 'LI' && target.find("a").hasClass("disabled")) {
-                toggleControlSidebar();
-            }
-        }
-    });
-
     // Barra plugin laterale disabilitata per schermi piccoli
     if (largeScreen && !globals.collapse_plugin_sidebar) {
         pluginToggle.click();
     }
-
-    $('.control-sidebar .nav-item > a').on("click", function(){
-        toggleControlSidebar();
-    });
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         window.dispatchEvent(new Event('resize'));

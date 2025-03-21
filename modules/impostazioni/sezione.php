@@ -52,3 +52,9 @@ foreach ($impostazioni as $impostazione) {
     echo '
     </script>';
 }
+
+?>
+
+<script>
+    init();
+</script>

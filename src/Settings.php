@@ -164,6 +164,24 @@ class Settings
             $input_value = $setting->valore;
         }
 
+        // Definizione icona per evidenziare le impostazioni personalizzate e personalizzabili
+        $user = Auth::user();
+        $user_options = [];
+        $user_setting_icon = '';
+        $tooltip = $setting->getTranslation('help');
+
+        if ($user) {
+            $user_options = json_decode($user->options ?: '', true);
+        }
+        
+        if ($user_options['settings'][$setting->id] !== null) {
+            $user_setting_icon = '<i class="fa fa-user text-primary"></i>';
+            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzata dall\'utente').'</em>';
+        } else if ($setting->is_user_setting) {
+            $user_setting_icon = '<i class="fa fa-user text-secondary"></i>';
+            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzabile dall\'utente').'</em>';
+        }
+
         // Lista predefinita
         if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
             $values = explode(',', $m[1]);
@@ -177,7 +195,7 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
+    {[ "type": "select", "multiple": 0, "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$tooltip.'" ]}';
         }
 
         // Lista multipla
@@ -210,38 +228,38 @@ class Settings
             }
 
             $result = '
-        {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'" ]}';
+        {[ "type": "select", "multiple": 1, "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$tooltip.'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"   ]}';
+    {[ "type": "select", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$tooltip.'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
+    {[ "type": "checkbox", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$tooltip.'"  ]}';
         }
 
         // Editor
         elseif ($setting->tipo == 'ckeditor') {
             $result = input([
                 'type' => 'ckeditor',
-                'label' => trim(json_encode($setting->getTranslation('title')), '"'),
+                'label' => $user_setting_icon.' '.$setting->getTranslation('title'),
                 'readonly' => !$setting->editable,
                 'name' => 'setting['.$setting->id.']',
                 'value' => $input_value,
                 'required' => intval($required),
-                'help' => $setting->getTranslation('help'),
+                'help' => $tooltip,
             ]);
         }
 
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($input_value).', "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($input_value).', "required": "'.intval($required).'", "help": "'.$tooltip.'"  ]}';
         }
 
         // Campo di testo
@@ -252,7 +270,7 @@ class Settings
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$input_value.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->getTranslation('help').'"  ]}';
+    {[ "type": "'.$tipo.'", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$input_value.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$tooltip.'"  ]}';
         }
 
         return $result;

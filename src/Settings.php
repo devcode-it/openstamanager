@@ -173,13 +173,13 @@ class Settings
         if ($user) {
             $user_options = json_decode($user->options ?: '', true);
         }
-        
+
         if ($user_options['settings'][$setting->id] !== null) {
             $user_setting_icon = '<i class="fa fa-user text-primary"></i>';
-            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzata dall\'utente').'</em>';
-        } else if ($setting->is_user_setting) {
+            $tooltip .= ($tooltip ? '<br>' : '').'<em>'.tr('Personalizzata dall\'utente').'</em>';
+        } elseif ($setting->is_user_setting) {
             $user_setting_icon = '<i class="fa fa-user text-secondary"></i>';
-            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzabile dall\'utente').'</em>';
+            $tooltip .= ($tooltip ? '<br>' : '').'<em>'.tr('Personalizzabile dall\'utente').'</em>';
         }
 
         // Lista predefinita

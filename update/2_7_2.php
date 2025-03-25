@@ -21,7 +21,6 @@ foreach ($files as $file) {
     }
 }
 
-
 // File e cartelle deprecate
 $files = [
     'assets/src/js/wacom/modules/protobufjs/bin/',

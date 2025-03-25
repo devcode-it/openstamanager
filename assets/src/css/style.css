@@ -1558,6 +1558,10 @@ kbd{
     background: #343a40;
 }
 
+.main-sidebar.bg-black {
+    background: #343a40;
+}
+
 .container {
     padding: 20px;
 }

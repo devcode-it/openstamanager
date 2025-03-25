@@ -70,6 +70,10 @@ foreach ($fatture as $fattura) {
 $fatture_senzanome = $dbo->fetchArray('SELECT `iddocumento`, `idconto` FROM `co_movimenti` WHERE `idconto` NOT IN (SELECT `id` FROM `co_pianodeiconti3`) AND `iddocumento` != 0');
 foreach ($fatture_senzanome as $fattura) {
     $documento = Fattura::find($fattura['iddocumento']);
-    $conto = ($documento->tipo->dir == 'uscita' ? $documento->anagrafica->idconto_fornitore : $documento->anagrafica->idconto_cliente);
-    $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
+    if ($documento) {
+        $conto = ($documento->tipo->dir == 'uscita' ? $documento->anagrafica->idconto_fornitore : $documento->anagrafica->idconto_cliente);
+        $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
+    } else {
+        $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.$fattura['iddocumento']);
+    }
 }

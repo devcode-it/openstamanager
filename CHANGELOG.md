@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.7.2 (2025-03-26)](#272-2025-03-26)
 - [2.7.1 (2025-03-05)](#271-2025-03-05)
 - [2.7 (2025-02-12)](#27-2025-02-12)
 - [2.6.2 (2025-01-15)](#262-2025-01-15)
@@ -52,7 +53,48 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
-## 2.7 (2025-02-12)
+## 2.7.2 (2025-03-26)
+### Modificato (Changed)
+- Migliorata la classe no-wrap per desktop
+- Spostati i file relativi alle fatture di vendita in files/vendite
+- Rimossa l'animazione in chiusura pagina
+- Aggiornamento assets\src\js\wacom\modules\protobufjs alla versione 7.2.4 per vulnerabilità CVE-2023-36665
+- Rimosse classi css non valide
+- Modificata la vista Contratti con le colonne Residuo contratto e Note interne
+- Ripristinato il numero di revisione in stampa Preventivo
+- Migliorata la visualizzazione di impostazioni personalizzabili per utente
+- Migliorata la gestione del campo Capitale sociale in Anagrafiche
+
+### Fixed
+- Corretta la ricerca di articoli per seriale
+- Corretto il riferimento all'ordine cliente in header
+- Corrette le API delle tariffe dei contratti
+- Corretta la visualizzazione del plugin selezionato
+- Corretta l'aggiunta di un range dal plugin Listino fornitori
+- Corretto il selettore del tipo di attività in Statistiche
+- Corretta la definizione della cartella per lettura degli XML in invio fattura elettronica
+- Corretta la visualizzazione degli impianti
+- Corretta la descrizione in esportazione degli articoli da azioni di gruppo
+- Corretta la visualizzazione dei button dropdown
+- Corretta la dimensione del campo descrizione in piano dei conti
+- Corretto l'avviso per utenti associati alle sedi
+- Corretta la modifica di un contratto associato all'anagrafica
+- Corretta l'impostazione delle tariffe attività in contratti
+- Corretta l'associazione del conto anagrafica fornitore da import FE
+- Corrette le registrazioni associate a conti rimossi
+- Corretta la visualizzazione del background Articoli in base alla disponibilità
+- Corretta la stampa inventario in base ai filtri selezionati
+- Corretta l'impostazione automatica del sezionale in base al tipo di documento in aggiunta di una fattura di acquisto
+- Corretta l'icona delle notifiche degli hooks
+- Corretto il background del menu laterale in caso di temi chiari
+- Corretta la gestione degli hooks da Stato dei servizi
+- Corretta la modifica dei documenti collegati ad Anagrafiche bloccate
+- Corretta la visualizzazione del prezzo di acquisto su ordine fornitore da import preventivo
+- Corretta la chiusura della sidebar dei plugin
+- Corretta la visualizzazione dei contratti
+- Corretto l'avviso di conflitti delle sessioni di lavoro
+
+## 2.7.1 (2025-03-05)
 ### Modificato (Changed)
 - Ripristinato il conteggio ore nel plugin consuntivo
 - Modificata la colonna Fornitore in Fornitore predefinito in Articoli

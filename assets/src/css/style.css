@@ -1550,8 +1550,12 @@ kbd{
     background: #d7d7d7;
 }
 
-.main-sidebar {
+.main-sidebar{
     background: #fff;
+}
+
+.main-sidebar.sidebar-dark-secondary {
+    background: #343a40;
 }
 
 .container {

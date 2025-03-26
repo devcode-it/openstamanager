@@ -41,6 +41,8 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
@@ -745,14 +747,14 @@ switch (post('op')) {
 
                 $data = explode(',', post('firma_base64'));
 
-                $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
-                $img->resize(680, 202, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
+                $manager = ImageManager::gd();
+                $img = $manager->read(base64_decode($data[1]));
+
+                $img->scale(680, 202);
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
-                    $img->brightness(setting('Luminosità firma Wacom'));
-                    $img->contrast(setting('Contrasto firma Wacom'));
+                    $img->brightness((float)setting('Luminosità firma Wacom'));
+                    $img->contrast((float)setting('Contrasto firma Wacom'));
                 }
 
                 if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
@@ -833,10 +835,9 @@ switch (post('op')) {
 
                     $data = explode(',', post('firma_base64'));
 
-                    $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
-                    $img->resize(680, 202, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
+                    $manager = ImageManager::gd();
+                    $img = $manager->read(base64_decode($data[1]));
+                    $img->scale(680, 202);
 
                     if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
                         flash()->error(tr('Impossibile creare il file!'));

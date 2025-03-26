@@ -56,7 +56,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.7.2 (2025-03-26)
 ### Modificato (Changed)
 - Migliorata la classe no-wrap per desktop
-- Spostati i file relativi alle fatture di vendita in files/vendite
+- Spostati i file relativi alle fatture di vendita in files\vendite
 - Rimossa l'animazione in chiusura pagina
 - Aggiornamento assets\src\js\wacom\modules\protobufjs alla versione 7.2.4 per vulnerabilità CVE-2023-36665
 - Rimosse classi css non valide

@@ -279,7 +279,7 @@ function wacom(){
         'poly2tri/dist/poly2tri.js',
         'protobufjs/dist/protobuf.min.js',
         'jszip/dist/jszip.min.js',
-        'gl-matrix/dist/gl-matrix.min.js',
+        'gl-matrix/gl-matrix-min.js',
         'rbush/rbush.min.js',
         'sjcl/sjcl.js',
         'node-forge/dist/forge.min.js'

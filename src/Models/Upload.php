@@ -22,9 +22,10 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Intervention\Image\ImageManagerStatic;
 use Modules\FileAdapters\FileAdapter;
 use Modules\FileAdapters\OSMFilesystem;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class Upload extends Model
 {
@@ -374,6 +375,28 @@ class Upload extends Model
         return pathinfo((string) $file);
     }
 
+    public static function ridimensionaImmagini($upload)
+    {
+        $info = $upload->info;
+        $directory = $upload->attachments_directory;
+
+        $filepath = base_dir().'/'.$info['dirname'].'/'.$info['filename'].'.'.$info['extension'];
+
+        if (!in_array(mime_content_type($filepath), ['image/png', 'image/gif', 'image/jpeg'])) {
+            return;
+        }
+
+        $manager = ImageManager::gd(autoOrientation: true);
+        $img = $manager->read($filepath);
+        $img->scale(setting('Larghezza per ridimensionamento immagini'), null);
+
+        $img->save(slashes($filepath));
+
+        clearstatcache();
+        $upload->size = filesize(slashes($filepath));
+        $upload->save([], true);
+    }
+
     /**
      * Genera le thumbnails per le immagini.
      */
@@ -388,24 +411,16 @@ class Upload extends Model
             return;
         }
 
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        ImageManagerStatic::configure(['driver' => $driver]);
+        $manager = ImageManager::gd();
+        $img = $manager->read($filepath);
+        $img->scale(600, null);
 
-        $img = ImageManagerStatic::make($filepath);
-
-        $img->resize(600, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb600.'.$info['extension']));
 
-        $img->resize(250, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $img->scale(250, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb250.'.$info['extension']));
 
-        $img->resize(100, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $img->scale(100, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
     }
 

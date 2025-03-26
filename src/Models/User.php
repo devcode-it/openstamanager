@@ -22,7 +22,8 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Intervention\Image\ImageManagerStatic;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Modules\Anagrafiche\Anagrafica;
 
 class User extends Model
@@ -171,12 +172,9 @@ class User extends Model
         $file = base_dir().'/files/temp_photo.'.$info['extension'];
 
         // Ridimensionamento
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = ImageManagerStatic::make($filepath)->resize(100, 100, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $manager = ImageManager::gd();
+        $img = $manager->read($filepath);
+        $img->scale(100, 100);
         $img->save(slashes($file));
 
         // Aggiunta nuova foto

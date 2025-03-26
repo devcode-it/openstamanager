@@ -22,11 +22,12 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Carbon\Carbon;
-use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class Interventi extends AppResource
 {
@@ -378,10 +379,9 @@ class Interventi extends AppResource
 
         $data = explode(',', (string) $firma_base64);
 
-        $img = ImageManagerStatic::make(base64_decode($data[1]));
-        $img->resize(680, 202, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $manager = ImageManager::gd();
+        $img = $manager->read(base64_decode($data[1]));
+        $img->scale(680, 202);
 
         $img->save(base_dir().'/files/interventi/'.$firma_file);
 

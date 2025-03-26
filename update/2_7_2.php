@@ -51,7 +51,14 @@ foreach ($anagrafiche as $anagrafica) {
 // Fix conto per registrazione contabile associate ai conti riepilogativi
 $riepilogativo_fornitori = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = "Riepilogativo fornitori"')['id'];
 $riepilogativo_clienti = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = "Riepilogativo clienti"')['id'];
-$fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` IN('.$riepilogativo_clienti.', '.$riepilogativo_fornitori.')');
+if ($riepilogativo_fornitori && $riepilogativo_clienti) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` IN ('.$riepilogativo_clienti.', '.$riepilogativo_fornitori.')');
+} elseif ($riepilogativo_fornitori) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` = '.$riepilogativo_fornitori);
+} elseif ($riepilogativo_clienti) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` = '.$riepilogativo_clienti);
+}
+
 foreach ($fatture as $fattura) {
     $fattura = Fattura::find($fattura['iddocumento']);
     $conto_cliente = $fattura->anagrafica->idconto_cliente;
@@ -71,8 +78,11 @@ $fatture_senzanome = $dbo->fetchArray('SELECT `iddocumento`, `idconto` FROM `co_
 foreach ($fatture_senzanome as $fattura) {
     $documento = Fattura::find($fattura['iddocumento']);
     if ($documento) {
-        $conto = ($documento->tipo->dir == 'uscita' ? $documento->anagrafica->idconto_fornitore : $documento->anagrafica->idconto_cliente);
-        $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
+        $anagrafica = $documento->anagrafica()->withTrashed()->first();
+        if ($anagrafica) {
+            $conto = ($documento->tipo->dir == 'uscita' ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente);
+            $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
+        } 
     } else {
         $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.$fattura['iddocumento']);
     }

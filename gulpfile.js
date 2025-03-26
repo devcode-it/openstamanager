@@ -48,7 +48,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 const shell = require('shelljs');
 const inquirer = require('inquirer');
-const { Readable } = require('stream');
+const { Readable } = require('node:stream');
 
 // Configurazione
 const config = {
@@ -281,8 +281,7 @@ function wacom(){
         'jszip/dist/jszip.min.js',
         'gl-matrix/gl-matrix-min.js',
         'rbush/rbush.min.js',
-        'sjcl/sjcl.js',
-        'node-forge/dist/forge.min.js'
+        'sjcl/sjcl.js'
     ];
 
     // Modifica i percorsi per puntare a node_modules
@@ -305,11 +304,13 @@ function wacom(){
     // Combina i file vendor con quelli specifici di Wacom
     const allFiles = [...vendor, ...wacomSpecific];
 
+    // Prima copiamo il file WASM necessario
     const wasmStream = gulp.src([
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk.wasm'
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/wacom/'));
-
+        
+    // Poi processiamo i file JS che lo utilizzano
     const jsStream = gulp.src(allFiles, {
         allowEmpty: true
     })
@@ -318,6 +319,7 @@ function wacom(){
         .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
+    // Usiamo merge per garantire che wasmStream sia completato prima di jsStream
     return merge(wasmStream, jsStream);
 }
 

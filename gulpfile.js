@@ -272,15 +272,17 @@ function leaflet() {
 }
 
 function wacom(){
-    // Librerie standard da node_modules
+    // Librerie da node_modules secondo package.json
     const vendor = [
         'clipper-lib/clipper.js',
         'js-md5/build/md5.min.js',
-        'poly2tri/dist/poly2tri.min.js',
+        'poly2tri/dist/poly2tri.js',
         'protobufjs/dist/protobuf.min.js',
         'jszip/dist/jszip.min.js',
-        'gl-matrix/gl-matrix-min.js',
+        'gl-matrix/dist/gl-matrix.min.js',
         'rbush/rbush.min.js',
+        'sjcl/sjcl.js',
+        'node-forge/dist/forge.min.js'
     ];
 
     // Modifica i percorsi per puntare a node_modules
@@ -288,17 +290,14 @@ function wacom(){
         vendor[i] = config.nodeDirectory + '/' + vendor[i];
     }
 
-    // File specifici di Wacom che non sono in node_modules
-    // Questi devono essere disponibili nella cartella assets/src/js/wacom
+    // File specifici di Wacom che devono rimanere in assets/src
     const wacomSpecific = [
         config.development + '/' + config.paths.js + '/wacom/modules/js-ext/js-ext-min.js',
         config.development + '/' + config.paths.js + '/wacom/modules/digital-ink/digital-ink-min.js',
         config.development + '/' + config.paths.js + '/wacom/common/will/tools.js',
-        config.development + '/' + config.paths.js + '/wacom/modules/sjcl/sjcl.js',
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk.js',
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk_helper.js',
         config.development + '/' + config.paths.js + '/wacom/common/libs/stu-sdk.min.js',
-        config.development + '/' + config.paths.js + '/wacom/modules/node-forge/dist/forge.min.js',
         config.development + '/' + config.paths.js + '/wacom/sigCaptDialog/sigCaptDialog.js',
         config.development + '/' + config.paths.js + '/wacom/sigCaptDialog/stuCaptDialog.js'
     ];
@@ -306,19 +305,20 @@ function wacom(){
     // Combina i file vendor con quelli specifici di Wacom
     const allFiles = [...vendor, ...wacomSpecific];
 
-    // Copia il file wasm nella cartella di produzione
-    gulp.src([
+    const wasmStream = gulp.src([
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk.wasm'
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/wacom/'));
 
-    return gulp.src(allFiles, {
+    const jsStream = gulp.src(allFiles, {
         allowEmpty: true
     })
         .pipe(babel(config.babelOptions))
         .pipe(concat('wacom.min.js'))
         .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
+
+    return merge(wasmStream, jsStream);
 }
 
 // Elaborazione dei fonts

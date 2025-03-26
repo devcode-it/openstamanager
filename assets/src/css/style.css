@@ -1699,7 +1699,7 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     }
 }
 
-@media screen and (min-width: 1920px) {
+@media screen and (min-width: 1440px) {
     .extra-buttons{
         padding-top: 0;
         line-height: 0;

@@ -7,7 +7,14 @@ include_once __DIR__.'/core.php';
 // Fix conto per registrazione contabile associate ai conti riepilogativi
 $riepilogativo_fornitori = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = "Riepilogativo fornitori"')['id'];
 $riepilogativo_clienti = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = "Riepilogativo clienti"')['id'];
-$fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` IN('.$riepilogativo_clienti.', '.$riepilogativo_fornitori.')');
+if ($riepilogativo_fornitori && $riepilogativo_clienti) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` IN ('.$riepilogativo_clienti.', '.$riepilogativo_fornitori.')');
+} elseif ($riepilogativo_fornitori) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` = '.$riepilogativo_fornitori);
+} elseif ($riepilogativo_clienti) {
+    $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` = '.$riepilogativo_clienti);
+}
+
 
 foreach ($fatture as $fattura) {
     $fattura = Fattura::find($fattura['iddocumento']);

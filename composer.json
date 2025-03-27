@@ -68,7 +68,8 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.53",
-        "phpunit/phpunit": "^11.5",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^10|^11",
         "rector/rector": "^1.0"
     },
     "autoload": {
@@ -150,11 +151,12 @@
         "minimum-stability": "dev",
         "prefer-stable": true,
         "platform-check": false,
-        "platform": {
-            "php": "8.3.7"
-        },
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }
+    },
+    "scripts": {
+        "unit-tests": "phpunit --configuration phpunit.xml",
+        "format": "php-cs-fixer fix"
     }
 }

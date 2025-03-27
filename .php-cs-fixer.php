@@ -5,7 +5,6 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('.couscous')
     ->exclude('node_modules')
     ->exclude('vendor')
-    ->exclude('tests')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true)
     ->in(__DIR__);

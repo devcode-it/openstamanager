@@ -22,4 +22,4 @@ WHERE
 HAVING 
     2=2" WHERE `name` = 'Contratti';
 
-UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF((righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))) != 0, (righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))), '')" WHERE `name` = 'Residuo contratto' AND `id_module`.`name` = 'Contratti'; 
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF((righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))) != 0, (righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))), '')" WHERE `zz_views`.`name` = 'Residuo contratto' AND `zz_modules`.`name` = 'Contratti';

@@ -242,9 +242,9 @@ foreach ($righe as $riga) {
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
-
-                echo '
-                <br><small class="text-muted">'.$text.'</small>';
+                $text = '<br><small class="text-muted">'.$text.'</small>';
+                echo $text;
+                $autofill->count($text, true);
             }
 
             echo '

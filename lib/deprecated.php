@@ -69,10 +69,7 @@ function create_thumbnails($tmp, $filename, $dir)
         return false;
     }
 
-    $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-    Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
-
-    $img = Intervention\Image\ImageManagerStatic::make($tmp);
+    $img = getImageManager()->read($tmp);
 
     $img->resize(600, null, function ($constraint) {
         $constraint->aspectRatio();

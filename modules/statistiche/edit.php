@@ -41,13 +41,15 @@ $start_date = new DateTime($start);
 $end_date = new DateTime($end);
 
 while ($start_date <= $end_date) {
-    $months[] = $start_date->format('F');
-    $start_date->modify('+1 month');
+    $month_number = $start_date->format('n');  // Ottiene il numero del mese (1-12)
+    if (!in_array($month_number, $months)) {  // Aggiunge il mese solo se non gia' presente
+        $months[] = $month_number;
+    }
+    $start_date->modify('+1 month');  // Avanza al mese successivo
 }
-
-foreach ($months as $key => $month) {
-    $month_number = date('n', strtotime($month));
-    $months[$key] = $translated_months[$month_number - 1];
+// Sostituisce i numeri con i nomi tradotti
+foreach ($months as $key => $month_number) {
+    $months[$key] = $translated_months[$month_number - 1];  // Traduce il mese
 }
 
 // Fatturato

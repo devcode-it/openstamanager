@@ -20,3 +20,17 @@ foreach ($files as $key => $value) {
 }
 
 delete($files);
+
+$module = Models\Module::where('name', 'Fatture di vendita')->first();
+$directory = 'files/fatture/';
+$files = glob($directory.'*.{xml,pdf}', GLOB_BRACE);
+$new_folder = 'files/'.$module->attachments_directory.'/';
+directory($new_folder);
+
+$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id);
+$attachments_filenames = array_column($attachments, 'filename');
+
+foreach ($files as $file) {
+    $filename = basename($file);
+    rename($file, $new_folder.$filename);
+}

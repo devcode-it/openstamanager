@@ -15,8 +15,10 @@ namespace Plugins\PresentazioniBancarie\Cbi;
  * @property string $comune_debitore
  * @property int    $abi_banca
  * @property int    $cab_banca
+ * @property string $iban
  * @property string $descrizione_banca
  * @property int    $codice_cliente
+ * @property string $ctgypurp
  * @property string $descrizione
  * @property string $provincia_debitore
  * @property string $descrizione_origine
@@ -68,6 +70,10 @@ class Ricevuta extends Elemento
     /**
      * @var string Valore alfanumerico di 50 cifre
      */
+    protected $iban;
+    /**
+     * @var string Valore alfanumerico di 27 cifre
+     */
     protected $descrizione_banca;
     /**
      * Codice cliente attribuito dal creditore.
@@ -78,7 +84,11 @@ class Ricevuta extends Elemento
     /**
      * @var string Valore alfanumerico di 40 cifre, con i campi (CIG CUP)
      */
-    protected $descrizione;
+    protected $ctgypurp;
+    /**
+     * @var string Valore alfanumerico che indica il tipo di bonifico
+     */
+     protected $descrizione;
     /**
      * @var string Valore alfanumerico di 2 cifre
      */
@@ -103,8 +113,10 @@ class Ricevuta extends Elemento
             $this->comune_debitore,
             $this->abi_banca,
             $this->cab_banca,
+            $this->iban,
             $this->descrizione_banca,
             $this->codice_cliente,
+            $this->ctgypurp,
             $this->descrizione,
             $this->provincia_debitore,
             $this->descrizione_origine,

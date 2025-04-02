@@ -217,7 +217,7 @@ switch (post('op')) {
                         $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
-                    $file = slashes($module->upload_directory.'/'.$src);
+                    $file = slashes('files/'.$module->attachments_directory.'/'.$src);
                     $dest = slashes($dir.'tmp/'.$dst);
 
                     $result = copy($file, $dest);

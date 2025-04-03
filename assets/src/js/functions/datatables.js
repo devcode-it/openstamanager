@@ -291,10 +291,6 @@ function initComplete(settings) {
 
         const value = search[(id_plugin ? id_plugin : "") + "_search_" + name] ? search[(id_plugin ? id_plugin : "") + "_search_" + name] : '';
 
-        if (value !== '') {
-            forceSearch = true;
-        }
-
         $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"><i class="deleteicon fa fa-times ' + (value ? '' : ' hide') + '"></i>')
             .appendTo(column.header())
             .on('keyup', function (e) {
@@ -342,7 +338,8 @@ function initComplete(settings) {
             });
     });
 
-    if (forceSearch) {
+    // Fai il trigger di table se via GET è presente un parametro che inizia con search_
+    if (window.location.search.indexOf('search_') > -1) {
         $('table.main-records:visible .search > input:not(:emptyVal)').first().trigger('keyup');
     }
 

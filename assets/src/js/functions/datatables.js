@@ -278,7 +278,6 @@ function initComplete(settings) {
     const api = this.api();
     const $this = $(this);
     const search = getTableSearch();
-    var forceSearch = false;
 
     api.columns('.search').every(function () {
         const column = this;

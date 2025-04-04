@@ -415,10 +415,6 @@ mark,
     text-align: justify;
 }
 
-.text-nowrap {
-    white-space: nowrap;
-}
-
 .text-lowercase {
     text-transform: lowercase;
 }

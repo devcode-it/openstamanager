@@ -30,7 +30,7 @@ $righe = $order_row_desc ? $fattura->getRighe()->sortByDesc('created_at') : $fat
 $colspan = $dir == 'entrata' ? '8' : '7';
 
 echo '
-<div class="table-responsive text-nowrap row-list">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-sm table-bordered">
         <thead>
             <tr>

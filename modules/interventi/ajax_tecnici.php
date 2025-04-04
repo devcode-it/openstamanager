@@ -67,7 +67,7 @@ if (!empty($sessioni)) {
             $prev_tecnico = $sessione['ragione_sociale'];
 
             echo '
-<div class="table-responsive text-nowrap">
+<div class="table-responsive">
     <table class="table table-striped table-hover table-sm">
         <tr><th>';
 
@@ -85,8 +85,8 @@ if (!empty($sessioni)) {
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
             <th width="2%"> </th>
-            <th width="10%">'.tr('Ore').'</th>
-            <th width="12%">'.tr('Km').'</th>';
+            <th width="8%">'.tr('Ore').'</th>
+            <th width="8%">'.tr('Km').'</th>';
 
             if ($show_costi) {
                 echo '

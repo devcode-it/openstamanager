@@ -28,7 +28,7 @@ $righe = $order_row_desc ? $preventivo->getRighe()->sortByDesc('created_at') : $
 $colspan = '9';
 
 echo '
-<div class="table-responsive text-nowrap row-list">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-sm table-bordered">
         <thead>
             <tr>

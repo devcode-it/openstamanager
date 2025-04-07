@@ -38,6 +38,10 @@
     color: #000;
 }
 
+.text-black {
+    color: #000;
+}
+
 #main_loading {
     display: block;
     position: fixed;

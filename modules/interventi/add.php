@@ -52,18 +52,20 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_cliente = $user['idanagrafica'];
 }
 
-// Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
-if (!empty($id_anagrafica)) {
-    $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
-    $id_tipo = $anagrafica['idtipointervento_default'];
-    $id_zona = $anagrafica['idzona'];
-}
-
 // Gestione dell'impostazione dei Contratti
 $id_intervento = filter('id_intervento');
 $id_contratto = filter('idcontratto');
 $id_promemoria_contratto = filter('idcontratto_riga');
 $id_ordine = null;
+
+if (empty($id_anagrafica)) {
+    $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->idanagrafica;
+} 
+
+$anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
+$id_tipo = $anagrafica['idtipointervento_default'];
+$id_zona = $anagrafica['idzona'];
+
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
@@ -109,7 +111,7 @@ elseif (!empty($id_intervento)) {
     $id_cliente_finale = $intervento['idclientefinale'];
     $id_contratto = $intervento['idcontratto'];
     $id_preventivo = $intervento['idpreventivo'];
-    $id_zona = $intervento['idzona'];
+    $id_zona = $intervento['idzona'] ?: $id_zona;
 
     // Generazione dell'orario di fine sulla base del tempo standard definito dall'Intervento
     if (!empty($intervento['tempo_standard'])) {

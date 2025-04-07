@@ -56,7 +56,7 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->fir
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>,"icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>||hide" ]}
 		</div>
 	</div>
 

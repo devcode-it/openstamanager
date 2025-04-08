@@ -137,7 +137,7 @@ class Checklists extends AppResource
                 LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
                 INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
-                `zz_modules_lang`.`title`="Interventi"
+                `zz_modules_lang`.`title`="Attività"
                 AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')';
 
             // Filtro per data
@@ -155,20 +155,17 @@ class Checklists extends AppResource
                 INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                 INNER JOIN `zz_modules` ON `zz_checks`.`id_module` = `zz_modules`.`id`
                 LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).'
-                INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
+                LEFT JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
-                `zz_modules_lang`.`title`="Interventi"
-                AND `zz_check_user`.`id_utente` = :id_tecnico
-                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')
-                AND (`orario_fine` BETWEEN :period_start AND :period_end)';
+                `zz_modules_lang`.`title`="Attività"
+                AND (`zz_check_user`.`id_utente` = :id_tecnico OR `zz_check_user`.`id_utente` IS NULL)
+                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')';
 
             // Filtro per data
             if ($last_sync_at) {
                 $query .= ' AND `zz_checks`.`updated_at` > '.prepare($last_sync_at);
             }
             $records = database()->fetchArray($query, [
-                ':period_start' => $start,
-                ':period_end' => $end,
                 ':id_tecnico' => $user->id,
             ]);
         }

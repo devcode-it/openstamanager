@@ -121,7 +121,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if ($database->tableExists('co_mandati_sepa')) {
             $rs_mandato = $dbo->fetchArray('SELECT * FROM co_mandati_sepa WHERE id_banca = '.prepare($banca_controparte->id));
         } else {
-            $rs_mandato = false;
+            $rs_mandato = 0;
         }
 
         $is_rid = in_array($scadenza->documento->pagamento['codice_modalita_pagamento_fe'], ['MP09', 'MP10', 'MP11']);
@@ -162,7 +162,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                 $check_prima = 'selected';
             }
 
-            if (sizeof($rs_mandato) > 0) {
+            if ($rs_mandato) {
                 if ($rs_mandato[0]['singola_disposizione'] == '1') {
                     $check_singola = 'selected';
 

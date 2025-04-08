@@ -90,7 +90,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = Module::where('name', 'Anagrafiche')->first()->id;
+        $module = Module::where('name', 'Interventi')->first()->id;
 
         // Creazione del file temporaneo
         $content = explode(',', (string) $data['contenuto']);

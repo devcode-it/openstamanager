@@ -122,7 +122,7 @@ class Mastrino extends Model
 
         // Aggiornamento delle scadenze per i singoli documenti
         $documenti = $this->getUniqueDocumenti($movimenti);
-        $scadenze = $this->getScadenzePerDocumenti($movimenti, $documenti);
+        $scadenze = $this->getScadenzePerDocumenti($documenti);
 
         foreach ($movimenti as $movimento) {
             $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento);
@@ -198,12 +198,12 @@ class Mastrino extends Model
             }
 
             foreach ($scadenze as $scadenza) {
-                $totale_da_distribuire = ($movimento['totale'] != 0 ? Movimento::where('id_scadenza', '=', $scadenza)
+                $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
                 ->where('totale', '>', 0)
-                ->sum('totale') : 0);
+                ->sum('totale');
             }
 
-            $totale_da_distribuire = abs($totale_da_distribuire);
+            $totale_da_distribuire = abs($totale_movimenti);
 
             // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
             // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
@@ -256,14 +256,15 @@ class Mastrino extends Model
         return $documentIds;
     }
 
-    private function getScadenzePerDocumenti($movimenti, $documenti)
+    private function getScadenzePerDocumenti($documenti)
     {
         $scadenze = [];
-        foreach ($movimenti as $movimento) {
-            if (in_array($movimento->iddocumento, $documenti)) {
-                if (!in_array($movimento->id_scadenza, $scadenze[$movimento->iddocumento] ?? [])) {
-                    $scadenze[$movimento->iddocumento][] = $movimento->id_scadenza;
-                }
+        foreach ($documenti as $documento) {
+            $scadenze[$documento] = [];
+            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento));
+            foreach ($scadenze_documento as $scadenza_row) {
+                 $id_scadenza = $scadenza_row['id'];
+                 $scadenze[$documento][$id_scadenza] = $id_scadenza; 
             }
         }
 

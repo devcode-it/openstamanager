@@ -246,8 +246,12 @@ if (Auth::check()) {
                 collapse_plugin_sidebar: '.($has_plugins ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
 
                 ckeditorToolbar: [
-					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor", "EmojiPanel" ],
-				],
+                    ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt"],
+                    ["Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule"],
+                    ["JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote"],
+                    ["Styles","Format","Image","Table", "TextColor", "BGColor"],
+                    ["EmojiPanel", "OpenRouter"],
+                ],
                 ckeditorToolbar_Full: [
                     { name: "document", items : [ "Source", "ExportPdf", "Preview", "Print", "-", "Templates" ] },
                     { name: "clipboard", items : [ "Cut","Copy","Paste","PasteText","PasteFromWord","-","Undo","Redo" ] },
@@ -270,7 +274,8 @@ if (Auth::check()) {
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
-                snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'"
+                snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'",
+                openRouterApiKey: "'.setting('OpenRouter API Key').'",
             };
 		</script>';
 } else {

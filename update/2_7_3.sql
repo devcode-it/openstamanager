@@ -23,3 +23,12 @@ HAVING
     2=2" WHERE `name` = 'Contratti';
 
 UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF((righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))) != 0, (righe.totale_imponibile - (COALESCE(sommacosti, 0) + COALESCE(sommasessioni, 0))), '')" WHERE `zz_views`.`name` = 'Residuo contratto' AND `zz_modules`.`name` = 'Contratti';
+
+-- Aggiunta impostazione per OpenRouter API Key
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+(NULL, 'OpenRouter API Key', '', 'string', 1, 'API', NULL);
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+(1, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'OpenRouter API Key'),
+'OpenRouter API Key',
+'API Key per l''integrazione con OpenRouter AI. Ottieni la tua chiave da https://openrouter.ai/keys');

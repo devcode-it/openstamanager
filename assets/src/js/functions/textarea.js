@@ -120,7 +120,7 @@ function initCKEditor(input) {
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         versionCheck: false,
-        extraPlugins: 'scayt,textwatcher,autocomplete,textmatch,emoji',
+        extraPlugins: 'scayt,textwatcher,autocomplete,textmatch,emoji,openrouter',
         skin: 'moono-lisa',
     });
 

@@ -137,12 +137,6 @@
             "lib/deprecated.php"
         ]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/wdog/sdd_ita"
-        }
-    ],
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true,

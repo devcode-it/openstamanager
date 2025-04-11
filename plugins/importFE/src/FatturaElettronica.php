@@ -391,7 +391,7 @@ class FatturaElettronica
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info'], $info['serial']);
 
-        $this->saveAllegati();
+        $this->saveAllegati($tipo == 'Cliente' ? 'Fatture di vendita': null);
 
         $this->getFattura()->save(['forza_emissione']);
 

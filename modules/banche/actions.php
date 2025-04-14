@@ -114,4 +114,51 @@ switch (filter('op')) {
         ]);
 
         break;
+
+    case 'check_balance':
+        $api_key = filter('api_key');
+        
+        // Verifica il credito residuo su ibanapi.com
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, setting('Endpoint ibanapi.com').'/v1/balance?api_key='.$api_key);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        $result = curl_exec($ch);
+        
+        if (curl_errno($ch)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com']);
+            exit;
+        }
+        curl_close($ch);
+        
+        echo $result;
+        break;
+        
+    case 'verify_iban':
+        $iban = filter('iban');
+        $type = filter('type');
+        $api_key = filter('api_key');
+        
+        // Verifica l'IBAN tramite ibanapi.com
+        $ch = curl_init();
+        $endpoint = ($type === 'bank') ? setting('Endpoint ibanapi.com').'/v1/validate' : setting('Endpoint ibanapi.com').'/v1/validate-basic';
+        curl_setopt($ch, CURLOPT_URL, $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ['iban' => $iban, 'api_key' => $api_key]);
+        $headers = [];
+        $headers[] = 'Accept: application/json';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        
+        if (curl_errno($ch)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com']);
+            exit;
+        }
+        curl_close($ch);
+        
+        echo $result;
+        break;
 }

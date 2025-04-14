@@ -35,7 +35,7 @@ WORKDIR /var/www/html
 EXPOSE 80
 
 # Clona il repository
-RUN wget -O openstamanager.zip https://github.com/devcode-it/openstamanager/releases/download/v2.7.2/openstamanager-2.7.2.zip && unzip openstamanager.zip
+RUN wget -O openstamanager.zip https://github.com/devcode-it/openstamanager/releases/download/v2.7.3/openstamanager-2.7.3.zip && unzip openstamanager.zip
 
 RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
 RUN chown -R $USER:www-data /var/www/html/

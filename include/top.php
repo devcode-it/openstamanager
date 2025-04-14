@@ -276,6 +276,8 @@ if (Auth::check()) {
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
                 snapDuration: "'.setting('Tempo predefinito di snap attività sul calendario').'",
                 openRouterApiKey: "'.setting('OpenRouter API Key').'",
+                openRouterDefaultModel: "'.setting('Modello AI predefinito per OpenRouter').'",
+                AISystemPrompt: "'.addslashes(setting('Prompt di sistema per Modello AI')).'",
             };
 		</script>';
 } else {

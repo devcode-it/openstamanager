@@ -79,7 +79,6 @@ switch (post('op')) {
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
             $tipo->name = $descrizione;
         }
-        $id_record = $dbo->lastInsertedID();
         $tipo->setTranslation('title', post('descrizione'));
         $tipo->save();
 
@@ -90,7 +89,7 @@ switch (post('op')) {
         foreach ($fasce_orarie as $fascia_oraria) {
             $dbo->insert('in_fasceorarie_tipiintervento', [
                 'idfasciaoraria' => $fascia_oraria['id'],
-                'idtipointervento' => $id_record,
+                'idtipointervento' => $tipo->id,
                 'costo_orario' => post('costo_orario'),
                 'costo_km' => post('costo_km'),
                 'costo_diritto_chiamata' => post('costo_diritto_chiamata'),

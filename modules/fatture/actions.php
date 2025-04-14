@@ -746,7 +746,7 @@ switch ($op) {
         if (setting('Cambia automaticamente stato attività fatturate')) {
             $dbo->query("UPDATE `in_interventi` SET `idstatointervento`=(SELECT `id` FROM `in_statiintervento` WHERE `codice`='FAT') WHERE `id`=".prepare($id_documento));
         }
-        
+
         // Individuazione del documento originale
         if (!is_subclass_of($class, Common\Document::class)) {
             return;

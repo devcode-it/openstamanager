@@ -23,7 +23,6 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 use Modules\Anagrafiche\Anagrafica;
 
 class User extends Model

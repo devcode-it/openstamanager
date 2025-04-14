@@ -15,7 +15,6 @@ if ($riepilogativo_fornitori && $riepilogativo_clienti) {
     $fatture = $dbo->fetchArray('SELECT iddocumento FROM `co_movimenti` WHERE `idconto` = '.$riepilogativo_clienti);
 }
 
-
 foreach ($fatture as $fattura) {
     $fattura = Fattura::find($fattura['iddocumento']);
     $conto_cliente = $fattura->anagrafica->idconto_cliente;

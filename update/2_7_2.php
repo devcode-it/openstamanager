@@ -82,7 +82,7 @@ foreach ($fatture_senzanome as $fattura) {
         if ($anagrafica) {
             $conto = ($documento->tipo->dir == 'uscita' ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente);
             $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
-        } 
+        }
     } else {
         $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.$fattura['iddocumento']);
     }

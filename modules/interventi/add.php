@@ -60,12 +60,11 @@ $id_ordine = null;
 
 if (empty($id_anagrafica)) {
     $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->idanagrafica;
-} 
+}
 
 $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
 $id_tipo = $anagrafica['idtipointervento_default'];
 $id_zona = $anagrafica['idzona'];
-
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {

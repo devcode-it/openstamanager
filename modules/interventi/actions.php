@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\CarbonPeriod;
+use Intervention\Image\ImageManager;
 use Models\Module;
 use Models\OperationLog;
 use Models\Plugin;
@@ -41,8 +42,6 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
@@ -753,8 +752,8 @@ switch (post('op')) {
                 $img->scale(680, 202);
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
-                    $img->brightness((float)setting('Luminosità firma Wacom'));
-                    $img->contrast((float)setting('Contrasto firma Wacom'));
+                    $img->brightness((float) setting('Luminosità firma Wacom'));
+                    $img->contrast((float) setting('Contrasto firma Wacom'));
                 }
 
                 if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {

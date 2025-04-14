@@ -22,10 +22,9 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Intervention\Image\ImageManager;
 use Modules\FileAdapters\FileAdapter;
 use Modules\FileAdapters\OSMFilesystem;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 
 class Upload extends Model
 {

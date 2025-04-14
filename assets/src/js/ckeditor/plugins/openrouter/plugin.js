@@ -396,7 +396,9 @@ CKEDITOR.plugins.add('openrouter', {
                                 ],
                                 'default': lastUsedModel, // Usa l'ultimo modello selezionato o il predefinito
                                 setup: function() {
-                                    this.setValue(lastUsedModel); // Imposta il valore al caricamento
+                                    // Leggi il cookie ogni volta che il dialog viene aperto
+                                    var currentLastUsedModel = getCookie('ckeditorOpenRouterModel') || defaultModel;
+                                    this.setValue(currentLastUsedModel);
                                 },
                                 commit: function(data) {
                                     data.model = this.getValue();
@@ -479,10 +481,35 @@ CKEDITOR.plugins.add('openrouter', {
                         'margin': '0'
                     });
                     
+                    // Leggi i cookie per le impostazioni più recenti
+                    var currentLastUsedModel = getCookie('ckeditorOpenRouterModel') || getDefaultModel();
+                    var currentTemperature = getCookie('ckeditorOpenRouterTemp') || '0.7';
+                    var currentMaxTokens = getCookie('ckeditorOpenRouterTokens') || '1024';
+                    
                     // Aggiorna il campo contesto
                     var contextField = dialog.getContentElement('tab-main', 'context');
                     if (contextField) {
                         contextField.setValue(this.selectedText || '');
+                    }
+                    
+                    // Aggiorna il modello selezionato
+                    var modelField = dialog.getContentElement('tab-main', 'model');
+                    if (modelField) {
+                        modelField.setValue(currentLastUsedModel);
+                    }
+                    
+                    // Aggiorna il valore della temperatura
+                    var tempElement = dialogElement.findOne('#temperatureRange');
+                    var tempValueElement = dialogElement.findOne('#tempValue');
+                    if (tempElement && tempValueElement) {
+                        tempElement.$.value = currentTemperature;
+                        tempValueElement.setHtml(currentTemperature);
+                    }
+                    
+                    // Aggiorna il valore dei max tokens
+                    var maxTokensField = dialog.getContentElement('tab-main', 'max_tokens');
+                    if (maxTokensField) {
+                        maxTokensField.setValue(currentMaxTokens);
                     }
                     
                     toggleLoadingIndicator(this, false);
@@ -505,14 +532,6 @@ CKEDITOR.plugins.add('openrouter', {
                         // Mostra l'avviso
                         if (warningContainer) {
                             warningContainer.setStyle('display', 'flex');
-                            
-                            // Aggiungi event listener al pulsante "Ok, ho capito"
-                            var closeButton = warningContainer.findOne('#api-key-warning-close');
-                            if (closeButton) {
-                                closeButton.on('click', function() {
-                                    dialog.hide(); // Chiudi il dialog quando il pulsante viene cliccato
-                                });
-                            }
                         }
                     } else {
                         // Abilita il pulsante OK

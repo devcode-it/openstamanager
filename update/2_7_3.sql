@@ -33,6 +33,11 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 'OpenRouter API Key',
 'API Key per l''integrazione con OpenRouter AI. Ottieni la tua chiave da https://openrouter.ai/keys');
 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+(2, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'OpenRouter API Key'),
+'OpenRouter API Key',
+'API Key for OpenRouter AI integration. Get your key from https://openrouter.ai/keys');
+
 -- Aggiunta impostazione per Modello AI predefinito OpenRouter
 -- Define the list of free models
 SET @free_models = 'mistralai/mistral-7b-instruct,google/gemini-pro-1.5,anthropic/claude-3-haiku-20240307,openai/gpt-3.5-turbo'; -- Add/remove models as needed

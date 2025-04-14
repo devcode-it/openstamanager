@@ -1,380 +1,562 @@
+// Translations - Default English translations instead of Italian
+let TRANSLATIONS = {
+    DIALOG_TITLE: 'AI Assistant (OpenRouter)',
+    LOADING_TITLE: 'Processing...',
+    LOADING_TEXT: 'Processing your request...',
+    ERROR_ELEMENTS_NOT_FOUND: 'Dialog elements not found for toggleLoadingIndicator',
+    ERROR_EDITOR_UPDATE: "Error updating the editor:",
+    ERROR_FALLBACK: 'Error in setData fallback:',
+    ERROR_INVALID_RESPONSE: 'Invalid response from OpenRouter',
+    ERROR_API_RESPONSE: 'Invalid API response:',
+    ERROR_API_KEY: 'OpenRouter API Key not configured. Configure it in settings.',
+    ERROR_UPDATE_TEXT: "Error updating text in the editor.",
+    ERROR_MAX_TOKENS: 'Max Tokens must be a positive integer.',
+    SUCCESS_UPDATE: 'Text updated successfully',
+    PLUGIN_LOADED: 'OpenRouter plugin loaded successfully.',
+    LABEL_CONTEXT: 'Context:',
+    LABEL_PROMPT: 'Your prompt:',
+    LABEL_MODEL: 'AI Model:',
+    LABEL_TEMPERATURE: 'Temperature:',
+    LABEL_MAX_TOKENS: 'Max Tokens:',
+    WARNING_TITLE: 'API Key Not Configured',
+    WARNING_DESCRIPTION: 'Configure a valid API key in system settings to use this feature.',
+    WARNING_BUTTON: 'I understand',
+    INFO_TEXT: {
+        SUGGESTION: 'If you have selected text in the editor, it will be automatically included in the prompt to be processed by the AI.',
+        TEMPERATURE: 'Controls randomness. Lower values (e.g., 0.2) make the output more focused and deterministic, higher values (e.g., 1.0) make it more creative.',
+        MAX_TOKENS: 'Limits the maximum length of the generated response.'
+    },
+    ERROR_PROMPT_EMPTY: "The prompt field cannot be empty."
+};
+
 CKEDITOR.plugins.add('openrouter', {
     icons: 'openrouter',
     init: function(editor) {
-        // Registra il dialog
-        CKEDITOR.dialog.add('openrouterDialog', function(editor) {
-            return {
-                title: 'Mistral AI',
-                minWidth: 400,
-                minHeight: 100,
-                onShow: function() {
-                    // Ottieni il testo selezionato ogni volta che il dialog viene mostrato
-                    var selectedText = editor.getSelection().getSelectedText();
-
-                    // Aggiorna l'elemento HTML con il testo selezionato
-                    var selectedTextElement = this.getContentElement('tab1', 'selectedText');
-                    if (selectedTextElement) {
-                        if (selectedText) {
-                            selectedTextElement.getElement().setHtml('<div style="margin-bottom: 10px;"><span style="font-style: italic;">Testo selezionato: </span><span style="font-style: italic; color: #666;">' + selectedText + '</span></div>');
-                            selectedTextElement.getElement().show();
-                        } else {
-                            selectedTextElement.getElement().hide();
+        // Carica il file CSS per lo stile del plugin
+        var cssPath = this.path + 'styles/openrouter.css';
+        CKEDITOR.document.appendStyleSheet(cssPath);
+        
+        // Determina la lingua da utilizzare per l'interfaccia
+        // Prima controlla se è definita nelle impostazioni globali, altrimenti usa il browser, con fallback su inglese
+        var userLang = 'it'; // Lingua predefinita: inglese
+      
+        
+        var translationsPath = this.path + 'translations/translations_' + userLang + '.js';
+        
+        // Funzione per aggiornare le traduzioni
+        // Esegue un merge intelligente mantenendo la struttura nidificata
+        function updateTranslations(newTranslations) {
+            if (newTranslations && typeof newTranslations === 'object') {
+                // Merge delle traduzioni mantenendo la struttura nidificata
+                for (var key in newTranslations) {
+                    if (typeof newTranslations[key] === 'object' && !Array.isArray(newTranslations[key])) {
+                        if (!TRANSLATIONS[key] || typeof TRANSLATIONS[key] !== 'object') {
+                            TRANSLATIONS[key] = {};
                         }
+                        for (var subKey in newTranslations[key]) {
+                            TRANSLATIONS[key][subKey] = newTranslations[key][subKey];
+                        }
+                    } else {
+                        TRANSLATIONS[key] = newTranslations[key];
                     }
+                }
+            }
+        }
+        
+        // Prova a caricare il file di traduzioni
+        CKEDITOR.scriptLoader.load(translationsPath, function(success) {
+            if (success) {
+                // Verifica il formato delle traduzioni caricate
+                if (window.OPENROUTER_TRANSLATIONS) {
+                    updateTranslations(window.OPENROUTER_TRANSLATIONS);
+                } else {
+                    // Prova il formato alternativo
+                    if (window.TRANSLATIONS) {
+                        updateTranslations(window.TRANSLATIONS);
+                    }
+                }
+            }
+        });
+
+        // Recupera il modello AI predefinito dalle impostazioni globali
+        // Se non è definito, utilizza mistral-7b-instruct come modello di fallback
+        function getDefaultModel() {
+            var defaultModel = 'mistralai/mistral-7b-instruct'; // Fallback predefinito
+            if (typeof globals !== 'undefined' && globals.openRouterDefaultModel && globals.openRouterDefaultModel.trim() !== '') {
+                defaultModel = globals.openRouterDefaultModel;
+            }
+            return defaultModel;
+        }
+
+        // Gestisce la visualizzazione dell'indicatore di caricamento nel dialog
+        // Mostra/nasconde l'animazione e gestisce gli stati dell'interfaccia utente
+        function toggleLoadingIndicator(dialog, show) {
+            var dialogElement = dialog.getElement();
+            var dialogContents = dialogElement.findOne('.cke_dialog_contents_body');
+            var loadingContainer = dialogElement.findOne('.loading-container');
+            var dialogTitle = dialogElement.findOne('.cke_dialog_title');
+            var closeButton = dialogElement.findOne('.cke_dialog_close_button');
+
+            if (!dialogContents || !loadingContainer || !dialogTitle) {
+                if (typeof globals !== 'undefined' && globals.debug) {
+                    console.error(TRANSLATIONS.ERROR_ELEMENTS_NOT_FOUND);
+                }
+                return;
+            }
+
+            // Centra sempre il dialog
+            dialogElement.setStyles({
+                'position': 'fixed',
+                'top': '50%',
+                'left': '50%',
+                'transform': 'translate(-50%, -50%)',
+                'margin': '0'
+            });
+
+            if (show) {
+                // Mantieni la larghezza corrente del dialog
+                var currentWidth = dialogElement.getStyle('width');
+                dialogContents.setStyle('display', 'none');
+                loadingContainer.setHtml(`
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">${TRANSLATIONS.LOADING_TEXT}</div>
+                `);
+                loadingContainer.setStyle('display', 'block');
+                dialogTitle.setHtml(TRANSLATIONS.LOADING_TITLE);
+                
+                // Nascondi il pulsante di chiusura durante il caricamento
+                if (closeButton) closeButton.hide();
+                
+                var buttons = dialogElement.findOne('.cke_dialog_footer');
+                if (buttons) buttons.hide();
+            } else {
+                // Mantieni il dialog centrato anche dopo il caricamento
+                loadingContainer.setStyle('display', 'none');
+                dialogContents.setStyle('display', 'block');
+                dialogTitle.setHtml(TRANSLATIONS.DIALOG_TITLE);
+                
+                // Mostra sempre il pulsante di chiusura
+                if (closeButton) closeButton.show();
+                
+                var buttons = dialogElement.findOne('.cke_dialog_footer');
+                if (buttons) buttons.show();
+            }
+        }
+
+        // Inserisce la risposta dell'AI nell'editor
+        // Gestisce sia il caso di testo selezionato che di inserimento in una nuova posizione
+        // Implementa un meccanismo di fallback in caso di errori
+        function insertAiResponse(editor, aiResponse) {
+            try {
+                var selection = editor.getSelection();
+                if (selection && selection.getSelectedText()) {
+                    editor.insertHtml(aiResponse);
+                } else {
+                    editor.insertHtml('<p>' + aiResponse + '</p>');
+                }
+                editor.updateElement();
+                editor.fire('change');
+                return true;
+            } catch (e) {
+                if (typeof globals !== 'undefined' && globals.debug) {
+                    // Rimuovo console.error
+                }
+                try {
+                    var currentContent = editor.getData();
+                    editor.setData(currentContent + '<p>' + aiResponse + '</p>');
+                    editor.updateElement();
+                    editor.fire('change');
+                    return true;
+                } catch (fallbackError) {
+                    if (typeof globals !== 'undefined' && globals.debug) {
+                        // Rimuovo console.error
+                    }
+                    return false;
+                }
+            }
+        }
+
+        // Elabora la risposta positiva dall'API
+        // Verifica la validità della risposta e la inserisce nell'editor
+        // Gestisce la chiusura del dialog e la notifica all'utente
+        function handleApiResponse(dialog, editor, data) {
+            toggleLoadingIndicator(dialog, false); // Nascondi indicatore di caricamento
+
+            if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+                toastr.error(TRANSLATIONS.ERROR_INVALID_RESPONSE);
+                return;
+            }
+
+            var aiResponse = data.choices[0].message.content.trim();
+
+            if (insertAiResponse(editor, aiResponse)) {
+                dialog.hide(); // Chiudi il dialog solo se l'inserimento ha successo
+                // Mostra messaggio di successo con un leggero ritardo
+                setTimeout(function() {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(TRANSLATIONS.SUCCESS_UPDATE);
+                    } else {
+                        alert(TRANSLATIONS.SUCCESS_UPDATE);
+                    }
+                }, 100);
+            } else {
+                // Se l'inserimento fallisce, mostra errore e lascia il dialog aperto
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(TRANSLATIONS.ERROR_UPDATE_TEXT);
+                } else {
+                    alert(TRANSLATIONS.ERROR_UPDATE_TEXT);
+                }
+            }
+        }
+
+        // Gestisce gli errori nelle chiamate API
+        // Mostra messaggi di errore appropriati all'utente e nasconde l'indicatore di caricamento
+        function handleApiError(dialog, error) {
+            toggleLoadingIndicator(dialog, false); // Nascondi indicatore di caricamento
+
+            // Mostra messaggio di errore all'utente
+            if (typeof toastr !== 'undefined') {
+                toastr.error('Errore: ' + (error.message || 'Si è verificato un errore durante la richiesta API'));
+            } else {
+                alert('Errore: ' + (error.message || 'Si è verificato un errore durante la richiesta API'));
+            }
+        }
+
+        // Funzioni di utilità per la gestione dei cookie
+        // Permettono di salvare e recuperare le preferenze dell'utente tra le sessioni
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            // Aggiunto SameSite=Lax e Secure (se applicabile, ma CKEditor potrebbe essere locale)
+            // Nota: Secure richiede HTTPS. Se si usa HTTP, rimuovere '; Secure'.
+            var secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax" + secureFlag;
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) {
+                    return c.substring(nameEQ.length, c.length);
+                }
+            }
+            return null;
+        }
+
+        // Effettua la chiamata API a OpenRouter
+        // Gestisce l'invio del prompt, la configurazione della richiesta e il trattamento delle risposte
+        function callOpenRouterApi(dialog, editor, prompt, selectedModel, selectedText, temperature, maxTokens) {
+            // Verifica API Key
+            if (typeof globals === 'undefined' || !globals.openRouterApiKey) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(TRANSLATIONS.ERROR_API_KEY);
+                } else {
+                    alert(TRANSLATIONS.ERROR_API_KEY);
+                }
+                return; // Interrompi se la chiave non è configurata
+            }
+
+            toggleLoadingIndicator(dialog, true); // Mostra caricamento
+
+            var requestBody = {
+                model: selectedModel,
+                messages: [
+                    { role: "system", content: "Sei un assistente utile." }, // Puoi personalizzare il messaggio di sistema
+                    { role: "user", content: prompt + (selectedText ? "\n\nRiscrivi o lavora su questo testo:\n" + selectedText : "") }
+                ],
+                temperature: parseFloat(temperature), // Ensure temperature is a float
+                max_tokens: parseInt(maxTokens, 10) // Ensure max_tokens is an integer
+            };
+
+            // Esegui la chiamata API
+            fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + globals.openRouterApiKey,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': window.location.href, 
+                    'X-Title': 'OpenSTAManager Integration'
                 },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Se la risposta non è OK, leggi il corpo per dettagli sull'errore
+                    return response.json().then(errData => {
+                        var errorMsg = 'Errore API: ' + response.status + ' ' + response.statusText;
+                        if (errData && errData.error && errData.error.message) {
+                            errorMsg += ' - ' + errData.error.message;
+                        } else if (typeof errData === 'string') {
+                            errorMsg += ' - ' + errData;
+                        }
+                        throw new Error(errorMsg); // Lancia un errore per essere catturato dal blocco catch
+                    }).catch(() => {
+                        // Se il corpo JSON non può essere letto o è vuoto
+                        throw new Error('Errore API: ' + response.status + ' ' + response.statusText + '. Impossibile ottenere dettagli aggiuntivi.');
+                    });
+                }
+                return response.json(); // Se la risposta è OK, procedi con il parsing del JSON
+            })
+            .then(data => {
+                handleApiResponse(dialog, editor, data); // Gestisci la risposta di successo
+            })
+            .catch(error => {
+                handleApiError(dialog, error); // Gestisci l'errore della chiamata
+            });
+        }
+
+        // Configurazione del dialog dell'editor
+        // Definisce l'interfaccia utente, i campi di input e gestisce le interazioni dell'utente
+        CKEDITOR.dialog.add('openrouterDialog', function(editor) {
+            var defaultModel = getDefaultModel(); // Ottieni il modello predefinito
+            var lastUsedModel = getCookie('ckeditorOpenRouterModel') || defaultModel; // Leggi l'ultimo modello usato o usa il predefinito
+            var lastTemperature = getCookie('ckeditorOpenRouterTemp') || '0.7'; // Default temperature
+            var lastMaxTokens = getCookie('ckeditorOpenRouterTokens') || '1024'; // Default max tokens
+
+            return {
+                title: TRANSLATIONS.DIALOG_TITLE,
+                minWidth: 400,
+                minHeight: 400,
+                width: Math.min(800, window.innerWidth * 0.8),
+                height: Math.min(400, window.innerHeight * 0.8),
+                resizable: CKEDITOR.DIALOG_RESIZE_BOTH,
                 contents: [
                     {
-                        id: 'tab1',
-                        label: 'Richiesta',
+                        id: 'tab-main',
+                        label: 'Impostazioni Principali',
                         elements: [
-                            // Elemento per il testo selezionato (inizialmente vuoto)
                             {
                                 type: 'html',
-                                id: 'selectedText',
-                                html: '<div style="margin-bottom: 10px; display: none;"></div>'
+                                id: 'loading-indicator',
+                                html: '<div class="loading-container" style="display: none; text-align: center; padding: 20px;"></div>'
                             },
                             {
-                                type: 'text',
+                                type: 'html',
+                                id: 'api-key-warning',
+                                html: '<div id="api-key-warning-container" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 255, 255, 0.9); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">' +
+                                      '<div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 15px; max-width: 80%;">' +
+                                      '<h3 style="margin-top: 0;">' + TRANSLATIONS.WARNING_TITLE + '</h3>' +
+                                      '<p>' + TRANSLATIONS.ERROR_API_KEY + '</p>' +
+                                      '<p>' + TRANSLATIONS.WARNING_DESCRIPTION + '</p>' +
+                                      '<button type="button" id="api-key-warning-close" style="margin-top: 15px; padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="CKEDITOR.dialog.getCurrent().hide()">' + TRANSLATIONS.WARNING_BUTTON + '</button>' +
+                                      '</div>' +
+                                      '</div>'
+                            },
+                            {
+                                type: 'textarea',
+                                id: 'context',
+                                label: TRANSLATIONS.LABEL_CONTEXT,
+                                rows: 3,
+                                setup: function() {
+                                    var selection = editor.getSelection();
+                                    var selectedText = selection ? selection.getSelectedText() : '';
+                                    this.setValue(selectedText);
+                                },
+                                style: 'background-color: #f5f5f5;' // Sfondo grigio chiaro per distinguerlo
+                            },
+                            {
+                                type: 'textarea',
                                 id: 'prompt',
-                                label: 'Genera testo con Mistral AI',
-                                validate: CKEDITOR.dialog.validate.notEmpty('Il campo richiesta non può essere vuoto')
+                                label: TRANSLATIONS.LABEL_PROMPT,
+                                rows: 5,
+                                required: true,
+                                validate: CKEDITOR.dialog.validate.notEmpty(TRANSLATIONS.ERROR_PROMPT_EMPTY),
+                                setup: function() {
+                                    // Potresti pre-popolare il prompt se necessario
+                                },
+                                commit: function(data) {
+                                    data.prompt = this.getValue();
+                                }
+                            },
+                            {
+                                type: 'select',
+                                id: 'model',
+                                label: TRANSLATIONS.LABEL_MODEL,
+                                items: [ // Aggiungi qui i modelli che vuoi supportare
+                                    ['Mistral 7B Instruct (Consigliato)', 'mistralai/mistral-7b-instruct'],
+                                    ['Mixtral 8x7B Instruct', 'mistralai/mixtral-8x7b-instruct'],
+                                    ['Google Gemini Pro 1.5', 'google/gemini-pro-1.5'],
+                                    ['Google Gemini Pro', 'google/gemini-pro'],
+                                    ['OpenAI GPT-4o', 'openai/gpt-4o'],
+                                    ['OpenAI GPT-4 Turbo', 'openai/gpt-4-turbo'],
+                                    ['OpenAI GPT-3.5 Turbo', 'openai/gpt-3.5-turbo'],
+                                    ['Claude 3 Haiku', 'anthropic/claude-3-haiku-20240307'],
+                                    ['Claude 3 Sonnet', 'anthropic/claude-3-sonnet-20240229'],
+                                    ['Claude 3 Opus', 'anthropic/claude-3-opus-20240229'],
+                                    ['Llama 3 70B Instruct (Meta)', 'meta-llama/llama-3-70b-instruct'],
+                                    ['Llama 3 8B Instruct (Meta)', 'meta-llama/llama-3-8b-instruct']
+                                    // Aggiungi altri modelli se necessario
+                                ],
+                                'default': lastUsedModel, // Usa l'ultimo modello selezionato o il predefinito
+                                setup: function() {
+                                    this.setValue(lastUsedModel); // Imposta il valore al caricamento
+                                },
+                                commit: function(data) {
+                                    data.model = this.getValue();
+                                    setCookie('ckeditorOpenRouterModel', data.model, 30); // Salva il modello selezionato per 30 giorni
+                                }
+                            },
+                            {
+                                type: 'hbox',
+                                widths: ['50%', '50%'],
+                                children: [
+                                    {
+                                        type: 'html',
+                                        html: '<div style="padding: 5px;">' +
+                                              '<label style="display: block; margin-bottom: 5px;">' + TRANSLATIONS.LABEL_TEMPERATURE + ' <span id="tempValue">' + lastTemperature + '</span></label>' +
+                                              '<input type="range" id="temperatureRange" min="0.1" max="1.0" step="0.1" value="' + lastTemperature + '" ' +
+                                              'style="width: 100%;" oninput="document.getElementById(\'tempValue\').textContent = this.value"/>' +
+                                              '</div>',
+                                        setup: function() {
+                                            var range = this.getElement().findOne('input');
+                                            if (range) {
+                                                range.$.value = lastTemperature;
+                                                range.$.oninput();
+                                            }
+                                        },
+                                        commit: function(data) {
+                                            var range = this.getElement().findOne('input');
+                                            if (range) {
+                                                data.temperature = range.$.value;
+                                                setCookie('ckeditorOpenRouterTemp', data.temperature, 30);
+                                            }
+                                        }
+                                    },
+                                    {
+                                        type: 'text',
+                                        id: 'max_tokens',
+                                        label: TRANSLATIONS.LABEL_MAX_TOKENS,
+                                        'default': lastMaxTokens,
+                                        validate: function() {
+                                            var value = parseInt(this.getValue(), 10);
+                                            if (isNaN(value) || value <= 0) {
+                                                alert(TRANSLATIONS.ERROR_MAX_TOKENS);
+                                                return false;
+                                            }
+                                            return true;
+                                        },
+                                        setup: function() {
+                                            this.setValue(lastMaxTokens);
+                                        },
+                                        commit: function(data) {
+                                            data.max_tokens = this.getValue();
+                                            setCookie('ckeditorOpenRouterTokens', data.max_tokens, 30);
+                                        }
+                                    }
+                                ]
+                            },
+                             {
+                                type: 'html',
+                                id: 'info_text',
+                                html: '<div style="margin-top: 10px; font-size: 0.9em; color: #555;">' +
+                                      '<strong>Suggerimento:</strong> ' + TRANSLATIONS.INFO_TEXT.SUGGESTION +
+                                      '<br><strong>Temperatura:</strong> ' + TRANSLATIONS.INFO_TEXT.TEMPERATURE +
+                                      '<br><strong>Max Tokens:</strong> ' + TRANSLATIONS.INFO_TEXT.MAX_TOKENS +
+                                      '</div>'
                             }
                         ]
                     }
                 ],
+                onShow: function() {
+                    var dialog = this;
+                    var selection = editor.getSelection();
+                    this.selectedText = selection ? selection.getSelectedText() : null;
+                    
+                    // Forza il centramento del dialog
+                    var dialogElement = dialog.getElement();
+                    dialogElement.setStyles({
+                        'position': 'fixed',
+                        'top': '50%',
+                        'left': '50%',
+                        'transform': 'translate(-50%, -50%)',
+                        'margin': '0'
+                    });
+                    
+                    // Aggiorna il campo contesto
+                    var contextField = dialog.getContentElement('tab-main', 'context');
+                    if (contextField) {
+                        contextField.setValue(this.selectedText || '');
+                    }
+                    
+                    toggleLoadingIndicator(this, false);
+                    
+                    // Verifica se l'API Key è configurata
+                    var apiKeyConfigured = typeof globals !== 'undefined' && globals.openRouterApiKey;
+                    
+                    // Trova il pulsante OK
+                    var okButton = this.getButton('ok');
+                    
+                    // Trova il container dell'avviso
+                    var warningContainer = dialogElement.findOne('#api-key-warning-container');
+                    
+                    if (!apiKeyConfigured) {
+                        // Disabilita il pulsante OK ma mantieni visibile il pulsante di chiusura
+                        if (okButton) {
+                            okButton.disable();
+                        }
+                        
+                        // Mostra l'avviso
+                        if (warningContainer) {
+                            warningContainer.setStyle('display', 'flex');
+                            
+                            // Aggiungi event listener al pulsante "Ok, ho capito"
+                            var closeButton = warningContainer.findOne('#api-key-warning-close');
+                            if (closeButton) {
+                                closeButton.on('click', function() {
+                                    dialog.hide(); // Chiudi il dialog quando il pulsante viene cliccato
+                                });
+                            }
+                        }
+                    } else {
+                        // Abilita il pulsante OK
+                        if (okButton) {
+                            okButton.enable();
+                        }
+                        
+                        // Nascondi l'avviso
+                        if (warningContainer) {
+                            warningContainer.setStyle('display', 'none');
+                        }
+                    }
+                },
                 onOk: function() {
                     var dialog = this;
-                    var prompt = dialog.getValueOf('tab1', 'prompt');
+                    var data = {};
+                    dialog.commitContent(data); // Raccoglie i dati dagli elementi del form
 
-                    // Verifica se la variabile globals esiste e se contiene openRouterApiKey
-                    if (typeof globals === 'undefined' || !globals.openRouterApiKey) {
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('OpenRouter API Key non configurata. Configurala nelle impostazioni.');
-                        } else {
-                            alert('OpenRouter API Key non configurata. Configurala nelle impostazioni.');
-                        }
-                        return false;
-                    }
+                    // Recupera il testo selezionato (potrebbe essere cambiato)
+                    var selection = editor.getSelection();
+                    var selectedText = selection ? selection.getSelectedText() : null;
 
-                    // Mostra una rotellina di caricamento direttamente nel dialog corrente
-                    var dialog = this;
-                    var dialogElement = dialog.getElement();
+                    // Chiama la funzione API
+                    callOpenRouterApi(dialog, editor, data.prompt, data.model, selectedText, data.temperature, data.max_tokens);
 
-                    // Nascondi tutti gli elementi del dialog tranne i pulsanti
-                    var dialogContents = dialogElement.findOne('.cke_dialog_contents');
-                    if (dialogContents) {
-                        dialogContents.setStyle('display', 'none');
-                    }
-
-                    // Crea un div con la rotellina di caricamento e lo stile CSS
-                    var loadingDiv = document.createElement('div');
-                    loadingDiv.className = 'loading-container';
-                    loadingDiv.style.cssText = 'text-align: center; padding: 20px;';
-
-                    // Aggiungi il contenuto HTML con lo stile CSS inline
-                    loadingDiv.innerHTML = '<style>.loading-spinner { border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 0 auto; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } .loading-text { margin-top: 10px; font-weight: bold; }</style><div class="loading-spinner"></div><div class="loading-text">Elaborazione in corso...</div>';
-
-                    // Cambia il titolo del dialog
-                    var dialogTitle = dialogElement.findOne('.cke_dialog_title');
-                    if (dialogTitle) {
-                        dialogTitle.setHtml('Elaborazione in corso...');
-                    }
-
-                    // Aggiungi la rotellina al dialog
-                    try {
-                        // Trova il contenitore del body del dialog
-                        var dialogBody = dialogElement.findOne('.cke_dialog_body');
-                        if (dialogBody) {
-                            dialogBody.appendChild(loadingDiv);
-                        }
-                    } catch (e) {
-                        console.error('Impossibile aggiungere la rotellina al dialog:', e);
-                    }
-
-                    // Disabilita i pulsanti del dialog
-                    var buttons = dialogElement.find('.cke_dialog_ui_button');
-                    for (var i = 0; i < buttons.count(); i++) {
-                        buttons.getItem(i).setAttribute('disabled', 'disabled');
-                    }
-
-                    // Log solo se debug è attivo
-                    if (typeof globals !== 'undefined' && globals.debug) {
-                        console.log('Prompt:', prompt);
-                        console.log('Editor:', editor);
-                    }
-
-                    // Ottieni il testo selezionato (lo abbiamo già ottenuto all'apertura del dialog)
-                    var selectedText = editor.getSelection().getSelectedText();
-                    var content = selectedText; // Usa solo il testo selezionato, non l'intero contenuto
-
-                    // Log per debug
-                    if (typeof globals !== 'undefined' && globals.debug) {
-                        console.log('Testo selezionato:', selectedText ? selectedText : 'Nessun testo selezionato');
-                        console.log('Contenuto da inviare:', content);
-                    }
-
-                    // Chiamata API a OpenRouter
-                    fetch('https://openrouter.ai/api/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + globals.openRouterApiKey,
-                            'Content-Type': 'application/json',
-                            'HTTP-Referer': window.location.origin,
-                            'X-Title': 'OpenSTAManager'
-                        },
-                        body: JSON.stringify({
-                            model: 'mistralai/mistral-7b-instruct',
-                            messages: [
-                                {
-                                    role: 'system',
-                                    content: 'Sei un assistente esperto che aiuta a migliorare e modificare testi in italiano. Rispondi sempre in italiano.'
-                                },
-                                {
-                                    role: 'user',
-                                    content: selectedText ? (prompt + '\n\nTesto originale:\n' + content) : prompt
-                                }
-                            ],
-                            temperature: 0.7,
-                            max_tokens: 1000
-                        })
-                    })
-                    .then(function(response) {
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        // Non c'è più bisogno di chiudere il dialog di caricamento
-                        if (typeof globals !== 'undefined' && globals.debug) {
-                            console.log('Risposta ricevuta dall\'API');
-                        }
-
-                        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-                            throw new Error('Risposta non valida da OpenRouter');
-                        }
-
-                        var aiResponse = data.choices[0].message.content;
-                        if (typeof globals !== 'undefined' && globals.debug) {
-                            console.log('Risposta ricevuta:', aiResponse);
-                        }
-
-                        // Inserisci direttamente la risposta nell'editor
-                        if (typeof globals !== 'undefined' && globals.debug) {
-                            console.log('Tentativo di inserire il testo nell\'editor');
-                            console.log('Modalità editor:', editor.mode);
-                            console.log('Editor status:', editor.status);
-                        }
-
-                        try {
-                            // Metodo 1: Aggiungi il testo alla fine del contenuto esistente
-                            if (typeof globals !== 'undefined' && globals.debug) {
-                                console.log('Provo ad aggiungere il testo alla fine del contenuto esistente');
-                            }
-
-                            // Ottieni il contenuto attuale
-                            var currentContent = editor.getData();
-
-                            // Aggiungi la risposta alla fine del contenuto esistente
-                            editor.setData(currentContent + '<p>' + aiResponse + '</p>');
-                            editor.updateElement();
-                            editor.fire('change');
-
-                            if (typeof globals !== 'undefined' && globals.debug) {
-                                console.log('Testo aggiunto con successo');
-                            }
-
-                            // Rimuovi la rotellina di caricamento e ripristina il dialog
-                            try {
-                                // Rimuovi il div di caricamento
-                                var loadingContainer = dialogElement.findOne('.loading-container');
-                                if (loadingContainer && loadingContainer.parentNode) {
-                                    loadingContainer.parentNode.removeChild(loadingContainer);
-                                }
-
-                                // Mostra nuovamente i contenuti del dialog
-                                var dialogContents = dialogElement.findOne('.cke_dialog_contents');
-                                if (dialogContents) {
-                                    dialogContents.setStyle('display', 'block');
-                                }
-
-                                // Ripristina il titolo originale
-                                var dialogTitle = dialogElement.findOne('.cke_dialog_title');
-                                if (dialogTitle) {
-                                    dialogTitle.setHtml('Mistral AI');
-                                }
-                            } catch (e) {
-                                console.error('Errore nella rimozione del container di caricamento:', e);
-                            }
-
-                            // Chiudi il dialog
-                            dialog.hide();
-
-                            // Mostra un messaggio toast di successo
-                            setTimeout(function() {
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.success('Testo aggiornato correttamente');
-                                } else {
-                                    alert('Testo aggiornato correttamente');
-                                }
-                            }, 100);
-                        } catch (e) {
-                            if (typeof globals !== 'undefined' && globals.debug) {
-                                console.error("Errore nell'aggiornamento dell'editor:", e);
-                            }
-
-                            // Fallback: prova con insertHtml
-                            try {
-                                if (typeof globals !== 'undefined' && globals.debug) {
-                                    console.log('Provo con insertHtml');
-                                }
-
-                                // Ottieni il contenuto attuale
-                                var currentContent = editor.getData();
-
-                                if (editor.mode !== 'wysiwyg') {
-                                    editor.setMode('wysiwyg', function() {
-                                        editor.insertHtml('<p>' + aiResponse + '</p>');
-                                    });
-                                } else {
-                                    editor.insertHtml('<p>' + aiResponse + '</p>');
-                                }
-
-                                // Forza l'aggiornamento
-                                editor.updateElement();
-                                editor.fire('change');
-
-                                if (typeof globals !== 'undefined' && globals.debug) {
-                                    console.log('insertHtml eseguito');
-                                }
-
-                                // Rimuovi la rotellina di caricamento
-                                try {
-                                    var loadingOverlay = dialogElement.findOne('.loading-overlay');
-                                    if (loadingOverlay) {
-                                        try {
-                                            loadingOverlay.remove();
-                                        } catch (e) {
-                                            // Se remove() non funziona, prova con removeChild
-                                            if (loadingOverlay.parentNode) {
-                                                loadingOverlay.parentNode.removeChild(loadingOverlay);
-                                            }
-                                        }
-                                    }
-                                } catch (e) {
-                                    console.error('Errore nella rimozione dell\'overlay:', e);
-                                }
-
-                                // Chiudi il dialog
-                                dialog.hide();
-
-                                // Mostra un messaggio toast di successo
-                                setTimeout(function() {
-                                    if (typeof toastr !== 'undefined') {
-                                        toastr.success('Testo aggiornato correttamente');
-                                    } else {
-                                        alert('Testo aggiornato correttamente');
-                                    }
-                                }, 100);
-                            } catch (fallbackError) {
-                                if (typeof globals !== 'undefined' && globals.debug) {
-                                    console.error('Errore nel fallback:', fallbackError);
-                                }
-                                // Rimuovi la rotellina di caricamento e ripristina il dialog
-                                try {
-                                    // Rimuovi il div di caricamento
-                                    var loadingContainer = dialogElement.findOne('.loading-container');
-                                    if (loadingContainer && loadingContainer.parentNode) {
-                                        loadingContainer.parentNode.removeChild(loadingContainer);
-                                    }
-
-                                    // Mostra nuovamente i contenuti del dialog
-                                    var dialogContents = dialogElement.findOne('.cke_dialog_contents');
-                                    if (dialogContents) {
-                                        dialogContents.setStyle('display', 'block');
-                                    }
-
-                                    // Ripristina il titolo originale
-                                    var dialogTitle = dialogElement.findOne('.cke_dialog_title');
-                                    if (dialogTitle) {
-                                        dialogTitle.setHtml('Mistral AI');
-                                    }
-                                } catch (e) {
-                                    console.error('Errore nella rimozione del container di caricamento:', e);
-                                }
-
-                                // Riabilita i pulsanti del dialog
-                                var buttons = dialogElement.find('.cke_dialog_ui_button');
-                                for (var i = 0; i < buttons.count(); i++) {
-                                    buttons.getItem(i).removeAttribute('disabled');
-                                }
-
-                                // Mostra un messaggio di errore
-                                if (typeof toastr !== 'undefined') {
-                                    toastr.error('Errore durante l\'aggiornamento del testo: ' + e.message);
-                                } else {
-                                    alert('Errore durante l\'aggiornamento del testo: ' + e.message);
-                                }
-                            }
-                        }
-                    })
-                    .catch(function(error) {
-                        // Log per debug
-                        if (typeof globals !== 'undefined' && globals.debug) {
-                            console.log('Errore nella richiesta API');
-                            console.error('Errore nella richiesta API:', error);
-                        }
-
-                        // Rimuovi la rotellina di caricamento e ripristina il dialog
-                        try {
-                            // Rimuovi il div di caricamento
-                            var loadingContainer = dialogElement.findOne('.loading-container');
-                            if (loadingContainer && loadingContainer.parentNode) {
-                                loadingContainer.parentNode.removeChild(loadingContainer);
-                            }
-
-                            // Mostra nuovamente i contenuti del dialog
-                            var dialogContents = dialogElement.findOne('.cke_dialog_contents');
-                            if (dialogContents) {
-                                dialogContents.setStyle('display', 'block');
-                            }
-
-                            // Ripristina il titolo originale
-                            var dialogTitle = dialogElement.findOne('.cke_dialog_title');
-                            if (dialogTitle) {
-                                dialogTitle.setHtml('Mistral AI');
-                            }
-                        } catch (e) {
-                            console.error('Errore nella rimozione del container di caricamento:', e);
-                        }
-
-                        // Riabilita i pulsanti del dialog
-                        var buttons = dialogElement.find('.cke_dialog_ui_button');
-                        for (var i = 0; i < buttons.count(); i++) {
-                            buttons.getItem(i).removeAttribute('disabled');
-                        }
-
-                        // Mostra un messaggio di errore
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('Errore: ' + (error.message || 'Si è verificato un errore durante la richiesta'));
-                        } else {
-                            alert('Errore: ' + (error.message || 'Si è verificato un errore durante la richiesta'));
-                        }
-                    });
-
-                    return true; // Chiude il dialog di input
+                    // Impedisci la chiusura automatica del dialog; la chiusura avverrà in handleApiResponse
+                    return false;
                 }
             };
         });
 
-        // Il dialog di caricamento è stato sostituito da un overlay direttamente nel dialog principale
+        // Configurazione del comando e del pulsante nella toolbar dell'editor
+        editor.addCommand('openrouterDialogCmd', new CKEDITOR.dialogCommand('openrouterDialog'));
 
-        // Aggiungi il comando
-        editor.addCommand('openrouter', new CKEDITOR.dialogCommand('openrouterDialog'));
-
-        // Aggiungi il pulsante alla toolbar
         editor.ui.addButton('OpenRouter', {
-            label: 'Genera testo con Mistral AI',
-            command: 'openrouter',
-            toolbar: 'insert'
+            label: TRANSLATIONS.DIALOG_TITLE,
+            command: 'openrouterDialogCmd',
+            toolbar: 'insert',
+            icon: this.path + 'icons/openrouter.png' // Percorso all'icona del plugin
         });
 
+        // Log di debug per confermare il corretto caricamento del plugin
+        if (typeof globals !== 'undefined' && globals.debug) {
+            console.log(TRANSLATIONS.PLUGIN_LOADED);
+        }
     }
 });

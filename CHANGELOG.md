@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.7.3 (2025-04-15](#273-2025-04-15)
 - [2.7.2 (2025-03-26)](#272-2025-03-26)
 - [2.7.1 (2025-03-05)](#271-2025-03-05)
 - [2.7 (2025-02-12)](#27-2025-02-12)
@@ -52,6 +53,34 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.7.3 (2025-04-15)
+### Modificato (Changed)
+- Rimossi file e cartelle deprecati e dipendenze inutilizzate
+- Spostati gli allegati PDF delle fatture di vendita
+
+### Fixed
+- Corretto il campo **Residuo contratto** in **Contratti**
+- Corretta la stampa degli ordini
+- Corretta la visualizzazione dei mesi in statistiche
+- Corretto il cambio stato automatico in fatturazione intervento
+- Corretta l'esportazione XML dei bonifici bancari
+- Corretto il controllo sulla tipologia di anagrafica
+- Corretta l'esportazione degli XML da azioni di gruppo
+- Corretto il doppio caricamento delle tabelle con filtri
+- Corretta la visualizzazione delle tabelle responsive
+- Corretto l'avviso per ricevute di scarto
+- Corretta la selezione della sottocategoria in impianti
+- Corretta la visualizzazione degli importi in fase di fatturazione documenti
+- Corretta la selezione delle zona in base all'anagrfica selezionata
+- Corretta l'esportazione SEPA
+- Corrette le API relative alle checklist
+- Corretta l'aggiunta delle tariffe dei tecnici
+- Corretto l'aggiornamento delle scadenze
+- Corretta la selezione del conto in fase di importazione delle fatture di vendita
+- Corretto il caricamento degli allegati in fase di importazione delle fatture di vendita
+- Corretta l'aggiunta dei tipi di intervento
+- Corretto il calcolo liquidazione IVA di fine anno
 
 ## 2.7.2 (2025-03-26)
 ### Modificato (Changed)

@@ -80,7 +80,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta la selezione del conto in fase di importazione delle fatture di vendita
 - Corretto il caricamento degli allegati in fase di importazione delle fatture di vendita
 - Corretta l'aggiunta dei tipi di intervento
-- Corretto il calcolo liquidazione IVA di fine anno
 
 ## 2.7.2 (2025-03-26)
 ### Modificato (Changed)

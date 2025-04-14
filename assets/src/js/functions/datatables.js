@@ -286,7 +286,7 @@ function initComplete(settings) {
 
         const value = search['search_' + name] ? search['search_' + name] : '';
 
-        $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"><i class="deleteicon fa fa-times ' + (value ? '' : ' hide') + '"></i>')
+        $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"><i class="deleteicon fa fa-times' + (value ? '' : ' hide') + '"></i>')
             .appendTo(column.header())
             .on('keyup', function (e) {
                 clearInterval(tempo);

@@ -184,7 +184,7 @@ echo '
     
     // Funzione per verificare l'IBAN tramite ibanapi.com
     function checkIban() {
-        let value = iban.get();
+        let value = $("#modals #iban").val();
         if (value.length < 15) {
             swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Inserire un IBAN valido'); ?>", "error");
             return;
@@ -235,10 +235,10 @@ echo '
                             // Compila i campi se disponibili
                             if (verificationType === 'bank' && response.data && response.data.bank) {
                                 if (response.data.bank.bic) {
-                                    $('#modals > div #bic').val(response.data.bank.bic);
+                                    $('#modals #bic').val(response.data.bank.bic);
                                 }
                                 if (response.data.bank.bank_name) {
-                                    $('#modals > div #nome').val(response.data.bank.bank_name);
+                                    $('#modals #nome').val(response.data.bank.bank_name);
                                 }
                             }
                             
@@ -278,7 +278,7 @@ echo '
                                 }
                             }
 
-                            if(response.data.sepa){
+                            if(verificationType === 'bank' && response.data.sepa){
                                 infoHtml += "<p><strong><?php echo tr('Informazioni sepa'); ?>:</strong></p>";
                                 infoHtml += "<div class='row'>";
                                 
@@ -329,7 +329,7 @@ echo '
     }
     
     // Aggiungi l'evento click al pulsante di verifica IBAN
-    $("#check-iban").on("click", function(e) {
+    $("#modals #check-iban").on("click", function(e) {
         e.preventDefault();
         checkIban();
     });

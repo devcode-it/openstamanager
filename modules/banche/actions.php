@@ -22,6 +22,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
 use Modules\Banche\Banca;
 use Modules\Banche\IBAN;
+use GuzzleHttp\Client;
 
 include_once __DIR__.'/../../core.php';
 
@@ -119,20 +120,19 @@ switch (filter('op')) {
         $api_key = filter('api_key');
         
         // Verifica il credito residuo su ibanapi.com
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, setting('Endpoint ibanapi.com').'/v1/balance?api_key='.$api_key);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        $result = curl_exec($ch);
-        
-        if (curl_errno($ch)) {
+        try {
+            $client = new Client();
+            $response = $client->request('GET', setting('Endpoint ibanapi.com').'/v1/balance', [
+                'query' => ['api_key' => $api_key],
+                'http_errors' => false,
+            ]);
+            
+            echo $response->getBody()->getContents();
+        } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com']);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com: '.$e->getMessage()]);
             exit;
         }
-        curl_close($ch);
-        
-        echo $result;
         break;
         
     case 'verify_iban':
@@ -141,24 +141,25 @@ switch (filter('op')) {
         $api_key = filter('api_key');
         
         // Verifica l'IBAN tramite ibanapi.com
-        $ch = curl_init();
-        $endpoint = ($type === 'bank') ? setting('Endpoint ibanapi.com').'/v1/validate' : setting('Endpoint ibanapi.com').'/v1/validate-basic';
-        curl_setopt($ch, CURLOPT_URL, $endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ['iban' => $iban, 'api_key' => $api_key]);
-        $headers = [];
-        $headers[] = 'Accept: application/json';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($ch);
-        
-        if (curl_errno($ch)) {
+        try {
+            $client = new Client();
+            $endpoint = ($type === 'bank') ? setting('Endpoint ibanapi.com').'/v1/validate' : setting('Endpoint ibanapi.com').'/v1/validate-basic';
+            $response = $client->request('POST', $endpoint, [
+                'form_params' => [
+                    'iban' => $iban,
+                    'api_key' => $api_key
+                ],
+                'headers' => [
+                    'Accept' => 'application/json'
+                ],
+                'http_errors' => false,
+            ]);
+            
+            echo $response->getBody()->getContents();
+        } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com']);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com: '.$e->getMessage()]);
             exit;
         }
-        curl_close($ch);
-        
-        echo $result;
         break;
 }

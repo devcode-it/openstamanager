@@ -259,7 +259,7 @@ if (!empty($numero_documenti)) {
     
     // Funzione per verificare l'IBAN tramite ibanapi.com
     function checkIban() {
-        let value = iban.get();
+        let value = $("#iban").val();
         if (value.length < 15) {
             swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Inserire un IBAN valido'); ?>", "error");
             return;
@@ -353,7 +353,7 @@ if (!empty($numero_documenti)) {
                                 }
                             }
 
-                            if(response.data.sepa){
+                            if(verificationType === 'bank' && response.data.sepa){
                                 infoHtml += "<p><strong><?php echo tr('Informazioni sepa'); ?>:</strong></p>";
                                 infoHtml += "<div class='row'>";
                                 

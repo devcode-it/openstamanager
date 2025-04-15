@@ -27,4 +27,5 @@ window.OPENROUTER_TRANSLATIONS = {
     WARNING_TITLE: 'API Key Not Configured',
     WARNING_DESCRIPTION: 'Configure a valid API key in system settings to use this feature.',
     WARNING_BUTTON: 'I understand',
+    LABEL_SYSTEM_PROMPT: 'System Prompt:', // Nuova traduzione
 };

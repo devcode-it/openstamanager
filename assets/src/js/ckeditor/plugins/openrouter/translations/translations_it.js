@@ -18,6 +18,7 @@ window.OPENROUTER_TRANSLATIONS = {
     LABEL_MODEL: 'Modello AI:',
     LABEL_TEMPERATURE: 'Temperatura:',
     LABEL_MAX_TOKENS: 'Max Tokens:',
+    LABEL_SYSTEM_PROMPT: 'Prompt di Sistema:', // Nuova traduzione
     INFO_TEXT: {
         SUGGESTION: 'Se hai selezionato del testo nell\'editor, verrà incluso automaticamente nel prompt per essere elaborato dall\'AI.',
         TEMPERATURE: 'Controlla la casualità. Valori più bassi (es. 0.2) rendono l\'output più focalizzato e deterministico, valori più alti (es. 1.0) lo rendono più creativo.',

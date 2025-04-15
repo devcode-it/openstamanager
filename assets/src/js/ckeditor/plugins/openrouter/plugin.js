@@ -88,6 +88,16 @@ CKEDITOR.plugins.add('openrouter', {
             return defaultModel;
         }
 
+        // Recupera il prompt di sistema predefinito dalle impostazioni globali
+        // Se non è definito, utilizza un prompt generico come fallback
+        function getSystemPrompt() {
+            var defaultPrompt = 'Sei un assistente utile.'; // Fallback predefinito
+            if (typeof globals !== 'undefined' && globals.AISystemPrompt && globals.AISystemPrompt.trim() !== '') {
+                defaultPrompt = globals.AISystemPrompt;
+            }
+            return defaultPrompt;
+        }
+
         // Gestisce la visualizzazione dell'indicatore di caricamento nel dialog
         // Mostra/nasconde l'animazione e gestisce gli stati dell'interfaccia utente
         function toggleLoadingIndicator(dialog, show) {
@@ -252,7 +262,7 @@ CKEDITOR.plugins.add('openrouter', {
 
         // Effettua la chiamata API a OpenRouter
         // Gestisce l'invio del prompt, la configurazione della richiesta e il trattamento delle risposte
-        function callOpenRouterApi(dialog, editor, prompt, selectedModel, selectedText, temperature, maxTokens) {
+        function callOpenRouterApi(dialog, editor, systemPrompt, userPrompt, selectedText, selectedModel, temperature, maxTokens) {
             // Verifica API Key
             if (typeof globals === 'undefined' || !globals.openRouterApiKey) {
                 if (typeof toastr !== 'undefined') {
@@ -268,8 +278,8 @@ CKEDITOR.plugins.add('openrouter', {
             var requestBody = {
                 model: selectedModel,
                 messages: [
-                    { role: "system", content: "Sei un assistente utile." }, // Puoi personalizzare il messaggio di sistema
-                    { role: "user", content: prompt + (selectedText ? "\n\nRiscrivi o lavora su questo testo:\n" + selectedText : "") }
+                    { role: "system", content: systemPrompt }, // Usa il prompt di sistema dal dialog
+                    { role: "user", content: userPrompt + (selectedText ? "\n\nRiscrivi o lavora su questo testo:\n" + selectedText : "") }
                 ],
                 temperature: parseFloat(temperature), // Ensure temperature is a float
                 max_tokens: parseInt(maxTokens, 10) // Ensure max_tokens is an integer
@@ -316,7 +326,8 @@ CKEDITOR.plugins.add('openrouter', {
         // Definisce l'interfaccia utente, i campi di input e gestisce le interazioni dell'utente
         CKEDITOR.dialog.add('openrouterDialog', function(editor) {
             var defaultModel = getDefaultModel(); // Ottieni il modello predefinito
-            var lastUsedModel = getCookie('ckeditorOpenRouterModel') || defaultModel; // Leggi l'ultimo modello usato o usa il predefinito
+            var defaultSystemPrompt = getSystemPrompt(); // Ottieni il prompt di sistema predefinito
+            var lastUsedModel = getCookie('ckeditorOpenRouterModel') || defaultModel; // Letto all'inizio, ma setup lo sovrascrive
             var lastTemperature = getCookie('ckeditorOpenRouterTemp') || '0.7'; // Default temperature
             var lastMaxTokens = getCookie('ckeditorOpenRouterTokens') || '1024'; // Default max tokens
 
@@ -351,6 +362,19 @@ CKEDITOR.plugins.add('openrouter', {
                             },
                             {
                                 type: 'textarea',
+                                id: 'system_prompt',
+                                label: TRANSLATIONS.LABEL_SYSTEM_PROMPT, // Nuova label
+                                rows: 3,
+                                'default': defaultSystemPrompt,
+                                setup: function() {
+                                    this.setValue(defaultSystemPrompt);
+                                },
+                                commit: function(data) {
+                                    data.system_prompt = this.getValue();
+                                }
+                            },
+                            {
+                                type: 'textarea',
                                 id: 'context',
                                 label: TRANSLATIONS.LABEL_CONTEXT,
                                 rows: 3,
@@ -359,7 +383,10 @@ CKEDITOR.plugins.add('openrouter', {
                                     var selectedText = selection ? selection.getSelectedText() : '';
                                     this.setValue(selectedText);
                                 },
-                                style: 'background-color: #f5f5f5;' // Sfondo grigio chiaro per distinguerlo
+                                // Rimosso lo style per renderlo editabile
+                                commit: function(data) {
+                                    data.context = this.getValue(); // Recupera il contesto (potrebbe essere stato modificato)
+                                }
                             },
                             {
                                 type: 'textarea',
@@ -372,7 +399,7 @@ CKEDITOR.plugins.add('openrouter', {
                                     // Potresti pre-popolare il prompt se necessario
                                 },
                                 commit: function(data) {
-                                    data.prompt = this.getValue();
+                                    data.user_prompt = this.getValue(); // Rinominato per chiarezza
                                 }
                             },
                             {
@@ -394,15 +421,17 @@ CKEDITOR.plugins.add('openrouter', {
                                     ['Llama 3 8B Instruct (Meta)', 'meta-llama/llama-3-8b-instruct']
                                     // Aggiungi altri modelli se necessario
                                 ],
-                                'default': lastUsedModel, // Usa l'ultimo modello selezionato o il predefinito
+                                'default': lastUsedModel, // Valore predefinito iniziale
                                 setup: function() {
-                                    // Leggi il cookie ogni volta che il dialog viene aperto
+                                    // Leggi il cookie *ogni volta* che il dialog viene aperto
                                     var currentLastUsedModel = getCookie('ckeditorOpenRouterModel') || defaultModel;
+                                    // Imposta il valore del dropdown basato sul cookie corrente
                                     this.setValue(currentLastUsedModel);
                                 },
                                 commit: function(data) {
+                                    // Salva il valore selezionato nel cookie quando si preme OK
                                     data.model = this.getValue();
-                                    setCookie('ckeditorOpenRouterModel', data.model, 30); // Salva il modello selezionato per 30 giorni
+                                    setCookie('ckeditorOpenRouterModel', data.model, 30);
                                 }
                             },
                             {
@@ -414,13 +443,17 @@ CKEDITOR.plugins.add('openrouter', {
                                         html: '<div style="padding: 5px;">' +
                                               '<label style="display: block; margin-bottom: 5px;">' + TRANSLATIONS.LABEL_TEMPERATURE + ' <span id="tempValue">' + lastTemperature + '</span></label>' +
                                               '<input type="range" id="temperatureRange" min="0.1" max="1.0" step="0.1" value="' + lastTemperature + '" ' +
-                                              'style="width: 100%;" oninput="document.getElementById(\'tempValue\').textContent = this.value"/>' +
+                                              'style="width: 100%;" oninput="document.getElementById(\'tempValue\').textContent = this.value"/>' + // Completed oninput
                                               '</div>',
                                         setup: function() {
                                             var range = this.getElement().findOne('input');
                                             if (range) {
-                                                range.$.value = lastTemperature;
-                                                range.$.oninput();
+                                                // Leggi il cookie ogni volta che il dialog viene aperto
+                                                var currentLastTemperature = getCookie('ckeditorOpenRouterTemp') || '0.7';
+                                                range.$.value = currentLastTemperature;
+                                                // Aggiorna il valore visualizzato
+                                                var span = this.getElement().findOne('#tempValue');
+                                                if (span) span.setText(currentLastTemperature);
                                             }
                                         },
                                         commit: function(data) {
@@ -445,7 +478,9 @@ CKEDITOR.plugins.add('openrouter', {
                                             return true;
                                         },
                                         setup: function() {
-                                            this.setValue(lastMaxTokens);
+                                            // Leggi il cookie ogni volta che il dialog viene aperto
+                                            var currentLastMaxTokens = getCookie('ckeditorOpenRouterTokens') || '1024';
+                                            this.setValue(currentLastMaxTokens);
                                         },
                                         commit: function(data) {
                                             data.max_tokens = this.getValue();
@@ -470,7 +505,7 @@ CKEDITOR.plugins.add('openrouter', {
                     var dialog = this;
                     var selection = editor.getSelection();
                     this.selectedText = selection ? selection.getSelectedText() : null;
-                    
+
                     // Forza il centramento del dialog
                     var dialogElement = dialog.getElement();
                     dialogElement.setStyles({
@@ -480,82 +515,40 @@ CKEDITOR.plugins.add('openrouter', {
                         'transform': 'translate(-50%, -50%)',
                         'margin': '0'
                     });
-                    
-                    // Leggi i cookie per le impostazioni più recenti
-                    var currentLastUsedModel = getCookie('ckeditorOpenRouterModel') || getDefaultModel();
-                    var currentTemperature = getCookie('ckeditorOpenRouterTemp') || '0.7';
-                    var currentMaxTokens = getCookie('ckeditorOpenRouterTokens') || '1024';
-                    
+
                     // Aggiorna il campo contesto
                     var contextField = dialog.getContentElement('tab-main', 'context');
                     if (contextField) {
                         contextField.setValue(this.selectedText || '');
                     }
-                    
-                    // Aggiorna il modello selezionato
-                    var modelField = dialog.getContentElement('tab-main', 'model');
-                    if (modelField) {
-                        modelField.setValue(currentLastUsedModel);
-                    }
-                    
-                    // Aggiorna il valore della temperatura
-                    var tempElement = dialogElement.findOne('#temperatureRange');
-                    var tempValueElement = dialogElement.findOne('#tempValue');
-                    if (tempElement && tempValueElement) {
-                        tempElement.$.value = currentTemperature;
-                        tempValueElement.setHtml(currentTemperature);
-                    }
-                    
-                    // Aggiorna il valore dei max tokens
-                    var maxTokensField = dialog.getContentElement('tab-main', 'max_tokens');
-                    if (maxTokensField) {
-                        maxTokensField.setValue(currentMaxTokens);
-                    }
-                    
-                    toggleLoadingIndicator(this, false);
-                    
-                    // Verifica se l'API Key è configurata
-                    var apiKeyConfigured = typeof globals !== 'undefined' && globals.openRouterApiKey;
-                    
-                    // Trova il pulsante OK
-                    var okButton = this.getButton('ok');
-                    
-                    // Trova il container dell'avviso
-                    var warningContainer = dialogElement.findOne('#api-key-warning-container');
-                    
-                    if (!apiKeyConfigured) {
-                        // Disabilita il pulsante OK ma mantieni visibile il pulsante di chiusura
-                        if (okButton) {
-                            okButton.disable();
-                        }
-                        
-                        // Mostra l'avviso
-                        if (warningContainer) {
-                            warningContainer.setStyle('display', 'flex');
-                        }
+
+                    // Mostra/nascondi l'avviso API Key
+                    var apiKeyWarningContainer = dialogElement.findOne('#api-key-warning-container');
+                    var mainContents = dialogElement.findOne('.cke_dialog_contents_body'); // Selettore corretto
+                    var footer = dialogElement.findOne('.cke_dialog_footer');
+
+                    if (typeof globals === 'undefined' || !globals.openRouterApiKey) {
+                        if (apiKeyWarningContainer) apiKeyWarningContainer.setStyle('display', 'flex');
+                        if (mainContents) mainContents.setStyle('visibility', 'hidden'); // Nascondi contenuti principali
+                        if (footer) footer.setStyle('visibility', 'hidden'); // Nascondi footer
                     } else {
-                        // Abilita il pulsante OK
-                        if (okButton) {
-                            okButton.enable();
-                        }
-                        
-                        // Nascondi l'avviso
-                        if (warningContainer) {
-                            warningContainer.setStyle('display', 'none');
-                        }
+                        if (apiKeyWarningContainer) apiKeyWarningContainer.setStyle('display', 'none');
+                        if (mainContents) mainContents.setStyle('visibility', 'visible'); // Mostra contenuti principali
+                        if (footer) footer.setStyle('visibility', 'visible'); // Mostra footer
                     }
+
+                    toggleLoadingIndicator(this, false);
                 },
                 onOk: function() {
                     var dialog = this;
                     var data = {};
                     dialog.commitContent(data); // Raccoglie i dati dagli elementi del form
 
-                    // Recupera il testo selezionato (potrebbe essere cambiato)
-                    var selection = editor.getSelection();
-                    var selectedText = selection ? selection.getSelectedText() : null;
+                    // Usa il contesto dal campo 'context' se presente, altrimenti il testo selezionato originale
+                    var contextText = data.context || this.selectedText;
 
-                    // Chiama la funzione API
-                    callOpenRouterApi(dialog, editor, data.prompt, data.model, selectedText, data.temperature, data.max_tokens);
+                    // Chiama la funzione API con il prompt di sistema
+                    callOpenRouterApi(dialog, editor, data.system_prompt, data.user_prompt, contextText, data.model, data.temperature, data.max_tokens);
 
                     // Impedisci la chiusura automatica del dialog; la chiusura avverrà in handleApiResponse
                     return false;
@@ -563,14 +556,14 @@ CKEDITOR.plugins.add('openrouter', {
             };
         });
 
-        // Configurazione del comando e del pulsante nella toolbar dell'editor
+        // Configurazione del comando e del pulsante nella toolbar
         editor.addCommand('openrouterDialogCmd', new CKEDITOR.dialogCommand('openrouterDialog'));
 
         editor.ui.addButton('OpenRouter', {
             label: TRANSLATIONS.DIALOG_TITLE,
             command: 'openrouterDialogCmd',
             toolbar: 'insert',
-            icon: this.path + 'icons/openrouter.png' // Percorso all'icona del plugin
+            icon: this.path + 'icons/openrouter.png' // Assicurati che l'icona esista in questa posizione
         });
 
         // Log di debug per confermare il corretto caricamento del plugin

@@ -359,19 +359,24 @@ function srcFonts() {
 
 function ckeditor() {
     
-    const ckeditor =  gulp.src([
+    const ckeditorCore =  gulp.src([
         config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
         config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 
-    const plugins = gulp.src([
+    const nodePlugins = gulp.src([
         config.nodeDirectory + '/ckeditor/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
-        config.nodeDirectory + '/ckeditor-image-to-base/*.{js,json,css,png,gif,html}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins'));
 
-    return merge(ckeditor, plugins);
+    // Plugin personalizzati
+    const customPlugins = gulp.src([
+        config.development + '/' + config.paths.js + '/ckeditor/plugins/**/*' // Sorgente: assets/src/js/ckeditor/plugins/
+    ], { allowEmpty: true })
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins')); // Destinazione: assets/dist/js/ckeditor/plugins/
+
+    return merge(ckeditorCore, nodePlugins, customPlugins); // Unione dei flussi
 }
 
 function colorpicker() {

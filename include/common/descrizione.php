@@ -23,6 +23,12 @@
 echo '
     <div class="row">
         <div class="col-md-12">
+            {[ "type": "select", "label": "'.tr('Descrizione predefinita').'", "name": "descrizione_predefinita", "ajax-source": "descrizioni_predefinite", "select-options": '.json_encode(['id_module' => $id_module]).' ]}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($result['descrizione']).', "required": 1, "extra": "rows=\"4\"", "charcounter": 1 ]}
         </div>
     </div>
@@ -41,3 +47,14 @@ if ($module->name == 'Preventivi' && $options['op'] == 'manage_descrizione') {
         </div>
     </div>';
 }
+
+echo '
+<script>
+    // Aggiungo al testo la descrizione predefinita
+    input("descrizione_predefinita").on("change", function() {
+        if (input(this).get()) {
+            let value = input("descrizione").get() + input(this).getData().descrizione_predefinita;
+            input("descrizione").set(value);
+        }
+    });
+</script>';

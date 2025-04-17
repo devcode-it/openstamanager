@@ -220,8 +220,7 @@ echo '
                 let num = 0;
                 $(".destinatari").each(function(){
                     addAutoComplete(this);
-                    if (num++ == 0 && emails.length > 0) {
-                        $(this).val(emails[0].value).trigger("change");
+                    if (num++==0) {
                         $(this).prop("required", true);
                     }
                 });

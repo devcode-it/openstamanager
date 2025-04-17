@@ -37,11 +37,11 @@ class Componente extends Model
 
     protected $table = 'my_componenti';
 
-    protected $dates = [
-        'data_registrazione',
-        'data_sostituzione',
-        'data_installazione',
-        'data_rimozione',
+    protected $casts = [
+        'data_registrazione' => 'date',
+        'data_sostituzione' => 'date',
+        'data_installazione' => 'date',
+        'data_rimozione' => 'date',
     ];
 
     /**

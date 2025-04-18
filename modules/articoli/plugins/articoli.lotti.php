@@ -419,6 +419,7 @@ echo '
 <script type="text/javascript">
 $(document).ready(function() {
     $("#table-serials").DataTable().draw();
+    $("#table-serials").DataTable().columns.adjust();
     $("#serials").removeClass("superselect");
     $("#serials").select2().select2("destroy");
 

@@ -70,19 +70,17 @@ class Newsletter extends Model
 
     public function fixStato()
     {
-        $mails = $this->emails;
+        // Verifica se esistono email associate a questa newsletter che non sono state ancora inviate.
+        $hasUnsentEmails = $this->emails()->whereNull('sent_at')->exists();
 
-        $completed = true;
-        foreach ($mails as $mail) {
-            if (empty($mail->sent_at)) {
-                $completed = false;
-                break;
-            }
+        // Se non ci sono email non inviate, la newsletter è completata.
+        $completed = !$hasUnsentEmails;
+
+        if ($completed && $this->state !== 'OK') {
+            $this->state = 'OK';
+            $this->completed_at = date('Y-m-d H:i:s'); // Utilizza la funzione helper now() per ottenere la data e l'ora correnti
+            $this->save();
         }
-
-        $this->state = $completed ? 'OK' : $this->state;
-        $this->completed_at = $completed ? date('Y-m-d H:i:s') : $this->completed_at;
-        $this->save();
     }
 
     public function getNumeroDestinatariSenzaEmail()

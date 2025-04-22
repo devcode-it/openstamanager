@@ -1434,7 +1434,7 @@ class FatturaElettronica implements \Stringable
                 // Aggiunta dei riferimenti ai documenti
                 if (setting('Riferimento dei documenti in Fattura Elettronica') == 0) {
                     $pos = strpos((string) $descrizione, 'Rif.');
-                    if ($pos !== false) {
+                    if ($pos !== false && $pos > 0) {
                         $descrizione = substr((string) $descrizione, 0, $pos);
                     }
                 }

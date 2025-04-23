@@ -5,8 +5,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`) VALUES (1, (SELECT id FROM zz_settings WHERE `nome`='Endpoint ibanapi.com'), 'Endpoint ibanapi.com');
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`) VALUES (1, (SELECT id FROM zz_settings WHERE `nome`='Api key ibanapi.com'), 'Api key ibanapi.com');
 
-
-
 -- Aggiunta impostazione per OpenRouter API Key
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
 (NULL, 'OpenRouter API Key', '', 'string', 1, 'API', NULL);
@@ -52,7 +50,6 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 'System Prompt for AI Model',
 'The system message sent to the AI to define its role and behavior. Modify it to customize responses.');
 
-
 -- Nuovo modulo "Descrizioni predefinite"
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Descrizioni predefinite', 'descrizioni_predefinite', 'SELECT |select| FROM `zz_default_description` WHERE 1=1 HAVING 2=2', '', 'fa fa-circle-o', '2.8', '2.8', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Tabelle'), '1', '1', '1', '1');
 
@@ -78,3 +75,16 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 CREATE TABLE `zz_default_description` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `descrizione` TEXT NOT NULL , `note` TEXT NOT NULL , PRIMARY KEY (`id`));
 CREATE TABLE `zz_default_description_module` (`id` INT NOT NULL AUTO_INCREMENT , `id_description` INT NOT NULL , `id_module` INT NOT NULL , PRIMARY KEY (`id`));
+
+-- Aggiunte colonne Note e _bg_ in Categorie impianti
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+(@id_module, 'Note', '`nota`', 3, 1, 0, 0, 0, '', '', 1, 0, 0, 0),
+(@id_module, '_bg_', '`colore`', 4, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
+
+SELECT @id:= MAX(`id`) FROM `zz_views`;
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, @id-1, 'Note'),
+(2, @id-1, 'Note'),
+(1, @id, '_bg_'),
+(2, @id, '_bg_');

@@ -43,6 +43,7 @@ switch ($op) {
                 'id_marca' => post('id_marca') ?: null,
                 'id_modello' => post('id_modello') ?: null,
                 'descrizione' => post('descrizione'),
+                'note' => post('note'),
                 'idsede' => post('idsede'),
                 'data' => post('data') ?: null,
                 'proprietario' => post('proprietario'),

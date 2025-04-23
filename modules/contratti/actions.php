@@ -366,35 +366,35 @@ switch (post('op')) {
         // eliminazione contratto
     case 'delete':
         // Fatture o interventi collegati a questo contratto
-        $elementi = $dbo->fetchArray('SELECT 
-                0 AS `codice`, 
-                `co_documenti`.`id` AS `id`, 
-                `co_documenti`.`numero` AS `numero`, 
-                `co_documenti`.`numero_esterno` AS `numero_esterno`,  
-                `co_documenti`.`data`, 
-                `co_tipidocumento_lang`.`title` AS `tipo_documento`, 
-                `co_tipidocumento`.`dir` AS `dir` 
-            FROM 
-                `co_documenti` 
-                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-                INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
-            WHERE 
+        $elementi = $dbo->fetchArray('SELECT
+                0 AS `codice`,
+                `co_documenti`.`id` AS `id`,
+                `co_documenti`.`numero` AS `numero`,
+                `co_documenti`.`numero_esterno` AS `numero_esterno`,
+                `co_documenti`.`data`,
+                `co_tipidocumento_lang`.`title` AS `tipo_documento`,
+                `co_tipidocumento`.`dir` AS `dir`
+            FROM
+                `co_documenti`
+                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+            WHERE
                 `co_righe_documenti`.`idcontratto` = '.prepare($id_record).'
         UNION
-            SELECT  
-                `in_interventi`.`codice` AS `codice`, 
-                `in_interventi`.`id` AS `id`, 
-                0 AS `numero`, 
-                0 AS `numero_esterno`, 
-                `in_interventi`.`data_richiesta` AS `data`, 
-                0 AS `tipo_documento`, 
-                0 AS `dir` 
-            FROM 
-                `in_interventi` 
-            WHERE 
-                `in_interventi`.`id_contratto` = '.prepare($id_record).' 
-        ORDER BY 
+            SELECT
+                `in_interventi`.`codice` AS `codice`,
+                `in_interventi`.`id` AS `id`,
+                0 AS `numero`,
+                0 AS `numero_esterno`,
+                `in_interventi`.`data_richiesta` AS `data`,
+                0 AS `tipo_documento`,
+                0 AS `dir`
+            FROM
+                `in_interventi`
+            WHERE
+                `in_interventi`.`id_contratto` = '.prepare($id_record).'
+        ORDER BY
                 `data` ');
 
         if (empty($elementi)) {
@@ -782,6 +782,57 @@ switch (post('op')) {
 
         $serials = (array) post('serial');
         $articolo->serials = $serials;
+
+        break;
+
+    case 'update_iva':
+        $id_riga = post('riga_id');
+        $id_iva = post('iva_id');
+
+        $riga = $riga ?: Riga::find($id_riga);
+        $riga = $riga ?: Articolo::find($id_riga);
+        $riga = $riga ?: Sconto::find($id_riga);
+
+        if (!empty($riga)) {
+            // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
+            $prezzo_unitario = $riga->prezzo_unitario;
+            $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+            $riga->save();
+
+            flash()->info(tr('IVA aggiornata!'));
+        }
+
+        break;
+
+    case 'update_iva_multiple':
+        $id_righe = (array) post('righe');
+        $id_iva = post('iva_id');
+        $numero_totale = 0;
+
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            if (!empty($riga)) {
+                // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
+                $prezzo_unitario = $riga->prezzo_unitario;
+                $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                $riga->save();
+                ++$numero_totale;
+            }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ aliquote IVA modificate!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } elseif ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ aliquota IVA modificata!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna aliquota IVA modificata!'));
+        }
 
         break;
 }

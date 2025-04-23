@@ -123,7 +123,7 @@ foreach ($righe as $riga) {
     }
     echo '
             </td>
-            
+
             <td class="text-center">
                 '.$num.'
             </td>
@@ -552,6 +552,10 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
             '.tr('Aggiorna prezzi').'
         </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
+            <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
+        </button>
     </div>';
 }
 echo '
@@ -578,7 +582,7 @@ async function modificaRiga(button) {
 // Estraggo le righe spuntate
 function getSelectData() {
     let data=new Array();
-    $(\'#righe\').find(\'.check:checked\').each(function (){ 
+    $(\'#righe\').find(\'.check:checked\').each(function (){
         data.push($(this).closest(\'tr\').data(\'id\'));
     });
 
@@ -704,6 +708,12 @@ function apriInformazioniFE(button) {
     openModal("'.tr('Dati Fattura Elettronica').'", "'.$module->fileurl('fe/row-fe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
 }
 
+function modificaIvaRighe(righe) {
+    if (righe.length > 0) {
+        openModal("'.tr('Modifica IVA').'", "'.$module->fileurl('modals/modifica_iva.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + righe.join(','));
+    }
+}
+
 $(document).ready(function() {
 	sortable(".sortable", {
         axis: "y",
@@ -736,17 +746,19 @@ $(".check").on("change", function() {
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
+        $("#modifica_iva_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
+        $("#modifica_iva_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");
     }
 });
 
-$("#check_all").click(function(){    
+$("#check_all").click(function(){
     if( $(this).is(":checked") ){
         $(".check").each(function(){
             if( !$(this).is(":checked") ){

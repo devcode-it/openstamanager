@@ -29,6 +29,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Tipo;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
+use Modules\Articoli\Marchio;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
@@ -125,6 +126,24 @@ class CSV extends CSVImporter
                 'names' => [
                     'Sottocategoria',
                     'sottocategoria',
+                ],
+            ],
+            [
+                'field' => 'marchio',
+                'label' => 'Marchio',
+                'names' => [
+                    'Marchio',
+                    'marchio',
+                    'Marca',
+                    'marca',
+                ],
+            ],
+            [
+                'field' => 'modello',
+                'label' => 'Modello',
+                'names' => [
+                    'Modello',
+                    'modello',
                 ],
             ],
             [
@@ -314,6 +333,17 @@ class CSV extends CSVImporter
             }
         }
 
+        // Gestione marchio
+        $marchio = null;
+        if (!empty($record['marchio'])) {
+            $marchio = Marchio::where('name', $record['marchio'])->first();
+
+            if (empty($marchio)) {
+                $marchio = Marchio::build($record['marchio']);
+                $marchio->save();
+            }
+        }
+
         // Gestione um
         $um = null;
         if (!empty($record['um'])) {
@@ -378,7 +408,7 @@ class CSV extends CSVImporter
 
                 /**
                  * Import immagine options:
-                 * 
+                 *
                  * - 1: Permette di importare l'immagine come principale dell'articolo mantenendo gli altri allegati già presenti.
                  * - 2: Permette di importare l'immagine come principale dell'articolo rimuovendo tutti gli allegati presenti.
                  * - 3: Permette di importare l'immagine come allegato dell'articolo.
@@ -432,6 +462,16 @@ class CSV extends CSVImporter
             'sottocategoria' => $sottocategoria->id ?: $articolo['sottocategoria'],
         ]);
 
+        // Associazione marchio
+        if (!empty($marchio)) {
+            $articolo->marchio()->associate($marchio);
+        }
+
+        // Associazione modello
+        if (!empty($record['modello'])) {
+            $articolo->modello = $record['modello'];
+        }
+
         // Prezzo di vendita
         if (!empty($record['prezzo_vendita'])) {
             $articolo->setPrezzoVendita($record['prezzo_vendita'], $aliquota ? $aliquota->id : setting('Iva predefinita'));
@@ -462,8 +502,8 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
-            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', '', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '', '', '180', '20', 'Fornitore', 'Sede'],
+            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Marchio', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
+            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', '', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '', '', '180', '20', 'Fornitore', 'Sede'],
         ];
     }
 

@@ -93,3 +93,16 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", \"fields\": \"Fido assicurato, Data inizio, Data fine, Totale, Residuo\", \"query\": \"SELECT id, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(fido_assicurato, 2) AS \'Fido assicurato\', ROUND(totale, 2) AS Totale, ROUND(fido_assicurato - totale, 2) AS Residuo, IF((fido_assicurato - totale) < 0, \'#f4af1b\', \'#4dc347\') AS _bg_ FROM an_assicurazione_crediti WHERE 1=1 AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY an_assicurazione_crediti.id DESC\"} ]}' WHERE `zz_plugins`.`name` = 'Assicurazione crediti';
 
 ALTER TABLE `my_impianti` ADD `note` VARCHAR(255) NULL AFTER `descrizione`; 
+
+-- Aggiunta colonne Marchio e Modello nella vista Articoli (nascoste di default)
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Articoli';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+(@id_module, 'Marchio', '(SELECT `name` FROM `mg_marchi` WHERE `mg_marchi`.`id` = `mg_articoli`.`id_marchio`)', 15, 1, 0, 0, 0, '', '', 0, 0, 0, 0),
+(@id_module, 'Modello', '`mg_articoli`.`modello`', 16, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
+
+SELECT @id:= MAX(`id`) FROM `zz_views`;
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, @id-1, 'Marchio'),
+(2, @id-1, 'Brand'),
+(1, @id, 'Modello'),
+(2, @id, 'Model');

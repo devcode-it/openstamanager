@@ -28,9 +28,6 @@ $db_options = [
     // 'sort_buffer_size' => '2M',
 ];
 
-// Percorso della cartella di backup
-$backup_dir = __DIR__.'/backup/';
-
 // Tema selezionato per il front-end
 $theme = 'default';
 

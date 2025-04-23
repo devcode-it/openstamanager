@@ -70,6 +70,7 @@ switch (filter('op')) {
             if ($result) {
                 flash()->info(tr('Nuovo backup creato correttamente!'));
             } else {
+                $backup_dir = Backup::getDirectory();
                 flash()->error(tr('Errore durante la creazione del backup!').' '.str_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
             }
         } catch (Exception $e) {
@@ -83,7 +84,7 @@ switch (filter('op')) {
         $number = intval($number);
 
         $backups = Backup::getList();
-        $backup = $backups[$number] ?: $backup_dir;
+        $backup = $backups[$number] ?: Backup::getDirectory();
 
         echo Util\FileSystem::size($backup);
 
@@ -111,7 +112,10 @@ if (filter('op') == 'restore') {
     }
 
     try {
-        $result = Backup::restore($path, is_file($path));
+        // Ottieni la password per i backup esterni se impostata
+        $password = setting('Password backup esterni');
+
+        $result = Backup::restore($path, is_file($path), $password);
         $database->beginTransaction();
 
         if ($result) {

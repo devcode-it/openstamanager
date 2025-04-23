@@ -1,5 +1,16 @@
 <?php
 
+// Spostamento backup
+$directory = 'backup/';
+$files = glob($directory.'*.{zip}', GLOB_BRACE);
+$new_folder = 'files/backups/';
+directory($new_folder);
+
+foreach ($files as $file) {
+    $filename = basename($file);
+    rename($file, $new_folder.$filename);
+}
+
 // File e cartelle deprecate
 $files = [
     'templates/bilancio/settings.php',
@@ -12,6 +23,7 @@ $files = [
     'templates/preventivi/settings.php',
     'templates/prima_nota/settings.php',
     'templates/scadenzario/settings.php',
+    'backup/',
 ];
 
 foreach ($files as $key => $value) {

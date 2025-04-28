@@ -34,7 +34,6 @@
         "jquery": "^3.5.1",
         "jquery-form": "^4.3.0",
         "jquery-ui-touch-punch": "^0.2.3",
-        "jquery.shorten": "^1.0.0",
         "js-md5": "^0.7.3",
         "jszip": "^3.10.1",
         "leaflet": "^1.9.4",

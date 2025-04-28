@@ -107,7 +107,6 @@ const JS = gulp.parallel(() => {
         'inputmask/dist/min/jquery.inputmask.bundle.min.js',
         'jquery-form/src/jquery.form.js',
         'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
-        'jquery.shorten/src/jquery.shorten.js',
         'numeral/numeral.js',
         'parsleyjs/dist/parsley.js',
         'select2/dist/js/select2.min.js',
@@ -309,7 +308,7 @@ function wacom(){
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk.wasm'
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/wacom/'));
-        
+
     // Poi processiamo i file JS che lo utilizzano
     const jsStream = gulp.src(allFiles, {
         allowEmpty: true
@@ -358,7 +357,7 @@ function srcFonts() {
 }
 
 function ckeditor() {
-    
+
     const ckeditorCore =  gulp.src([
         config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
         config.nodeDirectory + '/ckeditor4/*.{js,css}',
@@ -550,7 +549,7 @@ function release(done) {
 
         // Aggiunta del file per il controllo di integrità del database
         var bufferStream = new Readable();
-        
+
         bufferStream.push(shell.exec('php update/structure.php', {
             silent: true
         }).stdout);
@@ -573,7 +572,7 @@ function release(done) {
         bufferStream.push(null);
         archive.append(bufferStream, { name: 'REVISION' });
 
-        // Opzioni sulla release  
+        // Opzioni sulla release
         inquirer.prompt([{
             type: 'input',
             name: 'version',
@@ -588,12 +587,12 @@ function release(done) {
 
             let version = result.version;
 
-            // Aggiungi 'beta' solo se l'opzione beta è selezionata  
+            // Aggiungi 'beta' solo se l'opzione beta è selezionata
             if (result.beta) {
                 version += 'beta';
             }
 
-            // Creazione di un stream leggibile con la versione  
+            // Creazione di un stream leggibile con la versione
             const bufferStream = new Readable({
                 read() {
                     this.push(version);
@@ -601,10 +600,10 @@ function release(done) {
                 }
             });
 
-            // Aggiunta della versione corrente nel file VERSION  
+            // Aggiunta della versione corrente nel file VERSION
             archive.append(bufferStream, { name: 'VERSION' });
 
-            // Completamento dello ZIP  
+            // Completamento dello ZIP
             archive.finalize();
 
             done();

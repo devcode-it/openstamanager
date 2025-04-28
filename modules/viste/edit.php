@@ -36,7 +36,13 @@ echo '
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title">'.tr('Opzioni generali').'</h3>
-		</div>
+			<div class="card-tools">
+				<button type="button" class="btn btn-sm btn-primary" onclick="importModule()">
+					<i class="fa fa-upload"></i> '.tr('Importa modulo').'</button>
+				<button type="button" class="btn btn-sm btn-primary" onclick="exportModule()">
+					<i class="fa fa-download"></i> '.tr('Esporta modulo').'</button>
+			</div>
+        </div>
 
 		<div class="card-body">';
 $options = ($record->options2 == '') ? $record->options : $record->options2;
@@ -152,6 +158,12 @@ echo '<script>
     globals.translations.query_works_correctly = "'.tr('La query attuale funziona correttamente!').'";
     globals.translations.error = "'.tr('Errore').'";
     globals.translations.select_all = "'.tr('Seleziona tutti').'";
+    globals.translations.import_module = "'.tr('Importa modulo').'";
+    globals.translations.export_module = "'.tr('Esporta modulo').'";
+    globals.translations.import_success = "'.tr('Modulo importato con successo!').'";
+    globals.translations.import_error = "'.tr('Errore durante l\'importazione del modulo').'";
+    globals.translations.file_required = "'.tr('È necessario selezionare un file').'";
+    globals.translations.invalid_json = "'.tr('Il file selezionato non contiene un JSON valido').'";
 </script>
 <link rel="stylesheet" href="'.base_path().'/modules/viste/css/main.css">
 <script src="'.base_path().'/modules/viste/js/main.js"></script>

@@ -71,6 +71,51 @@ function addSelectAllButtons() {
 
 
 /**
+ * Funzione per importare un modulo
+ */
+function importModule() {
+    // Apre il modal per l'importazione
+    openModal(globals.translations.import_module, globals.rootdir + '/modules/viste/import_modal.php');
+}
+
+/**
+ * Funzione per esportare un modulo
+ */
+function exportModule() {
+    // Mostra il loader
+    $("#main_loading").fadeIn();
+
+    // Richiesta AJAX per esportare il modulo
+    $.ajax({
+        url: globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=export_module",
+        cache: false,
+        type: "post",
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function(response) {
+            $("#main_loading").fadeOut();
+
+            if (response.success) {
+                // Crea un link per il download e lo clicca automaticamente
+                var downloadLink = document.createElement("a");
+                downloadLink.href = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data, null, 4));
+                downloadLink.download = response.filename || "module_export.json";
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            } else {
+                swal(globals.translations.error, response.message, "error");
+            }
+        },
+        error: function() {
+            $("#main_loading").fadeOut();
+            swal(globals.translations.error, "Si è verificato un errore durante l'esportazione", "error");
+        }
+    });
+}
+
+/**
  * Inizializzazione degli event listener quando il documento è pronto
  */
 $(document).ready(function() {

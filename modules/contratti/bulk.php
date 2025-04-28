@@ -43,7 +43,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
-$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_bloccato= 1')['stati_completati'];
+$stati_bloccati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_bloccati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_bloccato`= 1')['stati_bloccati'];
 
 switch (post('op')) {
     case 'create_invoice':
@@ -291,7 +291,7 @@ $operations['renew_contract'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Rinnova contratti').'</span>',
     'data' => [
         'title' => tr('Rinnovare i contratti selezionati?').'</span>',
-        'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_completati]),
+        'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_bloccati]),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

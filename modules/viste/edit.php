@@ -151,6 +151,7 @@ echo '<script>
     globals.translations.working_query = "'.tr('Query funzionante').'";
     globals.translations.query_works_correctly = "'.tr('La query attuale funziona correttamente!').'";
     globals.translations.error = "'.tr('Errore').'";
+    globals.translations.select_all = "'.tr('Seleziona tutti').'";
 </script>
 <link rel="stylesheet" href="'.base_path().'/modules/viste/css/main.css">
 <script src="'.base_path().'/modules/viste/js/main.js"></script>

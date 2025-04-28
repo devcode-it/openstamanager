@@ -470,7 +470,7 @@ if (Auth::check()) {
                     </li>
 
                     <li class="nav-item">
-                        <a href="'.base_path().'/shortcuts.php" class="nav-link" title="'.tr('Scorciatoie').'">
+                        <a href="#" onclick="openModal(`'.tr('Scorciatoie').'`, `'.base_path().'/shortcuts.php`);" class="nav-link" title="'.tr('Scorciatoie').'">
                             <i class="fa fa-keyboard-o nav-icon"></i>
                         </a>
                     </li>

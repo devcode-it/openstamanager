@@ -32,6 +32,7 @@
         "devcode-it/ical-easy-reader": "dev-main",
         "devcode-it/sdd_ita": "dev-master",
         "digitick/sepa-xml": "^2.1",
+        "doctrine/sql-formatter": "^1.5",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.15.0",

@@ -1,0 +1,38 @@
+/* Stili per la formattazione SQL */
+.sql-formatted {
+    font-family: monospace;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 15px;
+    overflow: auto;
+    max-height: 500px;
+}
+
+.sql-formatted .keyword {
+    color: #0033b3;
+    font-weight: bold;
+}
+
+.sql-formatted .string {
+    color: #067d17;
+}
+
+.sql-formatted .comment {
+    color: #717171;
+    font-style: italic;
+}
+
+.sql-formatted .number {
+    color: #1750eb;
+}
+
+.sql-formatted .error {
+    color: #ff0000;
+    background-color: #fdd;
+}
+
+/* Stile per il textarea nascosto usato per il copia-incolla */
+#query-to-copy {
+    position: absolute;
+    left: -9999px;
+}

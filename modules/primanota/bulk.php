@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-    case 'export-bulk':
+    case 'export_bulk':
         $_SESSION['superselect']['mastrini'] = $id_records;
 
         $print = Prints::getModulePredefinedPrint($id_module);
@@ -30,7 +30,7 @@ switch (post('op')) {
 }
 
 return [
-    'export-bulk' => [
+    'export_bulk' => [
         'text' => '<span><i class="fa fa-file-o"></i> '.tr('Esporta PDF'),
         'data' => [
             'title' => tr('Vuoi davvero esportare il PDF?'),

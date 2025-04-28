@@ -37,7 +37,7 @@ $stato_emessa = Stato::where('name', 'Emessa')->first()->id;
 $is_fiscale = $dbo->selectOne('zz_segments', 'is_fiscale', ['id' => $_SESSION['module_'.$id_module]])['is_fiscale'];
 
 switch (post('op')) {
-    case 'export-bulk':
+    case 'export_bulk':
         $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
@@ -74,7 +74,7 @@ switch (post('op')) {
 
         break;
 
-    case 'exportFE-bulk':
+    case 'export_fe_bulk':
         $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
@@ -115,7 +115,7 @@ switch (post('op')) {
 
         break;
 
-    case 'genera-xml':
+    case 'generate_xml':
         $failed = [];
         $added = [];
 
@@ -148,7 +148,7 @@ switch (post('op')) {
 
         break;
 
-    case 'hook-send':
+    case 'hook_send':
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
 
@@ -172,7 +172,7 @@ switch (post('op')) {
 
         break;
 
-    case 'export-xml-bulk':
+    case 'export_xml_bulk':
         $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
@@ -250,7 +250,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'export-ricevute-bulk':
+    case 'export_receipts_bulk':
         $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
@@ -307,7 +307,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'copy-bulk':
+    case 'copy_bulk':
         $list = [];
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
@@ -375,7 +375,7 @@ switch (post('op')) {
 
         break;
 
-    case 'check-bulk':
+    case 'check_bulk':
         $controllo = new DatiFattureElettroniche();
         $fatture = [];
         foreach ($id_records as $id) {
@@ -422,7 +422,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'export-csv':
+    case 'export_csv':
         $file = temp_file();
         $exporter = new CSV($file);
 
@@ -436,7 +436,7 @@ switch (post('op')) {
 
         break;
 
-    case 'delete-bulk':
+    case 'delete_bulk':
         $count = 0;
         $count_tot = sizeof($id_records);
 
@@ -467,7 +467,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-bank':
+    case 'change_bank':
         $list = [];
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
@@ -482,7 +482,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-stato':
+    case 'change_status':
         $list = [];
         $new_stato = Stato::where('name', 'Emessa')->first()->id;
         $fatture = Fattura::vendita()
@@ -575,7 +575,7 @@ switch (post('op')) {
 
         break;
 
-    case 'verify-notifiche':
+    case 'verify_notifications':
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
 
@@ -590,7 +590,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'cambia-sezionale':
+    case 'change_segment':
         $count = 0;
         $n_doc = 0;
 
@@ -620,7 +620,7 @@ switch (post('op')) {
         break;
 }
 
-$operations['change-bank'] = [
+$operations['change_bank'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
     'data' => [
         'title' => tr('Aggiornare la banca?'),
@@ -631,7 +631,7 @@ $operations['change-bank'] = [
     ],
 ];
 
-$operations['cambia-sezionale'] = [
+$operations['change_segment'] = [
     'text' => '<span><i class="fa fa-tags"></i> '.tr('Cambia sezionale'),
     'data' => [
         'title' => tr('Cambia sezionale'),
@@ -645,7 +645,7 @@ $operations['cambia-sezionale'] = [
 ];
 
 if (Interaction::isEnabled()) {
-    $operations['hook-send'] = [
+    $operations['hook_send'] = [
         'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Coda di invio FE').'</span>',
         'data' => [
             'title' => '',
@@ -657,7 +657,7 @@ if (Interaction::isEnabled()) {
 }
 
 if ($module->name == 'Fatture di vendita') {
-    $operations['check-bulk'] = [
+    $operations['check_bulk'] = [
         'text' => '<span><i class="fa fa-list-alt"></i> '.tr('Controlla fatture elettroniche').'</span>',
         'data' => [
             'title' => '',
@@ -669,8 +669,25 @@ if ($module->name == 'Fatture di vendita') {
     ];
 }
 
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+
+
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+];
+
+
+
 if ($dir == 'entrata') {
-    $operations['change-stato'] = [
+    $operations['change_status'] = [
         'text' => '<span><i class="fa fa-refresh"></i> '.tr('Emetti fatture').'</span>',
         'data' => [
             'title' => tr('Emissione fatture'),
@@ -681,8 +698,18 @@ if ($dir == 'entrata') {
     ];
 }
 
+$operations['export_csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
 if ($module->name == 'Fatture di vendita') {
-    $operations['export-bulk'] = [
+    $operations['export_bulk'] = [
         'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
         'data' => [
             'title' => '',
@@ -693,7 +720,7 @@ if ($module->name == 'Fatture di vendita') {
         ],
     ];
 }
-$operations['exportFE-bulk'] = [
+$operations['export_fe_bulk'] = [
     'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
     'data' => [
         'title' => '',
@@ -704,7 +731,7 @@ $operations['exportFE-bulk'] = [
     ],
 ];
 
-$operations['export-ricevute-bulk'] = [
+$operations['export_receipts_bulk'] = [
     'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
     'data' => [
         'title' => '',
@@ -715,7 +742,7 @@ $operations['export-ricevute-bulk'] = [
     ],
 ];
 
-$operations['export-xml-bulk'] = [
+$operations['export_xml_bulk'] = [
     'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
     'data' => [
         'title' => '',
@@ -726,8 +753,9 @@ $operations['export-xml-bulk'] = [
     ],
 ];
 
+
 if ($module->name == 'Fatture di vendita') {
-    $operations['genera-xml'] = [
+    $operations['generate_xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [
             'title' => '',
@@ -739,7 +767,7 @@ if ($module->name == 'Fatture di vendita') {
     ];
 }
 
-$operations['registrazione-contabile'] = [
+$operations['registrazione_contabile'] = [
     'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
     'data' => [
         'title' => tr('Registrazione contabile'),
@@ -750,7 +778,7 @@ $operations['registrazione-contabile'] = [
 ];
 
 if (Interaction::isEnabled()) {
-    $operations['verify-notifiche'] = [
+    $operations['verify_notifications'] = [
         'text' => '<i class="fa fa-question-circle"></i> '.tr('Verifica ricevute').'</span>',
         'data' => [
             'title' => '',
@@ -762,28 +790,7 @@ if (Interaction::isEnabled()) {
     ];
 }
 
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le fatture selezionate?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
 
-$operations['copy-bulk'] = [
-    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'", "select-options-escape": true ]}<br>{[ "type": "checkbox", "label": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
-];
 
 
 return $operations;

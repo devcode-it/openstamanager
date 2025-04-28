@@ -44,7 +44,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 ])['id'];
 
 switch (post('op')) {
-    case 'export-bulk':
+    case 'export_bulk':
         $dir = base_dir().'/files/export_interventi/';
         directory($dir.'tmp/');
 
@@ -81,7 +81,7 @@ switch (post('op')) {
 
         break;
 
-    case 'crea_fattura':
+    case 'create_invoice':
         $id_documento_cliente = [];
         $fatturati = [];
         $n_interventi = 0;
@@ -198,7 +198,7 @@ switch (post('op')) {
 
         break;
 
-    case 'cambia_stato':
+    case 'change_status':
         $id_stato = post('id_stato');
 
         $n_interventi = 0;
@@ -224,7 +224,7 @@ switch (post('op')) {
 
         break;
 
-    case 'copy-bulk':
+    case 'copy_bulk':
         $id_stato = post('idstatointervento');
         $data_richiesta = post('data_richiesta');
         $copia_sessioni = post('sessioni');
@@ -321,7 +321,7 @@ switch (post('op')) {
 
         break;
 
-    case 'delete-bulk':
+    case 'delete_bulk':
         $count = 0;
         $count_tot = sizeof($id_records);
 
@@ -329,16 +329,16 @@ switch (post('op')) {
             $intervento = Intervento::find($id);
 
             $elementi = $dbo->fetchArray('
-            SELECT 
+            SELECT
                 `co_documenti`.`id`
-            FROM 
-                `co_documenti` 
+            FROM
+                `co_documenti`
                 INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
-            WHERE 
-                `co_righe_documenti`.`idintervento` = '.prepare($id).' OR 
+            WHERE
+                `co_righe_documenti`.`idintervento` = '.prepare($id).' OR
                 (`co_righe_documenti`.`original_document_id` = '.prepare($id).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\')
             GROUP BY id
-            
+
             ORDER BY `data`');
 
             if (empty($elementi)) {
@@ -375,14 +375,14 @@ switch (post('op')) {
 
         break;
 
-    case 'stampa-riepilogo':
+    case 'print_summary':
         $_SESSION['superselect']['interventi'] = $id_records;
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
         exit;
 
-    case 'send-mail':
+    case 'send_mail':
         $template = Template::find(post('id_template'));
 
         $list = [];
@@ -440,7 +440,7 @@ switch (post('op')) {
         break;
 }
 
-$operations['cambia_stato'] = [
+$operations['change_status'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
@@ -452,7 +452,28 @@ $operations['cambia_stato'] = [
     ],
 ];
 
-$operations['export-bulk'] = [
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
+        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+];
+
+$operations['export_bulk'] = [
     'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
     'data' => [
         'title' => tr('Vuoi davvero esportare queste stampe in un archivio ZIP?'),
@@ -463,7 +484,7 @@ $operations['export-bulk'] = [
     ],
 ];
 
-$operations['crea_fattura'] = [
+$operations['create_invoice'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
         'title' => tr('Fatturare le attività selezionate?'),
@@ -488,7 +509,7 @@ $operations['firma-intervento'] = [
     ],
 ];
 
-$operations['send-mail'] = [
+$operations['send_mail'] = [
     'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail').'</span>',
     'data' => [
         'title' => tr('Inviare mail?'),
@@ -499,7 +520,7 @@ $operations['send-mail'] = [
     ],
 ];
 
-$operations['stampa-riepilogo'] = [
+$operations['print_summary'] = [
     'text' => '<span><i class="fa fa-print"></i> '.tr('Stampa riepilogo'),
     'data' => [
         'title' => tr('Stampare il riepilogo delle attività selezionate?'),
@@ -510,25 +531,6 @@ $operations['stampa-riepilogo'] = [
     ],
 ];
 
-$operations['copy-bulk'] = [
-    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica'),
-    'data' => [
-        'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
-        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}
-            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
-            <style>.swal2-modal{ width:600px !important; }</style>',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
 
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
-];
 
 return $operations;

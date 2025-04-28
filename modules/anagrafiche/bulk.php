@@ -25,7 +25,7 @@ use Modules\Anagrafiche\Tipo;
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-    case 'delete-bulk':
+    case 'delete_bulk':
         $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
         foreach ($id_records as $id) {
@@ -49,7 +49,7 @@ switch (post('op')) {
 
         break;
 
-    case 'ricerca-coordinate':
+    case 'search_coordinates':
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
             $anagrafica->save();
@@ -57,7 +57,7 @@ switch (post('op')) {
 
         break;
 
-    case 'export-csv':
+    case 'export_csv':
         $file = temp_file();
         $exporter = new CSV($file);
 
@@ -70,7 +70,7 @@ switch (post('op')) {
         download($file, 'anagrafiche.csv');
         break;
 
-    case 'cambia-relazione':
+    case 'change_relation':
         $idrelazione = post('idrelazione');
 
         foreach ($id_records as $id) {
@@ -82,7 +82,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'aggiorna-listino':
+    case 'update_price_list':
         $id_listino = post('id_listino') ?: 0;
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
@@ -99,16 +99,7 @@ switch (post('op')) {
 
 $operations = [];
 
-$operations['ricerca-coordinate'] = [
-    'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
-    'data' => [
-        'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
-
-$operations['cambia-relazione'] = [
+$operations['change_relation'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Cambia relazione').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "required": 1, "ajax-source": "relazioni"]}',
@@ -117,16 +108,16 @@ $operations['cambia-relazione'] = [
     ],
 ];
 
-$operations['aggiorna-listino'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta listino').'</span>',
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
     'data' => [
-        'msg' => tr('Vuoi impostare il listino cliente selezionato a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Nessun listino').'" ]}',
+        'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
         'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
+        'class' => 'btn btn-lg btn-danger',
     ],
 ];
 
-$operations['export-csv'] = [
+$operations['export_csv'] = [
     'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
     'data' => [
         'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
@@ -136,12 +127,21 @@ $operations['export-csv'] = [
     ],
 ];
 
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+$operations['update_price_list'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta listino').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
+        'msg' => tr('Vuoi impostare il listino cliente selezionato a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Nessun listino').'" ]}',
         'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-danger',
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['search_coordinates'] = [
+    'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
+    'data' => [
+        'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

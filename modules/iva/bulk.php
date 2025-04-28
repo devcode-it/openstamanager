@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-    case 'delete-bulk':
+    case 'delete_bulk':
         $count_iva = $dbo->fetchNum('SELECT `id` FROM `co_iva` WHERE `deleted_at` IS NOT NULL');
         foreach ($id_records as $id) {
             $res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva`='.prepare($id).
@@ -51,7 +51,7 @@ switch (post('op')) {
 }
 
 $bulk = [
-    'delete-bulk' => tr('Elimina'),
+    'delete_bulk' => tr('Elimina'),
 ];
 
 return $bulk;

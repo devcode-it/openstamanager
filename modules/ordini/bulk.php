@@ -44,7 +44,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 ])['id'];
 
 switch (post('op')) {
-    case 'crea_fattura':
+    case 'create_invoice':
         $documenti = collect();
         $numero_totale = 0;
 
@@ -137,7 +137,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'cambia_stato':
+    case 'change_status':
         $id_stato = post('id_stato');
 
         $n_ordini = 0;
@@ -160,7 +160,7 @@ switch (post('op')) {
 
         break;
 
-    case 'unisci_rdo':
+    case 'merge_purchase_orders':
         $id_stato = post('id_stato');
         $data = post('data') ?: null;
         $tipo = Tipo::where('dir', 'uscita')->first();
@@ -209,11 +209,24 @@ switch (post('op')) {
 
         break;
 }
+
+$operations['change_status'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
+        'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
+        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `title` as descrizione, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
 if ($module->name == 'Ordini cliente') {
     // Fix per modulo Fatture di vendita disabilitato
     $module_fatture = $id_modulo_fatture ? Module::find($id_modulo_fatture)->getTranslation('title') : '';
     $module_fatture ? strtolower((string) $module_fatture) : '';
-    $operations['crea_fattura'] = [
+    $operations['create_invoice'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
@@ -228,7 +241,7 @@ if ($module->name == 'Ordini cliente') {
     ];
 } else {
     if (App::debug()) {
-        $operations['unisci_rdo'] = [
+        $operations['merge_purchase_orders'] = [
             'text' => '<span><i class="fa fa-refresh"></i> '.tr('Unisci rdo'),
             'data' => [
                 'title' => tr('Unire gli ordini selezionati?'),
@@ -244,16 +257,5 @@ if ($module->name == 'Ordini cliente') {
     }
 }
 
-$operations['cambia_stato'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-    'data' => [
-        'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
-        'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
-        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `title` as descrizione, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
 
 return $operations;

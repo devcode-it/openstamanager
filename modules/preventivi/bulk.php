@@ -41,7 +41,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 ])['id'];
 
 switch (post('op')) {
-    case 'crea_fattura':
+    case 'create_invoice':
         $documenti = collect();
         $numero_totale = 0;
 
@@ -138,7 +138,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'cambia_stato':
+    case 'change_status':
         $id_stato = post('id_stato');
 
         $n_preventivi = 0;
@@ -165,7 +165,19 @@ switch (post('op')) {
         break;
 }
 
-$operations['crea_fattura'] = [
+
+$operations['change_status'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero aggiornare lo stato di questi preventivi?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` as _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['create_invoice'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
@@ -178,15 +190,5 @@ $operations['crea_fattura'] = [
     ],
 ];
 
-$operations['cambia_stato'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-    'data' => [
-        'title' => tr('Vuoi davvero aggiornare lo stato di questi preventivi?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` as _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
 
 return $operations;

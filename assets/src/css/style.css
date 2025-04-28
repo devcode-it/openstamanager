@@ -352,6 +352,129 @@ span.form-control {
     font-size: 11px;
 }
 
+/* Stili per i tooltip con testo troncato */
+.shorten-wrapper, .request-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.shorten-full, .request-full {
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* Stile per il tooltip */
+.tooltipster-shadow {
+    border-radius: 4px !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
+}
+
+.tooltipster-shadow .tooltipster-content {
+    font-family: inherit !important;
+    padding: 8px !important;
+    width: 400px !important;
+}
+
+.tooltipster-base {
+    max-width: 400px !important;
+    width: 400px !important;
+}
+
+.tooltip-header {
+    position: relative;
+    padding: 8px;
+    background-color: #3c8dbc;
+    color: white;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin: -8px -8px 8px -8px;
+}
+
+.tooltip-header-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.tooltip-close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    transition: background-color 0.3s;
+}
+
+.tooltip-close-button:hover {
+    background-color: rgba(255,255,255,0.4) !important;
+}
+
+/* Stili per le informazioni nel tooltip */
+.tooltip-info-section {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.tooltip-info-section-noborder {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.tooltip-info-row {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.tooltip-info-label {
+    font-weight: bold;
+    margin-right: 5px;
+    min-width: 120px;
+    color: #3c8dbc;
+}
+
+.tooltip-info-value {
+    flex: 1;
+}
+
+.shorten-toggle, .request-toggle {
+    display: inline-block;
+    margin: 5px 0;
+    color: #fff;
+    background-color: #3c8dbc;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-decoration: none;
+    z-index: 9999;
+    position: relative;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.shorten-toggle:hover, .request-toggle:hover {
+    background-color: #367fa9;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
 .nav-tabs-custom>.nav-tabs.pull-right>li>a.back-btn {
     font-size: 12px;
     color: #FFFFFF;
@@ -1056,11 +1179,11 @@ kbd{
 .read-more-target {
     display: none;
 }
-  
+
 .read-more-trigger {
     cursor: pointer;
 }
-    
+
 .read-more-target:target {
     display: block;
 }
@@ -1708,7 +1831,7 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     .extra-buttons{
         padding-top: 0;
         float: right;
-       
+
     }
 }
 
@@ -1792,7 +1915,7 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
     .login-page{
         background: #ddd;
-    }    
+    }
 }
 
 

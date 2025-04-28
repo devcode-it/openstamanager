@@ -30,7 +30,7 @@ if (!empty($id_record)) {
         `in_interventi`.`descrizione` AS descrizione,
         `in_interventi`.`codice` AS codice,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
-        `in_statiintervento`.`is_completato` AS flag_completato,
+        `in_statiintervento`.`is_bloccato` AS flag_completato,
         `in_statiintervento`.`colore` AS colore,
         IF((`in_interventi`.`idsede_destinazione` = 0), `an_anagrafiche`.`idzona`, `an_sedi`.`idzona`) AS idzona,
         `in_interventi`.`idanagrafica` as idanagrafica,

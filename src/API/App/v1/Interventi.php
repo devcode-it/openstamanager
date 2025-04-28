@@ -137,7 +137,7 @@ class Interventi extends AppResource
                     `deleted_at` IS NULL AND (`in_interventi`.`id` IN (
                         SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end)
                         OR 
-                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
+                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                         )
                     )';
             } else {
@@ -159,7 +159,7 @@ class Interventi extends AppResource
                             `in_interventi`.`id` NOT IN (
                                 SELECT `idintervento` FROM `in_interventi_tecnici`
                             )
-                            AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0) AND `in_interventi`.`id` IN (
+                            AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0) AND `in_interventi`.`id` IN (
                                 SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`id_tecnico` = :id_tecnico_q2
                             )
                         )
@@ -184,7 +184,7 @@ class Interventi extends AppResource
                                 `in_interventi`.`id` NOT IN (
                                     SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
+                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
                         )';
             } else {
@@ -206,7 +206,7 @@ class Interventi extends AppResource
                                 `in_interventi`.`id` NOT IN (
                                     SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)
+                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
                         )';
             }

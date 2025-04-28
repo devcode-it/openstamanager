@@ -274,7 +274,7 @@ if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
 $query_da_programmare .= '
         WHERE 
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND 
-            `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)';
+            `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
 if (!empty($risultati_da_programmare)) {
@@ -320,7 +320,7 @@ if (!empty($risultati_da_programmare)) {
     $query_mesi_precenti .= '
         WHERE 
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 
-            AND `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0) 
+            AND `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0) 
             AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 

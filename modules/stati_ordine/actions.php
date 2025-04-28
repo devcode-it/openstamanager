@@ -35,7 +35,7 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->completato = post('completato');
+            $stato->is_bloccato = post('completato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->impegnato = post('impegnato');
             $stato->setTranslation('title', $descrizione);
@@ -50,7 +50,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $completato = post('completato_add');
+        $is_bloccato = post('completato_add');
         $is_fatturabile = post('is_fatturabile_add');
         $impegnato = post('impegnato_add');
 
@@ -59,7 +59,7 @@ switch (post('op')) {
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato ordine.'));
         } else {
-            $stato = Stato::build($icona, $colore, $completato, $is_fatturabile, $impegnato);
+            $stato = Stato::build($icona, $colore, $is_bloccato, $is_fatturabile, $impegnato);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $stato->name = $descrizione;
             }

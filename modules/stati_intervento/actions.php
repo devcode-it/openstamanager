@@ -34,7 +34,7 @@ switch (post('op')) {
             }
             $stato->codice = post('codice');
             $stato->colore = post('colore');
-            $stato->is_completato = post('is_completato');
+            $stato->is_bloccato = post('is_bloccato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->notifica = post('notifica');
             $stato->notifica_cliente = post('notifica_cliente');

@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$block_edit = $record['is_completato'];
+$block_edit = $record['is_bloccato'];
 
 // Mostro un avviso se ci sono più revisioni del preventivo
 if (count($preventivo->revisioni) > 1) {

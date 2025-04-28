@@ -34,12 +34,12 @@ class Stato extends Model
         'title',
     ];
 
-    public static function build($icona = null, $colore = null, $is_completato = null, $is_fatturabile = null, $is_pianificabile = null)
+    public static function build($icona = null, $colore = null, $is_bloccato = null, $is_fatturabile = null, $is_pianificabile = null)
     {
         $model = new static();
         $model->icona = $icona;
         $model->colore = $colore;
-        $model->is_completato = $is_completato;
+        $model->is_bloccato = $is_bloccato;
         $model->is_fatturabile = $is_fatturabile;
         $model->is_pianificabile = $is_pianificabile;
         $model->save();

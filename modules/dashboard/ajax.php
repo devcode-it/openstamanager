@@ -55,7 +55,7 @@ switch (filter('op')) {
             IF(`have_attachments`.`cont`, 1, 0) AS have_attachments,
             `an_anagrafiche`.`ragione_sociale` as cliente,
             `an_anagrafiche`.`idzona` as idzona,
-            `in_statiintervento`.`is_completato` AS is_completato
+            `in_statiintervento`.`is_bloccato` AS is_bloccato
         FROM `in_interventi_tecnici`
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`idtecnico` = `tecnico`.`idanagrafica`
@@ -108,7 +108,7 @@ switch (filter('op')) {
 
             $results[] = [
                 'id' => $sessione['id'],
-                'title' => (($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_completato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
+                'title' => (($sessione['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_bloccato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'extendedProps' => [
@@ -133,7 +133,7 @@ switch (filter('op')) {
                 `co_preventivi`.`data_conclusione`,
                 `co_statipreventivi`.`is_pianificabile`,
                 `co_statipreventivi_lang`.`title` as stato,
-                `co_statipreventivi`.`is_completato`,
+                `co_statipreventivi`.`is_bloccato`,
                 `an_anagrafiche`. `ragione_sociale` AS cliente,
                 IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
             FROM `co_preventivi`
@@ -157,7 +157,7 @@ switch (filter('op')) {
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_accettazione'],
                             // 'end' => $preventivo['data_accettazione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
@@ -175,7 +175,7 @@ switch (filter('op')) {
                             'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_conclusione'],
                             // 'end' => $preventivo['data_conclusione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
@@ -242,14 +242,14 @@ switch (filter('op')) {
         $q = 'SELECT 
                 `in_interventi_tecnici`.`prezzo_ore_unitario`, 
                 `idtecnico`, 
-                `in_statiintervento`.`is_completato` 
+                `in_statiintervento`.`is_bloccato` 
             FROM 
                 `in_interventi_tecnici` 
                 INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id` 
                 LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id` 
             WHERE 
                 `in_interventi`.`id`='.prepare($idintervento).' AND 
-                `in_statiintervento`.`is_completato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
+                `in_statiintervento`.`is_bloccato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -477,7 +477,7 @@ switch (filter('op')) {
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
         WHERE 
-            `in_statiintervento`.`is_completato` = 0
+            `in_statiintervento`.`is_bloccato` = 0
         GROUP BY 
             `in_interventi`.`id`, `in_interventi_tecnici_assegnati`.`id_tecnico`
         HAVING 

@@ -82,7 +82,7 @@ $interventi_programmati = Intervento::select('in_interventi.*')
     ->join('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
     ->where('idanagrafica', $intervento->idanagrafica)
     ->where('idsede_destinazione', $intervento->idsede_destinazione)
-    ->where('is_completato', '!=', 1)
+    ->where('is_bloccato', '!=', 1)
     ->where('in_interventi.id', '!=', $id_record)
     ->get();
 

@@ -35,7 +35,7 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->completato = post('completato');
+            $stato->is_bloccato = post('completato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->setTranslation('title', $descrizione);
             $stato->save();
@@ -49,7 +49,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $completato = post('completato_add');
+        $is_bloccato = post('completato_add');
         $is_fatturabile = post('is_fatturabile_add');
 
         $stato_new = Stato::where('name', $descrizione)->first();

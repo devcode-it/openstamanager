@@ -22,7 +22,7 @@ include_once __DIR__.'/init.php';
 
 use Models\Plugin;
 
-$block_edit = $record['is_completato'];
+$block_edit = $record['is_bloccato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $preventivo->getRighe()->sortByDesc('created_at') : $preventivo->getRighe();
 $colspan = '9';
@@ -286,7 +286,7 @@ foreach ($righe as $key => $riga) {
                         </a>';
     }
 
-    if (empty($record['is_completato'])) {
+    if (empty($record['is_bloccato'])) {
         echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>

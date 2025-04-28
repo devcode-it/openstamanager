@@ -62,7 +62,7 @@ switch (post('op')) {
             $anagrafica = $documento_import->anagrafica;
             $id_anagrafica = $anagrafica->id;
 
-            if (!$documento_import->stato->is_fatturabile && !$documento_import->stato->is_completato) {
+            if (!$documento_import->stato->is_fatturabile && !$documento_import->stato->is_bloccato) {
                 break;
             }
 

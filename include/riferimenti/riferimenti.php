@@ -88,7 +88,7 @@ foreach ($ordini as $elemento) {
 
 // Individuazione attività disponibili
 $interventi = Intervento::whereHas('stato', function ($query) {
-    $stati = StatoIntervento::where('is_completato', '0')->get();
+    $stati = StatoIntervento::where('is_bloccato', '0')->get();
     $query->whereIn('id', $stati->pluck('id'));
 })->get();
 foreach ($interventi as $elemento) {

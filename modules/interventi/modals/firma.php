@@ -33,7 +33,7 @@ $records = [];
 foreach ($id_records as $id) {
     $intervento = Intervento::find($id);
 
-    if ($intervento->stato->is_completato) {
+    if ($intervento->stato->is_bloccato) {
         $interventi_completati[] = $id;
     } elseif ($intervento->firma_file) {
         $interventi_firmati[] = $id;

@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Contratti\Stato;
 
-$block_edit = $record['is_completato'];
+$block_edit = $record['is_bloccato'];
 $data_accettazione = $record['data_accettazione'] ? strtotime((string) $record['data_accettazione']) : '';
 $data_conclusione = $record['data_conclusione'] ? strtotime((string) $record['data_conclusione']) : '';
 
@@ -215,7 +215,7 @@ echo '
     <div class="card card-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
         <div class=" card-header">
             <h4 class=" card-title">
-                
+
                 <?php echo tr('Dati appalto'); ?></h4>
 
                 <div class="card-tools pull-right">
@@ -223,7 +223,7 @@ echo '
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>
-            
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -245,7 +245,7 @@ echo '
             </div>
         </div>
     </div>
-  
+
 
 	<!-- COSTI -->
 	<div class="card card-primary">
@@ -393,11 +393,11 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
-                    
+
                     <div class="btn-group tip" data-card-widget="tooltip">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-list"></i> '.tr('Altro').'
@@ -476,7 +476,7 @@ function caricaRighe(id_riga) {
 
 $(document).ready(function() {
     caricaRighe(null);
-    
+
     $("#data_accettazione").on("dp.change", function() {
         if($(this).val()){
             $("#data_rifiuto").attr("disabled", true);
@@ -557,7 +557,7 @@ $("#codice_cig, #codice_cup").bind("keyup change", function(e) {
 async function salvaArticolo() {
     // Salvataggio via AJAX
     await salvaForm("#edit-form");
-    
+
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

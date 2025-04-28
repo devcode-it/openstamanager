@@ -62,7 +62,7 @@ if (!empty($interventi)) {
 
     // Tabella con i dati
     foreach ($interventi as $intervento) {
-        $totale_ore_completate += !empty($intervento->stato->is_completato) ? $intervento->ore_totali : 0;
+        $totale_ore_completate += !empty($intervento->stato->is_bloccato) ? $intervento->ore_totali : 0;
         // Riga per il singolo intervento
         echo '
     <tr style="background:' . $intervento->stato->colore . ';">

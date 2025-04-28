@@ -110,7 +110,7 @@ switch (post('op')) {
         // Duplica preventivo
     case 'copy':
         // Copia del preventivo
-        $new = $preventivo->replicate();
+        $new = $preventivo->replicate(['data_accettazione', 'data_conclusione', 'data_rifiuto']);
         $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
         $new->data_bozza = Carbon::now();
 

@@ -49,3 +49,66 @@ foreach ($files as $file) {
     $filename = basename($file);
     rename($file, $new_folder.$filename);
 }
+
+// Verifica presenza conti
+$conti_speciali_livello2 = [
+    'Conti transitori' => [
+        'Iva su vendite',
+        'Iva su acquisti',
+        'Iva indetraibile',
+    ],
+    'Conti compensativi' => [
+        'Compensazione per autofattura',
+    ],
+    'Perdite e profitti' => [],
+];
+
+$conti_speciali_livello3 = [
+    'Cassa e banca',
+    'Crediti clienti e crediti diversi',
+    'Debiti fornitori e debiti diversi',
+];
+
+foreach ($conti_speciali_livello2 as $conto_livello2 => $sottoconti) {
+    $conto2 = database()->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE descrizione = '.prepare($conto_livello2));
+
+    if (empty($conto2)) {
+        $conto1 = database()->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE descrizione = "Patrimoniale"');
+
+        if (!empty($conto1)) {
+            $max_numero = database()->fetchOne('SELECT MAX(CAST(numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti2 WHERE idpianodeiconti1 = '.prepare($conto1['id']));
+            $nuovo_numero = $max_numero ? $max_numero['max_numero'] + 1 : 1;
+            $nuovo_numero = str_pad($nuovo_numero, 6, '0', STR_PAD_LEFT);
+            $id_conto2 = database()->query('INSERT INTO co_pianodeiconti2 (numero, descrizione, idpianodeiconti1, dir) VALUES ('.prepare($nuovo_numero).', '.prepare($conto_livello2).', '.prepare($conto1['id']).', "entrata/uscita")');
+            $conto2 = ['id' => database()->lastInsertedID()];
+        }
+    }
+
+    foreach ($sottoconti as $sottoconto) {
+        $conto3 = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($sottoconto).' AND idpianodeiconti2 = '.prepare($conto2['id']));
+
+        if (empty($conto3)) {
+            $max_numero = database()->fetchOne('SELECT MAX(CAST(numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($conto2['id']));
+            $nuovo_numero = $max_numero ? $max_numero['max_numero'] + 1 : 1;
+            $nuovo_numero = str_pad($nuovo_numero, 6, '0', STR_PAD_LEFT);
+            database()->query('INSERT INTO co_pianodeiconti3 (numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES ('.prepare($nuovo_numero).', '.prepare($sottoconto).', '.prepare($conto2['id']).', "entrata/uscita", 100)');
+            echo "Creato conto di terzo livello: ".$sottoconto." (numero: ".$nuovo_numero.")\n";
+        }
+    }
+}
+
+foreach ($conti_speciali_livello3 as $conto_livello3) {
+    $conto3 = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($conto_livello3));
+
+    if (empty($conto3)) {
+        $conto2 = database()->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1 = (SELECT id FROM co_pianodeiconti1 WHERE descrizione = "Patrimoniale") LIMIT 1');
+
+        if (!empty($conto2)) {
+            $max_numero = database()->fetchOne('SELECT MAX(CAST(numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($conto2['id']));
+            $nuovo_numero = $max_numero ? $max_numero['max_numero'] + 1 : 1;
+            $nuovo_numero = str_pad($nuovo_numero, 6, '0', STR_PAD_LEFT);
+            database()->query('INSERT INTO co_pianodeiconti3 (numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES ('.prepare($nuovo_numero).', '.prepare($conto_livello3).', '.prepare($conto2['id']).', "entrata/uscita", 100)');
+            echo "Creato conto di terzo livello speciale: ".$conto_livello3." (numero: ".$nuovo_numero.")\n";
+        }
+    }
+}

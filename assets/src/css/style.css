@@ -2008,3 +2008,30 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
         font-size: 2.4em;
     }
 }
+
+/* Stile migliorato per i titoli dei plugin */
+.plugin-title {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px !important;
+    width: 100%;
+}
+
+.plugin-title .badge {
+    font-size: 85%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.plugin-title .text-primary {
+    margin-left: 5px;
+}
+
+/* Padding per il contenuto dei plugin */
+.tab-pane[id^="tab_"]:not(#tab_0) {
+    padding: 0 20px 20px 20px;
+}

@@ -644,9 +644,15 @@ if (Auth::check()) {
                 if (activeTabId !== "tab_0") {
                     // Nascondi il pulsante "Aggiungi" principale (quello accanto al nome del modulo)
                     $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").hide();
+
+                    // Rendi il nome del modulo in text-muted
+                    $(".content-header h1").addClass("text-muted");
                 } else {
                     // Mostra il pulsante "Aggiungi" principale quando siamo nel tab principale
                     $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").show();
+
+                    // Ripristina il colore normale del nome del modulo
+                    $(".content-header h1").removeClass("text-muted");
                 }
             }
 

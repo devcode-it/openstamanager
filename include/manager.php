@@ -47,9 +47,13 @@ if (!empty($id_plugin)) {
 			<span  class="'.(!empty($structure['help']) ? ' tip' : '').'"'.(!empty($structure['help']) ? ' title="'.prepareToField($structure['help']).'" data-position="bottom"' : '').' >
             '.$structure->getTranslation('title').(!empty($structure['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
+    echo '</span>';
+
     if ($structure->hasAddFile()) {
         echo '
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i> '.tr('Nuovo').'</button>
+        </div>';
     }
 
     echo '
@@ -194,7 +198,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     if (!empty($bulk) && $structure->permission == 'rw' && empty($id_plugin)) {
         echo '
             <div class="btn-group">
-                
+
                 <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> '.tr('Azioni di gruppo').'   </button>
                 <div class="dropdown-menu dropdown-menu-right">';
 

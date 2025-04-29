@@ -430,7 +430,7 @@ if (Auth::check()) {
                         </a>
                     </li>
                 </ul>
-            
+
 
                 <!-- Navbar Right Menu -->
                 <ul class="navbar-nav ml-auto">';
@@ -495,7 +495,7 @@ if (Auth::check()) {
                 <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" target="_blank">
                     <img src="'.$rootdir.'/assets/dist/img/logo_completo.png" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'">
                     <span class="brand-text font-weight-light">&nbsp;</span>
-                   
+
                 </a>
 
                 <!-- Sidebar -->
@@ -518,7 +518,7 @@ if (Auth::check()) {
                     </div>
                 </div>
 
-                        
+
                 <!-- SidebarSearch Form -->
                 <div class="form-inline">
                     <div class="input-group" data-widget="sidebar-search">
@@ -632,7 +632,43 @@ if (Auth::check()) {
     echo '
     <!-- Main content -->
     <div class="content-wrapper">
-        <section class="content">';
+        <section class="content">
+
+        <script>
+        $(document).ready(function() {
+            // Funzione per controllare se siamo in un plugin e nascondere il pulsante "Aggiungi" principale
+            function checkActiveTab() {
+                var activeTabId = $(".tab-pane.active").attr("id");
+
+                // Se il tab attivo è diverso da tab_0, siamo in un plugin
+                if (activeTabId !== "tab_0") {
+                    // Nascondi il pulsante "Aggiungi" principale (quello accanto al nome del modulo)
+                    $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").hide();
+                } else {
+                    // Mostra il pulsante "Aggiungi" principale quando siamo nel tab principale
+                    $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").show();
+                }
+            }
+
+            // Controlla all\'avvio
+            checkActiveTab();
+
+            // Controlla anche quando la pagina viene caricata con un hash nell\'URL
+            if (window.location.hash && window.location.hash !== "#tab_0") {
+                setTimeout(checkActiveTab, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+            }
+
+            // Controlla quando cambia il tab
+            $("a[data-toggle=\'tab\']").on("shown.bs.tab", function() {
+                checkActiveTab();
+            });
+
+            // Controlla anche quando viene cliccato un tab nella barra laterale
+            $("a[data-toggle=\'control-sidebar\']").on("click", function() {
+                setTimeout(checkActiveTab, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+            });
+        });
+        </script>';
 
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';
@@ -666,7 +702,7 @@ if (Auth::check()) {
 // Infomazioni
 if (!empty($messages['info'])) {
     foreach ($messages['info'] as $value) {
-        echo ' 
+        echo '
             <script>
                 $(document).ready( function(){
                     window.parent.toastr.success("'.$value.'", toastr.options);

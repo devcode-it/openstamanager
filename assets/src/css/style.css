@@ -402,19 +402,45 @@ span.form-control {
 .tooltipster-shadow {
     border-radius: 4px !important;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
+    border: none !important;
+    background-color: #e0e6eb !important;
 }
 
 .tooltipster-shadow .tooltipster-content {
     font-family: inherit !important;
     padding: 8px !important;
     width: 400px !important;
+    background-color: #e0e6eb !important;
+    color: #000000 !important;
+    overflow: hidden !important;
+    word-wrap: break-word !important;
 }
 
 .tooltipster-base {
     max-width: 400px !important;
     width: 400px !important;
-    z-index: 10000; /* Consistent z-index for all tooltip states */
+    z-index: 10000 !important; /* Consistent z-index for all tooltip states */
+    background-color: #e0e6eb !important;
+    border: none !important;
 }
+
+/* Rimuove i bordi esterni dai tooltip */
+.tooltipster-box,
+.tooltipster-arrow,
+.tooltipster-arrow-border,
+.tooltipster-arrow-background {
+    border: none !important;
+}
+
+/* Nasconde le barre di scorrimento */
+.tooltipster-content::-webkit-scrollbar {
+    display: none !important;
+}
+.tooltipster-content {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+}
+
 
 /* Tooltip header */
 .tooltip-header {
@@ -455,7 +481,7 @@ span.form-control {
 /* Tooltip content sections */
 .tooltip-info-section {
     margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ccc !important;
     padding-bottom: 10px;
 }
 
@@ -475,7 +501,7 @@ span.form-control {
     font-weight: bold;
     margin-right: 5px;
     min-width: 120px;
-    color: #3c8dbc;
+    color: #000000;
 }
 
 .tooltip-info-value {
@@ -486,7 +512,7 @@ span.form-control {
 .shorten-toggle,
 .request-toggle {
     display: inline-block;
-    margin: 5px 0;
+    margin: 2px 0 0 0;
     color: #fff;
     background-color: #3c8dbc;
     padding: 4px 10px;
@@ -501,6 +527,20 @@ span.form-control {
     text-align: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+/* Classi per i wrapper di testo troncato */
+.shorten-wrapper {
+    margin-bottom: 0;
+}
+
+.shorten-text, .request-text {
+    display: block;
+}
+
+.shorten-full, .request-full {
+    display: none;
+    margin-bottom: 0;
 }
 
 .shorten-toggle:hover,

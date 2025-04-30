@@ -20,6 +20,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+$query_conflitti = [];
+
+function saveQueriesToSession($queries) {
+    $_SESSION['query_conflitti'] = $queries;
+}
+
 function integrity_diff($expected, $current)
 {
     foreach ($expected as $key => $value) {
@@ -32,7 +38,7 @@ function integrity_diff($expected, $current)
                     $difference[$key] = $new_diff;
                 }
             }
-        } elseif (!array_key_exists($key, $current) || $current[$key] != $value) {
+        } elseif (!array_key_exists($key, $current) || $current[$key] != $value && !empty($value)) {
             $difference[$key] = [
                 'current' => $current[$key],
                 'expected' => $value,
@@ -74,7 +80,6 @@ function settings_diff($expected, $current)
 $file = basename(__FILE__);
 $effettua_controllo = filter('effettua_controllo');
 
-// Schermata di caricamento delle informazioni
 if (empty($effettua_controllo)) {
     echo '
 <div id="righe_controlli">
@@ -119,7 +124,7 @@ $data = json_decode($contents, true);
 
 if (empty($data)) {
     echo '
-<div class="alert alert-warning">
+<div class="alert alert-warning alert-database">
     <i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', [
         '_FILE_' => '<b>'.$file_to_check_database.'</b>',
     ]).'.
@@ -128,7 +133,6 @@ if (empty($data)) {
     return;
 }
 
-// Controllo degli errori
 $info = Update::getDatabaseStructure();
 $results = integrity_diff($data, $info);
 $results_added = integrity_diff($info, $data);
@@ -140,27 +144,37 @@ $settings = Update::getSettings();
 $results_settings = settings_diff($data_settings, $settings);
 $results_settings_added = settings_diff($settings, $data_settings);
 
-// Schermata di visualizzazione degli errori
 if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
+
     if ($results) {
         echo '
-<p>'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
-<div class="alert alert-warning">
-    <i class="fa fa-warning"></i>
-    '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione di _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
-            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-            '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
-        ]).'.
+<div class="row align-items-center">
+    <div class="col-md-9">
+        <p class="mb-0">'.tr("Segue l'elenco delle tabelle del database che presentano una struttura diversa rispetto a quella prevista nella versione ufficiale del gestionale").'.</p>
+    </div>
+    <div class="col-md-3 text-right">
+        <button type="button" class="btn btn-warning" id="risolvi_conflitti">
+            <i class="fa fa-database"></i> '.tr('Risolvi tutti i conflitti').'
+        </button>
+    </div>
+</div>
+<div>
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
+                '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+                '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+                '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
+            ]).'.
+    </div>
 </div>';
 
         foreach ($results as $table => $errors) {
             echo '
-<h3>'.$table.'</h3>';
+<h5 class="table-name">'.$table.'</h5>';
 
             if (array_key_exists('current', $errors) && $errors['current'] == null) {
                 echo '
-<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella assente').'
+<div class="alert alert-danger alert-database"><i class="fa fa-times"></i> '.tr('Tabella assente').'
 </div>';
                 continue;
             }
@@ -170,11 +184,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
             if (!empty($errors)) {
                 echo '
-<table class="table table-bordered">
+<table class="table table-bordered table-striped table-database">
     <thead>
         <tr>
             <th>'.tr('Colonna').'</th>
-            <th>'.tr('Conflitto').'</th>
+            <th>'.tr('Soluzione').'</th>
         </tr>
     </thead>
 
@@ -188,6 +202,24 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         } else {
                             $query = 'Chiave mancante';
                         }
+                    } elseif ($diff['current'] && array_key_exists('current', $diff['default']) && is_null($diff['default']['current'])) {
+                        $query = 'ALTER TABLE `'.$table.'` ADD `'.$name.'` '.$data[$table][$name]['type'];
+
+                        if ($data[$table][$name]['null'] == 'NO') {
+                            $query .= ' NOT NULL';
+                        } else {
+                            $query .= ' NULL';
+                        }
+
+                        if ($data[$table][$name]['default']) {
+                            $query .= ' DEFAULT '.$data[$table][$name]['default'];
+                        }
+
+                        if ($data[$table][$name]['extra']) {
+                            $query .= ' '.str_replace('DEFAULT_GENERATED', '', $data[$table][$name]['extra']);
+                        }
+
+                        $query_conflitti[] = $query.';';
                     } else {
                         $query .= 'ALTER TABLE `'.$table;
 
@@ -208,19 +240,20 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         if ($data[$table][$name]['default']) {
                             $query .= ' DEFAULT '.$data[$table][$name]['default'];
                         }
+
+                        $query_conflitti[] = $query.';';
                     }
 
                     echo '
-        <tr class="bg-warning" >
-            <td>
+        <tr class="row-warning">
+            <td class="column-name">
                 '.$name.'
             </td>
-            <td>
-                '.$query.';
+            <td class="column-conflict">
+                '.$query.'
             </td>
         </tr>';
                 }
-
                 echo '
     </tbody>
 </table>';
@@ -228,11 +261,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
             if (!empty($foreign_keys)) {
                 echo '
-<table class="table table-bordered">
+<table class="table table-bordered table-striped table-database">
     <thead>
         <tr>
             <th>'.tr('Foreign keys').'</th>
-            <th>'.tr('Conflitto').'</th>
+            <th>'.tr('Soluzione').'</th>
         </tr>
     </thead>
 
@@ -240,12 +273,12 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
                 foreach ($foreign_keys as $name => $diff) {
                     echo '
-        <tr class="bg-warning" >
-            <td>
+        <tr class="row-warning">
+            <td class="column-name">
                 '.($name ?: $diff['expected']['title']).'
             </td>
-            <td>
-                ALTER TABLE '.$table.' ADD  CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';
+            <td class="column-conflict">
+                ALTER TABLE '.$table.' ADD CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';
             </td>
         </tr>';
                 }
@@ -260,80 +293,111 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     if ($results_added) {
         foreach ($results_added as $table => $errors) {
             if (($results[$table] && array_keys($results[$table]) != array_keys($errors)) || (empty($results[$table]) && !empty($errors))) {
-                echo '
-<h3>'.$table.'</h3>';
 
-                if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                    echo '
-<div class="alert alert-danger" ><i class="fa fa-times"></i> '.tr('Tabella non prevista').'
-</div>';
-                    continue;
+                $has_content = false;
+
+
+                $table_not_expected = array_key_exists('current', $errors) && $errors['current'] == null;
+
+
+                $has_keys = false;
+                foreach ($errors as $name => $diff) {
+                    if ($name != 'foreign_keys' && !isset($results[$table][$name]) && isset($diff['key'])) {
+                        $has_keys = true;
+                        break;
+                    }
                 }
 
-                $foreign_keys = $errors['foreign_keys'] ?: [];
-                unset($errors['foreign_keys']);
 
-                if (!empty($errors)) {
+                $foreign_keys = $errors['foreign_keys'] ?: [];
+
+
+                if ($table_not_expected || $has_keys || !empty($foreign_keys)) {
                     echo '
-<table class="table table-bordered">
+<h5 class="table-name">'.$table.'</h5>';
+
+                    if ($table_not_expected) {
+                        echo '
+<div class="alert alert-danger alert-database"><i class="fa fa-times"></i> '.tr('Tabella non prevista').'
+</div>';
+                        continue;
+                    }
+
+                    unset($errors['foreign_keys']);
+
+                    if ($has_keys) {
+                        echo '
+<table class="table table-bordered table-striped table-database">
     <thead>
         <tr>
             <th>'.tr('Colonna').'</th>
-            <th>'.tr('Conflitto').'</th>
+            <th>'.tr('Soluzione').'</th>
         </tr>
     </thead>
 
     <tbody>';
 
-                    foreach ($errors as $name => $diff) {
-                        $query = '';
-                        if (!isset($results[$table][$name])) {
-                            if (isset($diff['key'])) {
-                                if ($diff['key']['expected'] == '') {
-                                    $query = 'Chiave non prevista';
-                                } else {
-                                    $query = 'Chiave mancante';
-                                }
-                            } else {
-                                $query = 'Campo non previsto';
-                            }
+                        foreach ($errors as $name => $diff) {
+                            $query = '';
+                            if (!isset($results[$table][$name])) {
+                                if (isset($diff['key'])) {
+                                    if ($diff['key']['expected'] == '') {
+                                        $query = 'Chiave non prevista';
+                                    } else {
+                                        $query = 'Chiave mancante';
+                                    }
 
-                            echo '
-        <tr class="bg-info" >
-            <td>
+                                    echo '
+        <tr class="row-info">
+            <td class="column-name">
                 '.$name.'
             </td>
-            <td>
+            <td class="column-conflict">
                 '.$query.'
             </td>
         </tr>';
+                                }
+                            }
                         }
-                    }
-                    echo '
+                        echo '
     </tbody>
 </table>';
+                    }
                 }
 
                 if (!empty($foreign_keys)) {
                     echo '
-<table class="table table-bordered">
+<table class="table table-bordered table-striped table-database">
     <thead>
         <tr>
             <th>'.tr('Foreign keys').'</th>
-            <th>'.tr('Conflitto').'</th>
+            <th>'.tr('Soluzione').'</th>
         </tr>
     </thead>
 
     <tbody>';
 
                     foreach ($foreign_keys as $name => $diff) {
+
+                        $query = 'ALTER TABLE `'.$table.'` ADD FOREIGN KEY (`'.$name.'`) REFERENCES ';
+
+
+                        if (isset($diff['referenced_table']) && isset($diff['referenced_column'])) {
+                            $query .= '`'.$diff['referenced_table']['current'].'`(`'.$diff['referenced_column']['current'].'`)';
+                        } else {
+
+                            $query .= 'altra_tabella(id)';
+                        }
+                        $query .= ' ON DELETE CASCADE ON UPDATE CASCADE';
+                        $query_conflitti[] = $query.';';
+
                         echo '
-        <tr class="bg-info" >
-            <td>
+        <tr class="row-warning">
+            <td class="column-name">
                 '.$name.'
             </td>
-            <td>
-                Chiave esterna non prevista
+            <td class="column-conflict">
+                '.$query.';
             </td>
         </tr>';
                     }
@@ -346,15 +410,32 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
         }
     }
 
+    $campi_non_previsti = [];
+
+    if ($results_added) {
+        foreach ($results_added as $table => $errors) {
+            if (!empty($errors) && (($results[$table] && array_keys($results[$table]) != array_keys($errors)) || (empty($results[$table]) && !empty($errors)))) {
+                foreach ($errors as $name => $diff) {
+                    if (!isset($results[$table][$name]) && !isset($diff['key']) && $name != 'foreign_keys') {
+                        $campi_non_previsti[] = [
+                            'tabella' => $table,
+                            'campo' => $name,
+                            'valore' => isset($diff['expected']) ? $diff['expected'] : ''
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
     if ($results_settings) {
         echo '
-<table class="table table-bordered">
+<h4 class="table-title">Problemi impostazioni</h4>
+<table class="table table-bordered table-striped table-database">
     <thead>
-        <h3>Problemi impostazioni</h3>
         <tr>
             <th>'.tr('Nome').'</th>
-            <th>'.tr('Valore attuale').'</th>
-            <th>'.tr('Valore atteso').'</th>
+            <th>'.tr('Soluzione').'</th>
         </tr>
     </thead>
 
@@ -362,19 +443,23 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
         foreach ($results_settings as $key => $setting) {
             if (!$setting['current']) {
                 $class = 'danger';
+
+                $query = "INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('".$key."', '".$setting['expected']."', 'string', 1, 'Generali')";
+                $query_conflitti[] = $query.';';
             } else {
                 $class = 'warning';
+
+                $query = "UPDATE `zz_settings` SET `tipo` = ".prepare($setting['expected'])." WHERE `nome` = ".prepare($key);
+                $query_conflitti[] = $query.';';
             }
+
             echo '
-        <tr class="bg-'.$class.'" >
-            <td>
+        <tr class="row-warning">
+            <td class="column-name">
                 '.$key.'
             </td>
-            <td>
-                '.($setting['current'] ?: '⚠️ Impostazione mancante').'
-            </td>
-            <td>
-                '.$setting['expected'].'
+            <td class="column-conflict">
+                '.$query.';
             </td>
         </tr>';
         }
@@ -385,9 +470,9 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
     if ($results_settings_added) {
         echo '
-<table class="table table-bordered">
+<h4 class="table-title">Impostazioni non previste</h4>
+<table class="table table-bordered table-striped table-database">
     <thead>
-        <h3>Impostazioni non previste</h3>
         <tr>
             <th>'.tr('Nome').'</th>
             <th>'.tr('Valore attuale').'</th>
@@ -397,11 +482,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
         foreach ($results_settings_added as $key => $setting) {
             if ($setting['current'] == null) {
                 echo '
-        <tr class="bg-info" >
-            <td>
+        <tr class="row-info">
+            <td class="column-name">
                 '.$key.'
             </td>
-            <td>
+            <td class="column-conflict">
                 '.$setting['expected'].'
             </td>
         </tr>';
@@ -411,9 +496,138 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     </tbody>
 </table>';
     }
+
+
+    if (!empty($campi_non_previsti)) {
+        echo '
+<h4 class="table-title">Campi non previsti</h4>
+<table class="table table-bordered table-striped table-database">
+    <thead>
+        <tr>
+            <th>'.tr('Tabella').'</th>
+            <th>'.tr('Campo').'</th>
+        </tr>
+    </thead>
+    <tbody>';
+        foreach ($campi_non_previsti as $campo) {
+            echo '
+        <tr class="row-info">
+            <td class="column-name">
+                '.$campo['tabella'].'
+            </td>
+            <td class="column-conflict">
+                '.$campo['campo'].'
+            </td>
+        </tr>';
+        }
+        echo '
+    </tbody>
+</table>';
+    }
 } else {
     echo '
-<div class="alert alert-info">
+<div class="alert alert-info alert-database">
     <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
 </div>';
+}
+
+
+if (!empty($query_conflitti)) {
+    echo '
+<script>
+
+function buttonLoading(button) {
+    let $this = $(button);
+
+    let result = [
+        $this.html(),
+        $this.attr("class")
+    ];
+
+    $this.html(\'<i class="fa fa-spinner fa-pulse fa-fw"></i>\');
+    $this.addClass("btn-warning");
+    $this.prop("disabled", true);
+
+    return result;
+}
+
+
+function buttonRestore(button, loadingResult) {
+    let $this = $(button);
+
+    $this.html(loadingResult[0]);
+
+    $this.attr("class", "");
+    $this.addClass(loadingResult[1]);
+    $this.prop("disabled", false);
+}
+
+$(document).ready(function() {
+    $("#risolvi_conflitti").on("click", function() {
+        var button = $(this);
+
+        swal({
+            title: "'.tr('Sei sicuro?').'",
+            html: "'.tr('Verranno eseguite tutte le query per risolvere i conflitti del database. Questa operazione potrebbe modificare la struttura del database. Si consiglia di effettuare un backup prima di procedere.').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì, procedi').'",
+            cancelButtonText: "'.tr('Annulla').'",
+            confirmButtonClass: "btn btn-lg btn-warning",
+            cancelButtonClass: "btn btn-lg btn-default",
+            buttonsStyling: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function() {
+                return new Promise(function(resolve) {
+
+                    var loadingResult = buttonLoading(button);
+
+
+                    var queries = [];
+
+
+                    $(".row-warning .column-conflict").each(function() {
+                        var query = $(this).text().trim();
+                        if (query &&
+                            query !== "Chiave non prevista" &&
+                            query !== "Chiave mancante" &&
+                            !query.startsWith("query=")) {
+
+                            if (!query.endsWith(";")) {
+                                query += ";";
+                            }
+                            queries.push(query);
+                        }
+                    });
+
+                    $.ajax({
+                        url: globals.rootdir + "/actions.php",
+                        type: "POST",
+                        dataType: "JSON",
+                        data: {
+                            id_module: globals.id_module,
+                            op: "risolvi-conflitti-database",
+                            queries: JSON.stringify(queries)
+                        },
+                        success: function(response) {
+                            buttonRestore(button, loadingResult);
+                            resolve(response);
+                        },
+                        error: function(xhr, status, error) {
+                            buttonRestore(button, loadingResult);
+                            swal.showValidationError(
+                                "'.tr('Si è verificato un errore durante l\'esecuzione delle query').':<br>" + error
+                            );
+                            resolve();
+                        }
+                    });
+                });
+            },
+            allowOutsideClick: false
+        }).then(function () {
+            location.reload(true);
+        });
+    });
+});
+</script>';
 }

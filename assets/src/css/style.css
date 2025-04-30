@@ -649,6 +649,75 @@ span.form-control {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
 }
 
+/* Stili per il modal di controllo database */
+.btn-resolve-all {
+    margin-bottom: 20px;
+}
+
+.table-database {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.table-database thead {
+    background-color: #f5f5f5 !important;
+}
+
+.table-database thead th {
+    background-color: #f5f5f5 !important;
+    color: #333 !important;
+    padding: 6px !important;
+    border-bottom: 1px solid #ddd !important;
+}
+
+.table-database th,
+.table-database td {
+    padding: 6px !important;
+}
+
+.table-database .column-name {
+    width: 30%;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.table-database .column-conflict {
+    width: 70%;
+    font-family: monospace;
+    white-space: collapse !important;
+}
+
+/* Stile per il nome della tabella */
+.modules-aggiornamenti h3 {
+    font-size: 1.1em;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.table-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.row-warning td {
+    background-color: #fff3cd;
+}
+
+.row-info td {
+    background-color: #d1ecf1;
+}
+
+.row-danger td {
+    background-color: #f8d7da;
+}
+
+.alert-database {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 .sidebar-form {
     border-radius: 3px;
     margin: 10px 10px;
@@ -1165,10 +1234,6 @@ div.tip {
 
 table.dataTable {
     border-collapse: collapse !important;
-}
-
-.alert-warning {
-    background-color: #EC971F;
 }
 
 .row-list .form-group {
@@ -1868,8 +1933,8 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 @media screen and (min-width: 1920px) {
     .large-modal .modal-dialog {
-        width: 80%;
-        max-width: 80%;
+        width: 70%;
+        max-width: 70%;
     }
 }
 
@@ -2034,4 +2099,93 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 /* Padding per il contenuto dei plugin */
 .tab-pane[id^="tab_"]:not(#tab_0) {
     padding: 0 20px 20px 20px;
+}
+
+/* Stili per il modal di controllo database */
+
+/* Stili per i pulsanti */
+.btn-resolve-all {
+    margin-bottom: 0;
+}
+
+/* Stili per le tabelle */
+.table-database {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.table-database thead {
+    background-color: #343a40;
+    color: white;
+}
+
+.table-database th,
+.table-database td {
+    padding: 10px;
+}
+
+.table-database .column-name {
+    width: 30%;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.table-database .column-conflict {
+    width: 70%;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+/* Stili per i messaggi */
+.table-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+/* Stili per le righe di avviso */
+.row-warning td {
+    background-color: #ffffff; /* Sfondo bianco invece di giallo */
+    border-bottom: 1px solid #f0f0f0; /* Bordo sottile per separare le righe */
+}
+
+/* Mantieni lo sfondo giallo per le righe nella sezione problemi impostazioni */
+.table-title + .table-database .row-warning td {
+    background-color: #fff3cd;
+}
+
+.row-info td {
+    background-color: #d1ecf1;
+}
+
+.row-danger td {
+    background-color: #f8d7da;
+}
+
+/* Stili per i messaggi di errore/successo */
+.alert-database {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Stili per il controllo database */
+.row.align-items-center {
+    margin-bottom: 15px;
+}
+
+.row.align-items-center p {
+    line-height: 1.5;
+}
+
+/* Stile per il nome della tabella */
+.table-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2c3e50;
+    background-color: #fff3cd; /* Sfondo giallo come .row-warning td */
+    padding: 8px 12px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-left: 4px solid #ffc107; /* Colore più intenso che si abbina al giallo */
+    border-radius: 0 4px 4px 0;
 }

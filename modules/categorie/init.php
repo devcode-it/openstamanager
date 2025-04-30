@@ -19,12 +19,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Categoria;
 
-// Sincronizza checklist impianti
-echo '
-<form action="" method="post" id="check-impianto">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="sync_checklist">
-</form>
+if (!empty($id_record)) {
+    $record = $dbo->fetchOne('SELECT `zz_categorie`.*, `zz_categorie_lang`.`title` FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang`='.prepare(parameter: Models\Locale::getDefault()->id).') WHERE `zz_categorie`.`id`='.prepare($id_record));
 
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist degli impianti di questa categoria verranno aggiornate. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Sincronizza checklist impianti').'</button>';
+    $categoria = Categoria::find($id_record);
+}

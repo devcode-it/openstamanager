@@ -22,7 +22,7 @@ use Models\Module;
 
 $id_anagrafica = filter('id_anagrafica');
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
-$id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->first()->id;
+$id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">

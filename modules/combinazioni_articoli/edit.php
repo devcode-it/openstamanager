@@ -30,10 +30,10 @@ echo '
                 <div class="col-md-6">';
 if (!empty($combinazione->id_categoria)) {
     echo '
-                    '.Modules::link('Categorie articoli', $combinazione->id_categoria, null, null, 'class="pull-right"');
+                    '.Modules::link('Categorie', $combinazione->id_categoria, null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Module::where('name', 'Categorie articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Module::where('name', 'Categorie')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-6">

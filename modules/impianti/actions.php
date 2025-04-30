@@ -26,7 +26,7 @@ use Modules\Checklists\Check;
 $op = post('op');
 
 $upload_dir = base_dir().'/files/'.Module::where('name', 'Impianti')->first()->directory;
-$id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->first()->id;
+$id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 
 switch ($op) {
     // Aggiorno informazioni di base impianto

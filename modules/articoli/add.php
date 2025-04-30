@@ -47,11 +47,11 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie articoli')->first()->id; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie articoli')->first()->id; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>||hide" ]}
 		</div>
 	</div>
 

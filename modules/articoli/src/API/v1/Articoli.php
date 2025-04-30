@@ -47,13 +47,13 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_categorie AS categorie',
+            'zz_categorie AS categorie',
             'mg_articoli.id_categoria',
             'categorie.id',
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS categorie_lang',
+            'zz_categorie_lang AS categorie_lang',
             'categorie_lang.id_record',
             'categorie.id',
             'categorie_lang.id_lang',
@@ -61,13 +61,13 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         ];
 
         $joins[] = [
-            'mg_categorie AS sottocategorie',
+            'zz_categorie AS sottocategorie',
             'mg_articoli.id_sottocategoria',
             'sottocategorie.id',
         ];
 
         $joins[] = [
-            'mg_categorie_lang AS sottocategorie_lang',
+            'zz_categorie_lang AS sottocategorie_lang',
             'sottocategorie_lang.id_record',
             'sottocategorie.id',
             'sottocategorie_lang.id_lang',
@@ -133,10 +133,11 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $sottocategoria = null;
 
         // Gestione categoria
-        $categoria = Categoria::where('nome', '=', $nome_categoria)
+        $categoria = Categoria::where('title', '=', $nome_categoria)
             ->first();
         if (empty($categoria) && !empty($nome_categoria)) {
-            $categoria = Categoria::build($nome_categoria);
+            $categoria = Categoria::build();
+            $categoria->setTranslation('title', $nome_categoria);
             $categoria->save();
         }
 
@@ -146,11 +147,12 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         }
 
         // Gestione sotto-categoria
-        $sottocategoria = Categoria::where('nome', '=', $nome_sottocategoria)
+        $sottocategoria = Categoria::where('title', '=', $nome_sottocategoria)
             ->where('parent', '=', $categoria->id)
             ->first();
         if (empty($sottocategoria) && !empty($nome_sottocategoria)) {
-            $sottocategoria = Categoria::build($nome_sottocategoria);
+            $sottocategoria = Categoria::build();
+            $sottocategoria->setTranslation('title', $nome_sottocategoria);
             $sottocategoria->parent = $categoria->id;
             $sottocategoria->save();
         }

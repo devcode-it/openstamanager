@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Categoria;
 
 $id_original = filter('id_original');
 
@@ -37,22 +38,36 @@ if (isset($id_original)) {
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
     <input type="hidden" name="op" value="<?php echo $id_record ? 'update' : 'add'; ?>">
+    <?php if (!empty($id_original)) : ?>
+    <input type="hidden" name="is_articolo" value="<?php echo $id_original ? Categoria::find($id_original)->is_articolo : 1; ?>">
+    <input type="hidden" name="is_impianto" value="<?php echo $id_original ? Categoria::find($id_original)->is_impianto : 0; ?>">
+    <?php endif; ?>
 
 	<div class="row">
-        <div class="col-md-8">
+        <div class="col-md-5">
             {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "class": "colorpicker text-center", "value": "<?php echo $categoria->colore; ?>", "extra": "maxlength=\"7\"", "icon-after": "<div class='img-circle square'></div>" ]}
+        </div>
+
+        <div class="col-md-2">
+            {[ "type": "checkbox", "label": "<?php echo tr('Articolo'); ?>", "name": "is_articolo_add", "value": "<?php echo $categoria ? $categoria->is_articolo : ($id_original ? Categoria::find($id_original)->is_articolo : 1); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
+        </div>
+
+        <div class="col-md-2">
+            {[ "type": "checkbox", "label": "<?php echo tr('Impianto'); ?>", "name": "is_impianto_add", "value": "<?php echo $categoria ? $categoria->is_impianto : ($id_original ? Categoria::find($id_original)->is_impianto : 0); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "<?php echo $categoria ? $categoria->getTranslation('note') : ''; ?>" ]}
+            {[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "<?php echo $categoria ? $categoria->getTranslation('note') : ''; ?>", "rows": "3" ]}
         </div>
     </div>
+
+
 
 	<!-- PULSANTI -->
 	<div class="modal-footer">

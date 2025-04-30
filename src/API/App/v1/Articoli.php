@@ -46,7 +46,7 @@ class Articoli extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT 
+        $query = 'SELECT
             `mg_articoli`.`id` AS id,
             `mg_articoli`.`codice`,
             `mg_articoli`.`barcode`,
@@ -58,14 +58,14 @@ class Articoli extends AppResource
             `mg_articoli`.`idiva_vendita` AS id_iva,
             `categoria_lang`.`title` AS categoria,
             `sottocategoria_lang`.`title` AS sottocategoria
-        FROM 
-            `mg_articoli` 
-            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
-            LEFT JOIN `mg_categorie` as categoria ON (`mg_articoli`.`id_categoria` = `categoria`.`id`) 
-            LEFT JOIN `mg_categorie_lang` as categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
-            LEFT JOIN `mg_categorie` as sottocategoria ON (`mg_articoli`.`id_sottocategoria` = `sottocategoria`.`id`) 
-            LEFT JOIN `mg_categorie_lang` as sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-        WHERE 
+        FROM
+            `mg_articoli`
+            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `zz_categorie` as categoria ON (`mg_articoli`.`id_categoria` = `categoria`.`id`)
+            LEFT JOIN `zz_categorie_lang` as categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            LEFT JOIN `zz_categorie` as sottocategoria ON (`mg_articoli`.`id_sottocategoria` = `sottocategoria`.`id`)
+            LEFT JOIN `zz_categorie_lang` as sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        WHERE
             `mg_articoli`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

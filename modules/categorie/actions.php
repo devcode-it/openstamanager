@@ -27,15 +27,53 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
+        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
+        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
+
+        // Verifica che almeno uno dei due flag sia selezionato
+        if ($is_articolo == 0 && $is_impianto == 0) {
+            flash()->error(tr('È necessario selezionare almeno una delle due opzioni: Articolo o Impianto.'));
+            break;
+        }
+
+        // Verifica se esiste già una categoria con lo stesso nome
+        $categoria_esistente = (new Categoria())->getByField('title', $nome);
+
+        if (!empty($categoria_esistente) && $categoria_esistente != $id_record) {
+            // Mostra un messaggio di errore con link alla categoria esistente
+            $message = tr('Esiste già una categoria con il nome _NOME_', [
+                '_NOME_' => '"'.$nome.'"',
+            ]);
+
+            $link = Modules::link('Categorie', $categoria_esistente->id, $nome);
+            flash()->error($message.': '.$link);
+            break;
+        }
 
         if (isset($nome) && isset($nota) && isset($colore)) {
             $categoria->colore = $colore;
             $categoria->parent = $id_original ?: null;
+            $categoria->is_articolo = $is_articolo;
+            $categoria->is_impianto = $is_impianto;
             $categoria->setTranslation('title', $nome);
             $categoria->setTranslation('note', $nota);
             $categoria->save();
 
-            flash()->info(tr('Salvataggio completato!'));
+            // Aggiorna i flag delle sottocategorie se è un parent
+            $subcategorie = Categoria::where('parent', '=', $id_record)->get();
+            if (!empty($subcategorie)) {
+                foreach ($subcategorie as $sub) {
+                    $sub->is_articolo = $is_articolo;
+                    $sub->is_impianto = $is_impianto;
+                    $sub->save();
+                }
+
+                flash()->info(tr('Salvataggio completato! Aggiornate anche _NUM_ sottocategorie.', [
+                    '_NUM_' => count($subcategorie),
+                ]));
+            } else {
+                flash()->info(tr('Salvataggio completato!'));
+            }
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
@@ -54,21 +92,32 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
+        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
+        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
 
-        $categoria_new = Categoria::where('id', '=', (new Categoria())->getByField('title', $nome));
-        if (!empty($id_original)) {
-            $categoria_new = $categoria_new->where('parent', '=', $id_original);
-        } else {
-            $categoria_new = $categoria_new->whereNull('parent');
+        // Verifica che almeno uno dei due flag sia selezionato
+        if ($is_articolo == 0 && $is_impianto == 0) {
+            flash()->error(tr('È necessario selezionare almeno una delle due opzioni: Articolo o Impianto.'));
+            break;
         }
-        $categoria_new = $categoria_new->first();
+
+        // Verifica se esiste già una categoria con lo stesso nome
+        $categoria_new = (new Categoria())->getByField('title', $nome);
 
         if (!empty($categoria_new)) {
-            flash()->error(tr('Questo nome è già stato utilizzato per un altra categoria.'));
+            // Mostra un messaggio di errore con link alla categoria esistente
+            $message = tr('Esiste già una categoria con il nome _NOME_', [
+                '_NOME_' => '"'.$nome.'"',
+            ]);
+
+            $link = Modules::link('Categorie', $categoria_new->id, $categoria_new->getTranslation('title'));
+            flash()->error($message.': '.$link);
         } else {
             $categoria = Categoria::build($colore);
             $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
+            $categoria->is_articolo = $is_articolo;
+            $categoria->is_impianto = $is_impianto;
             $categoria->setTranslation('note', $nota);
             $categoria->setTranslation('title', $nome);
             $categoria->save();
@@ -95,8 +144,8 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `mg_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
-            $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
+        if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
+            $dbo->query('DELETE FROM `zz_categorie` WHERE `id`='.prepare($id));
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',

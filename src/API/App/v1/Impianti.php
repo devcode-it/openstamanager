@@ -72,7 +72,7 @@ class Impianti extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT 
+        $query = 'SELECT
             `impianti`.`id`,
             `impianti`.`idanagrafica` AS id_cliente,
             `impianti`.`idsede` AS id_sede,
@@ -89,21 +89,21 @@ class Impianti extends AppResource
             `impianti`.`occupante`,
             `categorie_lang`.`title` AS categoria,
             `sottocategorie_lang`.`title` AS sottocategoria
-        FROM 
+        FROM
             my_impianti AS impianti
-        LEFT JOIN 
-            my_impianti_categorie AS categorie 
-            ON categorie.id = impianti.id_categoria
-        LEFT JOIN 
-            my_impianti_categorie_lang AS categorie_lang 
-            ON categorie_lang.id_record = categorie.id 
+        LEFT JOIN
+            zz_categorie AS categorie
+            ON categorie.id = impianti.id_categoria AND categorie.is_impianto = 1
+        LEFT JOIN
+            zz_categorie_lang AS categorie_lang
+            ON categorie_lang.id_record = categorie.id
             AND categorie_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
-        LEFT JOIN 
-            my_impianti_categorie AS sottocategorie 
-            ON sottocategorie.id = impianti.id_sottocategoria
-        LEFT JOIN 
-            my_impianti_categorie_lang AS sottocategorie_lang 
-            ON sottocategorie_lang.id_record = sottocategorie.id 
+        LEFT JOIN
+            zz_categorie AS sottocategorie
+            ON sottocategorie.id = impianti.id_sottocategoria AND sottocategorie.is_impianto = 1
+        LEFT JOIN
+            zz_categorie_lang AS sottocategorie_lang
+            ON sottocategorie_lang.id_record = sottocategorie.id
             AND sottocategorie_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
         WHERE `impianti`.`id` = '.prepare($id);
 

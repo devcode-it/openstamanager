@@ -9,7 +9,7 @@ $rs2 = $dbo->fetchArray('SELECT
         `idarticolo`, 
         SUM(`mg_movimenti`.`qta`) AS qta_automezzo, 
         `mg_articoli`.`qta` AS qta_magazzino, 
-        `mg_articoli_lang`.`title`, 
+        `mg_articoli_lang`.`title` AS descrizione, 
         `mg_articoli`.`prezzo_vendita`, 
         (SELECT `percentuale` FROM `co_iva` LEFT JOIN `co_iva_lang` ON ( `co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_iva`.`id`=`mg_articoli`.`idiva_vendita`) AS prciva_vendita 
     FROM 

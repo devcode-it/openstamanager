@@ -20,6 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Aggiunta della classe per il modulo
+echo '<div class="module-aggiornamenti px-3">';
+
 // Schermata di caricamento delle informazioni
 echo '
     <button class="btn btn-lg btn-block btn-primary" onclick="avviaControlli(this);">
@@ -268,4 +271,6 @@ function addRiga(controllo, card, record) {
 
     body.append(riga);
 }
-</script>';
+</script>
+
+</div>';

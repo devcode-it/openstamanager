@@ -2112,11 +2112,14 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 .table-database {
     width: 100%;
     margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .table-database thead {
-    background-color: #343a40;
-    color: white;
+    background-color: #f5f5f5;
+    color: #333;
 }
 
 .table-database th,
@@ -2139,8 +2142,10 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 /* Stili per i messaggi */
 .table-title {
     margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-size: 1.5em;
+    color: #2c3e50;
+    border-bottom: 2px solid #eee;
 }
 
 /* Stili per le righe di avviso */
@@ -2166,15 +2171,19 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 .alert-database {
     margin-top: 15px;
     margin-bottom: 15px;
+    border-radius: 8px;
 }
 
 /* Stili per il controllo database */
 .row.align-items-center {
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .row.align-items-center p {
     line-height: 1.5;
+    margin-bottom: 0;
 }
 
 /* Stile per il nome della tabella */

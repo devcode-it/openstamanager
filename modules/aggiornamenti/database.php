@@ -20,6 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Aggiunta della classe per il modulo
+echo '<div class="module-aggiornamenti px-3">';
+
 $query_conflitti = [];
 
 function saveQueriesToSession($queries) {
@@ -631,3 +634,6 @@ $(document).ready(function() {
 });
 </script>';
 }
+
+// Chiusura del div module-aggiornamenti
+echo '</div>';

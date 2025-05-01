@@ -196,8 +196,8 @@ Riepilogando, per compilare occorre installare i seguenti strumenti:
    - php-xsl
    - php-zip
  - **composer** v2: https://getcomposer.org/download/
- - **nodejs** >= 16: https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
- - **yarn** v 1.22: https://classic.yarnpkg.com/en/docs/install
+ - **nodejs** >= v22: https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
+ - **yarn** >= v4.6.0: https://classic.yarnpkg.com/en/docs/install
  - **gulp** v4: https://gulpjs.com/docs/en/getting-started/quick-start/#install-the-gulp-command-line-utility
 
 Consigliamo di installare [psalm](https://github.com/vimeo/psalm) e configurarlo nel proprio IDE se supportato, in modo che vengano eseguiti ulteriori controlli automatici sul codice scritto.

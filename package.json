@@ -79,7 +79,7 @@
         "gulp-sass": "^6.0.0",
         "gulp-stylus": "^3.0.0",
         "gulp-uglify": "^3.0.2",
-        "inquirer": "^9.2.12",
+        "inquirer": "^12.3.0",
         "main-bower-files": "^2.13.1",
         "md5-file": "^5.0.0",
         "sass": "^1.62.1",

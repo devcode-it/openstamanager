@@ -81,7 +81,7 @@ config.babelOptions.compact = !config.debug;
 
 function waitPipes(pipes, done) {
     if (!pipes || pipes.length === 0) {
-        done();
+        if (done) done();
         return Promise.resolve();
     }
     
@@ -89,12 +89,13 @@ function waitPipes(pipes, done) {
         pipes.map(pipe => new Promise((resolve, reject) => {
             pipe.on('end', resolve);
             pipe.on('error', reject);
+            pipe.on('close', resolve); // Add close event handler
         }))
     ).then(() => {
-        done();
+        if (done) done();
     }).catch(err => {
         console.error('Error in pipe:', err);
-        done(err);
+        if (done) done(err);
     });
 }
 
@@ -274,7 +275,7 @@ function srcImages() {
         .pipe(gulp.dest(config.production + '/' + config.paths.images));
 }
 
-function leaflet(done) {
+function leaflet() {
     const leaflet = gulp.src([
         config.nodeDirectory + '/leaflet.fullscreen/icon-fullscreen.svg',
         config.development + '/' + config.paths.images + '/leaflet/*',
@@ -287,10 +288,10 @@ function leaflet(done) {
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/leaflet'));
 
-    return waitPipes([images, leaflet], done);
+    return merge(images, leaflet);
 }
 
-function wacom(done) {
+function wacom() {
     // Librerie da node_modules secondo package.json
     const vendor = [
         'clipper-lib/clipper.js',
@@ -338,7 +339,7 @@ function wacom(done) {
         .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
     
-    return waitPipes([jsStream, wasmStream], done);
+    return merge(jsStream, wasmStream);
 }
 
 // Elaborazione dei fonts
@@ -438,7 +439,7 @@ function csrf() {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/csrf'));
 }
 
-function pdfjs(done) {
+function pdfjs() {
     const web = gulp.src([
         config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/**/*',
         '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/cmaps/*',
@@ -453,7 +454,7 @@ function pdfjs(done) {
     ], {encoding: false})
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 
-    return waitPipes([web, build], done);
+    return merge(web, build);
 }
 
 function uaparser() {
@@ -661,11 +662,14 @@ export default bower;
 
 // Watch task - lanciato con `gulp watch`, resta in attesa e ogni volta che viene modificato un asset in src
 // viene aggiornata la dist
-gulp.task('watch', function () {
+export function watch() {
     gulp.watch('assets/src/css/*.css', gulp.series(srcCSS, CSS));
     gulp.watch('assets/src/css/print/*.css', gulp.series(srcCSS, CSS));
     gulp.watch('assets/src/css/themes/*.css', gulp.series(srcCSS, CSS));
     gulp.watch('assets/src/js/base/*.js', gulp.series(srcJS, JS));
     gulp.watch('assets/src/js/functions/*.js', gulp.series(srcJS, JS));
     gulp.watch('assets/src/img/*', gulp.series(images));
-});
+}
+
+// Replace the old watch task definition
+gulp.task('watch', watch);

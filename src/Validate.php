@@ -83,23 +83,6 @@ class Validate
             return $result;
         }
 
-        /*
-        // mpociot/vat-calculator
-        use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
-        use Mpociot\VatCalculator\VatCalculator;
-        // Controllo con API europea ufficiale
-        if (extension_loaded('soap')) {
-            try {
-                $validator = new VatCalculator();
-
-                if (!$validator->isValidVATNumber($vat_number)) {
-                    return false;
-                }
-            } catch (VATCheckUnavailableException $e) {
-            }
-        }
-        */
-
         // Controllo attraverso apilayer
         $access_key = setting('apilayer API key for VAT number');
         if (!empty($access_key)) {

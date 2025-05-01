@@ -39,9 +39,9 @@ class Task extends Model
         'title',
     ];
 
-    protected $dates = [
-        'next_execution_at',
-        'last_executed_at',
+    protected $casts = [
+        'next_execution_at' => 'date',
+        'last_executed_at' => 'date',
     ];
 
     public function log($level, $message, $context = [])

@@ -747,10 +747,10 @@ switch (post('op')) {
 
                 $data = explode(',', post('firma_base64'));
 
-                $manager = ImageManager::gd();
-                $img = $manager->read(base64_decode($data[1]));
-
-                $img->scale(680, 202);
+                $img = getImageManager()->read(base64_decode($data[1]));
+                $img->resize(680, 202, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
                     $img->brightness((float)setting('Luminosità firma Wacom'));
@@ -835,9 +835,10 @@ switch (post('op')) {
 
                     $data = explode(',', post('firma_base64'));
 
-                    $manager = ImageManager::gd();
-                    $img = $manager->read(base64_decode($data[1]));
-                    $img->scale(680, 202);
+                    $img = getImageManager()->read(base64_decode($data[1]));
+                    $img->resize(680, 202, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
 
                     if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
                         flash()->error(tr('Impossibile creare il file!'));

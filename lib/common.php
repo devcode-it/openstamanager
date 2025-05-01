@@ -29,6 +29,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Intervention\Image\ImageManager;
 
 /**
  * Esegue una somma precisa tra due interi/array.
@@ -421,4 +422,13 @@ function hasArticoliFiglio($id_articolo)
     } else {
         return false;
     }
+}
+
+/**
+ * Funzione per generare una classe helper standard per le immagini.
+ *
+ * @return ImageManager
+ */
+function getImageManager() {
+    return extension_loaded('gd') ? ImageManager::gd() : ImageManager::imagick();
 }

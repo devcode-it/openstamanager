@@ -21,6 +21,9 @@ use Models\OperationLog;
 
 include_once __DIR__.'/../../core.php';
 
+// Aggiunta della classe per il modulo
+echo '<div class="module-aggiornamenti pl-3">';
+
 $file = basename(__FILE__);
 $effettua_controllo = filter('effettua_controllo');
 
@@ -87,7 +90,7 @@ if (!empty($errors)) {
     ]).'.
 </div>
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>'.tr('File con integrità errata').'</th>
@@ -99,8 +102,8 @@ if (!empty($errors)) {
     foreach ($errors as $error) {
         echo '
         <tr>
-            <td>
-                '.$error.'
+            <td class="file-integrity-error">
+                <i class="fa fa-exclamation-triangle"></i> '.$error.'
             </td>
         </tr>';
     }
@@ -117,3 +120,6 @@ if (!empty($errors)) {
 </div>';
 }
 OperationLog::build('effettua_controllo');
+
+// Chiusura del div module-aggiornamenti
+echo '</div>';

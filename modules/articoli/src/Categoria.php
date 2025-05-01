@@ -31,7 +31,7 @@ class Categoria extends Model
     use HierarchyTrait;
     use RecordTrait;
 
-    protected $table = 'mg_categorie';
+    protected $table = 'zz_categorie';
     protected static $translated_fields = [
         'title',
     ];
@@ -54,7 +54,7 @@ class Categoria extends Model
 
     public function getModuleAttribute()
     {
-        return 'Categorie articoli';
+        return 'Categorie';
     }
 
     public static function getTranslatedFields()

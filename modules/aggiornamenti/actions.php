@@ -33,6 +33,79 @@ use Modules\Aggiornamenti\UpdateHook;
 $id = post('id');
 
 switch (filter('op')) {
+    case 'risolvi-conflitti-database':
+        $queries_json = post('queries');
+        if (empty($queries_json)) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Nessuna query ricevuta.'),
+            ]);
+            break;
+        }
+
+        $queries = json_decode($queries_json, true);
+        if (empty($queries)) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Nessuna query da eseguire.'),
+            ]);
+            break;
+        }
+
+        if (empty($queries)) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Nessuna query valida da eseguire.'),
+            ]);
+            break;
+        }
+
+        $debug_queries = implode('<br>', $queries);
+
+        $dbo->query('SET FOREIGN_KEY_CHECKS=0');
+
+        $errors = [];
+        $executed = 0;
+
+        foreach ($queries as $query) {
+            try {
+                $dbo->query($query);
+                $executed++;
+            } catch (Exception $e) {
+                $errors[] = $query . ' - ' . $e->getMessage();
+            }
+        }
+        $dbo->query('SET FOREIGN_KEY_CHECKS=1');
+
+        if (empty($errors)) {
+            $success_message = tr('Tutte le query sono state eseguite con successo (_NUM_ query).', [
+                '_NUM_' => $executed,
+            ]);
+
+            flash()->info($success_message);
+
+            echo json_encode([
+                'success' => true,
+                'message' => $success_message . '<br><br>' . tr('Query eseguite:') . '<br>' . $debug_queries,
+                'flash_message' => true,
+            ]);
+        } else {
+            $error_message = tr('Si sono verificati errori durante l\'esecuzione di alcune query (_NUM_ su _TOTAL_).', [
+                '_NUM_' => count($errors),
+                '_TOTAL_' => count($queries),
+            ]);
+
+            flash()->error($error_message);
+
+            echo json_encode([
+                'success' => false,
+                'message' => $error_message . '<br>' . implode('<br>', $errors) . '<br><br>' . tr('Query da eseguire:') . '<br>' . $debug_queries,
+                'flash_message' => true,
+            ]);
+        }
+
+        exit;
+
     case 'check':
         $result = UpdateHook::isAvailable();
         $versione = false;

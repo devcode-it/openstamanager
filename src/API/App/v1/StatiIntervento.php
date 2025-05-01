@@ -50,7 +50,7 @@ class StatiIntervento extends AppResource
             `in_statiintervento`.`codice`,
             `in_statiintervento_lang`.`title` AS `descrizione`,
             `in_statiintervento`.`colore`,
-            `in_statiintervento`.`is_completato`
+            `in_statiintervento`.`is_bloccato`
         FROM `in_statiintervento`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `in_statiintervento`.`id` = '.prepare($id);

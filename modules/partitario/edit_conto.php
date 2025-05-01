@@ -31,6 +31,31 @@ if ($lvl == 2) {
 }
 
 $info = $dbo->fetchOne($query);
+
+$conto_bloccato = [
+    'Cassa e banche',
+    'Crediti clienti e crediti diversi',
+    'Debiti fornitori e debiti diversi',
+    'Perdite e profitti',
+    'Iva su vendite',
+    'Iva su acquisti',
+    'Iva indetraibile',
+    'Compensazione per autofattura'
+];
+
+$conto_bloccato = in_array($info['descrizione'], $conto_bloccato);
+
+if (!$conto_bloccato && $lvl == 3) {
+    $parent_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id = '.prepare($info['idpianodeiconti2']);
+    $parent_info = $dbo->fetchOne($parent_query);
+    $conto_bloccato = $parent_info && $parent_info['descrizione'] == 'Perdite e profitti';
+}
+
+if (!$conto_bloccato && $lvl == 3) {
+    $parent_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id = '.prepare($info['idpianodeiconti2']);
+    $parent_info = $dbo->fetchOne($parent_query);
+    $conto_bloccato = $parent_info && ($parent_info['descrizione'] == 'Conti transitori' || $parent_info['descrizione'] == 'Conti compensativi');
+}
 ?>
 <form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Module::where('name', 'Piano dei conti')->first()->id; ?>" method="post">
     <input type="hidden" name="op" value="edit">
@@ -46,7 +71,12 @@ $info = $dbo->fetchOne($query);
         </div>
 
         <div class="col-md-8">
+            <?php if ($conto_bloccato): ?>
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?>, "readonly": 1, "help": "<?php echo tr('Questo è un conto speciale utilizzato dal sistema. La descrizione non può essere modificata.'); ?>" ]}
+            <input type="hidden" name="conto_bloccato" value="1">
+            <?php else: ?>
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?> ]}
+            <?php endif; ?>
         </div>
     </div>
     <div class="row">

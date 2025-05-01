@@ -28,7 +28,7 @@ if (!empty($id_record)) {
             `an_anagrafiche`.`tipo` AS tipo_anagrafica,
             `co_statipreventivi`.`is_fatturabile`,
             `co_statipreventivi`.`is_pianificabile`,
-            `co_statipreventivi`.`is_completato`,
+            `co_statipreventivi`.`is_bloccato`,
             `co_statipreventivi`.`is_revisionabile`,
             `co_statipreventivi_lang`.`title` AS stato
         FROM 

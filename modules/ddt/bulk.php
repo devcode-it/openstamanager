@@ -49,7 +49,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 ])['id'];
 
 switch (post('op')) {
-    case 'crea_fattura':
+    case 'create_invoice':
         $documenti = collect();
         $numero_totale = 0;
 
@@ -143,7 +143,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'delete-bulk':
+    case 'delete_bulk':
         foreach ($id_records as $id) {
             $documento = DDT::find($id);
             try {
@@ -155,7 +155,7 @@ switch (post('op')) {
         flash()->info(tr('Ddt eliminati!'));
         break;
 
-    case 'cambia_stato':
+    case 'change_status':
         $id_stato = post('id_stato');
 
         $n_ddt = 0;
@@ -179,7 +179,30 @@ switch (post('op')) {
         break;
 }
 
-$operations['crea_fattura'] = [
+
+$operations['change_status'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
+        'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt_lang`.`title` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare i ddt selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+
+$operations['create_invoice'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
@@ -193,25 +216,5 @@ $operations['crea_fattura'] = [
     ],
 ];
 
-$operations['cambia_stato'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-    'data' => [
-        'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
-        'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt_lang`.`title` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero eliminare i ddt selezionati?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-danger',
-    ],
-];
 
 return $operations;

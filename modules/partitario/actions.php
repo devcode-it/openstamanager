@@ -66,8 +66,20 @@ switch (post('op')) {
         $numero = post('numero');
         $descrizione = post('descrizione');
         $dir = post('dir');
+        $conto_bloccato = post('conto_bloccato');
 
         $lvl = post('lvl');
+
+        if ($conto_bloccato) {
+            if ($lvl == 2) {
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+            } else {
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+            }
+            $original = $dbo->fetchOne($original_query);
+            $descrizione = $original['descrizione'];
+        }
+
         if ($lvl == 2) {
             $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
 
@@ -81,7 +93,11 @@ switch (post('op')) {
         // Controllo che non sia stato usato un numero non valido del conto
         if ($dbo->fetchNum($duplicate_query) == 0) {
             if ($dbo->query($update_query)) {
-                flash()->info(tr('Descrizione conto modificata!'));
+                if ($conto_bloccato) {
+                    flash()->info(tr('Conto speciale aggiornato! La descrizione non è stata modificata.'));
+                } else {
+                    flash()->info(tr('Descrizione conto modificata!'));
+                }
             }
         } else {
             flash()->error(tr('Il numero scelto è già esistente!'));

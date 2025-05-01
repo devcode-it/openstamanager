@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->first()->id;
+$id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 $id_modulo_marca_impianti = Module::where('name', 'Marche impianti')->first()->id;
 
 $img = null;
@@ -91,7 +91,7 @@ if (!empty($record['immagine'])) {
 					<div class="row">
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
-    Modules::link('Categorie impianti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+    Modules::link('Categorie', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>" ]}
                         </div>
 
@@ -103,8 +103,11 @@ if (!empty($record['immagine'])) {
 			</div>
 
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$" ]}
+				</div>
+				<div class="col-md-6">
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 

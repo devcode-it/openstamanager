@@ -63,6 +63,7 @@ switch (filter('op')) {
                 $pagamento->descrizione_incasso = post('descrizione_incasso');
                 $pagamento->importo_fisso_incasso = post('importo_fisso_incasso');
                 $pagamento->importo_percentuale_incasso = post('importo_percentuale_incasso');
+                $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
                 $pagamento->save();
             }
 

@@ -46,13 +46,13 @@ if ($record['can_delete']) {
 		</div>
 
 		<div class="col-md-3">
-		 	<div class="cardccardrimary">
-				<div class="cardheading">
-					<h3 class="cardtitle"><?php echo tr('Flags'); ?></h3>
+		 	<div class="card card-primary">
+				<div class="card-header">
+					<h3 class="card-title"><?php echo tr('Flags'); ?></h3>
 				</div>
 
-				<div class="cardbody">
-		            {[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+				<div class="card-body">
+		            {[ "type": "checkbox", "label": "<?php echo tr('Bloccato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "" ]}
 		            {[ "type": "checkbox", "label": "<?php echo tr('Impegnato?'); ?>", "name": "impegnato", "value": "$impegnato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come impegnati'); ?>", "placeholder": "<?php echo tr('Impegnato'); ?>", "extra": "" ]}
 		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 				</div>

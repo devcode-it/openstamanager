@@ -20,6 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Aggiunta della classe per il modulo
+echo '<div class="module-aggiornamenti px-3">';
+
 // Schermata di caricamento delle informazioni
 echo '
     <button class="btn btn-lg btn-block btn-primary" onclick="avviaControlli(this);">
@@ -212,7 +215,7 @@ function initcard(controllo, success) {
     if (!success) {
         card += `
     <div class="card-body">
-        <div class="table-responsive text-nowrap">
+        <div class="table-responsive">
             <table class="table table-striped table-hover table-sm table-bordered">
                 <thead>
                     <tr>
@@ -268,4 +271,6 @@ function addRiga(controllo, card, record) {
 
     body.append(riga);
 }
-</script>';
+</script>
+
+</div>';

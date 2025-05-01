@@ -30,7 +30,7 @@ if (!empty($id_record)) {
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
         `co_staticontratti`.`is_fatturabile` AS is_fatturabile,
         `co_staticontratti`.`is_pianificabile` AS is_pianificabile,
-        `co_staticontratti`.`is_completato` AS is_completato,
+        `co_staticontratti`.`is_bloccato` AS is_bloccato,
         `co_staticontratti_lang`.`title` AS stato,
         GROUP_CONCAT(`my_impianti_contratti`.`idimpianto`) AS idimpianti,
         `co_contratti`.`id_categoria` as id_categoria,

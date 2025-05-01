@@ -24,7 +24,7 @@ use Modules\Impianti\Impianto;
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-    case 'export-csv':
+    case 'export_csv':
         $file = temp_file();
         $exporter = new CSV($file);
 
@@ -39,12 +39,12 @@ switch (post('op')) {
         break;
 
     // Rimuovo impianto e scollego tutti i suoi componenti
-    case 'delete-bulk':
+    case 'delete_bulk':
         $n_impianti = 0;
 
         foreach ($id_records as $id) {
             $elementi = $dbo->fetchArray('SELECT `idimpianto` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id).'
-            UNION 
+            UNION
             SELECT `idimpianto` FROM `my_impianti_contratti` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id));
 
             if (empty($elementi)) {
@@ -63,7 +63,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-cliente':
+    case 'change_customer':
         foreach ($id_records as $id) {
             $impianto = Impianto::find($id);
             $impianto->idanagrafica = post('idanagrafica');
@@ -75,27 +75,7 @@ switch (post('op')) {
 
         break;
 }
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con tutti gli impianti?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero eliminare gli impianti selezionati?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-danger',
-    ],
-];
-
-$operations['change-cliente'] = [
+$operations['change_customer'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna cliente').'</span>',
     'data' => [
         'title' => tr('Cambiare l\'anagrafica degli impianti?'),
@@ -106,5 +86,25 @@ $operations['change-cliente'] = [
         'class' => 'btn btn-lg btn-success',
     ],
 ];
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare gli impianti selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+$operations['export_csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con tutti gli impianti?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+
 
 return $operations;

@@ -182,5 +182,10 @@ function riprovaSalvataggio() {
 
 if (!empty($ricerca)) {
     echo '
-<script>$("#ricerca_impostazioni").change();</script>';
+<script>
+    $(document).ready(function() {
+        $("#ricerca_impostazioni").val("'.$ricerca.'");
+        $("#search").click();
+    });
+</script>';
 }

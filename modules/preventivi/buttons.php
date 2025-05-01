@@ -42,9 +42,9 @@ echo '
     </button>
 </div>';
 
-$disabled = ($record['is_fatturabile'] || $record['is_completato']);
+$disabled = ($record['is_fatturabile'] || $record['is_bloccato']);
 
-$stati_abilitati = Stato::where('is_fatturabile', '=', '1')->orWhere('is_completato', '=', '1')->get();
+$stati_abilitati = Stato::where('is_fatturabile', '=', '1')->orWhere('is_bloccato', '=', '1')->get();
 $stati = [];
 
 foreach ($stati_abilitati as $stato) {

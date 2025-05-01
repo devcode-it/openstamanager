@@ -29,8 +29,8 @@ if ($user['gruppo'] == 'Tecnici') {
 }
 
 // Stato dell'intervento
-$rss = $dbo->fetchArray('SELECT `is_completato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
-$is_completato = $rss[0]['flag_completato'];
+$rss = $dbo->fetchArray('SELECT `is_bloccato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
+$is_bloccato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento
 $query = 'SELECT
@@ -67,7 +67,7 @@ if (!empty($sessioni)) {
             $prev_tecnico = $sessione['ragione_sociale'];
 
             echo '
-<div class="table-responsive text-nowrap">
+<div class="table-responsive">
     <table class="table table-striped table-hover table-sm">
         <tr><th>';
 
@@ -85,8 +85,8 @@ if (!empty($sessioni)) {
             <th width="15%">'.tr('Orario inizio').'</th>
             <th width="15%">'.tr('Orario fine').'</th>
             <th width="2%"> </th>
-            <th width="10%">'.tr('Ore').'</th>
-            <th width="12%">'.tr('Km').'</th>';
+            <th width="8%">'.tr('Ore').'</th>
+            <th width="8%">'.tr('Km').'</th>';
 
             if ($show_costi) {
                 echo '
@@ -94,7 +94,7 @@ if (!empty($sessioni)) {
             <th width="10%">'.tr('Sconto km').'</th>';
             }
 
-            if (!$is_completato) {
+            if (!$is_bloccato) {
                 echo '
             <th width="100" class="text-center">&nbsp;</th>';
             }
@@ -230,7 +230,7 @@ if (!empty($sessioni)) {
         }
 
         // Pulsante per la sessione
-        if (!$is_completato) {
+        if (!$is_bloccato) {
             echo '
             <td class="text-center">
                 <button type="button" class="btn btn-xs btn-primary tip"  title="'.tr('Salva e duplica sessione').'" onclick="copySessione(this)">
@@ -265,7 +265,7 @@ if (!empty($sessioni)) {
 echo '
 <div id="info-conflitti"></div>';
 
-if (!$is_completato) {
+if (!$is_bloccato) {
     echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">

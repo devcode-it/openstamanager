@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Emails\Mail;
 
 switch (post('op')) {
-    case 'delete-bulk':
+    case 'delete_bulk':
         $i = 0;
         foreach ($id_records as $id_record) {
             if (!empty($id_record)) {
@@ -44,7 +44,7 @@ switch (post('op')) {
         break;
 }
 
-$operations['delete-bulk'] = [
+$operations['delete_bulk'] = [
     'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina email selezionate e non ancora inviate').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero eliminare dalla coda di invio le email selezionate?'),

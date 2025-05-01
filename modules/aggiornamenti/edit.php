@@ -20,6 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Aggiunta della classe per il modulo
+echo '<div class="module-aggiornamenti px-3">';
+
 // Personalizzazioni di codice
 if (function_exists('customComponents')) {
     $custom = customComponents();
@@ -186,31 +189,6 @@ function search(button) {
 
 <div class="row">';
 
-// Verifiche di integrità
-echo '
-    <div class="col-md-4">
-        <div class="card card-primary card-outline">
-            <div class="card-header with-border">
-                <h3 class="card-title">
-                    '.tr("Verifica l'integrità dell'installazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
-                </h3>
-            </div>
-            <div class="card-body">
-                <button type="button" class="btn btn-info btn-block" onclick="checksum(this)">
-                    <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
-                </button>
-
-                <button type="button" class="btn btn-info btn-block" onclick="database(this)">
-                    <i class="fa fa-database"></i> '.tr('Controlla database').'
-                </button>
-
-                <button type="button" class="btn btn-info btn-block" onclick="controlli(this)">
-                    <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
-                </button>
-            </div>
-        </div>
-    </div>';
-
 // Controllo automatico della presenza di aggiornamenti per il gestionale
 echo '
 
@@ -218,7 +196,7 @@ echo '
         <div class="card card-primary card-outline">
             <div class="card-header with-border">
                 <h3 class="card-title">
-                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
+                    <i class="fa fa-refresh"></i> '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="card-body" id="update-search">';
@@ -242,7 +220,7 @@ echo '
         <div class="card card-primary card-outline">
             <div class="card-header with-border">
                 <h3 class="card-title">
-                    '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
+                    <i class="fa fa-upload"></i> '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="card-body">
@@ -282,14 +260,53 @@ echo '
 echo '
 </div>';
 
-// Requisiti
+// Sezione Verifica integrità
 echo '
 <hr>
 <div>
-    <h3>'.tr('Requisiti').'</h3>';
+    <h3 class="font-weight-normal mb-4 px-3"><i class="fa fa-shield"></i> '.tr('Verifica integrità').'</h3>
+
+    <div class="row">
+        <!-- Card Requisiti di sistema -->
+        <div class="col-md-9">
+            <div class="card card-primary card-outline">
+                <div class="card-header with-border">
+                    <h3 class="card-title">
+                        <i class="fa fa-check-square-o"></i> '.tr('Requisiti di sistema').' <span class="tip" title="'.tr('Verifica dei requisiti minimi di sistema per il corretto funzionamento del gestionale').'."><i class="fa fa-question-circle-o"></i></span>
+                    </h3>
+                </div>
+                <div class="card-body">';
 
 include base_dir().'/include/init/requirements.php';
 
 echo '
+                </div>
+            </div>
+        </div>
 
+        <!-- Card Controlli integrità -->
+        <div class="col-md-3">
+            <div class="card card-primary card-outline">
+                <div class="card-header with-border">
+                    <h3 class="card-title">
+                        <i class="fa fa-stethoscope"></i> '.tr('Controlli integrità').' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-info btn-block" onclick="checksum(this)">
+                        <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
+                    </button>
+
+                    <button type="button" class="btn btn-info btn-block" onclick="database(this)">
+                        <i class="fa fa-database"></i> '.tr('Controlla database').'
+                    </button>
+
+                    <button type="button" class="btn btn-info btn-block" onclick="controlli(this)">
+                        <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>';

@@ -21,6 +21,7 @@
 use Models\Clause;
 use Models\Module;
 use Models\View;
+use Doctrine\SqlFormatter\SqlFormatter;
 
 include_once __DIR__.'/../../core.php';
 
@@ -35,7 +36,13 @@ echo '
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title">'.tr('Opzioni generali').'</h3>
-		</div>
+			<div class="card-tools">
+				<button type="button" class="btn btn-sm btn-primary" onclick="importModule()">
+					<i class="fa fa-upload"></i> '.tr('Importa modulo').'</button>
+				<button type="button" class="btn btn-sm btn-primary" onclick="exportModule()">
+					<i class="fa fa-download"></i> '.tr('Esporta modulo').'</button>
+			</div>
+        </div>
 
 		<div class="card-body">';
 $options = ($record->options2 == '') ? $record->options : $record->options2;
@@ -71,14 +78,23 @@ echo '
 if ($options != '' && $options != 'menu' && $options != 'custom') {
     $module_query = Util\Query::getQuery(Module::find($id_record));
 
-    $beautiful_query = nl2br(htmlentities((string) $module_query));
-    $beautiful_query = str_replace('   ', '&nbsp;&nbsp;&nbsp;&nbsp;', $beautiful_query);
+    // Utilizzo di SqlFormatter per formattare e colorare la query
+    $sqlFormatter = new SqlFormatter();
+    $beautiful_query = $sqlFormatter->highlight($module_query);
+
+    // Salva la query originale (senza formattazione HTML) per il copia-incolla
+    $original_query = (string) $module_query;
 
     echo '
 			<div class="row">
 				<div class="col-md-12">
-					<p><strong>'.tr('Query risultante').':</strong></p>
-                    <div class="well">'.$beautiful_query.'</div>
+					<p><strong>'.tr('Query risultante').':</strong>
+                        <button type="button" class="btn btn-sm btn-info" id="copy-query-btn" title="'.tr('Copia query').'">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                    </p>
+                    <div class="sql-formatted well">'.$beautiful_query.'</div>
+                    <textarea id="query-to-copy" style="position: absolute; left: -9999px;">'.$original_query.'</textarea>
 
                     <div class="row">
                         <div class="col-md-12 text-right">
@@ -129,29 +145,26 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
 
     </div>
 </div>';
-
-    echo '
-<script>
-function testQuery(){
-    $("#main_loading").fadeIn();
-
-    $.ajax({
-        url: "'.base_path().'/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=test",
-        cache: false,
-        type: "post",
-        processData: false,
-        contentType: false,
-        dataType : "html",
-        success: function(data) {
-            $("#main_loading").fadeOut();
-
-            if (data == "ok"){
-                swal("'.tr('Query funzionante').'", "'.tr('La query attuale funziona correttamente!').'", "success");
-            } else {
-                swal("'.tr('Errore').'", data, "error");
-            }
-        }
-    })
 }
-</script>';
-}
+
+// Traduzioni per JavaScript
+echo '<script>
+    if (typeof globals.translations === "undefined") {
+        globals.translations = {};
+    }
+    globals.translations.copied = "'.tr('Copiato!').'";
+    globals.translations.query_copied = "'.tr('La query è stata copiata negli appunti').'";
+    globals.translations.working_query = "'.tr('Query funzionante').'";
+    globals.translations.query_works_correctly = "'.tr('La query attuale funziona correttamente!').'";
+    globals.translations.error = "'.tr('Errore').'";
+    globals.translations.select_all = "'.tr('Seleziona tutti').'";
+    globals.translations.import_module = "'.tr('Importa modulo').'";
+    globals.translations.export_module = "'.tr('Esporta modulo').'";
+    globals.translations.import_success = "'.tr('Modulo importato con successo!').'";
+    globals.translations.import_error = "'.tr('Errore durante l\'importazione del modulo').'";
+    globals.translations.file_required = "'.tr('È necessario selezionare un file').'";
+    globals.translations.invalid_json = "'.tr('Il file selezionato non contiene un JSON valido').'";
+</script>
+<link rel="stylesheet" href="'.base_path().'/modules/viste/css/main.css">
+<script src="'.base_path().'/modules/viste/js/main.js"></script>
+';

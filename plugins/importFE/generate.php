@@ -361,7 +361,7 @@ if (!empty($righe)) {
         <div class="clearfix"></div>
     </h4>
 
-    <div class="table-responsive text-nowrap">
+    <div class="table-responsive">
         <table class="table table-striped table-hover table-sm table-bordered">
             <thead>
                 <tr>
@@ -422,19 +422,17 @@ if (!empty($righe)) {
         $codici_articoli = [];
         $serial = [];
         $i = 0;
+        $id_articolo = 0;
+
         foreach ($codici as $codice) {
             $codici_articoli[] = (($i == 0) ? '<b>' : '').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i == 0) ? '</b>' : '');
             if (str_contains((string) $codice['CodiceTipo'], 'serial') || str_contains((string) $codice['CodiceTipo'], 'Serial')) {
                 $serial[] = $codice['CodiceValore'];
             }
             ++$i;
-        }
 
-        // Individuazione articolo con codice relativo
-        $id_articolo = null;
-        // Prendo il codice articolo dal primo nodo CodiceValore che trovo
-        $codice_principale = $codici[0]['CodiceValore'];
-        if (!empty($codice_principale)) {
+            $codice_principale = $codice['CodiceValore'];
+            
             if (!empty($anagrafica) && empty($id_articolo)) {
                 $id_articolo = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
                 if (empty($id_articolo)) {
@@ -450,6 +448,7 @@ if (!empty($righe)) {
             }
 
             $idconto_acquisto = $database->fetchOne('SELECT `idconto_acquisto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_acquisto'];
+            
         }
 
         $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;

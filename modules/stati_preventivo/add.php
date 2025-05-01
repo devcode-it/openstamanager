@@ -35,7 +35,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Completato'); ?>", "name": "is_completato_add", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Bloccato'); ?>", "name": "is_bloccato_add", "value": "$is_bloccato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "" ]}
 		</div>
 
 		 <div class="col-md-2">

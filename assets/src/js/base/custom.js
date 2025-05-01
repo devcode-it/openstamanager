@@ -93,17 +93,8 @@ $(document).ready(function () {
         });
     }, 1000);
 
-    // Plugin readmore.js
-    $('.readmore').each( function(){
-        height = $(this).data('height') ? parseInt($(this).data('height')) : 50;
-
-        $(this).readmore({
-            collapsedHeight: height,
-            moreLink: '<a href="#">' + globals.translations.readmore + '</a>',
-            lessLink: '<a href="#">' + globals.translations.readless + '</a>',
-            beforeToggle: function(){ setTimeout( 'alignMaxHeight(".module-header .card");', 300 ); },
-        });
-    });
+    // Inizializza il text shortener (readmore.js)
+    initTextShortener();
 
     alignMaxHeight(".module-header .card");
 
@@ -139,7 +130,7 @@ function sendWhatsAppMessage(phoneNumber, message) {
 function alignMaxHeight(element){
     // Azzera l'altezza fissa
     $(element).css('height', 'auto');
-    
+
     max_height = 0;
     $(element).each( function(){
         if($(this).height() > max_height){

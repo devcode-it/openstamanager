@@ -110,7 +110,7 @@ switch (post('op')) {
         // Duplica preventivo
     case 'copy':
         // Copia del preventivo
-        $new = $preventivo->replicate();
+        $new = $preventivo->replicate(['data_accettazione', 'data_conclusione', 'data_rifiuto']);
         $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
         $new->data_bozza = Carbon::now();
 
@@ -590,6 +590,57 @@ switch (post('op')) {
             ]));
         } else {
             flash()->warning(tr('Nessun prezzo modificato!'));
+        }
+
+        break;
+
+    case 'update_iva':
+        $id_riga = post('riga_id');
+        $id_iva = post('iva_id');
+
+        $riga = $riga ?: Riga::find($id_riga);
+        $riga = $riga ?: Articolo::find($id_riga);
+        $riga = $riga ?: Sconto::find($id_riga);
+
+        if (!empty($riga)) {
+            // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
+            $prezzo_unitario = $riga->prezzo_unitario;
+            $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+            $riga->save();
+
+            flash()->info(tr('IVA aggiornata!'));
+        }
+
+        break;
+
+    case 'update_iva_multiple':
+        $id_righe = (array) post('righe');
+        $id_iva = post('iva_id');
+        $numero_totale = 0;
+
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            if (!empty($riga)) {
+                // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
+                $prezzo_unitario = $riga->prezzo_unitario;
+                $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                $riga->save();
+                ++$numero_totale;
+            }
+        }
+
+        if ($numero_totale > 1) {
+            flash()->info(tr('_NUM_ aliquote IVA modificate!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } elseif ($numero_totale == 1) {
+            flash()->info(tr('_NUM_ aliquota IVA modificata!', [
+                '_NUM_' => $numero_totale,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna aliquota IVA modificata!'));
         }
 
         break;

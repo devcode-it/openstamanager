@@ -61,19 +61,17 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                     if ($lista_errori) {
                         $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
                         $errore = $lista_errori[0]['Errore'];
-                        if ($errore['Codice'] == '00404') {
-                            return;
+                        if ($errore['Codice'] != '00404') {
+                            $documenti_scarto[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
+                                '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
+                                '_NUM_' => $documento->numero_esterno,
+                                '_DATE_' => dateFormat($documento->data),
+                                '_STATO_' => $stato_fe->name,
+                            ]));
                         }
                     }
                 }
             }
-            $documenti_scarto[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
-                '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
-                '_NUM_' => $documento->numero_esterno,
-                '_DATE_' => dateFormat($documento->data),
-                '_STATO_' => $stato_fe->name,
-            ]));
-
             $show_avviso = $show_avviso ?: ($documento->data_stato_fe < (new Carbon())->subDays(4) ? 1 : 0);
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
             $is_estera = false;

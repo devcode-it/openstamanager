@@ -38,6 +38,13 @@
     color: #000;
 }
 
+.text-black {
+    color: #000;
+}
+
+/* ===== LOADING INDICATORS ===== */
+
+/* Main loading overlay */
 #main_loading {
     display: block;
     position: fixed;
@@ -58,6 +65,46 @@
     margin-top: -30px;
     margin-left: -30px;
     z-index: 9999;
+}
+
+/* Mini loader */
+#mini-loader > div {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    margin-top: -50px;
+    margin-left: -50px;
+    z-index: 9000;
+    width: 100px;
+    height: 100px;
+    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
+}
+
+/* Tiny loader */
+#tiny-loader {
+    position: fixed;
+    z-index: 9000;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
+}
+
+/* Component loader */
+.component-loader {
+    position: absolute;
+    z-index: 20;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+.component-loader > div {
+    position: relative;
+    top: 50%;
+    color: #333;
 }
 
 html {
@@ -232,27 +279,7 @@ a:focus {
 }
 
 
-#mini-loader > div{
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    margin-top: -50px;
-    margin-left: -50px;
-    z-index: 9000;
-    width: 100px;
-    height: 100px;
-    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
-}
-
-#tiny-loader {
-    position: fixed;
-    z-index: 9000;
-    width: 100%;
-    height: 100%;
-    top: 50%;
-    left: 50%;
-    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
-}
+/* Mini and tiny loaders moved to the loading indicators section */
 
 body .header .brand-link {
     font-family: inherit;
@@ -339,13 +366,189 @@ span.form-control {
 
 
 
-/* Tooltip dark */
+/* ===== UI TOOLTIP STYLES ===== */
 
 .ui-tooltip {
     background: #222;
     color: white;
     border: 0;
     font-size: 11px;
+    z-index: 9990;
+}
+
+/* ===== SHORTENED TEXT STYLES ===== */
+
+/* Wrapper for shortened text */
+.shorten-wrapper,
+.request-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Full text display */
+.shorten-full,
+.request-full {
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* ===== TOOLTIP STYLES ===== */
+
+/* Base tooltip styles */
+.tooltipster-shadow {
+    border-radius: 4px !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
+    border: none !important;
+    background-color: #e0e6eb !important;
+}
+
+.tooltipster-shadow .tooltipster-content {
+    font-family: inherit !important;
+    padding: 8px !important;
+    width: 400px !important;
+    background-color: #e0e6eb !important;
+    color: #000000 !important;
+    overflow: hidden !important;
+    word-wrap: break-word !important;
+}
+
+.tooltipster-base {
+    max-width: 400px !important;
+    width: 400px !important;
+    z-index: 10000 !important; /* Consistent z-index for all tooltip states */
+    background-color: #e0e6eb !important;
+    border: none !important;
+}
+
+/* Rimuove i bordi esterni dai tooltip */
+.tooltipster-box,
+.tooltipster-arrow,
+.tooltipster-arrow-border,
+.tooltipster-arrow-background {
+    border: none !important;
+}
+
+/* Nasconde le barre di scorrimento */
+.tooltipster-content::-webkit-scrollbar {
+    display: none !important;
+}
+.tooltipster-content {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+}
+
+
+/* Tooltip header */
+.tooltip-header {
+    position: relative;
+    padding: 8px;
+    background-color: #3c8dbc;
+    color: white;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin: -8px -8px 8px -8px;
+}
+
+.tooltip-header-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Close button */
+.tooltip-close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    transition: background-color 0.3s;
+}
+
+.tooltip-close-button:hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+/* Tooltip content sections */
+.tooltip-info-section {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ccc !important;
+    padding-bottom: 10px;
+}
+
+.tooltip-info-section-noborder {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.tooltip-info-row {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.tooltip-info-label {
+    font-weight: bold;
+    margin-right: 5px;
+    min-width: 120px;
+    color: #000000;
+}
+
+.tooltip-info-value {
+    flex: 1;
+}
+
+/* Toggle buttons for shortened text */
+.shorten-toggle,
+.request-toggle {
+    display: inline-block;
+    margin: 2px 0 0 0;
+    color: #fff;
+    background-color: #3c8dbc;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+/* Classi per i wrapper di testo troncato */
+.shorten-wrapper {
+    margin-bottom: 0;
+}
+
+.shorten-text, .request-text {
+    display: block;
+}
+
+.shorten-full, .request-full {
+    display: none;
+    margin-bottom: 0;
+}
+
+.shorten-toggle:hover,
+.request-toggle:hover {
+    background-color: #367fa9;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .nav-tabs-custom>.nav-tabs.pull-right>li>a.back-btn {
@@ -444,6 +647,75 @@ span.form-control {
     min-height: 202px;
     border-radius: 4px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
+}
+
+/* Stili per il modal di controllo database */
+.btn-resolve-all {
+    margin-bottom: 20px;
+}
+
+.table-database {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.table-database thead {
+    background-color: #f5f5f5 !important;
+}
+
+.table-database thead th {
+    background-color: #f5f5f5 !important;
+    color: #333 !important;
+    padding: 6px !important;
+    border-bottom: 1px solid #ddd !important;
+}
+
+.table-database th,
+.table-database td {
+    padding: 6px !important;
+}
+
+.table-database .column-name {
+    width: 30%;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.table-database .column-conflict {
+    width: 70%;
+    font-family: monospace;
+    white-space: collapse !important;
+}
+
+/* Stile per il nome della tabella */
+.modules-aggiornamenti h3 {
+    font-size: 1.1em;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.table-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.row-warning td {
+    background-color: #fff3cd;
+}
+
+.row-info td {
+    background-color: #d1ecf1;
+}
+
+.row-danger td {
+    background-color: #f8d7da;
+}
+
+.alert-database {
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .sidebar-form {
@@ -565,20 +837,7 @@ input.small-width {
     font-weight: bold;
 }
 
-.component-loader {
-    position: absolute;
-    z-index: 20;
-    opacity: 0.5;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-}
-
-.component-loader>div {
-    position: relative;
-    top: 50%;
-    color: #333;
-}
+/* Component loader moved to the loading indicators section */
 
 .btn-group-flex {
     display: flex;
@@ -977,10 +1236,6 @@ table.dataTable {
     border-collapse: collapse !important;
 }
 
-.alert-warning {
-    background-color: #EC971F;
-}
-
 .row-list .form-group {
     margin-bottom: 0px;
 }
@@ -1052,11 +1307,11 @@ kbd{
 .read-more-target {
     display: none;
 }
-  
+
 .read-more-trigger {
     cursor: pointer;
 }
-    
+
 .read-more-target:target {
     display: block;
 }
@@ -1678,8 +1933,8 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 @media screen and (min-width: 1920px) {
     .large-modal .modal-dialog {
-        width: 80%;
-        max-width: 80%;
+        width: 70%;
+        max-width: 70%;
     }
 }
 
@@ -1704,7 +1959,13 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     .extra-buttons{
         padding-top: 0;
         float: right;
-       
+
+    }
+}
+
+@media screen and (max-width: 1080px) {
+    .table {
+        width: 1080px;
     }
 }
 
@@ -1782,17 +2043,13 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
     .login-page{
         background: #ddd;
-    }    
+    }
 }
 
 
 @media (min-width: 1140px) {
     .modal-lg {
         max-width: 60vw;
-    }
-
-    .text-nowrap {
-        white-space: normal !important;
     }
 }
 
@@ -1815,4 +2072,129 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     html body.sidebar-mini.sidebar-mini.sidebar-collapse i.fa.fa-user-circle-o.fa-3x.pull-left {
         font-size: 2.4em;
     }
+}
+
+/* Stile migliorato per i titoli dei plugin */
+.plugin-title {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px !important;
+    width: 100%;
+}
+
+.plugin-title .badge {
+    font-size: 85%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.plugin-title .text-primary {
+    margin-left: 5px;
+}
+
+/* Padding per il contenuto dei plugin */
+.tab-pane[id^="tab_"]:not(#tab_0) {
+    padding: 0 20px 20px 20px;
+}
+
+/* Stili per il modal di controllo database */
+
+/* Stili per i pulsanti */
+.btn-resolve-all {
+    margin-bottom: 0;
+}
+
+/* Stili per le tabelle */
+.table-database {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.table-database thead {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.table-database th,
+.table-database td {
+    padding: 10px;
+}
+
+.table-database .column-name {
+    width: 30%;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.table-database .column-conflict {
+    width: 70%;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+/* Stili per i messaggi */
+.table-title {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    color: #2c3e50;
+    border-bottom: 2px solid #eee;
+}
+
+/* Stili per le righe di avviso */
+.row-warning td {
+    background-color: #ffffff; /* Sfondo bianco invece di giallo */
+    border-bottom: 1px solid #f0f0f0; /* Bordo sottile per separare le righe */
+}
+
+/* Mantieni lo sfondo giallo per le righe nella sezione problemi impostazioni */
+.table-title + .table-database .row-warning td {
+    background-color: #fff3cd;
+}
+
+.row-info td {
+    background-color: #d1ecf1;
+}
+
+.row-danger td {
+    background-color: #f8d7da;
+}
+
+/* Stili per i messaggi di errore/successo */
+.alert-database {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+/* Stili per il controllo database */
+.row.align-items-center {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.row.align-items-center p {
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* Stile per il nome della tabella */
+.table-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2c3e50;
+    background-color: #fff3cd; /* Sfondo giallo come .row-warning td */
+    padding: 8px 12px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-left: 4px solid #ffc107; /* Colore più intenso che si abbina al giallo */
+    border-radius: 0 4px 4px 0;
 }

@@ -96,7 +96,7 @@ class FileManager implements ManagerInterface
             </button>
         </div>
     </div>
-    <div class="card-body no-padding table-responsive text-nowrap">
+    <div class="card-body no-padding table-responsive">
     <table class="table table-striped table-sm ">
 	  <thead>
         <tr>

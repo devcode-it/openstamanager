@@ -23,6 +23,8 @@ namespace Modules\TipiIntervento;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Preventivi\Preventivo;
+use Modules\Interventi\Intervento;
 use Traits\RecordTrait;
 
 class Tipo extends Model
@@ -79,6 +81,14 @@ class Tipo extends Model
 
         $this->attributes['tempo_standard'] = $result;
     }
+
+    public function save(array $options = [])
+    {
+        parent::save($options);
+
+        $this->fixTecnici();
+    }
+
 
     public function preventivi()
     {

@@ -54,7 +54,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-bank':
+    case 'change_bank':
         $list = [];
         foreach ($id_records as $id) {
             $scadenza = Scadenza::find($id);
@@ -74,7 +74,7 @@ switch (post('op')) {
 
         break;
 
-    case 'send-sollecito':
+    case 'send_reminder':
         $template = Template::where('name', 'Sollecito di pagamento raggruppato per anagrafica')->first();
 
         $list = [];
@@ -183,15 +183,17 @@ switch (post('op')) {
         break;
 }
 
-$operations['registrazione-contabile'] = [
-    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
+$operations['change-bank'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
     'data' => [
-        'title' => tr('Registrazione contabile'),
-        'type' => 'modal',
-        'origine' => 'scadenzario',
-        'url' => base_path().'/add.php?id_module='.Module::where('name', 'Prima nota')->first()->id,
+        'title' => tr('Aggiornare la banca?'),
+        'msg' => tr('Per ciascuna scadenza selezionata, verrà aggiornata la banca della fattura di riferimento e quindi di conseguenza di tutte le scadenze collegate').'
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
+
 
 $operations['change_distinta'] = [
     'text' => '<span><i class="fa fa-edit"></i> '.tr('Info distinta'),
@@ -205,24 +207,24 @@ $operations['change_distinta'] = [
     ],
 ];
 
-$operations['change-bank'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
-    'data' => [
-        'title' => tr('Aggiornare la banca?'),
-        'msg' => tr('Per ciascuna scadenza selezionata, verrà aggiornata la banca della fattura di riferimento e quindi di conseguenza di tutte le scadenze collegate').'
-        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
 
-$operations['send-sollecito'] = [
+$operations['send_reminder'] = [
     'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail sollecito').'</span>',
     'data' => [
         'title' => tr('Inviare mail sollecito?'),
         'msg' => tr('Per ciascuna rata scaduta selezionata collegata ad una fattura di vendita, verrà inviata una mail con allegata la fattura di vendita corrispondente.<br>(Template utilizzato: Sollecito di pagamento raggruppato per anagrafica)'),
         'button' => tr('Invia'),
         'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['registrazione-contabile'] = [
+    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
+    'data' => [
+        'title' => tr('Registrazione contabile'),
+        'type' => 'modal',
+        'origine' => 'scadenzario',
+        'url' => base_path().'/add.php?id_module='.Module::where('name', 'Prima nota')->first()->id,
     ],
 ];
 

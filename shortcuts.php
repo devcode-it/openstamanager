@@ -22,8 +22,6 @@ include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Scorciatoie');
 
-include_once App::filepath('include|custom|', 'top.php');
-
 echo '
 <div class="card">
     <div class="card-header">
@@ -42,8 +40,7 @@ echo '
         <br>
     </div>
 </div>
-
-<div class="jumbotron">';
+';
 
 if (setting('Attiva scorciatoie da tastiera')) {
     echo '<p class="text-muted"><i class="fa fa-check text-success"></i> '.tr('Le scorciatoie da tastiera sono attive').'.</p>';
@@ -53,5 +50,3 @@ if (setting('Attiva scorciatoie da tastiera')) {
             '_LINK_IMPOSTAZIONI_' => Modules::link('Impostazioni', null, tr('Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>')),
         ]).'.</p>';
 }
-echo '
-</div>';

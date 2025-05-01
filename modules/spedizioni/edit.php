@@ -24,12 +24,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
-	<div class="cardccardrimary">
-		<div class="cardheading">
-			<h3 class="cardtitle"><?php echo tr('Dati'); ?></h3>
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
-		<div class="cardbody">
+		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}

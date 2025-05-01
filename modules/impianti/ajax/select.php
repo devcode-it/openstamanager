@@ -96,15 +96,15 @@ switch ($resource) {
          */
     case 'componenti':
         if (isset($superselect['matricola'])) {
-            $query = 'SELECT 
-                `my_componenti`.`id`, 
+            $query = 'SELECT
+                `my_componenti`.`id`,
                 CONCAT("#", `my_componenti`.`id`, ": ", `mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`title`) AS descrizione
-            FROM 
+            FROM
                 `my_componenti`
                 INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `my_componenti`.`id_articolo`
                 LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            |where| 
-            ORDER BY 
+            |where|
+            ORDER BY
                 `my_componenti`.`id`';
 
             foreach ($elements as $element) {
@@ -129,13 +129,14 @@ switch ($resource) {
         break;
 
     case 'categorie_imp':
-        $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+        $query = 'SELECT `zz_categorie`.`id`, `zz_categorie_lang`.`title` AS descrizione FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
-            $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
+            $filter[] = '`zz_categorie`.`id`='.prepare($element);
         }
 
         $where[] = '`parent` IS NULL';
+        $where[] = '`is_impianto` = 1';
 
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
@@ -149,13 +150,14 @@ switch ($resource) {
          */
     case 'sottocategorie_imp':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT `my_impianti_categorie`.`id`, `my_impianti_categorie_lang`.`title` AS descrizione FROM `my_impianti_categorie` LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id`=`my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+            $query = 'SELECT `zz_categorie`.`id`, `zz_categorie_lang`.`title` AS descrizione FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
             foreach ($elements as $element) {
-                $filter[] = '`my_impianti_categorie`.`id`='.prepare($element);
+                $filter[] = '`zz_categorie`.`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
+            $where[] = '`is_impianto` = 1';
 
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');

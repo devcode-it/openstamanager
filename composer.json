@@ -30,7 +30,9 @@
         "ext-zip": "*",
         "davidepastore/codice-fiscale": "^0.9.1",
         "devcode-it/ical-easy-reader": "dev-main",
+        "devcode-it/sdd_ita": "dev-master",
         "digitick/sepa-xml": "^2.1",
+        "doctrine/sql-formatter": "^1.5",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.15.0",
@@ -63,7 +65,6 @@
         "symfony/var-dumper": "^5.0",
         "thenetworg/oauth2-azure": "^2.0",
         "voku/stringy": "^6.0.0",
-        "wdog/sdd_ita": "dev-master",
         "willdurand/geocoder": "^4.2"
     },
     "require-dev": {
@@ -137,12 +138,6 @@
             "lib/deprecated.php"
         ]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/wdog/sdd_ita"
-        }
-    ],
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true,

@@ -51,11 +51,11 @@ switch (filter('op')) {
             `in_interventi_tecnici`.`orario_inizio`,
             `in_interventi_tecnici`.`orario_fine`,
             `tecnico`.`ragione_sociale` AS nome_tecnico,
-            `tecnico`.`colore` AS colore_tecnico, 
+            `tecnico`.`colore` AS colore_tecnico,
             IF(`have_attachments`.`cont`, 1, 0) AS have_attachments,
             `an_anagrafiche`.`ragione_sociale` as cliente,
             `an_anagrafiche`.`idzona` as idzona,
-            `in_statiintervento`.`is_completato` AS is_completato
+            `in_statiintervento`.`is_bloccato` AS is_bloccato
         FROM `in_interventi_tecnici`
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`idtecnico` = `tecnico`.`idanagrafica`
@@ -108,7 +108,7 @@ switch (filter('op')) {
 
             $results[] = [
                 'id' => $sessione['id'],
-                'title' => (($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_completato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
+                'title' => (($sessione['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_bloccato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'extendedProps' => [
@@ -133,7 +133,7 @@ switch (filter('op')) {
                 `co_preventivi`.`data_conclusione`,
                 `co_statipreventivi`.`is_pianificabile`,
                 `co_statipreventivi_lang`.`title` as stato,
-                `co_statipreventivi`.`is_completato`,
+                `co_statipreventivi`.`is_bloccato`,
                 `an_anagrafiche`. `ragione_sociale` AS cliente,
                 IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
             FROM `co_preventivi`
@@ -157,7 +157,7 @@ switch (filter('op')) {
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_accettazione'],
                             // 'end' => $preventivo['data_accettazione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
@@ -175,7 +175,7 @@ switch (filter('op')) {
                             'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'idintervento' => $preventivo['id'],
                             'idtecnico' => '',
-                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                            'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_conclusione'],
                             // 'end' => $preventivo['data_conclusione'],
                             'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
@@ -193,14 +193,14 @@ switch (filter('op')) {
             // # Box allDay eventi (escluse festività)
             $query = 'SELECT
                 *
-            FROM 
+            FROM
                 `zz_events`
             WHERE
                 `zz_events`.`is_bank_holiday` = 0
             AND (`zz_events`.`is_recurring` = 1 AND
-                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).')) 
+                DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).'))
                 )
-            OR 
+            OR
                 (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
             // echo $query;
@@ -239,17 +239,17 @@ switch (filter('op')) {
         $orario_fine = filter('timeEnd');
 
         // Aggiornamento prezzo totale
-        $q = 'SELECT 
-                `in_interventi_tecnici`.`prezzo_ore_unitario`, 
-                `idtecnico`, 
-                `in_statiintervento`.`is_completato` 
-            FROM 
-                `in_interventi_tecnici` 
-                INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id` 
-                LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id` 
-            WHERE 
-                `in_interventi`.`id`='.prepare($idintervento).' AND 
-                `in_statiintervento`.`is_completato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
+        $q = 'SELECT
+                `in_interventi_tecnici`.`prezzo_ore_unitario`,
+                `idtecnico`,
+                `in_statiintervento`.`is_bloccato`
+            FROM
+                `in_interventi_tecnici`
+                INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
+                LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id`
+            WHERE
+                `in_interventi`.`id`='.prepare($idintervento).' AND
+                `in_statiintervento`.`is_bloccato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -289,25 +289,25 @@ switch (filter('op')) {
                 }
 
                 // Lettura dati intervento
-                $query = 'SELECT 
-                        *, 
-                        `in_interventi`.`codice`, 
-                        `an_anagrafiche`.`note` AS note_anagrafica, 
-                        `in_statiintervento`.`id` AS parent_idstato, 
+                $query = 'SELECT
+                        *,
+                        `in_interventi`.`codice`,
+                        `an_anagrafiche`.`note` AS note_anagrafica,
+                        `in_statiintervento`.`id` AS parent_idstato,
                         `in_statiintervento_lang`.`title` AS stato,
-                        `in_interventi`.`idtipointervento` AS parent_idtipo, 
-                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti, 
-                        `in_tipiintervento_lang`.`title` AS tipo, 
-                        (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona 
-                    FROM 
-                        `in_interventi` 
+                        `in_interventi`.`idtipointervento` AS parent_idtipo,
+                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
+                        `in_tipiintervento_lang`.`title` AS tipo,
+                        (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona
+                    FROM
+                        `in_interventi`
                         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
                         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento`=`in_tipiintervento`.`id`
                         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento` 
-                        LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` 
-                    WHERE 
+                        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento`
+                        LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+                    WHERE
                         `in_interventi`.`id`='.prepare($id).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
                 $rs = $dbo->fetchArray($query);
 
@@ -322,51 +322,72 @@ switch (filter('op')) {
 
                 $desc_tipointervento = $rs[0]['tipo'];
 
-                $tooltip = '<b>'.tr('Numero intervento').'</b>: '.$rs[0]['codice'].'<br/>';
+                $tooltip = '<div class="tooltip-header">
+                    <div class="tooltip-header-title">'.tr('Dettagli attività').'</div>
+                    <div class="tooltip-close-button"><i class="fa fa-times"></i></div>
+                </div>
+                <div class="tooltip-info-section">';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-hashtag"></i> '.tr('Numero intervento').':</span> <span class="tooltip-info-value">'.$rs[0]['codice'].'</span></div>';
 
-                $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-building"></i> '.tr('Cliente').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['ragione_sociale']).'</span></div>';
+
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-calendar"></i> '.tr('Data richiesta').':</span> <span class="tooltip-info-value">'.Translator::timestampToLocale($rs[0]['data_richiesta']).'</span></div>';
 
                 if (!empty($rs[0]['data_scadenza'])) {
-                    $tooltip .= '<b>'.tr('Data scadenza').'</b>: '.Translator::timestampToLocale($rs[0]['data_scadenza']).'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-calendar-check-o"></i> '.tr('Data scadenza').':</span> <span class="tooltip-info-value">'.Translator::timestampToLocale($rs[0]['data_scadenza']).'</span></div>';
                 }
 
-                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br((string) $desc_tipointervento).'<br/>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-wrench"></i> '.tr('Tipo intervento').':</span> <span class="tooltip-info-value">'.nl2br((string) $desc_tipointervento).'</span></div>';
 
-                $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnici').':</span> <span class="tooltip-info-value">'.implode(', ', $tecnici).'</span></div>';
+                $tooltip .= '</div>';
 
+                // Sezione impianti
                 if ($rs[0]['impianti'] != '') {
-                    $tooltip .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-industry"></i> '.tr('Impianti').':</span> <span class="tooltip-info-value">'.$rs[0]['impianti'].'</span></div>';
                 }
+                $tooltip .= '</div>'; // Chiude tooltip-info-section
 
+                // Sezione richiesta e descrizione
+                $tooltip .= '<div class="tooltip-info-section">';
                 if ($rs[0]['richiesta'] != '') {
-                    $tooltip .= '<b>'.tr('Richiesta').'</b>:<div class=\'shorten\'> '.nl2br((string) $rs[0]['richiesta']).'</div>';
+                    $richiesta = (string) $rs[0]['richiesta'];
+                    $richiesta_short = (strlen($richiesta) > 200) ? substr($richiesta, 0, 200).'...' : $richiesta;
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-comment"></i> '.tr('Richiesta').':</span></div>';
+                    $tooltip .= '<div class="shorten-wrapper"><div class="shorten-text">'.nl2br($richiesta_short).'</div><div class="shorten-full">'.nl2br($richiesta).'</div><a href="javascript:void(0);" class="shorten-toggle">'.tr('Mostra tutto').'</a></div>';
                 }
 
                 if ($rs[0]['descrizione'] != '') {
-                    $tooltip .= '<b>'.tr('Descrizione').'</b>:<div class=\'shorten\'> '.nl2br((string) $rs[0]['descrizione']).'</div>';
+                    $descrizione = (string) $rs[0]['descrizione'];
+                    $descrizione_short = (strlen($descrizione) > 200) ? substr($descrizione, 0, 200).'...' : $descrizione;
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-file-text-o"></i> '.tr('Descrizione').':</span></div>';
+                    $tooltip .= '<div class="shorten-wrapper"><div class="shorten-text">'.nl2br($descrizione_short).'</div><div class="shorten-full">'.nl2br($descrizione).'</div><a href="javascript:void(0);" class="shorten-toggle">'.tr('Mostra tutto').'</a></div>';
                 }
 
                 if ($rs[0]['informazioniaggiuntive'] != '') {
-                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br((string) $rs[0]['informazioniaggiuntive']).'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-info-circle"></i> '.tr('Informazioni aggiuntive').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['informazioniaggiuntive']).'</span></div>';
                 }
+                $tooltip .= '</div>'; // Chiude tooltip-info-section
 
-                $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br((string) $rs[0]['ragione_sociale']).'<br/>';
+                // Sezione cliente
+                $tooltip .= '<div class="tooltip-info-section tooltip-info-section-noborder">';
 
                 if (!empty($rs[0]['telefono'])) {
-                    $tooltip .= '<b>'.tr('Telefono').'</b>: '.nl2br((string) $rs[0]['telefono']).'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-phone"></i> '.tr('Telefono').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['telefono']).'</span></div>';
                 }
 
                 if (!empty($rs[0]['cellulare'])) {
-                    $tooltip .= '<b>'.tr('Cellulare').'</b>: '.nl2br((string) $rs[0]['cellulare']).'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-mobile"></i> '.tr('Cellulare').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['cellulare']).'</span></div>';
                 }
 
                 if (!empty($rs[0]['indirizzo']) || !empty($rs[0]['citta']) || !empty($rs[0]['provincia']) || !empty($rs[0]['cap'])) {
-                    $tooltip .= '<b>'.tr('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' - '.$rs[0]['cap'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-map-marker"></i> '.tr('Indirizzo').':</span> <span class="tooltip-info-value">'.nl2br($rs[0]['indirizzo'].' - '.$rs[0]['cap'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'</span></div>';
                 }
 
                 if (!empty($rs[0]['note_anagrafica'])) {
-                    $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br((string) $rs[0]['note_anagrafica']).'<br/>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-sticky-note"></i> '.tr('Note anagrafica').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['note_anagrafica']).'</span></div>';
                 }
+                $tooltip .= '</div>'; // Chiude tooltip-info-section
             }
         } else {
             $query = 'SELECT
@@ -376,19 +397,26 @@ switch (filter('op')) {
                 `co_preventivi`.`data_conclusione`,
                 `an_anagrafiche`.`ragione_sociale` AS cliente,
                 IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
-            FROM 
+            FROM
                 `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
                 LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            WHERE 
+            WHERE
                 `co_preventivi`.`id`='.prepare($id);
 
             $rs = $dbo->fetchArray($query);
 
             if (!empty($rs[0]['cliente'])) {
-                $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+                $tooltip = '<div class="tooltip-header">
+                    <div class="tooltip-header-title">'.tr('Dettagli attività').'</div>
+                    <div class="tooltip-close-button"><i class="fa fa-times"></i></div>
+                </div>
+                <div class="tooltip-info-section">';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-file-text-o"></i> '.tr('Preventivo').':</span> <span class="tooltip-info-value">'.$rs[0]['numero'].' - '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</span></div>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-building"></i> '.tr('Cliente').':</span> <span class="tooltip-info-value">'.$rs[0]['cliente'].'</span></div>';
+                $tooltip .= '</div>';
             } else {
                 $tooltip = tr('Rilascia per aggiungere l\'attività...');
             }
@@ -396,10 +424,53 @@ switch (filter('op')) {
 
         $tooltip .= '
             <script type="text/javascript">
-                $(".shorten").shorten({
-                    moreText: "'.tr('Mostra tutto').'",
-                    lessText: "'.tr('Comprimi').'",
-                    showChars : 200
+                // Gestione manuale dei tooltip con testo troncato
+                $(".shorten-toggle").on("click", function(e) {
+                    e.preventDefault();
+                    var wrapper = $(this).closest(".shorten-wrapper");
+                    var textEl = wrapper.find(".shorten-text");
+                    var fullEl = wrapper.find(".shorten-full");
+
+                    if (fullEl.is(":visible")) {
+                        fullEl.hide();
+                        textEl.show();
+                        $(this).text("' . tr('Mostra tutto') . '");
+
+                        // Forza il ridimensionamento del tooltip alla dimensione originale
+                        var instance = $(".tooltipstered").tooltipster("instance");
+                        if (instance) {
+                            // Riposiziona il tooltip
+                            instance.reposition();
+                        }
+                    } else {
+                        textEl.hide();
+                        fullEl.show();
+                        $(this).text("' . tr('Comprimi') . '");
+
+                        // Forza il ridimensionamento del tooltip solo verticalmente
+                        var instance = $(".tooltipstered").tooltipster("instance");
+                        if (instance) {
+                            // Riposiziona il tooltip
+                            instance.reposition();
+                        }
+                    }
+                });
+
+                // Nascondi il pulsante se il testo non è troncato
+                $(".shorten-wrapper").each(function() {
+                    var textEl = $(this).find(".shorten-text");
+                    var fullEl = $(this).find(".shorten-full");
+                    var toggleEl = $(this).find(".shorten-toggle");
+
+                    if (textEl.text() === fullEl.text() || !textEl.text().endsWith("...")) {
+                        toggleEl.hide();
+                    }
+                });
+
+                // Gestione del pulsante di chiusura del tooltip
+                $(".tooltip-close-button").on("click", function() {
+                    // Trova il tooltip e lo chiude
+                    $(".tooltipstered").tooltipster("close");
                 });
             </script>';
 
@@ -432,17 +503,17 @@ switch (filter('op')) {
             '' AS id_tecnico,
             '' AS ragione_sociale_tecnico,
             '' AS colore
-        FROM 
+        FROM
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
-        WHERE 
+        WHERE
             `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
         UNION
-        (SELECT 
+        (SELECT
             `in_interventi`.`id` AS id,
             `in_interventi`.`id_contratto` AS idcontratto,
             `in_interventi`.`richiesta` AS richiesta,
@@ -458,7 +529,7 @@ switch (filter('op')) {
             `in_interventi_tecnici_assegnati`.`id_tecnico` AS id_tecnico,
             `tecnico`.`ragione_sociale` AS ragione_sociale_tecnico,
             `tecnico`.`colore`
-        FROM 
+        FROM
             `in_interventi`
             INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
@@ -476,13 +547,13 @@ switch (filter('op')) {
         $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`idanagrafica`
-        WHERE 
-            `in_statiintervento`.`is_completato` = 0
-        GROUP BY 
+        WHERE
+            `in_statiintervento`.`is_bloccato` = 0
+        GROUP BY
             `in_interventi`.`id`, `in_interventi_tecnici_assegnati`.`id_tecnico`
-        HAVING 
+        HAVING
             COUNT(`in_interventi_tecnici`.`id`) = 0)
-        ORDER BY 
+        ORDER BY
             IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) ASC';
 
         $promemoria = $dbo->fetchArray($query);
@@ -512,7 +583,7 @@ switch (filter('op')) {
                     <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
-                        <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.strip_tags((string) $sessione['richiesta']) : '').'</div>
+                        '.(!empty($sessione['richiesta']) ? '<div class="request-wrapper"><span class="request-text">' . (strlen(strip_tags((string) $sessione['richiesta'])) > 200 ? substr(strip_tags((string) $sessione['richiesta']), 0, 200).'...' : strip_tags((string) $sessione['richiesta'])) . '</span><span class="request-full">' . strip_tags((string) $sessione['richiesta']) . '</span><a href="#" class="request-toggle">' . tr('Mostra tutto') . '</a></div>' : '').'
                         '.(!empty($sessione['numero_contratto']) ? '<span class="badge badge-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="badge badge-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="badge" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
                     </div>';
                 }
@@ -520,10 +591,42 @@ switch (filter('op')) {
 
             echo '
             <script type="text/javascript">
-                $(".request").shorten({
-                    moreText: "'.tr('Mostra tutto').'",
-                    lessText: "'.tr('Comprimi').'",
-                    showChars : 200
+                // Gestione manuale dei tooltip con testo troncato
+                $(".request-toggle").on("click", function(e) {
+                    e.preventDefault();
+                    var wrapper = $(this).closest(".request-wrapper");
+                    var textEl = wrapper.find(".request-text");
+                    var fullEl = wrapper.find(".request-full");
+
+                    if (fullEl.is(":visible")) {
+                        fullEl.hide();
+                        textEl.show();
+                        $(this).text("' . tr('Mostra tutto') . '");
+
+                        // Gli stili sono ora definiti nel CSS
+                    } else {
+                        textEl.hide();
+                        fullEl.show();
+                        $(this).text("' . tr('Comprimi') . '");
+
+                        // Forza il ridimensionamento del tooltip solo verticalmente
+                        var instance = $(".tooltipstered").tooltipster("instance");
+                        if (instance) {
+                            // Riposiziona il tooltip
+                            instance.reposition();
+                        }
+                    }
+                });
+
+                // Nascondi il pulsante se il testo non è troncato
+                $(".request-wrapper").each(function() {
+                    var textEl = $(this).find(".request-text");
+                    var fullEl = $(this).find(".request-full");
+                    var toggleEl = $(this).find(".request-toggle");
+
+                    if (textEl.text() === fullEl.text() || !textEl.text().endsWith("...")) {
+                        toggleEl.hide();
+                    }
                 });
             </script>';
         } else {
@@ -537,12 +640,12 @@ switch (filter('op')) {
         $end = filter('end');
 
         // TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
-        $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events` 
-            WHERE `zz_events`.`is_bank_holiday` = 1 
-            AND 
-            (`zz_events`.`is_recurring` = 1 
+        $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events`
+            WHERE `zz_events`.`is_bank_holiday` = 1
+            AND
+            (`zz_events`.`is_recurring` = 1
             AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).')) )
-            OR 
+            OR
             (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
 
         $eventi = $dbo->fetchArray($query);

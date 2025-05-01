@@ -49,17 +49,6 @@ if (!is_writable($backup_dir) || !is_readable($backup_dir)) {
     return;
 }
 
-echo '<p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
-
-if (string_starts_with($backup_dir, base_dir())) {
-    echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna. Puoi modificare il percorso di backup dal tuo file _FILE_', [
-        '_FILE_' => '<b>config.inc.php</b>',
-    ]).'.
-    </div>';
-}
-
 // Operazioni JavaScript
 echo '
 <script>
@@ -148,53 +137,111 @@ function loadSize(number, id){
 }
 </script>';
 
+// Header con informazioni generali
 echo '
 <div class="row">
-    <div class="col-md-8">
-        <div class="alert bg-light-blue-active">
-            <p>'.$message.'</p><br>
-			<p>'.tr('Spazio totale occupato dai backup: _SPAZIO_', [
-    '_SPAZIO_' => '<i id="total_size"></i>',
-]).'</p>
-			<p>'.tr('Numero di backup: _NUM_', [
-    '_NUM_' => count($backups),
-]).'</p>
-        </div>
-    </div>
+    <div class="col-md-12">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-info-circle mr-2"></i>'.tr('Informazioni sul backup').'
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>
 
-    <script>
-        loadSize('.count($backups).', "total_size");
-    </script>';
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-box bg-info">
+                                        <span class="info-box-icon"><i class="fa fa-folder"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Percorso backup').'</span>
+                                            <span class="info-box-number">'.slashes($backup_dir).'</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-success">
+                                        <span class="info-box-icon"><i class="fa fa-hdd-o"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Spazio occupato').'</span>
+                                            <span class="info-box-number" id="total_size">'.tr('Calcolo in corso').'...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-warning">
+                                        <span class="info-box-icon"><i class="fa fa-files-o"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Numero backup').'</span>
+                                            <span class="info-box-number">'.count($backups).'</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+
+if (string_starts_with($backup_dir, base_dir())) {
+    echo '
+                        <div class="alert alert-warning mt-3">
+                            <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna.').'
+                            <p class="mt-2">'.tr('Puoi modificare il percorso di backup da:').' <a href="'.base_path().'/controller.php?id_module='.\Models\Module::where('name', 'Impostazioni')->first()->id.'&search=Adattatore archiviazione backup#" class="btn btn-sm btn-info"><i class="fa fa-cog"></i> '.tr('Menu <b>Strumenti</b> &rarr; <b>Impostazioni</b> &rarr; sezione <b>Backup</b> &rarr; impostazione <b>Adattatore archiviazione backup</b>').'</a>
+                            </p>
+                        </div>';
+}
+
+echo '
+                    </div>
+
+                    <script>
+                        loadSize('.count($backups).', "total_size");
+                    </script>';
 
 $upload_max_filesize = ini_get('upload_max_filesize');
 $max_execution_time = ini_get('max_execution_time');
 
 if (setting('Permetti il ripristino di backup da file esterni')) {
     echo '
-    <div class="col-md-4">
-        <div class="card card-success">
-            <div class="card-header with-border">
-                <h3 class="card-title">
-                    '.tr('Ripristina backup').' <small>(upload_max_filesize: '.$upload_max_filesize.')</small> <small>(max_execution_time: '.$max_execution_time.')</small>
-                </h3>
-            </div>
-            <div class="card-body">
-                <form action="" method="post" enctype="multipart/form-data" id="restore">
-                    <input type="hidden" name="op" value="restore">
+                    <div class="col-md-4">
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fa fa-upload mr-2"></i>'.tr('Ripristina backup').'
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">
+                                    <i class="fa fa-info-circle"></i> '.tr('Limiti di sistema').':
+                                    <span class="badge badge-info">upload_max_filesize: '.$upload_max_filesize.'</span>
+                                    <span class="badge badge-info">max_execution_time: '.$max_execution_time.'s</span>
+                                </p>
 
-			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
+                                <form action="" method="post" enctype="multipart/form-data" id="restore">
+                                    <input type="hidden" name="op" value="restore">
 
-                    <button type="button" class="btn btn-primary pull-right" onclick="restore()">
-                        <i class="fa fa-upload"></i> '.tr('Ripristina').'...
-                    </button>
-                </form>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <button type="button" class="btn btn-success" onclick="restore()">
+                                                <i class="fa fa-upload"></i> '.tr('Ripristina').'
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>';
-}
-
-echo '
+    </div>
 </div>';
+}
 
 // Lettura file di backup
 if (file_exists($backup_dir)) {
@@ -217,9 +264,27 @@ if (file_exists($backup_dir)) {
 </div>';
     } else {
         echo '
-<div class="row">
-    <div class="col-xs-12 col-md-6">
-        <h3>'.tr('Backup compressi').'</h3>';
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                <ul class="nav nav-tabs card-header-tabs justify-content-center" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="compressed-tab" data-toggle="tab" href="#compressed" role="tab" aria-controls="compressed" aria-selected="true">
+                            <i class="fa fa-file-archive-o mr-2"></i>'.tr('Backup compressi').' <span class="badge badge-pill badge-info">'.count($backups_zip).'</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="uncompressed-tab" data-toggle="tab" href="#uncompressed" role="tab" aria-controls="uncompressed" aria-selected="false">
+                            <i class="fa fa-file-text-o mr-2"></i>'.tr('Backup non compressi').' <span class="badge badge-pill badge-warning">'.count($backups_file).'</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="compressed" role="tabpanel" aria-labelledby="compressed-tab">
+                        <div class="row">';
 
         if (!empty($backups_zip)) {
             foreach ($backups_zip as $id => $backup) {
@@ -230,50 +295,78 @@ if (file_exists($backup_dir)) {
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
                 $tipo = $info['AAAAAAA'];
                 echo '
-        <div class="callout callout-info">
-            <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                    '_DATE_' => Translator::dateToLocale($data),
-                    '_TIME_' => Translator::timeToLocale($ora),
-                ]).'</h4>
-            <p><small>
-                '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Tipo').': '.(($tipo == 'PARTIAL') ? '🟠 '.tr('Parziale') : '🟢 '.tr('Completo')).'<br>
-                '.tr('Dimensione').': <i id="c-'.$id.'"></i>
-            </small></p>
-
-            <script>
-                loadSize("'.$id.'", "c-'.$id.'");
-            </script>
-
-            <a class="btn btn-primary" href="'.base_path().'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
-
-            <div class="float-right d-none d-sm-inline">
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Clicca su Ripristina per ripristinare questo backup').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
-                    <i class="fa fa-upload"></i> '.tr('Ripristina').'
-                </a>
-
-                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
-                    <i class="fa fa-trash"></i>
-                </a>
-            </div>
-        </div>';
+                            <div class="col-md-12 mb-3">
+                                <div class="card card-outline card-info">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fa fa-calendar-o mr-2"></i><strong>'.tr('Backup del _DATE_', [
+                                                '_DATE_' => Translator::dateToLocale($data),
+                                            ]).'</strong>
+                                            <span class="text-muted ml-2">'.tr('alle _TIME_', [
+                                                '_TIME_' => Translator::timeToLocale($ora),
+                                            ]).'</span>
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1">
+                                                            <i class="fa fa-file-o mr-1"></i> <strong>'.tr('Nome').':</strong> '.$name.'
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="mb-1">
+                                                            <i class="fa fa-tag mr-1"></i> <strong>'.tr('Tipo').':</strong> '.(($tipo == 'PARTIAL') ? '<span class="badge badge-warning">🟠 '.tr('Parziale').'</span>' : '<span class="badge badge-success">🟢 '.tr('Completo').'</span>').'
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="mb-1">
+                                                            <i class="fa fa-hdd-o mr-1"></i> <strong>'.tr('Dimensione').':</strong> <span id="c-'.$id.'">'.tr('Calcolo in corso').'...</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 text-right">
+                                                <div class="btn-group">
+                                                    <a class="btn btn-sm btn-primary" href="'.base_path().'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank">
+                                                        <i class="fa fa-download"></i> '.tr('Scarica').'
+                                                    </a>
+                                                    <a class="btn btn-sm btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Clicca su Ripristina per ripristinare questo backup').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                                                        <i class="fa fa-upload"></i> '.tr('Ripristina').'
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    loadSize("'.$id.'", "c-'.$id.'");
+                                </script>
+                            </div>';
             }
         } else {
             echo '
-        <div class="alert alert-info">
-            <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
-        </div>';
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
+                                </div>
+                            </div>';
         }
 
         echo '
-    </div>
-
-    <div class="col-xs-12 col-md-6">
-        <h3>'.tr('Backup non compressi').'</h3>';
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="uncompressed" role="tabpanel" aria-labelledby="uncompressed-tab">
+                        <div class="row">';
 
         // Backup non compressi e quindi non scaricabili
         if (!empty($backups_file)) {
-            foreach ($backups_file as $backup) {
+            foreach ($backups_file as $id => $backup) {
                 $name = basename((string) $backup);
                 $info = Backup::readName($backup);
 
@@ -281,56 +374,88 @@ if (file_exists($backup_dir)) {
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
 
                 echo '
-        <div class="callout callout-warning">
-            <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                    '_DATE_' => Translator::dateToLocale($data),
-                    '_TIME_' => Translator::timeToLocale($ora),
-                ]).'</h4>
-            <p><small>
-                '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Dimensione').': <i id="n-'.$id.'"></i>
-            </small></p>
-
-            <script>
-                loadSize("'.$id.'", "n-'.$id.'");
-            </script>
-
-            <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>
-
-            <div class="float-right d-none d-sm-inline">
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
-                    <i class="fa fa-upload"></i>
-                </a>
-
-                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
-                    <i class="fa fa-trash"></i>
-                </a>
-            </div>
-        </div>';
+                            <div class="col-md-12 mb-3">
+                                <div class="card card-outline card-warning">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fa fa-calendar-o mr-2"></i><strong>'.tr('Backup del _DATE_', [
+                                                '_DATE_' => Translator::dateToLocale($data),
+                                            ]).'</strong>
+                                            <span class="text-muted ml-2">'.tr('alle _TIME_', [
+                                                '_TIME_' => Translator::timeToLocale($ora),
+                                            ]).'</span>
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1">
+                                                            <i class="fa fa-file-o mr-1"></i> <strong>'.tr('Nome').':</strong> '.$name.'
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="mb-1">
+                                                            <i class="fa fa-hdd-o mr-1"></i> <strong>'.tr('Dimensione').':</strong> <span id="n-'.$id.'">'.tr('Calcolo in corso').'...</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="mb-1">
+                                                            <span class="badge badge-warning"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 text-right">
+                                                <div class="btn-group">
+                                                    <a class="btn btn-sm btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                                                        <i class="fa fa-upload"></i> '.tr('Ripristina').'
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    loadSize("'.$id.'", "n-'.$id.'");
+                                </script>
+                            </div>';
             }
         } else {
             echo '
-        <div class="alert alert-info">
-            <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
-        </div>';
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> '.tr('Non è stato trovato alcun backup di questa tipologia.').'
+                                </div>
+                            </div>';
         }
 
         echo '
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>';
+
+        // Aggiungi un pulsante "Crea backup" anche in fondo alla pagina
+        if (!empty($backup_dir)) {
+            echo '
+<div class="row mt-4 mb-4">
+    <div class="col-md-8 mx-auto text-center">
+        <a class="btn btn-lg btn-success" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
+            <i class="fa fa-archive fa-fw"></i> '.tr('Crea nuovo backup').'
+        </a>
+    </div>
+</div>';
+        }
     }
 } else {
     echo '
 <div class="alert alert-danger">'.tr('La cartella di backup non esiste!').' '.tr('Non è possibile eseguire i backup!').'</div>';
-}
-
-// Creazione backup
-if (!empty($backup_dir)) {
-    echo '
-<div class="btn-group pull-right">
-    <a class="btn btn-primary" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
-        <i class="fa fa-archive"></i> '.tr('Crea backup').'
-    </a>
-</div>
-<div class="clearfix"></div>';
 }

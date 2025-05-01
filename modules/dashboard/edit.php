@@ -33,20 +33,20 @@ $tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiin
 
 // Tecnici disponibili
 $id_tipo_tecnico = Tipo::where('name', 'Tecnico')->first()->id;
-$tecnici_disponibili = $dbo->fetchArray('SELECT 
-    `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore` 
-FROM 
+$tecnici_disponibili = $dbo->fetchArray('SELECT
+    `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore`
+FROM
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-WHERE 
+WHERE
     `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
-GROUP BY 
+GROUP BY
     `an_anagrafiche`.`idanagrafica`
-ORDER BY 
+ORDER BY
     `ragione_sociale` ASC');
 
 // Zone
@@ -248,9 +248,9 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_tecnico = $user['idanagrafica'];
 }
 
-$query_da_programmare = 'SELECT 
-            `data_richiesta` AS data 
-        FROM 
+$query_da_programmare = 'SELECT
+            `data_richiesta` AS data
+        FROM
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
@@ -258,10 +258,10 @@ $query_da_programmare = 'SELECT
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
         WHERE
             `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
-    UNION 
-        SELECT 
-            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data 
-        FROM 
+    UNION
+        SELECT
+            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data
+        FROM
             `in_interventi`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`';
 
@@ -272,9 +272,9 @@ if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
 }
 
 $query_da_programmare .= '
-        WHERE 
-            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND 
-            `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0)';
+        WHERE
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND
+            `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
 if (!empty($risultati_da_programmare)) {
@@ -295,19 +295,19 @@ if (!empty($risultati_da_programmare)) {
 
     // Controllo pianificazioni mesi precedenti
     // Promemoria contratti + promemoria interventi
-    $query_mesi_precenti = 'SELECT 
-            `co_promemoria`.`id` 
-        FROM 
-            `co_promemoria` 
+    $query_mesi_precenti = 'SELECT
+            `co_promemoria`.`id`
+        FROM
+            `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto`=`co_contratti`.`id`
-        WHERE 
-            `idstato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1) 
-            AND `idintervento` IS NULL 
+        WHERE
+            `idstato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1)
+            AND `idintervento` IS NULL
             AND DATE_ADD(`co_promemoria`.`data_richiesta`, INTERVAL 1 DAY) <= NOW()
-    UNION 
-        SELECT 
-            `in_interventi`.`id` 
-        FROM 
+    UNION
+        SELECT
+            `in_interventi`.`id`
+        FROM
             `in_interventi`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
 
@@ -318,9 +318,9 @@ if (!empty($risultati_da_programmare)) {
     }
 
     $query_mesi_precenti .= '
-        WHERE 
-            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 
-            AND `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_completato` = 0) 
+        WHERE
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0
+            AND `in_interventi`.`idstatointervento` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
             AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 
@@ -749,9 +749,9 @@ echo '
 
             eventDidMount: function(info){
                 let element = $(info.el);
-                
+
                 let id_record = info.event.extendedProps.idintervento;
-                
+
                 if (globals.dashboard.tooltip == 1 && element[0].childElementCount > 0 ) {
                     element.tooltipster({
                         content: globals.translations.loading + "...",
@@ -766,6 +766,16 @@ echo '
                         touchDevices: true,
                         trigger: "hover",
                         position: "left",
+                        interactive: true,
+                        autoClose: false,
+                        functionReady: function(instance, helper) {
+                            $(".tooltipster-base").css("z-index", "10000");
+                        },
+                        functionAfter: function(instance, helper) {
+                            // Rimuove il flag "loaded" quando il tooltip viene chiuso
+                            // per permettere di ricaricarlo la prossima volta
+                            $(helper.origin).data("loaded", false);
+                        },
                         functionBefore: function (instance, helper) {
                             let $origin = $(helper.origin);
 
@@ -809,7 +819,7 @@ echo '
                         swal(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
                 }
-                
+
             ]
         });
 

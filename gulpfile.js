@@ -117,7 +117,6 @@ const JS = gulp.parallel(() => {
         'inputmask/dist/min/jquery.inputmask.bundle.min.js',
         'jquery-form/src/jquery.form.js',
         'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
-        'jquery.shorten/src/jquery.shorten.js',
         'numeral/numeral.js',
         'parsleyjs/dist/parsley.js',
         'select2/dist/js/select2.min.js',
@@ -319,7 +318,7 @@ function wacom(done) {
         config.development + '/' + config.paths.js + '/wacom/common/libs/signature_sdk.wasm'
     ], {encoding: false})
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/wacom/'));
-        
+
     // Poi processiamo i file JS che lo utilizzano
     const jsStream = gulp.src(allFiles, {
         allowEmpty: true
@@ -366,20 +365,26 @@ function srcFonts() {
         .pipe(gulp.dest(config.production + '/' + config.paths.fonts));
 }
 
-function ckeditor(done) {
-    const ckeditor = gulp.src([
-        config.nodeDirectory + '/ckeditor4-full/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
-        config.nodeDirectory + '/ckeditor4-full/*.{js,css}',
-    ], {encoding: false})
+function ckeditor() {
+
+    const ckeditorCore =  gulp.src([
+        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
+        config.nodeDirectory + '/ckeditor4/*.{js,css}',
+    ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 
-    const plugins = gulp.src([
-        config.nodeDirectory + '/ckeditor4/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
-        //config.nodeDirectory + '/ckeditor-image-to-base/*.{js,json,css,png,gif,html}',
-    ], {encoding: false})
+    const nodePlugins = gulp.src([
+        config.nodeDirectory + '/ckeditor/plugins/{emoji,autocomplete,textmatch,textwatcher}/**/*.{js,json,css,png,gif,html}',
+    ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins'));
 
-    return waitPipes([ckeditor, plugins], done);
+    // Plugin personalizzati
+    const customPlugins = gulp.src([
+        config.development + '/' + config.paths.js + '/ckeditor/plugins/**/*' // Sorgente: assets/src/js/ckeditor/plugins/
+    ], { allowEmpty: true })
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor/plugins')); // Destinazione: assets/dist/js/ckeditor/plugins/
+
+    return merge(ckeditorCore, nodePlugins, customPlugins); // Unione dei flussi
 }
 
 function colorpicker() {
@@ -575,7 +580,7 @@ export function release(done) {
         bufferStream.push(null);
         archive.append(bufferStream, { name: 'REVISION' });
 
-        // Opzioni sulla release  
+        // Opzioni sulla release
         inquirer.prompt([{
             type: 'input',
             name: 'version',
@@ -590,12 +595,12 @@ export function release(done) {
 
             let version = result.version;
 
-            // Aggiungi 'beta' solo se l'opzione beta è selezionata  
+            // Aggiungi 'beta' solo se l'opzione beta è selezionata
             if (result.beta) {
                 version += 'beta';
             }
 
-            // Creazione di un stream leggibile con la versione  
+            // Creazione di un stream leggibile con la versione
             const bufferStream = new Readable({
                 read() {
                     this.push(version);
@@ -603,10 +608,10 @@ export function release(done) {
                 }
             });
 
-            // Aggiunta della versione corrente nel file VERSION  
+            // Aggiunta della versione corrente nel file VERSION
             archive.append(bufferStream, { name: 'VERSION' });
 
-            // Completamento dello ZIP  
+            // Completamento dello ZIP
             archive.finalize();
 
             done();

@@ -52,7 +52,7 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="card-body">
-		            {[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Bloccato?'); ?>", "name": "is_bloccato", "value": "$is_bloccato$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "" ]}
 		            {[ "type": "checkbox", "label": "<?php echo tr('Pianificabile?'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
 		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 				</div>

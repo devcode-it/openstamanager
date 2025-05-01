@@ -98,13 +98,13 @@ switch ($resource) {
             `righe`.`media_ponderata`,
             CONCAT(`conto_vendita_categoria` .`numero`, '.', `conto_vendita_sottocategoria`.`numero`, ' ', `conto_vendita_sottocategoria`.`descrizione`) AS idconto_vendita_title,
             CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS idconto_acquisto_title
-        FROM 
+        FROM
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-            LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
-            LEFT JOIN `mg_categorie_lang` AS categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria`
-            LEFT JOIN `mg_categorie_lang` AS sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+            LEFT JOIN `zz_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
+            LEFT JOIN `zz_categorie_lang` AS categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            LEFT JOIN `zz_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria`
+            LEFT JOIN `zz_categorie_lang` AS sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
             LEFT JOIN `co_pianodeiconti3` AS conto_vendita_sottocategoria ON `conto_vendita_sottocategoria`.`id`=`mg_articoli`.`idconto_vendita`
                 LEFT JOIN `co_pianodeiconti2` AS conto_vendita_categoria ON `conto_vendita_sottocategoria`.`idpianodeiconti2`=`conto_vendita_categoria`.`id`
             LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`idconto_acquisto`
@@ -221,13 +221,14 @@ switch ($resource) {
         break;
 
     case 'categorie':
-        $query = 'SELECT `mg_categorie`.`id`, `title` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+        $query = 'SELECT `zz_categorie`.`id`, `title` AS descrizione FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
         foreach ($elements as $element) {
-            $filter[] = '`mg_categorie`.`id`='.prepare($element);
+            $filter[] = '`zz_categorie`.`id`='.prepare($element);
         }
 
         $where[] = '`parent` IS NULL';
+        $where[] = '`zz_categorie`.`is_articolo` = 1';
 
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
@@ -241,13 +242,14 @@ switch ($resource) {
          */
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT `mg_categorie`.`id`, `title` AS descrizione FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+            $query = 'SELECT `zz_categorie`.`id`, `title` AS descrizione FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
 
             foreach ($elements as $element) {
-                $filter[] = '`mg_categorie`.`id`='.prepare($element);
+                $filter[] = '`zz_categorie`.`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_categoria']);
+            $where[] = '`zz_categorie`.`is_articolo` = 1';
 
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');

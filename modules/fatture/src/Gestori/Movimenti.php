@@ -105,6 +105,7 @@ class Movimenti
         $id_conto_controparte = $id_conto; // Salvataggio del conto dell'anagrafica per usi successivi
 
         $importo_anagrafica = $totale;
+        // Per le fatture con split payment, l'importo dell'anagrafica è sempre il totale senza IVA
         if ($split_payment) {
             $importo_anagrafica = sum($importo_anagrafica, -$iva_detraibile, 2);
         }
@@ -142,15 +143,40 @@ class Movimenti
         }
 
         /*
-         * 3) IVA detraibile sul relativo conto (Split Payment disabilitato)
+         * 3) IVA detraibile sul relativo conto
          * IVA detraibile -> AVERE per Vendita, DARE per Acquisto
          */
-        if (!empty($iva_detraibile) && empty($split_payment)) {
-            $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti') : setting('Conto per Iva su vendite');
-            $movimenti[] = [
-                'id_conto' => $id_conto,
-                'avere' => $iva_detraibile,
-            ];
+        if (!empty($iva_detraibile)) {
+            // Caso 1: Fattura di acquisto con split payment - IVA su vendite
+            if ($is_acquisto && $split_payment) {
+                $id_conto = setting('Conto per Iva su vendite');
+                $movimenti[] = [
+                    'id_conto' => $id_conto,
+                    'avere' => $iva_detraibile,
+                ];
+
+                // Aggiunta dell'IVA al conto di costo per fatture di acquisto con split payment
+                foreach ($righe as $riga) {
+                    $id_conto = $riga->id_conto ?: $this->fattura->idconto;
+                    $iva_riga = $riga->iva;
+
+                    if (!empty($iva_riga)) {
+                        $movimenti[] = [
+                            'id_conto' => $id_conto,
+                            'avere' => $iva_riga,
+                        ];
+                    }
+                }
+            }
+            // Caso 2: Fattura senza split payment - IVA normale (acquisti o vendite)
+            else if (empty($split_payment)) {
+                $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti') : setting('Conto per Iva su vendite');
+                $movimenti[] = [
+                    'id_conto' => $id_conto,
+                    'avere' => $iva_detraibile,
+                ];
+            }
+            // Caso 3: Fattura di vendita con split payment - Non si registra l'IVA
         }
 
         /*

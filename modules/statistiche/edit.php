@@ -41,13 +41,15 @@ $start_date = new DateTime($start);
 $end_date = new DateTime($end);
 
 while ($start_date <= $end_date) {
-    $months[] = $start_date->format('F');
-    $start_date->modify('+1 month');
+    $month_number = $start_date->format('n');  // Ottiene il numero del mese (1-12)
+    if (!in_array($month_number, $months)) {  // Aggiunge il mese solo se non gia' presente
+        $months[] = $month_number;
+    }
+    $start_date->modify('+1 month');  // Avanza al mese successivo
 }
-
-foreach ($months as $key => $month) {
-    $month_number = date('n', strtotime($month));
-    $months[$key] = $translated_months[$month_number - 1];
+// Sostituisce i numeri con i nomi tradotti
+foreach ($months as $key => $month_number) {
+    $months[$key] = $translated_months[$month_number - 1];  // Traduce il mese
 }
 
 // Fatturato
@@ -115,7 +117,7 @@ var chart_options = {
                     return label;
                 }
             }
-            
+
         },
         elements: {
             line: {
@@ -190,49 +192,49 @@ function init_calendar(calendar) {
 </script>';
 
 // Clienti top
-$clienti = $dbo->fetchArray('SELECT 
-        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
-        (SELECT 
-            COUNT(*) 
-        FROM 
-            `co_documenti` 
+$clienti = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale,
+        (SELECT
+            COUNT(*)
+        FROM
+            `co_documenti`
             INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
-            INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
-        WHERE 
-            `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta, 
-        `an_anagrafiche`.`idanagrafica`, 
-        `an_anagrafiche`.`ragione_sociale` 
-    FROM 
-        `co_documenti` 
+            INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+        WHERE
+            `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
+        `an_anagrafiche`.`idanagrafica`,
+        `an_anagrafiche`.`ragione_sociale`
+    FROM
+        `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
-        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica` 
-        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
-    WHERE 
-        `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
-        AND `zz_segments`.`autofatture`=0 
-    GROUP BY 
-        `an_anagrafiche`.`idanagrafica` 
-    ORDER BY 
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='entrata'
+        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0
+    GROUP BY
+        `an_anagrafiche`.`idanagrafica`
+    ORDER BY
         `totale` DESC LIMIT 20');
 
-$totale = $dbo->fetchArray('SELECT 
-        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale 
-    FROM 
-        `co_documenti` 
+$totale = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
+    FROM
+        `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") 
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
-        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
-    WHERE 
-        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_tipidocumento`.`dir`='entrata' 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
+        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_tipidocumento`.`dir`='entrata'
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 
 echo '
@@ -280,47 +282,47 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray('SELECT 
-        SUM(IF(`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS qta,  
-        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale, 
-        `mg_articoli`.`id`, 
-        `mg_articoli`.`codice`, 
-        `mg_articoli_lang`.`title` as descrizione, 
-        `mg_articoli`.`um` 
-    FROM 
-        `co_documenti` 
+$articoli = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS qta,
+        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale,
+        `mg_articoli`.`id`,
+        `mg_articoli`.`codice`,
+        `mg_articoli_lang`.`title` as descrizione,
+        `mg_articoli`.`um`
+    FROM
+        `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
-    WHERE 
-        `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
-        AND `zz_segments`.`autofatture`=0 
-    GROUP BY 
-        `co_righe_documenti`.`idarticolo` 
-    ORDER BY 
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='entrata'
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0
+    GROUP BY
+        `co_righe_documenti`.`idarticolo`
+    ORDER BY
         `qta` DESC LIMIT 20');
 
-$totale = $dbo->fetchArray('SELECT 
+$totale = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, - `co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS totale_qta,
-        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale 
-    FROM 
-        `co_documenti` 
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` 
+        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
+    FROM
+        `co_documenti`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` 
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo` 
-        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
-    WHERE 
-        `co_tipidocumento`.`dir`='entrata' 
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa') 
-        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).' 
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='entrata'
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 
 echo '
@@ -383,7 +385,7 @@ foreach ($tipi as $tipo) {
         `in_interventi`
         LEFT JOIN(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni ON `in_interventi`.`id` = `sessioni`.`idintervento`
     WHERE
-        `in_interventi`.`idtipointervento` = '.prepare($tipo['idtipointervento']).' 
+        `in_interventi`.`idtipointervento` = '.prepare($tipo['idtipointervento']).'
         AND `sessioni`.`orario_fine` BETWEEN '.prepare($start).' AND '.prepare($end).'
     GROUP BY
         YEAR(`sessioni`.`orario_fine`),
@@ -499,19 +501,19 @@ $(document).ready(function() {
 </script>';
 
 // Interventi per tecnico
-$tecnici = $dbo->fetchArray('SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore` 
-FROM 
+$tecnici = $dbo->fetchArray('SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore`
+FROM
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-WHERE 
+WHERE
     `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche_lang`.`title`='Tecnico'
-GROUP BY 
+GROUP BY
     `an_anagrafiche`.`idanagrafica`
-ORDER BY 
+ORDER BY
     `ragione_sociale` ASC");
 
 $dataset = '';
@@ -522,7 +524,7 @@ if ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect']['id
 }
 
 foreach ($tecnici as $tecnico) {
-    $sessioni = $dbo->fetchArray('SELECT SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `in_interventi_tecnici`.`idtecnico` = '.prepare($tecnico['id']).' AND `in_interventi_tecnici`.`orario_inizio` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` AND '.$where.' GROUP BY YEAR(`in_interventi_tecnici`.`orario_inizio`), MONTH(`in_interventi_tecnici`.`orario_inizio`) ORDER BY YEAR(`in_interventi_tecnici`.`orario_inizio`) ASC, MONTH(`in_interventi_tecnici`.`orario_inizio`) ASC');
+    $sessioni = $dbo->fetchArray('SELECT SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `in_interventi_tecnici`.`idtecnico` = '.prepare($tecnico['id']).' AND `in_interventi_tecnici`.`orario_inizio` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_bloccato` AND '.$where.' GROUP BY YEAR(`in_interventi_tecnici`.`orario_inizio`), MONTH(`in_interventi_tecnici`.`orario_inizio`) ORDER BY YEAR(`in_interventi_tecnici`.`orario_inizio`) ASC, MONTH(`in_interventi_tecnici`.`orario_inizio`) ASC');
 
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
@@ -561,7 +563,7 @@ echo '
                         {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
                     </div>
                 </div>
-          
+
                 <canvas id="sessioni"></canvas>
             </div>
         </div>
@@ -605,13 +607,13 @@ $(document).ready(function() {
                     label: function(tooltipItem, data) {
                         var dataset = data.datasets[tooltipItem.datasetIndex];
                         var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
-    
+
                         if (label) {
                             label += ": ";
                         }
 
                         label += tooltipItem.xLabel;
-                        
+
                         if (tooltipItem.xLabel<=1) {
                             label += " ora ";
                         }else{
@@ -619,7 +621,7 @@ $(document).ready(function() {
                         }
 
                         label += "(in attività completate)";
-    
+
                         return label;
                     }
                 }
@@ -631,63 +633,63 @@ $(document).ready(function() {
 
 $dataset = '';
 
-$nuovi_clienti = $dbo->fetchArray('SELECT 
-    COUNT(*) AS result, 
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, 
-    YEAR(`an_anagrafiche`.`created_at`) AS year, 
-    MONTH(`an_anagrafiche`.`created_at`) AS month 
-FROM 
+$nuovi_clienti = $dbo->fetchArray('SELECT
+    COUNT(*) AS result,
+    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
+    YEAR(`an_anagrafiche`.`created_at`) AS year,
+    MONTH(`an_anagrafiche`.`created_at`) AS month
+FROM
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE 
+WHERE
     `an_tipianagrafiche_lang`.`title` = "Cliente" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) ORDER BY YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
-$nuovi_fornitori = $dbo->fetchArray('SELECT 
-    COUNT(*) AS result, 
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, 
-    YEAR(`an_anagrafiche`.`created_at`) AS year, 
-    MONTH(`an_anagrafiche`.`created_at`) AS month 
-FROM 
+$nuovi_fornitori = $dbo->fetchArray('SELECT
+    COUNT(*) AS result,
+    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
+    YEAR(`an_anagrafiche`.`created_at`) AS year,
+    MONTH(`an_anagrafiche`.`created_at`) AS month
+FROM
     `an_anagrafiche`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE 
-    `an_tipianagrafiche_lang`.`title` = "Fornitore" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
-GROUP BY 
-    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) 
-ORDER BY 
+WHERE
+    `an_tipianagrafiche_lang`.`title` = "Fornitore" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).'
+GROUP BY
+    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`)
+ORDER BY
     YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
 // Nuovi clienti per i quali ho emesso almeno una fattura di vendita
-$clienti_acquisiti = $dbo->fetchArray('SELECT 
-    COUNT(*) AS result, 
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, 
-    YEAR(`an_anagrafiche`.`created_at`) AS year, 
-    MONTH(`an_anagrafiche`.`created_at`) AS month 
-FROM 
+$clienti_acquisiti = $dbo->fetchArray('SELECT
+    COUNT(*) AS result,
+    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
+    YEAR(`an_anagrafiche`.`created_at`) AS year,
+    MONTH(`an_anagrafiche`.`created_at`) AS month
+FROM
     `an_anagrafiche`
     INNER JOIN `co_documenti` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
     INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE 
-    `an_tipianagrafiche_lang`.`title` = "Cliente" AND 
-    `co_tipidocumento`.`dir` = "entrata" AND 
-    `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' 
-GROUP BY 
-    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) 
-ORDER BY 
+WHERE
+    `an_tipianagrafiche_lang`.`title` = "Cliente" AND
+    `co_tipidocumento`.`dir` = "entrata" AND
+    `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).'
+GROUP BY
+    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`)
+ORDER BY
     YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
 
 // Random color
 $background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr('Nuovi clienti').'",   
+    label: "'.tr('Nuovi clienti').'",
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($nuovi_clienti, 'result')).'
@@ -698,7 +700,7 @@ $dataset .= '{
 $background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr('Clienti acquisiti').'",   
+    label: "'.tr('Clienti acquisiti').'",
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($clienti_acquisiti, 'result')).'
@@ -709,7 +711,7 @@ $dataset .= '{
 $background = '#'.dechex(random_int(256, 16777215));
 
 $dataset .= '{
-    label: "'.tr('Nuovi fornitori').'",   
+    label: "'.tr('Nuovi fornitori').'",
     backgroundColor: "'.$background.'",
     data: [
         '.implode(',', array_column($nuovi_fornitori, 'result')).'
@@ -799,18 +801,14 @@ $(document).ready(function() {
 
 
 <script type="text/javascript">
-$(".shorten").shorten({
-    moreText: "'.tr('Mostra tutto').'",
-    lessText: "'.tr('Comprimi').'",
-    showChars : 70
-});
+// Inizializzazione automatica tramite text-shortener.js
 
 $("#idtipiintervento").change(function(){
     let tipi = "";
     if( $(this).val() ){
         idtipi = JSON.stringify($(this).val());
     }
-    
+
     session_set("superselect,idtipiintervento",idtipi,0);
     location.reload();
 });

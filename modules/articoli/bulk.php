@@ -36,7 +36,7 @@ $id_preventivi = Module::where('name', 'Preventivi')->first()->id;
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {
-    case 'change-acquisto':
+    case 'change_purchase_price':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $percentuale = post('percentuale');
@@ -56,7 +56,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-vendita':
+    case 'change_sale_price':
         $percentuale = post('percentuale');
         $prezzo_partenza = post('prezzo_partenza');
         $tipologia = post('tipologia');
@@ -106,7 +106,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-coefficiente':
+    case 'change_coefficient':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $coefficiente = post('coefficiente');
@@ -120,41 +120,41 @@ switch (post('op')) {
 
         break;
 
-    case 'delete-bulk':
+    case 'delete_bulk':
         foreach ($id_records as $id) {
             $elementi = $dbo->fetchArray('
-                SELECT `co_documenti`.`id` FROM `co_documenti` 
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` 
+                SELECT `co_documenti`.`id` FROM `co_documenti`
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
                 WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id).'
-                
-                UNION 
-                
-                SELECT `dt_ddt`.`id` FROM `dt_ddt` 
-                INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
+
+                UNION
+
+                SELECT `dt_ddt`.`id` FROM `dt_ddt`
+                INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
                 WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id).'
-                
-                UNION 
-                
-                SELECT `or_ordini`.`id` FROM `or_ordini` 
-                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` 
+
+                UNION
+
+                SELECT `or_ordini`.`id` FROM `or_ordini`
+                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
                 WHERE `or_righe_ordini`.`idarticolo` = '.prepare($id).'
-                
-                UNION 
-                
-                SELECT `co_contratti`.`id` FROM `co_contratti` 
-                INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` 
+
+                UNION
+
+                SELECT `co_contratti`.`id` FROM `co_contratti`
+                INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`
                 WHERE `co_righe_contratti`.`idarticolo` = '.prepare($id).'
-                
-                UNION 
-                
-                SELECT `co_preventivi`.`id` FROM `co_preventivi` 
-                INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id` 
+
+                UNION
+
+                SELECT `co_preventivi`.`id` FROM `co_preventivi`
+                INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
                 WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id).'
-                
-                UNION 
-                
-                SELECT `in_interventi`.`id` FROM `in_interventi` 
-                INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id` 
+
+                UNION
+
+                SELECT `in_interventi`.`id` FROM `in_interventi`
+                INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
                 WHERE `in_righe_interventi`.`idarticolo` = '.prepare($id)
             );
 
@@ -170,7 +170,7 @@ switch (post('op')) {
 
         break;
 
-    case 'stampa-etichette':
+    case 'print_labels':
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
 
         if (post('tipologia') == 'singola') {
@@ -182,7 +182,7 @@ switch (post('op')) {
         redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
         exit;
 
-    case 'change-qta':
+    case 'change_quantity':
         $descrizione = post('descrizione');
         $data = post('data');
         $qta = post('qta');
@@ -206,7 +206,7 @@ switch (post('op')) {
 
         break;
 
-    case 'crea-preventivo':
+    case 'create_estimate':
         $nome = post('nome');
         $data = post('data');
         $id_tipo = post('id_tipo');
@@ -245,7 +245,7 @@ switch (post('op')) {
         redirect(base_path().'/editor.php?id_module='.$id_preventivi.'&id_record='.$id_preventivo);
         exit;
 
-    case 'export-csv':
+    case 'export_csv':
         $file = temp_file();
         $exporter = new CSV($file);
 
@@ -258,7 +258,7 @@ switch (post('op')) {
         download($file, 'articoli.csv');
         break;
 
-    case 'change-categoria':
+    case 'change_category':
         $categoria = post('id_categoria');
         $sottocategoria = post('subcategoria');
         $n_articoli = 0;
@@ -282,7 +282,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-iva':
+    case 'change_vat':
         $iva = post('id_iva');
         $n_articoli = 0;
 
@@ -304,7 +304,7 @@ switch (post('op')) {
 
         break;
 
-    case 'set-acquisto-ifzero':
+    case 'set_purchase_price_if_zero':
         $n_art = 0;
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
@@ -327,7 +327,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-um':
+    case 'change_unit':
         $um = post('um');
         $n_articoli = 0;
 
@@ -349,7 +349,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-conto-acquisto':
+    case 'change_purchase_account':
         $conto_acquisto = post('conto_acquisto');
         $n_articoli = 0;
 
@@ -371,7 +371,7 @@ switch (post('op')) {
 
         break;
 
-    case 'change-conto-vendita':
+    case 'change_sale_account':
         $conto_vendita = post('conto_vendita');
         $n_articoli = 0;
 
@@ -393,7 +393,7 @@ switch (post('op')) {
 
         break;
 
-    case 'set-provvigione':
+    case 'set_commission':
         $n_art = 0;
         foreach ($id_records as $id) {
             $exist = $dbo->selectOne('co_provvigioni', 'id', ['idarticolo' => $id, 'idagente' => post('idagente')]);
@@ -421,7 +421,7 @@ switch (post('op')) {
 
         break;
 
-    case 'add-listino':
+    case 'add_price_list':
         $id_listino = post('id_listino');
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
@@ -443,7 +443,7 @@ switch (post('op')) {
 
         break;
 
-    case 'generate-barcode-bulk':
+    case 'generate_barcode_bulk':
         foreach ($id_records as $id) {
             $codice = '200'.str_pad((string) $id, 9, '0', STR_PAD_LEFT);
             $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
@@ -457,15 +457,15 @@ switch (post('op')) {
 
         break;
 
-    case 'change-attivo':
+    case 'change_active':
         Articolo::whereIn('id', $id_records)->update(['attivo' => post('attivo')]);
-        
+
         flash()->info(tr('Articoli '.(post('attivo') ? 'attivati' : 'disattivati').' correttamente!'));
 
         break;
 }
 
-$operations['change-iva'] = [
+$operations['change_vat'] = [
     'text' => '<span><i class="fa fa-percent"></i> '.tr('Aggiorna aliquota iva').'</span>',
     'data' => [
         'title' => tr('Cambiare l\'aliquota iva?'),
@@ -476,7 +476,7 @@ $operations['change-iva'] = [
     ],
 ];
 
-$operations['change-categoria'] = [
+$operations['change_category'] = [
     'text' => '<span><i class="fa fa-briefcase"></i> '.tr('Aggiorna categoria e sottocategoria').'</span>',
     'data' => [
         'title' => tr('Cambiare la categoria e la sottocategoria?'),
@@ -488,7 +488,7 @@ $operations['change-categoria'] = [
     ],
 ];
 
-$operations['change-coefficiente'] = [
+$operations['change_coefficient'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna coefficiente di vendita').'</span>',
     'data' => [
         'title' => tr('Aggiornare il coefficiente di vendita per gli articoli selezionati?'),
@@ -499,7 +499,7 @@ $operations['change-coefficiente'] = [
     ],
 ];
 
-$operations['change-conto-acquisto'] = [
+$operations['change_purchase_account'] = [
     'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di acquisto').'</span>',
     'data' => [
         'title' => tr('Cambiare il conto predefinito di acquisto?'),
@@ -510,7 +510,7 @@ $operations['change-conto-acquisto'] = [
     ],
 ];
 
-$operations['change-conto-vendita'] = [
+$operations['change_sale_account'] = [
     'text' => '<span><i class="fa fa-money"></i> '.tr('Aggiorna conto predefinito di vendita').'</span>',
     'data' => [
         'title' => tr('Cambiare il conto predefinito di vendita?'),
@@ -521,7 +521,7 @@ $operations['change-conto-vendita'] = [
     ],
 ];
 
-$operations['change-acquisto'] = [
+$operations['change_purchase_price'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),
@@ -532,7 +532,7 @@ $operations['change-acquisto'] = [
     ],
 ];
 
-$operations['change-vendita'] = [
+$operations['change_sale_price'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di vendita').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
@@ -547,7 +547,7 @@ $operations['change-vendita'] = [
     ],
 ];
 
-$operations['change-qta'] = [
+$operations['change_quantity'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna quantità').'</span>',
     'data' => [
         'title' => tr('Cambiare le quantità?'),
@@ -560,7 +560,7 @@ $operations['change-qta'] = [
     ],
 ];
 
-$operations['change-um'] = [
+$operations['change_unit'] = [
     'text' => '<span><i class="fa fa-balance-scale"></i> '.tr('Aggiorna unità di misura').'</span>',
     'data' => [
         'title' => tr('Cambiare l\'unità di misura?'),
@@ -571,7 +571,7 @@ $operations['change-um'] = [
     ],
 ];
 
-$operations['add-listino'] = [
+$operations['add_price_list'] = [
     'text' => '<span><i class="fa fa-plus"></i> '.tr('Aggiungi a listino cliente').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero aggiungere gli articoli al listino cliente?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 1, "ajax-source": "listini" ]}
@@ -582,7 +582,39 @@ $operations['add-listino'] = [
     ],
 ];
 
-$operations['crea-preventivo'] = [
+
+$operations['change_active'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Attiva/disattiva articoli').'</span>',
+    'data' => [
+        'title' => tr('Attiva/disattiva articoli selezionati'),
+        'msg' => '
+        {[ "type": "checkbox", "label": "'.tr('Stato').'", "name": "attivo", "value": "0", "placeholder": "'.tr('Attivo').'" ]}<br>',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => false,
+    ],
+];
+
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+$operations['export_csv'] = [
+    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => true,
+    ],
+];
+
+$operations['create_estimate'] = [
     'text' => '<span><i class="fa fa-plus"></i> '.tr('Crea preventivo').'</span>',
     'data' => [
         'title' => tr('Creare preventivo?'),
@@ -597,7 +629,20 @@ $operations['crea-preventivo'] = [
     ],
 ];
 
-$operations['set-acquisto-ifzero'] = [
+
+
+$operations['generate_barcode_bulk'] = [
+    'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',
+    'data' => [
+        'title' => tr('Generare il barcode per gli articoli selezionati?'),
+        'msg' => 'Il barcode sarà generato in maniera random con tipologia EAN-13',
+        'button' => tr('Genera'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => false,
+    ],
+];
+
+$operations['set_purchase_price_if_zero'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Imposta prezzo di acquisto da fattura ').'</span>',
     'data' => [
         'title' => tr('Impostare il prezzo di acquisto per gli articoli selezionati?'),
@@ -608,7 +653,7 @@ $operations['set-acquisto-ifzero'] = [
     ],
 ];
 
-$operations['set-provvigione'] = [
+$operations['set_commission'] = [
     'text' => '<span><i class="fa fa-percent"></i> '.tr('Imposta una provvigione').'</span>',
     'data' => [
         'title' => tr('Impostare una provvigione?'),
@@ -620,7 +665,7 @@ $operations['set-provvigione'] = [
     ],
 ];
 
-$operations['stampa-etichette'] = [
+$operations['print_labels'] = [
     'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
     'data' => [
         'title' => tr('Stampare le etichette?'),
@@ -632,46 +677,6 @@ $operations['stampa-etichette'] = [
     ],
 ];
 
-$operations['generate-barcode-bulk'] = [
-    'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',
-    'data' => [
-        'title' => tr('Generare il barcode per gli articoli selezionati?'),
-        'msg' => 'Il barcode sarà generato in maniera random con tipologia EAN-13',
-        'button' => tr('Genera'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => false,
-    ],
-];
 
-$operations['change-attivo'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Attiva/disattiva articoli').'</span>',
-    'data' => [
-        'title' => tr('Attiva/disattiva articoli selezionati'),
-        'msg' => '
-        {[ "type": "checkbox", "label": "'.tr('Stato').'", "name": "attivo", "value": "0", "placeholder": "'.tr('Attivo').'" ]}<br>',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => false,
-    ],
-];
-
-$operations['export-csv'] = [
-    'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi esportare un CSV con gli articoli selezionati?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-success',
-        'blank' => true,
-    ],
-];
-
-$operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
-    'data' => [
-        'msg' => tr('Vuoi davvero eliminare gli articoli selezionati?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-danger',
-    ],
-];
 
 return $operations;

@@ -130,9 +130,9 @@ $img = App::getPaths()['img'];
 
 // Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti
 echo '
-<div class="card card-center-large card-warning">
+<div class="card card-center-large shadow-lg" style="max-width: 1200px; margin: 3% auto;">
     <div class="card-header text-center">
-        <img src="'.$img.'/logo_completo.png" class="logo-image" alt="'.tr('OSM Logo').'">
+        <img src="'.$img.'/logo_completo.png" style="max-width: 280px;" alt="'.tr('OSM Logo').'">
     </div>
 
     <div class="card-body">
@@ -141,9 +141,9 @@ echo '
 
 if (!$has_user) {
     echo '
-            <div class="card card-primary">
+            <div class="card card-outline card-info mb-4">
                 <div class="card-header">
-                    <h3 class="card-title">'.tr('Amministrazione').'</h3>
+                    <h3 class="card-title"><i class="fa fa-user mr-2"></i>'.tr('Amministrazione').'</h3>
                 </div>
 
                 <div class="card-body">
@@ -166,9 +166,9 @@ if (!$has_user) {
 
 if (!$has_azienda) {
     echo '
-            <div class="card card-primary">
+            <div class="card card-outline card-success mb-4">
                 <div class="card-header">
-                    <h3 class="card-title">'.tr('Azienda predefinita').'</h3>
+                    <h3 class="card-title"><i class="fa fa-building mr-2"></i>'.tr('Azienda predefinita').'</h3>
                 </div>
 
                 <div class="card-body" id="bs-popup">';
@@ -183,9 +183,9 @@ if (!$has_azienda) {
     echo str_replace('</form>', '', $anagrafica);
 
     echo '
-                    <div class="card card-success collapsed-card">
+                    <div class="card card-outline card-secondary collapsed-card">
                         <div class="card-header">
-                            <h3 class="card-title">'.tr('Logo stampe').'</h3>
+                            <h3 class="card-title"><i class="fa fa-image mr-2"></i>'.tr('Logo stampe').'</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fa fa-plus"></i>
@@ -197,12 +197,12 @@ if (!$has_azienda) {
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>'.tr('File').'</label>
-                                    <input type="file" class="form-control" name="blob">
+                                    <input type="file" class="form-control" name="blob" accept=".jpg,.jpeg,.png">
                                 </div>
                             </div>
 
                             <p>&nbsp;</p>
-                            <div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.
+                            <div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con estensione ".jpg", ".jpeg" o ".png". Risoluzione consigliata 302x111 pixel').'.
                             </div>
                         </div>
                     </div>';
@@ -214,16 +214,16 @@ if (!$has_azienda) {
 
 if (!$has_settings) {
     echo '
-            <div class="card card-primary">
+            <div class="card card-outline card-warning mb-4">
                 <div class="card-header">
-                    <h3 class="card-title">'.tr('Impostazioni di base').'</h3>
+                    <h3 class="card-title"><i class="fa fa-cogs mr-2"></i>'.tr('Impostazioni di base').'</h3>
                 </div>
 
                 <div class="card-body">
                     <div class="row">';
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
-            echo '  
+            echo '
                         <div class="col-md-4">
                             '.Settings::input($setting, $required).'
                         </div>';
@@ -238,7 +238,7 @@ echo '
             <!-- PULSANTI -->
             <div class="row">
                 <div class="col-md-4">
-                    <span>*<small><small>'.tr('Campi obbligatori').'</small></small></span>
+                    <span style="color: red;" >*</span> <span><small><small>'.tr('Campi obbligatori').'</small></small></span>
                 </div>
                 <div class="col-md-4 text-right">
                     <button type="submit" id="config" class="btn btn-success btn-block">

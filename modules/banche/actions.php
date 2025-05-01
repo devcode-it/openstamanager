@@ -22,6 +22,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
 use Modules\Banche\Banca;
 use Modules\Banche\IBAN;
+use GuzzleHttp\Client;
 
 include_once __DIR__.'/../../core.php';
 
@@ -113,5 +114,52 @@ switch (filter('op')) {
             'national_check_digits' => $iban->getNationalCheckDigits(),
         ]);
 
+        break;
+
+    case 'check_balance':
+        $api_key = filter('api_key');
+        
+        // Verifica il credito residuo su ibanapi.com
+        try {
+            $client = new Client();
+            $response = $client->request('GET', setting('Endpoint ibanapi.com').'/v1/balance', [
+                'query' => ['api_key' => $api_key],
+                'http_errors' => false,
+            ]);
+            
+            echo $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com: '.$e->getMessage()]);
+            exit;
+        }
+        break;
+        
+    case 'verify_iban':
+        $iban = filter('iban');
+        $type = filter('type');
+        $api_key = filter('api_key');
+        
+        // Verifica l'IBAN tramite ibanapi.com
+        try {
+            $client = new Client();
+            $endpoint = ($type === 'bank') ? setting('Endpoint ibanapi.com').'/v1/validate' : setting('Endpoint ibanapi.com').'/v1/validate-basic';
+            $response = $client->request('POST', $endpoint, [
+                'form_params' => [
+                    'iban' => $iban,
+                    'api_key' => $api_key
+                ],
+                'headers' => [
+                    'Accept' => 'application/json'
+                ],
+                'http_errors' => false,
+            ]);
+            
+            echo $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Errore durante la connessione a ibanapi.com: '.$e->getMessage()]);
+            exit;
+        }
         break;
 }

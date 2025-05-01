@@ -50,7 +50,7 @@ $id_anagrafica = $documento_finale->idanagrafica;
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_documento", "ajax-source": "preventivi", "select-options": {"idanagrafica": '.$id_anagrafica.', "stato": "is_fatturabile=1 OR is_completato"} ]}
+        {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_documento", "ajax-source": "preventivi", "select-options": {"idanagrafica": '.$id_anagrafica.', "stato": "is_fatturabile=1 OR is_bloccato"} ]}
     </div>
 </div>
 

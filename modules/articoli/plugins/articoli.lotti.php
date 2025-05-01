@@ -122,12 +122,12 @@ if (empty(get('modal'))) {
     <table id="table-serials" class="table table-striped table-hover table-sm table-bordered text-center datatables">
         <thead>
             <tr>
-                <th>'.tr('Serial').'</th>
-                <th>'.tr('Data di creazione').'</th>
-                <th>'.tr('Documento di acquisto').'</th>
-                <th>'.tr('Prezzo di acquisto').'</th>
-                <th>'.tr('Documento di vendita').'</th>
-                <th>'.tr('Prezzo di vendita').'</th>
+                <th width="20%">'.tr('Serial').'</th>
+                <th width="10%">'.tr('Data di creazione').'</th>
+                <th width="20%">'.tr('Documento di acquisto').'</th>
+                <th width="15%">'.tr('Prezzo di acquisto').'</th>
+                <th width="15%">'.tr('Documento di vendita').'</th>
+                <th width="15%">'.tr('Prezzo di vendita').'</th>
                 <th class="text-center">#</th>
             </tr>
         </thead>
@@ -419,6 +419,7 @@ echo '
 <script type="text/javascript">
 $(document).ready(function() {
     $("#table-serials").DataTable().draw();
+    $("#table-serials").DataTable().columns.adjust();
     $("#serials").removeClass("superselect");
     $("#serials").select2().select2("destroy");
 

@@ -362,7 +362,7 @@ if (!empty($righe)) {
         <div class="clearfix"></div>
     </h4>
 
-    <div class="table-responsive text-nowrap">
+    <div class="table-responsive">
         <table class="table table-striped table-hover table-sm table-bordered">
             <thead>
                 <tr>
@@ -443,10 +443,10 @@ if (!empty($righe)) {
                 }
             }
 
-            $idconto_acquisto = $database->fetchOne('SELECT `idconto_acquisto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_acquisto'];
+            $idconto_vendita = $database->fetchOne('SELECT `idconto_vendita` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_vendita'];
         }
 
-        $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;
+        $idconto_vendita = $is_autofattura ? setting('Conto per autofattura') : $idconto_vendita;
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
@@ -573,7 +573,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-3">
-                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
+                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-vendite", "required": 1, "label": "'.tr('Conto vendite').'", "value": "'.$idconto_vendita.'" ]}
                             </div>
 
                             <div class="col-md-3">
@@ -909,7 +909,7 @@ $("[id^=\'articoli\']").change(function() {
     updateSelectOption("id_articolo", $(this).val());
     let data = $(this).selectData();
     if(data!==undefined){
-        $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
+        $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_vendita, data.idconto_vendita_title);
     }
 
     verificaSerial($(this));

@@ -95,7 +95,7 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="card-body">
-					{[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Bloccato?'); ?>", "name": "is_bloccato", "value": "$is_bloccato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "<?php echo $attr; ?>" ]}
 					{[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come fatturabili.'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "<?php echo $attr; ?>" ]}		
 				</div>
 			</div>

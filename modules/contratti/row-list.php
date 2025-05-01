@@ -22,7 +22,7 @@ include_once __DIR__.'/init.php';
 
 use Models\Plugin;
 
-$block_edit = $record['is_completato'];
+$block_edit = $record['is_bloccato'];
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $contratto->getRighe()->sortByDesc('created_at') : $contratto->getRighe();
 $colspan = '8';
@@ -33,7 +33,7 @@ $evasione_bar = [
 ];
 
 echo '
-<div class="table-responsive text-nowrap row-list">
+<div class="table-responsive row-list">
     <table class="table table-striped table-hover table-sm table-bordered">
         <thead>
             <tr>
@@ -127,7 +127,7 @@ foreach ($righe as $riga) {
     }
     echo '
                 </td>
-                
+
                 <td>';
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {
@@ -252,7 +252,7 @@ foreach ($righe as $riga) {
                         </a>';
     }
 
-    if (empty($record['is_completato'])) {
+    if (empty($record['is_bloccato'])) {
         echo '
                         <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                             <i class="fa fa-edit"></i>
@@ -419,6 +419,10 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
             '.tr('Aggiorna prezzi').'
         </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
+            <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
+        </button>
     </div>';
 }
 echo '
@@ -461,7 +465,7 @@ async function modificaRiga(button) {
 // Estraggo le righe spuntate
 function getSelectData() {
     let data=new Array();
-    $(\'#righe\').find(\'.check:checked\').each(function (){ 
+    $(\'#righe\').find(\'.check:checked\').each(function (){
         data.push($(this).closest(\'tr\').data(\'id\'));
     });
 
@@ -593,17 +597,19 @@ $(".check").on("change", function() {
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
+        $("#modifica_iva_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
+        $("#modifica_iva_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");
     }
 });
 
-$("#check_all").click(function(){    
+$("#check_all").click(function(){
     if( $(this).is(":checked") ){
         $(".check").each(function(){
             if( !$(this).is(":checked") ){
@@ -678,5 +684,11 @@ function apriDocumenti(div) {
     let type = riga.data("type");
 
     openModal("'.tr('Documenti collegati').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_documenti_collegati&riga_id=" + id + "&riga_type=" + type)
+}
+
+function modificaIvaRighe(righe) {
+    if (righe.length > 0) {
+        openModal("'.tr('Modifica IVA').'", "'.$module->fileurl('modals/modifica_iva.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + righe.join(','));
+    }
 }
 </script>';

@@ -127,7 +127,7 @@ if (!empty($options['create_document'])) {
     elseif ($final_module->getTranslation('title') == 'Attività') {
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_completato` = 0 ORDER BY `title`" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
             </div>
 
             <div class="col-md-6">
@@ -358,9 +358,8 @@ foreach ($righe as $i => $riga) {
                     </td>
                     <td style="vertical-align:middle">
                         <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
-
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
-                        <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'uscita' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
+                        <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'entrata' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
                         <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
 

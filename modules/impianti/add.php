@@ -22,7 +22,7 @@ use Models\Module;
 
 $id_anagrafica = filter('id_anagrafica');
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
-$id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->first()->id;
+$id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -56,7 +56,7 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie impianti')->fir
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>,"icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>||hide" ]}
 		</div>
 	</div>
 

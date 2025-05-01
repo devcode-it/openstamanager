@@ -43,10 +43,10 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
-$stati_completati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_completati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_completato` = 1')['stati_completati'];
+$stati_bloccati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_bloccati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_bloccato`= 1')['stati_bloccati'];
 
 switch (post('op')) {
-    case 'crea_fattura':
+    case 'create_invoice':
         $documenti = collect();
         $numero_totale = 0;
 
@@ -142,13 +142,13 @@ switch (post('op')) {
         }
         break;
 
-    case 'renew_contratto':
+    case 'renew_contract':
         $numero_totale = 0;
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
             $contratto = Contratto::find($id);
-            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_completato && $contratto->rinnovabile;
+            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_bloccato& $contratto->rinnovabile;
 
             if ($rinnova) {
                 $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
@@ -235,7 +235,7 @@ switch (post('op')) {
         }
         break;
 
-    case 'cambia_stato':
+    case 'change_status':
         $id_stato = post('id_stato');
 
         $n_contratti = 0;
@@ -262,7 +262,18 @@ switch (post('op')) {
         break;
 }
 
-$operations['crea_fattura'] = [
+$operations['change_status'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` AS descrizione, `colore` as _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['create_invoice'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
@@ -276,22 +287,11 @@ $operations['crea_fattura'] = [
     ],
 ];
 
-$operations['renew_contratto'] = [
+$operations['renew_contract'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Rinnova contratti').'</span>',
     'data' => [
         'title' => tr('Rinnovare i contratti selezionati?').'</span>',
-        'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_completati]),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
-];
-
-$operations['cambia_stato'] = [
-    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
-    'data' => [
-        'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` AS descrizione, `colore` as _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
+        'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_bloccati]),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

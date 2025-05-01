@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": "^8.1|^8.3",
+        "php": "^8.1",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -39,17 +39,16 @@
         "greenlion/php-sql-parser": "^4.5",
         "guzzlehttp/guzzle": "^7.0.1",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/database": "^8.0",
-        "intervention/image": "^3.11",
+        "illuminate/database": "^10.0",
+        "intervention/image": "^3.0",
         "jurosh/pdf-merge": "^2.1",
         "league/csv": "^9.7.0",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
         "league/oauth2-client": "^2.6",
         "league/oauth2-google": "^4.0",
-        "monolog/monolog": "^1.27",
+        "monolog/monolog": "^3.0",
         "mpdf/mpdf": "^v8.0.10",
-        "mpociot/vat-calculator": "^2.3",
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",
         "picqer/php-barcode-generator": "^3.2",
@@ -57,12 +56,11 @@
         "servo/fluidxml": "^2.0",
         "slim/flash": "^0.4.0",
         "spipu/html2pdf": "^5.0.0",
-        "symfony/filesystem": "^5.0",
-        "symfony/finder": "^5.0",
+        "symfony/filesystem": "^6.0",
+        "symfony/finder": "^6.0",
         "symfony/polyfill-ctype": "^1.8",
-        "symfony/polyfill-php70": "^1.8",
-        "symfony/translation": "^4.0",
-        "symfony/var-dumper": "^5.0",
+        "symfony/translation": "^6.0",
+        "symfony/var-dumper": "^6.0",
         "thenetworg/oauth2-azure": "^2.0",
         "voku/stringy": "^6.0.0",
         "willdurand/geocoder": "^4.2"
@@ -70,7 +68,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.53",
         "phpunit/phpunit": "^11.5",
-        "rector/rector": "^1.0"
+        "rector/rector": "^2.0"
     },
     "autoload": {
         "psr-4": {

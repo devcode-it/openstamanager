@@ -120,7 +120,7 @@ if (!API\Response::isAPIRequest()) {
 
     // Aggiunta di Monolog a Whoops
     $whoops->pushHandler(function ($exception, $inspector, $run) use ($logger) {
-        $logger->addError($exception->getMessage(), [
+        $logger->addRecord(Monolog\Level::Error, $exception->getMessage(), [
             'code' => $exception->getCode(),
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
@@ -151,9 +151,9 @@ foreach ($handlers as $handler) {
 $handler = new Monolog\ErrorHandler($logger);
 if (!API\Response::isAPIRequest()) {
     $handler->registerErrorHandler([]);
-    $handler->registerExceptionHandler(Monolog\Logger::ERROR);
+    //$handler->registerExceptionHandler(); // Handled by Whoops above
 }
-$handler->registerFatalHandler(Monolog\Logger::ERROR);
+$handler->registerFatalHandler(\Psr\Log\LogLevel::ERROR);
 
 // Database
 $dbo = $database = database();

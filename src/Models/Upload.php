@@ -411,10 +411,11 @@ class Upload extends Model
             return;
         }
 
-        $manager = ImageManager::gd();
-        $img = $manager->read($filepath);
-        $img->scale(600, null);
+        $img = getImageManager()->read($filepath);
 
+        $img->resize(600, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb600.'.$info['extension']));
 
         $img->scale(250, null);
@@ -423,5 +424,4 @@ class Upload extends Model
         $img->scale(100, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
     }
-
 }

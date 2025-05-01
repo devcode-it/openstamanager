@@ -49,11 +49,11 @@ class Preventivo extends Document
      *
      * @var array
      */
-    protected $dates = [
-        'data_bozza',
-        'data_conclusione',
-        'data_accettazione',
-        'data_rifiuto',
+    protected $casts = [
+        'data_bozza' => 'date',
+        'data_conclusione' => 'date',
+        'data_accettazione' => 'date',
+        'data_rifiuto' => 'date',
     ];
 
     protected $info = [];

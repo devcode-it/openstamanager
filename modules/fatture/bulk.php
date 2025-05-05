@@ -30,6 +30,9 @@ use Modules\Fatture\Stato;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
+use Modules\Emails\Template;
+use Notifications\EmailNotification;
+use Models\OperationLog;
 use Util\Zip;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
@@ -575,6 +578,125 @@ switch (post('op')) {
 
         break;
 
+    case 'send-invoices':
+        $list = [];
+        $user = Auth::user();
+        $fatture = Fattura::vendita()
+            ->whereIn('id', $id_records)
+            ->orderBy('data')
+            ->get();
+
+        // Template email predefinito
+        $template = Template::where('id_module', $id_module)
+            ->where('predefined', 1)
+            ->first();
+
+        if (empty($template)) {
+            flash()->error(tr('Nessun template email predefinito trovato per il modulo Fatture!'));
+            break;
+        }
+
+        $module = $template->module;
+        $success_count = 0;
+        $failed_count = 0;
+        $failed_emails = [];
+
+        foreach ($fatture as $fattura) {
+            $mail = Modules\Emails\Mail::build($user, $template, $fattura->id);
+
+            // Destinatari
+            $emails = [];
+            if (!empty($fattura->anagrafica->email)) {
+                $emails[] = $fattura->anagrafica->email;
+            }
+
+            // Aggiungo email referenti in base alla mansione impostata nel template
+            $mansioni = $dbo->select('em_mansioni_template', ['idmansione'], [], ['id_template' => $template->id]);
+            foreach ($mansioni as $mansione) {
+                $referenti = $dbo->table('an_referenti')
+                    ->where('idmansione', $mansione['idmansione'])
+                    ->where('idanagrafica', $fattura->idanagrafica)
+                    ->where('email', '!=', '')
+                    ->get();
+
+                foreach ($referenti as $referente) {
+                    if (!in_array($referente->email, $emails)) {
+                        $emails[] = $referente->email;
+                    }
+                }
+            }
+
+            // Se non ci sono destinatari, salta questa fattura
+            if (empty($emails)) {
+                $failed_count++;
+                $failed_emails[] = $fattura->numero_esterno;
+                continue;
+            }
+
+            // Aggiungi tutti i destinatari all'email
+            foreach ($emails as $receiver) {
+                $mail->addReceiver($receiver);
+            }
+
+            // Contenuti
+            $placeholder_options = ['is_pec' => intval($mail->account->pec ?? 0)];
+            $mail->content = $template->getTranslation('body');
+            $mail->subject = $template->getTranslation('subject');
+
+            // Conferma di lettura
+            $mail->read_notify = $template->read_notify;
+
+            // Prima rimuoviamo eventuali stampe predefinite per evitare duplicati
+            $mail->resetPrints();
+
+            // Stampe da allegare
+            $selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']));
+            $prints = array_column($selected_prints, 'id_print');
+
+            // Aggiungi le stampe selezionate come allegati SOLO per questa fattura
+            foreach ($prints as $print_id) {
+                // Passa l'ID della fattura corrente per allegare solo questa fattura
+                $mail->addPrint($print_id, $fattura->id);
+            }
+
+            // Salvataggio email nella coda di invio
+            $mail->save();
+
+            // Invio mail istantaneo
+            $email = EmailNotification::build($mail);
+            $email_success = $email->send();
+
+            if ($email_success) {
+                OperationLog::setInfo('id_email', $mail->id);
+                $list[] = $fattura->numero_esterno;
+                $success_count++;
+            } else {
+                $mail->delete();
+                $failed_count++;
+                $failed_emails[] = $fattura->numero_esterno;
+            }
+        }
+
+        // Mostra messaggi di riepilogo
+        if ($success_count > 0) {
+            flash()->info(tr('Inviate con successo _COUNT_ email per le fatture _LIST_', [
+                '_COUNT_' => $success_count,
+                '_LIST_' => implode(', ', $list),
+            ]));
+        }
+
+        if ($failed_count > 0) {
+            flash()->error(tr('Impossibile inviare _COUNT_ email per le fatture _LIST_', [
+                '_COUNT_' => $failed_count,
+                '_LIST_' => implode(', ', $failed_emails),
+            ]));
+
+            // Aggiungi suggerimento per verificare gli indirizzi email
+            flash()->warning(tr('Verificare che gli indirizzi email dei destinatari siano corretti e che i domini esistano.'));
+        }
+
+        break;
+
     case 'verify_notifications':
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
@@ -766,6 +888,17 @@ if ($module->name == 'Fatture di vendita') {
         ],
     ];
 }
+
+$operations['send-invoices'] = [
+    'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia fatture').'</span>',
+    'data' => [
+        'title' => tr('Invia fatture'),
+        'msg' => tr('Vuoi inviare le fatture PDF ai contatti email predefiniti in anagrafica?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
 
 $operations['registrazione_contabile'] = [
     'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',

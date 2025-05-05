@@ -442,10 +442,14 @@ if (file_exists($backup_dir)) {
         </div>
     </div>
 </div>';
+    }
+} else {
+    echo '
+    
+<div class="alert alert-danger">'.tr('La cartella di backup non esiste!').' '.tr('Non è possibile eseguire i backup!').'</div>';
+}
 
-        // Aggiungi un pulsante "Crea backup" anche in fondo alla pagina
-        if (!empty($backup_dir)) {
-            echo '
+echo'
 <div class="row mt-4 mb-4">
     <div class="col-md-8 mx-auto text-center">
         <a class="btn btn-lg btn-success" aria-haspopup="true" aria-expanded="false" onclick="creaBackup(this)">
@@ -453,9 +457,3 @@ if (file_exists($backup_dir)) {
         </a>
     </div>
 </div>';
-        }
-    }
-} else {
-    echo '
-<div class="alert alert-danger">'.tr('La cartella di backup non esiste!').' '.tr('Non è possibile eseguire i backup!').'</div>';
-}

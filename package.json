@@ -1,5 +1,6 @@
 {
     "private": true,
+    "type": "module",
     "main": "gulpfile.js",
     "dependencies": {
         "@fullcalendar/moment": "^6.1.5",

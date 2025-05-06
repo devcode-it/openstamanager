@@ -28,43 +28,44 @@ use Models\Module;
 	<!-- DATI SEGMENTO -->
 	<div class="card card-primary">
 		<div class="card-header">
-			<h3 class="card-title"><?php echo tr('Segmento'); ?></h3>
+			<h3 class="card-title"><i class="fa fa-filter"></i> <?php echo tr('Informazioni segmento'); ?></h3>
 		</div>
 
 		<div class="card-body">
 			<div class="row">
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$title$" ]}
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$title$", "icon-before": "<i class='fa fa-tag'></i>" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON(`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo Models\Locale::getDefault()->id; ?>) WHERE (`enabled` = 1 AND `options` != 'custom' ) OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `title` ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON(`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo Models\Locale::getDefault()->id; ?>) WHERE (`enabled` = 1 AND `options` != 'custom' ) OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `title` ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>", "icon-before": "<i class='fa fa-cube'></i>" ]}
 				</div>
+            </div>
 
-				<div class="col-md-2">
+            <div class="row">
+				<div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo $record['predefined'] || ($record['is_sezionale'] == 0) ? 'readonly' : ''; ?>"  ]}
 				</div>
 
-                <div class="col-md-2">
+                <div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Tipologia'); ?>", "help": "<?php echo tr('Se sezionale verrà utilizzato il contatore'); ?>", "name": "is_sezionale", "value": "$is_sezionale$", "extra": "readonly", "values": "Sezionale,Segmento" ]}
 				</div>
 
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>", "extra": "<?php echo (!$record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>", "extra": "<?php echo (!$record['is_sezionale']) ? 'readonly' : ''; ?>", "icon-before": "<i class='fa fa-hashtag'></i>" ]}
 				</div>
 			</div>
 
-			<div class="row">
+            <hr>
 
+            <div class="row">
 				<div class="col-md-8">
-					{[ "type": "textarea", "label": "<?php echo tr('Filtro'); ?>", "name": "clause", "required": 1, "value": "$clause$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Filtro'); ?>", "name": "clause", "required": 1, "value": "$clause$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>", "icon-before": "<i class='fa fa-code'></i>" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position", "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position", "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$", "extra": "<?php echo ($record['is_sezionale']) ? 'readonly' : ''; ?>", "icon-before": "<i class='fa fa-map-marker'></i>" ]}
 				</div>
-
 			</div>
 <?php
 
@@ -75,11 +76,94 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $id_record;
 
 $current_module = Module::find($record['id_module']);
 $total = Util\Query::readQuery($current_module);
-$module_query = Modules::replaceAdditionals($record['id_module'], $total['query']);
 
-echo '
-            <p><strong>'.tr('Query risultante').':</strong></p>
-            <p>'.htmlentities((string) $module_query).'</p>';
+// Check if $total is an array and has the 'query' key
+if (is_array($total) && isset($total['query'])) {
+    $module_query = Modules::replaceAdditionals($record['id_module'], $total['query']);
+
+    echo '
+            <div class="card card-info mt-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-database"></i> '.tr('Query risultante').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-light" id="format-query-btn" title="'.tr('Formatta query').'">
+                            <i class="fa fa-indent"></i> '.tr('Formatta').'
+                        </button>
+                        <button type="button" class="btn btn-sm btn-light ml-2" id="copy-query-btn" title="'.tr('Copia query').'">
+                            <i class="fa fa-copy"></i> '.tr('Copia').'
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="sql-formatted" style="max-height: 200px; overflow: auto; padding: 10px; white-space: pre;">'.htmlentities((string) $module_query).'</div>
+                    <textarea id="query-to-copy" style="position: absolute; left: -9999px;">'.htmlentities((string) $module_query).'</textarea>
+                </div>
+            </div>
+
+            <script>
+            $(document).ready(function() {
+                // Event listener per il pulsante di copia
+                $("#copy-query-btn").click(function() {
+                    var copyText = document.getElementById("query-to-copy");
+                    copyText.select();
+                    document.execCommand("copy");
+
+                    // Mostra un messaggio di conferma
+                    swal("'.tr('Copiato').'", "'.tr('Query copiata negli appunti').'", "success");
+                });
+
+                // Event listener per il pulsante di formattazione
+                $("#format-query-btn").click(function() {
+                    var sqlFormattedDiv = $(".sql-formatted");
+
+                    // Alterna tra la visualizzazione con e senza barre di scorrimento
+                    if (sqlFormattedDiv.hasClass("formatted")) {
+                        // Ripristina la visualizzazione originale con barre di scorrimento
+                        sqlFormattedDiv.removeClass("formatted");
+
+                        // Ripristina lo stile originale
+                        sqlFormattedDiv.css({
+                            "max-height": "200px",
+                            "overflow": "auto",
+                            "white-space": "pre"
+                        });
+
+                        // Cambia l\'icona e il testo del pulsante
+                        $("#format-query-btn i").removeClass("fa-compress").addClass("fa-indent");
+                        $("#format-query-btn").attr("title", "'.tr('Formatta query').'");
+                        $("#format-query-btn").html(\'<i class="fa fa-indent"></i> '.tr('Formatta').'\');
+                    } else {
+                        // Rimuovi le barre di scorrimento e adatta l\'altezza al contenuto
+                        sqlFormattedDiv.addClass("formatted");
+
+                        // Modifica lo stile del contenitore
+                        sqlFormattedDiv.css({
+                            "max-height": "none",
+                            "overflow": "visible",
+                            "white-space": "pre-wrap"
+                        });
+
+                        // Cambia l\'icona e il testo del pulsante
+                        $("#format-query-btn i").removeClass("fa-indent").addClass("fa-compress");
+                        $("#format-query-btn").attr("title", "'.tr('Comprimi query').'");
+                        $("#format-query-btn").html(\'<i class="fa fa-compress"></i> '.tr('Comprimi').'\');
+                    }
+                });
+            });
+            </script>';
+} else {
+    echo '
+            <div class="card card-warning mt-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-exclamation-triangle"></i> '.tr('Query risultante').'</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fa fa-exclamation-circle"></i> '.tr('Impossibile generare la query').'
+                    </div>
+                </div>
+            </div>';
+}
 
 $_SESSION['module_'.$id_module]['id_segment'] = $previous;
 $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
@@ -87,7 +171,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 ?>
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "icon-before": "<i class='fa fa-sticky-note'></i>" ]}
 				</div>
 			</div>
 <?php
@@ -101,14 +185,21 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 <?php
         }
 echo '
-            <div class="row">
-				<div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "values": "query=SELECT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+            <div class="card card-success mt-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-users"></i> '.tr('Permessi').'</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[]", "multiple": "1", "icon-before": "<i class=\'fa fa-users\'></i>", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record['id_module']).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_group_segment` WHERE `id_segment` = '.prepare($id_record).') ORDER BY `zz_groups`.`id` ASC", "value": "';
 $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_segment` WHERE `id_segment`='.prepare($id_record));
 
 echo $results[0]['gruppi'].'"';
 
 echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo segmento').'" ]}
+                        </div>
+                    </div>
 				</div>
 			</div>';
 ?>

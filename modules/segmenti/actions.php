@@ -19,7 +19,6 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Models\Group;
 
 switch (post('op')) {
     case 'update':
@@ -101,16 +100,27 @@ switch (post('op')) {
             'id_lang' => Models\Locale::getDefault()->id,
         ]);
 
-        // Aggiunta permessi segmento
-        $gruppi = Group::get();
+        // Aggiunta permessi segmento solo per i gruppi che hanno accesso al modulo
+        $gruppi_con_accesso = $dbo->fetchArray('SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
+
+        // Assicurati che il gruppo Amministratori (ID 1) sia incluso
+        $id_gruppo_admin = 1; // ID del gruppo Amministratori
+        $gruppi_ids = array_column($gruppi_con_accesso, 'idgruppo');
+        if (!in_array($id_gruppo_admin, $gruppi_ids)) {
+            $gruppi_con_accesso[] = ['idgruppo' => $id_gruppo_admin];
+        }
+
         $array = [];
-        foreach ($gruppi as $gruppo) {
+        foreach ($gruppi_con_accesso as $gruppo) {
             $array[] = [
-                'id_gruppo' => $gruppo->id,
+                'id_gruppo' => $gruppo['idgruppo'],
                 'id_segment' => $id_record,
             ];
         }
-        $dbo->insert('zz_group_segment', $array);
+
+        if (!empty($array)) {
+            $dbo->insert('zz_group_segment', $array);
+        }
 
         flash()->info(tr('Nuovo segmento aggiunto'));
 

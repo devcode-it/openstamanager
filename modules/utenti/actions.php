@@ -276,22 +276,15 @@ switch (filter('op')) {
             } else {
                 $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs[0]['id']);
             }
-
-            // Aggiunta dei permessi relativi alle viste
-            $count = $dbo->fetchNum('SELECT * FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($id_record).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($idmodulo).')');
-
-            if (empty($count)) {
-                $results = $dbo->fetchArray('SELECT `id_vista` FROM `zz_group_view` WHERE `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($idmodulo).')');
-
-                foreach ($results as $result) {
-                    $dbo->attach('zz_group_view', ['id_vista' => $result['id_vista']], ['id_gruppo' => $id_record]);
-                }
-            }
         } else {
             $query = 'DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo);
         }
 
         $dbo->query($query);
+
+        // Sincronizza i permessi delle viste e dei segmenti
+        $group = Group::find($id_record);
+        $group->syncModulePermissions($idmodulo, $permessi);
 
         ob_end_clean();
         echo 'ok';

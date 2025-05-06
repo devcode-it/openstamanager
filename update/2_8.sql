@@ -342,3 +342,63 @@ ORDER BY
 
 UPDATE `zz_views` SET `query` = 'marca.name' WHERE `name` = 'Marca' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
 UPDATE `zz_views` SET `query` = 'modello.name' WHERE `name` = 'Modello' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
+
+-- Pulizia dei permessi sulle viste per gruppi che non hanno accesso al modulo
+DELETE FROM `zz_group_view` 
+WHERE `id_gruppo` IN (
+    SELECT `idgruppo` 
+    FROM (
+        SELECT DISTINCT `g`.`id` AS `idgruppo`, `v`.`id_module` 
+        FROM `zz_groups` AS `g`
+        INNER JOIN `zz_group_view` AS `gv` ON `g`.`id` = `gv`.`id_gruppo`
+        INNER JOIN `zz_views` AS `v` ON `gv`.`id_vista` = `v`.`id`
+        LEFT JOIN `zz_permissions` AS `p` ON `g`.`id` = `p`.`idgruppo` AND `v`.`id_module` = `p`.`idmodule`
+        WHERE `p`.`id` IS NULL OR `p`.`permessi` = '-'
+    ) AS `subquery`
+)
+AND `id_vista` IN (
+    SELECT `v`.`id` 
+    FROM `zz_views` AS `v`
+    INNER JOIN `zz_modules` AS `m` ON `v`.`id_module` = `m`.`id`
+    WHERE `v`.`id_module` IN (
+        SELECT `id_module` 
+        FROM (
+            SELECT DISTINCT `g`.`id` AS `idgruppo`, `v`.`id_module` 
+            FROM `zz_groups` AS `g`
+            INNER JOIN `zz_group_view` AS `gv` ON `g`.`id` = `gv`.`id_gruppo`
+            INNER JOIN `zz_views` AS `v` ON `gv`.`id_vista` = `v`.`id`
+            LEFT JOIN `zz_permissions` AS `p` ON `g`.`id` = `p`.`idgruppo` AND `v`.`id_module` = `p`.`idmodule`
+            WHERE `p`.`id` IS NULL OR `p`.`permessi` = '-'
+        ) AS `subquery`
+    )
+);
+
+-- Pulizia dei permessi sui segmenti per gruppi che non hanno accesso al modulo
+DELETE FROM `zz_group_segment` 
+WHERE `id_gruppo` IN (
+    SELECT `idgruppo` 
+    FROM (
+        SELECT DISTINCT `g`.`id` AS `idgruppo`, `s`.`id_module` 
+        FROM `zz_groups` AS `g`
+        INNER JOIN `zz_group_segment` AS `gs` ON `g`.`id` = `gs`.`id_gruppo`
+        INNER JOIN `zz_segments` AS `s` ON `gs`.`id_segment` = `s`.`id`
+        LEFT JOIN `zz_permissions` AS `p` ON `g`.`id` = `p`.`idgruppo` AND `s`.`id_module` = `p`.`idmodule`
+        WHERE `p`.`id` IS NULL OR `p`.`permessi` = '-'
+    ) AS `subquery`
+)
+AND `id_segment` IN (
+    SELECT `s`.`id` 
+    FROM `zz_segments` AS `s`
+    INNER JOIN `zz_modules` AS `m` ON `s`.`id_module` = `m`.`id`
+    WHERE `s`.`id_module` IN (
+        SELECT `id_module` 
+        FROM (
+            SELECT DISTINCT `g`.`id` AS `idgruppo`, `s`.`id_module` 
+            FROM `zz_groups` AS `g`
+            INNER JOIN `zz_group_segment` AS `gs` ON `g`.`id` = `gs`.`id_gruppo`
+            INNER JOIN `zz_segments` AS `s` ON `gs`.`id_segment` = `s`.`id`
+            LEFT JOIN `zz_permissions` AS `p` ON `g`.`id` = `p`.`idgruppo` AND `s`.`id_module` = `p`.`idmodule`
+            WHERE `p`.`id` IS NULL OR `p`.`permessi` = '-'
+        ) AS `subquery`
+    )
+);

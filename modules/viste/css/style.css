@@ -1,0 +1,209 @@
+/* Stili personalizzati per il modulo viste */
+
+/* Stile generale per le card */
+.card {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Stile per l'header delle card */
+.card-header {
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-header .card-title {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.card-header .card-title i {
+    margin-right: 5px;
+    font-size: 13px;
+}
+
+.card-header .card-title strong {
+    margin-right: 6px;
+    font-size: 12px;
+}
+
+.card-header .card-title small {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* Stile per il corpo delle card */
+.card-body {
+    padding: 15px;
+    background-color: #fafafa;
+}
+
+/* Stile per i gruppi di campi */
+.field-group {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+}
+
+.field-group-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+}
+
+.field-group-title i {
+    margin-right: 8px;
+    color: #3498db;
+}
+
+/* Stile per i pulsanti */
+.btn-tool {
+    padding: 5px;
+    font-size: 14px;
+    color: #6c757d;
+    background: transparent;
+    border: none;
+}
+
+.btn-tool:hover {
+    color: #343a40;
+}
+
+/* Stile per i pulsanti importa/esporta */
+.card-header .card-tools .btn-lg {
+    margin-left: 5px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.card-header .card-tools .btn-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Stile per il pulsante elimina */
+.btn-danger.ask {
+    margin-top: 15px;
+    border-radius: 4px;
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-danger.ask:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Stile per il pulsante aggiungi nuovo campo */
+#add {
+    margin-right: 10px;
+    transition: all 0.2s ease;
+}
+
+#add:hover {
+    transform: translateY(-2px);
+}
+
+/* Stile per l'area di ordinamento */
+.sortable p {
+    padding: 8px 10px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    border: 1px solid #eee;
+    transition: all 0.2s ease;
+}
+
+.sortable p:hover {
+    background-color: #f8f9fa;
+    cursor: move;
+}
+
+.sortable p i {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+/* Stile per i campi di input */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.form-group label i {
+    margin-right: 5px;
+    color: #3498db;
+    font-size: 14px;
+}
+
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Stile per il layout a due colonne nome-query */
+/* Modifica il template esistente */
+.card-body .row:first-of-type {
+    margin-bottom: 0 !important;
+}
+
+.card-body .row:first-of-type + .row {
+    margin-top: 0 !important;
+}
+
+/* Stile per il template di nuovo campo */
+#template .card-header {
+    padding: 8px 12px;
+}
+
+#template .card-header .card-title {
+    font-size: 13px;
+}
+
+#template .field-content {
+    padding: 10px !important;
+}
+
+/* Riduzione altezza textarea */
+.card-body textarea.form-control {
+    height: 80px !important;
+    min-height: 80px;
+}
+
+/* Stile per i tooltip */
+.tip {
+    cursor: help;
+}
+
+/* Stile per i checkbox */
+.custom-control-label {
+    cursor: pointer;
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

@@ -11,6 +11,58 @@ function copyQueryToClipboard() {
 }
 
 /**
+ * Funzione per formattare la query e rimuovere le barre di scorrimento
+ */
+function formatQuery() {
+    var sqlFormattedDiv = $(".sql-formatted");
+
+    // Alterna tra la visualizzazione con e senza barre di scorrimento
+    if (sqlFormattedDiv.hasClass("formatted")) {
+        // Ripristina la visualizzazione originale con barre di scorrimento
+        sqlFormattedDiv.removeClass("formatted");
+
+        // Ripristina lo stile originale
+        sqlFormattedDiv.css({
+            "max-height": "500px",
+            "overflow": "auto"
+        });
+
+        // Ripristina lo stile per tutti gli elementi interni
+        sqlFormattedDiv.find("*").css({
+            "white-space": "pre",
+            "word-wrap": "normal",
+            "word-break": "normal"
+        });
+
+        // Cambia l'icona e il testo del pulsante
+        $("#format-query-btn i").removeClass("fa-compress").addClass("fa-indent");
+        $("#format-query-btn").attr("title", globals.translations.format_query);
+        $("#format-query-btn").html('<i class="fa fa-indent"></i> ' + globals.translations.format);
+    } else {
+        // Rimuovi le barre di scorrimento e adatta l'altezza al contenuto
+        sqlFormattedDiv.addClass("formatted");
+
+        // Modifica lo stile del contenitore
+        sqlFormattedDiv.css({
+            "max-height": "none",
+            "overflow": "visible"
+        });
+
+        // Modifica lo stile di tutti gli elementi interni per forzare il wrapping
+        sqlFormattedDiv.find("*").css({
+            "white-space": "pre-wrap",
+            "word-wrap": "break-word",
+            "word-break": "break-word"
+        });
+
+        // Cambia l'icona e il testo del pulsante
+        $("#format-query-btn i").removeClass("fa-indent").addClass("fa-compress");
+        $("#format-query-btn").attr("title", globals.translations.compress_query);
+        $("#format-query-btn").html('<i class="fa fa-compress"></i> ' + globals.translations.compress);
+    }
+}
+
+/**
  * Funzione per testare la query
  */
 function testQuery() {
@@ -124,14 +176,52 @@ $(document).ready(function() {
         copyQueryToClipboard();
     });
 
+    // Event listener per il pulsante di formattazione
+    $("#format-query-btn").click(function() {
+        formatQuery();
+    });
+
     // Aggiungi il pulsante "Seleziona tutti" accanto alle label dei gruppi
     addSelectAllButtons();
 
-    // Quando viene aggiunto un nuovo campo, aggiungi anche il pulsante
+    // Funzione per aggiungere la classe clickable-header alle card
+    function makeHeadersClickable() {
+        $(".card-header").each(function() {
+            if ($(this).find('[data-card-widget="collapse"]').length > 0 && !$(this).hasClass("clickable-header")) {
+                $(this).addClass("clickable-header");
+            }
+        });
+    }
+
+    // Esegui la funzione inizialmente
+    makeHeadersClickable();
+
+    // Quando viene aggiunto un nuovo campo, aggiungi anche il pulsante e rendi l'header cliccabile
     $(document).on("click", "#add", function() {
         // Attendiamo che il nuovo campo sia stato aggiunto e inizializzato
         setTimeout(function() {
             addSelectAllButtons();
+            makeHeadersClickable();
         }, 500);
     });
+
+    // Aggiungi stile CSS per rendere il cursore a puntatore sugli header cliccabili
+    $("<style>")
+        .prop("type", "text/css")
+        .html(".clickable-header { cursor: pointer; }")
+        .appendTo("head");
+
+    // Rendi l'intera card header cliccabile per espandere/comprimere la card
+    $(document).on("click", ".clickable-header", function(e) {
+        // Verifica che il click non sia sul pulsante di collapse (per evitare doppi click)
+        // e non sia su altri elementi interattivi come link o pulsanti
+        if (!$(e.target).closest('[data-card-widget="collapse"]').length &&
+            !$(e.target).closest('a').length &&
+            !$(e.target).closest('button').length) {
+            // Trova il pulsante di collapse all'interno dell'header e simulane il click
+            $(this).find('[data-card-widget="collapse"]').click();
+        }
+    });
+
+
 });

@@ -34,11 +34,41 @@ switch (post('op')) {
         break;
 }
 
+// Convert to array and filter out empty values
+$records = array_filter((array) $id_records);
+
+// Default query for when there are no valid records
+$query = "SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
+         LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record`
+         AND `zz_groups_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+         WHERE `zz_groups`.`id` = 1
+         ORDER BY `zz_groups`.`id` ASC";
+
+// If we have valid records, use the full query with IN clause
+if (!empty($records)) {
+    $records_list = implode(',', $records);
+    $query = "SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
+             LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record`
+             AND `zz_groups_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+             WHERE `zz_groups`.`id` = 1
+             OR `zz_groups`.`id` IN (
+                 SELECT DISTINCT `idgruppo` FROM `zz_permissions`
+                 WHERE `permessi` IN ('r', 'rw')
+                 AND `idmodule` IN (
+                     SELECT DISTINCT `id_module` FROM `zz_segments`
+                     WHERE `id` IN (".$records_list.")
+                 )
+             )
+             ORDER BY `zz_groups`.`id` ASC";
+}
+
+$msg = '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Seleziona i gruppi che avranno accesso ai segmenti selezionati:').'</small>", "values": "query='.$query.'", "name": "gruppi[]" ]}';
+
 $operations['set_groups'] = [
     'text' => '<span><i class="fa fa-users"></i> '.tr('Imposta l\'accesso ai segmenti').'</span>',
     'data' => [
         'title' => tr('Imposta l\'accesso ai segmenti.'),
-        'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Seleziona i gruppi che avranno accesso ai segmenti selezionati:').'</small>", "values": "query=SELECT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "name": "gruppi[]" ]}',
+        'msg' => $msg,
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

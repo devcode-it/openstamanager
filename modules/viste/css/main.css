@@ -8,6 +8,18 @@
     max-height: 500px;
 }
 
+/* Stile per la modalità formattata */
+.sql-formatted.formatted {
+    max-height: none;
+    overflow: visible;
+}
+
+.sql-formatted.formatted * {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+}
+
 .sql-formatted .keyword {
     color: #0033b3;
     font-weight: bold;

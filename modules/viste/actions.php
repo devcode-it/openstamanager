@@ -447,6 +447,30 @@ switch (filter('op')) {
                     $array['order'] = orderValue('zz_views', 'id_module', $id_record);
                     $dbo->insert('zz_views', $array);
                     $id = $dbo->lastInsertedID();
+
+                    // Se è una nuova vista, aggiungi automaticamente tutti i gruppi che hanno accesso al modulo
+                    if (empty(post('gruppi')[$c])) {
+                        // Ottieni tutti i gruppi che hanno accesso al modulo (permessi 'r' o 'rw')
+                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
+
+                        // Assicurati che il gruppo Amministratori (ID 1) sia incluso
+                        $id_gruppo_admin = 1; // ID del gruppo Amministratori
+                        $gruppi_ids = array_column($gruppi_con_accesso, 'idgruppo');
+                        if (!in_array($id_gruppo_admin, $gruppi_ids)) {
+                            $gruppi_con_accesso[] = ['idgruppo' => $id_gruppo_admin];
+                        }
+
+                        // Aggiungi i permessi per tutti i gruppi con accesso
+                        foreach ($gruppi_con_accesso as $gruppo) {
+                            $dbo->insert('zz_group_view', [
+                                'id_vista' => $id,
+                                'id_gruppo' => $gruppo['idgruppo'],
+                            ]);
+                        }
+
+                        // Aggiorna l'array dei gruppi per la sincronizzazione successiva
+                        $_POST['gruppi'][$c] = array_column($gruppi_con_accesso, 'idgruppo');
+                    }
                 }
 
                 // Aggiornamento traduzione nome campo

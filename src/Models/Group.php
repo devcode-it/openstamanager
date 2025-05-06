@@ -71,4 +71,47 @@ class Group extends Model
     {
         return self::$translated_fields;
     }
+
+    /**
+     * Sincronizza i permessi delle viste e dei segmenti per un modulo specifico.
+     * Se il gruppo non ha permessi sul modulo, rimuove i permessi sulle viste e segmenti.
+     * Se il gruppo ha permessi sul modulo, aggiunge i permessi su tutte le viste e segmenti.
+     *
+     * @param int $id_module ID del modulo
+     * @param string $permessi Permessi ('r', 'rw', o '-')
+     * @return void
+     */
+    public function syncModulePermissions($id_module, $permessi)
+    {
+        $database = database();
+
+        // Se i permessi sono di lettura o lettura/scrittura
+        if ($permessi == 'r' || $permessi == 'rw') {
+            // Sincronizza i permessi delle viste
+            $count_views = $database->fetchNum('SELECT * FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).')');
+
+            if (empty($count_views)) {
+                $views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module));
+
+                foreach ($views as $view) {
+                    $database->attach('zz_group_view', ['id_vista' => $view['id']], ['id_gruppo' => $this->id]);
+                }
+            }
+
+            // Sincronizza i permessi dei segmenti
+            $count_segments = $database->fetchNum('SELECT * FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` IN (SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).')');
+
+            if (empty($count_segments)) {
+                $segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module));
+
+                foreach ($segments as $segment) {
+                    $database->attach('zz_group_segment', ['id_segment' => $segment['id']], ['id_gruppo' => $this->id]);
+                }
+            }
+        } else {
+            // Se i permessi sono stati rimossi, rimuovi anche i permessi su viste e segmenti
+            $database->query('DELETE FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).')');
+            $database->query('DELETE FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` IN (SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).')');
+        }
+    }
 }

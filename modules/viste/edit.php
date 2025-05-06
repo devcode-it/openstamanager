@@ -35,7 +35,7 @@ echo '
 	<!-- DATI -->
 	<div class="card card-primary">
 		<div class="card-header">
-			<h3 class="card-title">'.tr('Opzioni generali').'</h3>
+			<h3 class="card-title"><i class="fa fa-cog"></i> '.tr('Opzioni generali').'</h3>
 			<div class="card-tools">
 				<button type="button" class="btn btn-sm btn-primary" onclick="importModule()">
 					<i class="fa fa-upload"></i> '.tr('Importa modulo').'</button>
@@ -88,25 +88,32 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
     echo '
 			<div class="row">
 				<div class="col-md-12">
-					<p><strong>'.tr('Query risultante').':</strong>
-                        <button type="button" class="btn btn-sm btn-info" id="copy-query-btn" title="'.tr('Copia query').'">
-                            <i class="fa fa-copy"></i>
-                        </button>
-                    </p>
-                    <div class="sql-formatted well">'.$beautiful_query.'</div>
-                    <textarea id="query-to-copy" style="position: absolute; left: -9999px;">'.$original_query.'</textarea>
+					<div class="card card-info">
+						<div class="card-header">
+							<h3 class="card-title"><i class="fa fa-database"></i> '.tr('Query risultante').'</h3>
+							<div class="card-tools">
+								<button type="button" class="btn btn-sm btn-light" id="format-query-btn" title="'.tr('Formatta query').'">
+									<i class="fa fa-indent"></i> '.tr('Formatta').'
+								</button>
+								<button type="button" class="btn btn-sm btn-light ml-2" id="copy-query-btn" title="'.tr('Copia query').'">
+									<i class="fa fa-copy"></i> '.tr('Copia').'
+								</button>
+							</div>
+						</div>
+						<div class="card-body p-0">
+							<div class="sql-formatted">'.$beautiful_query.'</div>
+							<textarea id="query-to-copy" style="position: absolute; left: -9999px;">'.$original_query.'</textarea>
+						</div>
+						<div class="card-footer text-right">
+							<button type="button" class="btn btn-warning" onclick="testQuery()">
+								<i class="fa fa-flask"></i> '.tr('Testa la query').'
+							</button>
 
-                    <div class="row">
-                        <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-warning" onclick="testQuery()">
-                                <i class="fa fa-file-text-o"></i> '.tr('Testa la query').'
-                            </button>
-
-                            <button type="submit" class="btn btn-success">
-                                <i class="fa fa-check"></i> '.tr('Salva').'
-                            </button>
-                        </div>
-                    </div>
+							<button type="submit" class="btn btn-success">
+								<i class="fa fa-check"></i> '.tr('Salva').'
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>';
 }
@@ -164,7 +171,12 @@ echo '<script>
     globals.translations.import_error = "'.tr('Errore durante l\'importazione del modulo').'";
     globals.translations.file_required = "'.tr('È necessario selezionare un file').'";
     globals.translations.invalid_json = "'.tr('Il file selezionato non contiene un JSON valido').'";
+    globals.translations.format = "'.tr('Formatta').'";
+    globals.translations.compress = "'.tr('Comprimi').'";
+    globals.translations.format_query = "'.tr('Formatta query').'";
+    globals.translations.compress_query = "'.tr('Comprimi query').'";
 </script>
 <link rel="stylesheet" href="'.base_path().'/modules/viste/css/main.css">
 <script src="'.base_path().'/modules/viste/js/main.js"></script>
+<link rel="stylesheet" href="'.base_path().'/modules/viste/css/style.css">
 ';

@@ -80,6 +80,8 @@ switch (post('op')) {
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
+        $articolo->id_marca = post('id_marca');
+        $articolo->id_modello = post('id_modello');
         $articolo->setTranslation('title', post('descrizione'));
         $articolo->save();
 
@@ -153,8 +155,8 @@ switch (post('op')) {
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
-        $articolo->id_marchio = post('id_marchio');
-        $articolo->modello = post('modello');
+        $articolo->id_marca = post('id_marca');
+        $articolo->id_modello = post('id_modello');
 
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');

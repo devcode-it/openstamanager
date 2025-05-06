@@ -19,6 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Marca;
 
 $immagine_articolo = $articolo->immagine ? base_path().'/files/articoli/'.$articolo->immagine : App::getPaths()['img'].'/logo_header.png';
 
@@ -38,11 +39,11 @@ echo '
                     
                     <div class="col-md-9">';
 // Articolo
-if ($articolo->marchio || $articolo->modello) {
+if ($articolo->marca) {
     echo '
                             <p class="float-right"><i class="fa fa-tag"></i>
-                                '.($articolo->marchio ? ($articolo->marchio->link ? '<a href="'.$articolo->marchio->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marchio->name.'</a>' : $articolo->marchio->name.' ') : '').
-        ($articolo->modello ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->modello.' ' : '')
+                                '.($articolo->marca ? ($articolo->marca->link ? '<a href="'.$articolo->marca->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marca->name.'</a>' : $articolo->marca->name.' ') : '').
+        ($articolo->id_modello ? ' <small><i class="fa fa-chevron-right"></i></small> '.Marca::where('parent', $articolo->id_marca)->where('id', $articolo->id_modello)->first()->name.' ' : '')
     .'</p>';
 }
 if ($articolo->id_categoria) {

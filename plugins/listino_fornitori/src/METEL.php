@@ -43,7 +43,7 @@ class METEL
     ];
 
     public const ROW = [
-        1 => 'Sigla Marchio',
+        1 => 'Sigla marca',
         4 => 'Codice Prodotto Azienda',
         20 => 'Codice EAN',
         33 => 'Descrizione prodotto',

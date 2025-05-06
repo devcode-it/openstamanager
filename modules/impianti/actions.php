@@ -107,6 +107,8 @@ switch ($op) {
         $idsede = post('idsede');
         $id_categoria = post('id_categoria');
         $id_sottocategoria = post('id_sottocategoria');
+        $id_marca = post('id_marca');
+        $id_modello = post('id_modello');
 
         if (!empty($matricola)) {
             $dbo->insert('my_impianti', [
@@ -118,6 +120,8 @@ switch ($op) {
                 'idsede' => $idsede ?: 0,
                 'id_categoria' => $id_categoria ?: null,
                 'id_sottocategoria' => $id_sottocategoria ?: null,
+                'id_marca' => $id_marca ?: null,
+                'id_modello' => $id_modello ?: null,
             ]);
 
             $id_record = $dbo->lastInsertedID();

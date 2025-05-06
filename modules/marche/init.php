@@ -19,10 +19,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\Impianti\Marca;
+use Modules\Articoli\Marca;
 
-if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `my_impianti_marche`.`id`='.prepare($id_record));
+if (isset($id_record)) {
+    $record = $dbo->fetchOne('SELECT * FROM zz_marche WHERE id='.prepare($id_record));
 
     $marca = Marca::find($id_record);
 }

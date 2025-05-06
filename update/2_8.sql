@@ -94,15 +94,15 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 
 ALTER TABLE `my_impianti` ADD `note` VARCHAR(255) NULL AFTER `descrizione`;
 
--- Aggiunta colonne Marchio e Modello nella vista Articoli (nascoste di default)
+-- Aggiunta colonne marche e Modello nella vista Articoli (nascoste di default)
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Articoli';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Marchio', '(SELECT `name` FROM `mg_marchi` WHERE `mg_marchi`.`id` = `mg_articoli`.`id_marchio`)', 15, 1, 0, 0, 0, '', '', 0, 0, 0, 0),
-(@id_module, 'Modello', '`mg_articoli`.`modello`', 16, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
+(@id_module, 'Marche', '(SELECT `name` FROM `zz_marche` WHERE `zz_marche`.`id` = `mg_articoli`.`id_marca`)', 15, 1, 0, 0, 0, '', '', 0, 0, 0, 0),
+(@id_module, 'Modello', '`mg_articoli`.`id_modello`', 16, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
 
 SELECT @id:= MAX(`id`) FROM `zz_views`;
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, @id-1, 'Marchio'),
+(1, @id-1, 'Marche'),
 (2, @id-1, 'Brand'),
 (1, @id, 'Modello'),
 (2, @id, 'Model');
@@ -230,18 +230,6 @@ JOIN `my_impianti_categorie` `mic` ON `imp`.`id_sottocategoria` = `mic`.`id`
 JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore` = `mic`.`colore`
 SET `imp`.`id_sottocategoria` = `zz_cat`.`id`;
 
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '`mg_categorie`', '`zz_categorie`') WHERE `options` LIKE '%`mg_categorie`%';
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '`mg_categorie_lang`', '`zz_categorie_lang`') WHERE `options` LIKE '%`mg_categorie_lang`%';
-
-UPDATE `zz_views` SET `query` = REPLACE(`query`, '`mg_categorie`', '`zz_categorie`') WHERE `query` LIKE '%`mg_categorie`%';
-UPDATE `zz_views` SET `query` = REPLACE(`query`, '`mg_categorie_lang`', '`zz_categorie_lang`') WHERE `query` LIKE '%`mg_categorie_lang`%';
-
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '`my_impianti_categorie`', '`zz_categorie`') WHERE `options` LIKE '%`my_impianti_categorie`%';
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '`my_impianti_categorie_lang`', '`zz_categorie_lang`') WHERE `options` LIKE '%`my_impianti_categorie_lang`%';
-
-UPDATE `zz_views` SET `query` = REPLACE(`query`, '`my_impianti_categorie`', '`zz_categorie`') WHERE `query` LIKE '%`my_impianti_categorie`%';
-UPDATE `zz_views` SET `query` = REPLACE(`query`, '`my_impianti_categorie_lang`', '`zz_categorie_lang`') WHERE `query` LIKE '%`my_impianti_categorie_lang`%';
-
 DROP TABLE IF EXISTS `my_impianti_categorie_lang`;
 ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_1`;
 DROP TABLE IF EXISTS `my_impianti_categorie`;
@@ -292,3 +280,65 @@ HAVING
     2=2
 ORDER BY
     `mg_articoli_lang`.`title`" WHERE `name` = 'Articoli';
+
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'mg_categorie_lang', 'zz_categorie_lang') WHERE `options` LIKE '%mg_categorie_lang%';
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'mg_categorie', 'zz_categorie') WHERE `options` LIKE '%mg_categorie%';
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'mg_categorie_lang', 'zz_categorie_lang') WHERE `query` LIKE '%mg_categorie_lang%';
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'mg_categorie', 'zz_categorie') WHERE `query` LIKE '%mg_categorie%';
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'my_impianti_categorie_lang', 'zz_categorie_lang') WHERE `options` LIKE '%my_impianti_categorie_lang%';
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'my_impianti_categorie', 'zz_categorie') WHERE `options` LIKE '%my_impianti_categorie%';
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_categorie_lang', 'zz_categorie_lang') WHERE `query` LIKE '%my_impianti_categorie_lang%';
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_categorie', 'zz_categorie') WHERE `query` LIKE '%my_impianti_categorie%';
+
+RENAME TABLE `openstamanager`.`mg_marchi` TO `openstamanager`.`zz_marche`;
+
+ALTER TABLE `zz_marche` ADD `parent` INT NOT NULL AFTER `link`, ADD `is_articolo` BOOLEAN NOT NULL DEFAULT 1, ADD `is_impianto` BOOLEAN NOT NULL DEFAULT 0; 
+
+ALTER TABLE `mg_articoli` CHANGE `id_marchio` `id_marca` INT NULL DEFAULT NULL; 
+ALTER TABLE `mg_articoli` CHANGE `modello` `id_modello` INT NULL DEFAULT NULL; 
+
+UPDATE `zz_marche` SET `is_articolo` = 1 WHERE `id` IN (SELECT DISTINCT `id_marca` FROM `mg_articoli` WHERE `id_marca` IS NOT NULL AND `id_marca` > 0) OR `id` IN (SELECT DISTINCT `id_modello` FROM `mg_articoli` WHERE `id_modello` IS NOT NULL AND `id_modello` > 0);
+
+INSERT INTO `zz_marche` (`name`,`parent`, `is_articolo`, `is_impianto`) SELECT `title`, `parent`, 0, 1 FROM `my_impianti_marche` INNER JOIN `my_impianti_marche_lang` ON `my_impianti_marche`.`id` = `my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = 1;
+
+UPDATE `zz_modules` SET `name` = 'Marche', `directory` = 'marche' WHERE `zz_modules`.`name` = 'Marchi'; 
+UPDATE `zz_modules_lang` SET `title` = 'Marche' WHERE `zz_modules_lang`.`title` = 'Marchi'; 
+
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'mg_marchi', 'zz_marche') WHERE `options` LIKE '%mg_marchi%';
+
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'mg_marchi', 'zz_marche') WHERE `query` LIKE '%mg_marchi%';
+
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'my_impianti_marche_lang', 'zz_marche') WHERE `options` LIKE '%my_impianti_marche_lang%';
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'my_impianti_marche', 'zz_marche') WHERE `options` LIKE '%my_impianti_marche%';
+
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_marche_lang', 'zz_marche') WHERE `query` LIKE '%my_impianti_marche_lang%';
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_marche', 'zz_marche') WHERE `query` LIKE '%my_impianti_marche%';
+
+DELETE FROM `zz_modules` WHERE `name` = 'Marche impianti';
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_marche` WHERE 1=1 AND parent = 0 HAVING 2=2 ORDER BY `zz_marche`.`name`' WHERE `zz_modules`.`name` = 'Marche'; 
+
+-- Allineamento vista Impianti
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `my_impianti`
+    LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico` 
+    LEFT JOIN `zz_categorie` ON `zz_categorie`.`id` = `my_impianti`.`id_categoria`
+    LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
+    LEFT JOIN `zz_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
+    LEFT JOIN `zz_categorie_lang` as sub_lang ON (sub.`id` = sub_lang.`id_record` AND sub_lang.|lang|)
+    LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.idsede
+    LEFT JOIN `zz_marche` as marca ON `marca`.`id` = `my_impianti`.`id_marca`
+    LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `my_impianti`.`id_modello`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY
+    `matricola`" WHERE `name` = 'Impianti';
+
+UPDATE `zz_views` SET `query` = 'marca.name' WHERE `name` = 'Marca' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
+UPDATE `zz_views` SET `query` = 'modello.name' WHERE `name` = 'Modello' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');

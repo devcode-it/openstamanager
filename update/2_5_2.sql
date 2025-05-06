@@ -103,31 +103,6 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views` ), 'Modello'),
 (2, (SELECT MAX(`id`) FROM `zz_views` ), 'Model');
 
--- Allineamento vista Impianti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `my_impianti`
-    LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
-    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico` 
-    LEFT JOIN `my_impianti_categorie` ON `my_impianti_categorie`.`id` = `my_impianti`.`id_categoria`
-    LEFT JOIN `my_impianti_categorie_lang` ON (`my_impianti_categorie`.`id` = `my_impianti_categorie_lang`.`id_record` AND `my_impianti_categorie_lang`.|lang|)
-    LEFT JOIN `my_impianti_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
-    LEFT JOIN `my_impianti_categorie_lang` as sub_lang ON (sub.`id` = sub_lang.`id_record` AND sub_lang.|lang|)
-    LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.idsede
-    LEFT JOIN `my_impianti_marche` as marca ON `marca`.`id` = `my_impianti`.`id_marca`
-    LEFT JOIN `my_impianti_marche_lang` as marca_lang ON (`marca`.`id` = `marca_lang`.`id_record` AND `marca_lang`.|lang|)
-    LEFT JOIN `my_impianti_marche` as modello ON `modello`.`id` = `my_impianti`.`id_modello`
-    LEFT JOIN `my_impianti_marche_lang` as modello_lang ON (`modello`.`id` = `modello_lang`.`id_record` AND `modello_lang`.|lang|)
-WHERE
-    1=1
-HAVING
-    2=2
-ORDER BY
-    `matricola`" WHERE `name` = 'Impianti';
-
-
 -- Opzioni possibili per stampa "Contratto"
 UPDATE `zz_prints` SET `available_options` = '{\"pricing\":\"Visualizzare i prezzi\", \"hide-total\": \"Nascondere i totali delle righe\", \"show-only-total\": \"Visualizzare solo i totali del documento\", \"hide-header\": \"Nascondere intestazione\", \"hide-footer\": \"Nascondere footer\", \"last-page-footer\": \"Visualizzare footer solo su ultima pagina\", \"hide-item-number\": \"Nascondere i codici degli articoli\"}' WHERE `zz_prints`.`name` = 'Contratto';
 

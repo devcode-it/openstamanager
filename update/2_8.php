@@ -26,6 +26,10 @@ $files = [
     'templates/prima_nota/settings.php',
     'templates/scadenzario/settings.php',
     'backup/',
+    'modules/marchi',
+    'modules/impianti_marche',
+    'modules/categorie_articoli',
+    'modules/categorie_impianti',
 ];
 
 foreach ($files as $key => $value) {

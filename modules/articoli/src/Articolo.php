@@ -372,9 +372,9 @@ class Articolo extends Model
         return $this->belongsTo(Categoria::class, 'id_sottocategoria');
     }
 
-    public function marchio()
+    public function marca()
     {
-        return $this->belongsTo(Marchio::class, 'id_marchio');
+        return $this->belongsTo(Marca::class, 'id_marca');
     }
 
     public function dettaglioFornitori()

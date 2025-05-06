@@ -166,32 +166,34 @@ switch ($resource) {
         break;
 
     case 'marca':
-        $query = 'SELECT `my_impianti_marche`.`id`, `my_impianti_marche_lang`.`title` AS descrizione FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+        $query = 'SELECT `id`, `name` AS descrizione FROM `zz_marche` |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = '`my_impianti_marche`.`id`='.prepare($element);
+            $filter[] = '`id`='.prepare($element);
         }
 
         $where[] = '`parent` = 0';
+        $where[] = '`is_impianto` = 1';
 
         if (!empty($search)) {
-            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
 
     case 'modello':
         if (isset($superselect['id_marca'])) {
-            $query = 'SELECT `my_impianti_marche`.`id`, `my_impianti_marche_lang`.`title` AS descrizione FROM `my_impianti_marche` LEFT JOIN `my_impianti_marche_lang` ON (`my_impianti_marche`.`id`=`my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+            $query = 'SELECT `id`, `name` AS descrizione FROM `zz_marche` |where| ORDER BY `name` ASC';
 
             foreach ($elements as $element) {
-                $filter[] = '`my_impianti_marche`.`id`='.prepare($element);
+                $filter[] = '`id`='.prepare($element);
             }
 
             $where[] = '`parent`='.prepare($superselect['id_marca']);
+            $where[] = '`is_impianto` = 1';
 
             if (!empty($search)) {
-                $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
             }
         }
         break;

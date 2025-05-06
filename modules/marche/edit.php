@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Module;
 
 if (!empty($record['immagine'])) {
     $fileinfo = Uploads::fileInfo($record['immagine']);
@@ -37,27 +38,68 @@ if (!empty($record['immagine'])) {
 	<!-- DATI ANAGRAFICI -->
 	<div class="card card-primary">
 		<div class="card-header">
-			<h3 class="card-title"><?php echo tr('Dati marchio'); ?></h3>
+			<h3 class="card-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
 		<div class="card-body">
 			<div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
 					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $url; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
 				</div>
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value":"$name$", "required": 1, "validation": "name" ]}
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value":"$name$", "required": 1 ]}
 				</div>
-                <div class="col-md-4">
+                <div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}
 				</div>
+                <div class="col-md-2">
+					{[ "type": "checkbox", "label": "<?php echo tr('Articolo'); ?>", "name": "is_articolo", "value": "<?php echo $marca->is_articolo; ?>" ]}
+				</div>
+				<div class="col-md-2">
+					{[ "type": "checkbox", "label": "<?php echo tr('Impianto'); ?>", "name": "is_impianto", "value": "<?php echo $marca->is_impianto; ?>" ]}
+				</div>
 			</div>
-
 		</div>
 	</div>
 </form>
+<div class="card card-primary">
+	<div class="card-header">
+		<h3 class="card-title"><?php echo tr('Modelli'); ?></h3>
+	</div>
+
+	<div class="card-body">
+		<div class="pull-left">
+			<a class="btn btn-primary" data-href="<?php echo base_path(); ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-card-widget="modal" data-title="<?php echo tr('Aggiungi riga'); ?>"><i class="fa fa-plus"></i> <?php echo tr('Modello'); ?></a><br>
+		</div>
+		<div class="clearfix"></div>
+		<hr>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped table-hover table-bordered">
+						<thead>
+							<tr>
+								<th width="10%" class="text-center"><?php echo tr('Immagine'); ?></th>
+								<th width="25%" class="text-left"><?php echo tr('Nome'); ?></th>
+								<th width="25%" class="text-left"><?php echo tr('Link produttore'); ?></th>
+								<th width="10%" class="text-center"><?php echo tr('Articolo'); ?></th>
+								<th width="10%" class="text-center"><?php echo tr('Impianto'); ?></th>
+								<th width="10%" class="text-center"><?php echo tr('Azioni'); ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php include base_dir().'/modules/'.Module::find($id_module)->directory.'/row-list.php'; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <?php
-$articoli = $marchio->articoli;
+$articoli = $marca->articoli;
 $class = '';
 
 if (!empty(count($articoli))) {

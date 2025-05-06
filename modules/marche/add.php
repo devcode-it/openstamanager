@@ -18,7 +18,9 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Marca;
 
+$id_anagrafica = filter('id_anagrafica');
 $id_original = filter('id_original');
 
 if (!empty($id_record)) {
@@ -26,23 +28,35 @@ if (!empty($id_record)) {
 }
 
 ?><form action="<?php
-if (isset($id_original)) {
-    echo base_path().'/controller.php?id_module='.$id_module;
+echo base_path().'/controller.php?id_module='.$id_module;
 
-    if (!empty($id_record)) {
-        echo '&id_record='.$id_record;
-    }
+if (!empty($id_record)) {
+    echo '&id_record='.$id_record;
 }
 ?>" method="post" id="add-form">
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
     <input type="hidden" name="op" value="<?php echo $id_record ? 'update' : 'add'; ?>">
+    <?php if (!empty($id_original)) : ?>
+    <input type="hidden" name="is_articolo" value="<?php echo $id_original ? Marca::find($id_original)->is_articolo : 1; ?>">
+    <input type="hidden" name="is_impianto" value="<?php echo $id_original ? Marca::find($id_original)->is_impianto : 0; ?>">
+    <?php endif; ?>
 
 	<div class="row">
-        <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "title", "required": 1, "value": "$title$" ]}
+		<div class="col-md-4">
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1]}
+		</div>
+		<div class="col-md-4">
+			{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}
+		</div>
+		<div class="col-md-2">
+            {[ "type": "checkbox", "label": "<?php echo tr('Articolo'); ?>", "name": "is_articolo_add", "value": "<?php echo $marca ? $marca->is_articolo : ($id_original ? Marca::find($id_original)->is_articolo : 1); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
         </div>
-    </div>
+
+        <div class="col-md-2">
+            {[ "type": "checkbox", "label": "<?php echo tr('Impianto'); ?>", "name": "is_impianto_add", "value": "<?php echo $marca ? $marca->is_impianto : ($id_original ? Marca::find($id_original)->is_impianto : 0); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
+        </div>
+	</div>
 
 	<!-- PULSANTI -->
 	<div class="modal-footer">

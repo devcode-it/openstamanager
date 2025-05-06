@@ -23,6 +23,7 @@ use Models\Module;
 $id_anagrafica = filter('id_anagrafica');
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 $id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
+$id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -51,13 +52,21 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 	</div>
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "id": "sottocategoria_add", "ajax-source": "sottocategorie_imp", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>,"icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>||hide" ]}
 		</div>
+
+        <div class="col-md-3">
+            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "id": "id_marca_add", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modello", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>||hide" ]}
+        </div>
 	</div>
 
 	<!-- PULSANTI -->
@@ -70,6 +79,7 @@ $id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 
 <script type="text/javascript">
 $(document).ready(function () {
+    // Gestione sottocategorie
     var sub = $('#sottocategoria_add');
     var original = sub.parent().find(".input-group-append button").attr("onclick");
 
@@ -85,6 +95,25 @@ $(document).ready(function () {
         }
         else {
             sub.parent().find(".input-group-append button").addClass("hide");
+        }
+    });
+
+    // Gestione modelli
+    var modello = $('#id_modello_add');
+    var originalModello = modello.parent().find(".input-group-append button").attr("onclick");
+
+    $('#id_marca_add').change(function() {
+        updateSelectOption("id_marca", $(this).val());
+        session_set('superselect,id_marca', $(this).val(), 0);
+
+        modello.selectReset();
+
+        if($(this).val()){
+            modello.parent().find(".input-group-append button").removeClass("hide");
+            modello.parent().find(".input-group-append button").attr("onclick", originalModello ? originalModello.replace(/id_original=\d*/, "id_original=" + $(this).val()) : "openModal('<?php echo tr('Aggiungi modello'); ?>', '<?php echo base_path(); ?>/add.php?id_module=<?php echo $id_modulo_marca_impianti; ?>&id_original=" + $(this).val() + "')");
+        }
+        else {
+            modello.parent().find(".input-group-append button").addClass("hide");
         }
     });
 

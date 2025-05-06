@@ -25,13 +25,13 @@ use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
 use Traits\RecordTrait;
 
-class Marchio extends Model
+class Marca extends Model
 {
     use SimpleModelTrait;
     use HierarchyTrait;
     use RecordTrait;
 
-    protected $table = 'mg_marchi';
+    protected $table = 'zz_marche';
 
     public static function build($nome = null)
     {
@@ -44,11 +44,11 @@ class Marchio extends Model
 
     public function articoli()
     {
-        return $this->hasMany(Articolo::class, 'id_marchio');
+        return $this->hasMany(Articolo::class, 'id_marca');
     }
 
     public function getModuleAttribute()
     {
-        return 'Marchi';
+        return 'marche';
     }
 }

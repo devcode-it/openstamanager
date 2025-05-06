@@ -29,7 +29,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Tipo;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
-use Modules\Articoli\Marchio;
+use Modules\Articoli\Marca;
 use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\ListinoFornitori\DettaglioFornitore;
@@ -129,11 +129,11 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'marchio',
-                'label' => 'Marchio',
+                'field' => 'marca',
+                'label' => 'marca',
                 'names' => [
-                    'Marchio',
-                    'marchio',
+                    'marca',
+                    'marca',
                     'Marca',
                     'marca',
                 ],
@@ -333,14 +333,14 @@ class CSV extends CSVImporter
             }
         }
 
-        // Gestione marchio
-        $marchio = null;
-        if (!empty($record['marchio'])) {
-            $marchio = Marchio::where('name', $record['marchio'])->first();
+        // Gestione marca
+        $marca = null;
+        if (!empty($record['marca'])) {
+            $marca = Marca::where('name', $record['marca'])->first();
 
-            if (empty($marchio)) {
-                $marchio = Marchio::build($record['marchio']);
-                $marchio->save();
+            if (empty($marca)) {
+                $marca = Marca::build($record['marca']);
+                $marca->save();
             }
         }
 
@@ -462,9 +462,9 @@ class CSV extends CSVImporter
             'sottocategoria' => $sottocategoria->id ?: $articolo['sottocategoria'],
         ]);
 
-        // Associazione marchio
-        if (!empty($marchio)) {
-            $articolo->marchio()->associate($marchio);
+        // Associazione marca
+        if (!empty($marca)) {
+            $articolo->marca()->associate($marca);
         }
 
         // Associazione modello
@@ -502,7 +502,7 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'Marchio', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
+            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'marca', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
             ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', '', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '', '', '180', '20', 'Fornitore', 'Sede'],
         ];
     }

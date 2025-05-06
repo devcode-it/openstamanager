@@ -74,11 +74,12 @@ use Modules\Iva\Aliquota;
                         </div>
 
                         <div class="col-md-3">
-                            <?php echo !empty($record['id_marchio']) ? Modules::link('Marchi', $record['id_marchio'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Marchio'); ?>", "name": "id_marchio", "value":"$id_marchio$", "values": "query=SELECT id, name AS descrizione FROM mg_marchi ORDER BY descrizione ASC" ]}
+                            <?php echo !empty($record['id_marca']) ? Modules::link('Marche', $record['id_marca'], null, null, 'class="pull-right"') : ''; ?>
+                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "text", "label": "<?php echo tr('Modello'); ?>", "name": "modello", "value": "$modello$" ]}
+                            <?php echo !empty($record['id_modello']) ? Modules::link('Marche', $record['id_modello'], null, null, 'class="pull-right"') : ''; ?>
+                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
                         </div>
                     </div>
                     <div class="row">
@@ -186,7 +187,7 @@ use Modules\Iva\Aliquota;
                         </div>
                     </div>
 
-                    <div class="row">				    
+                    <div class="row">
                         <div class="col-md-12">
                             <?php echo (!empty($record['id_fornitore'])) ?
         Plugins::link('Listino Fornitori', $id_record, null, null, 'class="pull-right" onclick="modificaFornitore('.$id_record.','.$record['id_fornitore'].')"') : ''; ?>
@@ -215,7 +216,7 @@ use Modules\Iva\Aliquota;
                     <div class="clearfix"></div>
 
                     <div class="row">
-                        
+
                         <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Coefficiente di vendita'); ?>", "name": "coefficiente", "value": "$coefficiente$", "help": "<?php echo tr('Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando cambia il prezzo di acquisto'); ?>." ]}
                         </div>
@@ -239,7 +240,7 @@ echo '
                         <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Minimo di vendita'); ?>", "name": "minimo_vendita", "value": "<?php echo $prezzi_ivati ? $articolo->minimo_vendita_ivato : $articolo->minimo_vendita; ?>", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo $prezzi_ivati ? tr('Importo IVA inclusa') : ''; ?>" ]}
                         </div>
-                        
+
                         <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "value": "$idiva_vendita$", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                             <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
@@ -348,9 +349,30 @@ $("#categoria").change(function() {
 	$("#subcategoria").val(null).trigger("change");
 });
 
+// Gestione del cambio marca per aggiornare i modelli
+$("#id_marca").change(function() {
+    updateSelectOption("id_marca", $(this).val());
+
+    // Reset del modello
+    $("#id_modello").val(null).trigger("change");
+
+    // Aggiornamento dell'icona "aggiungi" per il modello
+    if($(this).val()) {
+        var button = $("#id_modello").parent().find(".input-group-append button");
+        var original = button.attr("onclick");
+        if(original) {
+            var newOnclick = original.replace(/id_original=\d+/, "id_original=" + $(this).val());
+            button.attr("onclick", newOnclick);
+            button.removeClass("hide");
+        }
+    } else {
+        $("#id_modello").parent().find(".input-group-append button").addClass("hide");
+    }
+});
+
 function scorporaIva() {
     if(!percentuale) return;
-    
+
     let input = $("#prezzo_vendita");
     let prezzo = input.val().toEnglish();
     let scorporato = prezzo * 100 / (100 + percentuale);

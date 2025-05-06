@@ -46,13 +46,21 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 			{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>", "charcounter": 1 ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>||hide" ]}
 		</div>
+
+        <div class="col-md-3">
+            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>||hide" ]}
+        </div>
 	</div>
 
     <div class="card card-info collapsed-card">
@@ -84,7 +92,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''; ?>" ]}
                 </div>
-                
+
             </div>
 
             <div class="row">
@@ -145,6 +153,7 @@ iva_vendita = $("#add-form").find("#idiva_vendita");
 percentuale = 0;
 
 $(document).ready(function () {
+    // Gestione sottocategorie
     var sub = $('#add-form').find('#subcategoria_add');
     var original = sub.parent().find(".input-group-append button").attr("onclick");
 
@@ -160,6 +169,25 @@ $(document).ready(function () {
         }
         else {
             sub.parent().find(".input-group-append button").addClass("hide");
+        }
+    });
+
+    // Gestione modelli
+    var modello = $('#add-form').find('#id_modello_add');
+    var originalModello = modello.parent().find(".input-group-append button").attr("onclick");
+
+    $('#add-form').find('#id_marca').change(function() {
+        updateSelectOption("id_marca", $(this).val());
+        session_set('superselect,id_marca', $(this).val(), 0);
+
+        modello.selectReset();
+
+        if($(this).val()){
+            modello.parent().find(".input-group-append button").removeClass("hide");
+            modello.parent().find(".input-group-append button").attr("onclick", originalModello ? originalModello.replace(/id_original=\d*/, "id_original=" + $(this).val()) : "openModal('<?php echo tr('Aggiungi modello'); ?>', '<?php echo base_path(); ?>/add.php?id_module=<?php echo Module::where('name', 'Marche')->first()->id; ?>&id_original=" + $(this).val() + "')");
+        }
+        else {
+            modello.parent().find(".input-group-append button").addClass("hide");
         }
     });
 
@@ -225,7 +253,7 @@ function scorpora_iva_add() {
     input.val(scorporato);
 }
 
-$("#genera_barcode").click(function(){    
+$("#genera_barcode").click(function(){
     $(".modal #barcode").attr("disabled", $(this).is(":checked")).val("");
 });
 </script>

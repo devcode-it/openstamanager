@@ -29,8 +29,7 @@ class OSMFilesystem extends Filesystem
         'php' => 'application/php',
         'php5' => 'application/php',
         'phtml' => 'application/php',
-        'html' => 'text/html',
-        'htm' => 'text/html',
+
     ];
 
     public function upload($directory, $filename, $contents)

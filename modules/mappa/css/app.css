@@ -1,82 +1,121 @@
 #mappa {
     width: 100%;
-    height: 835px; 
+    height: 700px;
+    border-radius: 0;
+    transition: height 0.3s ease;
 }
 
-#menu-filtri {
-    width:600px;
-    height:700px;
-    position:fixed;
-    top:100px;
-    z-index: 10000;
+#map-container .card {
+    transition: all 0.3s ease;
 }
 
-.open-menu{
-    right:0px;
-    background-color:#FFFFFFEB;
+#map-container .card-body {
+    transition: height 0.3s ease;
 }
 
-.closed-menu{
-    right:-560px;
-    background-color:#FFFFFF00;
+.row {
+    margin-bottom: 8px;
 }
 
-.row{
-    margin-bottom: 5px;
+.section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #3c8dbc;
+    margin: 12px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #f4f4f4;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
-hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
+.section-title i {
+    margin-right: 5px;
+    color: #3c8dbc;
 }
 
-.material-switch > input[type="checkbox"] {
-    display: none;   
+.stati-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 8px;
 }
 
-.material-switch > label {
-    cursor: pointer;
-    height: 0px;
-    position: relative; 
-    width: 40px;  
+.stato-item {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 8px;
+    width: 100%;
 }
 
-.material-switch > label::before {
-    background: rgb(0, 0, 0);
-    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    content: '';
-    height: 16px;
-    margin-top: -8px;
-    position:absolute;
-    opacity: 0.3;
-    transition: all 0.4s ease-in-out;
-    width: 40px;
+.stato-label {
+    margin-left: 10px;
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 13px;
+    white-space: normal;
+    word-wrap: break-word;
 }
-.material-switch > label::after {
-    background: rgb(255, 255, 255);
-    border-radius: 16px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-    content: '';
-    height: 24px;
-    left: -4px;
-    margin-top: -8px;
+
+/* Switch moderno */
+.switch-container {
+    position: relative;
+    display: inline-block;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 22px;
+    margin-bottom: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
     position: absolute;
-    top: -4px;
-    transition: all 0.3s ease-in-out;
-    width: 24px;
-}
-.material-switch > input[type="checkbox"]:checked + label::before {
-    background: inherit;
-    opacity: 0.5;
-}
-.material-switch > input[type="checkbox"]:checked + label::after {
-    background: inherit;
-    left: 20px;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
 }
 
-.material-switch {
-    margin-bottom:10px;
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 22px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }
 
 .btn-black{
@@ -105,4 +144,265 @@ a:active, a:hover, a:focus {
 
 .select2-container {
     z-index: 10000;
+}
+
+/* Stile per la modalità fullscreen del modulo */
+.module-fullscreen {
+    position: relative !important;
+    margin: -15px -15px 0 -15px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    transition: all 0.3s ease;
+}
+
+.module-fullscreen .card-body {
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.module-fullscreen .card-header {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+
+/* Stile per il pulsante fullscreen */
+#fullscreen-btn:hover {
+    color: #3c8dbc !important;
+}
+
+/* Improve marker popup styling */
+.leaflet-popup-content {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.leaflet-popup-content hr {
+    margin: 5px 0;
+}
+
+.leaflet-popup-content button {
+    margin-top: 5px;
+}
+
+/* Improve controls styling */
+.leaflet-control-layers,
+.leaflet-bar {
+    border-radius: 4px !important;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2) !important;
+}
+
+.leaflet-control-layers-toggle {
+    background-size: 16px 16px !important;
+}
+
+.leaflet-touch .leaflet-bar a {
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+}
+
+/* Loading indicator */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-size: 13px;
+    border: 1px solid #e0e0e0;
+}
+
+.map-loading i {
+    margin-right: 5px;
+    color: #3c8dbc;
+}
+
+/* Custom tooltip */
+.custom-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    max-width: 250px;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Custom popup */
+.custom-popup .leaflet-popup-content-wrapper {
+    border-radius: 4px;
+    padding: 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    max-width: 300px;
+}
+
+.custom-popup .leaflet-popup-content {
+    margin: 0;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.custom-popup .leaflet-popup-tip {
+    background: white;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.custom-popup hr {
+    margin: 8px 0;
+    border-color: #eee;
+}
+
+.custom-popup button {
+    margin-top: 8px;
+    border-radius: 3px;
+}
+
+/* Miglioramenti per i form */
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    height: 32px;
+    font-size: 13px;
+}
+
+.input-group-btn .btn {
+    height: 32px;
+    padding: 5px 10px;
+}
+
+/* Miglioramenti per il select2 */
+.select2-container--bootstrap .select2-selection--single {
+    height: 32px !important;
+    font-size: 13px;
+}
+
+.select2-container--bootstrap .select2-selection--single .select2-selection__rendered {
+    padding-top: 2px;
+}
+
+/* Miglioramenti per la card */
+.card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.card-header {
+    padding: 8px 12px;
+}
+
+.card-header .card-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-body.p-0 {
+    padding: 0 !important;
+}
+
+.card-body.p-2 {
+    padding: 10px !important;
+}
+
+/* Stile per il pannello dei filtri sovrapposto */
+#filters-container {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 300px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transform: translateY(-50%);
+    background-color: #fff;
+}
+
+#menu-filtri {
+    margin-bottom: 0;
+    border-radius: 4px;
+    overflow: visible;
+    max-width: 100%;
+}
+
+#menu-filtri .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+}
+
+#lista-filtri {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    font-size: 13px;
+    height: auto !important; /* Forza l'altezza automatica */
+    min-height: 0 !important; /* Permette al contenitore di adattarsi al contenuto */
+    max-height: none !important; /* Rimuove eventuali limiti di altezza */
+}
+
+
+/* Stile per il pulsante toggle filtri */
+#toggle-filters-btn {
+    margin-right: 5px;
+}
+
+#toggle-filters-btn i.text-primary {
+    color: #3c8dbc !important;
+}
+
+/* Stile per le icone dell'indirizzo */
+.address-icon, .location-icon {
+    color: #3c8dbc;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.address-icon:hover, .location-icon:hover {
+    color: #367fa9;
+}
+
+.location-icon {
+    color: #00a65a;
+}
+
+.location-icon:hover {
+    color: #008d4c;
+}
+
+/* Miglioramenti per gli input */
+#geocomplete .form-control {
+    border-color: #d2d6de;
+    box-shadow: none;
+    transition: border-color 0.2s ease;
+}
+
+#geocomplete .form-control:focus {
+    border-color: #3c8dbc;
+    box-shadow: 0 0 3px rgba(60, 141, 188, 0.2);
 }

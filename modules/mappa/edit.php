@@ -23,68 +23,94 @@ include_once __DIR__.'/../../core.php';
 
 <link rel="stylesheet" href="<?php echo $rootdir; ?>/modules/mappa/css/app.css">
 
-<!-- Mappa -->
-<div id="mappa"></div>
-
-<!-- Menu laterale -->
-<div id="menu-filtri" class="open-menu">
-    <div style='width:100%;height:50px;background-color:#4d4d4d;padding:8px;font-size:25px;color:white;' class='text-center'>
-        <div class="pull-left"><i class='fa fa-forward clickable' id="menu-filtri-toggle"></i></div>
-        <b><?php echo tr('Filtri'); ?></b>
-    </div>
-
-    <div id="lista-filtri" style="padding:20px 40px;height:637px;overflow:auto;">
-
-        <div class="row">
-            <div class="col-md-12" id="geocomplete">
-                <input type="hidden" name="lat" id="lat" value="">
-                <input type="hidden" name="lng" id="lng" value="">
-                {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "gaddress", "value": "", "extra": "data-geo='formatted_address'", "icon-after":"<button type=\"button\" class=\"btn btn-info\" onclick=\"initGeocomplete();\"><i class=\"fa fa-search\"></i></button>", "icon-before":"<button type=\"button\" class=\"btn btn-info\" onclick=\"getLocation();\"><i class=\"fa fa-map-marker\"></i></button>" ]}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12" id="geocomplete">
-                <input type="hidden" name="lat" id="lat" value="">
-                <input type="hidden" name="lng" id="lng" value="">
-                {[ "type": "number", "label": "<?php echo tr('Nel raggio di'); ?>", "name": "range", "value": "", "decimals": 0, "icon-after":"m" ]}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per anagrafica'); ?></label>
-                <hr>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti" ]}
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <label style='font-size:12pt;'><?php echo tr('Geolocalizzazione attività per stato'); ?></label>
-                <hr>
-            </div>
-        </div>
-
-        <div class="row">
-<?php
-    $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
-
-foreach ($rs_stati as $stato) {
-    ?>
-            <div class="col-md-4">
-                <label><?php echo $stato['title']; ?></label>
-                <div class="material-switch">
-                    <input id="<?php echo $stato['title']; ?>" name="<?php echo $stato['title']; ?>" type="checkbox" checked/>
-                    <label for="<?php echo $stato['title']; ?>" class="badge-success"></label>
+<div class="row">
+    <!-- Mappa Container -->
+    <div id="map-container" class="col-md-12">
+        <div class="card">
+            <div class="card-header with-border">
+                <h3 class="card-title">
+                    <i class="fa fa-map-marker text-primary"></i> <?php echo tr('Mappa'); ?>
+                </h3>
+                <div class="card-tools pull-right">
+                    <button type="button" class="btn btn-tool" id="toggle-filters-btn" title="<?php echo tr('Mostra/nascondi filtri'); ?>">
+                        <i class="fa fa-sliders"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" id="fullscreen-btn" title="<?php echo tr('Schermo intero'); ?>">
+                        <i class="fa fa-expand"></i>
+                    </button>
                 </div>
-			</div>
-<?php
-}
-?>
+            </div>
+            <div class="card-body p-0">
+                <div id="mappa"></div>
+
+                <!-- Menu filtri sovrapposto -->
+                <div id="filters-container">
+                    <div id="menu-filtri" class="card card-primary card-outline">
+                        <div class="card-header with-border">
+                            <h3 class="card-title">
+                                <i class="fa fa-filter text-primary"></i> <?php echo tr('Filtri'); ?>
+                            </h3>
+                            <div class="card-tools pull-right">
+                                <button type="button" class="btn btn-tool" id="menu-filtri-toggle" title="<?php echo tr('Chiudi pannello'); ?>">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+            <div class="card-body p-2" id="lista-filtri">
+                <div class="section-title">
+                    <i class="fa fa-search"></i> <?php echo tr('Ricerca posizione'); ?>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="geocomplete">
+                        <input type="hidden" name="lat" id="lat" value="">
+                        <input type="hidden" name="lng" id="lng" value="">
+                        {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "gaddress", "value": "", "extra": "data-geo='formatted_address' placeholder=\"<?php echo tr('Inserisci un indirizzo da cercare'); ?>\"", "icon-after":"<i class=\"fa fa-search address-icon\" onclick=\"initGeocomplete();\" title=\"<?php echo tr('Cerca indirizzo'); ?>\"></i>", "icon-before":"<i class=\"fa fa-crosshairs location-icon\" onclick=\"getLocation();\" title=\"<?php echo tr('Usa posizione attuale'); ?>\"></i>" ]}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="geocomplete">
+                        <input type="hidden" name="lat" id="lat" value="">
+                        <input type="hidden" name="lng" id="lng" value="">
+                        {[ "type": "number", "label": "<?php echo tr('Nel raggio di'); ?>", "name": "range", "value": "1000", "min": "100", "max": "50000", "decimals": 0, "icon-after":"m" ]}
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fa fa-users"></i> <?php echo tr('Filtro per anagrafica'); ?>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti", "placeholder": "<?php echo tr('Seleziona un\'opzione'); ?>" ]}
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fa fa-tasks"></i> <?php echo tr('Filtro per stato'); ?>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="stati-container">
+                        <?php
+                            $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
+
+                            foreach ($rs_stati as $stato) {
+                        ?>
+                            <div class="stato-item">
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input id="<?php echo $stato['title']; ?>" name="<?php echo $stato['title']; ?>" type="checkbox" checked/>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <label class="stato-label"><?php echo $stato['title']; ?></label>
+                            </div>
+                        <?php
+                            }
+                        ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -110,12 +136,12 @@ foreach ($rs_stati as $stato) {
         L.tileLayer("<?php echo setting('Tile server OpenStreetMap'); ?>", {
             maxZoom: 17,
             attribution: "© OpenStreetMap"
-        }); 
+        });
 
         var street = L.tileLayer('<?php echo setting('Tile server OpenStreetMap'); ?>', {
             maxZoom: 17,
             attribution: "© OpenStreetMap",
-        }).addTo(map); 
+        }).addTo(map);
 
         var satellite = L.tileLayer(esri_url, {id: "mappa", maxZoom: 17, tileSize: 512, zoomOffset: -1, attribution: esri_attribution});
 

@@ -38,15 +38,18 @@ function add_calendar() {
 
     var name = "calendar-" + last_id;
 
-    $("#calendars").append(`<div class="col-md-4" id="group-` + name + `">
-    <div class="input-group">
-        <span class="input-group-addon before">` + last_id + `</span>
-        <input class="form-control calendar-input text-center" type="text" name="` + name + `" id="` + name + `"/>
-        <span class="input-group-addon after clickable btn btn-danger" onclick="remove_calendar(this)">
-            <i class="fa fa-trash-o"></i>
-        </span>
+    $("#calendars").append(`<div class="col-md-6" id="group-` + name + `">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white">` + last_id + `</span>
+        </div>
+        <input class="form-control calendar-input text-center" type="text" name="` + name + `" id="` + name + `" placeholder="Seleziona periodo"/>
+        <div class="input-group-append">
+            <button class="btn btn-outline-danger" onclick="remove_calendar(this)" title="Rimuovi periodo">
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
     </div>
-    <br>
 </div>`);
 
     start_complete_calendar("#" + name, function (start, end) {

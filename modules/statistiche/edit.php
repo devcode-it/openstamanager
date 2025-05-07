@@ -54,37 +54,49 @@ foreach ($months as $key => $month_number) {
 
 // Fatturato
 echo '
-<div class="card card-info">
+<div class="card card-outline card-info">
     <div class="card-header">
-        <h4 class="card-title">'.tr('Vendite e acquisti').'</h4>
-
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
-            </button>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="card-title">'.tr('Vendite e acquisti').'</h3>
+                <span class="badge badge-info ml-2">'.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</span>
+            </div>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
         </div>
     </div>
     <div class="card-body">
-        <div class="card card-warning collapsed-card">
-            <div class="card-header">
-                <h4 class="card-title">'.tr('Periodi temporali').'</h4>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-plus"></i>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="btn-group float-right">
+                    <button class="btn btn-sm btn-outline-info" onclick="add_calendar()">
+                        <i class="fa fa-calendar"></i> '.tr('Aggiungi periodo di confronto').'
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#calendars-container">
+                        <i class="fa fa-cog"></i> '.tr('Gestisci periodi').'
                     </button>
                 </div>
-            </div>
-
-            <div class="card-body" id="calendars">
-                <div class="row">
-                    <button class="btn btn-warning btn-sm" onclick="add_calendar()">
-                        <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
-                    </button>
-                </div>
-            <br>
             </div>
         </div>
-        <canvas id="fatturato" height="50"></canvas>
+
+        <div id="calendars-container" class="collapse">
+            <div class="card card-light mb-3">
+                <div class="card-body" id="calendars">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small class="text-muted">'.tr('Aggiungi periodi temporali per confrontare i dati').'</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container" style="position: relative; height:300px;">
+            <canvas id="fatturato"></canvas>
+        </div>
     </div>
 </div>';
 
@@ -102,38 +114,51 @@ var chart_options = {
     },
     options: {
         responsive: true,
-        tooltips: {
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    var dataset = data.datasets[tooltipItem.datasetIndex];
-                    var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
-
-                    if (label) {
-                        label += ": ";
-                    }
-
-                    label += tooltipItem.yLabel;
-
-                    return label;
-                }
-            }
-
-        },
+        maintainAspectRatio: false,
         elements: {
             line: {
-                tension: 0
+                tension: 0.3,
+                borderWidth: 2
+            },
+            point: {
+                radius: 3,
+                hitRadius: 10,
+                hoverRadius: 5
             }
         },
-        annotation: {
-            annotations: [{
-                type: "line",
-                mode: "horizontal",
-                scaleID: "y-axis-0",
-                value: 0,
-                label: {
-                    enabled: true,
+        plugins: {
+            legend: {
+                position: "top",
+                labels: {
+                    boxWidth: 12,
+                    padding: 10
                 }
-            }]
+            },
+            tooltip: {
+                mode: "index",
+                intersect: false,
+                backgroundColor: "rgba(0,0,0,0.7)",
+                titleFont: {
+                    size: 12
+                },
+                bodyFont: {
+                    size: 12
+                },
+                callbacks: {
+                    label: function(context) {
+                        var dataset = context.dataset;
+                        var label = dataset.labels ? dataset.labels[context.dataIndex] : dataset.label || "";
+
+                        if (label) {
+                            label += ": ";
+                        }
+
+                        label += \''.html_entity_decode(currency()).' \' + (context.raw || 0).toLocaleString();
+
+                        return label;
+                    }
+                }
+            }
         },
         hover: {
             mode: "nearest",
@@ -145,6 +170,9 @@ var chart_options = {
                 title: {
                     display: true,
                     text: "'.tr('Periodo').'"
+                },
+                grid: {
+                    color: "rgba(0,0,0,0.05)"
                 }
             },
             y: {
@@ -153,14 +181,16 @@ var chart_options = {
                     display: true,
                     text: "'.tr('Andamento').'"
                 },
+                grid: {
+                    color: "rgba(0,0,0,0.05)"
+                },
                 ticks: {
-                    // Include a dollar sign in the ticks
-                    callback: function(value, index, values) {
-                        return \''.html_entity_decode(currency()).' \' + value;
+                    callback: function(value) {
+                        return \''.html_entity_decode(currency()).' \' + value.toLocaleString();
                     }
                 }
             }
-        },
+        }
     }
 };
 
@@ -242,41 +272,53 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('I 20 clienti TOP per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('I 20 clienti TOP').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="card-body" height="500">';
+            <div class="card-body p-0">
+                <div class="table-responsive">';
 if (!empty($clienti)) {
     echo '
-                <table class="table table-striped">
-                    <tr>
-                        <th>'.tr('Ragione sociale').'</th>
-                        <th class="text-right" width="100">'.tr('N. fatture').'</th>
-                        <th class="text-right" width="120">'.tr('Totale').'<span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                    </tr>';
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Ragione sociale').'</th>
+                                <th class="text-right" width="100">'.tr('N. fatture').'</th>
+                                <th class="text-right" width="120">'.tr('Totale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Valori iva esclusa').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Percentuale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Incidenza sul fatturato').'"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
     foreach ($clienti as $cliente) {
         echo '
-                    <tr>
-                        <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
-                        <td class="text-right">'.intval($cliente['qta']).'</td>
-                        <td class="text-right">'.moneyFormat($cliente['totale'], 2).'</td>
-                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / ($totale[0]['totale'] != 0 ? $totale[0]['totale'] : 1), 2).' %</td>
-                    </tr>';
+                            <tr>
+                                <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
+                                <td class="text-right">'.intval($cliente['qta']).'</td>
+                                <td class="text-right">'.moneyFormat($cliente['totale'], 2).'</td>
+                                <td class="text-right">
+                                    <span class="badge badge-'.($cliente['totale'] * 100 / ($totale[0]['totale'] != 0 ? $totale[0]['totale'] : 1) > 10 ? 'info' : 'secondary').'">
+                                        '.Translator::numberToLocale($cliente['totale'] * 100 / ($totale[0]['totale'] != 0 ? $totale[0]['totale'] : 1), 2).' %
+                                    </span>
+                                </td>
+                            </tr>';
     }
     echo '
-                </table>';
+                        </tbody>
+                    </table>';
 } else {
     echo '
-                <p>'.tr('Nessuna vendita').'...</p>';
+                    <div class="alert alert-info m-3">
+                        <i class="fa fa-info-circle"></i> '.tr('Nessuna vendita').'...
+                    </div>';
 }
 echo '
-
+                </div>
             </div>
         </div>
     </div>';
@@ -329,43 +371,61 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('I 20 articoli più venduti per il periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</h4>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('I 20 articoli più venduti').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="card-body" height="500">';
+            <div class="card-body p-0">
+                <div class="table-responsive">';
 if (!empty($articoli)) {
     echo '
-                <table class="table table-striped">
-                    <tr>
-                        <th>'.tr('Articolo').'</th>
-                        <th class="text-right" width="100">'.tr('N. articoli').'<span class="tip" title="'.tr('Numero di articoli venduti').'"> <i class="fa fa-question-circle" aria-hidden="true"></i></span></th>
-                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                        <th class="text-right" width="120">'.tr('Totale').'<span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                    </tr>';
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Articolo').'</th>
+                                <th class="text-right" width="100">'.tr('N. articoli').' <i class="fa fa-info-circle text-info tip" title="'.tr('Numero di articoli venduti').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Percentuale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Incidenza sul numero di articoli').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Totale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Valori iva esclusa').'"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
     foreach ($articoli as $articolo) {
         echo '
-                    <tr>
-                        <td><div class="shorten"> '.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</div></td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / ($totale[0]['totale_qta'] != 0 ? $totale[0]['totale_qta'] : 1), 2).' %</td>
-                        <td class="text-right">'.moneyFormat($articolo['totale'], 2).'</td>
-                    </tr>';
+                            <tr>
+                                <td><div class="text-truncate" style="max-width: 250px;"> '.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</div></td>
+                                <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
+                                <td class="text-right">
+                                    <span class="badge badge-'.($articolo['qta'] * 100 / ($totale[0]['totale_qta'] != 0 ? $totale[0]['totale_qta'] : 1) > 10 ? 'info' : 'secondary').'">
+                                        '.Translator::numberToLocale($articolo['qta'] * 100 / ($totale[0]['totale_qta'] != 0 ? $totale[0]['totale_qta'] : 1), 2).' %
+                                    </span>
+                                </td>
+                                <td class="text-right font-weight-bold">'.moneyFormat($articolo['totale'], 2).'</td>
+                            </tr>';
     }
     echo '
-                </table>';
-
-    echo "<br><p class='float-right' >".Modules::link('Articoli', null, tr('Vedi tutto...'), null, null, false, 'tab_'.Plugin::where('name', 'Statistiche vendita')->first()->id).'</p>';
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-light border-top">
+                        <div>
+                            <span class="text-muted"><small>'.tr('Periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</small></span>
+                        </div>
+                        <div>
+                            '.Modules::link('Articoli', null, '<i class="fa fa-chart-bar"></i> '.tr('Statistiche complete'), 'btn btn-info btn-sm', null, false, 'tab_'.Plugin::where('name', 'Statistiche vendita')->first()->id).'
+                        </div>
+                    </div>';
 } else {
     echo '
-                <p>'.tr('Nessun articolo venduto').'...</p>';
+                    <div class="alert alert-info m-3">
+                        <i class="fa fa-info-circle"></i> '.tr('Nessun articolo venduto').'...
+                    </div>';
 }
 echo '
-
+                </div>
             </div>
         </div>
     </div>
@@ -413,16 +473,19 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('Numero interventi per tipologia').'</h4>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('Numero interventi per tipologia').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="interventi_n_tipologia"></canvas>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="interventi_n_tipologia"></canvas>
+                </div>
             </div>
         </div>
     </div>';
@@ -441,6 +504,35 @@ $(document).ready(function() {
                 '.$dataset.'
             ]
         },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: "index",
+                intersect: false,
+                backgroundColor: "rgba(0,0,0,0.7)",
+            },
+            legend: {
+                position: "top",
+                labels: {
+                    boxWidth: 12,
+                    padding: 8
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    }
+                },
+                y: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
     });
 });
 </script>';
@@ -468,16 +560,19 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('Ore interventi per tipologia').'</h4>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('Ore interventi per tipologia').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="interventi_ore_tipologia"></canvas>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="interventi_ore_tipologia"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -496,6 +591,40 @@ $(document).ready(function() {
                 '.$dataset.'
             ]
         },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: "index",
+                intersect: false,
+                backgroundColor: "rgba(0,0,0,0.7)",
+            },
+            legend: {
+                position: "top",
+                labels: {
+                    boxWidth: 12,
+                    padding: 8
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    }
+                },
+                y: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + " ore";
+                        }
+                    }
+                }
+            }
+        }
     });
 });
 </script>';
@@ -517,11 +646,9 @@ ORDER BY
     `ragione_sociale` ASC");
 
 $dataset = '';
-if ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect']['idtipiintervento']!= '[]') {
-    $where = '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')';
-} else {
-    $where = '1=1';
-}
+$where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect']['idtipiintervento'] != '[]') ?
+    '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')' :
+    '1=1';
 
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->fetchArray('SELECT SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `in_interventi_tecnici`.`idtecnico` = '.prepare($tecnico['id']).' AND `in_interventi_tecnici`.`orario_inizio` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_bloccato` AND '.$where.' GROUP BY YEAR(`in_interventi_tecnici`.`orario_inizio`), MONTH(`in_interventi_tecnici`.`orario_inizio`) ORDER BY YEAR(`in_interventi_tecnici`.`orario_inizio`) ASC, MONTH(`in_interventi_tecnici`.`orario_inizio`) ASC');
@@ -550,21 +677,25 @@ echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('Ore di lavoro per tecnico').'</h4>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('Ore di lavoro per tecnico').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        {["type": "select", "multiple": "1", "label": "'.tr('Tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti" ]}
-                    </div>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="sessioni"></canvas>
                 </div>
 
-                <canvas id="sessioni"></canvas>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        {["type": "select", "multiple": "1", "label": "'.tr('Filtra per tipi attività').'", "name": "idtipiintervento[]", "ajax-source": "tipiintervento", "value": "'.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).'", "placeholder": "Tutti", "icon-before": "<i class=\"fa fa-filter\"></i>" ]}
+                    </div>
+                </div>
             </div>
         </div>
     </div>';
@@ -585,47 +716,58 @@ $(document).ready(function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             indexAxis: "y",
+            plugins: {
+                legend: {
+                    position: "right",
+                    labels: {
+                        boxWidth: 12,
+                        padding: 8
+                    }
+                },
+                tooltip: {
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    callbacks: {
+                        label: function(context) {
+                            var label = context.dataset.label || "";
+                            if (label) {
+                                label += ": ";
+                            }
+
+                            var value = context.raw || 0;
+                            label += value;
+
+                            if (value <= 1 && value != 0) {
+                                label += " ora ";
+                            } else {
+                                label += " ore ";
+                            }
+
+                            label += "(in attività completate)";
+
+                            return label;
+                        }
+                    }
+                }
+            },
             scales: {
                 x: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
                     ticks: {
-                        // Include a dollar sign in the ticks
-                        callback: function(value, index, values) {
-                            var text = "";
-                            if (value<=1 && value!=0){
-                                text = " ora";
-                            }else{
-                                text = " ore";
-                            }
-                            return value + text;
+                        callback: function(value) {
+                            return value + (value <= 1 && value != 0 ? " ora" : " ore");
                         }
                     }
-                }
-            },
-            tooltips: {
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        var dataset = data.datasets[tooltipItem.datasetIndex];
-                        var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
-
-                        if (label) {
-                            label += ": ";
-                        }
-
-                        label += tooltipItem.xLabel;
-
-                        if (tooltipItem.xLabel<=1) {
-                            label += " ora ";
-                        }else{
-                            label += " ore ";
-                        }
-
-                        label += "(in attività completate)";
-
-                        return label;
+                },
+                y: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
                     }
                 }
-            },
+            }
         }
     });
 });
@@ -718,20 +860,22 @@ $dataset .= '{
     ]
 },';
 echo '
-
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h4 class="card-title">'.tr('Nuove anagrafiche').'</h4>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('Nuove anagrafiche').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="n_anagrafiche"></canvas>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="n_anagrafiche"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -753,21 +897,31 @@ $(document).ready(function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             elements: {
                 line: {
-                    tension: 0
+                    tension: 0.3,
+                    borderWidth: 2
+                },
+                point: {
+                    radius: 3,
+                    hitRadius: 10,
+                    hoverRadius: 5
                 }
             },
-            annotation: {
-                annotations: [{
-                    type: "line",
-                    mode: "horizontal",
-                    scaleID: "y-axis-0",
-                    value: 0,
-                    label: {
-                        enabled: false,
+            plugins: {
+                legend: {
+                    position: "top",
+                    labels: {
+                        boxWidth: 12,
+                        padding: 8
                     }
-                }]
+                },
+                tooltip: {
+                    mode: "index",
+                    intersect: false,
+                    backgroundColor: "rgba(0,0,0,0.7)"
+                }
             },
             hover: {
                 mode: "nearest",
@@ -776,24 +930,29 @@ $(document).ready(function() {
             scales: {
                 x: {
                     display: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: "'.tr('Periodo').'"
+                        text: "'.tr('Periodo').'"
+                    },
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
                     }
                 },
                 y: {
                     display: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: "'.tr('Numero').'"
+                        text: "'.tr('Numero').'"
                     },
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
+                    beginAtZero: true,
                     ticks: {
-                        callback: function(value, index, values) {
-                            return value;
-                        }
+                        precision: 0
                     }
                 }
-            },
+            }
         }
     });
 });

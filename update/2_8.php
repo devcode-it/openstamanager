@@ -4,7 +4,7 @@ include __DIR__.'/../config.inc.php';
 
 // Spostamento backup
 $directory = 'backup/';
-$files = glob($directory.'*.{zip}', GLOB_BRACE);
+$files = glob($directory.'*.{zip}', GLOB_BRACE) ?: [];
 $new_folder = 'files/backups/';
 directory($new_folder);
 
@@ -41,12 +41,12 @@ delete($files);
 
 $module = Models\Module::where('name', 'Fatture di acquisto')->first();
 $directory = 'files/fatture/vendite/';
-$files = glob($directory.'*.{xml,pdf}', GLOB_BRACE);
+$files = glob($directory.'*.{xml,pdf}', GLOB_BRACE) ?: [];
 $new_folder = 'files/'.$module->attachments_directory.'/';
 directory($new_folder);
 
-$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id);
-$attachments_filenames = array_column($attachments, 'filename');
+$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id) ?: [];
+$attachments_filenames = !empty($attachments) ? array_column($attachments, 'filename') : [];
 
 foreach ($files as $file) {
     $filename = basename($file);
@@ -59,12 +59,12 @@ foreach ($files as $file) {
 
 $module = Models\Module::where('name', 'Fatture di vendita')->first();
 $directory = 'files/fatture/';
-$files = glob($directory.'*.{xml,pdf}', GLOB_BRACE);
+$files = glob($directory.'*.{xml,pdf}', GLOB_BRACE) ?: [];
 $new_folder = 'files/'.$module->attachments_directory.'/';
 directory($new_folder);
 
-$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id);
-$attachments_filenames = array_column($attachments, 'filename');
+$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id) ?: [];
+$attachments_filenames = !empty($attachments) ? array_column($attachments, 'filename') : [];
 
 foreach ($files as $file) {
     $filename = basename($file);

@@ -51,13 +51,26 @@ switch (filter('op')) {
 
     case 'ricerca':
         $search = filter('search');
-        $sezioni = Setting::select('sezione')
-            ->where('sezione', 'like', '%'.$search.'%')
-            ->orWhere('nome', 'like', '%'.$search.'%')
-            ->groupBy(['sezione'])
-            ->get()->pluck('sezione');
 
-        echo json_encode($sezioni);
+        // Trova le impostazioni che corrispondono alla ricerca
+        $settings = Setting::select('id', 'nome', 'sezione')
+            ->where('nome', 'like', '%'.$search.'%')
+            ->orWhere('sezione', 'like', '%'.$search.'%')
+            ->get();
+
+        // Raggruppa le impostazioni per sezione
+        $results = [];
+        foreach ($settings as $setting) {
+            if (!isset($results[$setting->sezione])) {
+                $results[$setting->sezione] = [];
+            }
+            $results[$setting->sezione][] = [
+                'id' => $setting->id,
+                'nome' => $setting->nome
+            ];
+        }
+
+        echo json_encode($results);
 
         break;
 

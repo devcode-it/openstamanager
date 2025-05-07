@@ -29,36 +29,49 @@ $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
     ->get();
 
 echo '
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="input-group">
-            <input type="text" class="form-control form-control-lg text-center" id="ricerca_impostazioni" placeholder="'.tr('Cerca').'...">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button" id="search">
-                        <span class="fa fa-search"></span>
-                    </button>
+        <div class="col-md-8 offset-md-2">
+            <div class="search-container mb-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-primary border-primary text-white">
+                            <i class="fa fa-cog"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control form-control-lg" id="ricerca_impostazioni" placeholder="'.tr('Cerca impostazioni').'...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" id="search">
+                            <span class="fa fa-search"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2 text-right">
             <button class="btn btn-warning hidden" type="button" id="riprova_salvataggi" onclick="riprovaSalvataggio()">
                 <span class="fa fa-save"></span> '.tr('Riprova salvataggi falliti').'
             </button>
         </div>
     </div>
-</div>
+</div>';
 
-<hr>';
+echo '<div class="row">
+    <div class="col-md-12">
+        <div class="settings-container modules-impostazioni">
+';
 
 foreach ($gruppi as $key => $gruppo) {
     echo '
 <!-- Impostazioni della singola sezione -->
-<div class="card card-primary collapsed-card">
+<div class="card card-primary collapsed-card mb-3">
     <div class="card-header clickable" data-title="'.$gruppo->nome.'" id="impostazioni-'.$key.'">
-        <div class="card-title">'.tr('_SEZIONE_', [
-        '_SEZIONE_' => $gruppo->nome,
-    ]).'</div>
+        <div class="card-title">
+            <i class="fa fa-sliders mr-2"></i>
+            '.tr('_SEZIONE_', [
+            '_SEZIONE_' => $gruppo->nome,
+        ]).'
+        </div>
         <div class="card-tools pull-right">
             <div class="badge">'.$gruppo->numero.'</div>
         </div>
@@ -69,19 +82,33 @@ foreach ($gruppi as $key => $gruppo) {
 }
 
 echo '
+        </div>
+    </div>
+</div>
+
 <script>
 
 $(document).ready(function() {
+    // Animazione per le card al caricamento
+    $(".card").each(function(index) {
+        $(this).delay(100 * index).animate({opacity: 1}, 300);
+    });
+
+    // Gestione ricerca con tasto invio
     $("#ricerca_impostazioni").keyup(function(key) {
         if (key.which == 13) {
             $("#search").click();
         }
     });
+
+    // Focus automatico sul campo di ricerca
+    $("#ricerca_impostazioni").focus();
 });
 
 globals.impostazioni = {
     errors: {},
     numero_ricerche: 0,
+    filtered_settings: null
 };
 
 $("[id^=impostazioni]").click(function() {
@@ -91,16 +118,22 @@ $("[id^=impostazioni]").click(function() {
 $("#search").on("click", function(){
     const ricerca = $("#ricerca_impostazioni").val();
     const icon = $(this).parent().find("span");
-    $(".card").removeClass("hidden");
 
     // Segnalazione ricerca in corso
     globals.impostazioni.numero_ricerche = globals.impostazioni.numero_ricerche + 1;
+
     // Impostazione icona di caricamento
     icon
         .addClass("fa-spinner fa-spin")
-        .removeClass("fa-search")
+        .removeClass("fa-search");
+
+    // Mostra tutte le card prima di filtrare
+    $(".card").removeClass("hidden");
 
     if (ricerca) {
+        // Aggiungi un effetto di transizione durante la ricerca
+        $(".settings-container").css("opacity", "0.7");
+
         $.get("'.$structure->fileurl('actions.php').'?id_module='.$id_module.'&op=ricerca&search=" + ricerca, function(data) {
             // Segnalazione ricerca completata
             globals.impostazioni.numero_ricerche = globals.impostazioni.numero_ricerche - 1;
@@ -109,38 +142,106 @@ $("#search").on("click", function(){
             if (globals.impostazioni.numero_ricerche === 0){
                 icon
                     .removeClass("fa-spinner fa-spin")
-                    .addClass("fa-search")
+                    .addClass("fa-search");
             }
 
-            $(".card-header").addClass("hidden");
+            // Nascondi tutte le card
+            $(".card").addClass("hidden");
 
-            let sezioni = JSON.parse(data);
-            for(const sezione of sezioni){
-                $(`.card-header[data-title="` + sezione + `"]`).removeClass("hidden")
-                let card = $(`.card-header[data-title="` + sezione + `"]`).removeClass("hidden")
-                caricaSezione(card);
+            // Mostra solo le card corrispondenti alla ricerca
+            let risultati = JSON.parse(data);
+            let sezioni = Object.keys(risultati);
+
+            // Se non ci sono risultati, mostra un messaggio
+            if (sezioni.length === 0) {
+                let searchText = $("#ricerca_impostazioni").val();
+                $(".settings-container").html(\'<div class="alert alert-info text-center mt-4"><i class="fa fa-info-circle mr-2"></i> \' +
+                    tr("Nessun risultato trovato per") + \' <strong>"\' + searchText + \'"</strong></div>\');
+            } else {
+                // Salva gli ID delle impostazioni da mostrare per ogni sezione
+                globals.impostazioni.filtered_settings = risultati;
+
+                // Mostra le sezioni trovate con un effetto di fade-in
+                for(const sezione of sezioni){
+                    const card = $(`.card-header[data-title="` + sezione + `"]`).closest(".card");
+                    card.removeClass("hidden")
+                        .css("opacity", "0")
+                        .animate({opacity: 1}, 300);
+
+                    // Carica la sezione e mostra solo le impostazioni corrispondenti
+                    caricaSezioneConFiltro(card.find(".card-header"), risultati[sezione]);
+                }
             }
+
+            // Ripristina l\'opacità del container
+            $(".settings-container").css("opacity", "1");
         });
+    } else {
+        // Se la ricerca è vuota, mostra tutte le card
+        $(".card").removeClass("hidden")
+            .css("opacity", "0")
+            .each(function(index) {
+                $(this).delay(50 * index).animate({opacity: 1}, 200);
+            });
+
+        // Rimuovi eventuali filtri precedenti
+        globals.impostazioni.filtered_settings = null;
+
+        // Ripristina l\'icona di ricerca
+        icon
+            .removeClass("fa-spinner fa-spin")
+            .addClass("fa-search");
     }
 })
 
 function caricaSezione(header) {
     let card = $(header).closest(".card");
-    card.toggleClass("collapsed-card");
+    let sezione = card.find(".card-header").data("title");
 
     // Controllo sul caricamento già effettuato
     let container = card.find(".card-body");
-    if (container.html()){
-        return ;
-    }
 
-    // Caricamento della sezione di impostazioni
-    let sezione = card.find(".card-header").data("title");
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('sezione.php').'?id_module='.$id_module.'&sezione=" + sezione, function(data) {
-        container.html(data);
-        localLoading(container, false);
-    });
+    // Animazione per l\'apertura/chiusura della card
+    if (card.hasClass("collapsed-card")) {
+        // Se c\'è una ricerca attiva, usa la funzione di caricamento con filtro
+        if (globals.impostazioni.filtered_settings && globals.impostazioni.filtered_settings[sezione]) {
+            return caricaSezioneConFiltro(header, globals.impostazioni.filtered_settings[sezione]);
+        }
+
+        card.removeClass("collapsed-card");
+        card.find(".card-header").addClass("bg-light");
+
+        // Se il contenuto è già caricato, mostra con animazione
+        if (container.html() && container.html().trim() !== "") {
+            container.slideDown(300);
+            return;
+        }
+
+        // Caricamento della sezione di impostazioni
+        localLoading(container, true);
+        return $.get("'.$structure->fileurl('sezione.php').'?id_module='.$id_module.'&sezione=" + sezione, function(data) {
+            container.hide();
+            container.html(data);
+            localLoading(container, false);
+
+            // Inizializza i tooltip per gli elementi appena caricati
+            container.find("[data-toggle=\'tooltip\']").tooltip();
+
+            // Mostra il contenuto con animazione
+            container.slideDown(300);
+
+            // Evidenzia brevemente i nuovi elementi
+            container.find(".form-group").each(function(index) {
+                $(this).delay(50 * index).animate({backgroundColor: "#f8f9fa"}, 300).delay(300).animate({backgroundColor: "transparent"}, 300);
+            });
+        });
+    } else {
+        // Chiudi la card con animazione
+        container.slideUp(300, function() {
+            card.addClass("collapsed-card");
+            card.find(".card-header").removeClass("bg-light");
+        });
+    }
 }
 
 function salvaImpostazione(id, valore){
@@ -177,6 +278,58 @@ function riprovaSalvataggio() {
     for ([id, valore] of Object.entries(impostazioni)) {
         salvaImpostazione(id, valore);
     }
+}
+
+// Funzione per caricare una sezione e mostrare solo le impostazioni filtrate
+function caricaSezioneConFiltro(header, impostazioni_filtrate) {
+    let card = $(header).closest(".card");
+
+    // Rimuovi la classe collapsed-card per espandere la sezione
+    card.removeClass("collapsed-card");
+    card.find(".card-header").addClass("bg-light");
+
+    // Controllo sul caricamento già effettuato
+    let container = card.find(".card-body");
+
+    // Caricamento della sezione di impostazioni
+    let sezione = card.find(".card-header").data("title");
+    localLoading(container, true);
+
+    return $.get("'.$structure->fileurl('sezione.php').'?id_module='.$id_module.'&sezione=" + sezione, function(data) {
+        container.hide();
+        container.html(data);
+        localLoading(container, false);
+
+        // Inizializza i tooltip per gli elementi appena caricati
+        container.find("[data-toggle=\'tooltip\']").tooltip();
+
+        // Filtra le impostazioni: nascondi quelle che non corrispondono alla ricerca
+        const ids_da_mostrare = impostazioni_filtrate.map(item => item.id);
+
+        container.find(".col-md-4").each(function() {
+            const setting_id = $(this).find("[name^=\'setting[\']").attr("name");
+            if (setting_id) {
+                const id = parseInt(setting_id.match(/setting\[(\d+)\]/)[1]);
+
+                // Nascondi le impostazioni che non corrispondono alla ricerca
+                if (!ids_da_mostrare.includes(id)) {
+                    $(this).hide();
+                    $(this).next("script").hide();
+                } else {
+                    // Evidenzia le impostazioni trovate
+                    $(this).addClass("found-setting");
+                    $(this).find(".form-group").css({
+                        "border-left": "3px solid #007bff",
+                        "padding-left": "10px",
+                        "background-color": "#f8f9fa"
+                    });
+                }
+            }
+        });
+
+        // Mostra il contenuto con animazione
+        container.slideDown(300);
+    });
 }
 </script>';
 

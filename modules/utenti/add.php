@@ -23,20 +23,30 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-list">
 
-	<div class="row">
-		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Nome gruppo'); ?>", "name": "nome", "required": 1, "validation": "gruppo", "help": "<?php echo tr('Compilando questo campo verrà creato un nuovo gruppo di utenti.'); ?>" ]}
-		</div>
-		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Tema'); ?>", "name": "theme", "values": "list=\"\": \"<?php echo tr('Predefinito'); ?>\",\"black-light\": \"<?php echo tr('Bianco'); ?>\",\"black\": \"<?php echo tr('Nero'); ?>\",\"red-light\": \"<?php echo tr('Rosso chiaro'); ?>\",\"red\": \"<?php echo tr('Rosso'); ?>\",\"blue-light\": \"<?php echo tr('Blu chiaro'); ?>\",\"blue\": \"<?php echo tr('Blu'); ?>\",\"green-light\": \"<?php echo tr('Verde chiaro'); ?>\",\"green\": \"<?php echo tr('Verde'); ?>\",\"yellow-light\": \"<?php echo tr('Giallo chiaro'); ?>\",\"yellow\": \"<?php echo tr('Giallo'); ?>\",\"purple-light\": \"<?php echo tr('Viola chiaro'); ?>\",\"purple\": \"<?php echo tr('Viola'); ?>\"", "value": "$theme$" ]}
-		</div>
-		<div class="col-md-3">
-			 {["type":"select", "label":"<?php echo tr('Modulo iniziale'); ?>", "name":"id_module_start", "ajax-source":"moduli_gruppo", "placeholder":"<?php tr('Modulo iniziale'); ?>" ]}
+	<div class="card card-primary card-outline">
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Nome gruppo'); ?>", "name": "nome", "required": 1, "validation": "gruppo", "help": "<?php echo tr('Compilando questo campo verrà creato un nuovo gruppo di utenti.'); ?>" ]}
+				</div>
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Modulo iniziale'); ?>", "name":"id_module_start", "ajax-source":"moduli_gruppo", "placeholder":"<?php tr('Modulo iniziale'); ?>" ]}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Tema'); ?>", "name": "theme", "values": "list=\"\": \"<?php echo tr('Predefinito'); ?>\",\"black-light\": \"<?php echo tr('Bianco'); ?>\",\"black\": \"<?php echo tr('Nero'); ?>\",\"red-light\": \"<?php echo tr('Rosso chiaro'); ?>\",\"red\": \"<?php echo tr('Rosso'); ?>\",\"blue-light\": \"<?php echo tr('Blu chiaro'); ?>\",\"blue\": \"<?php echo tr('Blu'); ?>\",\"green-light\": \"<?php echo tr('Verde chiaro'); ?>\",\"green\": \"<?php echo tr('Verde'); ?>\",\"yellow-light\": \"<?php echo tr('Giallo chiaro'); ?>\",\"yellow\": \"<?php echo tr('Giallo'); ?>\",\"purple-light\": \"<?php echo tr('Viola chiaro'); ?>\",\"purple\": \"<?php echo tr('Viola'); ?>\"", "value": "$theme$" ]}
+				</div>
+				<div class="col-md-6">
+					<!-- Spazio per eventuali campi futuri -->
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
-	<div class="modal-footer">
+	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="button" onclick="submitCheck()" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
@@ -54,7 +64,7 @@ function submitCheck() {
 	}else{
 		$("input[name=nome]").focus();
 		swal("<?php echo tr('Impossibile procedere'); ?>", "<?php echo tr('Nome gruppo già utilizzato'); ?>.", "error");
-		
+
 	}
 }
 </script>

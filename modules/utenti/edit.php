@@ -20,91 +20,118 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Group;
+use Models\Module;
+use Models\User;
+
+$group = Group::find($id_record);
+$record = $group->toArray();
+
+// Lettura gruppi
+$gruppi = $dbo->fetchArray('SELECT `id`, `nome` FROM `zz_groups`');
+
+// Lettura utenti
 $utenti = $dbo->fetchArray('
-    SELECT 
-        `zz_users`.*, 
-        `an_anagrafiche`.`ragione_sociale`, 
-        GROUP_CONCAT(`an_tipianagrafiche_lang`.`title` SEPARATOR ", ") AS tipo 
-    FROM 
-        `zz_users` 
-        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` 
-        LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` 
-        LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` 
+    SELECT
+        `zz_users`.*,
+        `an_anagrafiche`.`ragione_sociale`,
+        GROUP_CONCAT(`an_tipianagrafiche_lang`.`title` SEPARATOR ", ") AS tipo
+    FROM
+        `zz_users`
+        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+        LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+        LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
         LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    WHERE 
-        `zz_users`.`idgruppo` = '.prepare($record['id']).' 
-    GROUP BY 
+    WHERE
+        `zz_users`.`idgruppo` = '.prepare($record['id']).'
+    GROUP BY
         `zz_users`.`id`');
 
 echo '
-	<div class="card card-primary">
+	<div class="card card-primary card-outline">
 		<div class="card-header">
-			<h3 class="card-title">'.tr('Utenti del gruppo: _GROUP_', [
-    '_GROUP_' => $group->getTranslation('title'),
+			<h3 class="card-title">
+                <i class="fa fa-users mr-2"></i>'.tr('Utenti del gruppo: _GROUP_', [
+    '_GROUP_' => '<span class="text-primary">'.$group->getTranslation('title').'</span>',
 ]).'</h3>
+            <div class="card-tools">
+                <a data-card-widget="modal" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-msg="" data-backto="record-edit" data-title="'.tr('Aggiungi utente').'" class="btn btn-sm btn-primary">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi utente').'
+                </a>
+            </div>
 		</div>
 
 		<div class="card-body">
-            <div class="row">
-                <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"'.tr('Modulo iniziale').'", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><i class="fa fa-home mr-1"></i> '.tr('Modulo iniziale').'</label>
+                        {["type":"select", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
+                    </div>
                 </div>
-                 <div class="col-md-3 pull-right">
-                    {["type":"select", "label":"'.tr('Tema').'", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"black\": \"'.tr('Nero').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"info-light\": \"'.tr('Azzurro chiaro').'\",\"info\": \"'.tr('Azzurro').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$group->theme.'" ]}
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><i class="fa fa-palette mr-1"></i> '.tr('Tema').'</label>
+                        {["type":"select", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"black\": \"'.tr('Nero').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"info-light\": \"'.tr('Azzurro chiaro').'\",\"info\": \"'.tr('Azzurro').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$group->theme.'" ]}
+                    </div>
                 </div>
-            </div>
-            <br>';
+            </div>';
 
 if (!empty($utenti)) {
     echo '
         <div class="table-responsive">
-		<table class="table table-hover table-sm table-striped">
-		<tr>
-			<th>'.tr('Nome utente').'</th>
-            <th>'.tr('Email').'</th>
-			<th>'.tr('Ragione sociale').'</th>
-            <th>'.tr('Tipo di anagrafica').'</th>
-            <th>'.tr('Sedi').'</th>
-			<th width="120">'.tr('Opzioni').'</th>
-		</tr>';
+			<table class="table table-hover table-sm table-striped">
+            <thead>
+			<tr>
+				<th><i class="fa fa-user mr-1"></i>'.tr('Nome utente').'</th>
+                <th><i class="fa fa-envelope mr-1"></i>'.tr('Email').'</th>
+				<th><i class="fa fa-building mr-1"></i>'.tr('Ragione sociale').'</th>
+                <th><i class="fa fa-tag mr-1"></i>'.tr('Tipo di anagrafica').'</th>
+                <th><i class="fa fa-map-marker-alt mr-1"></i>'.tr('Sedi').'</th>
+				<th width="140" class="text-center"><i class="fa fa-cog mr-1"></i>'.tr('Opzioni').'</th>
+			</tr>
+            </thead>
+            <tbody>';
 
     foreach ($utenti as $utente) {
+        $status_class = empty($utente['enabled']) ? 'text-muted' : '';
         echo '
-		<tr>
-			<td '.(empty($utente['enabled']) ? ' style="text-decoration:line-through;"' : '').'>
-			    <i class="fa fa-user"></i> '.$utente['username'].'
-            </td>';
+			<tr>
+				<td class="'.$status_class.'">
+				    <i class="fa fa-user '.($status_class ? '' : 'text-primary').'"></i> '.$utente['username'].'
+                    '.(!empty($status_class) ? '<span class="badge badge-danger">'.tr('Disabilitato').'</span>' : '').'
+	            </td>';
 
         if (!empty($utente['email'])) {
             echo '
             <td>'.$utente['email'].'</td>';
         } else {
             echo '
-            <td>-</td>';
+            <td><span class="text-muted">-</span></td>';
         }
 
         if (!empty($utente['idanagrafica'])) {
             echo '
-			<td>'.Modules::link('Anagrafiche', $utente['idanagrafica'], $utente['ragione_sociale']).'</td>
-			<td>'.$utente['tipo'].'</td>';
+				<td>'.Modules::link('Anagrafiche', $utente['idanagrafica'], $utente['ragione_sociale']).'</td>
+				<td>'.$utente['tipo'].'</td>';
         } else {
             echo '
-			<td>-</td>
-			<td>-</td>';
+				<td><span class="text-muted">-</span></td>
+				<td><span class="text-muted">-</span></td>';
         }
 
         $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user')['nomesede'];
 
         echo '
-            <td>'.$sedi.'</td>';
+            <td>'.(!empty($sedi) ? $sedi : '<span class="text-muted">-</span>').'</td>';
 
         echo '
-            <td>';
+            <td class="text-center">';
 
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-card-widget="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
+            <div data-card-widget="tooltip" class="tip d-inline-block" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-eye-slash"></i>
                 </span></div>';
         } elseif ($utente['enabled'] == 1) {
@@ -128,7 +155,7 @@ if (!empty($utenti)) {
 
         if ($utente['id'] == '1') {
             echo '
-                <div data-card-widget="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-danger disabled">
+                <div data-card-widget="tooltip" class="tip d-inline-block" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-key "></i>
                 </span></div>';
         } elseif (!empty($token)) {
@@ -146,7 +173,7 @@ if (!empty($utenti)) {
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-card-widget="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
+            <div data-card-widget="tooltip" class="tip d-inline-block"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-trash"></i>
                 </span></div>';
         } else {
@@ -157,11 +184,12 @@ if (!empty($utenti)) {
         }
 
         echo '
-				</td>
-			</tr>';
+					</td>
+				</tr>';
     }
 
     echo '
+            </tbody>
             </table>
             </div>';
 } else {
@@ -172,36 +200,38 @@ if (!empty($utenti)) {
 }
 
 echo '
-			<a data-card-widget="modal" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-msg="" data-backto="record-edit" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary">
-			    <i class="fa fa-plus"></i> '.tr('Aggiungi utente').'
-            </a>
 		</div>
 	</div>';
 
 // Aggiunta nuovo utente
 echo '
-	<hr>';
+	<hr>
 
-echo '
-	<div class="card card-primary">
-		<div class="card-header">
-            <h3 class="card-title">'.tr('Permessi del gruppo: _GROUP_', [
-    '_GROUP_' => $record['nome'],
-]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
-            <div class="card-tools">
-                <btn type="button" class="btn clickable btn-xs btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn> 
-            </div>' : '').'
-		</div>
+<div class="row">
+	<div class="col-md-6 mx-auto">
+		<div class="card card-primary card-outline">
+			<div class="card-header">
+				<h3 class="card-title">
+					<i class="fa fa-lock mr-2"></i>'.tr('Permessi del gruppo: _GROUP_', [
+		'_GROUP_' => '<span class="text-primary">'.$record['nome'].'</span>',
+	]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
+				<div class="card-tools">
+					<btn type="button" class="btn clickable btn-sm btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn>
+				</div>' : '').'
+			</div>
 
-		<div class="card-body">';
+			<div class="card-body">';
 if ($record['nome'] != 'Amministratori') {
     echo '
-			<div class="table-responsive">
-            <table class="table table-hover table-sm table-striped">
-				<tr>
-					<th>'.tr('Modulo').'</th>
-					<th>'.tr('Permessi').'</th>
-                </tr>';
+					<div class="table-responsive">
+					<table class="table table-hover table-sm table-striped">
+						<thead>
+						<tr>
+							<th style="padding: 4px 8px;"><i class="fa fa-cube"></i> '.tr('Modulo').'</th>
+							<th style="padding: 4px 8px;"><i class="fa fa-shield-alt"></i> '.tr('Permessi').'</th>
+						</tr>
+						</thead>
+						<tbody>';
 
     $moduli = Modules::getHierarchy();
 
@@ -216,15 +246,18 @@ if ($record['nome'] != 'Amministratori') {
     }
 
     echo '
-			</table>
-            </div>';
+                </tbody>
+					</table>
+					</div>';
 } else {
     echo '
-			<div class="alert alert-info">
-			    <i class="fa fa-info-circle"></i> '.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.
-            </div>';
+					<div class="alert alert-info">
+						<i class="fa fa-info-circle"></i> '.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.
+					</div>';
 }
 echo '
+				</div>
+			</div>
 		</div>
 	</div>';
 
@@ -252,17 +285,22 @@ $(document).ready(function() {
 });
 
 function colorize_select2(){
-    $( ".select2-selection__rendered" ).each(function() {
-        if ($( this ).attr("title") == "Lettura e scrittura"){
-            $( this ).addClass( "text-green" );
-        }
-        else if ($( this ).attr("title") == "Sola lettura"){
-            $( this ).addClass( "text-orange" );
-        }
-        else if ($( this ).attr("title") == "Nessun permesso"){
-            $( this ).addClass( "text-red" );
-        }else{
+    // Colora i valori selezionati nei select
+    $(".select2-selection__rendered").each(function() {
+        var title = $(this).attr("title");
+        var select = $(this).closest(".select2-container").prev("select");
+        var value = select.val();
 
+        $(this).removeClass("text-green text-orange text-red");
+
+        if (title == "Lettura e scrittura" || value == "rw"){
+            $(this).addClass("text-green");
+        }
+        else if (title == "Sola lettura" || value == "r"){
+            $(this).addClass("text-orange");
+        }
+        else if (title == "Nessun permesso" || value == "-"){
+            $(this).addClass("text-red");
         }
     });
 }
@@ -271,7 +309,7 @@ function colorize_select2(){
 $("li.active.header button.btn-primary").attr("data-href", $("a.pull-right").attr("data-href") );
 
 function update_permissions(id, value, color){
-    
+
     $.get(
         globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,
         function(data){
@@ -285,6 +323,7 @@ function update_permissions(id, value, color){
                 $("#select2-permesso_"+id+"-container").removeClass("text-green");
                 $("#select2-permesso_"+id+"-container").addClass(color);
 
+
                 if( id==$("#id_module_start").val() && value=="-" ){
                     $("#id_module_start").selectReset();
                     update_id_module_start($("#id_module_start").val());
@@ -296,7 +335,6 @@ function update_permissions(id, value, color){
         }
     );
 }
-
 var mySkins=["skin-blue","skin-black","skin-red","skin-yellow","skin-purple","skin-green","skin-blue-light","skin-black-light","skin-red-light","skin-yellow-light","skin-purple-light","skin-green-light"];
 
 function changeSkin(cls){

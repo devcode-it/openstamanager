@@ -31,30 +31,41 @@ if (!function_exists('menuSelection')) {
 
         $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
 
+        $is_parent = ($depth === 0);
+        $parent_class = $is_parent ? 'module-parent' : '';
+        $indent = str_repeat('&nbsp;&nbsp;', $depth);
+
+        $icon = !empty($element['icon']) ? '<i class="'.$element['icon'].' text-primary"></i> ' : '';
+
         $result = '
-                    <tr>
-                        <td>'.str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $depth).'<span>'.$element['title'].'</span></td>
-                        <td>
-                            <select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control superselect openstamanager-input select-input" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val(), $(this).find(\'option:selected\').data(\'color\'))">';
+                    <tr class="'.$parent_class.'">
+                        <td style="padding: 4px 8px;">'.$indent.$icon.'<span>'.$element['title'].'</span></td>
+                        <td style="padding: 4px 8px; width: 200px;">
+                            <select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control form-control-sm superselect openstamanager-input select-input" style="width: 100%;" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val(), $(this).find(\'option:selected\').data(\'color\'))">';
 
         foreach ($permessi_disponibili as $id => $nome) {
             switch ($id) {
                 case 'rw':
                     $bgcolor = 'green';
+                    $icon_class = 'fa fa-check-circle';
                     break;
                 case 'r':
                     $bgcolor = 'orange';
+                    $icon_class = 'fa fa-eye';
                     break;
                 case '-':
                     $bgcolor = 'red';
+                    $icon_class = 'fa fa-ban';
                     break;
                 default:
+                    $bgcolor = '';
+                    $icon_class = '';
                     break;
             }
             $attr = ($id == $permessi) ? ' selected="selected"' : '';
 
             $result .= '
-                                <option data-color="text-'.$bgcolor.'" _bgcolor_="'.$bgcolor.'" value="'.$id.'" '.$attr.'>'.$nome.'</option>';
+                                <option data-color="text-'.$bgcolor.'" _bgcolor_="'.$bgcolor.'" value="'.$id.'" '.$attr.'><i class="'.$icon_class.'"></i> '.$nome.'</option>';
         }
 
         $result .= '

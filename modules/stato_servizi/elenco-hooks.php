@@ -22,17 +22,17 @@ include_once __DIR__.'/../../core.php';
 use Models\Hook;
 
 echo '
-<table class="table table-hover table-sm">
+<table class="table table-hover table-sm mb-0">
     <thead>
         <tr>
-            <th>'.tr('Nome').'</th>
-            <th class="text-center">'.tr('Ultima esecuzione').'</th>
-            <th class="text-center">'.tr('Stato').'</th>
+            <th width="50%">'.tr('Nome').'</th>
+            <th width="30%" class="text-center">'.tr('Ultima esecuzione').'</th>
+            <th width="20%" class="text-center">'.tr('Stato').'</th>
         </tr>
     </thead>';
 
-$hooks = $dbo->fetchArray('SELECT 
-    `zz_hooks`.*, 
+$hooks = $dbo->fetchArray('SELECT
+    `zz_hooks`.*,
     `zz_modules_lang`.`title` AS modulo
     FROM `zz_hooks`
         LEFT JOIN `zz_hooks_lang` ON (`zz_hooks`.`id` = `zz_hooks_lang`.`id_record` AND `zz_hooks_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
@@ -46,7 +46,7 @@ foreach ($gruppi as $modulo => $hooks) {
     echo '
     <thead>
         <tr>
-            <th colspan="4" class="text-center text-muted" >'.$modulo.'</th>
+            <th colspan="3" class="text-center bg-light" ><small><i class="fa fa-folder-open mr-2"></i>'.$modulo.'</small></th>
         </tr>
     </thead>
 
@@ -59,14 +59,14 @@ foreach ($gruppi as $modulo => $hooks) {
         $nome_tipo = 'hook';
 
         echo '
-            <tr class="'.$class.'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->name).'>
+            <tr class="'.($class === 'success' ? '' : 'table-'.$class).'" data-id="'.$hook->id.'" data-nome='.json_encode($hook->name).'>
                 <td>
                     '.$hook->name.(!empty($hook->help) ? '
-                    <i class="tip fa fa-question-circle-o" title="'.$hook->help.'"</i>' : '').'
+                    <i class="tip fa fa-question-circle-o ml-1" title="'.$hook->help.'"</i>' : '').'
                 </td>
-             
+
                 <td class="text-center">
-                    '.(!empty($hook->processing_at) ? Translator::timestampToLocale($hook->processing_at) : '').'
+                    <small>'.(!empty($hook->processing_at) ? Translator::timestampToLocale($hook->processing_at) : '-').'</small>
                 </td>
 
                 <td class="text-center">';
@@ -98,8 +98,8 @@ foreach ($gruppi as $modulo => $hooks) {
     }
 }
 
-echo '<tr><td colspan="3"><p>&nbsp;</p><button type="button" class="btn btn-danger pull-right" onclick="svuotaCacheHooks(this)">
-    <i class="fa fa-trash" title="'.tr('Svuota cache degli hooks').'"></i> '.tr('Svuota cache').'</button>
+echo '<tr><td colspan="3" class="text-right p-3"><button type="button" class="btn btn-sm btn-danger" onclick="svuotaCacheHooks(this)">
+    <i class="fa fa-trash mr-1" title="'.tr('Svuota cache degli hooks').'"></i>'.tr('Svuota cache').'</button>
     </td></tr>';
 
 echo '

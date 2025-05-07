@@ -32,38 +32,40 @@ if (Services::isEnabled()) {
     echo '
     <!-- Informazioni sui Servizi attivi -->
     <div class="col-md-12 col-lg-6">
-        <div class="card card-primary">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Servizi').'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-cogs mr-2"></i>'.tr('Servizi').'
+                </div>
             </div>
 
-            <div class="card-body">';
+            <div class="card-body p-0">';
 
     $servizi = Services::getServiziAttivi()->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
-                <table class="card-body table table-striped table-hover table-sm">
+                <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th width="50%">'.tr('Nome').'</th>
-                            <th>'.tr('Tipo').'</th>
-                            <th width="30%">'.tr('Scadenza').'</th>
-                            <th width="10%" class="text-center" >'.tr('#').'</th>
+                            <th width="45%">'.tr('Nome').'</th>
+                            <th width="20%">'.tr('Tipo').'</th>
+                            <th width="25%">'.tr('Scadenza').'</th>
+                            <th width="10%" class="text-center">'.tr('#').'</th>
                         </tr>
                     </thead>
 
                     <tbody>';
         foreach ($servizi as $servizio) {
             $scadenza = Carbon::parse($servizio['data_conclusione']);
+            $status_class = $scadenza->lessThan(Carbon::now()) ? 'table-danger' : ($scadenza->lessThan($limite_scadenze) ? 'table-warning' : '');
+            $status_icon = $scadenza->lessThan(Carbon::now()) ? '<i class="fa fa-exclamation-circle text-danger mr-1"></i>' : ($scadenza->lessThan($limite_scadenze) ? '<i class="fa fa-clock-o text-warning mr-1"></i>' : '');
 
             echo '
-                        <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
-                            <td>'.$servizio['codice'].' - '.$servizio['nome'].'</td>
+                        <tr class="'.$status_class.'">
+                            <td><strong>'.$servizio['codice'].'</strong> - '.$servizio['nome'].'</td>
                             <td>'.$servizio['sottocategoria'].'</td>
-                            <td>'.dateFormat($scadenza).' ('.$scadenza->diffForHumans().')</td>
-                            <td class="text-center" >
+                            <td>'.$status_icon.dateFormat($scadenza).' <small class="text-muted">('.$scadenza->diffForHumans().')</small></td>
+                            <td class="text-center">
                                 <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? '' : 'hide').'" name="rinnova[]" value="'.$servizio['codice'].'">
                             </td>
                         </tr>';
@@ -75,8 +77,8 @@ if (Services::isEnabled()) {
             echo '  </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4">
-                                <a type="button" href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-xs btn-primary pull-right disabled" ><i class="fa fa-shopping-cart"></i> '.tr('Rinnova').'</a>
+                            <td colspan="4" class="text-right">
+                                <a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-primary disabled"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>
                             </td>
                         </tr>
                     </tfoot>';
@@ -86,8 +88,8 @@ if (Services::isEnabled()) {
                 </table>';
     } else {
         echo '
-                <div class="alert alert-info" role="alert">
-                    <i class="fa fa-info"></i> '.tr('Nessun servizio abilitato al momento').'.
+                <div class="alert alert-info m-3">
+                    <i class="fa fa-info-circle mr-2"></i>'.tr('Nessun servizio abilitato al momento').'.
                 </div>';
     }
 
@@ -98,14 +100,14 @@ if (Services::isEnabled()) {
 
     <!-- Informazioni sulle Risorse API -->
     <div class="col-md-12 col-lg-6">
-        <div class="card card-primary">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Risorse').'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-cubes mr-2"></i>'.tr('Risorse').'
+                </div>
             </div>
 
-            <div class="card-body">';
+            <div class="card-body p-0">';
 
     // Elaborazione delle risorse API in scadenza
     $risorse_attive = Services::getRisorseAttive();
@@ -116,43 +118,53 @@ if (Services::isEnabled()) {
         if (!$risorse_in_scadenza->isEmpty() || !$risorse_scadute->isEmpty()) {
             if (!$risorse_scadute->isEmpty()) {
                 echo '
-                <div class="alert alert-danger" role="alert"> <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
+                <div class="alert alert-danger m-3 mb-0">
+                    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
                     '_NUM_' => $risorse_scadute->count(),
-                ]).'</div>';
+                ]).'
+                </div>';
             }
 
             if (!$risorse_in_scadenza->isEmpty()) {
                 echo '
-                <div class="alert alert-warning" role="alert"> <i class="fa fa-clock-o"></i> '.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
+                <div class="alert alert-warning m-3 mb-0">
+                    <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
                     '_NUM_' => $risorse_in_scadenza->count(),
-                ]).'</div>';
+                ]).'
+                </div>';
             }
         } else {
             /*echo '
-            <div class="alert alert-success" role="alert"> <i class="fa fa-check-circle"></i> '.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
+            <div class="alert alert-success m-3 mb-0">
+                <i class="fa fa-check-circle mr-2"></i>'.tr('Bene, tutte le risorse sono attive e non presentano avvisi:', [
                 '_NUM_' => $risorse_attive->count(),
-            ]).'</div>';*/
+            ]).'
+            </div>';*/
         }
 
         echo '
-                <table class="card-body table table-striped table-hover table-sm">
+                <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th width="50%">'.tr('Nome').'</th>
-                            <th>'.tr('Crediti').'</th>
-                            <th width="30%">'.tr('Scadenza').'</th>
+                            <th width="45%">'.tr('Nome').'</th>
+                            <th width="20%">'.tr('Crediti').'</th>
+                            <th width="35%">'.tr('Scadenza').'</th>
                         </tr>
                     </thead>
-                    
+
                     <tbody>';
 
         foreach ($risorse_attive as $servizio) {
             $scadenza = Carbon::parse($servizio['expiration_at']);
+            $status_class = $scadenza->lessThan(Carbon::now()) ? 'table-danger' : ($scadenza->lessThan($limite_scadenze) ? 'table-warning' : '');
+            $status_icon = $scadenza->lessThan(Carbon::now()) ? '<i class="fa fa-exclamation-circle text-danger mr-1"></i>' : ($scadenza->lessThan($limite_scadenze) ? '<i class="fa fa-clock-o text-warning mr-1"></i>' : '');
+            $credits_warning = ($servizio['credits'] < 100 && $servizio['credits'] !== null);
+
             echo '
-                        <tr class="'.($scadenza->lessThan(Carbon::now()) ? 'danger' : ($scadenza->lessThan($limite_scadenze) ? 'warning' : '')).'">
-                            <td>'.$servizio['name'].'</td>
-                            <td>'.(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').($servizio['credits'] ?? '-').(($servizio['credits'] < 100 && $servizio['credits'] !== null) ? '</b>' : '').'</td>
-                            <td>'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '<b><i class="fa fa-warning text-warning" ></i> ' : '').dateFormat($scadenza).' ('.$scadenza->diffForHumans().')'.((Carbon::now()->diffInDays($scadenza, false) < $days && $scadenza) ? '</b>' : '').'</td>
+                        <tr class="'.$status_class.'">
+                            <td><strong>'.$servizio['name'].'</strong></td>
+                            <td>'.($credits_warning ? '<i class="fa fa-exclamation-triangle text-warning mr-1"></i>' : '').($servizio['credits'] ?? '-').'</td>
+                            <td>'.$status_icon.dateFormat($scadenza).' <small class="text-muted">('.$scadenza->diffForHumans().')</small></td>
                         </tr>';
         }
 
@@ -165,8 +177,11 @@ if (Services::isEnabled()) {
         if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
             echo '
 
-            <div class="card card-primary">
-                <div class="card-header" >  <i class="fa fa-bar-chart"></i> '.tr('Statistiche su Fatture Elettroniche').'
+            <div class="card card-primary card-outline mt-3">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa fa-bar-chart mr-2"></i>'.tr('Statistiche su Fatture Elettroniche').'
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -226,8 +241,8 @@ if (Services::isEnabled()) {
         }
     } else {
         echo '
-                <div class="alert alert-info" role="alert">
-                    <i class="fa fa-info"></i> '.tr('Nessuna risorsa Services abilitata').'.
+                <div class="alert alert-info m-3">
+                    <i class="fa fa-info-circle mr-2"></i>'.tr('Nessuna risorsa Services abilitata').'.
                 </div>
             </div>';
     }
@@ -239,16 +254,16 @@ if (Services::isEnabled()) {
 
 echo '
 </div>
-<div class="row">
+<div class="row mt-3">
     <div class="col-md-12 col-lg-6">
-        <div class="card card-info">
+        <div class="card card-info card-outline">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Moduli disponibili').'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-puzzle-piece mr-2"></i>'.tr('Moduli disponibili').'
+                </div>
             </div>
 
-            <div class="card-body" id="moduli">
+            <div class="card-body p-0" id="moduli">
             </div>
         </div>
     </div>';
@@ -256,36 +271,36 @@ echo '
 // Widgets + Hooks + Sessioni
 echo '
     <div class="col-md-12 col-lg-6">
-        <div class="card card-info">
+        <div class="card card-info card-outline">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Widget disponibili').'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-th mr-2"></i>'.tr('Widget disponibili').'
+                </div>
             </div>
 
-            <div class="card-body" id="widget">
+            <div class="card-body p-0" id="widget">
             </div>
         </div>
 
-        <div class="card card-info">
+        <div class="card card-info card-outline mt-3">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Hooks disponibili').'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-link mr-2"></i>'.tr('Hooks disponibili').'
+                </div>
             </div>
 
-            <div class="card-body" id="hook">
+            <div class="card-body p-0" id="hook">
             </div>
         </div>
 
-        <div class="card card-info">
+        <div class="card card-info card-outline mt-3">
             <div class="card-header">
-                <h3 class="card-title">
-                    '.tr('Sessioni attive durante ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
-                </h3>
+                <div class="card-title">
+                    <i class="fa fa-users mr-2"></i>'.tr('Sessioni attive durante ultimi _MINUTI_ minuti', ['_MINUTI_' => setting('Timeout notifica di presenza (minuti)')]).'
+                </div>
             </div>
 
-            <div class="card-body" id="sessioni">
+            <div class="card-body p-0" id="sessioni">
             </div>
         </div>
 
@@ -297,11 +312,11 @@ echo '
 <script>
 
 $(".check_rinnova").each(function() {
-    
+
     var len = 0;
 
     input(this).change(function() {
-        
+
         len = $("input[type=checkbox]:checked.check_rinnova").length;
 
         if (len>0){
@@ -324,7 +339,7 @@ function aggiornaStatisticheFE(){
         },
         success: function (response) {
             $("#fe_numero").html(response.invoice_number);
-            
+
             $("#fe_spazio").html(response.spazio_occupato);
 
             // Informazioni sullo spazio occupato
@@ -341,7 +356,7 @@ function aggiornaStatisticheFE(){
 
                 if (response.spazio_totale){
                     $("#fe_spazio").html($("#fe_spazio").html() + " / " + response.spazio_totale);
-    
+
                     if (response.spazio_occupato>response.spazio_totale && response.avviso_spazio){
                         $("#fe_spazio").html("<span style=\"font-weight:bold;\" ><i class=\"fa fa-warning text-warning\" ></i> " + $("#fe_spazio").html() + "</span>");
                     }
@@ -350,7 +365,7 @@ function aggiornaStatisticheFE(){
                 if (response.spazio_occupato<response.spazio_totale){
                     $("#spazio-fe-icon").addClass("fa fa-clock-o");
                     $("#spazio-fe").addClass("alert-warning");
-                    $("#spazio-fe-text").html("'.tr('in esaurimento').'"); 
+                    $("#spazio-fe-text").html("'.tr('in esaurimento').'");
                 }
                 else if (response.spazio_occupato>=response.spazio_totale){
                     $("#spazio-fe-icon").addClass("fa fa-warning");
@@ -358,14 +373,14 @@ function aggiornaStatisticheFE(){
                     $("#spazio-fe-text").html("'.tr('terminato').'");
                 }
             }
-            
+
             if (response.history.length) {
 
                 for (let i = 0; i < response.history.length; i++) {
-                    
+
                     const data = response.history[i];
                     if (data["year"] == '.date('Y').'){
-                        
+
                         var highlight = "<tr class=\"info\" >";
                         var number =  data["number"];
 
@@ -386,7 +401,7 @@ function aggiornaStatisticheFE(){
                             if (number<response.maxNumber){
                                 $("#numero-fe-icon").addClass("fa fa-clock-o");
                                 $("#numero-fe").addClass("alert-warning");
-                                $("#numero-fe-text").html("'.tr('in esaurimento').'"); 
+                                $("#numero-fe-text").html("'.tr('in esaurimento').'");
                             }
                             else if (number>=response.maxNumber){
                                 $("#numero-fe-icon").addClass("fa fa-warning");
@@ -405,7 +420,7 @@ function aggiornaStatisticheFE(){
                         <td>` + data["number"] + `</td>
                         <td>` + data["size"] + `</td>
                     </tr>`);
-                   
+
                 }
             }
         }

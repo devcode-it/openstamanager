@@ -51,7 +51,7 @@ function crea_grafico(values){
     var ctx = $("#chart");
     $data = [];
     $labels = [];
-    
+
     values.forEach(function(element) {
         $data.push(element.size);
 
@@ -60,7 +60,7 @@ function crea_grafico(values){
             if (element.size < element.dbSize){
                 var diff = (element.dbSize - element.size);
                 if (diff > 1000){
-                    $("#message").append("<div class=\"badge badge-warning\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di files mancanti per allegati.</div><br>");
+                    $("#warnings").append("<div class=\"alert alert-warning py-1 px-2 mb-1\"><small><i class=\"fa fa-exclamation-triangle mr-1\"></i>"+formatBytes(diff)+" di files mancanti per allegati.</small></div>");
                 }
             }
         }
@@ -69,22 +69,22 @@ function crea_grafico(values){
         if (element.dbCount > 0 && element.description == "Allegati" ){
             if (element.count < element.dbCount){
                 var diff = (element.dbCount - element.count);
-                $("#message").append("<div class=\"badge badge-warning\"><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" files non trovati per allegati.</div><br>");
-
-
+                $("#warnings").append("<div class=\"alert alert-warning py-1 px-2 mb-1\"><small><i class=\"fa fa-exclamation-triangle mr-1\"></i>"+diff+" files non trovati per allegati.</small></div>");
             }
         }
-        
+
         //Numero di file in Allegati suddivisi per estensione
         if (element.dbExtensions.length > 0){
-            $("#message").append("<br><p><b>Top 10 allegati:</b></p>");
+            $("#file-types").append("<div class=\"card-header bg-light py-1 px-2\"><small><i class=\"fa fa-file mr-1\"></i>Top 10 allegati per estensione</small></div>");
+            $("#file-types").append("<div class=\"card-body p-0\"><div class=\"list-group list-group-flush\" id=\"extensions-list\"></div></div>");
+
             element.dbExtensions.forEach(function(ext) {
-                $("#message").append("<div class=\"badge badge-info\"><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+ext.num+"</b> files con estensione <b>"+ext.extension+"</b>.</div><br>");
-
-
+                $("#extensions-list").append("<div class=\"list-group-item py-1 px-2 d-flex justify-content-between align-items-center\"><small><i class=\"fa fa-file-o mr-1 text-primary\"></i>"+ext.extension+"</small><small class=\"badge badge-primary badge-pill\">"+ext.num+"</small></div>");
             });
         }
-        $labels.push(`${element.description} (${element.formattedSize}) [${element.count}]`);
+
+        // Format labels to be more readable
+        $labels.push(element.description + " (" + element.formattedSize + ")");
     });
 
     const options = {
@@ -93,10 +93,16 @@ function crea_grafico(values){
         legend: {
             display: true,
             position: "right",
+            labels: {
+                boxWidth: 15,
+                padding: 15,
+                fontColor: "#555"
+            }
         },
         animation: {
             animateScale: true,
             animateRotate: true,
+            duration: 1000
         },
         tooltips: {
             callbacks: {
@@ -106,50 +112,60 @@ function crea_grafico(values){
                 label: function(tooltipItem, data) {
                     const dataset = data.datasets[0];
                     const percent = Math.round((dataset.data[tooltipItem.index] / dataset._meta[0].total) * 100);
-                    return `(${percent}%)`;
+                    return formatBytes(dataset.data[tooltipItem.index]) + " (" + percent + "%)";
                 },
             },
-            backgroundColor: "#fbfbfb",
-            titleFontSize: 12,
-            titleFontColor: "#000",
-            bodyFontColor: "#444",
-            bodyFontSize: 10,
-            displayColors: true
-          }
+            backgroundColor: "#fff",
+            titleFontSize: 13,
+            titleFontColor: "#333",
+            bodyFontColor: "#555",
+            bodyFontSize: 12,
+            displayColors: true,
+            borderColor: "#ddd",
+            borderWidth: 1
+        }
 	};
 
 	data = {
 		datasets: [{
 			data: $data,
-			 backgroundColor: [
-                \'rgba(255, 99, 132, 0.2)\',
-                \'rgba(54, 162, 235, 0.2)\',
-                \'rgba(255, 206, 86, 0.2)\',
-                \'rgba(75, 192, 192, 0.2)\',
-                \'rgba(153, 102, 255, 0.2)\',
-                \'rgba(255, 159, 64, 0.2)\'
+			backgroundColor: [
+                "#4e73df80", // Blue
+                "#1cc88a80", // Green
+                "#f6c23e80", // Yellow
+                "#e74a3b80", // Red
+                "#36b9cc80", // Cyan
+                "#6f42c180"  // Purple
             ],
             borderColor: [
-                \'rgba(255, 99, 132, 1)\',
-                \'rgba(54, 162, 235, 1)\',
-                \'rgba(255, 206, 86, 1)\',
-                \'rgba(75, 192, 192, 1)\',
-                \'rgba(153, 102, 255, 1)\',
-                \'rgba(255, 159, 64, 1)\'
+                "#4e73df", // Blue
+                "#1cc88a", // Green
+                "#f6c23e", // Yellow
+                "#e74a3b", // Red
+                "#36b9cc", // Cyan
+                "#6f42c1"  // Purple
             ],
+            borderWidth: 2
 		}],
-
 		labels: $labels,
 	};
 
 	var chart = new Chart(ctx, {
-		type: "pie",
+		type: "doughnut",
 		data: data,
 		options: options
 	});
 }
 </script>
-<div id="message float-right"></div>
-<div class="chart-container">
-    <canvas id="chart"></canvas>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="chart-container" style="position: relative; height: 280px; margin-bottom: 10px;">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="warnings"></div>
+        <div id="file-types" class="card mt-2"></div>
+    </div>
 </div>';

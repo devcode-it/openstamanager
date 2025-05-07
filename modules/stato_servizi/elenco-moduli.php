@@ -21,13 +21,13 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<table class="table table-hover table-bordered table-sm">
+<table class="table table-hover table-sm mb-0">
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>
-            <th class="text-center">'.tr('Versione').'</th>
-            <th class="text-center">'.tr('Stato').'</th>
-            <th class="text-center">#</th>
+            <th class="text-center" width="15%">'.tr('Versione').'</th>
+            <th class="text-center" width="15%">'.tr('Stato').'</th>
+            <th class="text-center" width="10%">#</th>
         </tr>
     </thead>
 
@@ -299,21 +299,21 @@ function renderElencoModuli($elenco, $depth = 0)
         }
 
         $result .= '
-        <tr class="'.$class.' depth-'.$depth.'" data-id="'.$record['id'].'" data-nome='.json_encode($record['title']).' data-tipo="'.($is_plugin ? 'plugin' : 'module').'" data-nome_tipo='.json_encode($nome_tipo).'>
+        <tr class="'.($class === 'success' ? '' : 'table-'.$class).' depth-'.$depth.'" data-id="'.$record['id'].'" data-nome='.json_encode($record['title']).' data-tipo="'.($is_plugin ? 'plugin' : 'module').'" data-nome_tipo='.json_encode($nome_tipo).'>
             <td>
-                '.str_repeat('&nbsp;', $depth * 4).'- '.$record['title'].'
+                '.str_repeat('&nbsp;', $depth * 4).$record['title'].'
                 '.($compatibile ? '' :
-                    '<div class="tip pull-right" data-widget="tooltip" title="'.tr('Non compatibile!').' '.tr('Questo _TYPE_ è compatibile solo con le versioni: _LIST_', [
+                    '<div class="tip float-right" data-widget="tooltip" title="'.tr('Non compatibile!').' '.tr('Questo _TYPE_ è compatibile solo con le versioni: _LIST_', [
                         '_TYPE_' => $nome_tipo,
                         '_LIST_' => $record['compatibility'],
                     ]).'">
                         <span class="badge badge-danger">
-                            <i class="fa fa-warning" title="'.tr('Non compatibile!').'"></i>
+                            <i class="fa fa-exclamation-circle" title="'.tr('Non compatibile!').'"></i>
                         </span>
                     </div>'
         ).'
 
-                '.($is_plugin ? '<span class="badge pull-right" style="margin-right: 5px">'.tr('Plugin').'</span>' : '').'
+                '.($is_plugin ? '<span class="badge badge-info float-right mr-2">'.tr('Plugin').'</span>' : '').'
             </td>
             <td class="text-center">'.$record['version'].'</td>
             <td class="text-center">';

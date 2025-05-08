@@ -153,7 +153,7 @@ if (empty($_GET['visualizza_allegati'])) {
                                 <i class="fa fa-external-link"></i> '.$file->name.'
                             </a>
                         </td>
-                        <td>'.Modules::link(Module::find($allegato['id_module']->name), $file->id_record, $documento['descrizione']).'</td>
+                        <td>'.Modules::link(Module::find($documento['id_module'])->name, $documento['id_record'], $documento['descrizione']).'</td>
                         <td class="text-center">'.Translator::dateToLocale($file->created_at).'</td>
                         </tr>';
             }

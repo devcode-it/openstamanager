@@ -707,34 +707,6 @@ class Validator
     }
 
     /**
-     * Removes invalid characters from a UTF-8 XML string.
-     *
-     * @deprecated 2.4.34
-     *
-     * @param string a XML string potentially containing invalid characters
-     *
-     * @return string
-     */
-    public static function sanitizeXML($string)
-    {
-        $result = '';
-        $current = '';
-        $length = strlen((string) $string);
-
-        for ($i = 0; $i < $length; ++$i) {
-            $current = ord($string[$i]);
-
-            if ($current < 0x20 || $current > 0x7E) {
-                $result .= ' ';
-            } else {
-                $result .= chr($current);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Manage and replace invalid characters from a UTF-8 XML string.
      *
      * @param string a XML string potentially containing invalid characters

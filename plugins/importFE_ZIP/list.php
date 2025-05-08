@@ -37,7 +37,7 @@ if (!empty($list)) {
             <th class="text-center">'.tr('Cliente').'</th>
             <th class="text-center">'.tr('Data di registrazione').'</th>
             <th class="text-center">'.tr('Totale imponibile').'</th>
-            <th width="20%" class="text-center">#</th>
+            <th width="20%" class="text-center">'.tr('Azioni').'</th>
         </tr>
     </thead>
     <tbody>';
@@ -53,7 +53,7 @@ if (!empty($list)) {
         if (!empty($element['file'])) {
             echo '
             <td>
-                <p>'.$name.'</p>
+                <i class="fa fa-file-text-o mr-1 text-primary"></i>'.$name.'
             </td>
 
             <td class="text-center">-</td>
@@ -61,65 +61,68 @@ if (!empty($list)) {
             <td class="text-center">-</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-danger" onclick="delete_fe_vendita(this, \''.$element['id'].'\')">
-                    <i class="fa fa-trash"></i>
-                </button>';
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger btn-sm tip" onclick="delete_fe_vendita(this, \''.$element['id'].'\')" title="'.tr('Elimina la fattura').'">
+                        <i class="fa fa-trash mr-1"></i>
+                    </button>';
         } else {
             $date = new DateTime($element['date']);
+            $formatted_date = dateFormat($date->format('Y-m-d'));
 
             $descrizione = '';
             if ($element['type'] == 'TD01') {
                 $descrizione = tr('Fattura num. _NUM_ del _DATE_', [
                     '_NUM_' => $element['number'],
-                    '_DATE_' => dateFormat($date),
+                    '_DATE_' => $formatted_date,
                 ]);
             } elseif ($element['type'] == 'TD04') {
                 $descrizione = tr('Nota di credito num. _NUM_ del _DATE_', [
                     '_NUM_' => $element['number'],
-                    '_DATE_' => dateFormat($date),
+                    '_DATE_' => $formatted_date,
                 ]);
             } elseif ($element['type'] == 'TD05') {
                 $descrizione = tr('Nota di debito num. _NUM_ del _DATE_', [
                     '_NUM_' => $element['number'],
-                    '_DATE_' => dateFormat($date),
+                    '_DATE_' => $formatted_date,
                 ]);
             } elseif ($element['type'] == 'TD06') {
                 $descrizione = tr('Parcella num. _NUM_ del _DATE_', [
                     '_NUM_' => $element['number'],
-                    '_DATE_' => dateFormat($date),
+                    '_DATE_' => $formatted_date,
                 ]);
             }
 
-            $date = new DateTime($element['date']);
             $date = $date->format('Y-m-d');
 
             echo '
             <td>
-                '.$descrizione.' <small>['.$name.']</small>
+                <i class="fa fa-file-text-o mr-1 text-primary"></i>'.$descrizione.' <small class="text-muted">['.$name.']</small>
             </td>
 
-            <td>'.$element['sender'].'</td>
-            <td class="text-center">'.dateFormat(new Carbon($element['date_sent'])).'</td>
-            <td class="text-right">'.moneyFormat($element['amount']).'</td>
+            <td><i class="fa fa-industry mr-1 text-muted"></i>'.$element['sender'].'</td>
+            <td class="text-center"><i class="fa fa-calendar mr-1 text-muted"></i>'.dateFormat(new Carbon($element['date_sent'])).'</td>
+            <td class="text-right"><i class="fa fa-euro mr-1 text-muted"></i>'.moneyFormat($element['amount']).'</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-info tip" onclick="process_fe_vendita(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
-                    <i class="fa fa-upload"></i>
-                </button>';
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info btn-sm tip" onclick="process_fe_vendita(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
+                        <i class="fa fa-upload mr-1"></i>
+                    </button>';
         }
 
         if (file_exists($directory.'/'.$name)) {
             echo '
-                <button type="button" class="btn btn-primary tip" onclick="download_fe_vendita(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
-                    <i class="fa fa-download"></i>
+                <button type="button" class="btn btn-primary btn-sm tip" onclick="download_fe_vendita(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
+                    <i class="fa fa-download mr-1"></i>
                 </button>';
         }
 
         echo '
 
-                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_vendita(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
-                    <i class="fa fa-cloud-download"></i> '.tr('Importa').'
+                <button type="button" class="btn btn-warning btn-sm tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_vendita(this, \''.$name.'\', \''.$date.'\')" title="'.tr('Importa la fattura nel gestionale').'">
+                    <i class="fa fa-cloud-download mr-1"></i>
                 </button>
+                </div>
             </td>
         </tr>';
     }
@@ -129,13 +132,18 @@ if (!empty($list)) {
 </table>';
 } else {
     echo '
-<p>'.tr('Nessuna fattura da importare').'.</p>';
+<div class="alert alert-warning">
+    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Nessuna fattura da importare').'
+</div>';
 }
 
 echo '
 <script>
 function import_fe_vendita(button, file, data_registrazione) {
     var restore = buttonLoading(button);
+
+    // Mostra un\'animazione di caricamento
+    $("#main_loading").show();
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -147,6 +155,7 @@ function import_fe_vendita(button, file, data_registrazione) {
             name: file,
         },
         success: function(data) {
+            $("#main_loading").fadeOut();
             data = JSON.parse(data);
 
             if (!data.already) {
@@ -163,7 +172,8 @@ function import_fe_vendita(button, file, data_registrazione) {
             buttonRestore(button, restore);
         },
         error: function(xhr) {
-            alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
+            $("#main_loading").fadeOut();
+            swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
             buttonRestore(button, restore);
         }
@@ -180,6 +190,9 @@ function process_fe_vendita(button, file) {
     }).then(function (result) {
         var restore = buttonLoading(button);
 
+        // Mostra un\'animazione di caricamento
+        $("#main_loading").show();
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "get",
@@ -190,9 +203,15 @@ function process_fe_vendita(button, file) {
                 name: file,
             },
             success: function(data) {
+                $("#main_loading").fadeOut();
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                     buttonRestore(button, restore);
                 });
+            },
+            error: function(xhr) {
+                $("#main_loading").fadeOut();
+                swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                buttonRestore(button, restore);
             }
         });
     });
@@ -208,6 +227,9 @@ function delete_fe_vendita(button, file_id) {
     }).then(function (result) {
         var restore = buttonLoading(button);
 
+        // Mostra un\'animazione di caricamento
+        $("#main_loading").show();
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "get",
@@ -218,9 +240,15 @@ function delete_fe_vendita(button, file_id) {
                 file_id: file_id,
             },
             success: function(data) {
+                $("#main_loading").fadeOut();
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                     buttonRestore(button, restore);
                 });
+            },
+            error: function(xhr) {
+                $("#main_loading").fadeOut();
+                swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                buttonRestore(button, restore);
             }
         });
     });

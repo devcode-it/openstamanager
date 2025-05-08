@@ -25,9 +25,20 @@ use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
 use Util\XML;
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__ . '/../../core.php';
 
 echo '
+<style>
+.riga-fattura td {
+    height: 60px;
+    vertical-align: middle;
+}
+
+.table td {
+    padding: 0.5rem;
+}
+</style>
+
 <script>
 $(document).ready(function() {
     $("#save-buttons").hide();
@@ -38,26 +49,51 @@ $(document).ready(function() {
         verificaSerial($(this));
     });
 
-    // Disabilita input seriali se flag crea serialzi è disattivato
+    // Disabilita input seriali se flag crea seriali è disattivato
     if (!$("#flag_crea_seriali").is(":checked")) {
         $("[id^=\'serial\']").attr("disabled", true);
     }
 });
+
+function copy_rif() {
+    let riferimenti = $("select[name^=selezione_riferimento_vendita]");
+
+    // Individuazione del primo riferimento selezionato
+    let riferimento_selezionato = null;
+    for (const riferimento of riferimenti) {
+        const data = $(riferimento).selectData();
+        if (data && data.id) {
+            riferimento_selezionato = data;
+            break;
+        }
+    }
+
+    // Selezione generale per il riferimento
+    if (riferimento_selezionato) {
+        riferimenti.each(function() {
+            $(this).selectSetNew(riferimento_selezionato.id, riferimento_selezionato.text, riferimento_selezionato);
+        });
+    }
+}
 </script>';
 
-$skip_link = $has_next && post('sequence') ? base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence') : base_path().'/editor.php?id_module='.$id_module;
+$skip_link = $has_next && post('sequence') ? base_path() . '/editor.php?id_module=' . $id_module . '&id_plugin=' . $id_plugin . '&id_record=' . ($id_record + 1) . '&sequence=' . get('sequence') : base_path() . '/editor.php?id_module=' . $id_module;
 
 if (empty($fattura)) {
     if (!empty($error)) {
         echo '
-<p>'.tr("Errore durante l'apertura della fattura elettronica _NAME_", [
-            '_NAME_' => $record['name'],
-        ]).'.</p>';
+<div class="alert alert-danger">
+    <i class="fa fa-exclamation-triangle mr-2"></i>' . tr("Errore durante l'apertura della fattura elettronica _NAME_", [
+                '_NAME_' => $record['name'],
+            ]) . '
+</div>';
     } elseif (!empty($imported)) {
         echo '
-<p>'.tr('La fattura elettronica _NAME_ è già stata importata in passato', [
-            '_NAME_' => $record['name'],
-        ]).'.</p>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle mr-2"></i>' . tr('La fattura elettronica _NAME_ è già stata importata in passato', [
+                '_NAME_' => $record['name'],
+            ]) . '
+</div>';
     }
 
     echo '
@@ -67,20 +103,20 @@ if (empty($fattura)) {
     if (!empty($imported)) {
         echo '
         <button type="button" class="btn btn-danger" onclick="cleanup()">
-            <i class="fa fa-trash-o"></i> '.tr('Processa e rimuovi').'
+            <i class="fa fa-trash-o"></i> ' . tr('Processa e rimuovi') . '
         </button>';
     }
 
     echo '
         <button type="button" class="btn btn-warning" onclick="skip()">
-            <i class="fa fa-ban "></i> '.tr('Salta fattura').'
+            <i class="fa fa-ban "></i> ' . tr('Salta fattura') . '
         </button>
     </div>
 </div>
 
 <script>
 function skip() {
-    redirect("'.$skip_link.'");
+    redirect("' . $skip_link . '");
 }
 
 function cleanup(){
@@ -88,10 +124,10 @@ function cleanup(){
         url: globals.rootdir + "/actions.php",
         type: "get",
         data: {
-            id_module: "'.$id_module.'",
-            id_plugin: "'.$id_plugin.'",
+            id_module: "' . $id_module . '",
+            id_plugin: "' . $id_plugin . '",
             op: "delete",
-            name: "'.$record['name'].'",
+            name: "' . $record['name'] . '",
         }
     });
 
@@ -99,10 +135,10 @@ function cleanup(){
         url: globals.rootdir + "/actions.php",
         type: "get",
         data: {
-            id_module: "'.$id_module.'",
-            id_plugin: "'.$id_plugin.'",
+            id_module: "' . $id_module . '",
+            id_plugin: "' . $id_plugin . '",
             op: "process",
-            name: "'.$record['name'].'",
+            name: "' . $record['name'] . '",
         }
     });
 
@@ -116,7 +152,7 @@ function cleanup(){
 // Cliente
 $cliente = $fattura->getAnagrafe('Cliente');
 
-$ragione_sociale = $cliente['ragione_sociale'] ?: $cliente['cognome'].' '.$cliente['nome'];
+$ragione_sociale = $cliente['ragione_sociale'] ?: $cliente['cognome'] . ' ' . $cliente['nome'];
 $codice_fiscale = $cliente['codice_fiscale'];
 $partita_iva = $cliente['partita_iva'];
 
@@ -130,7 +166,7 @@ $provincia = $sede['provincia'];
 $fattura_body = $fattura->getBody();
 $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
 
-$tipo_documento = $database->fetchOne('SELECT CONCAT("(", `codice`, ") ", `title`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
+$tipo_documento = $database->fetchOne('SELECT CONCAT("(", `codice`, ") ", `title`) AS descrizione FROM `fe_tipi_documento` LEFT JOIN `fe_tipi_documento_lang` ON (`fe_tipi_documento_lang`.`id_record` = `fe_tipi_documento`.`codice` AND `fe_tipi_documento_lang`.`id_lang` = ' . prepare(Models\Locale::getDefault()->id) . ') WHERE codice = ' . prepare($dati_generali['TipoDocumento']))['descrizione'];
 
 // Gestione per fattura elettroniche senza pagamento definito
 $pagamenti = [];
@@ -152,51 +188,81 @@ $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
 echo '
 <form action="" method="post">
-    <input type="hidden" name="filename" value="'.$record['name'].'">
+    <input type="hidden" name="filename" value="' . $record['name'] . '">
     <input type="hidden" name="op" value="generate">
-
     <div class="row">
-		<div class="col-md-3">
-			<h4>
-			    '.$ragione_sociale.'
+        <div class="col-md-4">
+            <div class="card card-outline card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-industry mr-2"></i>' . tr('Cliente') . '
+                    </h3>
+                </div>
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <span class="text-primary font-weight-bold">' . $ragione_sociale . '</span>
+                            ' . (empty($anagrafica) ? '<span class="badge badge-warning ml-2">' . tr('Nuova anagrafica') . '</span>' : '<small class="ml-2">' . Modules::link('Anagrafiche', $anagrafica->id, '', null, '') . '</small>') . '
+                            <div class="small">
+                                ' . (!empty($codice_fiscale) ? '<span class="mr-2"><i class="fa fa-id-card mr-1 text-muted"></i>' . $codice_fiscale . '</span>' : '') . '
+                                ' . (!empty($partita_iva) ? '<span class="mr-2"><i class="fa fa-building mr-1 text-muted"></i>' . $partita_iva . '</span>' : '') . '
+                                <span><i class="fa fa-map-marker mr-1 text-muted"></i>' . $cap . ' ' . $citta . ' (' . $provincia . ')</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>';
 
-			    '.(empty($anagrafica) ? '<span class="badge bg-warning">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '').'</small>').'<br>
+// Documento
+echo '
+        <div class="col-md-4">
+            <div class="card card-outline card-info">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-file-text-o mr-2"></i>' . tr('Documento') . '
+                    </h3>
+                    <div class="card-tools">
+                        <a href="' . $structure->fileurl('view.php') . '?filename=' . $record['name'] . '" class="btn btn-info btn-sm" target="_blank" >
+                            <i class="fa fa-eye"></i> ' . tr('Visualizza XML') . '
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <span class="text-info font-weight-bold">' . $tipo_documento . ' ' . $dati_generali['Numero'] . '</span>
+                            <div class="small">
+                                <span class="mr-2"><i class="fa fa-calendar mr-1 text-muted"></i>' . Translator::dateToLocale($dati_generali['Data']) . '</span>
+                                <span><i class="fa fa-euro mr-1 text-muted"></i>' . $dati_generali['Divisa'] . '</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>';
 
-				<small>
-					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
-					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
-					'.$cap.' '.$citta.' ('.$provincia.')<br>
-				</small>
-			</h4>
-		</div>
-
-		<div class="col-md-3">
-			<h4>
-			    '.$dati_generali['Numero'].'
-
-				<a href="'.$structure->fileurl('view.php').'?filename='.$record['name'].'" class="btn btn-info btn-xs" target="_blank" >
-					<i class="fa fa-eye"></i> '.tr('Visualizza').'
-				</a>
-
-				<br><small>
-					'.$tipo_documento.'
-					<br>'.Translator::dateToLocale($dati_generali['Data']).'
-					<br>'.$dati_generali['Divisa'].'
-				</small>
-			</h4>
-		</div>';
-
-// Blocco DatiPagamento è valorizzato (opzionale)
+// Pagamento
 if (!empty($pagamenti)) {
     echo '
-		<div class="col-md-6">
-            <h4>'.tr('Pagamento').'</h4>
-
-            <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-        '_NUM_' => count($metodi),
-        '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-    ]).':</p>
-            <ol>';
+        <div class="col-md-4">
+            <div class="card card-outline card-success">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-money mr-2"></i>' . tr('Pagamento') . '
+                    </h3>
+                </div>
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-bordered mb-0">
+                            <thead>
+                                <tr>
+                                    <th>' . tr('Modalità') . '</th>
+                                    <th>' . tr('Data') . '</th>
+                                    <th class="text-right">' . tr('Importo') . '</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
 
     foreach ($pagamenti as $pagamento) {
         $rate = $pagamento['DettaglioPagamento'];
@@ -204,29 +270,35 @@ if (!empty($pagamenti)) {
 
         // Scadenze di pagamento
         foreach ($rate as $rata) {
-            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT `title` FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `codice` = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
+            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT `title` FROM `fe_modalita_pagamento` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`=' . prepare(Models\Locale::getDefault()->id) . ') WHERE `codice` = ' . prepare($rata['ModalitaPagamento']))['descrizione'] : '';
             $data = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($rata['DataScadenzaPagamento']) : '';
 
             echo '
-				<li>
-				    '.dateFormat($data).'
-				    '.moneyFormat($rata['ImportoPagamento']).'
-                    ('.$descrizione.')
-                </li>';
+                                <tr>
+                                    <td><small><i class="fa fa-credit-card mr-1 text-muted"></i>' . $descrizione . '</small></td>
+                                    <td><small><i class="fa fa-calendar mr-1 text-muted"></i>' . dateFormat($data) . '</small></td>
+                                    <td class="text-right"><small><i class="fa fa-euro mr-1 text-muted"></i>' . moneyFormat($rata['ImportoPagamento']) . '</small></td>
+                                </tr>';
         }
     }
 
     echo '
-            </ol>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>';
 }
 
 echo '
-	</div>';
+    </div>';
+
+
 
 // Tipo del documento
-$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `dir` = 'entrata'";
-$query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
+$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = " . prepare(Models\Locale::getDefault()->id) . ") WHERE `dir` = 'entrata'";
+$query_tipo = $query . ' AND `codice_tipo_documento_fe` = ' . prepare($dati_generali['TipoDocumento']);
 $numero_tipo = $database->fetchNum($query_tipo);
 if (!empty($numero_tipo)) {
     $query = $query_tipo;
@@ -235,26 +307,46 @@ if (!empty($numero_tipo)) {
 $id_tipodocumento = $database->fetchOne($query_tipo)['id'];
 
 echo '
-    <div class="row">
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 ? $id_tipodocumento : '').'" ]}
-        </div>';
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card card-outline card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa fa-cog mr-2"></i>' . tr('Impostazioni') . '
+                    </h3>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "select", "label": "' . tr('Tipo fattura') . '", "name": "id_tipo", "required": 1, "values": "query=' . $query . '", "value": "' . ($numero_tipo != 1 ? $id_tipodocumento : '') . '" ]}
+                        </div>';
 
 // Sezionale
 $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
 
 echo '
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.$id_segment.'" ]}
-        </div>';
+                        <div class="col-md-3">
+                            {[ "type": "select", "label": "' . tr('Sezionale') . '", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": ' . json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]) . ', "value": "' . $id_segment . '" ]}
+                        </div>';
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
 $data_registrazione = new Carbon($data_registrazione);
 echo '
-        <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
-        </div>';
+                        <div class="col-md-3">
+                            {[ "type": "date", "label": "' . tr('Data di registrazione') . '", "name": "data_registrazione", "required": 1, "value": "' . ($data_registrazione ?: $dati_generali['Data']) . '", "max-date": "-now-", "min-date": "' . $dati_generali['Data'] . '" ]}
+                        </div>';
+
+// Pagamento
+$pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
+echo '
+                        <div class="col-md-3">
+                            {[ "type": "select", "label": "' . tr('Pagamento') . '", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": ' . json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]) . ', "value": "' . $pagamento->id . '" ]}
+                            <button type="button" class="btn btn-info btn-xs" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
+                                <i class="fa fa-refresh"></i> ' . tr('Visualizza tutte le modalità') . '
+                            </button>
+                        </div>
+                    </div>';
 
 if (!empty($anagrafica)) {
     $query = "SELECT
@@ -263,84 +355,82 @@ if (!empty($anagrafica)) {
         FROM `co_documenti`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         WHERE
-            `co_tipidocumento`.`dir` = 'entrata' AND
+            `co_tipidocumento`.`dir` = 'uscita' AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
-            `co_documenti`.`idanagrafica` = ".prepare($anagrafica->id);
+            `co_documenti`.`idanagrafica` = " . prepare($anagrafica->id);
 
     // Riferimenti ad altre fatture
-    if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
+    if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05']) || $dati_generali['TipoDocumento'] == 'TD06' || $is_autofattura) {
         echo '
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 0, "values": "query='.$query.'" ]}
-        </div>';
-    } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
-        $query .= 'AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title` = 'Fatture pro-forma' AND `id_module` = ".prepare($id_module).')';
+                    <div class="row mt-2">';
+
+        if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
+            echo '
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "' . tr('Fattura collegata') . '", "name": "ref_fattura", "required": 0, "values": "query=' . $query . '" ]}
+                        </div>';
+        } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
+            $query .= 'AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = ' . prepare(Models\Locale::getDefault()->id) . ") WHERE `title` = 'Fatture pro-forma' AND `id_module` = " . prepare($id_module) . ')';
+
+            echo '
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "' . tr('Collega a fattura pro-forma') . '", "name": "ref_fattura", "values": "query=' . $query . '" ]}
+                        </div>';
+        } elseif ($is_autofattura) {
+            $query = "SELECT
+                `co_documenti`.`id`,
+                CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
+            FROM `co_documenti`
+                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+            WHERE
+                `co_tipidocumento`.`dir` = 'entrata' AND
+                `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
+                (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
+                `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
+                `co_documenti`.`idanagrafica` = " . prepare($anagrafica->id);
+
+            $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->getHeader()['DatiTrasmissione']['ProgressivoInvio'])->first();
+
+            echo '
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "' . tr('Autofattura collegata') . '", "name": "autofattura", "values": "query=' . $query . '", "value": "' . $autofattura_collegata->id . '" ]}
+                        </div>';
+        }
 
         echo '
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Collega a fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
-        </div>';
-    } elseif ($is_autofattura) {
-        $query = "SELECT
-            `co_documenti`.`id`,
-            CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
-        FROM `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
-        WHERE
-            `co_tipidocumento`.`dir` = 'entrata' AND
-            `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
-            (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-            `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
-            `co_documenti`.`idanagrafica` = ".prepare($anagrafica->id);
-
-        $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->getHeader()['DatiTrasmissione']['ProgressivoInvio'])->first();
-
-        echo '
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Autofattura collegata').'", "name": "autofattura", "values": "query='.$query.'", "value": "'.$autofattura_collegata->id.'" ]}
-        </div>';
+                    </div>';
     }
 }
 
-echo '
-    </div>';
-
-// Pagamento
-$pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
-echo '
-    <div class="row" >
-		<div class="col-md-3">
-		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
-		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
-            </button>
-
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).', "value": "'.$pagamento->id.'" ]}
-        </div>';
-
 // Movimentazioni
 echo '
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": "'.setting('Movimenta magazzino da fatture di acquisto').'" ]}
-        </div>
+                    <div class="row mt-2">
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "' . tr('Movimenta gli articoli') . '", "name": "movimentazione", "value": "' . setting('Movimenta magazzino da fatture di acquisto') . '" ]}
+                        </div>
 
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr('Nel caso di righe con almeno un nodo \'CodiceArticolo\', il gestionale procede alla creazione dell\'articolo se la riga non risulta assegnata manualmente').'." ]}
-        </div>
-        
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
-        </div>';
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "' . tr('Creazione automatica articoli') . '", "name": "flag_crea_articoli", "value": 0, "help": "' . tr('Nel caso di righe con almeno un nodo \'CodiceArticolo\', il gestionale procede alla creazione dell\'articolo se la riga non risulta assegnata manualmente') . '." ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "' . tr('Creazione seriali') . '", "name": "flag_crea_seriali", "value": "' . setting('Creazione seriali in import FE') . '", "help": "' . tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ') . '." ]}
+                        </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];
 
 if (!empty($ritenuta)) {
     echo '
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal cliente').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr('Attivare se la ritenuta è stata pagata dal cliente').'" ]}
-            </div>';
+                        <div class="col-md-3">
+                            {[ "type": "checkbox", "label": "' . tr('Ritenuta pagata dal cliente') . '", "name": "is_ritenuta_pagata", "value": 0, "help": "' . tr('Attivare se la ritenuta è stata pagata dal cliente') . '" ]}
+                        </div>';
 }
 echo '
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>';
 
 // Righe
@@ -355,25 +445,29 @@ if (setting('Aggiorna info di acquisto') == 'Non aggiornare') {
 $righe = $fattura->getRighe();
 if (!empty($righe)) {
     echo '
-    <h4>
-        '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copia()" style="margin-left:5px;"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy_rif()"><i class="fa fa-copy"></i> '.tr('Copia il riferimento vendita dalla prima riga valorizzata').'</button>
-        <div class="clearfix"></div>
-    </h4>
+    <div class="card card-outline card-warning mt-3">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fa fa-list mr-2"></i>' . tr('Righe') . '
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-info btn-sm" onclick="copia()"><i class="fa fa-copy"></i> ' . tr('Copia dati contabili') . '</button>
+                <button type="button" class="btn btn-info btn-sm ml-2" onclick="copy_rif()"><i class="fa fa-copy"></i> ' . tr('Copia riferimento vendita') . '</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>' . tr('Descrizione') . '</th>
+                            <th class="text-center" width="10%">' . tr('Quantità') . '</th>
+                            <th class="text-center" width="10%">' . tr('Prezzo unitario') . '</th>
+                            <th class="text-center" width="10%">' . tr('Aliquota') . '</th>
+                        </tr>
+                    </thead>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover table-sm table-bordered">
-            <thead>
-                <tr>
-                    <th>'.tr('Descrizione').'</th>
-                    <th class="text-center" width="10%">'.tr('Quantità').'</th>
-                    <th class="text-center" width="10%">'.tr('Prezzo unitario').'</th>
-                    <th class="text-center" width="10%">'.tr('Aliquota').'</th>
-                </tr>
-            </thead>
-
-            <tbody>';
+                    <tbody>';
 
     // Dati ordini
     $DatiOrdini = XML::forceArray($fattura->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
@@ -402,11 +496,11 @@ if (!empty($righe)) {
     }
 
     foreach ($righe as $key => $riga) {
-        $query = "SELECT `co_iva`.`id`, IF(`codice` IS NULL, `title`, CONCAT(`codice`, ' - ', `title`)) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `percentuale` = '.prepare($riga['AliquotaIVA']);
+        $query = "SELECT `co_iva`.`id`, IF(`codice` IS NULL, `title`, CONCAT(`codice`, ' - ', `title`)) AS descrizione FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = " . prepare(Models\Locale::getDefault()->id) . ') WHERE `deleted_at` IS NULL AND `percentuale` = ' . prepare($riga['AliquotaIVA']);
         $start_query = $query;
 
         if (!empty($riga['Natura'])) {
-            $query .= ' AND `codice_natura_fe` = '.prepare($riga['Natura']);
+            $query .= ' AND `codice_natura_fe` = ' . prepare($riga['Natura']);
 
             // Fallback per natura iva mancante
             if (empty($dbo->fetchArray($query))) {
@@ -423,8 +517,10 @@ if (!empty($righe)) {
         $codici_articoli = [];
         $serial = [];
         $i = 0;
+        $id_articolo = 0;
+
         foreach ($codici as $codice) {
-            $codici_articoli[] = (($i == 0) ? '<b>' : '').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i == 0) ? '</b>' : '');
+            $codici_articoli[] = (($i == 0) ? '<b>' : '') . $codice['CodiceValore'] . ' (' . $codice['CodiceTipo'] . ')' . (($i == 0) ? '</b>' : '');
             if (str_contains((string) $codice['CodiceTipo'], 'serial') || str_contains((string) $codice['CodiceTipo'], 'Serial')) {
                 $serial[] = $codice['CodiceValore'];
             }
@@ -436,14 +532,16 @@ if (!empty($righe)) {
         // Prendo il codice articolo dal primo nodo CodiceValore che trovo
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
+
             if (empty($id_articolo)) {
-                $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale))['id'];
+                $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = ' . prepare($codice_principale))['id'];
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale))['id'];
+                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = ' . prepare($codice_principale))['id'];
                 }
             }
 
-            $idconto_vendita = $database->fetchOne('SELECT `idconto_vendita` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_vendita'];
+            $idconto_vendita = $database->fetchOne('SELECT `idconto_vendita` FROM `mg_articoli` WHERE `id` = ' . prepare($id_articolo))['idconto_vendita'];
+
         }
 
         $idconto_vendita = $is_autofattura ? setting('Conto per autofattura') : $idconto_vendita;
@@ -501,146 +599,193 @@ if (!empty($righe)) {
         $riferimento_fe = '';
 
         if ($dati_ddt[(int) $riga['NumeroLinea']]) {
-            $riferimento_fe = tr('DDT _NUMERO_ del _DATA_',
+            $riferimento_fe = tr(
+                'DDT _NUMERO_ del _DATA_',
                 [
                     '_NUMERO_' => $dati_ddt[(int) $riga['NumeroLinea']]['numero'],
                     '_DATA_' => $dati_ddt[(int) $riga['NumeroLinea']]['data'],
-                ]);
+                ]
+            );
         }
 
         echo '
-        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
-            <td>
-                '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
-                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
-                <small class="pull-right text-muted">'.$riferimento_fe.'</small>
+                        <tr class="riga-fattura" data-id="' . $key . '" data-qta="' . $qta . '" data-descrizione="' . $riga['Descrizione'] . '" data-prezzo_unitario="' . $prezzo_unitario . '" data-iva_percentuale="' . $riga['AliquotaIVA'] . '">
+                            <td style="height: 60px;">
+                                <div class="d-flex align-items-center h-100">
+                                    <div class="flex-grow-1">
+                                        <input type="hidden" name="qta_riferimento[' . $key . ']" id="qta_riferimento_' . $key . '" value="' . $riga['Quantita'] . '">
+                                        <input type="hidden" name="tipo_riferimento[' . $key . ']" id="tipo_riferimento_' . $key . '" value="">
+                                        <input type="hidden" name="id_riferimento[' . $key . ']" id="id_riferimento_' . $key . '" value="">
+                                        <input type="hidden" name="id_riga_riferimento[' . $key . ']" id="id_riga_riferimento_' . $key . '" value="">
+                                        <input type="hidden" name="tipo_riga_riferimento[' . $key . ']" id="tipo_riga_riferimento_' . $key . '" value="">
 
+                                        <input type="hidden" name="tipo_riferimento_vendita[' . $key . ']" id="tipo_riferimento_vendita_' . $key . '" value="">
+                                        <input type="hidden" name="id_riferimento_vendita[' . $key . ']" id="id_riferimento_vendita_' . $key . '" value="">
+                                        <input type="hidden" name="id_riga_riferimento_vendita[' . $key . ']" id="id_riga_riferimento_vendita_' . $key . '" value="">
+                                        <input type="hidden" name="tipo_riga_riferimento_vendita[' . $key . ']" id="tipo_riga_riferimento_vendita_' . $key . '" value="">
 
-                '.$riga['Descrizione'].'<br>
+                                        <div>' . $riga['Descrizione'] . '</div>
+                                        ' . (!empty($codici_articoli) ? '<small class="text-muted">' . implode(', ', $codici_articoli) . '</small>' : '') . '
+                                        <b id="riferimento_' . $key . '_descrizione"></b>
+                                    </div>
+                                    <div class="ml-2 text-right">
+                                        ' . (empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning text-muted articolo-warning hidden">' . tr('Creazione automatica articolo non disponibile') . '</div>' : '<label class="badge badge-success text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli[' . $key . ']"/> <span style="position:relative;top:-2px;" >' . tr('Crea automaticamente questo articolo') . '</span></label>') . '
+                                        <div><small class="text-muted" id="riferimento_' . $key . '"></small></div>
+                                        <div><small class="text-muted">' . $riferimento_fe . '</small></div>
+                                    </div>
+                                </div>
+                            </td>
 
-				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
+                            <td class="text-center align-middle" style="height: 60px;">
+                                ' . numberFormat($qta, 'qta') . ' ' . $um . '
+                                <span id="riferimento_' . $key . '_qta"></span>
+                            </td>
 
-                <b id="riferimento_'.$key.'_descrizione"></b>
-            </td>
-
-            <td class="text-center">
-                '.numberFormat($qta, 'qta').' '.$um.'
-                <span id="riferimento_'.$key.'_qta"></span>
-            </td>
-
-            <td class="text-right">
-                '.moneyFormat($prezzo_unitario);
+                            <td class="text-right align-middle" style="height: 60px;">
+                                ' . moneyFormat($prezzo_unitario);
         if (abs($sconto_unitario) > 0) {
             $text = ($prezzo_unitario >= 0 && $sconto_unitario > 0) || ($prezzo_unitario < 0 && $sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]) : tr('maggiorazione _TOT__TYPE_', ['_TOT_' => Translator::numberToLocale(abs($sconto_unitario)), '_TYPE_' => $tipo]);
             echo '
-                        <br> <span class="right badge badge-danger">'.$text.'</small>';
+                                <br> <span class="right badge badge-danger">' . $text . '</span>';
         }
         echo '
-                <span id="riferimento_'.$key.'_prezzo"></span>
-            </td>
+                                <span id="riferimento_' . $key . '_prezzo"></span>
+                            </td>
 
-            <td class="text-right">
-                '.replace('_VALUE_ _DESC_', [
-            '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA'], 0).'%' : $riga['Natura'],
-            '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
-        ]).'
-                <span id="riferimento_'.$key.'_iva"></span>
-            </td>
-        </tr>';
+                            <td class="text-right align-middle" style="height: 60px;">
+                                ' . replace('_VALUE_ _DESC_', [
+                                '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA'], 0) . '%' : $riga['Natura'],
+                                '_DESC_' => $riga['RiferimentoNormativo'] ? ' - ' . $riga['RiferimentoNormativo'] : '',
+                            ]) . '
+                                <span id="riferimento_' . $key . '_iva"></span>
+                            </td>
+                        </tr>';
+        echo '
+                        <tr>
+                            <td colspan="4">
+                                <div class="card card-outline card-primary">
+                                    <div class="card-header d-flex align-items-center">
+                                        <div class="col-md-11">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    {[ "type": "select", "label": "' . tr('Articolo') . '", "name": "articoli[' . $key . ']", "ajax-source": "articoli", "select-options": ' . json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]) . ', "value": "' . $id_articolo . '", "icon-after": "add|' . tr('Crea articolo') . '|' . base_path() . '/add.php?id_module=' . Modules::get('Articoli')['id'] . '", "readonly": "' . ($is_descrizione ? 1 : 0) . '", "onchange": "verificaSerial(this)" ]}
+                                                </div>
 
-        if (!$is_descrizione) {
-            echo '
-        <tr id="dati_'.$key.'">
-            <td class="row">
-                <span class="hide" id="aliquota['.$key.']">'.$riga['AliquotaIVA'].'</span>
-                <input type="hidden" name="qta_riferimento['.$key.']" id="qta_riferimento_'.$key.'" value="'.$riga['Quantita'].'">
+                                                <div class="col-md-3">
+                                                    {[ "type": "select", "name": "conto[' . $key . ']", "id": "conto-' . $key . '", "ajax-source": "conti-vendite", "required": 1, "label": "' . tr('Conto vendite') . '", "value": "' . $idconto_vendita . '" ]}
+                                                </div>
 
-                <input type="hidden" name="tipo_riferimento['.$key.']" id="tipo_riferimento_'.$key.'" value="">
-                <input type="hidden" name="id_riferimento['.$key.']" id="id_riferimento_'.$key.'" value="">
-                <input type="hidden" name="id_riga_riferimento['.$key.']" id="id_riga_riferimento_'.$key.'" value="">
-                <input type="hidden" name="tipo_riga_riferimento['.$key.']" id="tipo_riga_riferimento_'.$key.'" value="">
+                                                <div class="col-md-3">
+                                                    {[ "type": "select", "name": "iva[' . $key . ']", "values": ' . json_encode('query=' . $query) . ', "required": 1, "label": "' . tr('Aliquota IVA') . '" ]}
+                                                </div>
+                                            </div>
+                                        </div>
 
-                <input type="hidden" name="tipo_riferimento_vendita['.$key.']" id="tipo_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="id_riferimento_vendita['.$key.']" id="id_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
+                                        <div class="col-md-1 text-right">
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="toggleRiferimenti(' . $key . ')" title="' . tr('Mostra/nascondi riferimenti') . '">
+                                                <i class="fa fa-link mr-1"></i> <i class="fa fa-plus" id="toggle-icon-' . $key . '"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                <div class="card collapsed-card card-lg" style="background:#eeeeee;">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-5">
-                                {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
-                            </div>
+                                    <div class="card-body p-0" id="riferimenti-body-' . $key . '" style="display: none;">
+                                        <div class="p-3 bg-light border-top">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-2">
+                                                    <h5 class="text-primary"><i class="fa fa-link mr-2"></i>' . tr('Riferimenti') . '</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    {[ "type": "select", "name": "selezione_riferimento[' . $key . ']", "ajax-source": "riferimenti-fe", "select-options": ' . json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']) . ', "label": "' . tr('Riferimento acquisto') . '", "icon-after": ' . json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-danger disabled" id="rimuovi_riferimento_' . $key . '"><i class="fa fa-close"></i></button>') . ', "help": "' . tr('Articoli contenuti in Ordini o DDT del cliente') . '" ]}
+                                                </div>
 
-                            <div class="col-md-3">
-                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-vendite", "required": 1, "label": "'.tr('Conto vendite').'", "value": "'.$idconto_vendita.'" ]}
-                            </div>
-
-                            <div class="col-md-3">
-                                {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
-                            </div>
-
-                            <div class="col-md-1 card-tools">
-                            <br>
-                                <button type="button" class="btn btn-lg" data-card-widget="collapse" onclick="$(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
-                                <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento acquisto').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-danger disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini o DDT del cliente').'" ]}
-                            </div>
-
-                            <div class="col-md-3">
-                                {[ "type": "select", "name": "selezione_riferimento_vendita['.$key.']", "ajax-source": "riferimenti-vendita-fe", "select-options": '.json_encode(['id_articolo' => $id_articolo]).', "label": "'.tr('Riferimento vendita').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimentoVendita(this)" class="btn btn-danger disabled" id="rimuovi_riferimento_vendita_'.$key.'"><i class="fa fa-close"></i></button>').', "help": "'.tr('Articoli contenuti in Ordini Cliente').'" ]}
-                            </div>
-
-                            <div class="col-md-6">
-                                {[ "type": "select", "name": "update_info['.$key.']", "values": "list=\"update_not\":\"Nessuna operazione\", \"update_price\":\"Crea listino del cliente (se non presente) e aggiorna il prezzo di acquisto\", \"update_all\":\"Crea listino del cliente (se non presente) aggiorna prezzo di acquisto e imposta cliente come predefinito\"", "label": "'.tr('Aggiorna informazioni di acquisto').'", "value": "'.$update_info.'", "help": "'.tr('Creazione automatica articolo deve essere attiva o l\'articolo deve essere selezionato affinché questa impostazione abbia effetto').'.", "readonly": "'.(empty($codice_principale) ? 1 : 0).'" ]}
-                            </div>
-                        </div>
-
-                        <div class="row">';
-            if (setting('Creazione seriali in import FE') && $serial) {
-                for ($i = 0; $i < $qta; ++$i) {
-                    echo '
-                                            <div class="col-md-3">
-                                                {[ "type": "text", "label": "'.tr('Serial').'", "name": "serial['.$key.'][]", "value": "'.$serial[$i].'" ]}
-                                            </div>';
-                }
-            }
-            echo '
-                        </div>
-                    </div> 
-                </div>
-            </td>
-        </tr>';
-        } else {
-            echo '
-                <input type="hidden" name="qta_riferimento['.$key.']" id="qta_riferimento_'.$key.'" value="'.$riga['Quantita'].'">
-
-                <input type="hidden" name="tipo_riferimento['.$key.']" id="tipo_riferimento_'.$key.'" value="">
-                <input type="hidden" name="id_riferimento['.$key.']" id="id_riferimento_'.$key.'" value="">
-                <input type="hidden" name="id_riga_riferimento['.$key.']" id="id_riga_riferimento_'.$key.'" value="">
-                <input type="hidden" name="tipo_riga_riferimento['.$key.']" id="tipo_riga_riferimento_'.$key.'" value="">
-
-                <input type="hidden" name="tipo_riferimento_vendita['.$key.']" id="tipo_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="id_riferimento_vendita['.$key.']" id="id_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
-                <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
-                
-                <input type="hidden" name="conto['.$key.']" value="">
-                <input type="hidden" name="iva['.$key.']" value="">
-                <input type="hidden" name="update_info['.$key.']" value="">';
-        }
+                                                <div class="col-md-3">
+                                                    {[ "type": "select", "name": "selezione_riferimento_vendita[' . $key . ']", "ajax-source": "riferimenti-vendita-fe", "select-options": ' . json_encode(['id_articolo' => $id_articolo]) . ', "label": "' . tr('Riferimento vendita') . '", "icon-after": ' . json_encode('<button type="button" onclick="rimuoviRiferimentoVendita(this)" class="btn btn-danger disabled" id="rimuovi_riferimento_vendita_' . $key . '"><i class="fa fa-close"></i></button>') . ', "help": "' . tr('Articoli contenuti in Ordini Cliente') . '" ]}
+                                                </div>
+                                            </div>
+                                        </div>';
     }
 
+    if (setting('Creazione seriali in import FE') && $serial) {
+        for ($i = 0; $i < $qta; ++$i) {
+            echo '
+                                        <div class="row mt-2">
+                                            <div class="col-md-12">
+                                                <div class="card card-outline card-warning">
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">
+                                                            <i class="fa fa-barcode mr-2"></i>' . tr('Serial number') . '
+                                                        </h3>
+                                                    </div>
+                                                    <div class="card-body p-3">';
+
+            foreach ($serial as $s) {
+                echo '
+                                                        <div class="col-md-4">
+                                                            {[ "type": "text", "label": "' . tr('Serial') . '", "name": "serial[' . $key . '][]", "value": "' . $serial[$i] . '" ]}
+                                                        </div>';
+            }
+
+            echo '
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+        }
+
+        // Riferimento ordine
+        if (!empty($dati_ordini[(int) $riga['NumeroLinea']])) {
+            $riferimento = $dati_ordini[(int) $riga['NumeroLinea']];
+
+            $query = "SELECT
+                `or_ordini`.`id`,
+                CONCAT('Ordine ', `or_ordini`.`numero`, ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y')) AS descrizione
+            FROM `or_ordini`
+                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+            WHERE
+                `or_ordini`.`idanagrafica` = " . prepare($anagrafica->id) . " AND
+                `or_ordini`.`numero` = " . prepare($riferimento['numero']) . " AND
+                DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y') = " . prepare($riferimento['data']) . "
+            GROUP BY `or_ordini`.`id`";
+
+            $ordini = $database->fetchArray($query);
+
+            if (!empty($ordini)) {
+                echo '
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box box-info">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">' . tr('Riferimento ordine') . '</h3>
+                                            </div>
+                                            <div class="box-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        {[ "type": "select", "label": "' . tr('Ordine') . '", "name": "selezione_riferimento_vendita[' . $key . ']", "values": "query=' . $query . '", "onchange": "aggiornaRiferimento(this, ' . $key . ')" ]}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+            }
+        }
+
+        echo '
+                            </td>
+                        </tr>';
+    }
+
+
+
     echo '
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>';
 
     echo '
@@ -672,7 +817,7 @@ if (!empty($righe)) {
         // Selezione generale per l\'IVA
         if (iva_selezionata) {
             aliquote.each(function() {
-                $(this).selectSet(iva_selezionata.id);
+                $(this).selectSetNew(iva_selezionata.id, iva_selezionata.text, iva_selezionata);
             });
         }
 
@@ -686,18 +831,18 @@ if (!empty($righe)) {
     </script>';
 } else {
     echo '
-    <p>'.tr('Non ci sono righe nella fattura').'.</p>';
+    <p>' . tr('Non ci sono righe nella fattura') . '.</p>';
 }
 
 echo '
     <div class="row">
         <div class="col-md-12 text-right">
-            <a href="'.$skip_link.'" class="btn btn-warning">
-                <i class="fa fa-ban "></i> '.tr('Salta fattura').'
+            <a href="' . $skip_link . '" class="btn btn-warning">
+                <i class="fa fa-ban "></i> ' . tr('Salta fattura') . '
             </a>
 
             <button type="submit" class="btn btn-primary">
-                <i class="fa fa-arrow-right"></i> '.tr('Continua').'...
+                <i class="fa fa-arrow-right"></i> ' . tr('Continua') . '...
             </button>
         </div>
     </div>
@@ -745,17 +890,16 @@ function rimuoviRiferimento(button) {
     $(button).addClass("disabled");
     riga.removeClass("success").removeClass("warning");
 }
-
 function selezionaRiferimento(riga, tipo_documento, id_documento, dir) {
     let id_riga = riga.data("id");
     let qta = riga.data("qta");
     let descrizione = riga.data("descrizione");
     let prezzo_unitario = riga.data("prezzo_unitario");
-    
+
     let riferimenti = getRiferimenti();
     let query = {
-        id_module: "'.$id_module.'",
-        id_record: "'.$id_record.'",
+        id_module: "' . $id_module . '",
+        id_record: "' . $id_record . '",
         qta: qta,
         descrizione: descrizione,
         prezzo_unitario: prezzo_unitario,
@@ -767,9 +911,9 @@ function selezionaRiferimento(riga, tipo_documento, id_documento, dir) {
         dir: dir,
     };
 
-    let url = "'.$structure->fileurl('riferimento.php').'?" + $.param(query);
+    let url = "' . $structure->fileurl('riferimento.php') . '?" + $.param(query);
 
-    openModal("'.tr('Selezione riferimento').'", url);
+    openModal("' . tr('Selezione riferimento') . '", url);
 }
 
 function getRiferimenti() {
@@ -914,14 +1058,14 @@ $("[id^=\'articoli\']").change(function() {
 
     verificaSerial($(this));
 
-    
+
     if($(this).val()){
        $("#update_info"+$(this).data("id")).prop(\'disabled\', false);
     }else{
         $("#update_info"+$(this).data("id")).prop(\'disabled\', true);
     }
 
-     
+
 });
 
 function copy_rif() {
@@ -956,7 +1100,6 @@ function copy_rif() {
     }
 }
 
-// Visualizza input seriali se abilita serial dell\'articolo selezionato è attivo
 function verificaSerial(riga) {
     if (riga.val()) {
         let data = riga.selectData();
@@ -967,6 +1110,19 @@ function verificaSerial(riga) {
         }
     } else {
         $("#serial"+riga.data("id")).parent().parent().parent().addClass("hidden");
+    }
+}
+
+function toggleRiferimenti(key) {
+    const body = $("#riferimenti-body-" + key);
+    const icon = $("#toggle-icon-" + key);
+
+    if (body.is(":visible")) {
+        body.hide(300);
+        icon.removeClass("fa-minus").addClass("fa-plus");
+    } else {
+        body.show(300);
+        icon.removeClass("fa-plus").addClass("fa-minus");
     }
 }
 

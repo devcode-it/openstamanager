@@ -26,13 +26,17 @@ use Plugins\ReceiptFE\Interaction;
 use Util\XML;
 
 echo '
-<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura trasmessa è stata accettata dal Sistema Di Interscambio').'.</p>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle mr-2"></i>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura trasmessa è stata accettata dal Sistema Di Interscambio').'
+</div>';
 
 if (Interaction::isEnabled()) {
     echo '
-<p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
-        '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
-    ]).'.</p>';
+<div class="alert alert-light border">
+    <i class="fa fa-refresh mr-2"></i>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
+        '_BTN_' => '<b>'.tr('Ricerca ricevute').'</b>',
+    ]).'
+</div>';
 }
 
 // Messaggio informativo su fatture con stato di errore
@@ -46,7 +50,7 @@ if (!empty($fatture_generate_errore->count())) {
     echo '
         <div class="alert alert-warning push alert-dismissible" role="alert">
             <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-            <h4><i class="fa fa-warning"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count() > 1) ? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
+            <h4><i class="fa fa-warning mr-2"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count() > 1) ? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
             <ul>';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
@@ -92,7 +96,7 @@ $fatture_generate = Fattura::vendita()
 if (!empty($fatture_generate->count())) {
     echo '
     <div class="alert alert-info push info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-        <h4><i class="fa fa-info"></i>'.tr('Informazione').'</h4> '.(($fatture_generate->count() > 1) ? tr('Le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni') : tr('La seguente fattura è in attesa di una ricevuta da più di 7 giorni')).':
+        <h4><i class="fa fa-info mr-2"></i>'.tr('Informazione').'</h4> '.(($fatture_generate->count() > 1) ? tr('Le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni') : tr('La seguente fattura è in attesa di una ricevuta da più di 7 giorni')).':
         <ul>';
 
     foreach ($fatture_generate as $fattura_generata) {
@@ -104,12 +108,12 @@ if (!empty($fatture_generate->count())) {
     </div>';
 }
 echo '
-<div class="card card-success">
-    <div class="card-header with-border">
+<div class="card card-outline card-success">
+    <div class="card-header">
         <h3 class="card-title">
-            '.tr('Carica un XML').'
+            <i class="fa fa-file-text-o mr-2"></i>'.tr('Carica un XML').'
 
-            <span class="tip" title="'.tr('Formati supportati: XML e P7M').'.">
+            <span class="tip ml-1" title="'.tr('Formati supportati: XML e P7M').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
 
@@ -118,12 +122,12 @@ echo '
     <div class="card-body" id="upload">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "file", "name": "blob", "required": 1 ]}
+                {[ "type": "file", "name": "blob", "required": 1, "placeholder": "'.tr('Seleziona un file XML').'" ]}
             </div>
 
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
-                    <i class="fa fa-upload"></i> '.tr('Carica ricevuta').'
+            <div class="col-md-3 align-items-end">
+                <button type="button" class="btn btn-primary btn-block" onclick="upload(this)">
+                    <i class="fa fa-upload mr-1"></i> '.tr('Carica ricevuta').'
                 </button>
             </div>
         </div>
@@ -131,23 +135,32 @@ echo '
 </div>';
 
 echo '
-<div class="card card-info">
-    <div class="card-header with-border">
+<div class="card card-outline card-info mt-3">
+    <div class="card-header">
         <h3 class="card-title">
-            '.tr('Ricevute da importare').'</span>
+            <i class="fa fa-file-text-o mr-2"></i>'.tr('Ricevute da importare').'
         </h3>';
 
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-        <div class="float-right d-none d-sm-inline">
-            <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                <i class="fa fa-cloud-download"></i> '.tr('Importa tutte le ricevute').'
-            </button>
+        <div class="card-tools">
+            <div class="input-group input-group-sm mr-2 d-inline-flex" style="width: 250px;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-search"></i></span>
+                </div>
+                <input type="text" class="form-control" id="search_receipt" placeholder="'.tr('Cerca ricevuta').'">
+            </div>
 
-            <button type="button" class="btn btn-primary" onclick="search(this)">
-                <i class="fa fa-refresh"></i> '.tr('Ricerca ricevute').'
-            </button>
+            <div class="btn-group btn-group-sm d-inline-flex">
+                <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                    <i class="fa fa-cloud-download mr-1"></i> '.tr('Importa tutte').'
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="search(this)">
+                    <i class="fa fa-refresh mr-1"></i> '.tr('Ricerca ricevute').'
+                </button>
+            </div>
         </div>';
 }
 
@@ -157,9 +170,11 @@ echo '
 
 if (Interaction::isEnabled()) {
     echo '
-        <p>'.tr('Per vedere le ricevute da importare utilizza il pulsante _BUTTON_', [
-        '_BUTTON_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
-    ]).'.</p>';
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le ricevute da importare utilizza il pulsante _BUTTON_', [
+            '_BUTTON_' => '<b>'.tr('Ricerca ricevute').'</b>',
+        ]).'
+        </div>';
 } else {
     include $structure->filepath('list.php');
 }
@@ -171,16 +186,77 @@ echo '
 
 echo '
 <script>
+$(document).ready(function() {
+    // Search functionality for receipt list
+    $("#search_receipt").on("keyup", function() {
+        applySearchFilter();
+    });
+
+    // Personalizzazione animazione di caricamento
+    $.fn.dataTable.ext.pager.numbers_length = 5;
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            processing: "<div class=\"text-center\"><i class=\"fa fa-refresh fa-spin fa-2x fa-fw text-primary\"></i><div class=\"mt-2\">"+globals.translations.processing+"</div></div>"
+        }
+    });
+});
+
+function applySearchFilter() {
+    var searchValue = $("#search_receipt").val().toLowerCase();
+
+    // Mostra tutte le righe se il campo di ricerca è vuoto
+    if(searchValue.length === 0) {
+        $("table tbody tr").show();
+        return;
+    }
+
+    // Aggiungi un effetto di evidenziazione durante la ricerca
+    $("table tbody tr").each(function() {
+        var rowText = $(this).text().toLowerCase();
+        var match = rowText.indexOf(searchValue) > -1;
+
+        if(match) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+
+    // Mostra un messaggio se non ci sono risultati
+    if($("table tbody tr:visible").length === 0) {
+        if($("#no-results-message").length === 0) {
+            $("table tbody").append("<tr id=\"no-results-message\"><td colspan=\"3\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
+        } else {
+            $("#no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
+        }
+    } else {
+        $("#no-results-message").remove();
+    }
+}
+
 function search(button) {
     var restore = buttonLoading(button);
 
+    // Mostra un\'animazione di caricamento nella lista
+    $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
+
+    // Carica la lista delle ricevute
     $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
         buttonRestore(button, restore);
+
+        // Applica il filtro di ricerca se presente
+        applySearchFilter();
+
+        // Inizializza i tooltip
+        $(".tip").tooltip();
     });
 }
 function upload(btn) {
     if ($("#blob").val()) {
         var restore = buttonLoading(btn);
+
+        // Mostra un\'animazione di caricamento
+        $("#main_loading").show();
 
         $("#upload").ajaxSubmit({
             url: globals.rootdir + "/actions.php",
@@ -191,12 +267,14 @@ function upload(btn) {
             },
             type: "post",
             success: function(data){
+                $("#main_loading").fadeOut();
                 importMessage(data);
 
                 buttonRestore(btn, restore);
             },
             error: function(xhr) {
-                alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
+                $("#main_loading").fadeOut();
+                swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
                 buttonRestore(btn, restore);
             }
@@ -243,59 +321,62 @@ function importAll(btn) {
         confirmButtonText: "'.tr('Procedi').'",
         type: "info",
     }).then(function (result) {
-        var restore = buttonLoading(btn);
-        $("#main_loading").show();
+        if (result) {
+            var restore = buttonLoading(btn);
+            $("#main_loading").show();
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            data: {
-                op: "import",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-            },
-            type: "post",
-            success: function(data){
-                data = JSON.parse(data);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                data: {
+                    op: "import",
+                    id_module: "'.$id_module.'",
+                    id_plugin: "'.$id_plugin.'",
+                },
+                type: "post",
+                success: function(data){
+                    data = JSON.parse(data);
 
-                if(data.length == 0){
-                    var html = "'.tr('Non sono state trovate ricevute da importare').'.";
-                } else {
-                    var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
+                    if(data.length == 0){
+                        var html = "'.tr('Non sono state trovate ricevute da importare').'.";
+                    } else {
+                        var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
 
-                    data.forEach(function(element) {
-                        var text = "";
-                        if(element.fattura) {
-                            text += element.fattura;
-                        } else {
-                            text += "<i>'.tr('Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
-                        }
+                        data.forEach(function(element) {
+                            var text = "";
+                            if(element.fattura) {
+                                text += element.fattura;
+                            } else {
+                                text += "<i>'.tr('Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
+                            }
 
-                        text += " (" + element.file + ")";
+                            text += " (" + element.file + ")";
 
-                        html += "<small><li>" + text + "</li></small>";
+                            html += "<small><li>" + text + "</li></small>";
+                        });
+
+                        html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
+                    }
+
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        swal({
+                            title: "'.tr('Operazione completata!').'",
+                            html: html,
+                            type: "info",
+                        });
+
+                        buttonRestore(btn, restore);
+                        $("#main_loading").fadeOut();
                     });
 
-                    html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
-                }
-
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    swal({
-                        title: "'.tr('Operazione completata!').'",
-                        html: html,
-                        type: "info",
-                    });
+                },
+                error: function(data) {
+                    $("#main_loading").fadeOut();
+                    swal("'.tr('Errore').'", data, "error");
 
                     buttonRestore(btn, restore);
-                    $("#main_loading").fadeOut();
-                });
-
-            },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
-
-                buttonRestore(btn, restore);
-            }
-        });
+                }
+            });
+        }
     });
 }
 </script>';

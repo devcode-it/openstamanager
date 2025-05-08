@@ -36,7 +36,7 @@ if (!empty($list)) {
             <th class="text-center">'.tr('Fornitore').'</th>
             <th class="text-center">'.tr('Data di registrazione').'</th>
             <th class="text-center">'.tr('Totale imponibile').'</th>
-            <th width="20%" class="text-center">#</th>
+            <th width="20%" class="text-center">'.tr('Azioni').'</th>
         </tr>
     </thead>
     <tbody>';
@@ -51,15 +51,15 @@ if (!empty($list)) {
         if (!empty($element['file'])) {
             echo '
             <td>
-                <p>'.$name.'</p>
+                <i class="fa fa-file-code-o mr-1 text-muted"></i>'.$name.'
             </td>
 
-            <td class="text-center">-</td>
-            <td class="text-center">-</td>
-            <td class="text-center">-</td>
+            <td class="text-center text-muted">-</td>
+            <td class="text-center text-muted">-</td>
+            <td class="text-center text-muted">-</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
+                <button type="button" class="btn btn-sm btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
@@ -91,31 +91,32 @@ if (!empty($list)) {
 
             echo '
             <td>
-                '.$descrizione.' <small>['.$name.']</small>
+                <i class="fa fa-file-text-o mr-1 text-primary"></i>'.$descrizione.' <small class="text-muted">['.$name.']</small>
             </td>
 
-            <td>'.$element['sender'].'</td>
-            <td class="text-center">'.dateFormat(new Carbon($element['date_sent'])).'</td>
-            <td class="text-right">'.moneyFormat($element['amount']).'</td>
+            <td><i class="fa fa-industry mr-1 text-muted"></i>'.$element['sender'].'</td>
+            <td class="text-center"><i class="fa fa-calendar mr-1 text-muted"></i>'.dateFormat(new Carbon($element['date_sent'])).'</td>
+            <td class="text-right"><i class="fa fa-euro mr-1 text-muted"></i>'.moneyFormat($element['amount']).'</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-info tip" onclick="process_fe(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
-                    <i class="fa fa-upload"></i>
-                </button>';
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-info tip" onclick="process_fe(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
+                        <i class="fa fa-upload"></i>
+                    </button>';
         }
 
         if (file_exists($directory.'/'.$name)) {
             echo '
-                <button type="button" class="btn btn-primary tip" onclick="download_fe(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
-                    <i class="fa fa-download"></i>
-                </button>';
+                    <button type="button" class="btn btn-sm btn-primary tip" onclick="download_fe(this, \''.$element['id'].'\')" title="'.tr('Scarica la fattura').'">
+                        <i class="fa fa-download"></i>
+                    </button>';
         }
 
         echo '
-
-                <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$data.'\')" title="'.tr('Importa la fattura nel gestionale').'">
-                    <i class="fa fa-cloud-download"></i> '.tr('Importa').'
-                </button>
+                    <button type="button" class="btn btn-sm btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$data.'\')" title="'.tr('Importa la fattura nel gestionale').'">
+                        <i class="fa fa-cloud-download"></i>
+                    </button>
+                </div>
             </td>
         </tr>';
     }
@@ -125,7 +126,9 @@ if (!empty($list)) {
 </table>';
 } else {
     echo '
-<p>'.tr('Nessuna fattura da importare').'.</p>';
+<div class="alert alert-warning">
+    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Nessuna fattura da importare').'
+</div>';
 }
 
 echo '

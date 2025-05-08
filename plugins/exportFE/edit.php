@@ -41,7 +41,7 @@ if ($fattura !== null) {
     if (!empty($checks)) {
         echo '
     <div class="alert alert-warning">
-        <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa le seguenti informazioni').':</p>';
+        <p><i class="fa fa-warning mr-2"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa le seguenti informazioni').':</p>';
 
         foreach ($checks as $check) {
             echo '
@@ -64,12 +64,15 @@ if ($fattura !== null) {
     }
 
     echo '
-    <p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
-        '_BTN_' => '<b>Genera</b>',
-    ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle mr-2"></i>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
+            '_BTN_' => '<b>Genera</b>',
+        ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'
+    </div>
 
-    <p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'.</p>
-    <br>';
+    <div class="alert alert-light border">
+        <i class="fa fa-paperclip mr-2"></i>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'
+    </div>';
 
     echo '
     <div class="text-center">
@@ -80,7 +83,7 @@ if ($fattura !== null) {
             <input type="hidden" name="op" value="generate">
 
             <button type="button" class="btn btn-primary btn-lg '.(!$abilita_genera ? 'disabled' : '').'" onclick="generaFE(this)">
-                <i class="fa fa-file"></i> '.tr('Genera').'
+                <i class="fa fa-file mr-1"></i> '.tr('Genera').'
             </button>
         </form>';
 
@@ -91,7 +94,7 @@ if ($fattura !== null) {
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
         <a href="'.base_path().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
-            <i class="fa fa-eye"></i> '.tr('Visualizza').'
+            <i class="fa fa-eye mr-1"></i> '.tr('Visualizza').'
         </a>';
 
     // Scelgo quando posso inviarla
@@ -101,7 +104,7 @@ if ($fattura !== null) {
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
         <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
-            <i class="fa fa-download"></i> '.tr('Scarica').'
+            <i class="fa fa-download mr-1"></i> '.tr('Scarica').'
         </a>';
 
     echo '
@@ -109,7 +112,7 @@ if ($fattura !== null) {
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
         <button type="button" onclick="inviaFE(this)" class="btn btn-success btn-lg '.($inviabile ? '' : 'disabled').'">
-            <i class="fa fa-paper-plane"></i> '.tr('Invia').'
+            <i class="fa fa-paper-plane mr-1"></i> '.tr('Invia').'
         </button>';
 
     $verify = Interaction::isEnabled() && $generata;
@@ -117,7 +120,7 @@ if ($fattura !== null) {
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
         <button type="button" onclick="verificaNotificheFE(this)" class="btn btn-warning btn-lg '.($verify ? '' : 'disabled').'">
-            <i class="fa fa-question-circle"></i> '.tr('Verifica ricevute').'
+            <i class="fa fa-question-circle mr-1"></i> '.tr('Verifica ricevute').'
         </button>
     </div>';
 
@@ -128,12 +131,12 @@ if ($fattura !== null) {
         echo '
     <div class="alert alert-'.$stato_fe->tipo.'">
         <div class="float-right d-none d-sm-inline">
-            <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
+            <i class="fa fa-clock-o mr-1 tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
 
         if (!empty($ultima_ricevuta)) {
             echo '
             <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
-                <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
+                <i class="fa fa-external-link mr-1"></i> '.tr('Visualizza ricevuta').'
             </a>';
         }
 
@@ -141,7 +144,7 @@ if ($fattura !== null) {
         </div>
 
         <big>
-            <i class="'.$stato_fe->icon.'" style="color:#fff;"></i>
+            <i class="'.$stato_fe->icon.' mr-1" style="color:#fff;"></i>
             <b>'.$stato_fe->codice.'</b> - '.$stato_fe->name.'
         </big>';
 
@@ -152,7 +155,7 @@ if ($fattura !== null) {
 
         if ($fattura->codice_stato_fe == 'GEN') {
             echo '
-        <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
+        <br><i class="fa fa-info-circle mr-1"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
         }
 
         echo '
@@ -194,9 +197,22 @@ if ($fattura !== null) {
 
     echo '
     <script>
+    $(document).ready(function() {
+        // Personalizzazione animazione di caricamento
+        $.fn.dataTable.ext.pager.numbers_length = 5;
+        $.extend(true, $.fn.dataTable.defaults, {
+            language: {
+                processing: "<div class=\"text-center\"><i class=\"fa fa-refresh fa-spin fa-2x fa-fw text-primary\"></i><div class=\"mt-2\">"+globals.translations.processing+"</div></div>"
+            }
+        });
+    });
+
         function inviaFE(button) {
             if (confirm("'.tr('Inviare la fattura al SDI?').'")) {
                 let restore = buttonLoading(button);
+
+                // Mostra un\'animazione di caricamento
+                $("#main_loading").show();
 
                 $.ajax({
                     url: globals.rootdir + "/actions.php",
@@ -209,6 +225,7 @@ if ($fattura !== null) {
                         id_record: "'.$id_record.'",
                     },
                     success: function(data) {
+                        $("#main_loading").fadeOut();
                         buttonRestore(button, restore);
 
                         if (data.code === 200) {
@@ -227,6 +244,7 @@ if ($fattura !== null) {
                         }
                     },
                     error: function() {
+                        $("#main_loading").fadeOut();
                         swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
 
                         buttonRestore(button, restore);
@@ -241,6 +259,9 @@ if ($fattura !== null) {
         /*
             let restore = buttonLoading(button);
 
+            // Mostra un\'animazione di caricamento
+            $("#main_loading").show();
+
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "post",
@@ -251,6 +272,7 @@ if ($fattura !== null) {
                     id_record: "'.$id_record.'",
                 },
                 success: function(data) {
+                    $("#main_loading").fadeOut();
                     buttonRestore(button, restore);
                     data = JSON.parse(data);
 
@@ -263,6 +285,7 @@ if ($fattura !== null) {
                     }
                 },
                 error: function(data) {
+                    $("#main_loading").fadeOut();
                     swal("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
 
                     buttonRestore(button, restore);
@@ -272,11 +295,12 @@ if ($fattura !== null) {
 
         function generaFE(button) {
             salvaForm("#edit-form", {}, button)
-                .then(function(valid) {';
+                .then(function(valid) {
+                    // Mostra un\'animazione di caricamento
+                    $("#main_loading").show();';
 
     if ($generata) {
         echo '
-                    /*<p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>*/
                     swal({
                         title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
                         html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p>",
@@ -288,15 +312,17 @@ if ($fattura !== null) {
                     }).then((result) => {
                         if (result) {
                             $("#form-xml").submit();
+                        } else {
+                            $("#main_loading").fadeOut();
                         }
                     });';
     } else {
         echo '
-
                     $("#form-xml").submit();';
     }
     echo '
                 }).catch(function() {
+                    $("#main_loading").fadeOut();
                     swal({
                         type: "error",
                         title: "'.tr('Errore').'",

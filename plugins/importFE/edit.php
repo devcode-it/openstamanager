@@ -80,26 +80,24 @@ echo '
     }
 </script>
 
-<div class="card card-success">
-    <div class="card-header with-border">
+<div class="card card-outline card-success">
+    <div class="card-header">
         <h3 class="card-title">
-            '.tr('Carica un XML').'
-
-            <span class="tip" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
+            <i class="fa fa-file-code-o mr-2"></i>'.tr('Carica un XML').'
+            <span class="tip ml-1" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
-
         </h3>
     </div>
     <div class="card-body" id="upload">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "file", "name": "blob", "required": 1 ]}
+                {[ "type": "file", "name": "blob", "required": 1, "placeholder": "'.tr('Seleziona un file XML, P7M o ZIP').'" ]}
             </div>
 
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
-                    <i class="fa fa-upload"></i> '.tr('Carica documento fornitore').'
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-primary btn-block" onclick="upload(this)">
+                    <i class="fa fa-upload mr-1"></i> '.tr('Carica documento').'
                 </button>
             </div>
         </div>
@@ -107,35 +105,46 @@ echo '
 </div>';
 
 echo '
-<div class="card card-info">
-    <div class="card-header with-border">
+<div class="card card-outline card-info mt-3">
+    <div class="card-header">
         <h3 class="card-title">
-            '.tr('Fatture da importare').'</span>
+            <i class="fa fa-file-text-o mr-2"></i>'.tr('Fatture da importare').'
         </h3>
 
-        <div class="float-right d-none d-sm-inline">
-            <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
-            </button>';
+        <div class="card-tools">
+            <div class="input-group input-group-sm mr-2 d-inline-flex" style="width: 250px;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-search"></i></span>
+                </div>
+                <input type="text" class="form-control" id="search_invoice" placeholder="'.tr('Cerca fattura').'">
+            </div>
+
+            <div class="btn-group btn-group-sm d-inline-flex">
+                <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                    <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
+                </button>';
 
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-            <button type="button" class="btn btn-primary" onclick="search(this)">
-                <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
-            </button>';
+                <button type="button" class="btn btn-primary" onclick="search(this)">
+                    <i class="fa fa-refresh"></i> '.tr('Ricerca fatture').'
+                </button>';
 }
 
 echo '
+            </div>
         </div>
     </div>
     <div class="card-body" id="list">';
 
 if (Interaction::isEnabled()) {
     echo '
-        <p>'.tr('Per vedere le fatture da importare utilizza il pulsante _BUTTON_', [
-        '_BUTTON_' => '<b>"'.tr('Ricerca fatture di acquisto').'"</b>',
-    ]).'.</p>';
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le fatture da importare utilizza il pulsante _BUTTON_', [
+            '_BUTTON_' => '<b>"'.tr('Ricerca fatture').'"</b>',
+        ]).'
+        </div>';
 } else {
     include $structure->filepath('list.php');
 }
@@ -149,6 +158,19 @@ echo '
 $(document).ready(function() {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
     $($.fn.dataTable.tables(true)).DataTable().scroller.measure();
+
+    // Search functionality for invoice list
+    $("#search_invoice").on("keyup", function() {
+        applySearchFilter();
+    });
+
+    // Personalizzazione animazione di caricamento
+    $.fn.dataTable.ext.pager.numbers_length = 5;
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            processing: "<div class=\"text-center\"><i class=\"fa fa-refresh fa-spin fa-2x fa-fw text-primary\"></i><div class=\"mt-2\">"+globals.translations.processing+"</div></div>"
+        }
+    });
 });';
 
 if (Interaction::isEnabled()) {
@@ -162,7 +184,12 @@ function importAll(btn) {
         type: "info",
     }).then(function (result) {
         var restore = buttonLoading(btn);
+
+        // Mostra l\'animazione di caricamento
         $("#main_loading").show();
+
+        // Mostra un messaggio di caricamento
+        $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">'.tr('Importazione fatture in corso...').'</div></div>");
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -213,11 +240,21 @@ function importAll(btn) {
 }
 
 function importComplete(count, counter, btn, restore) {
+    // Se tutte le fatture sono state elaborate, reindirizza
     if(counter == count){
         $("#main_loading").fadeOut();
         buttonRestore(btn, restore);
 
-        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+        // Mostra un messaggio di successo prima del reindirizzamento
+        swal({
+            title: "'.tr('Importazione completata!').'",
+            text: "'.tr('Tutte le fatture sono state importate con successo.').'",
+            type: "success",
+            timer: 2000,
+            showConfirmButton: false
+        }).then(function() {
+            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+        });
     }
 }';
 } else {
@@ -231,9 +268,52 @@ echo '
 function search(btn) {
     var restore = buttonLoading(btn);
 
+    // Mostra un\'animazione di caricamento nella lista
+    $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
+
+    // Carica la lista delle fatture
     $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
         buttonRestore(btn, restore);
+
+        // Applica il filtro di ricerca se presente
+        applySearchFilter();
+
+        // Inizializza i tooltip
+        $(".tip").tooltip();
     });
+}
+
+function applySearchFilter() {
+    var searchValue = $("#search_invoice").val().toLowerCase();
+
+    // Mostra tutte le righe se il campo di ricerca è vuoto
+    if(searchValue.length === 0) {
+        $("table tbody tr").show();
+        return;
+    }
+
+    // Aggiungi un effetto di evidenziazione durante la ricerca
+    $("table tbody tr").each(function() {
+        var rowText = $(this).text().toLowerCase();
+        var match = rowText.indexOf(searchValue) > -1;
+
+        if(match) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+
+    // Mostra un messaggio se non ci sono risultati
+    if($("table tbody tr:visible").length === 0) {
+        if($("#no-results-message").length === 0) {
+            $("table tbody").append("<tr id=\"no-results-message\"><td colspan=\"5\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
+        } else {
+            $("#no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
+        }
+    } else {
+        $("#no-results-message").remove();
+    }
 }
 
 </script>';

@@ -105,6 +105,67 @@ $pageTitle = tr('Login');
 
 include_once App::filepath('include|custom|', 'top.php');
 
+// Add inline styles for login page enhancement
+echo '
+<style>
+    .login-page {
+        background: linear-gradient(135deg, rgba(245,247,250,1) 0%, rgba(230,233,240,1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    .login-box {
+        margin: 0 auto;
+    }
+    .card-outline.card-primary {
+        border-top: 3px solid #007bff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .form-control-lg {
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    .form-control-lg:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .input-group-text {
+        border-top-right-radius: 4px !important;
+        border-bottom-right-radius: 4px !important;
+    }
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
+    .login-box-msg {
+        font-size: 1.1rem;
+    }
+    .is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg width=\'12\' height=\'12\' fill=\'none\' stroke=\'%23dc3545\' viewBox=\'0 0 12 12\'%3e%3ccircle cx=\'6\' cy=\'6\' r=\'4.5\'/%3e%3cpath stroke-linejoin=\'round\' d=\'M5.8 3.6h.4L6 6.5z\'/%3e%3ccircle cx=\'6\' cy=\'8.2\' r=\'.6\' fill=\'%23dc3545\' stroke=\'none\'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: #dc3545;
+    }
+    .d-block {
+        display: block !important;
+    }
+    @media (max-width: 576px) {
+        .login-box {
+            width: 90%;
+            margin: 0 auto;
+        }
+    }
+</style>';
+
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
     echo '
@@ -118,13 +179,16 @@ if (Update::isBeta()) {
 // Controllo se è una beta e in caso mostro un warning
 if (Auth::isBrute()) {
     echo '
-    <div class="box box-danger" id="brute">
-        <div class="box-header with-border text-center">
-            <h3 class="box-title">'.tr('Attenzione').'</h3>
+    <div class="card card-danger shadow-lg col-md-6 offset-md-3 mt-5" id="brute">
+        <div class="card-header text-center">
+            <h3 class="card-title"><i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione').'</h3>
         </div>
-        <div class="box-body text-center">
-            <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-            <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+        <div class="card-body text-center">
+            <p class="lead">'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
+            <div class="alert alert-warning">
+                <p>'.tr('Tempo rimanente').':</p>
+                <h3><span id="brute-timeout" class="badge badge-danger">'.(Auth::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+            </div>
         </div>
     </div>
 
@@ -141,8 +205,9 @@ if (Auth::isBrute()) {
         if(value > 0){
             setTimeout(brute, 1000);
         } else {
-            $("#brute").fadeOut();
-            $(".login-box").fadeIn();
+            $("#brute").fadeOut(500, function() {
+                $(".login-box").fadeIn(500);
+            });
         }
     }
     </script>';
@@ -151,7 +216,23 @@ if (!empty(flash()->getMessage('error'))) {
     echo '
             <script>
             $(document).ready(function(){
+                // Add shake animation to login box
                 $(".login-box").addClass("animated shake");
+
+                // Add error styling to password field
+                $(".password-field").addClass("is-invalid");
+
+                // Add error message under password field
+                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.tr('Credenziali non valide. Riprova.').'</div>\');
+
+                // Focus on password field
+                $("input[name=password]").focus();
+
+                // Remove error styling when user starts typing in any field
+                $("input[name=password], input[name=username]").on("keydown", function() {
+                    $(".password-field").removeClass("is-invalid");
+                    $(".invalid-feedback").fadeOut(300);
+                });
             });
             </script>';
 }
@@ -159,40 +240,48 @@ if (!empty(flash()->getMessage('error'))) {
 echo '
 			<form action="?op=login" method="post" autocomplete="off">
 				<div class="login-box card-center-medium">
-                    <div class="card card-outline card-orange">
-                        <div class="card-header text-center">
-                            <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid">
+                    <div class="card card-outline card-primary shadow-lg">
+                        <div class="card-header text-center bg-light py-4">
+                            <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid" style="max-width: 85%;">
                         </div>
 
-                        <div class="card-body">
-                            <p class="login-box-msg">'.tr('Accedi con le tue credenziali').'</p>
-                            <div class="input-group mb-3">
-                                <input type="text" name="username" autocomplete="username" class="form-control" placeholder="'.tr('Nome utente').'"';
+                        <div class="card-body pt-4">
+                            <p class="login-box-msg text-secondary mb-4"><i class="fa fa-lock mr-2"></i>'.tr('Accedi con le tue credenziali').'</p>
+                            <div class="input-group mb-4">
+                                <input type="text" name="username" autocomplete="username" class="form-control form-control-lg" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
 
 echo ' required>
                                 <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <i class="fa fa-user"></i>
+                                    <div class="input-group-text bg-light">
+                                        <i class="fa fa-user text-primary"></i>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'" ]}
+                            <div class="mb-4 password-field-container">
+                                {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "class": "form-control-lg password-field" ]}
                             </div>
 
-                            <button type="submit" class="btn btn-danger btn-block btn-flat">'.tr('Accedi').'</button>
-                            <br>
-                            <p><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></p>';
+                            <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm" id="login-button">
+                                <i class="fa fa-sign-in mr-2"></i>'.tr('Accedi').'
+                            </button>
+
+                            <div class="text-center mt-4">
+                                <a href="'.base_path().'/reset.php" class="text-secondary">
+                                    <i class="fa fa-question-circle mr-1"></i>'.tr('Password dimenticata?').'
+                                </a>
+                            </div>';
 if ($microsoft) {
     echo '
-                        <div class="social-auth-links text-center">
-                            <p>- oppure -</p>
-                        
-                            <a href="'.base_path().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat"><i class="fa fa-windows"></i>'.tr('Accedi con Microsoft').'</a>
+                        <div class="social-auth-links text-center mt-4 pt-3 border-top">
+                            <p class="text-muted">'.tr('- oppure -').'</p>
+
+                            <a href="'.base_path().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
+                                <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
+                            </a>
                         </div>';
 }
 echo '
@@ -203,17 +292,33 @@ echo '
 			<!-- /.box -->
 
             <script>
-            $(document).ready( function(){
-                $("#login").click(function(){
-                    $("#login").text("'.tr('Autenticazione').'...");
-                });
-
-                if( $("input[name=username]").val() == ""){
+            $(document).ready(function(){
+                // Focus on first empty field
+                if($("input[name=username]").val() == ""){
                     $("input[name=username]").focus();
-                }
-                else{
+                } else {
                     $("input[name=password]").focus();
                 }
+
+                // Add hover effect to login button
+                $("#login-button").hover(
+                    function() {
+                        $(this).removeClass("shadow-sm").addClass("shadow");
+                    },
+                    function() {
+                        $(this).removeClass("shadow").addClass("shadow-sm");
+                    }
+                );
+
+                // Show loading text on button click
+                $("#login-button").click(function(){
+                    $(this).html(\'<i class="fa fa-circle-o-notch fa-spin mr-2"></i> '.tr('Autenticazione').'...\');
+                });
+
+                // Add subtle animation to input fields on focus
+                $("input").focus(function(){
+                    $(this).parent().animate({marginLeft: "5px"}, 200).animate({marginLeft: "0px"}, 200);
+                });
             });
             </script>';
 

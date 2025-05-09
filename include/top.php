@@ -701,7 +701,9 @@ if (Auth::check()) {
         include_once $extra_file;
     }
 
-    if (!empty($messages['warning']) || !empty($messages['error'])) {
+    // Non mostrare la card nella pagina di login quando ci sono solo errori
+    if ((!empty($messages['warning']) || (!empty($messages['error']) && ($pageTitle != tr('Login')))) &&
+        !($pageTitle == tr('Login') && empty($messages['warning']) && !empty($messages['error']))) {
         echo '
             <div class="card card-warning card-center card-center-large">
                 <div class="card-header with-border text-center">
@@ -724,8 +726,8 @@ if (!empty($messages['info'])) {
     }
 }
 
-// Errori
-if (!empty($messages['error'])) {
+// Errori - non mostrare nella pagina di login
+if (!empty($messages['error']) && (Auth::check() || $pageTitle != tr('Login'))) {
     foreach ($messages['error'] as $value) {
         echo '
 							<div class="alert alert-danger push">
@@ -746,7 +748,10 @@ if (!empty($messages['warning'])) {
     }
 }
 
-if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
+// Chiusura della card informazioni - non mostrare nella pagina di login quando ci sono solo errori
+if (!Auth::check() &&
+    (!empty($messages['info']) || !empty($messages['warning']) ||
+     (!empty($messages['error']) && $pageTitle != tr('Login')))) {
     echo '
                 </div>
             </div>';

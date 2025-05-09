@@ -84,17 +84,64 @@ $pageTitle = tr('Reimpostazione password');
 
 include_once App::filepath('include|custom|', 'top.php');
 
+// Add inline styles for reset password page enhancement
+echo '
+<style>
+    .login-page {
+        background: linear-gradient(135deg, rgba(245,247,250,1) 0%, rgba(230,233,240,1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    .card-center-large {
+        margin: 0 auto;
+        max-width: 450px;
+        width: 100%;
+    }
+    .card-outline.card-primary {
+        border-top: 3px solid #007bff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .form-control {
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .input-group-text {
+        border-top-right-radius: 4px !important;
+        border-bottom-right-radius: 4px !important;
+    }
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
+    @media (max-width: 576px) {
+        .card-center-large {
+            width: 90%;
+            margin: 0 auto;
+        }
+    }
+</style>';
+
 // Controllo se è una beta e in caso mostro un warning
 if (Auth::isBrute()) {
     echo '
-    <div class="card card-danger card-center" id="brute">
-        <div class="card-header with-border text-center">
-            <h3 class="card-title">'.tr('Attenzione').'</h3>
+    <div class="card card-danger shadow-lg card-center-large" id="brute">
+        <div class="card-header text-center">
+            <h3 class="card-title"><i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione').'</h3>
         </div>
 
         <div class="card-body text-center">
-        <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-        <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+            <p class="lead">'.tr('Accesso temporaneamente bloccato').'</p>
+            <p>'.tr('Per motivi di sicurezza, sono stati rilevati troppi tentativi di accesso consecutivi.').'</p>
+            <div class="alert alert-warning">
+                <p>'.tr('Potrai riprovare tra').':</p>
+                <h3><span id="brute-timeout" class="badge badge-danger">'.(Auth::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+            </div>
         </div>
     </div>
     <script>
@@ -104,55 +151,127 @@ if (Auth::isBrute()) {
     });
 
     function brute() {
-        var value = parseFloat($("#brute-timeout").html()) - 1;
-        $("#brute-timeout").html(value);
+        var value = parseFloat($("#brute-timeout").text()) - 1;
+        $("#brute-timeout").text(value);
 
         if(value > 0){
-            setTimeout("brute()", 1000);
+            setTimeout(brute, 1000);
         } else{
-            $("#brute").fadeOut();
-            $("#reset").fadeIn();
+            $("#brute").fadeOut(500, function() {
+                $("#reset").fadeIn(500);
+            });
         }
     }
     </script>';
 }
 
 echo '
-    <form action="" method="post" class="card card-center-large card-warning" id="reset">
-        <div class="card-header with-border text-center">
-            <a href="'.base_path().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
-            <h3 class="card-title">'.$pageTitle.'</h3>
-        </div>
+    <form action="" method="post" id="reset">
+        <div class="card-center-large">
+            <div class="card card-outline card-primary shadow-lg">
+                <div class="card-header text-center bg-light py-4">
+                    <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid" style="max-width: 85%;">
+                </div>
 
-        <div class="card-body">';
+                <div class="card-body pt-4">';
 
 if (empty($token)) {
     echo '
-            <input type="hidden" name="op" value="reset">
+                    <p class="text-center text-secondary mb-4"><i class="fa fa-key mr-2"></i>'.tr('Recupero password').'</p>
+                    <input type="hidden" name="op" value="reset">
 
-            <p>'.tr("Per reimpostare password, inserisci l'username con cui hai accesso al gestionale e l'indirizzo email associato all'utente").'.<br>
-            '.tr("Se i dati inseriti risulteranno corretti riceverai un'email dove sarà indicato il link da cui potrai reimpostare la tua password").'.</p>
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-2">'.tr("Per recuperare l'accesso al tuo account, inserisci:").'</p>
+                        <ul class="mb-0">
+                            <li>'.tr("Il tuo nome utente (username)").'</li>
+                            <li>'.tr("L'indirizzo email registrato nel sistema").'</li>
+                        </ul>
+                    </div>
 
-            {[ "type": "text", "label": "'.tr('Username').'", "placeholder": "'.tr('Username').'", "name": "username", "icon-before": "<i class=\"fa fa-user\"></i>", "required": 1 ]}
+                    <p class="text-muted mb-3">'.tr("Se le informazioni inserite sono corrette, riceverai un'email con un link per reimpostare la tua password.").'</p>
+                    <p class="text-danger mb-4"><i class="fa fa-exclamation-circle mr-1"></i> '.tr("Nota: l'email deve corrispondere esattamente a quella associata al tuo account.").'</p>
 
-            {[ "type": "text", "class": "email-mask", "label": "'.tr('Email').'", "placeholder": "'.tr('Email').'", "name": "email", "icon-before": "<i class=\"fa fa-envelope\"></i>", "required": 1 ]}';
+                    <div class="input-group mb-4">
+                        <input type="text" name="username" class="form-control form-control-lg" placeholder="'.tr('Username').'" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text bg-light">
+                                <i class="fa fa-user text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-4">
+                        <input type="email" name="email" class="form-control form-control-lg email-mask" placeholder="'.tr('Email').'" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text bg-light">
+                                <i class="fa fa-envelope text-primary"></i>
+                            </div>
+                        </div>
+                    </div>';
 } else {
     echo '
-            <input type="hidden" name="op" value="update">
+                    <p class="text-center text-secondary mb-4"><i class="fa fa-key mr-2"></i>'.tr('Crea nuova password').'</p>
+                    <input type="hidden" name="op" value="update">
 
-            <p>'.tr('Inserisci la nuova password per il tuo account').':</p>
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-0">'.tr("Scegli una nuova password sicura per il tuo account.").'</p>
+                    </div>
 
-            {[ "type": "password", "label": "'.tr('Password').'", "name": "password", "required": 1, "strength": "#submit-button", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}';
+                    <p class="text-muted mb-4">'.tr('Ti consigliamo di utilizzare una password:').'</p>
+                    <ul class="text-muted mb-4">
+                        <li>'.tr('Di almeno 8 caratteri').'</li>
+                        <li>'.tr('Con lettere maiuscole e minuscole').'</li>
+                        <li>'.tr('Con numeri e caratteri speciali').'</li>
+                        <li>'.tr('Diversa dalle password precedenti').'</li>
+                    </ul>
+
+                    <div class="mb-4">
+                        {[ "type": "password", "name": "password", "required": 1, "strength": "#submit-button", "class": "form-control-lg", "placeholder": "'.tr('Nuova password').'" ]}
+                    </div>';
 }
 
 echo '
-            </div>
+                    <button type="submit" id="submit-button" class="btn btn-primary btn-block btn-lg shadow-sm">
+                        <i class="fa fa-'.(!empty($token) ? 'check' : 'paper-plane').' mr-2"></i> '.tr(!empty($token) ? 'Salva nuova password' : 'Invia richiesta di recupero').'
+                    </button>
 
-            <div class="card-footer">
-                    <button type="submit" id="submit-button" class="btn btn-success btn-block">
-                        <i class="fa fa-arrow-right"></i> '.tr('Invia richiesta').'
-            </button>
+                    <div class="text-center mt-4">
+                        <a href="'.base_path().'/index.php" class="text-secondary">
+                            <i class="fa fa-sign-in mr-1"></i>'.tr('Torna alla pagina di accesso').'
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>';
+    </form>
+
+    <script>
+    $(document).ready(function(){
+        // Focus on first field
+        $("input:visible:first").focus();
+
+        // Add hover effect to submit button
+        $("#submit-button").hover(
+            function() {
+                $(this).removeClass("shadow-sm").addClass("shadow");
+            },
+            function() {
+                $(this).removeClass("shadow").addClass("shadow-sm");
+            }
+        );
+
+        // Show loading text on button click
+        $("#submit-button").click(function(){
+            if($("#reset").parsley().isValid()) {
+                $(this).html(\'<i class="fa fa-circle-o-notch fa-spin mr-2"></i> '.tr('Elaborazione').'...\');
+            }
+        });
+
+        // Add subtle animation to input fields on focus
+        $("input").focus(function(){
+            $(this).parent().animate({marginLeft: "5px"}, 200).animate({marginLeft: "0px"}, 200);
+        });
+    });
+    </script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

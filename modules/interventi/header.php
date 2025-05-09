@@ -101,35 +101,35 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-4">
-        <div class="card card-info card-outline shadow">
+        <div class="card card-primary card-outline shadow">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Cliente').'</h3>
+                <h3 class="card-title text-primary"><i class="fa fa-vcard"></i> '.tr('Cliente').'</h3>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-2">
-                        <img src="'.$logo.'" class="img-fluid">
+                    <div class="col-md-3">
+                        <img src="'.$logo.'" class="img-fluid img-thumbnail">
                     </div>
-                    
-                    <div class="col-md-10">';
+
+                    <div class="col-md-9">';
 
 // Cliente
 echo '
-                        <h4><b>'.Modules::link('Anagrafiche', $anagrafica->idanagrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
+                        <h4 class="mb-2"><b>'.Modules::link('Anagrafiche', $anagrafica->idanagrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
 
-                        <p>
-                            '.($sede['nomesede'] ? $sede['nomesede'].'<br>' : '').'
-                            '.$sede['indirizzo'].'<br>
-                            '.$sede['cap'].' - '.$sede['citta'].' ('.$sede['provincia'].')
+                        <p class="mb-2">
+                            '.($sede['nomesede'] ? '<i class="fa fa-building-o text-muted mr-1"></i> '.$sede['nomesede'].'<br>' : '').'
+                            <i class="fa fa-map-marker text-muted mr-1"></i> '.$sede['indirizzo'].'<br>
+                            <i class="fa fa-map text-muted mr-1"></i> '.$sede['cap'].' - '.$sede['citta'].' ('.$sede['provincia'].')
                         </p>
 
-                        <p>
-                            '.($sede['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$sede['telefono'].'</a>' : '').'
-                            '.($sede['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$sede['email'].'</a>' : '').'
-                            '.($referente['nome'] ? '<p></p><i class="fa fa-user-o text-muted"></i> '.$referente['nome'].'<br>' : '').'
-                            '.($referente['telefono'] ? '<a class="btn btn-default btn-xs" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-maroon"></i> '.$referente['telefono'].'</a>' : '').'
-                            '.($referente['email'] ? '<a class="btn btn-default btn-xs" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-maroon"></i> '.$referente['email'].'</a>' : '').'
-                        </p>
+                        <div class="mt-3">
+                            '.($sede['telefono'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$sede['telefono'].'</a>' : '').'
+                            '.($sede['email'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-primary"></i> '.$sede['email'].'</a>' : '').'
+                            '.($referente['nome'] ? '<div class="mt-2"><i class="fa fa-user-o text-muted"></i> '.$referente['nome'].'</div>' : '').'
+                            '.($referente['telefono'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$referente['telefono'].'</a>' : '').'
+                            '.($referente['email'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-primary"></i> '.$referente['email'].'</a>' : '').'
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,76 +144,92 @@ $stato = Modules\Interventi\Stato::find($intervento->stato->id);
 echo '
     <div class="col-md-4">
         <div class="card card-info card-outline shadow">
+
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-wrench"></i> '.tr('Attività _NUM_ del _DATA_', [
-    '_NUM_' => $intervento->codice,
+                <h3 class="card-title text-info"><i class="fa fa-wrench"></i> '.tr('Attività _NUM_ del _DATA_', [
+    '_NUM_' => '<strong>'.$intervento->codice.'</strong>',
     '_DATA_' => Translator::dateToLocale($intervento->data_richiesta),
 ]).'</h3>
+                <div class="card-tools">
+                    <span class="badge badge-'.($stato->colore == '#000000' ? 'dark' : 'info').' p-2">
+                        <span class="round-16 mr-1" style="background-color:'.$stato->colore.';"></span>
+                        <strong>'.$stato->getTranslation('title').'</strong>
+                    </span>
+                </div>
             </div>
-            <div class="card-body">
-                <p>
-                    <span class="tip" title="'.tr('Numero sessioni di lavoro').'"><i class="fa fa-user text-gray"></i> '.$intervento->sessioni->count().'</span>
-                    <span class="separator">|</span>
-                    
-                    <span class="tip" title="'.tr('Numero di ore totali').'"><i class="fa fa-hourglass text-gray"></i> '.Translator::numberToLocale($intervento->sessioni->sum('ore')).'</span>
-                    <span class="separator">|</span>
-                    
-                    <span class="tip" title="'.tr('Numero di km percorsi').'"><i class="fa fa-truck text-gray"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
-                    <span class="separator">|</span>
-                    
-                    <span class="tip" title="'.tr('Importo totale del lavoro').'"><i class="fa fa-money text-gray"></i> '.($show_prezzi ? moneyFormat($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile, 2) : '-').'</span>
-                    <span class="separator">|</span>
-                    
-                    <span class="round-16" style="background-color:'.$stato->colore.';"></span> '.$stato->getTranslation('title').'
-                </p>
-                <hr>
-                <p><i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>  
-                    '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
-                </p>
+            <div class="card-body pt-3">
+                <div class="row mb-4 mt-2">
+                    <div class="col-md-3 text-center">
+                        <span class="tip badge badge-light p-2" title="'.tr('Numero sessioni di lavoro').'"><i class="fa fa-user text-info mr-1"></i> '.$intervento->sessioni->count().'</span>
+                    </div>
 
-                <p><i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i> '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : tr('Attività aperte').': ');
+                    <div class="col-md-3 text-center">
+                        <span class="tip badge badge-light p-2" title="'.tr('Numero di ore totali').'"><i class="fa fa-hourglass text-info mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('ore')).'</span>
+                    </div>
+
+                    <div class="col-md-3 text-center">
+                        <span class="tip badge badge-light p-2" title="'.tr('Numero di km percorsi').'"><i class="fa fa-truck text-info mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
+                    </div>
+
+                    <div class="col-md-3 text-center">
+                        <span class="tip badge badge-light p-2" title="'.tr('Importo totale del lavoro').'"><i class="fa fa-money text-info mr-1"></i> '.($show_prezzi ? moneyFormat($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile, 2) : '-').'</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <i class="fa fa-'.($insoluti ? 'warning text-danger' : 'check text-success').'"></i>
+                    '.($insoluti ? tr('Sono presenti insoluti') : tr('Non sono presenti insoluti')).'
+                </div>
+
+                <div class="mb-3">
+                    <i class="fa '.(count($interventi_programmati) == 0 ? 'fa-clock-o text-success' : 'fa-clock-o text-warning').'"></i>
+                    '.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : tr('Attività aperte').': ');
 if (count($interventi_programmati) != 0) {
-    echo ' <div class="readmore" data-height="50">';
+    echo ' <div class="readmore mt-1" data-height="60">';
     foreach ($interventi_programmati as $intervento_programmato) {
-        echo ' <a class="btn btn-default btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank">'.$intervento_programmato->codice.' ('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</a>';
+        echo ' <a class="btn btn-light mr-1 mb-1 p-2" style="font-size: 10px;" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank"><i class="fa fa-calendar-check-o text-info mr-1"></i>'.$intervento_programmato->codice.' <span class="badge badge-secondary" style="font-size: 9px;">('.(new Carbon($intervento_programmato->data_richiesta))->diffForHumans().')</span></a>';
     }
     echo ' </div>';
 }
 echo '
-                </p>';
+                </div>';
 // Contratto
 if ($contratto) {
     echo '
-                <p><i class="fa fa-book text-info"></i>
-                    '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => $contratto->numero, '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
+                <div class="mb-3">
+                    <i class="fa fa-book text-info"></i>
+                    '.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => '<strong>'.$contratto->numero.'</strong>', '_DATA_' => Translator::dateToLocale($contratto->data_bozza)]));
     if ($ore_previste > 0) {
         echo '
-                    - '.Translator::numberToLocale($ore_erogate, 2).'/'.$ore_previste.' '.tr('ore').'<br>
-
-                    <div class="progress" style="margin:0; height:8px;">
-                        <div class="progress-bar progress-bar-'.$color.'" style="width:'.$perc_ore.'%"></div>
+                    <div class="mt-1">
+                        <span class="badge badge-light">'.Translator::numberToLocale($ore_erogate, 2).'/'.$ore_previste.' '.tr('ore').'</span>
+                        <div class="progress mt-1" style="height:6px; border-radius:3px;">
+                            <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ore.'%"></div>
+                        </div>
                     </div>';
     }
     echo '
-                </p>';
+                </div>';
 }
 
 // Preventivo
 if ($preventivo) {
     echo '
-                <p><i class="fa fa-book text-info"></i>
-                '.Modules::link('Preventivi', $preventivo->id, tr('Preventivo num. _NUM_ del _DATA_', ['_NUM_' => $preventivo->numero, '_DATA_' => Translator::dateToLocale($preventivo->data_bozza)])).'
-                </p>';
+                <div class="mb-3">
+                    <i class="fa fa-file-text-o text-info"></i>
+                    '.Modules::link('Preventivi', $preventivo->id, tr('Preventivo num. _NUM_ del _DATA_', ['_NUM_' => '<strong>'.$preventivo->numero.'</strong>', '_DATA_' => Translator::dateToLocale($preventivo->data_bozza)])).'
+                </div>';
 }
 
 // Ordine
 if ($ordine) {
     echo '
-                <p><i class="fa fa-book text-info"></i>
-                '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => $ordine->numero_esterno, '_DATA_' => Translator::dateToLocale($ordine->data)])).'
-                </p>';
+                <div class="mb-3">
+                    <i class="fa fa-shopping-cart text-info"></i>
+                    '.Modules::link('Ordini cliente', $ordine->id, tr('Ordine num. _NUM_ del _DATA_', ['_NUM_' => '<strong>'.$ordine->numero_esterno.'</strong>', '_DATA_' => Translator::dateToLocale($ordine->data)])).'
+                </div>';
 }
-echo '                
+echo '
             </div>
         </div>
     </div>';
@@ -230,62 +246,67 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="card card-info card-outline shadow">
+        <div class="card card-success card-outline shadow">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
+                <h3 class="card-title text-success"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
             </div>
             <div class="card-body">';
 
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
-                <div id="map-edit" style="width: 100%;"></div>
+                <div id="map-edit" style="width: 100%; min-height: 150px; border-radius: 4px; border: 1px solid #eee;"></div>
 
                 <div class="clearfix"></div>
-                <br>
-                
-                <div class="row">
-                    <div class="col-md-6">';
+                <div class="mt-3">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">';
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <button class="btn btn-xs btn-default btn-block" onclick="caricaMappa();">
-                            <div class="load"><i class="fa fa-compass"></i> '.tr('Carica mappa').'</div>
-                            <a class="go-to hidden" href="geo://'.$sede['lat'].','.$sede['lng'].'"><i class="fa fa-map"></i> '.tr('Apri mappa').'</a>
-                        </button>
-                    </div>
-                    
-                    <div class="col-md-6">';
+                            <button class="btn btn-light btn-sm btn-block" onclick="caricaMappa();">
+                                <div class="load"><i class="fa fa-compass text-success"></i> '.tr('Carica mappa').'</div>
+                                <a class="go-to hidden" href="geo://'.$sede['lat'].','.$sede['lng'].'"><i class="fa fa-map text-success"></i> '.tr('Apri mappa').'</a>
+                            </button>
+                        </div>
+
+                        <div class="col-md-6 mb-2">';
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-xs btn-default btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>
+                            <a class="btn btn-light btn-sm btn-block" onclick="calcolaPercorso()">
+                                <i class="fa fa-map-signs text-success"></i> '.tr('Calcola percorso').'
+                            </a>
+                        </div>
                     </div>
                 </div>';
 } else {
     echo '
+                <div class="alert alert-light text-center mb-3">
+                    <i class="fa fa-map-o fa-3x text-muted mb-2"></i>
+                    <p class="text-muted">'.tr('Nessuna mappa disponibile').'</p>
+                </div>
+
                 <div class="row">
-                    <div class="col-md-6">';
+                    <div class="col-md-6 mb-2">';
     // Navigazione diretta verso l'indirizzo
     echo '
-                        <a class="btn btn-xs btn-default btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                        <a class="btn btn-light btn-sm btn-block" onclick="calcolaPercorso()">
+                            <i class="fa fa-map-signs text-success"></i> '.tr('Calcola percorso').'
                         </a>
                     </div>
 
-                    <div class="col-md-6">';
+                    <div class="col-md-6 mb-2">';
     // Ricerca diretta su Mappa
     echo '
-                        <a class="btn btn-xs btn-default btn-block" onclick="cercaOpenStreetMap()">
-                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
+                        <a class="btn btn-light btn-sm btn-block" onclick="cercaOpenStreetMap()">
+                            <i class="fa fa-map-marker text-success"></i> '.tr('Cerca su Mappa').'
                         </a>
                     </div>
                 </div>';
 }
 
-echo '     
+echo '
             </div>
         </div>
-    </div>            
+    </div>
 </div>
 
 <script>
@@ -352,18 +373,19 @@ echo '
         const $map_container = $(".module-header:visible .card").eq(2);
 
         // Ingrandimento area mappa
-        $map_container.css("height", "300px");
+        $map_container.css("height", "320px");
         alignMaxHeight(".module-header .card");
-        $("#map-edit").css("height", "80%");
+        $("#map-edit").css("height", "85%");
+        $("#map-edit").css("border", "none");
 
         $map_container.find(".load").addClass("hidden");
         $map_container.find(".go-to").removeClass("hidden");
 
         const lat = parseFloat("'.$sede_cliente->lat.'");
         const lng = parseFloat("'.$sede_cliente->lng.'");
-    
-        var container = L.DomUtil.get("map-edit"); 
-        if(container._leaflet_id != null){ 
+
+        var container = L.DomUtil.get("map-edit");
+        if(container._leaflet_id != null){
             map.eachLayer(function (layer) {
                 if(layer instanceof L.Marker) {
                     map.removeLayer(layer);
@@ -388,9 +410,9 @@ echo '
             L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                 maxZoom: 17,
                 attribution: "© OpenStreetMap"
-            }).addTo(map); 
+            }).addTo(map);
         }
-    
+
         var icon = new L.Icon({
             iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
             shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
@@ -403,7 +425,7 @@ echo '
         var marker = L.marker([lat, lng], {
             icon: icon
         }).addTo(map);
-    
+
         map.setView([lat, lng], 10);
     }
 </script>';

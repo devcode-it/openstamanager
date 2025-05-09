@@ -1505,6 +1505,69 @@ kbd{
     z-index: 10;
 }
 
+/* Stili per le icone di stato nella card centrale dell'header */
+.status-item {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+}
+
+.status-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.status-icon i {
+    font-size: 12px;
+}
+
+.status-text {
+    font-weight: normal;
+}
+
+/* Stili specifici per ciascuna icona */
+.insoluti-item:hover .badge-danger {
+    background-color: #dc3545;
+}
+
+.insoluti-item:hover .badge-success {
+    background-color: #28a745;
+}
+
+.attivita-item:hover .badge-warning {
+    background-color: #ffc107;
+}
+
+.attivita-item:hover .badge-success {
+    background-color: #28a745;
+}
+
+.contratto-item:hover .badge-info,
+.preventivo-item:hover .badge-info,
+.ordine-item:hover .badge-info {
+    background-color: #17a2b8;
+}
+
+/* Effetto hover per i pulsanti delle attività */
+.btn-outline-primary.btn-sm:hover {
+    color: white !important;
+}
+
+.btn-outline-primary.btn-sm:hover .badge-light {
+    color: white !important;
+}
+
+/* Effetto hover per cambiare il testo in bianco */
+.btn-outline-primary.btn-sm:hover,
+.btn-outline-primary.btn-sm:hover span,
+.btn-outline-primary.btn-sm:hover i {
+    color: white !important;
+}
+
 .login-box .form-control-feedback{
     pointer-events: all;
 }
@@ -2163,6 +2226,31 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 .fc-event {
     opacity:1 !important;
+}
+
+/* Improved styling for unpaid items and open activities */
+.badge-danger i.fa, .badge-success i.fa, .badge-warning i.fa {
+    font-size: 14px;
+}
+
+/* Remove bold formatting from activity status text */
+.font-weight-bold {
+    font-weight: normal !important;
+}
+
+/* Activity buttons hover effect */
+.btn-outline-primary.btn-sm:hover {
+    background-color: #007bff;
+    color: white !important;
+}
+
+.btn-outline-primary.btn-sm:hover i,
+.btn-outline-primary.btn-sm:hover .badge {
+    color: white !important;
+}
+
+.btn-outline-primary.btn-sm:hover .badge-light {
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 @media screen and (max-width: 767px) {

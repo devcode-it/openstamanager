@@ -65,5 +65,12 @@ $(document).ready(function () {
     $('a[data-widget="tab"]').on('shown.bs.tab', function (e) {
         $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         $($.fn.dataTable.tables(true)).DataTable().scroller.measure();
+
+        // Reinizializza readmore per il contenuto del tab
+        if (typeof initTextShortener === 'function') {
+            setTimeout(function() {
+                initTextShortener();
+            }, 100);
+        }
     });
 });

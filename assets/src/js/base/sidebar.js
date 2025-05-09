@@ -72,6 +72,13 @@ $(document).ready(function () {
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         window.dispatchEvent(new Event('resize'));
+
+        // Reinizializza readmore per il contenuto del tab
+        if (typeof initTextShortener === 'function') {
+            setTimeout(function() {
+                initTextShortener();
+            }, 100);
+        }
     });
 });
 

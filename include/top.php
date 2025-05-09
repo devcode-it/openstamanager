@@ -671,7 +671,14 @@ if (Auth::check()) {
 
             // Controlla anche quando viene cliccato un tab nella barra laterale
             $("a[data-toggle=\'control-sidebar\']").on("click", function() {
-                setTimeout(checkActiveTab, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+                setTimeout(function() {
+                    checkActiveTab();
+
+                    // Reinizializza readmore per il contenuto del plugin
+                    if (typeof initTextShortener === "function") {
+                        initTextShortener();
+                    }
+                }, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
             });
         });
         </script>';

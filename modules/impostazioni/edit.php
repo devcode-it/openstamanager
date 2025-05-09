@@ -225,7 +225,7 @@ function caricaSezione(header) {
             localLoading(container, false);
 
             // Inizializza i tooltip per gli elementi appena caricati
-            container.find("[data-toggle=\'tooltip\']").tooltip();
+            initTooltips();
 
             // Mostra il contenuto con animazione
             container.slideDown(300);
@@ -301,7 +301,7 @@ function caricaSezioneConFiltro(header, impostazioni_filtrate) {
         localLoading(container, false);
 
         // Inizializza i tooltip per gli elementi appena caricati
-        container.find("[data-toggle=\'tooltip\']").tooltip();
+        initTooltips();
 
         // Filtra le impostazioni: nascondi quelle che non corrispondono alla ricerca
         const ids_da_mostrare = impostazioni_filtrate.map(item => item.id);

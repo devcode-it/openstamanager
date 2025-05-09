@@ -369,11 +369,13 @@ span.form-control {
 /* ===== UI TOOLTIP STYLES ===== */
 
 .ui-tooltip {
-    background: #222;
-    color: white;
+    background: #e0e6eb;
+    color: #000000;
     border: 0;
     font-size: 11px;
     z-index: 9990;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
 /* ===== SHORTENED TEXT STYLES ===== */
@@ -400,7 +402,7 @@ span.form-control {
 
 /* Base tooltip styles */
 .tooltipster-shadow {
-    border-radius: 4px !important;
+    border-radius: 8px !important;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
     border: none !important;
     background-color: #e0e6eb !important;
@@ -414,6 +416,7 @@ span.form-control {
     color: #000000 !important;
     overflow: hidden !important;
     word-wrap: break-word !important;
+    border-radius: 8px !important;
 }
 
 .tooltipster-base {
@@ -422,6 +425,7 @@ span.form-control {
     z-index: 10000 !important; /* Consistent z-index for all tooltip states */
     background-color: #e0e6eb !important;
     border: none !important;
+    border-radius: 8px !important;
 }
 
 /* Rimuove i bordi esterni dai tooltip */
@@ -430,6 +434,44 @@ span.form-control {
 .tooltipster-arrow-border,
 .tooltipster-arrow-background {
     border: none !important;
+}
+
+/* Rimuove completamente l'ombra inferiore dai tooltip */
+.tooltipster-sidetip.tooltipster-shadow .tooltipster-box {
+    box-shadow: 0 0 10px rgba(0,0,0,0.2) !important;
+    border: none !important;
+}
+
+/* Rimuove qualsiasi ombra o bordo dai tooltip */
+.tooltipster-sidetip {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Rimuove qualsiasi ombra o bordo inferiore dai tooltip */
+.tooltipster-sidetip.tooltipster-shadow .tooltipster-box:after,
+.tooltipster-sidetip.tooltipster-shadow .tooltipster-box:before,
+.tooltipster-sidetip.tooltipster-shadow:after,
+.tooltipster-sidetip.tooltipster-shadow:before,
+.tooltipster-sidetip .tooltipster-arrow,
+.tooltipster-arrow-border,
+.tooltipster-arrow-background {
+    display: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+}
+
+/* Arrotonda i bordi del box del tooltip */
+.tooltipster-box {
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Rimuove completamente la freccia del tooltip */
+.tooltipster-arrow {
+    display: none !important;
 }
 
 /* Nasconde le barre di scorrimento */
@@ -448,8 +490,8 @@ span.form-control {
     padding: 8px;
     background-color: #3c8dbc;
     color: white;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     margin: -8px -8px 8px -8px;
 }
 

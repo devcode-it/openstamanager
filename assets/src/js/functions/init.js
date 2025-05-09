@@ -23,24 +23,12 @@ function init() {
     });
     $('[data-href]').not('.ask, .bound').addClass('bound clickable');
 
-    // Tooltip
-    $('.tip').not('.tooltipstered').each(function () {
-        $this = $(this);
-        $this.tooltipster({
-            animation: 'grow',
-            contentAsHTML: true,
-            hideOnClick: true,
-            onlyOne: true,
-            maxWidth: 350,
-            touchDevices: true,
-            trigger: 'hover',
-            position: $this.data('position') ? $this.data('position') : 'top',
-        });
-    });
+    // Inizializza tutti i tooltip con Tooltipster
+    initTooltips();
 
     if ($('form').length) {
       $('form').not('.no-check').parsley();
-        
+
       if (window.CKEDITOR){
         CKEDITOR.on('instanceReady', function () {
           $('form textarea').each(function () {
@@ -48,7 +36,7 @@ function init() {
               $(this).prop('required', true);
             }
           });
-        
+
           $.each(CKEDITOR.instances, function (instance) {
             CKEDITOR.instances[instance].on("change", function (e) {
               for (instance in CKEDITOR.instances) {
@@ -88,4 +76,92 @@ function init() {
     });
 
     restart_inputs();
+}
+
+/**
+ * Funzione per standardizzare l'inizializzazione dei tooltip utilizzando Tooltipster
+ * Converte anche i tooltip Bootstrap (data-toggle="tooltip") in tooltip Tooltipster
+ */
+function initTooltips() {
+    // Opzioni standard per Tooltipster
+    const tooltipsterOptions = {
+        animation: 'grow',
+        contentAsHTML: true,
+        hideOnClick: true,
+        onlyOne: true,
+        maxWidth: 350,
+        touchDevices: true,
+        trigger: 'hover',
+        theme: 'tooltipster-shadow',
+        interactive: false,
+        speed: 200,
+        delay: 200,
+        arrow: false, // Disabilita la freccia del tooltip
+        border: false, // Disabilita il bordo
+        functionReady: function(instance, helper) {
+            // Rimuove qualsiasi ombra o bordo quando il tooltip viene mostrato
+            $(".tooltipster-base").css({
+                "box-shadow": "none",
+                "border": "none"
+            });
+
+            // Rimuove la freccia del tooltip
+            $(".tooltipster-arrow").css("display", "none");
+        }
+    };
+
+    // Inizializza i tooltip con classe .tip
+    $('.tip').not('.tooltipstered').each(function () {
+        const $this = $(this);
+        const position = $this.data('position') ? $this.data('position') : 'top';
+
+        $this.tooltipster({
+            ...tooltipsterOptions,
+            position: position,
+        });
+    });
+
+    // Converti i tooltip Bootstrap (data-toggle="tooltip") in tooltip Tooltipster
+    $('[data-toggle="tooltip"]').not('.tooltipstered').each(function () {
+        const $this = $(this);
+
+        // Ottieni il titolo dal tooltip Bootstrap
+        const title = $this.attr('title') || $this.data('original-title');
+
+        // Rimuovi gli attributi di Bootstrap per evitare conflitti
+        $this.removeAttr('data-toggle');
+        $this.removeAttr('data-original-title');
+
+        // Aggiungi la classe .tip per coerenza
+        $this.addClass('tip');
+
+        // Inizializza Tooltipster
+        $this.tooltipster({
+            ...tooltipsterOptions,
+            content: title,
+            position: $this.data('placement') || 'top',
+        });
+    });
+
+    // Converti i tooltip jQuery UI in tooltip Tooltipster
+    $('.ui-tooltip-content').each(function() {
+        const $this = $(this);
+        const $parent = $this.parent();
+
+        // Ottieni il contenuto
+        const content = $this.html();
+
+        // Rimuovi il tooltip jQuery UI
+        $parent.remove();
+
+        // Trova l'elemento originale e inizializza Tooltipster
+        const $target = $('[aria-describedby="' + $parent.attr('id') + '"]');
+        if ($target.length) {
+            $target.addClass('tip');
+            $target.tooltipster({
+                ...tooltipsterOptions,
+                content: content,
+            });
+        }
+    });
 }

@@ -191,8 +191,8 @@ a:active, a:hover, a:focus {
 /* Improve controls styling */
 .leaflet-control-layers,
 .leaflet-bar {
-    border-radius: 4px !important;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.2) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
 }
 
 .leaflet-control-layers-toggle {
@@ -213,11 +213,11 @@ a:active, a:hover, a:focus {
     transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.9);
     padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     font-size: 13px;
-    border: 1px solid #e0e0e0;
+    border: none;
 }
 
 .map-loading i {
@@ -227,14 +227,14 @@ a:active, a:hover, a:focus {
 
 /* Custom tooltip */
 .custom-tooltip {
-    background: rgba(255, 255, 255, 0.95);
+    background: #e0e6eb;
     border: none;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     padding: 6px 10px;
     font-size: 12px;
     font-weight: 600;
-    color: #333;
+    color: #000000;
     max-width: 250px;
     white-space: normal;
     word-wrap: break-word;
@@ -242,7 +242,7 @@ a:active, a:hover, a:focus {
 
 /* Custom popup */
 .custom-popup .leaflet-popup-content-wrapper {
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 0;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     max-width: 300px;
@@ -337,14 +337,15 @@ a:active, a:hover, a:focus {
     transition: all 0.3s ease;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     transform: translateY(-50%);
     background-color: #fff;
+    border-radius: 8px;
 }
 
 #menu-filtri {
     margin-bottom: 0;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: visible;
     max-width: 100%;
 }

@@ -16,7 +16,22 @@ $numero_documenti = 5;
 
 switch ($op) {
     case 'dettagli':
+        // Recupero informazioni cliente
+        $anagrafica = Anagrafica::find($id_anagrafica);
+
         echo '
+        <div class="alert alert-info mb-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5 class="mb-2"><i class="fa fa-user"></i> '.tr('Informazioni cliente').'</h5>
+                    <p class="mb-0"><strong>'.tr('Ragione sociale').':</strong> '.$anagrafica->ragione_sociale.'</p>
+                    <p class="mb-0"><strong>'.tr('Partita IVA').':</strong> '.(!empty($anagrafica->piva) ? $anagrafica->piva : tr('Non specificata')).'</p>
+                    <p class="mb-0"><strong>'.tr('Codice fiscale').':</strong> '.(!empty($anagrafica->codice_fiscale) ? $anagrafica->codice_fiscale : tr('Non specificato')).'</p>
+                    <p class="mb-0"><strong>'.tr('Telefono').':</strong> '.(!empty($anagrafica->telefono) ? $anagrafica->telefono : tr('Non specificato')).'</p>
+                </div>
+            </div>
+        </div>
+
         <div class="row">';
 
         // Informazioni sui contratti
@@ -30,19 +45,22 @@ switch ($op) {
                 ->latest()->take($numero_documenti)->get();
 
             echo '
-            <div class="col-md-6">
-                <b>'.tr('Ultimi _NUM_ Contratti', ['_NUM_' => $numero_documenti]).':</b><ul>';
+            <div class="col-md-6 mb-3">
+                <div class="alert alert-light">
+                    <h6 class="text-primary"><i class="fa fa-file-text-o"></i> '.tr('Ultimi _NUM_ Contratti', ['_NUM_' => $numero_documenti]).'</h6>
+                    <ul class="list-unstyled">';
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
                     echo '
-                    <li>'.Modules::link('Contratti', $contratto->id, $contratto->getReference().' ['.$contratto->stato->getTranslation('title').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione)).'</li>';
+                        <li class="mb-1"><i class="fa fa-angle-right"></i> '.Modules::link('Contratti', $contratto->id, $contratto->getReference().' ['.$contratto->stato->getTranslation('title').']: '.dateFormat($contratto->data_accettazione).' - '.dateFormat($contratto->data_conclusione)).'</li>';
                 }
             } else {
                 echo '
-                    <li>'.tr('Nessun contratto attivo per questo cliente').'</li>';
+                        <li>'.tr('Nessun contratto attivo per questo cliente').'</li>';
             }
             echo '
-                </ul>
+                    </ul>
+                </div>
             </div>';
         }
 
@@ -56,46 +74,48 @@ switch ($op) {
                 })
                 ->latest()->take($numero_documenti)->get();
             echo '
-            <div class="col-md-6">
-                <b>'.tr('Ultimi _NUM_ Preventivi', ['_NUM_' => $numero_documenti]).':</b><ul>';
+            <div class="col-md-6 mb-3">
+                <div class="alert alert-light">
+                    <h6 class="text-primary"><i class="fa fa-file-o"></i> '.tr('Ultimi _NUM_ Preventivi', ['_NUM_' => $numero_documenti]).'</h6>
+                    <ul class="list-unstyled">';
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
                     echo '
-                    <li>'.Modules::link('Preventivi', $preventivo->id, $preventivo->getReference().' ['.$preventivo->stato->getTranslation('title').']').'</li>';
+                        <li class="mb-1"><i class="fa fa-angle-right"></i> '.Modules::link('Preventivi', $preventivo->id, $preventivo->getReference().' ['.$preventivo->stato->getTranslation('title').']').'</li>';
                 }
             } else {
                 echo '
-                    <li>'.tr('Nessun preventivo attivo per questo cliente').'</li>';
+                        <li>'.tr('Nessun preventivo attivo per questo cliente').'</li>';
             }
             echo '
-                </ul>
+                    </ul>
+                </div>
             </div>';
         }
-        echo '
-        </div>
-        
-        <div class="row">';
 
         // Informazioni sulle attività
         $modulo_interventi = Module::where('name', 'Interventi')->first();
         if ($modulo_interventi->permission != '-') {
-            // Preventivi attivi
+            // Attività recenti
             $interventi = Intervento::where('idanagrafica', '=', $id_anagrafica)
                 ->latest()->take($numero_documenti)->get();
             echo '
-            <div class="col-md-6">
-                <b>'.tr('Ultime _NUM_ Attività', ['_NUM_' => $numero_documenti]).':</b><ul>';
+            <div class="col-md-6 mb-3">
+                <div class="alert alert-light">
+                    <h6 class="text-primary"><i class="fa fa-wrench"></i> '.tr('Ultime _NUM_ Attività', ['_NUM_' => $numero_documenti]).'</h6>
+                    <ul class="list-unstyled">';
             if (!$interventi->isEmpty()) {
                 foreach ($interventi as $intervento) {
                     echo '
-                    <li>'.Modules::link('Interventi', $intervento->id, $intervento->getReference().' ['.$intervento->stato->getTranslation('title').']').'</li>';
+                        <li class="mb-1"><i class="fa fa-angle-right"></i> '.Modules::link('Interventi', $intervento->id, $intervento->getReference().' ['.$intervento->stato->getTranslation('title').']').'</li>';
                 }
             } else {
                 echo '
-                    <li>'.tr('Nessun intervento per questo cliente').'</li>';
+                        <li>'.tr('Nessun intervento per questo cliente').'</li>';
             }
             echo '
-                </ul>
+                    </ul>
+                </div>
             </div>';
         }
 
@@ -111,32 +131,38 @@ switch ($op) {
                 })
                 ->latest()->take($numero_documenti)->get();
             echo '
-            <div class="col-md-6">
-                <b>'.tr('Ultime _NUM_ Fatture', ['_NUM_' => $numero_documenti]).':</b><ul>';
+            <div class="col-md-6 mb-3">
+                <div class="alert alert-light">
+                    <h6 class="text-primary"><i class="fa fa-file-pdf-o"></i> '.tr('Ultime _NUM_ Fatture', ['_NUM_' => $numero_documenti]).'</h6>
+                    <ul class="list-unstyled">';
             if (!$fatture->isEmpty()) {
                 foreach ($fatture as $fattura) {
                     $scadenze = $fattura->scadenze;
                     $da_pagare = $scadenze->sum('da_pagare') - $scadenze->sum('pagato');
                     echo '
-                    <li>'.Modules::link('Fatture di vendita', $fattura->id, $fattura->getReference().': '.moneyFormat($da_pagare)).'</li>';
+                        <li class="mb-1"><i class="fa fa-angle-right"></i> '.Modules::link('Fatture di vendita', $fattura->id, $fattura->getReference().': '.moneyFormat($da_pagare)).'</li>';
                 }
             } else {
                 echo '
-                    <li>'.tr('Nessuna fattura attiva per questo cliente').'</li>';
+                        <li>'.tr('Nessuna fattura attiva per questo cliente').'</li>';
             }
             echo '
-                </ul>
+                    </ul>
+                </div>
             </div>';
         }
 
         // Note dell'anagrafica
-        $anagrafica = Anagrafica::find($id_anagrafica);
         $note_anagrafica = $anagrafica->note;
-        echo '
+        if (!empty($note_anagrafica)) {
+            echo '
             <div class="col-md-12">
-                <p><b>'.tr('Note interne sul cliente').':</b></p>
-                '.(!empty($note_anagrafica) ? $note_anagrafica : tr('Nessuna nota interna per questo cliente')).'
+                <div class="alert alert-warning">
+                    <h6 class="text-primary"><i class="fa fa-sticky-note-o"></i> '.tr('Note interne sul cliente').'</h6>
+                    <p class="mb-0">'.(!empty($note_anagrafica) ? $note_anagrafica : tr('Nessuna nota interna per questo cliente')).'</p>
+                </div>
             </div>';
+        }
 
         echo '
         </div>';

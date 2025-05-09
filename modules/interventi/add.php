@@ -60,7 +60,7 @@ $id_ordine = null;
 
 if (empty($id_anagrafica)) {
     $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->idanagrafica;
-} 
+}
 
 $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
 $id_tipo = $anagrafica['idtipointervento_default'];
@@ -145,7 +145,7 @@ echo '
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="'.get('ref').'">
 	<input type="hidden" name="backto" value="record-edit">
-    
+
     <!-- Fix creazione da Anagrafica -->
     <input type="hidden" name="id_record" value="0">';
 
@@ -196,8 +196,8 @@ echo '
         </div>
 
         <div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-		</div>
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+        </div>
     </div>
 
     <div class="row">
@@ -224,6 +224,7 @@ echo input([
     'required' => 1,
     'value' => htmlentities((string) $richiesta),
     'extra' => 'style=\'max-height:80px;\'',
+    'help' => tr('Descrivi brevemente la richiesta del cliente'),
 ]);
 echo '
         </div>
@@ -235,193 +236,164 @@ echo input([
     'id' => 'descrizione_add',
     'value' => htmlentities((string) $descrizione),
     'extra' => 'style=\'max-height:80px;\'',
+    'help' => tr('Aggiungi dettagli e note sull\'attività da svolgere'),
 ]);
 echo '
         </div>
     </div>
 
-	<!-- DETTAGLI CLIENTE -->
-    <div class="card card-info collapsable collapsed-card">
-        <div class="card-header with-border">
-			<h3 class="card-title">'.tr('Dettagli cliente').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-		</div>
+	<!-- NAVBAR TABS -->
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs bg-light nav-justified" id="intervento-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active text-bold text-center" id="dettagli-cliente-tab" data-toggle="tab" href="#tab_dettagli_cliente" role="tab" aria-controls="tab_dettagli_cliente" aria-selected="true">
+                    <i class="fa fa-user text-primary"></i> '.tr('Dettagli cliente').'
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-bold text-center" id="posizione-tab" data-toggle="tab" href="#tab_posizione" role="tab" aria-controls="tab_posizione" aria-selected="false" onclick="autoload_mappa=true; caricaMappa();">
+                    <i class="fa fa-map-marker text-success"></i> '.tr('Posizione').'
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-bold text-center" id="dettagli-aggiuntivi-tab" data-toggle="tab" href="#tab_dettagli_aggiuntivi" role="tab" aria-controls="tab_dettagli_aggiuntivi" aria-selected="false">
+                    <i class="fa fa-info-circle text-info"></i> '.tr('Dettagli aggiuntivi').'
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-bold text-center" id="tecnici-sessioni-tab" data-toggle="tab" href="#tab_tecnici_sessioni" role="tab" aria-controls="tab_tecnici_sessioni" aria-selected="false">
+                    <i class="fa fa-users text-warning"></i> '.tr('Tecnici e sessioni').'
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-bold text-center" id="ricorrenza-tab" data-toggle="tab" href="#tab_ricorrenza" role="tab" aria-controls="tab_ricorrenza" aria-selected="false">
+                    <i class="fa fa-repeat text-danger"></i> '.tr('Ricorrenza').'
+                </a>
+            </li>
+        </ul>
 
-        <div class="card-body" id="dettagli_cliente">
-            '.tr('Seleziona prima un cliente').'...
-        </div>
-    </div>
-
-    <!-- POSIZIONE -->
-    <div class="card card-info collapsable collapsed-card">
-        <div class="card-header with-border">
-            <h3 class="card-title">'.tr('Posizione').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" onclick="autoload_mappa=true; caricaMappa();">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div id="map-add" style="height: 300px;width: 100%;display: flex;align-items: center;justify-content: center;"></div>
-            <div id="map-warning" class="hide alert alert-warning">
-                La posizione non è stata definita. Impossibile caricare la mappa.
-            </div>
-        </div>
-    </div>';
-
-$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
-echo '
-    <!-- DATI AGGIUNTIVI -->
-    <div class="card card-info collapsable '.(empty($espandi_dettagli) ? 'collapsed-card' : '').'">
-        <div class="card-header with-border">
-            <h3 class="card-title">'.tr('Dettagli aggiuntivi').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
-                </button>
-            </div>
-        </div>
-
-		<div class="card-body">
-			<div class="row">
-                <div class="col-md-4">
-                    {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
+        <div class="tab-content p-0 border-left border-right border-bottom" id="intervento-tabs-content" style="height: 380px; overflow-y: auto; background-color: #fff;">
+                <!-- TAB DETTAGLI CLIENTE -->
+                <div class="tab-pane fade show active" id="tab_dettagli_cliente" role="tabpanel" aria-labelledby="dettagli-cliente-tab">
+                    <div id="dettagli_cliente" class="p-4">
+                        <div class="text-center text-muted py-5">
+                            <i class="fa fa-user fa-3x mb-3"></i>
+                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
+                <!-- TAB POSIZIONE -->
+                <div class="tab-pane fade" id="tab_posizione" role="tabpanel" aria-labelledby="posizione-tab">
+                    <div class="p-4">
+                        <div id="map-add" style="height: 300px; width: 100%; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);"></div>
+                        <div id="map-warning" class="hide alert alert-warning mt-3">
+                            <i class="fa fa-exclamation-triangle"></i> '.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'
+                        </div>
+                    </div>
                 </div>
-			</div>
-		</div>
-	</div>';
 
-// if (empty($id_intervento)) {
-echo '
-	<!-- ASSEGNAZIONE TECNICI -->
-    <div class="card card-info collapsable collapsed-card">
-        <div class="card-header with-border">
-			<h3 class="card-title">'.tr('Assegnazione tecnici').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-		</div>
+                <!-- TAB DETTAGLI AGGIUNTIVI -->
+                <div class="tab-pane fade" id="tab_dettagli_aggiuntivi" role="tabpanel" aria-labelledby="dettagli-aggiuntivi-tab">
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
+                            </div>
 
-		<div class="card-body">
-	        <div class="row">
-                <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.$tecnici_assegnati.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1", "readonly": '.intval($id_intervento).'  ]}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="btn-group" >
-                                <button type="button" class="btn btn-xs btn-primary '.(intval($id_intervento) ? 'disabled' : '').'" onclick="assegnaTuttiTecnici()">
-                                    '.tr('Tutti').'
-                                </button>
-
-                                <button type="button" class="btn btn-xs btn-danger '.(intval($id_intervento) ? 'disabled' : '').'" onclick="deassegnaTuttiTecnici()">
-                                <i class="fa fa-times"></i>
-                                </button>
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
                             </div>
                         </div>
                     </div>
-				</div>
-			</div>
-        </div>
-    </div>';
-// }
-
-echo '
-	<!-- ORE LAVORO -->
-    <div class="card card-info collapsable '.($origine_dashboard ? '' : 'collapsed-card').'">
-        <div class="card-header with-border">
-			<h3 class="card-title">'.tr('Sessioni di lavoro').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fa fa-'.($origine_dashboard ? 'minus' : 'plus').'"></i>
-                </button>
-            </div>
-		</div>
-
-		<div class="card-body">
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
-				</div>
-
-                <div class="col-md-4">
-					{[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "orario_fine", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$fine_sessione.'" ]}
-				</div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
-                </div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
-				</div>
-			</div>
-
-            <div id="info-conflitti-add"></div>
-
-		</div>
-	</div>
-
-    <!-- RICORRENZA -->
-    <div class="card card-info collapsable collapsed-card">
-        <div class="card-header with-border">
-			<h3 class="card-title">'.tr('Ricorrenza').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fa fa-plus"></i>
-                </button>
-            </div>
-		</div>
-
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva_add", "value": "" ]}
                 </div>
 
-                <div class="col-md-4 ricorrenza">
-                    {[ "type": "timestamp", "label": "'.tr('Data/ora inizio').'", "name": "data_inizio_ricorrenza", "value": "'.($data_richiesta ?: '-now-').'" ]}
+                <!-- TAB TECNICI E SESSIONI -->
+                <div class="tab-pane fade" id="tab_tecnici_sessioni" role="tabpanel" aria-labelledby="tecnici-sessioni-tab">
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.$tecnici_assegnati.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1", "readonly": '.intval($id_intervento).'  ]}
+                                <div class="row">
+                                    <div class="col-md-12 mt-3 mb-5">
+                                        <div class="btn-group" >
+                                            <button type="button" class="btn btn-sm btn-primary '.(intval($id_intervento) ? 'disabled' : '').'" onclick="assegnaTuttiTecnici()">
+                                                <i class="fa fa-users"></i> '.tr('Tutti').'
+                                            </button>
+
+                                            <button type="button" class="btn btn-sm btn-danger '.(intval($id_intervento) ? 'disabled' : '').'" onclick="deassegnaTuttiTecnici()">
+                                            <i class="fa fa-times"></i> '.tr('Nessuno').'
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="text-primary border-bottom pb-2 mb-4"><i class="fa fa-clock-o"></i> '.tr('Sessioni di lavoro').'</h5>
+                        <div class="row">
+                            <div class="col-md-2">
+                                {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
+                            </div>
+
+                            <div class="col-md-2">
+                                {[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "orario_fine", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$fine_sessione.'" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
+                            </div>
+                        </div>
+
+                        <div id="info-conflitti-add" class="mt-4"></div>
+                    </div>
                 </div>
 
-                <div class="col-md-4 ricorrenza">
-                    {[ "type": "number", "label": "'.tr('Periodicità').'", "name": "periodicita", "decimals": "0", "icon-after": "choice|period|months", "value": "1" ]}
-                </div>
-            </div>
+                <!-- TAB RICORRENZA -->
+                <div class="tab-pane fade" id="tab_ricorrenza" role="tabpanel" aria-labelledby="ricorrenza-tab">
+                    <div class="p-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva_add", "value": "" ]}
+                            </div>
 
-            <div class="row ricorrenza">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
-                </div>
+                            <div class="col-md-4 ricorrenza">
+                                {[ "type": "timestamp", "label": "'.tr('Data/ora inizio').'", "name": "data_inizio_ricorrenza", "value": "'.($data_richiesta ?: '-now-').'" ]}
+                            </div>
 
-                <div class="col-md-4">
-                    {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
-                </div>
+                            <div class="col-md-4 ricorrenza">
+                                {[ "type": "number", "label": "'.tr('Periodicità').'", "name": "periodicita", "decimals": "0", "icon-after": "choice|period|months", "value": "1" ]}
+                            </div>
+                        </div>
 
-                <div class="col-md-4">
-                    {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}
-                </div>
-            </div>
+                        <div class="row ricorrenza mt-3">
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
+                            </div>
 
-            <div class="row ricorrenza">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
-                </div>
+                            <div class="col-md-4">
+                                {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
+                            </div>
 
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
+                            <div class="col-md-4">
+                                {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}
+                            </div>
+                        </div>
+
+                        <div class="row ricorrenza mt-3">
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -430,8 +402,8 @@ echo '
 	<!-- PULSANTI -->
 	<div class="modal-footer">
 		<div class="col-md-12 text-right">
-			<button type="button" class="btn btn-primary" onclick="salva(this)">
-                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+			<button type="button" class="btn btn-lg btn-success" onclick="salva(this)">
+                <i class="fa fa-check"></i> '.tr('Aggiungi attività').'
             </button>
 		</div>
 	</div>
@@ -495,11 +467,12 @@ echo '
            session_set("superselect,idanagrafica",value, 0);
 
             // Carico nel card i dettagli del cliente
+            $("#dettagli_cliente").html(\'<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>'.tr('Caricamento informazioni cliente...').'</p></div>\');
             $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         }
-            
+
         let data = anagrafica.getData();
         if (data && contratto.get() === "") {
             input("idcontratto").getElement().selectSetNew(data.id_contratto, data.descrizione_contratto);
@@ -531,6 +504,26 @@ echo '
 
         // Ricorrenza
         $(".ricorrenza").addClass("hidden");
+
+        // Miglioramenti grafici per le tab
+        $(".nav-tabs .nav-link").hover(
+            function() {
+                if (!$(this).hasClass("active")) {
+                    $(this).addClass("bg-white");
+                }
+            },
+            function() {
+                if (!$(this).hasClass("active")) {
+                    $(this).removeClass("bg-white");
+                }
+            }
+        );
+
+        // Evidenzia la tab attiva
+        $(".nav-tabs .nav-link").on("shown.bs.tab", function() {
+            $(".nav-tabs .nav-link").removeClass("active-tab bg-white");
+            $(this).addClass("active-tab");
+        });
     });
 
 	input("idtecnico").change(function() {
@@ -583,11 +576,12 @@ echo '
 
         if (data !== undefined) {
             // Carico nel card i dettagli del cliente
+            $("#dettagli_cliente").html(\'<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>'.tr('Caricamento informazioni cliente...').'</p></div>\');
             $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         } else {
-            $("#dettagli_cliente").html("'.tr('Seleziona prima un cliente').'...");
+            $("#dettagli_cliente").html(\'<div class="text-center text-muted"><i class="fa fa-user fa-3x mb-2"></i><p>'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
         }
 
         plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
@@ -628,7 +622,7 @@ echo '
 	sede.change(function() {
         updateSelectOption("idsede_destinazione", $(this).val());
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
-        
+
 
         let data = sede.getData();
 		if (data) {
@@ -683,7 +677,7 @@ echo '
 
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();
-        
+
         // Selezione anagrafica in automatico in base impianto
         if ($(this).val()[0]) {
             input("idanagrafica").disable();
@@ -803,7 +797,7 @@ echo '
             input("data_fine_ricorrenza").enable();
             $("#data_fine_ricorrenza").attr("required", true);
             input("numero_ricorrenze").disable();
-            input("numero_ricorrenze").set("");  
+            input("numero_ricorrenze").set("");
         } else {
             input("numero_ricorrenze").enable();
             input("data_fine_ricorrenza").disable();
@@ -825,10 +819,10 @@ echo '
         } else {
             $("#map-warning").addClass("hide");
         }
-        
+
         if (input("idanagrafica").getData("select-options")) {
             var container = L.DomUtil.get("map-add");
-            if(container._leaflet_id != null){ 
+            if(container._leaflet_id != null){
                 map.eachLayer(function (layer) {
                     if(layer instanceof L.Marker) {
                         map.removeLayer(layer);
@@ -838,11 +832,11 @@ echo '
                 map = L.map("map-add", {
                     gestureHandling: true
                 });
-        
+
                 L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                     maxZoom: 17,
                     attribution: "© OpenStreetMap"
-                }).addTo(map); 
+                }).addTo(map);
             }
 
             if (lat && lng) {
@@ -854,11 +848,11 @@ echo '
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 });
-                
+
                 var marker = L.marker([lat, lng], {
                     icon: icon
                 }).addTo(map);
-                
+
                 map.setView([parseFloat(lat), parseFloat(lng)], 14);
             }
         }

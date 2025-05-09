@@ -27,35 +27,35 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-info card-outline shadow">
+        <div class="card card-primary card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Articolo').'</h3>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="'.$immagine_articolo.'" " class="img-fluid">
+                        <img src="'.$immagine_articolo.'" class="img-fluid img-thumbnail">
                     </div>
-                    
+
                     <div class="col-md-9">';
 // Articolo
 if ($articolo->marca) {
     echo '
-                            <p class="float-right"><i class="fa fa-tag"></i>
-                                '.($articolo->marca ? ($articolo->marca->link ? '<a href="'.$articolo->marca->link.'" target="_blank" rel="noopener noreferrer"> '.$articolo->marca->name.'</a>' : $articolo->marca->name.' ') : '').
+                            <p class="float-right badge badge-info p-2"><i class="fa fa-tag mr-1"></i>
+                                '.($articolo->marca ? ($articolo->marca->link ? '<a href="'.$articolo->marca->link.'" target="_blank" rel="noopener noreferrer" class="text-white"> '.$articolo->marca->name.'</a>' : $articolo->marca->name.' ') : '').
         ($articolo->id_modello ? ' <small><i class="fa fa-chevron-right"></i></small> '.Marca::where('parent', $articolo->id_marca)->where('id', $articolo->id_modello)->first()->name.' ' : '')
     .'</p>';
 }
 if ($articolo->id_categoria) {
     echo '
-                            <p class="text-muted">'.$articolo->categoria->getTranslation('title').
+                            <p class="text-muted mb-2"><i class="fa fa-folder-open mr-1"></i>'.$articolo->categoria->getTranslation('title').
     ($articolo->sottocategoria ? ' <small><i class="fa fa-chevron-right"></i></small> '.$articolo->sottocategoria->getTranslation('title') : '').
     '</p>';
 }
 echo '
-                        <p><h4><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i> ').'</h4></p>
-                        <p><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' - <i class="fa fa-barcode"></i> '.$articolo->barcode.'</p>' : '').'</p>
-                        '.($articolo->note ? '<p class="text-danger"><i class="fa fa-pencil-square-o"></i> '.$articolo->note.'</p>' : '').'
+                        <h4 class="mb-2 text-primary"><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<span class="badge badge-success"><i class="fa fa-check"></i> '.tr('Attivo').'</span>' : '<span class="badge badge-danger"><i class="fa fa-times"></i> '.tr('Disattivato').'</span>').'</h4>
+                        <p class="mb-2"><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' <span class="badge badge-secondary"><i class="fa fa-barcode mr-1"></i> '.$articolo->barcode.'</span>' : '').'</p>
+                        '.($articolo->note ? '<p class="alert alert-warning p-2 mt-2"><i class="fa fa-pencil-square-o mr-1"></i> '.$articolo->note.'</p>' : '').'
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@ $giacenze = $articolo->getGiacenze();
 // Giacenze
 echo '
     <div class="col-md-4">
-        <div class="card card-info card-outline shadow">
+        <div class="card card-success card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-archive"></i> '.tr('Giacenze').'</h3>
             </div>
@@ -81,11 +81,11 @@ echo '
 if ($articolo->servizio) {
     echo '
                 <div class="alert alert-info text-center" role="alert">
-                    <i class="fa fa-info-circle"></i> '.tr('Questo articolo è un servizio').'.
+                    <i class="fa fa-info-circle mr-1"></i> '.tr('Questo articolo è un servizio').'.
                 </div>';
 } else {
     echo '
-                <table class="table table-sm">
+                <table class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th>'.tr('Sede').'</th>
@@ -96,12 +96,18 @@ if ($articolo->servizio) {
                     <tbody>';
     foreach ($sedi as $sede) {
         $threshold_sede = $dbo->fetchOne('SELECT `threshold_qta` FROM `mg_scorte_sedi` WHERE `id_sede` = '.prepare($sede['id']).' AND `id_articolo` = '.prepare($articolo->id))['threshold_qta'];
+        $giacenza_value = $giacenze[$sede['id']][0];
+        $is_low = $giacenza_value < $threshold_sede;
+
+        // Format the quantity with the appropriate decimal places
+        $formatted_qty = numberFormat($giacenza_value, null);
+        $formatted_secondary = $articolo->fattore_um_secondaria != 0 ? numberFormat($giacenza_value * $articolo->fattore_um_secondaria, null) : '';
 
         echo '
-                    <tr class="'.($giacenze[$sede['id']][0] < $threshold_sede ? 'text-danger' : '').'">
-                        <td>'.$sede['nomesede'].'</td>
-                        <td class="text-right">'.numberFormat($giacenze[$sede['id']][0], 'qta').' '.$articolo->um.'</td>
-                        '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$giacenze[$sede['id']][0] * $articolo->fattore_um_secondaria.' '.$articolo->um_secondaria.'</td>' : '').'
+                    <tr class="'.($is_low ? 'text-danger' : '').'">
+                        <td>'.($is_low ? '<i class="fa fa-exclamation-triangle mr-1"></i>' : '').$sede['nomesede'].'</td>
+                        <td class="text-right">'.$formatted_qty.' '.$articolo->um.'</td>
+                        '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$formatted_secondary.' '.$articolo->um_secondaria.'</td>' : '').'
                     </tr>';
     }
     echo '
@@ -115,36 +121,36 @@ echo '
 // Panoramica
 echo '
     <div class="col-md-2">
-        <div class="card card-info card-outline shadow">
+        <div class="card card-warning card-outline shadow">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-info-circle"></i> '.tr('Informazioni').'</h3>
             </div>
             <div class="card-body">
-                <table class="table table-sm">
+                <table class="table table-sm table-hover">
                     <tbody>
                         <tr>
-                            <td>'.tr('Garanzia').'</td>
-                            <td class="text-right">'.($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '').'</td>
+                            <td><i class="fa fa-calendar-check-o mr-1"></i> '.tr('Garanzia').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '<span class="text-muted">-</span>').'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Serial number').'</td>
-                            <td class="text-right">'.($articolo->abilita_serial ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>').'</td>
+                            <td><i class="fa fa-qrcode mr-1"></i> '.tr('Serial number').'</td>
+                            <td class="text-right">'.($articolo->abilita_serial ? '<span class="badge badge-success"><i class="fa fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fa fa-times"></i></span>').'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Ubicazione').'</td>
-                            <td class="text-right">'.($articolo->ubicazione ?: '').'</td>
+                            <td><i class="fa fa-map-marker mr-1"></i> '.tr('Ubicazione').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->ubicazione ? $articolo->ubicazione : '<span class="text-muted">-</span>').'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Peso lordo').'</td>
-                            <td class="text-right">'.($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, $decimals).' '.tr('kg') : '').'</td>
+                            <td><i class="fa fa-balance-scale mr-1"></i> '.tr('Peso lordo').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->peso_lordo ? numberFormat($articolo->peso_lordo, null).' '.tr('kg') : '<span class="text-muted">-</span>').'</td>
                         </tr>
                         <tr>
-                            <td>'.tr('Volume').'</td>
-                            <td class="text-right">'.($articolo->volume ? numberFormat($articolo->volume, $decimals).' '.tr('m³') : '').'</td>
+                            <td><i class="fa fa-cube mr-1"></i> '.tr('Volume').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->volume ? numberFormat($articolo->volume, null).' '.tr('m³') : '<span class="text-muted">-</span>').'</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>  
+    </div>
 </div>';

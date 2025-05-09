@@ -69,106 +69,149 @@ $link = Prints::getHref($nome_stampa, $id_record);
 
 echo '
 <div class="alert alert-info hidden" id="period">
-    <i class="fa fa-exclamation-circle"></i> '.tr('Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario prima impostare un trimestre o un singolo mese!').'
+    <div class="row">
+        <div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+            <i class="fa fa-exclamation-circle fa-2x"></i>
+        </div>
+        <div class="col-md-11">
+            '.tr('Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario prima impostare un trimestre o un singolo mese!').'
+        </div>
+    </div>
 </div>
 
 <div class="alert alert-warning hidden" id="is_definitiva">
-    <i class="fa fa-warning"></i> '.tr('È già presente la stampa definitiva per il periodo selezionato!').'
+    <div class="row">
+        <div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+            <i class="fa fa-warning fa-2x"></i>
+        </div>
+        <div class="col-md-11">
+            '.tr('È già presente la stampa definitiva per il periodo selezionato!').'
+        </div>
+    </div>
 </div>
 
-<form action="" method="post" id="form" >
-	<div class="row">';
+<form action="" method="post" id="form" class="mb-3">
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fa fa-calendar mr-2"></i>'.tr('Periodo di riferimento').'
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
+                </div>
+            </div>';
+
 echo '
-		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
-		</div>
-
-		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
-		</div>
-
-		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
-		</div>
-	</div>';
-
-echo '
-	<div class="row">';
+            <hr>
+            <div class="row">';
 if ($nome_stampa != 'Liquidazione IVA' && $nome_stampa != 'Libro giornale') {
     echo '
-		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = \"'.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\" AND `id_lang` = '.prepare(Models\Locale::getDefault()->id).') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \"Tutti i sezionali\" AS descrizione" ]}
-		</div>';
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = \"'.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\" AND `id_lang` = '.prepare(Models\Locale::getDefault()->id).') AND `is_fiscale` = 1 UNION SELECT  -1 AS id, \"Tutti i sezionali\" AS descrizione" ]}
+                </div>';
 }
 echo '
-		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
-		</div>
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['stampe_contabili']['format'].'" ]}
+                </div>
 
-		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['stampe_contabili']['orientation'].'" ]}
-		</div>
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['stampe_contabili']['orientation'].'" ]}
+                </div>
+            </div>
 
-		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
-		</div>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Definitiva').'", "disabled": "1", "name": "definitiva", "help": "'.tr('Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la stampa definitiva del periodo selezionato').'" ]}
+                </div>
 
-		<div class="col-md-4 pull-right">
-			<p style="line-height:14px;">&nbsp;</p>
-			<button type="button" class="btn btn-primary btn-block" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
-				<i class="fa fa-print"></i> '.tr('Stampa').'
-			</button>
-		</div>
-	</div>
-</form>
-<br>';
+                <div class="col-md-4 offset-md-4 text-right">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="if($(\'#form\').parsley().validate()) { return avvia_stampa(); }">
+                        <i class="fa fa-print mr-2"></i> '.tr('Stampa').'
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>';
 
 $elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
 echo '
-<div class="card card-info collapsable collapsed-card">
-	<div class="card-header with-border">
-		<h3 class="card-title"><i class="fa fa-print"></i> '.tr('Stampe definitive _NOME_ _DIR_ dal _START_ al _END_', [
-	'_NOME_' => $nome_stampa,
-	'_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
-	'_START_' => dateFormat($_SESSION['period_start']),
-	'_END_' => dateFormat($_SESSION['period_end']),
-]).'
-		</h3>
-		<div class="card-tools pull-right">
-			<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
-		</div>
-	</div>
-	<div class="card-body">
-		<ul>';
+<div class="card card-info card-outline mt-3 collapsed-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fa fa-history mr-2"></i>'.tr('Stampe definitive _NOME_ _DIR_ dal _START_ al _END_', [
+        '_NOME_' => $nome_stampa,
+        '_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
+        '_START_' => dateFormat($_SESSION['period_start']),
+        '_END_' => dateFormat($_SESSION['period_end']),
+    ]).'
+        </h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">';
 
-foreach ($elementi as $elemento) {
-	$sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
+if (!empty($elementi)) {
+    echo '
+                <thead>
+                    <tr>
+                        <th>'.tr('Periodo').'</th>
+                        <th>'.tr('Sezionale').'</th>
+                        <th>'.tr('Pagine').'</th>
+                        <th class="text-center">'.tr('Azioni').'</th>
+                    </tr>
+                </thead>
+                <tbody>';
 
-	$descrizione = tr('Stampa definitiva dal _START_ al _END_ _SEZIONALE_ (_FIRST_-_LAST_)', [
-		'_START_' => dateFormat($elemento['date_start']),
-		'_END_' => dateFormat($elemento['date_end']),
-		'_SEZIONALE_' => $sezionale_stampa ? '['.$sezionale_stampa.']' : '',
-		'_FIRST_' => $elemento['first_page'],
-		'_LAST_' => $elemento['last_page'],
-	]);
+    foreach ($elementi as $elemento) {
+        $sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
 
-	$file = $dbo->selectOne('zz_files', '*', ['id_module' => $id_module, 'id_record' => $elemento['id']]);
+        $file = $dbo->selectOne('zz_files', '*', [
+            'id_module' => $id_module,
+            'id_record' => $elemento['id']
+        ]);
 
-	echo '
-			<li>
-				<a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank"><i class="fa fa-download"></i>
-				</a>
-				'.$descrizione.'
-			</li>';
-}
+        echo '
+                    <tr>
+                        <td>'.dateFormat($elemento['date_start']).' - '.dateFormat($elemento['date_end']).'</td>
+                        <td>'.($sezionale_stampa ?: tr('Tutti i sezionali')).'</td>
+                        <td>'.$elemento['first_page'].' - '.$elemento['last_page'].'</td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-info" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
+                                <i class="fa fa-download"></i> '.tr('Scarica').'
+                            </a>
+                        </td>
+                    </tr>';
+    }
 
-if (empty($elementi)) {
-	echo '<p class="text-center">'.tr('Nessuna stampa presente').'</p>';
+    echo '
+                </tbody>';
+} else {
+    echo '
+                <tr>
+                    <td class="text-center">'.tr('Nessuna stampa presente').'</td>
+                </tr>';
 }
 
 echo '
-		</ul>
-	</div>
+            </table>
+        </div>
+    </div>
 </div>';
 
 echo '
@@ -202,7 +245,7 @@ echo '
 		let year = date.getFullYear();
 		let m_start = 0;
 		let m_end = 3;
-		
+
 		for (i=0; i<=3; i++) {
 			let start = new Date(year, m_start, 1);
 			let end = new Date(year, m_end, 0);
@@ -211,7 +254,7 @@ echo '
 			int_end = end.getFullYear() +  "-" + ("0" + (end.getMonth() + 1)).slice(-2) + "-" + ("0" + end.getDate()).slice(-2);
 
 			if (date_start == int_start && date_end == int_end) {
-				intervallo_corretto = 1;	
+				intervallo_corretto = 1;
 			}
 			m_start += 3;
 			m_end += 3;
@@ -227,7 +270,7 @@ echo '
 			int_end = end.getFullYear() +  "-" + ("0" + (end.getMonth() + 1)).slice(-2) + "-" + ("0" + end.getDate()).slice(-2);
 
 			if (date_start == int_start && date_end == int_end) {
-				intervallo_corretto = 1;	
+				intervallo_corretto = 1;
 			}
 			m_start += 1;
 			m_end += 1;
@@ -289,7 +332,7 @@ echo '
 			window.open("'.$link.'&dir='.$dir.'&notdefinitiva=1&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
 			$("#modals > div").modal("hide");
 		}
-		
+
 	}
 
 	$("#format").change(function() {

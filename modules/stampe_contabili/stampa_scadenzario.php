@@ -55,42 +55,53 @@ for ($i = 1; $i <= 12; ++$i) {
 }
 
 echo '
-	<div class="row">
-        <div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data inizio').'", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
-		</div>
-        <div class="col-md-3">
-			{[ "type": "date", "label": "'.tr('Data fine').'", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
-		</div>
-        <div class="col-md-3">
-			{[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
-		</div>
-        <div class="col-md-3">
-        {[ "type": "select", "label": "'.tr('Anagrafica').'", "name": "id_anagrafica", "values": "'.$id_anagrafica.'", "ajax-source": "anagrafiche" ]}
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fa fa-calendar-check-o mr-2"></i>'.tr('Opzioni scadenzario').'
+        </h3>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "date", "label": "'.tr('Data inizio').'", "name": "date_start", "value": "'.$_SESSION['period_start'].'" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "date", "label": "'.tr('Data fine').'", "name": "date_end", "value": "'.$_SESSION['period_end'].'" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "select", "label": "'.tr('Periodo').'", "name": "periodo", "required": "1", "values": '.json_encode($periodi).', "value": "manuale" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "select", "label": "'.tr('Anagrafica').'", "name": "id_anagrafica", "values": "'.$id_anagrafica.'", "ajax-source": "anagrafiche" ]}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Includi scadenze pagate').'", "name": "is_pagata" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Includi solo Ri.Ba').'", "name": "is_riba" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Includi solo scadenze Clienti').'", "name": "is_cliente" ]}
+            </div>
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Includi solo scadenze Fornitori').'", "name": "is_fornitore" ]}
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-3">
-			{[ "type": "checkbox", "label": "'.tr('Includi scadenze pagate').'", "name": "is_pagata" ]}
-		</div>
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Includi solo Ri.Ba').'", "name": "is_riba" ]}
-        </div>
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Includi solo scadenze Clienti').'", "name": "is_cliente" ]}
-        </div>
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Includi solo scadenze Fornitori').'", "name": "is_fornitore" ]}
-        </div>
-	</div>
 
-	<div class="row">
-		<div class="col-md-12 text-right">
-			<button type="button" onclick="avvia_stampa();" class="btn btn-primary">
-				<i class="fa fa-print"></i> '.tr('Stampa scadenzario').'
-			</button>
-		</div>
-	</div>
+    <div class="card-footer text-right">
+        <button type="button" onclick="avvia_stampa();" class="btn btn-primary btn-lg">
+            <i class="fa fa-print mr-2"></i> '.tr('Stampa scadenzario').'
+        </button>
+    </div>
+</div>
 
 <script>$(document).ready(init)</script>';
 
@@ -106,7 +117,7 @@ echo '
         var is_riba = $("#is_riba").is(":checked");
         var is_cliente = $("#is_cliente").is(":checked");
         var is_fornitore = $("#is_fornitore").is(":checked");
-        
+
         window.open("'.$link.'&date_start="+date_start+"&date_end="+date_end+"&is_pagata="+is_pagata+"&is_riba="+is_riba+"&is_cliente="+is_cliente+"&is_fornitore="+is_fornitore+"&id_anagrafica="+id_anagrafica, "_blank");
 	}
 
@@ -115,7 +126,7 @@ echo '
             $("#is_fornitore").prop("checked", false);
         }
     });
-    
+
     $("#is_fornitore").change(function() {
         if($(this).is(":checked")) {
             $("#is_cliente").prop("checked", false);

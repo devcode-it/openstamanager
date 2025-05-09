@@ -22,55 +22,17 @@ include_once __DIR__.'/../../core.php';
 
 echo '
 <div class="row">
-    <div class="col-md-12 text-center">
+    <div class="col-md-12">
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> <strong>'.tr('Attenzione', [], ['upper']).':</strong><br> '.tr('le seguenti stampe contabili possono essere utilizzate per fini fiscali previa verifica delle informazioni inserite nel gestionale.<br/> Rimane esclusiva responsabilità dell\'utente controllare la correttezza dei documenti qui prodotti').'.
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 text-center">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">'.tr('Registri IVA').'</h3>
-            </div>
-
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'</button>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'</button>
-                    </div>
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'</button>
-                    </div>
+            <div class="row">
+                <div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+                    <i class="fa fa-warning fa-3x"></i>
                 </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="col-md-6 text-center">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">'.tr('Contabilità').'</h3>
-            </div>
-
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" ><i class="fa fa-print fa-2x"></i> <br>'.tr('Stampa').'<br>'.tr('Bilancio').'<br></button>
-                    </div>
-                    <div class="col-md-4">
-                        '.Prints::getLink('Mastrino', 1, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('patrimoniale'), '|default| fa-2x', 'lev=1').'
-                    </div>
-                    <div class="col-md-4">
-                        '.Prints::getLink('Mastrino', 2, 'btn-primary col-md-12', '<br>'.tr('Situazione').'<br>'.tr('economica'), '|default| fa-2x', 'lev=1').'
-                    </div>
+                <div class="col-md-11">
+                    <strong class="text-blue">'.tr('Attenzione').':</strong>
+                    <hr class="mt-1 mb-1">
+                    <p>'.tr('Le seguenti stampe contabili possono essere utilizzate per fini fiscali previa verifica delle informazioni inserite nel gestionale.').'</p>
+                    <p>'.tr('Rimane esclusiva responsabilità dell\'utente controllare la correttezza dei documenti qui prodotti.').'</p>
                 </div>
             </div>
         </div>
@@ -78,10 +40,73 @@ echo '
 </div>
 
 <div class="row">
-    <div class="col-md-4 text-center">
-        <div class="card card-primary">
+    <div class="col-md-6">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Dati economici dal _START_ al _END_', [
+                <h3 class="card-title text-blue">
+                    <i class="fa fa-file-text-o mr-2"></i>'.tr('Registri IVA').'
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" data-card-widget="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" >
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Registro').'<br>'.tr('IVA vendite').'
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" data-card-widget="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" >
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Registro').'<br>'.tr('IVA acquisti').'
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" data-card-widget="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" >
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Liquidazione').'<br>'.tr('IVA').'
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title text-blue">
+                    <i class="fa fa-balance-scale mr-2"></i>'.tr('Contabilità').'
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" data-card-widget="modal" data-title="'.tr('Stampa Bilancio').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_bilancio.php" >
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Stampa').'<br>'.tr('Bilancio').'
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" onclick="window.open(\''.base_path().'/pdfgen.php?id_print='.Prints::getPrints()['Mastrino'].'&id_record=1&lev=1\', \'_blank\')">
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Situazione').'<br>'.tr('patrimoniale').'
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" onclick="window.open(\''.base_path().'/pdfgen.php?id_print='.Prints::getPrints()['Mastrino'].'&id_record=2&lev=1\', \'_blank\')">
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Situazione').'<br>'.tr('economica').'
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-4">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title text-blue">
+                    <i class="fa fa-bar-chart mr-2"></i>'.tr('Dati economici dal _START_ al _END_', [
     '_START_' => Translator::dateToLocale($_SESSION['period_start']),
     '_END_' => Translator::dateToLocale($_SESSION['period_end']),
 ]).'</h3>
@@ -89,35 +114,47 @@ echo '
 
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Fatturato'), '|default| fa-2x', 'dir=entrata').'
+                    <div class="col-md-6 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" onclick="window.open(\''.base_path().'/pdfgen.php?id_print='.Prints::getPrints()['Fatturato'].'&id_record='.$id_record.'&dir=entrata\', \'_blank\')">
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Stampa').'<br>'.tr('Fatturato').'
+                        </button>
                     </div>
-                    <div class="col-md-6">
-                    '.Prints::getLink('Fatturato', $id_record, 'btn-primary col-md-12', '<br>'.tr('Stampa').'<br>'.tr('Acquisti').'<br>', '|default| fa-2x', 'dir=uscita').'
+                    <div class="col-md-6 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" onclick="window.open(\''.base_path().'/pdfgen.php?id_print='.Prints::getPrints()['Fatturato'].'&id_record='.$id_record.'&dir=uscita\', \'_blank\')">
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Stampa').'<br>'.tr('Acquisti').'
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 text-center">
-        <div class="card card-primary">
+    <div class="col-md-4">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Libro giornale').'</h3>
+                <h3 class="card-title text-blue">
+                    <i class="fa fa-book mr-2"></i>'.tr('Libro giornale').'
+                </h3>
             </div>
 
             <div class="card-body">
-                <div class="col-md-6">
-                    <button type="button" class="btn btn-primary col-md-12" data-card-widget="modal" data-title="'.tr('Libro giornale').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Libro giornale&id_record='.$id_record.'"><i class="fa fa-print fa-2x"></i><br>'.tr('Libro').'<br>'.tr('giornale').'</button>
+                <div class="row">
+                    <div class="col-md-8 offset-md-2 mb-3">
+                        <button type="button" class="btn btn-primary btn-block" data-card-widget="modal" data-title="'.tr('Libro giornale').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Libro giornale&id_record='.$id_record.'">
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Libro').'<br>'.tr('giornale').'
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 text-center">
-        <div class="card card-primary">
+    <div class="col-md-4">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Scadenzario').'</h3>
+                <h3 class="card-title text-blue">
+                    <i class="fa fa-calendar-check-o mr-2"></i>'.tr('Scadenzario').'
+                </h3>
             </div>
 
             <div class="card-body">';
@@ -130,11 +167,13 @@ if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
     $disabled = '';
 }
 
-echo '     
-                <div class="col-md-6">
-                    <button type="button" '.$disabled.' class="btn btn-'.$class.' col-md-12" data-card-widget="modal" data-title="'.tr('Stampa scadenzario').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_scadenzario.php" >
-                        <i class="fa fa-print fa-2x"></i><br>'.tr('Stampa<br>scadenzario').'
-                    </button>
+echo '
+                <div class="row">
+                    <div class="col-md-8 offset-md-2 mb-3">
+                        <button type="button" '.$disabled.' class="btn btn-'.$class.' btn-block" data-card-widget="modal" data-title="'.tr('Stampa scadenzario').'" data-href="'.base_path().'/modules/stampe_contabili/stampa_scadenzario.php" >
+                            <i class="fa fa-print fa-2x mb-2"></i><br>'.tr('Stampa').'<br>'.tr('scadenzario').'
+                        </button>
+                    </div>
                 </div>';
 
 echo '

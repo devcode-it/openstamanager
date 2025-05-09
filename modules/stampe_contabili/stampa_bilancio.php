@@ -25,22 +25,27 @@ $link = Prints::getHref('Bilancio', null);
 
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return avvia_stampa(); }" >
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fa fa-cog mr-2"></i>'.tr('Opzioni di stampa').'
+            </h3>
+        </div>
 
-	<div class="row">
-		<div class="col-md-6">
-			{[ "type": "checkbox", "label": "'.tr('Elenco analitico delle anagrafiche').'", "name": "elenco_analitico", "value": "0" ]}
-		</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "'.tr('Elenco analitico delle anagrafiche').'", "name": "elenco_analitico", "value": "0" ]}
+                </div>
+            </div>
+        </div>
 
-	</div>
-
-	<div class="row">
-		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary">
-				<i class="fa fa-print"></i> '.tr('Stampa Bilancio').'
-			</button>
-		</div>
-	</div>
-
+        <div class="card-footer text-right">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa fa-print mr-2"></i> '.tr('Stampa Bilancio').'
+            </button>
+        </div>
+    </div>
 </form>
 
 <script>$(document).ready(init)</script>';
@@ -51,7 +56,7 @@ echo '
 		var elenco = 0;
 		if($("#elenco_analitico").is(":checked")){
 			elenco = 1;
-		} 
+		}
 		window.open("'.$link.'&elenco_analitico="+elenco+"");
 	return false;
 	}

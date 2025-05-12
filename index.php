@@ -101,70 +101,10 @@ include_once base_dir().'/include/init/update.php';
 // Procedura di inizializzazione
 include_once base_dir().'/include/init/init.php';
 
-$pageTitle = tr('Login');
+$pageTitle = (!$dbo->isInstalled() || !$dbo->isConnected()) ? tr('Installazione') : tr('Login');
 
 include_once App::filepath('include|custom|', 'top.php');
 
-// Add inline styles for login page enhancement
-echo '
-<style>
-    .login-page {
-        background: linear-gradient(135deg, rgba(245,247,250,1) 0%, rgba(230,233,240,1) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-    }
-    .login-box {
-        margin: 0 auto;
-    }
-    .card-outline.card-primary {
-        border-top: 3px solid #007bff;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    .form-control-lg {
-        border-radius: 4px;
-        transition: all 0.3s ease;
-    }
-    .form-control-lg:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
-    .input-group-text {
-        border-top-right-radius: 4px !important;
-        border-bottom-right-radius: 4px !important;
-    }
-    .btn-primary {
-        transition: all 0.3s ease;
-    }
-    .login-box-msg {
-        font-size: 1.1rem;
-    }
-    .is-invalid {
-        border-color: #dc3545 !important;
-        background-image: url("data:image/svg+xml,%3csvg width=\'12\' height=\'12\' fill=\'none\' stroke=\'%23dc3545\' viewBox=\'0 0 12 12\'%3e%3ccircle cx=\'6\' cy=\'6\' r=\'4.5\'/%3e%3cpath stroke-linejoin=\'round\' d=\'M5.8 3.6h.4L6 6.5z\'/%3e%3ccircle cx=\'6\' cy=\'8.2\' r=\'.6\' fill=\'%23dc3545\' stroke=\'none\'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right calc(0.375em + 0.1875rem) center;
-        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-    }
-    .invalid-feedback {
-        display: none;
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.875rem;
-        color: #dc3545;
-    }
-    .d-block {
-        display: block !important;
-    }
-    @media (max-width: 576px) {
-        .login-box {
-            width: 90%;
-            margin: 0 auto;
-        }
-    }
-</style>';
 
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
@@ -237,7 +177,9 @@ if (!empty(flash()->getMessage('error'))) {
             </script>';
 }
 
-echo '
+
+if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) {
+    echo '
 			<form action="?op=login" method="post" autocomplete="off">
 				<div class="login-box card-center-medium">
                     <div class="card card-outline card-primary shadow-lg">
@@ -321,6 +263,7 @@ echo '
                 });
             });
             </script>';
+}
 
 $custom_css = $dbo->isInstalled() ? html_entity_decode(setting('CSS Personalizzato')) : '';
 if (!empty($custom_css)) {

@@ -148,7 +148,7 @@ if (!empty(post('db_host'))) {
 				<h3 class="card-title">'.tr('Permessi di scrittura mancanti').'</h3>
 			</div>
 			<div class="card-body">
-				<p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
+				<p>'.tr('Non è possibile creare il file di configurazione _FILE_ per mancanza di permessi di scrittura', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</p>
 				<form action="'.base_path().'/index.php?action=updateconfig&firstuse=true" method="post">
@@ -158,8 +158,8 @@ if (!empty(post('db_host'))) {
 						<input type="hidden" name="db_username" value="'.$db_username.'">;
 						<input type="hidden" name="db_host" value="'.$db_host.'">
 					</div>
-					<a class="btn btn-warning" href="'.base_path().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Torna indietro').'</a>
-					<button class="btn btn-info"><i class="fa fa-repeat"></i> '.tr('Riprova').'</button>
+					<a class="btn btn-warning btn-lg" href="'.base_path().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Indietro').'</a>
+					<button class="btn btn-info btn-lg"><i class="fa fa-refresh"></i> '.tr('Riprova').'</button>
 				</form>
 				<hr>
 				<div class="card card-default collapsed-card">
@@ -170,7 +170,7 @@ if (!empty(post('db_host'))) {
 						</div>
 					</div>
 					<div class="card-body">
-						<p>'.tr('Inserire il seguente testo nel file _FILE_', [
+						<p>'.tr('Crea manualmente il file _FILE_ con il seguente contenuto:', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</p>
 						<pre class="text-left">'.htmlentities($new_config).'</pre>
@@ -194,12 +194,12 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
     echo '
     <div class="card card-center card-danger card-solid text-center">
         <div class="card-header with-border">
-            <h3 class="card-title">'.tr('Impossibile connettersi al database').'</h3>
+            <h3 class="card-title">'.tr('Errore di connessione al database').'</h3>
         </div>
         <div class="card-body">
-            <p>'.tr('Si è verificato un errore durante la connessione al database').'.</p>
-            <p>'.tr('Controllare di aver inserito correttamente i dati di accesso, e che il database atto ad ospitare i dati del gestionale sia esistente').'.</p>
-            <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+            <p>'.tr('Impossibile stabilire una connessione con il database').'.</p>
+            <p>'.tr('Verifica che i dati di accesso siano corretti e che il database esista').'.</p>
+            <a class="btn btn-info btn-lg" href="'.base_path().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
             </div>
     </div>';
 }
@@ -212,15 +212,15 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         echo '
 		<div class="card card-center card-danger card-solid text-center">
 			<div class="card-header with-border">
-				<h3 class="card-title">'.tr('Parametri non sufficienti!').'</h3>
+				<h3 class="card-title">'.tr('Configurazione incompleta').'</h3>
 			</div>
 			<div class="card-body">
-				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni parametri nella configurazione di base").'.</p>
-				<p>'.tr("Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)", [
+				<p>'.tr("Mancano alcuni parametri necessari nella configurazione").'.</p>
+				<p>'.tr("Verifica che il file _FILE_ contenga tutti i parametri di connessione al database", [
             '_FILE_' => '<b>config.inc.php</b>',
         ]).'.</p>
-				<p>'.tr("Nel caso il problema persista, rivolgersi all'assistenza ufficiale").'.</p>
-				<a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+				<p>'.tr("Se il problema persiste, contatta l'assistenza").'.</p>
+				<a class="btn btn-info btn-lg" href="'.base_path().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
             </div>
 		</div>';
     }
@@ -288,12 +288,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             $("#install").prop("disabled", false);
 
                             if(data == 0){
-                                swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
+                                swal("'.tr('Errore di connessione').'", "'.tr('Impossibile connettersi al database con i parametri inseriti').'.", "error");
                             } else if(data == 1){
-                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il testing della connessione. Potresti rilevare problemi in fase di installazione.").'.", "error");
+                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente MySQL non ha i permessi necessari per creare e modificare le tabelle. Verifica i permessi o usa un altro utente.").'.", "error");
                             } else {
-                                swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr('Clicca su _BTN_ per proseguire', [
-        '_BTN_' => "'".tr('Installa')."'",
+                                swal("'.tr('Connessione riuscita').'", "'.tr('Connessione al database stabilita correttamente').'. '.tr('Clicca su _BTN_ per procedere con l\'installazione', [
+        '_BTN_' => "'".tr('Procedi')."'",
     ]).'.", "success");
                             }
                         },
@@ -416,10 +416,10 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     <p>'.tr('Benvenuto in _NAME_!', [
         '_NAME_' => '<strong>OpenSTAManager</strong>',
     ]).'</p>
-    <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'.</p>
+    <p>'.tr("Prima di procedere con l'installazione, verifica che il sistema soddisfi i seguenti requisiti").'.</p>
     <br>
 
-    <p>'.tr('Le estensioni e impostazioni PHP possono essere personalizzate nel file di configurazione _FILE_', [
+    <p>'.tr('Le impostazioni PHP possono essere modificate nel file _FILE_', [
         '_FILE_' => '<b>php.ini</b>',
     ]).'.</p>
     <hr>';
@@ -462,8 +462,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     <div id="step-3">
                         <a href="https://www.openstamanager.com/contattaci/" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
 
-                        <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
-                        <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
+                        <p>'.tr('Configurazione del database').'</p>
+                        <p><small class="help-block">'.tr('Inserisci i parametri di connessione al database (modificabili successivamente nel file _FILE_)', [
         '_FILE_' => '<b>config.inc.php</b>',
     ]).'</small></p>
 
@@ -567,13 +567,13 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                     <span>*<small><small>'.tr('Campi obbligatori').'</small></small></span>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <button type="button" id="test" class="btn btn-warning btn-block">
-                                        <i class="fa fa-file-text"></i> '.tr('Testa il database').'
+                                    <button type="button" id="test" class="btn btn-info btn-block">
+                                        <i class="fa fa-database"></i> '.tr('Verifica connessione').'
                                     </button>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <button type="submit" id="install" class="btn btn-success btn-block">
-                                        <i class="fa fa-check"></i> '.tr('Installa').'
+                                    <button type="submit" id="install" class="btn btn-success btn-lg btn-block">
+                                        <i class="fa fa-check"></i> '.tr('Procedi').'
                                     </button>
                                 </div>
                             </div>

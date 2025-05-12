@@ -45,8 +45,8 @@ if (filter('action') == 'do_update') {
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
                 <script>
-                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
-                        '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-database text-primary\"></i> '.tr('Database aggiornato: _FILENAME_', [
+                        '_FILENAME_' => '<code>'.$update['filename'].'.sql</code>',
                     ]).'</p>");
                 </script>';
                 }
@@ -79,10 +79,16 @@ if (filter('action') == 'do_update') {
         } else {
             // Failure
             echo '
-                    <div class="alert alert-danger">
-                        <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
-                '_VERSION_' => $update['version'],
-            ]).'
+                    <div class="alert alert-danger shadow-sm">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-times-circle fa-2x mr-3"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">'.tr("Errore durante l'aggiornamento").'</h5>
+                                <p class="mb-0">'.tr("Si è verificato un problema durante l'aggiornamento alla versione _VERSION_", [
+                    '_VERSION_' => '<strong>'.$update['version'].'</strong>',
+                ]).'</p>
+                            </div>
+                        </div>
                     </div>';
         }
     }
@@ -91,22 +97,35 @@ if (filter('action') == 'do_update') {
         Update::updateCleanup();
 
         echo '
-            <p><strong>'.tr('Aggiornamento completato').'</strong> 😃</p>
+            <div class="alert alert-success shadow">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-check-circle fa-3x mr-3"></i>
+                    <div>
+                        <h4 class="alert-heading mb-1">'.(!$dbo->isInstalled() ? tr('Installazione completata!') : tr('Aggiornamento completato!')).'</h4>
+                        <p class="mb-0">'.tr('Tutte le operazioni sono state eseguite correttamente').'.</p>
+                    </div>
+                </div>
+            </div>
             <script>
                 setPercent(100);
+                // Assicurati che la barra sia verde al completamento
+                $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-success");
             </script>';
 
         // Instructions for the first installation
         if ($_GET['firstuse'] == 'true') {
             echo '
-            <p class="text-danger">'.tr('Si consiglia di rimuovere i permessi di scrittura dal file _FILE_', [
-                '_FILE_' => '<b>config.inc.php</b>',
-            ]).'.</p>';
+            <div class="alert alert-warning mb-4">
+                <i class="fa fa-exclamation-triangle mr-2"></i>
+                '.tr('Per maggiore sicurezza, rimuovi i permessi di scrittura dal file _FILE_', [
+                    '_FILE_' => '<b>config.inc.php</b>',
+                ]).'
+            </div>';
         }
 
         echo '
-            <a class="btn btn-success btn-block" href="'.base_path().'">
-                <i class="fa fa-check"></i> '.tr('Continua').'
+            <a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'">
+                <i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'
             </a>';
     }
 
@@ -119,14 +138,18 @@ if (filter('action') == 'do_update') {
         include_once App::filepath('include|custom|', 'top.php');
 
         echo '
-        <div class="card card-danger card-outline card-center-large text-center">
+        <div class="card card-danger card-outline card-center-large text-center shadow">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Aggiornamento in corso!').'</h3>
+                <h3 class="card-title"><i class="fa fa-refresh fa-spin mr-2"></i>'.tr('Aggiornamento in corso').'</h3>
             </div>
             <div class="card-body">
-                <p>'.tr('Il software si trova attualmente nella fase di aggiornamento, potrebbero volerci fino a 10 minuti, siete pregati di attendere sino alla sua conclusione').'.</p>
-                <p>'.tr("In caso di problemi rivolgersi all'amministratore di sistema o all'assistenza del gestionale").'.</p>
-                <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-redo"></i> '.tr('Riprova').'</a>
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle mr-2"></i>
+                    <span>'.tr('Il sistema sta eseguendo un aggiornamento del database').'</span>
+                </div>
+                <p>'.tr('Questo processo potrebbe richiedere fino a 10 minuti. Ti preghiamo di attendere il completamento').'.</p>
+                <p>'.tr("Se il problema persiste, contatta l'amministratore di sistema").'.</p>
+                <a class="btn btn-info btn-lg mt-3" href="'.base_path().'/index.php"><i class="fa fa-refresh mr-2"></i> '.tr('Aggiorna pagina').'</a>
             </div>
         </div>';
 
@@ -143,17 +166,17 @@ if (filter('action') == 'do_update') {
     include_once App::filepath('include|custom|', 'top.php');
 
     echo '
-        <div class="card card-warning card-center-large text-center">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-refresh"></i> '.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
+        <div class="card card-warning card-center-large text-center shadow">
+            <div class="card-header bg-warning">
+                <h3 class="card-title"><i class="fa fa-refresh mr-2"></i> '.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
             </div>
             <div class="card-body">';
     if (!$dbo->isInstalled()) {
         echo '
-                <p><strong>'.tr("E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database").'.</strong></p>';
+                <p><strong>'.tr("Benvenuto! Procediamo con l'installazione del database").'.</strong></p>';
     } else {
         echo '
-                <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
+                <p>'.tr("È necessario aggiornare il database alla nuova versione").'.</p>';
 
         // Lista aggiornamenti da applicare
         $updates = Update::getTodoUpdates();
@@ -161,50 +184,61 @@ if (filter('action') == 'do_update') {
         if (!empty($updates)) {
             echo '
                 <p>'.tr('Verranno applicati i seguenti aggiornamenti').':</p>
-            <ul>';
+                <div class="card card-body bg-light mb-3">
+                    <div class="row">';
 
             foreach ($updates as $update) {
-                echo '<i class="fa fa-upload text-primary"></i> <span>'.$update['version'].'</span><br>';
+                echo '
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-upload text-primary mr-2"></i>
+                                <span class="font-weight-bold">'.$update['version'].'</span>
+                            </div>
+                        </div>';
             }
 
             echo '
-                </ul>';
+                    </div>
+                </div>';
         }
     }
     echo '
-                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')).'!', [
+                <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
         '_BUTTON_' => '<b>"'.$button.'"</b>',
     ]).'</p>
-                <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="continue_button">
+                <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
 
                 <script>
                 function continue_update(){
                     swal({
-                        title: "'.(!$dbo->isInstalled() ? tr('Procedere con l\'installazione?') : tr('Procedere l\'aggiornamento?')).'",
-                        text: "",
+                        title: "'.(!$dbo->isInstalled() ? tr('Confermi l\'installazione?') : tr('Confermi l\'aggiornamento?')).'",
+                        text: "'.(!$dbo->isInstalled() ? tr('Verrà creato il database e installati i dati iniziali') : tr('Il database verrà aggiornato alla nuova versione')).'",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn btn-lg btn-success",
-                        confirmButtonText: "'.tr('Procedi').'",
+                        confirmButtonText: "'.tr('Conferma').'",
                     }).then(
                     function(){
-                        $("#progress").show();
+                        $("#progress").fadeIn(300);
+                        setPercent(1);
+
                         $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
                         $("#continue_button").remove();
                     }, function(){});
                 }
                 </script>
 
-                <div id="progress">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                            <span>0%</span>
-                        </div>
+                <div id="progress" class="mt-4" style="display: none;">
+                    <!-- Progress bar personalizzata senza classe progress -->
+                    <div style="height: 30px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: #f5f5f5; overflow: hidden;">
+                        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: 0%; height: 100%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
-                    <hr>
-                    <div class="card card-info text-center collapsed-card">
+                    <div class="text-center mt-3 mb-3">
+                        <span class="text-primary" id="progress-status" style="font-size: 14px;">'.tr('Preparazione aggiornamento...').'</span>
+                    </div>
+                    <div class="card card-info text-center collapsed-card shadow-sm">
                         <div class="card-header with-border">
-                            <h3 class="card-title"><a class="clickable" data-card-widget="collapse">'.tr('Log').'</a></h3>
+                            <h3 class="card-title"><i class="fa fa-list-alt mr-2"></i><a class="clickable" data-card-widget="collapse">'.tr('Dettagli aggiornamento').'</a></h3>
                             <div class="card-tools pull-right">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
                             </div>
@@ -212,7 +246,7 @@ if (filter('action') == 'do_update') {
                         <div class="card-body info text-left"></div>
                     </div>
                 </div>
-                <div id="result"></div>';
+                <div id="result" class="mt-3"></div>';
 
     $total = 0;
     $updates = Update::getTodoUpdates();
@@ -234,7 +268,6 @@ if (filter('action') == 'do_update') {
     echo '
         <script>
         $(document).ready(function(){
-            $(".login-box").fadeOut();
 
             count = '.count($updates).';
             current = 0;
@@ -254,8 +287,24 @@ if (filter('action') == 'do_update') {
         }
 
         function setPercent(percent){
-            $("#progress .progress-bar").width(percent + "%");
-            $("#progress .progress-bar span").text(percent + "%");
+            // Aggiorna la progress bar personalizzata
+            $("#custom-progress-bar").css("width", percent + "%");
+            $("#custom-progress-bar").attr("aria-valuenow", percent);
+            $("#custom-progress-bar").text(percent + "%");
+
+            // Aggiorna il testo di stato in base alla percentuale
+            if (percent < 25) {
+                $("#progress-status").text("'.tr('Inizializzazione aggiornamento...').'");
+            } else if (percent < 50) {
+                $("#progress-status").text("'.tr('Aggiornamento database in corso...').'");
+            } else if (percent < 75) {
+                $("#progress-status").text("'.tr('Applicazione modifiche...').'");
+            } else if (percent < 100) {
+                $("#progress-status").text("'.tr('Completamento aggiornamento...').'");
+            } else {
+                $("#progress-status").text("'.tr('Aggiornamento completato!').'");
+                $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-success");
+            }
         }
 
         function addVersion(version){

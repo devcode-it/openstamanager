@@ -394,7 +394,11 @@ echo '
 	<body class="sidebar-mini layout-fixed '.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
 		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
+
+$isInstallation = (!$dbo->isInstalled() || !$dbo->isConnected() || Update::isUpdateAvailable());
+
 if (Auth::check()) {
+
     $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'secondary';
 
     echo '
@@ -410,8 +414,10 @@ if (Auth::check()) {
             </div>
 
 			<!-- Loader senza overlay -->
-			<div id="tiny-loader" style="display:none;"></div>
+			<div id="tiny-loader" style="display:none;"></div>';
 
+    if (!$isInstallation) {
+        echo '
             <!-- Navbar -->
             <nav class="main-header navbar navbar-expand navbar-white navbar-light">
                 <ul class="navbar-nav">
@@ -434,8 +440,9 @@ if (Auth::check()) {
 
                 <!-- Navbar Right Menu -->
                 <ul class="navbar-nav ml-auto">';
-    // Visualizzo gli hooks solo se non sono stati disabilitati
-    if (!$config['disable_hooks']) {
+    }
+
+    if (!$config['disable_hooks'] && !$isInstallation) {
         echo '
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
@@ -504,10 +511,12 @@ if (Auth::check()) {
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">';
+    }
 
-    $user_photo = $user->photo ?: $rootdir.'/assets/dist/img/user.png';
+    if (!$isInstallation) {
+        $user_photo = $user->photo ?: $rootdir.'/assets/dist/img/user.png';
 
-    echo '
+        echo '
                         <img src="'.$user_photo.'" class="img-circle elevation-2" alt="'.$user['username'].'" />
                     </div>
 
@@ -534,17 +543,18 @@ if (Auth::check()) {
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">';
-    echo Modules::getMainMenu();
-    echo '
+        echo Modules::getMainMenu();
+        echo '
                     </ul>
                 </nav>
                 <!-- / Sidebar Menu -->
             </div>
         </aside>';
+    }
 
     $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
     $in_controller = string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php');
-    if ($in_editor || $in_controller) {
+    if (($in_editor || $in_controller) && !$isInstallation) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <div class="control-sidebar-button"><i class="fa fa-chevron-left"></i></div>
@@ -629,59 +639,60 @@ if (Auth::check()) {
         <div class="control-sidebar-bg"></div>';
     }
 
-    echo '
-    <!-- Main content -->
-    <div class="content-wrapper">
-        <section class="content">
+    if (!$isInstallation) {
+        echo '
+        <!-- Main content -->
+        <div class="content-wrapper">
+            <section class="content">
 
-        <script>
-        $(document).ready(function() {
-            // Funzione per controllare se siamo in un plugin e nascondere il pulsante "Aggiungi" principale
-            function checkActiveTab() {
-                var activeTabId = $(".tab-pane.active").attr("id");
+            <script>
+            $(document).ready(function() {
+                // Funzione per controllare se siamo in un plugin e nascondere il pulsante "Aggiungi" principale
+                function checkActiveTab() {
+                    var activeTabId = $(".tab-pane.active").attr("id");
 
-                // Se il tab attivo è diverso da tab_0, siamo in un plugin
-                if (activeTabId !== "tab_0") {
-                    // Nascondi il pulsante "Aggiungi" principale (quello accanto al nome del modulo)
-                    $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").hide();
+                    // Se il tab attivo è diverso da tab_0, siamo in un plugin
+                    if (activeTabId !== "tab_0") {
+                        // Nascondi il pulsante "Aggiungi" principale (quello accanto al nome del modulo)
+                        $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").hide();
 
-                    // Rendi il nome del modulo in text-muted
-                    $(".content-header h1").addClass("text-muted");
-                } else {
-                    // Mostra il pulsante "Aggiungi" principale quando siamo nel tab principale
-                    $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").show();
+                        // Rendi il nome del modulo in text-muted
+                        $(".content-header h1").addClass("text-muted");
+                    } else {
+                        // Mostra il pulsante "Aggiungi" principale quando siamo nel tab principale
+                        $(".content-header .btn-primary[data-title=\'Aggiungi...\'], .content-header .btn-primary[data-title=\'Aggiungi\'], .content-header button.btn-primary:has(i.fa-plus)").show();
 
-                    // Ripristina il colore normale del nome del modulo
-                    $(".content-header h1").removeClass("text-muted");
-                }
-            }
-
-            // Controlla all\'avvio
-            checkActiveTab();
-
-            // Controlla anche quando la pagina viene caricata con un hash nell\'URL
-            if (window.location.hash && window.location.hash !== "#tab_0") {
-                setTimeout(checkActiveTab, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
-            }
-
-            // Controlla quando cambia il tab
-            $("a[data-toggle=\'tab\']").on("shown.bs.tab", function() {
-                checkActiveTab();
-            });
-
-            // Controlla anche quando viene cliccato un tab nella barra laterale
-            $("a[data-toggle=\'control-sidebar\']").on("click", function() {
-                setTimeout(function() {
-                    checkActiveTab();
-
-                    // Reinizializza readmore per il contenuto del plugin
-                    if (typeof initTextShortener === "function") {
-                        initTextShortener();
+                        // Ripristina il colore normale del nome del modulo
+                        $(".content-header h1").removeClass("text-muted");
                     }
-                }, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+                }
+
+                // Controlla all\'avvio
+                checkActiveTab();
+
+                // Controlla anche quando la pagina viene caricata con un hash nell\'URL
+                if (window.location.hash && window.location.hash !== "#tab_0") {
+                    setTimeout(checkActiveTab, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+                }
+
+                // Controlla quando cambia il tab
+                $("a[data-toggle=\'tab\']").on("shown.bs.tab", function() {
+                    checkActiveTab();
+                });
+
+                // Controlla anche quando viene cliccato un tab nella barra laterale
+                $("a[data-toggle=\'control-sidebar\']").on("click", function() {
+                    setTimeout(function() {
+                        checkActiveTab();
+
+                        // Reinizializza readmore per il contenuto del plugin
+                        if (typeof initTextShortener === "function") {
+                            initTextShortener();
+                        }
+                    }, 100); // Piccolo ritardo per assicurarsi che il tab sia cambiato
+                });
             });
-        });
-        </script>';
+            </script>';
 
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';

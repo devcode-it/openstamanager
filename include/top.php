@@ -440,7 +440,6 @@ if (Auth::check()) {
 
                 <!-- Navbar Right Menu -->
                 <ul class="navbar-nav ml-auto">';
-    }
 
     if (!$config['disable_hooks'] && !$isInstallation) {
         echo '
@@ -461,9 +460,9 @@ if (Auth::check()) {
                             <div id="hooks"></div>
                         </div>
                     </div>';
-    }
+        }
 
-    echo '
+        echo '
                     <li class="nav-item">
                         <a href="#" onclick="window.print()" class="nav-link" title="'.tr('Stampa').'">
                             <i class="fa fa-print nav-icon"></i>
@@ -693,6 +692,7 @@ if (Auth::check()) {
                 });
             });
             </script>';
+    }
 
     if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';

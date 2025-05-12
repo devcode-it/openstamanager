@@ -1313,6 +1313,141 @@ input.small-width {
     margin-top: 5px;
 }
 
+/** TIMELINE SMALL (OPERATIONS) */
+
+/* Timeline container */
+.timeline-sm {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Vertical line */
+.timeline-sm:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 16px;
+    width: 3px;
+    background: #e0e6eb;
+    border-radius: 3px;
+}
+
+/* Date labels */
+.timeline-sm .time-label {
+    position: relative;
+    margin: 25px 0 15px 35px;
+    z-index: 1;
+}
+
+.timeline-sm .time-label span {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Timeline items */
+.timeline-sm > div {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+/* Icon in circle */
+.timeline-sm > div > i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 34px;
+    color: #fff;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Timeline item content */
+.timeline-sm .timeline-item {
+    margin-left: 50px;
+    padding: 15px;
+    border-radius: 6px;
+    background: #fff;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef;
+}
+
+/* Time display */
+.timeline-sm .timeline-item .time {
+    float: right;
+    color: #6c757d;
+    margin-top: -2px;
+}
+
+/* Header */
+.timeline-sm .timeline-header {
+    margin: 0 0 10px;
+    padding: 0;
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Body content */
+.timeline-sm .timeline-body {
+    padding: 10px 0 5px;
+}
+
+/* User info */
+.timeline-sm .timeline-body .d-flex {
+    margin-bottom: 8px;
+}
+
+.timeline-sm .timeline-body .d-flex .mr-3 {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.timeline-sm .timeline-body .d-flex .mr-3 i {
+    margin-right: 6px;
+}
+
+/* Operation details */
+.timeline-sm .timeline-body .text-muted {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.timeline-sm .timeline-body .text-muted span {
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.timeline-sm .timeline-body .text-muted span b {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* End of timeline marker */
+.timeline-sm > div:last-child i.bg-gray {
+    background-color: #adb5bd !important;
+}
+
+.timeline-sm > div:last-child .timeline-item {
+    background-color: #f8f9fa;
+}
+
 
 /* Checklist */
 

@@ -165,7 +165,7 @@ if (empty($record) || !$has_access) {
     }
 
     // Pulsanti di default
-    echo '              
+    echo '
 
                 <div id="pulsanti">
                     <a class="btn btn-default" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
@@ -192,9 +192,9 @@ if (empty($record) || !$has_access) {
     // Successivo
     $next = $posizioni[$key + 1]['id'];
 
- 
+
     echo '<span class="d-sm-inline">';
-   
+
 
     echo '
                 <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
@@ -205,9 +205,9 @@ if (empty($record) || !$has_access) {
                 </a>
             </span>';
 
-   
+
     echo '<div class="extra-buttons d-sm-inline">';
-  
+
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');
@@ -244,7 +244,7 @@ if (empty($record) || !$has_access) {
                         </div>
                     </div>
                 </div>
-                    
+
 
                 <script>
                 $(document).ready(function(){
@@ -381,66 +381,118 @@ if (empty($record) || !$has_access) {
         }
 
         echo '
-                <div class="timeline">';
+                <div class="card card-outline card-primary mx-auto" style="max-width: 800px;">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center">
+                            <i class="fa fa-history mr-2"></i> '.tr('Cronologia operazioni').'
+                        </h5>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="timeline timeline-sm">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
 
         if (!empty($operations)) {
+            $current_date = null;
+
             foreach ($operations as $operation) {
                 $description = $operation['op'];
                 $icon = 'pencil-square-o';
                 $color = 'warning';
+                $date = Carbon::parse($operation['created_at']);
+                $formatted_date = $date->format('d/m/Y');
+
+                // Mostra l'intestazione della data se è cambiata
+                if ($current_date !== $formatted_date) {
+                    echo '
+                        <div class="time-label">
+                            <span class="bg-primary px-2 py-1 small">
+                                '.$formatted_date.'
+                            </span>
+                        </div>';
+                    $current_date = $formatted_date;
+                }
 
                 switch ($operation['op']) {
                     case 'add':
                         $description = tr('Creazione');
-                        $icon = 'plus';
+                        $icon = 'plus-circle';
                         $color = 'success';
                         break;
 
                     case 'update':
                         $description = tr('Modifica');
-                        $icon = 'pencil';
+                        $icon = 'edit';
                         $color = 'info';
                         break;
 
                     case 'delete':
                         $description = tr('Eliminazione');
-                        $icon = 'times';
+                        $icon = 'trash';
                         $color = 'danger';
                         break;
 
                     case 'copy':
                         $description = tr('Duplicato');
-                        $icon = 'clone';
-                        $color = 'info';
+                        $icon = 'copy';
+                        $color = 'primary';
                         break;
                 }
 
                 echo '
                     <div>
-                        <i class="fa fa-'.$icon.' bg-'.$color.'"></i>
-                        <div class="timeline-item">
-                            <span class="time"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</span>
-                            <h4 class="timeline-header">'.$description.'</h4>
-                            <div class="timeline-body">
-                                <span class="badge badge-default"><i class="fa fa-user"></i> '.$operation['username'].'</span>
+                        <i class="fa fa-'.$icon.' bg-'.$color.' small"></i>
+                        <div class="timeline-item small shadow-sm">
+                            <span class="time small"><i class="fa fa-clock-o"></i> '.$date->format('H:i').' ('.$date->diffForHumans().')</span>
+                            <h5 class="timeline-header no-border mb-0">'.$description.'</h5>
+                            <div class="timeline-body py-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="mr-3 small">
+                                        <i class="fa fa-user mr-1 text-'.$color.'"></i>
+                                        <span>'.$operation['username'].'</span>
+                                    </div>';
+
+                if (!empty($operation['options'])) {
+                    $options = json_decode($operation['options'], true);
+                    if (!empty($options) && is_array($options)) {
+                        echo '<div class="text-muted small">';
+                        $details = [];
+                        foreach ($options as $key => $value) {
+                            if (!is_array($value) && !empty($value)) {
+                                $details[] = '<span>'.ucfirst($key).': <b>'.$value.'</b></span>';
+                            }
+                        }
+                        echo implode(' | ', $details);
+                        echo '</div>';
+                    }
+                }
+
+                echo '
+                                </div>
                             </div>
                         </div>
                     </div>';
             }
+
             echo '
-                    <div>
-                        <i class="fa fa-clock-o bg-gray"></i>
-                    </div>';
+                <div>
+                    <i class="fa fa-clock-o bg-gray small"></i>
+                    <div class="timeline-item small shadow-sm">
+                        <div class="timeline-body py-2 text-center text-muted small">
+                            '.tr('Fine cronologia').'
+                        </div>
+                    </div>
+                </div>';
         } else {
             echo '
-                <div class="alert alert-info">
-                    <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
+                <div class="alert alert-info small text-center">
+                    <i class="fa fa-info-circle mr-2"></i> '.tr('Nessun log disponibile per questa scheda').'.
                 </div>';
         }
 
         echo '
+                        </div>
+                    </div>
                 </div>
             </div>';
     }

@@ -263,7 +263,7 @@ a:focus {
 }
 
 .card-center-medium {
-    margin: 7% auto
+    margin: 0 auto;
 }
 
 .box-center .box-body,
@@ -1777,7 +1777,10 @@ kbd{
 .login-page{
     background: #ccc;
     background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(229,229,229,1) 34%, rgba(204,204,204,1) 100%);
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 .icon{

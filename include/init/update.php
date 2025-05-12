@@ -45,9 +45,12 @@ if (filter('action') == 'do_update') {
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
                 <script>
-                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-database text-primary\"></i> '.tr('Database aggiornato: _FILENAME_', [
-                        '_FILENAME_' => '<code>'.$update['filename'].'.sql</code>',
-                    ]).'</p>");
+                    updateCurrentFile("'.tr('Database aggiornato').': '.$update['filename'].'.sql");
+                </script>';
+                } else if (!empty($update['sql'])) {
+                    echo '
+                <script>
+                    updateCurrentFile("'.tr('Aggiornamento database').': '.$update['filename'].'.sql");
                 </script>';
                 }
 
@@ -56,9 +59,10 @@ if (filter('action') == 'do_update') {
                 // Adding a message about the completion of the script
                 echo '
                 <script>
-                    $("#progress .info").html($("#progress .info").html() + "<p><i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
-                    '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
-                ]).'</p>");
+                    updateCurrentFile("'.tr('Esecuzione dello script').': '.$update['filename'].'.php");
+                    // Mostra l\'icona dello script PHP accanto alla versione
+                    var version_id = "'.$update['version'].'".trim().replace(/\./g, "_");
+                    $("#script-icon-" + version_id).show();
                 </script>';
 
                 $rate = $scriptValue;
@@ -78,18 +82,74 @@ if (filter('action') == 'do_update') {
                 </script>';
         } else {
             // Failure
-            echo '
-                    <div class="alert alert-danger shadow-sm">
-                        <div class="d-flex align-items-center">
-                            <i class="fa fa-times-circle fa-2x mr-3"></i>
-                            <div>
-                                <h5 class="alert-heading mb-1">'.tr("Errore durante l'aggiornamento").'</h5>
-                                <p class="mb-0">'.tr("Si è verificato un problema durante l'aggiornamento alla versione _VERSION_", [
-                    '_VERSION_' => '<strong>'.$update['version'].'</strong>',
-                ]).'</p>
-                            </div>
+            $error_message = isset($_SESSION['update_error']) ? $_SESSION['update_error']['message'] : '';
+            $error_query = isset($_SESSION['update_error']) ? $_SESSION['update_error']['query'] : '';
+
+            if (!empty($error_message)) {
+                echo '
+                    <script>
+                        showUpdateError();
+                    </script>
+                    <div class="card mt-4 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="card-title"><i class="fa fa-exclamation-circle mr-2"></i>'.tr("Dettagli dell'errore").'</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border-left border-danger">
+                                <h5 class="text-danger font-weight-bold"><i class="fa fa-info-circle mr-2"></i>'.tr("Messaggio di errore").'</h5>
+                                <p class="mb-0 font-weight-bold">'.$error_message.'</p>
+                            </div>';
+
+                if (!empty($error_query)) {
+                    echo '
+                            <div class="mt-4">
+                                <div class="card card-outline card-danger">
+                                    <div class="card-header">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0 font-weight-bold"><i class="fa fa-database mr-2"></i>'.tr("Query SQL che ha causato l'errore").'</h5>
+                                            <button type="button" class="btn btn-sm btn-danger copy-query-btn" data-query="'.htmlspecialchars($error_query).'">
+                                                <i class="fa fa-copy mr-1"></i>'.tr("Copia query").'
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="p-3 bg-light code-container">
+                                            <pre class="mb-0" style="white-space: pre-wrap; word-wrap: break-word;"><code>'.htmlspecialchars($error_query).'</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    $(document).ready(function() {
+                                        $(".copy-query-btn").click(function() {
+                                            var $temp = $("<textarea>");
+                                            $("body").append($temp);
+                                            $temp.val($(this).data("query")).select();
+                                            document.execCommand("copy");
+                                            $temp.remove();
+
+                                            // Show feedback
+                                            var $btn = $(this);
+                                            var originalText = $btn.html();
+                                            $btn.html(\'<i class="fa fa-check mr-1"></i>'.tr("Copiato!").'\');
+                                            $btn.addClass("btn-success").removeClass("btn-outline-light");
+
+                                            setTimeout(function() {
+                                                $btn.html(originalText);
+                                                $btn.addClass("btn-outline-light").removeClass("btn-success");
+                                            }, 2000);
+                                        });
+                                    });
+                                </script>
+                            </div>';
+                }
+
+                echo '
+
                         </div>
                     </div>';
+
+                unset($_SESSION['update_error']);
+            }
         }
     }
     // Update completed
@@ -97,19 +157,14 @@ if (filter('action') == 'do_update') {
         Update::updateCleanup();
 
         echo '
-            <div class="alert alert-success shadow">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle fa-3x mr-3"></i>
-                    <div>
-                        <h4 class="alert-heading mb-1">'.(!$dbo->isInstalled() ? tr('Installazione completata!') : tr('Aggiornamento completato!')).'</h4>
-                        <p class="mb-0">'.tr('Tutte le operazioni sono state eseguite correttamente').'.</p>
-                    </div>
-                </div>
-            </div>
             <script>
                 setPercent(100);
                 // Assicurati che la barra sia verde al completamento
                 $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-success");
+                // Nascondi il testo sotto la barra di progresso
+                $("#current-file").hide();
+                // Mostra tutti i segni di spunta per gli aggiornamenti completati
+                $("#updates-list .fa-check").show();
             </script>';
 
         // Instructions for the first installation
@@ -138,15 +193,29 @@ if (filter('action') == 'do_update') {
         include_once App::filepath('include|custom|', 'top.php');
 
         echo '
-        <div class="card card-danger card-outline card-center-large text-center shadow">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-refresh fa-spin mr-2"></i>'.tr('Aggiornamento in corso').'</h3>
+        <div class="card card-danger card-center-large text-center shadow">
+            <div class="card-header bg-danger">
+                <h3 class="card-title text-white"><i class="fa fa-times-circle mr-2"></i>'.tr('Errore durante l\'aggiornamento').'</h3>
             </div>
             <div class="card-body">
-                <div class="alert alert-warning">
-                    <i class="fa fa-exclamation-triangle mr-2"></i>
-                    <span>'.tr('Il sistema sta eseguendo un aggiornamento del database').'</span>
+                <div class="alert alert-danger shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3">
+                            <i class="fa fa-times-circle fa-3x text-danger"></i>
+                        </div>
+                        <div class="text-left">
+                            <h5 class="alert-heading mb-1 font-weight-bold">'.tr('Errore durante l\'aggiornamento del database').'</h5>
+                            <p class="mb-0">'.tr('Si è verificato un errore durante l\'aggiornamento del database').'</p>
+                        </div>
+                    </div>
                 </div>
+                <script>
+                    $(document).ready(function() {
+                        $("#progress-status").html("<i class=\"fa fa-times-circle text-danger mr-1\"></i><span class=\"text-danger\">'.tr('Errore durante l\'aggiornamento').'</span>");
+                        $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-danger");
+                        $("#current-file").hide(); // Nasconde il messaggio di avvio aggiornamento
+                    });
+                </script>
                 <p>'.tr('Questo processo potrebbe richiedere fino a 10 minuti. Ti preghiamo di attendere il completamento').'.</p>
                 <p>'.tr("Se il problema persiste, contatta l'amministratore di sistema").'.</p>
                 <a class="btn btn-info btn-lg mt-3" href="'.base_path().'/index.php"><i class="fa fa-refresh mr-2"></i> '.tr('Aggiorna pagina').'</a>
@@ -171,42 +240,70 @@ if (filter('action') == 'do_update') {
                 <h3 class="card-title"><i class="fa fa-refresh mr-2"></i> '.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
             </div>
             <div class="card-body">';
+    // Lista aggiornamenti da applicare
+    $updates = Update::getTodoUpdates();
+
     if (!$dbo->isInstalled()) {
         echo '
                 <p><strong>'.tr("Benvenuto! Procediamo con l'installazione del database").'.</strong></p>';
     } else {
         echo '
                 <p>'.tr("È necessario aggiornare il database alla nuova versione").'.</p>';
+    }
 
-        // Lista aggiornamenti da applicare
-        $updates = Update::getTodoUpdates();
-
-        if (!empty($updates)) {
-            echo '
+    // Prepara l'HTML per l'elenco degli aggiornamenti, ma non lo mostra ancora
+    $updates_html = '';
+    if (!empty($updates)) {
+        $updates_html .= '
+            <div id="updates-container" style="display: none;">
                 <p>'.tr('Verranno applicati i seguenti aggiornamenti').':</p>
                 <div class="card card-body bg-light mb-3">
-                    <div class="row">';
+                    <div class="row" id="updates-list">';
 
-            foreach ($updates as $update) {
-                echo '
-                        <div class="col-md-4 mb-2">
-                            <div class="d-flex align-items-center">
-                                <i class="fa fa-upload text-primary mr-2"></i>
-                                <span class="font-weight-bold">'.$update['version'].'</span>
-                            </div>
-                        </div>';
+        // Dividi gli aggiornamenti in 3 colonne
+        $total_updates = count($updates);
+        $updates_per_column = ceil($total_updates / 3);
+        $column_updates = array_chunk($updates, $updates_per_column);
+
+        // Per ogni colonna
+        for ($col = 0; $col < count($column_updates); $col++) {
+            $updates_html .= '
+                        <div class="col-md-4">
+                            <ul class="list-unstyled mb-0">';
+
+            // Per ogni aggiornamento nella colonna
+            foreach ($column_updates[$col] as $update) {
+                $version_id = str_replace('.', '_', $update['version']);
+                $updates_html .= '
+                                <li class="mb-2">
+                                    <div class="d-flex align-items-center" id="update-item-'.$version_id.'">
+                                        <i class="fa fa-upload text-primary mr-2"></i>
+                                        <span class="font-weight-bold">'.$update['version'].'</span>
+                                        <i class="fa fa-check text-success ml-2" style="display: none;"></i>
+                                        '.($update['script'] ? '<i class="fa fa-check text-info ml-2" id="script-icon-'.$version_id.'" style="display: none;"></i>' : '').'
+                                    </div>
+                                </li>';
             }
 
-            echo '
-                    </div>
-                </div>';
+            $updates_html .= '
+                            </ul>
+                        </div>';
         }
+
+        $updates_html .= '
+                    </div>
+                </div>
+            </div>';
+
+        echo $updates_html;
     }
     echo '
-                <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
-        '_BUTTON_' => '<b>"'.$button.'"</b>',
-    ]).'</p>
-                <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
+                <div id="install-instructions">
+                    <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
+            '_BUTTON_' => '<b>"'.$button.'"</b>',
+        ]).'</p>
+                    <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
+                </div>
 
                 <script>
                 function continue_update(){
@@ -219,8 +316,15 @@ if (filter('action') == 'do_update') {
                         confirmButtonText: "'.tr('Conferma').'",
                     }).then(
                     function(){
+                        // Nascondi le istruzioni di installazione
+                        $("#install-instructions").hide();
+
+                        $("#updates-container").fadeIn(300);
+
+                        // Mostra la barra di progresso
                         $("#progress").fadeIn(300);
                         setPercent(1);
+                        updateCurrentFile("'.tr('Avvio aggiornamento...').'");
 
                         $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
                         $("#continue_button").remove();
@@ -230,20 +334,12 @@ if (filter('action') == 'do_update') {
 
                 <div id="progress" class="mt-4" style="display: none;">
                     <!-- Progress bar personalizzata senza classe progress -->
-                    <div style="height: 30px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: #f5f5f5; overflow: hidden;">
-                        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: 0%; height: 100%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress-container" data-percentage="0%">
+                        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div class="text-center mt-3 mb-3">
-                        <span class="text-primary" id="progress-status" style="font-size: 14px;">'.tr('Preparazione aggiornamento...').'</span>
-                    </div>
-                    <div class="card card-info text-center collapsed-card shadow-sm">
-                        <div class="card-header with-border">
-                            <h3 class="card-title"><i class="fa fa-list-alt mr-2"></i><a class="clickable" data-card-widget="collapse">'.tr('Dettagli aggiornamento').'</a></h3>
-                            <div class="card-tools pull-right">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body info text-left"></div>
+                        <span class="text-primary" id="progress-status">'.tr('Inizializzazione aggiornamento...').'</span>
+                        <div id="current-file" class="mt-1 text-muted"></div>
                     </div>
                 </div>
                 <div id="result" class="mt-3"></div>';
@@ -290,21 +386,30 @@ if (filter('action') == 'do_update') {
             // Aggiorna la progress bar personalizzata
             $("#custom-progress-bar").css("width", percent + "%");
             $("#custom-progress-bar").attr("aria-valuenow", percent);
-            $("#custom-progress-bar").text(percent + "%");
+
+            $(".progress-container").attr("data-percentage", percent + "%");
 
             // Aggiorna il testo di stato in base alla percentuale
-            if (percent < 25) {
+            if (percent < 1) {
                 $("#progress-status").text("'.tr('Inizializzazione aggiornamento...').'");
-            } else if (percent < 50) {
-                $("#progress-status").text("'.tr('Aggiornamento database in corso...').'");
             } else if (percent < 75) {
-                $("#progress-status").text("'.tr('Applicazione modifiche...').'");
+                $("#progress-status").text("'.tr('Aggiornamento in corso...').'");
             } else if (percent < 100) {
                 $("#progress-status").text("'.tr('Completamento aggiornamento...').'");
             } else {
-                $("#progress-status").text("'.tr('Aggiornamento completato!').'");
+                $("#progress-status").html("<i class=\"fa fa-check-circle text-success mr-1\"></i><span class=\"text-success\">'.tr('Aggiornamento completato!').'</span>");
                 $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-success");
             }
+        }
+
+        function showUpdateError() {
+            $("#progress-status").html("<i class=\"fa fa-times-circle text-danger mr-1\"></i><span class=\"text-danger\">'.tr('Errore durante l\'aggiornamento').'</span>");
+            $("#custom-progress-bar").removeClass("bg-warning").addClass("bg-danger");
+            $("#current-file").hide(); // Nasconde il messaggio di avvio aggiornamento
+        }
+
+        function updateCurrentFile(filename) {
+            $("#current-file").text(filename);
         }
 
         function addVersion(version){
@@ -312,11 +417,12 @@ if (filter('action') == 'do_update') {
                 versions.push(version);
                 current += 1;
 
-                $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
-        '_DONE_' => '" + current + "',
-        '_TODO_' => '" + count + "',
-        '_VERSION_' => '" + version.trim() + "',
-    ]).'</strong></p>");
+                // Mostra il segno di spunta accanto all\'aggiornamento completato
+                var version_id = version.trim().replace(/\./g, "_");
+                $("#update-item-" + version_id + " .fa-check").show();
+
+                // Aggiorna il nome del file corrente
+                updateCurrentFile("'.tr('Installazione di').' " + version.trim());
             }
         }
         </script>

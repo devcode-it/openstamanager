@@ -169,7 +169,8 @@ if (Auth::check()) {
                     },
                     "error": {
                         "title": "'.tr('Errore').'",
-                        "text": "'.tr('Errore durante il salvataggio del record').'",
+                        "text": "'.tr('Si è verificato un errore durante il salvataggio').'",
+                        "icon": "fa-times-circle"
                     }
                 },
                 password: {

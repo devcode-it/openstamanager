@@ -263,7 +263,11 @@ class Update
                         for ($i = $start; $i < $end; ++$i) {
                             try {
                                 $database->query($queries[$i]);
-                            } catch (Exception) {
+                            } catch (Exception $e) {
+                                $_SESSION['update_error'] = [
+                                    'message' => $e->getMessage(),
+                                    'query' => $queries[$i],
+                                ];
                                 throw new PDOException(tr('Aggiornamento fallito').': '.$queries[$i]);
                             }
 
@@ -350,6 +354,13 @@ class Update
             } catch (Exception $e) {
                 $logger = logger();
                 $logger->addRecord(Monolog\Logger::EMERGENCY, $e->getMessage());
+
+                if (!isset($_SESSION['update_error'])) {
+                    $_SESSION['update_error'] = [
+                        'message' => $e->getMessage(),
+                        'query' => '',
+                    ];
+                }
             }
 
             return false;

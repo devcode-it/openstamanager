@@ -290,7 +290,7 @@ UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'my_impianti_categorie', 
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_categorie_lang', 'zz_categorie_lang') WHERE `query` LIKE '%my_impianti_categorie_lang%';
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_categorie', 'zz_categorie') WHERE `query` LIKE '%my_impianti_categorie%';
 
-RENAME TABLE `openstamanager`.`mg_marchi` TO `openstamanager`.`zz_marche`;
+RENAME TABLE `mg_marchi` TO `zz_marche`;
 
 ALTER TABLE `zz_marche` ADD `parent` INT NOT NULL AFTER `link`, ADD `is_articolo` BOOLEAN NOT NULL DEFAULT 1, ADD `is_impianto` BOOLEAN NOT NULL DEFAULT 0; 
 

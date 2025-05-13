@@ -94,7 +94,11 @@ switch (filter('op')) {
 
                 $files_xml = scandir($directory);
             } else {
-                $files_xml[] = $file ?: $files;
+                // Messaggio di errore per file non ZIP
+                echo json_encode([
+                    'error' => tr('È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP valido.'),
+                ]);
+                exit;
             }
 
             $i = 1;
@@ -185,22 +189,11 @@ switch (filter('op')) {
 
                 exit;
             } else {
-                $files_xml[] = $file ?: $files;
-
-                $i = 1;
-                foreach ($files_xml as $xml) {
-                    if ($xml != '.' && $xml != '..' && is_file($directory.'/'.$xml)) {
-                        if (FatturaElettronica::isValid($xml, 'Fatture di vendita', 'Importazione FE')) {
-                            if (string_ends_with($xml, '.p7m')) {
-                                $file = XML::decodeP7M($directory.'/'.$xml);
-                            } else {
-                                $file = XML::readFile($directory.'/'.$xml);
-                            }
-
-                            $file = FatturaElettronica::store($xml, $content);
-                        }
-                    }
-                }
+                // Messaggio di errore per file non ZIP
+                echo json_encode([
+                    'error' => tr('È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP valido.'),
+                ]);
+                exit;
             }
         }
 
@@ -554,14 +547,14 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica è indicato un DDT cerco quel documento specifico
             $ddt = $dati_ddt[$numero_linea];
-            $query = "SELECT 
-                `dt_righe_ddt`.`id`, 
-                `dt_righe_ddt`.`idddt` AS id_documento, 
-                `dt_righe_ddt`.`is_descrizione`, 
-                `dt_righe_ddt`.`idarticolo`, 
+            $query = "SELECT
+                `dt_righe_ddt`.`id`,
+                `dt_righe_ddt`.`idddt` AS id_documento,
+                `dt_righe_ddt`.`is_descrizione`,
+                `dt_righe_ddt`.`idarticolo`,
                 `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
                 CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
-            FROM 
+            FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                 INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
@@ -595,12 +588,12 @@ switch (filter('op')) {
             // cerco per quell'ordine
             if (empty($collegamento)) {
                 $ordine = $dati_ordini[$numero_linea];
-                $query = "SELECT 
-                    `or_righe_ordini`.`id`, 
-                    `or_righe_ordini`.`idordine` AS id_documento, 
-                    `or_righe_ordini`.`is_descrizione`, 
-                    `or_righe_ordini`.`idarticolo`, 
-                    `or_righe_ordini`.`is_sconto`, 
+                $query = "SELECT
+                    `or_righe_ordini`.`id`,
+                    `or_righe_ordini`.`idordine` AS id_documento,
+                    `or_righe_ordini`.`is_descrizione`,
+                    `or_righe_ordini`.`idarticolo`,
+                    `or_righe_ordini`.`is_sconto`,
                     'ordine' AS ref,
                     CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
                 FROM `or_righe_ordini`
@@ -640,45 +633,45 @@ switch (filter('op')) {
             // Se non ci sono Ordini o DDT cerco per contenuto
             if (empty($collegamento)) {
                 $match_documento_da_fe = false;
-                $query = "SELECT 
-                        `dt_righe_ddt`.`id`, 
-                        `dt_righe_ddt`.`idddt` AS id_documento, 
-                        `dt_righe_ddt`.`is_descrizione`, 
-                        `dt_righe_ddt`.`idarticolo`, 
-                        `dt_righe_ddt`.`is_sconto`, 
+                $query = "SELECT
+                        `dt_righe_ddt`.`id`,
+                        `dt_righe_ddt`.`idddt` AS id_documento,
+                        `dt_righe_ddt`.`is_descrizione`,
+                        `dt_righe_ddt`.`idarticolo`,
+                        `dt_righe_ddt`.`is_sconto`,
                         'ddt' AS ref,
                         CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
-                    FROM 
+                    FROM
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                         INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
                         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-                    WHERE 
-                        `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
-                        |where_ddt| AND 
-                        `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND 
+                    WHERE
+                        `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND
+                        |where_ddt| AND
+                        `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
                         `dt_statiddt_lang`.`title` != 'Fatturato' AND
                         `dt_tipiddt`.`dir` = 'entrata'
-                UNION 
-                    SELECT 
+                UNION
+                    SELECT
                         `or_righe_ordini`.`id`,
                         `or_righe_ordini`.`idordine` AS id_documento,
-                        `or_righe_ordini`.`is_descrizione`, 
-                        `or_righe_ordini`.`idarticolo`, 
-                        `or_righe_ordini`.`is_sconto`, 
+                        `or_righe_ordini`.`is_descrizione`,
+                        `or_righe_ordini`.`idarticolo`,
+                        `or_righe_ordini`.`is_sconto`,
                         'ordine' AS ref,
                         CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `idstatoordine`)  , ']') AS opzione
-                    FROM 
+                    FROM
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                         INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
                         LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-                    WHERE 
-                        `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
-                        |where_ordini| AND 
-                        `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
+                    WHERE
+                        `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND
+                        |where_ordini| AND
+                        `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND
                         `or_statiordine_lang`.`title` != 'Fatturato' AND
                         `or_tipiordine`.`dir` ='entrata'";
 

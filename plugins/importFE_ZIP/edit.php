@@ -30,8 +30,20 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                         type: "post",
                         success: function(data){
                             $("#main_loading").fadeOut();
-                            swal("Caricamento completato!", "", "success");
 
+                            try {
+                                var response = JSON.parse(data);
+                                if (response.error) {
+                                    swal("'.tr('Errore').'", response.error, "error");
+                                    $("#blob1").val("");
+                                    buttonRestore(btn, restore);
+                                    return;
+                                }
+                            } catch (e) {
+                                // Se non è JSON valido, continua normalmente
+                            }
+
+                            swal("Caricamento completato!", "", "success");
                             $("#blob1").val("");
                             buttonRestore(btn, restore);
                         },
@@ -82,16 +94,31 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                         type: "post",
                         success: function(data){
                             $("#main_loading").fadeOut();
-                            data = JSON.parse(data);
 
-                            if (!data.already) {
-                                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
-                            } else {
-                                swal({
-                                    title: "'.tr('Fattura già importata').'.",
-                                    type: "info",
-                                });
+                            try {
+                                data = JSON.parse(data);
 
+                                // Controlla se c\'è un messaggio di errore nella risposta
+                                if (data.error) {
+                                    swal("'.tr('Errore').'", data.error, "error");
+                                    $("#blob1").val("");
+                                    buttonRestore(btn, restore);
+                                    return;
+                                }
+
+                                if (!data.already) {
+                                    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                                } else {
+                                    swal({
+                                        title: "'.tr('Fattura già importata').'.",
+                                        type: "info",
+                                    });
+
+                                    $("#blob1").val("");
+                                }
+                            } catch (e) {
+                                // Se non è JSON valido, mostra un errore generico
+                                swal("'.tr('Errore').'", "'.tr('Si è verificato un errore durante l\'elaborazione della risposta').'", "error");
                                 $("#blob1").val("");
                             }
 
@@ -177,9 +204,9 @@ echo '
 if (Interaction::isEnabled()) {
     echo '
         <div class="alert alert-info">
-            <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le fatture da importare utilizza il pulsante _BUTTON_', [
-            '_BUTTON_' => '<b>"'.tr('Ricerca fatture').'"</b>',
-        ]).'
+            <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le fatture da importare utilizza il pulsante <b>_BUTTON_</b>', [
+                '_BUTTON_' => tr('Ricerca fatture'),
+            ]).'
         </div>';
 } else {
     include $structure->filepath('list.php');

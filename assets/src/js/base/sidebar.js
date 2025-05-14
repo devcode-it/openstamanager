@@ -58,11 +58,28 @@ $(document).ready(function () {
 
     // Gestione click sul pulsante per il toggle
     pluginToggle.on("click", function () {
+        // Add a subtle animation to the button
+        $(this).css({
+            "transform": "scale(0.95)",
+            "opacity": "0.9"
+        });
+
+        setTimeout(function() {
+            pluginToggle.css({
+                "transform": "scale(1)",
+                "opacity": "1"
+            });
+        }, 150);
+
         $("aside.content-sidebar, section.content, .main-footer, .control-sidebar-button").toggleClass("with-control-sidebar");
         $(".control-sidebar-button i").toggleClass("fa-chevron-right").toggleClass("fa-chevron-left");
 
         toggleControlSidebar();
-        $(window).resize();
+
+        // Trigger resize event after animation completes
+        setTimeout(function() {
+            $(window).resize();
+        }, 300);
     });
 
     // Barra plugin laterale disabilitata per schermi piccoli
@@ -87,6 +104,15 @@ $(document).ready(function () {
  */
 function toggleControlSidebar() {
     const sidebar = $(".control-sidebar");
+    const button = $(".control-sidebar-button");
 
+    // Add smooth animation
     sidebar.toggleClass("control-sidebar-open");
+
+    // Add visual feedback to the button
+    if (sidebar.hasClass("control-sidebar-open")) {
+        button.css("background-color", "#f8f9fa");
+    } else {
+        button.css("background-color", "#fff");
+    }
 }

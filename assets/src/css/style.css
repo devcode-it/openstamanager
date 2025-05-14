@@ -1576,6 +1576,12 @@ div.tip {
 .control-sidebar{
     top: 0;
     padding-top: 50px;
+    transition: all 0.3s ease;
+    right: -200px;
+}
+
+.control-sidebar-open {
+    right: 0 !important;
 }
 
 .control-sidebar > h4 {
@@ -2329,6 +2335,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 .with-control-sidebar {
     margin-right: 200px;
+    transition: margin-right 0.3s ease;
+}
+
+section.content, .main-footer {
+    transition: margin-right 0.3s ease;
 }
 
 .control-sidebar-open {
@@ -2342,17 +2353,42 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     right: 0;
 }
 
+/* Stile per il pulsante della barra dei plugin - Sostituito da nuove classi alla fine del file */
 .control-sidebar-button{
     position: fixed;
     right: 0px;
-    padding: 10px;
-    top: 62px;
-    z-index: 50;
+    padding: 10px 12px;
+    z-index: 1050;
     cursor: pointer;
     background: #fff;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    border-left: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stili per il pulsante della barra dei plugin - Sostituiti da nuove classi alla fine del file */
+.control-sidebar-button:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.control-sidebar-button i {
+    color: #3c8dbc;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.control-sidebar-button:hover i {
+    color: #2c6f9d;
+}
+
+.control-sidebar-button.with-control-sidebar {
+    background-color: #f8f9fa;
 }
 
 .dropdown-menu {
@@ -2463,6 +2499,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
 
 .fc-event {
     opacity:1 !important;
+}
+
+/* Spostamento breadcrumb per evitare sovrapposizione con l'indicatore del plugin sidebar */
+.breadcrumb.float-sm-right {
+    padding-right: 50px; /* Aggiunto spazio a destra per evitare sovrapposizione con l'indicatore del plugin sidebar */
 }
 
 /* Improved styling for unpaid items and open activities */
@@ -2766,4 +2807,76 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     margin-bottom: 10px;
     border-left: 4px solid #ffc107; /* Colore più intenso che si abbina al giallo */
     border-radius: 0 4px 4px 0;
+}
+
+/* Stili migliorati per la barra dei plugin */
+.control-sidebar-button {
+    position: fixed;
+    right: 0px;
+    padding: 12px 14px;
+    top: 120px; /* Posizionato sotto la barra dei pulsanti */
+    z-index: 1050; /* Aumentato il z-index per assicurarsi che sia sopra i pulsanti */
+    cursor: pointer;
+    background: #fff;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    border-left: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-sidebar-button i {
+    font-size: 16px;
+    color: #3c8dbc;
+}
+
+.control-sidebar-enhanced {
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    border-left: 1px solid #f0f0f0;
+}
+
+.plugin-header {
+    padding: 15px 15px 12px;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.plugin-header i {
+    margin-right: 8px;
+    color: #3c8dbc;
+}
+
+.plugin-tabs {
+    padding-top: 10px;
+}
+
+.plugin-tab-item {
+    margin-bottom: 2px;
+}
+
+.plugin-tab-link {
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    padding: 10px 15px;
+}
+
+.plugin-tab-text {
+    font-weight: 500;
+}
+
+.plugin-tab-badge {
+    margin-left: 5px;
+    transition: all 0.2s ease;
+}
+
+.plugin-tab-badge-light {
+    margin-left: 5px;
+    background-color: rgba(255,255,255,0.3);
+    transition: all 0.2s ease;
 }

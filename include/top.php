@@ -557,13 +557,15 @@ if (Auth::check()) {
     if (($in_editor || $in_controller) && !$isInstallation) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
-        <div class="control-sidebar-button"><i class="fa fa-chevron-left"></i></div>
-        <aside class="control-sidebar control-sidebar-light">
-            <h4><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
-            <ul class="nav nav-tabs nav-pills nav-stacked">
-                <li data-toggle="control-sidebar" class="active btn-default nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#tab_0">
-                        '.$structure->getTranslation('title').'
+        <div class="control-sidebar-button" title="'.tr('Plugin').'">
+            <i class="fa fa-chevron-left"></i>
+        </div>
+        <aside class="control-sidebar control-sidebar-light control-sidebar-enhanced">
+            <h4 class="plugin-header"><i class="fa fa-plug"></i> '.tr('Plugin').'</h4>
+            <ul class="nav nav-tabs nav-pills nav-stacked plugin-tabs">
+                <li data-toggle="control-sidebar" class="active btn-default nav-item plugin-tab-item">
+                    <a class="nav-link active plugin-tab-link" data-toggle="tab" href="#tab_0">
+                        <span class="plugin-tab-text">'.$structure->getTranslation('title').'</span>
                     </a>
                 </li>';
 
@@ -585,10 +587,10 @@ if (Auth::check()) {
             }
 
             echo '
-                        <li data-toggle="control-sidebar" class="btn-default nav-item" >
-                            <a class="nav-link" data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
-                                '.$plugin['title'].'
-                                <span class="right badge badge-danger">'.($count > 0 ? $count : '').'</span>
+                        <li data-toggle="control-sidebar" class="btn-default nav-item plugin-tab-item">
+                            <a class="nav-link plugin-tab-link" data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                                <span class="plugin-tab-text">'.$plugin['title'].'</span>
+                                <span class="right badge badge-danger plugin-tab-badge">'.($count > 0 ? $count : '').'</span>
                             </a>
                         </li>';
         }
@@ -599,10 +601,10 @@ if (Auth::check()) {
                 $notes = $structure->recordNotes($id_record);
 
                 echo '
-                            <li data-toggle="control-sidebar" class="btn-default nav-item">
-                                <a class="bg-info nav-link" data-toggle="tab" href="#tab_note" id="link-tab_note">
-                                    '.tr('Note interne').'
-                                    <span class="badge pull-right">'.($notes->count() ?: '').'</span>
+                            <li data-toggle="control-sidebar" class="btn-default nav-item plugin-tab-item">
+                                <a class="bg-info nav-link plugin-tab-link" data-toggle="tab" href="#tab_note" id="link-tab_note">
+                                    <span class="plugin-tab-text">'.tr('Note interne').'</span>
+                                    <span class="badge pull-right plugin-tab-badge-light">'.($notes->count() ?: '').'</span>
                                 </a>
                             </li>';
             }
@@ -613,11 +615,10 @@ if (Auth::check()) {
                 $checklists_total = $structure->recordChecks($id_record)->where('is_titolo', 0);
 
                 echo '
-                    <li data-toggle="control-sidebar" class="btn-default nav-item">
-                        <a class="bg-info nav-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
-                            '.tr('Checklist')
-                            .($checklists_total ? ' <span class="badge pull-right">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '')
-                            .'
+                    <li data-toggle="control-sidebar" class="btn-default nav-item plugin-tab-item">
+                        <a class="bg-info nav-link plugin-tab-link" data-toggle="tab" href="#tab_checks" id="link-tab_checks">
+                            <span class="plugin-tab-text">'.tr('Checklist').'</span>
+                            '.($checklists_total ? ' <span class="badge pull-right plugin-tab-badge-light">'.$checklists_unchecked->count().tr(' / ').$checklists_total->count().'</span>' : '').'
                         </a>
                     </li>';
             }
@@ -625,9 +626,9 @@ if (Auth::check()) {
             // Tab per le informazioni sulle operazioni
             if (Auth::admin()) {
                 echo '
-                            <li data-toggle="control-sidebar" class="btn-default nav-item">
-                                <a class="bg-info nav-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
-                                    '.tr('Info').'
+                            <li data-toggle="control-sidebar" class="btn-default nav-item plugin-tab-item">
+                                <a class="bg-info nav-link plugin-tab-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
+                                    <span class="plugin-tab-text">'.tr('Info').'</span>
                                 </a>
                             </li>';
             }

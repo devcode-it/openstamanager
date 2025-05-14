@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Module;
 use Models\Upload;
 
 $id_allegati = (array) json_decode(filter('id_allegati'));
@@ -37,13 +38,13 @@ if (sizeof($id_allegati) == 1) {
             {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->name.'" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "'.$allegato->category.'", "disabled": "'.intval(in_array($allegato->category, ['Fattura Elettronica'])).'" ]}
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "ajax-source": "categorie-files", "value": "'.$allegato->id_category.'", "disabled": "'.intval(in_array($allegato->categoria->name, ['Fattura Elettronica'])).'", "icon-after": "add|'.Module::where('name', 'Categorie file')->first()->id.'" ]}
         </div>';
 } else {
     $allegato = Upload::find($id_allegati[0]);
     echo '
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "" ]}
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "ajax-source": "categorie-files", "value": "", "icon-after": "add|'.Module::where('name', 'Categorie file')->first()->id.'" ]}
         </div>';
 }
 echo '

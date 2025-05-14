@@ -138,3 +138,13 @@ foreach ($conti_speciali_livello3 as $conto_livello3) {
         }
     }
 }
+
+// Creazione record categorie allegati
+$categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `category`) AS `category` FROM `zz_files` ORDER BY `category`');
+$categories = array_clean(array_column($categories, 'category'));
+foreach ($categories as $categoria) {
+    $dbo->insert('zz_files_categories', ['name' => $categoria]);
+    $id = $dbo->lastInsertedId();
+    $dbo->query('UPDATE `zz_files` SET `id_category` = '.$id.' WHERE `category` = '.prepare($categoria));
+}
+$dbo->query('ALTER TABLE `zz_files` DROP `category`'); 

@@ -48,6 +48,7 @@ function initGestioneAllegati(gestione) {
         id_module: gestione.data('id_module'),
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
+        id_category: gestione.data('id_category')
     }).toString();
 
     let dragdrop = new Dropzone(dropzone_id, {
@@ -97,40 +98,6 @@ function modificaCategoriaAllegati(gestione, pulsanteModifica) {
 }
 
 /**
- * Funzione per salvare le modifiche effettuate su una categoria di allegati.
- * @param gestione
- * @param pulsanteSalva
- */
-function salvaCategoriaAllegati(gestione, pulsanteSalva) {
-    const categoria = $(pulsanteSalva).parent().parent();
-
-    const nome = categoria.find(".box-title");
-    const inputNome = categoria.find(".category-name");
-
-    mostraCaricamentoAllegati(gestione);
-
-    $.ajax({
-        url: globals.rootdir + "/actions.php",
-        cache: false,
-        type: "POST",
-        data: {
-            op: "modifica-categoria-allegato",
-            id_module: gestione.data('id_module'),
-            id_plugin: gestione.data('id_plugin'),
-            id_record: gestione.data('id_record'),
-            category: nome.text(),
-            name: inputNome.val(),
-        },
-        success: function (data) {
-            ricaricaAllegati(gestione);
-        },
-        error: function (gestione) {
-            ricaricaAllegati(gestione);
-        }
-    });
-}
-
-/**
  * Funzione per caricare un nuovo allegato.
  * @param gestione
  */
@@ -176,6 +143,7 @@ function ricaricaAllegati(gestione) {
         id_module: gestione.data('id_module'),
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
+        id_category: gestione.data('id_category')
     }).toString();
 
     $(id).load(globals.rootdir + "/ajax.php?" + params, function () {
@@ -294,35 +262,4 @@ function rimuoviAllegato(button) {
                 ricaricaAllegati(gestione);
             });
     }).catch(swal.noop);
-}
-
-function impostaCategorieAllegatiDisponibili(gestione, categorie) {
-    // Disabilitazione per rimozione input in aggiunta
-    return;
-
-    const id = "#" + gestione.attr('id');
-    const input = $("#modifica-allegato #categoria_allegato")[0];
-
-    autocomplete({
-        minLength: 0,
-        input: input,
-        emptyMsg: globals.translations.noResults,
-        fetch: function (text, update) {
-            text = text.toLowerCase();
-            const suggestions = categorie.filter(n => n.toLowerCase().startsWith(text));
-
-            // Trasformazione risultati in formato leggibile
-            const results = suggestions.map(function (result) {
-                return {
-                    label: result,
-                    value: result
-                }
-            });
-
-            update(results);
-        },
-        onSelect: function (item) {
-            input.value = item.label;
-        },
-    });
 }

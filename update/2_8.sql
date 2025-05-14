@@ -450,3 +450,26 @@ HAVING
     2=2
 ORDER BY 
     `co_contratti`.`data_bozza` DESC" WHERE `name` = 'Contratti';
+
+-- Nuovo modulo "Categorie file"
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Categorie file', 'categorie_files', 'SELECT |select| FROM `zz_files_categories` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2', '', 'fa fa-circle-o', '2.8', '2.8', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Tabelle'), '1', '1', '1', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', @id_module, 'Categorie file', 'Categorie file'),
+('2', @id_module, 'Categorie file', 'Categorie file');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+(@id_module, 'Descrizione', 'zz_files_categories.name', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(@id_module, 'id', '`zz_files_categories`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id');
+
+CREATE TABLE `zz_files_categories` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `deleted_at` TIMESTAMP NULL , PRIMARY KEY (`id`));
+ALTER TABLE `zz_files` ADD `id_category` INT NULL AFTER `category`;

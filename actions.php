@@ -123,7 +123,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
         if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
             $upload = Uploads::upload($_FILES['file'], [
                 'name' => filter('nome_allegato'),
-                'category' => filter('categoria'),
+                'id_category' => filter('id_category') ?: null,
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
                 'id_record' => $id_record,
@@ -223,12 +223,12 @@ elseif (filter('op') == 'modifica-allegato') {
     if (sizeof($id_allegati) == 1) {
         $upload = Upload::find($id_allegati[0]);
         $upload->name = post('nome_allegato');
-        $upload->category = post('categoria_allegato');
+        $upload->id_category = post('categoria_allegato') ?: null;
         $upload->save();
     } else {
         foreach ($id_allegati as $id_allegato) {
             $upload = Upload::find($id_allegato);
-            $upload->category = post('categoria_allegato');
+            $upload->id_category = post('categoria_allegato') ?: null;
             $upload->save();
         }
     }

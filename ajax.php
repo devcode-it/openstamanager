@@ -21,6 +21,7 @@
 include_once __DIR__.'/core.php';
 
 use Models\Hook;
+use Modules\CategorieFiles\Categoria;
 
 switch (filter('op')) {
     // Imposta un valore ad un array di $_SESSION
@@ -68,7 +69,8 @@ switch (filter('op')) {
         break;
 
     case 'list_attachments':
-        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}';
+        $category = get('id_category') ? Categoria::find(get('id_category'))->name : null;
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "category": "'.$category.'" )}';
 
         break;
 

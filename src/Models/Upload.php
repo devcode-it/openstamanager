@@ -22,6 +22,7 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\CategorieFiles\Categoria;
 use Modules\FileAdapters\FileAdapter;
 use Modules\FileAdapters\OSMFilesystem;
 use Intervention\Image\ImageManager;
@@ -89,12 +90,16 @@ class Upload extends Model
             $name = $data['name'] ?? ($source['name'] ?? $source);
         }
 
+        if ($category) {
+            $id_category = Categoria::where('name', '=', $category)->first()->id;
+        }
+
         $original_name = $source['name'] ?? $name;
-        $category = $data['category'] ?? $category;
+        $id_category = $data['id_category'] ?? $id_category;
 
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
-        $model->category = $category;
+        $model->id_category = $id_category;
 
         // Nome di origine dell'allegato
         $original_name = !empty($data['original_name']) ? $data['original_name'] : $original_name; // Campo "original_name" variato in modo dinamico
@@ -423,5 +428,10 @@ class Upload extends Model
 
         $img->scale(100, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'id_category');
     }
 }

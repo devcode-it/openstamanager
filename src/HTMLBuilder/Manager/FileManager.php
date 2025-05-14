@@ -21,6 +21,7 @@
 namespace HTMLBuilder\Manager;
 
 use Models\Upload;
+use Modules\CategorieFiles\Categoria;
 use Util\FileSystem;
 
 /**
@@ -45,8 +46,10 @@ class FileManager implements ManagerInterface
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
+        $id_categoria = $options['category'] ? Categoria::where('name', $options['category'])->first()->id : null;
+
         // ID del form
-        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
+        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'].($id_categoria ? '_'.$id_categoria : '');
 
         if (ini_get('upload_max_filesize') < ini_get('post_max_size')) {
             $upload_max_filesize = ini_get('upload_max_filesize');
@@ -62,7 +65,7 @@ class FileManager implements ManagerInterface
 
         // Codice HTML
         $result = '
-<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'">';
+<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'" data-id_category="'.$id_categoria.'">';
 
         if (!empty($options['showcard'])) {
             $result .= '
@@ -75,20 +78,28 @@ class FileManager implements ManagerInterface
 
         $count = 0;
 
-        $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
+        $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL');
+
+        // Limitare alle categorie specificate
+        if (!empty($id_categoria)) {
+            $where .= ' AND `id_category` = '.prepare($id_categoria);
+        }
 
         // Categorie
-        $categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `category`) AS `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
+        $categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `id_category`) AS `id_category` FROM `zz_files` LEFT JOIN `zz_files_categories` ON `zz_files`.`id_category` = `zz_files_categories`.`id` WHERE '.$where.' ORDER BY `zz_files_categories`.`name`');
+        $categories = array_column($categories, 'id_category');
         foreach ($categories as $category) {
-            $category = $category['category'];
+            $categoria = $category ? Categoria::find($category)->name : 'Generale';
 
-            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE BINARY `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
+            $rs = $dbo->fetchArray('SELECT `zz_files`.* FROM `zz_files` WHERE BINARY `id_category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
 
             if (!empty($rs)) {
                 $result .= '
 <div class="card card-info">
     <div class="card-header with-border">
-        <h3 class="card-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
+        <h3 class="card-title">'.tr('_CATEGORY_', [
+            '_CATEGORY_' => $categoria
+        ]).' <span class="badge">'.count($rs).'</span></h3>
 
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -102,8 +113,8 @@ class FileManager implements ManagerInterface
         <tr>
             <th scope="col" width="5%" class="text-center"></th>
             <th scope="col" >'.tr('Nome').'</th>
-            <th scope="col" width="15%" >'.tr('Data').'</th>
-            <th scope="col" width="10%" class="text-center">#</th>
+            <th scope="col" class="text-center" width="18%" >'.tr('Data').'</th>
+            <th scope="col" width="18%" class="text-right"></th>
         </tr>
 	  </thead>
 	  <tbody class="files">';
@@ -136,9 +147,9 @@ class FileManager implements ManagerInterface
                 <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $file->filename) || (setting('Filigrana stampe') == $file->filename)) ? '<span class="tip" title="'.tr('Logo caricato correttamente').'." >✔️</span>' : '').'</small>'.'
             </td>
 
-            <td>'.timestampFormat($file['created_at']).'</td>
+            <td class="text-center">'.timestampFormat($file['created_at']).'</td>
 
-            <td class="text-center">
+            <td class="text-right">
                 <button type="button" class="btn btn-xs btn-primary" onclick="scaricaAllegato(this)">
                     <i class="fa fa-download"></i>
                 </button>';
@@ -233,8 +244,6 @@ class FileManager implements ManagerInterface
 </div>';
         }
 
-        $source = array_clean(array_column($categories, 'category'));
-
         $result .= '
 <script>$(document).ready(init)</script>
 
@@ -243,26 +252,6 @@ $(document).ready(function() {
     const container = $("#'.$attachment_id.'");
 
     initGestioneAllegati(container);
-    impostaCategorieAllegatiDisponibili(container, '.json_encode($source).');
-});
-
-// Modifica categoria
-$("#'.$attachment_id.' .category-edit").click(function() {
-    const container = $(this).closest(".gestione-allegati");
-
-    modificaCategoriaAllegati(container, this);
-});
-
-$("#'.$attachment_id.' .category-save").click(function() {
-    const container = $(this).closest(".gestione-allegati");
-
-    salvaCategoriaAllegati(container, this);
-});
-
-$("#'.$attachment_id.' .category-cancel").click(function() {
-    const container = $(this).closest(".gestione-allegati");
-
-    ricaricaAllegati(gestione);
 });
 
 // Upload

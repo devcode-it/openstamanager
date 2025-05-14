@@ -260,15 +260,15 @@ if (filter('action') == 'do_update') {
                 <div class="card card-body bg-light mb-3">
                     <div class="row" id="updates-list">';
 
-        // Dividi gli aggiornamenti in 3 colonne
+        // Dividi gli aggiornamenti in 4 colonne
         $total_updates = count($updates);
-        $updates_per_column = ceil($total_updates / 3);
+        $updates_per_column = ceil($total_updates / 4);
         $column_updates = array_chunk($updates, $updates_per_column);
 
         // Per ogni colonna
         for ($col = 0; $col < count($column_updates); $col++) {
             $updates_html .= '
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <ul class="list-unstyled mb-0">';
 
             // Per ogni aggiornamento nella colonna

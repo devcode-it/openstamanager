@@ -168,6 +168,24 @@ echo '
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$", "class": "unblockable" ]}
+                </div>
+
+                <div class="col-md-3 rinnovo-field" <?php echo $record['rinnovabile'] ? '' : 'style="display:none;"'; ?>>
+                    {[ "type": "checkbox", "label": "<?php echo tr('Tacito rinnovo'); ?>", "name": "rinnovo_automatico", "help": "<?php echo tr('Il contratto può essere rinnovato senza chiedere conferma al cliente alla scadenza, questa impostazione non implica nessun automatismo di rinnovo.'); ?>", "value": "$rinnovo_automatico$", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "class": "unblockable" ]}
+                </div>
+
+                <div class="col-md-3 rinnovo-field" <?php echo $record['rinnovabile'] ? '' : 'style="display:none;"'; ?>>
+                    {[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "2", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "class": "unblockable" ]}
+                </div>
+
+                <div class="col-md-3 rinnovo-field" <?php echo $record['rinnovabile'] ? '' : 'style="display:none;"'; ?>>
+                    {[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "2", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr('Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato.'); ?>", "class": "unblockable" ]}
+                </div>
+            </div>
+
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$", "extra": "rows='5'" ]}
@@ -681,5 +699,21 @@ $("#id_categoria").change(function() {
     updateSelectOption("id_categoria", $(this).val());
 
     $("#id_sottocategoria").val(null).trigger("change");
+});
+
+input("rinnovabile").on("change", function() {
+    const disabled = parseInt($(this).val()) === 0;
+
+    // Disabilita i campi
+    input("giorni_preavviso_rinnovo").setDisabled(disabled);
+    input("ore_preavviso_rinnovo").setDisabled(disabled);
+    input("rinnovo_automatico").setDisabled(disabled);
+
+    // Mostra/nascondi i campi
+    if (disabled) {
+        $(".rinnovo-field").hide();
+    } else {
+        $(".rinnovo-field").show();
+    }
 });
 </script>';

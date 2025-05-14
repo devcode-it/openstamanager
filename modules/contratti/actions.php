@@ -111,6 +111,12 @@ switch (post('op')) {
             $contratto->codice_cig = post('codice_cig');
             $contratto->codice_cup = post('codice_cup');
 
+            // Salvataggio informazioni sul rinnovo
+            $contratto->rinnovabile = post('rinnovabile');
+            $contratto->rinnovo_automatico = post('rinnovo_automatico');
+            $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+            $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
+
             $contratto->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
             $contratto->idtipointervento = post('idtipointervento');
 
@@ -152,16 +158,6 @@ switch (post('op')) {
 
             flash()->info(tr('Contratto modificato correttamente!'));
         }
-
-        break;
-
-    case 'update_rinnovo':
-        $contratto->rinnovabile = post('rinnovabile');
-        $contratto->rinnovo_automatico = post('rinnovo_automatico');
-        $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
-        $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
-        $contratto->save();
-        flash()->info(tr('Contratto modificato correttamente!'));
 
         break;
 

@@ -740,12 +740,38 @@ if (!empty($messages['info'])) {
 
 // Errori - non mostrare nella pagina di login
 if (!empty($messages['error']) && (Auth::check() || $pageTitle != tr('Login'))) {
+    // Verifica se l'utente è un amministratore
+    $is_admin = Auth::check() && Auth::admin();
+
     foreach ($messages['error'] as $value) {
-        echo '
-							<div class="alert alert-danger push">
-                                <h4><i class="fa fa fa-ban"></i> '.tr('Errore').'</h4>
-                                '.$value.'
-                            </div>';
+        // Rimuovi il codice errore dal messaggio
+        $value = preg_replace('/\[uid: ([a-z0-9]+)\]/i', '', $value);
+
+        if ($is_admin) {
+            // Visualizzazione migliorata per amministratori
+            echo '
+                <div class="alert alert-danger shadow-sm border-left border-danger border-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-exclamation-circle text-danger fa-2x mr-3"></i>
+                        <div>
+                            <h4 class="mb-1"><i class="fa fa-times-circle mr-2"></i>'.tr('Errore').'</h4>
+                            '.$value.'
+                        </div>
+                    </div>
+                </div>';
+        } else {
+            // Visualizzazione semplificata per utenti normali
+            echo '
+                <div class="alert alert-danger shadow-sm border-left border-danger border-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-exclamation-triangle text-danger fa-2x mr-3"></i>
+                        <div>
+                            <h4 class="mb-1"><i class="fa fa-times-circle mr-2"></i>'.tr('Errore').'</h4>
+                            <p class="mb-0">'.tr('Si è verificato un errore').'. '.tr("Contattare l'amministratore di sistema").'.</p>
+                        </div>
+                    </div>
+                </div>';
+        }
     }
 }
 
@@ -753,10 +779,15 @@ if (!empty($messages['error']) && (Auth::check() || $pageTitle != tr('Login'))) 
 if (!empty($messages['warning'])) {
     foreach ($messages['warning'] as $value) {
         echo '
-							<div class="alert alert-warning push">
-                                <h4><i class="fa fa-warning"></i> '.tr('Attenzione').'</h4>
-                                '.$value.'
-                            </div>';
+            <div class="alert alert-warning shadow-sm border-left border-warning border-3">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-warning text-warning fa-2x mr-3"></i>
+                    <div>
+                        <h4 class="mb-1">'.tr('Attenzione').'</h4>
+                        '.$value.'
+                    </div>
+                </div>
+            </div>';
     }
 }
 

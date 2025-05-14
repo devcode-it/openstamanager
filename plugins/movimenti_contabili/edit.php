@@ -37,27 +37,34 @@ if (empty($_GET['visualizza_movimenti'])) {
 } else {
     $modulo = Module::find($id_module)->getTranslation('title');
     if ($modulo == 'Anagrafiche') {
-        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_anagrafica='.prepare($id_record).' GROUP BY idmastrino, idconto ORDER BY data, idmastrino');
+        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_anagrafica='.prepare($id_record).' GROUP BY co_movimenti.id ORDER BY data, idmastrino');
     } else {
-        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento='.prepare($id_record).' GROUP BY idmastrino, idconto ORDER BY data, idmastrino');
+        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento='.prepare($id_record).' GROUP BY co_movimenti.id ORDER BY data, idmastrino');
     }
 
     $idmastrini_processati = [-1];
 
     if (!empty($movimenti)) {
         echo '
-        <table class="table table-hover table-sm table-bordered table-striped" style="font-size:11pt;">
-            <thead>
-                <tr>
-                    <th width="160">'.tr('Data').'</th>
-                    <th>'.tr('Conto').'</th>
-                    <th width="170">'.tr('Dare').'</th>
-                    <th width="170">'.tr('Avere').'</th>
-                    <th width="170">'.tr('Scalare').'</th>
-                </tr>
-            </thead>
+        <form action="" method="post" role="form">
+            <input type="hidden" name="id_module" value="'.$id_module.'">
+            <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+            <input type="hidden" name="id_record" value="'.$id_record.'">
+            <input type="hidden" name="backto" value="record-edit">
+            <input type="hidden" name="op" value="update_conti_movimenti">
+            
+            <table class="table table-hover table-sm table-bordered table-striped" style="font-size:11pt;">
+                <thead>
+                    <tr>
+                        <th width="160">'.tr('Data').'</th>
+                        <th>'.tr('Conto').'</th>
+                        <th width="170">'.tr('Dare').'</th>
+                        <th width="170">'.tr('Avere').'</th>
+                        <th width="170">'.tr('Scalare').'</th>
+                    </tr>
+                </thead>
 
-            <tbody>';
+                <tbody>';
 
         foreach ($movimenti as $movimento) {
             $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['iddocumento']) : null;
@@ -70,12 +77,21 @@ if (empty($_GET['visualizza_movimenti'])) {
 
             echo '
                     <tr>
-                        <td class="text-center">'.Translator::dateToLocale($movimento['data']).'</td>
-                        <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
-                        <td class="text-right">'.($movimento['totale'] > 0 ? moneyFormat(abs($movimento['totale'])) : '').'</td>
-                        <td class="text-right">'.($movimento['totale'] < 0 ? moneyFormat(abs($movimento['totale'])) : '').'</td>
-                        <td class="text-right">'.moneyFormat($scalare).'</td>
-                    </tr>';
+                            <td class="text-center">'.Translator::dateToLocale($movimento['data']).'</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        {[ "type": "select", "name": "idconto['.$movimento['id'].']", "required": 1, "value": "'.$movimento['idconto'].'", "ajax-source": "conti", "class": "unblockable" ]}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right">'.($movimento['totale'] > 0 ? moneyFormat(abs($movimento['totale'])) : '').'</td>
+                            <td class="text-right">'.($movimento['totale'] < 0 ? moneyFormat(abs($movimento['totale'])) : '').'</td>
+                            <td class="text-right">'.moneyFormat($scalare).'</td>
+                        </tr>';
 
             $idmastrini_processati[] = $movimento['idmastrino'];
         }
@@ -96,7 +112,16 @@ if (empty($_GET['visualizza_movimenti'])) {
                 echo '
                         <tr>
                             <td class="text-center">'.Translator::dateToLocale($altro_movimento['data']).'</td>
-                            <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        {[ "type": "select", "name": "idconto['.$altro_movimento['id'].']", "required": 1, "value": "'.$altro_movimento['idconto'].'", "ajax-source": "conti", "class": "unblockable" ]}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="text-right">'.($altro_movimento['totale'] > 0 ? moneyFormat(abs($altro_movimento['totale'])) : '').'</td>
                             <td class="text-right">'.($altro_movimento['totale'] < 0 ? moneyFormat(abs($altro_movimento['totale'])) : '').'</td>
                             <td class="text-right">'.moneyFormat($scalare).'</td>
@@ -104,8 +129,16 @@ if (empty($_GET['visualizza_movimenti'])) {
             }
         }
         echo '
-            </tbody>
-        </table>';
+                </tbody>
+            </table>
+            
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-check"></i> '.tr('Salva').'</button>
+                </div>
+            </div>
+        </form>';
     } else {
         echo '
         <h3 class="text-center">

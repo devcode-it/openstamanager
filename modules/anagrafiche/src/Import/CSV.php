@@ -32,6 +32,11 @@ use Modules\Anagrafiche\Tipo;
  */
 class CSV extends CSVImporter
 {
+    /**
+     * Definisce i campi disponibili per l'importazione.
+     *
+     * @return array
+     */
     public function getAvailableFields()
     {
         return [
@@ -52,6 +57,7 @@ class CSV extends CSVImporter
                     'Denominazione',
                     'Ragione sociale',
                 ],
+                'required' => true,
             ],
             [
                 'field' => 'nome',
@@ -89,6 +95,7 @@ class CSV extends CSVImporter
             [
                 'field' => 'telefono',
                 'label' => 'Telefono',
+                'required' => false, // Almeno uno tra telefono e partita IVA deve essere presente
             ],
             [
                 'field' => 'indirizzo',
@@ -160,6 +167,7 @@ class CSV extends CSVImporter
                     'TAX ID',
                     'Partita IVA',
                 ],
+                'required' => false, // Almeno uno tra telefono e partita IVA deve essere presente
             ],
             [
                 'field' => 'codiceiban',
@@ -207,6 +215,7 @@ class CSV extends CSVImporter
                     'tipo',
                     'idtipo',
                 ],
+                'required' => true,
             ],
             [
                 'field' => 'tipo',
@@ -214,6 +223,7 @@ class CSV extends CSVImporter
                 'names' => [
                     'Tipologia',
                 ],
+                'required' => true,
             ],
             [
                 'field' => 'split_payment',
@@ -235,27 +245,49 @@ class CSV extends CSVImporter
         ];
     }
 
+    /**
+     * Importa un record nel database.
+     *
+     * @param array $record Record da importare
+     * @param bool $update_record Se true, aggiorna i record esistenti
+     * @param bool $add_record Se true, aggiunge nuovi record
+     * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
+     */
     public function import($record, $update_record = true, $add_record = true)
     {
+        // Validazione dei campi obbligatori
+        if (empty($record['ragione_sociale'])) {
+            return false;
+        }
+
+        // Verifica che almeno uno tra telefono e partita IVA sia presente
+        if (empty($record['telefono']) && empty($record['piva'])) {
+            return false;
+        }
+
         $database = database();
         $primary_key = $this->getPrimaryKey();
         $id_azienda = setting('Azienda predefinita');
 
         // Compilo la ragione sociale se sono valorizzati cognome e nome
-        if (!$record['ragione_sociale'] && ($record['cognome'] && $record['nome'])) {
-            $record['ragione_sociale'] = $record['cognome'].' '.$record['nome'];
+        if (empty($record['ragione_sociale']) && (!empty($record['cognome']) && !empty($record['nome']))) {
+            $record['ragione_sociale'] = trim($record['cognome'].' '.$record['nome']);
         }
-        unset($record['cognome']);
-        unset($record['nome']);
+        
+        // Rimuovo i campi già utilizzati per la ragione sociale
+        $nome = $record['nome'] ?? '';
+        $cognome = $record['cognome'] ?? '';
+        unset($record['nome'], $record['cognome']);
 
-        // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
-        if (!empty($primary_key)) {
+        // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key
+        $anagrafica = null;
+        if (!empty($primary_key) && !empty($record[$primary_key])) {
             $anagrafica = Anagrafica::where($primary_key, '=', trim((string) $record[$primary_key]))->first();
         }
 
         // Controllo se creare o aggiornare il record
         if (($anagrafica && !$update_record) || (!$anagrafica && !$add_record)) {
-            return;
+            return null;
         }
 
         // Se non trovo nessuna anagrafica corrispondente, allora la creo
@@ -263,62 +295,185 @@ class CSV extends CSVImporter
             $anagrafica = Anagrafica::build($record['ragione_sociale']);
         }
 
-        // Individuazione del tipo dell'anagrafica
-        $tipologie = [];
-        if (!empty($record['tipologia'])) {
-            $tipi_selezionati = explode(',', (string) $record['tipologia']);
-
-            foreach ($tipi_selezionati as $tipo) {
-                $id_tipo = Tipo::where('name', $tipo)->first()->id;
-
-                // Creo il tipo anagrafica se non esiste
-                if (empty($id_tipo)) {
-                    $id_tipo = database()->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, `1`)');
-                    $database->insert('an_tipianagrafiche_lang', [
-                        'id_lang' => \Models\Locale::getDefault()->id,
-                        'id_record' => $id_tipo,
-                        'name' => $tipo,
-                    ])['id'];
-
-                    $id_tipo = Tipo::where('name', $tipo)->first()->id;
-                }
-
-                $tipologie[] = $id_tipo;
-            }
+        // Impedisco di aggiornare l'anagrafica Azienda
+        if ($anagrafica->id == $id_azienda) {
+            return false;
         }
+
+        // Gestione delle tipologie
+        $tipologie = $this->processaTipologie($record);
         unset($record['tipologia']);
 
+        // Gestione del tipo
         $tipo = '';
         if (!empty($record['tipo'])) {
             $tipo = $record['tipo'];
         }
         unset($record['tipo']);
 
-        // Fix per campi con contenuti derivati da query implicite
+        // Gestione della nazione
         if (!empty($record['id_nazione'])) {
             $record['id_nazione'] = (new Nazione())->getByField('title', $record['id_nazione'], \Models\Locale::getPredefined()->id);
         } else {
             unset($record['id_nazione']);
         }
 
-        // Creo il settore merceologico nel caso in cui non sia presente
-        $id_settore = '';
-        if (!empty($record['id_settore'])) {
-            $settore = $record['id_settore'];
-            $id_settore = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE LOWER(`title`) = LOWER('.prepare($settore).')');
+        // Gestione del settore merceologico
+        $id_settore = $this->processaSettore($record);
+        unset($record['id_settore']);
 
-            if (empty($id_settore)) {
-                $id_settore = database()->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
-                $database->insert('an_settori_lang', [
-                    'id_lang' => \Models\Locale::getDefault()->id,
-                    'id_record' => $id_settore,
-                    'title' => $settore,
-                ])['id'];
-            }
-            unset($record['id_settore']);
-        }
+        // Gestione dell'IBAN
+        $id_banca = $this->processaIBAN($record, $anagrafica);
+        unset($record['codiceiban']);
 
         // Separazione dei campi relativi alla sede legale
+        $dati_sede = $this->estraiDatiSede($record, $primary_key);
+
+        // Rimuovo la ragione sociale dal record per evitare di sovrascriverla
+        $ragione_sociale = $record['ragione_sociale'];
+        unset($record['ragione_sociale']);
+
+        // Aggiorno l'anagrafica
+        $anagrafica->fill($record);
+        
+        // Aggiorno le tipologie solo se sono state passate nel file
+        if (!empty($tipologie)) {
+            $anagrafica->tipologie = $tipologie;
+        }
+        
+        $anagrafica->id_settore = $id_settore;
+        $anagrafica->tipo = $tipo;
+        $anagrafica->save();
+
+        // Aggiorno la sede legale
+        $sede = $anagrafica->sedeLegale;
+        $sede->fill($dati_sede);
+        $sede->save();
+
+        return true;
+    }
+
+    /**
+     * Processa le tipologie dell'anagrafica.
+     *
+     * @param array $record Record da processare
+     * @return array Array di ID delle tipologie
+     */
+    private function processaTipologie($record)
+    {
+        if (empty($record['tipologia'])) {
+            return [];
+        }
+
+        $database = database();
+        $tipologie = [];
+        $tipi_selezionati = explode(',', (string) $record['tipologia']);
+
+        foreach ($tipi_selezionati as $tipo) {
+            $tipo = trim($tipo);
+            if (empty($tipo)) {
+                continue;
+            }
+
+            $tipo_obj = Tipo::where('name', $tipo)->first();
+            $id_tipo = $tipo_obj ? $tipo_obj->id : null;
+
+            // Creo il tipo anagrafica se non esiste
+            if (empty($id_tipo)) {
+                $database->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, 1)');
+                $id_tipo = $database->lastInsertedID();
+                
+                $database->insert('an_tipianagrafiche_lang', [
+                    'id_lang' => \Models\Locale::getDefault()->id,
+                    'id_record' => $id_tipo,
+                    'name' => $tipo,
+                ]);
+            }
+
+            $tipologie[] = $id_tipo;
+        }
+
+        return $tipologie;
+    }
+
+    /**
+     * Processa il settore merceologico.
+     *
+     * @param array $record Record da processare
+     * @return string|null ID del settore merceologico
+     */
+    private function processaSettore($record)
+    {
+        if (empty($record['id_settore'])) {
+            return null;
+        }
+
+        $database = database();
+        $settore = trim($record['id_settore']);
+        
+        $result = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` 
+            LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` 
+            AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            WHERE LOWER(`title`) = LOWER('.prepare($settore).')');
+        
+        $id_settore = !empty($result) ? $result[0]['id'] : null;
+
+        if (empty($id_settore)) {
+            $database->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) 
+                VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
+            $id_settore = $database->lastInsertedID();
+            
+            $database->insert('an_settori_lang', [
+                'id_lang' => \Models\Locale::getDefault()->id,
+                'id_record' => $id_settore,
+                'title' => $settore,
+            ]);
+        }
+
+        return $id_settore;
+    }
+
+    /**
+     * Processa l'IBAN.
+     *
+     * @param array $record Record da processare
+     * @param Anagrafica $anagrafica Anagrafica associata
+     * @return string|null ID della banca
+     */
+    private function processaIBAN($record, $anagrafica)
+    {
+        if (empty($record['codiceiban'])) {
+            return null;
+        }
+
+        $database = database();
+        $iban = trim($record['codiceiban']);
+        
+        $result = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche` 
+            WHERE LOWER(`iban`) = LOWER('.prepare($iban).') 
+            AND `id_anagrafica` = '.$anagrafica->id.' 
+            AND deleted_at IS NULL');
+        
+        $id_banca = !empty($result) ? $result['id'] : null;
+
+        if (empty($id_banca)) {
+            $database->query('INSERT INTO `co_banche` (`iban`, `nome`, `id_anagrafica`) 
+                VALUES ('.prepare($iban).', "Banca da importazione '.addslashes($anagrafica->ragione_sociale).'", '.$anagrafica->id.')');
+            $id_banca = $database->lastInsertedID();
+        }
+
+        return $id_banca;
+    }
+
+    /**
+     * Estrae i dati della sede legale dal record.
+     *
+     * @param array $record Record da processare
+     * @param string $primary_key Chiave primaria
+     * @return array Dati della sede legale
+     */
+    private function estraiDatiSede(&$record, $primary_key)
+    {
         $campi_sede = [
             'indirizzo',
             'citta',
@@ -338,45 +493,20 @@ class CSV extends CSVImporter
 
         $dati_sede = [];
         foreach ($campi_sede as $field) {
-            if ($primary_key != $field) {
-                if (isset($record[$field])) {
-                    $dati_sede[$field] = trim((string) $record[$field]);
-                    unset($record[$field]);
-                }
+            if ($primary_key != $field && isset($record[$field])) {
+                $dati_sede[$field] = trim((string) $record[$field]);
+                unset($record[$field]);
             }
         }
 
-        // Impedisco di aggiornare l'anagrafica Azienda
-        if ($anagrafica->id == $id_azienda) {
-            return false;
-        }
-        unset($record['ragione_sociale']);
-
-        $id_banca = '';
-        if (!empty($record['codiceiban'])) {
-            $id_banca = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche` WHERE LOWER(`iban`) = LOWER('.prepare($record['codiceiban']).') AND `id_anagrafica` = '.$anagrafica->id.' AND deleted_at IS NULL');
-
-            if (empty($id_banca)) {
-                $id_banca = $database->query('INSERT INTO `co_banche` (`iban`, `nome`,`id_anagrafica`) VALUES ('.prepare($record['codiceiban']).', "Banca da importazione '.$anagrafica->ragione_sociale.'", '.$anagrafica->id.')');
-            }
-            unset($record['codiceiban']);
-        }
-
-        $anagrafica->fill($record);
-
-        // Aggiorno le tipologie solo se sono state passate nel file
-        if (!empty($tipologie)) {
-            $anagrafica->tipologie = $tipologie;
-        }
-        $anagrafica->id_settore = $id_settore;
-        $anagrafica->tipo = $tipo;
-        $anagrafica->save();
-
-        $sede = $anagrafica->sedeLegale;
-        $sede->fill($dati_sede);
-        $sede->save();
+        return $dati_sede;
     }
 
+    /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
     public static function getExample()
     {
         return [

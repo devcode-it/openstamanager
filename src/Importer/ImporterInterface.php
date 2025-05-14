@@ -67,7 +67,7 @@ interface ImporterInterface
     /**
      * Importa un sottoinsieme delle righe del documento nel gestionale.
      *
-     * @return int
+     * @return array Restituisce un array con il conteggio dei record importati e quelli con errori
      */
     public function importRows($offset, $length, $update_record, $add_record);
 
@@ -87,6 +87,36 @@ interface ImporterInterface
      * Imposta la chiave primaria selezionata dall'utente.
      */
     public function setPrimaryKey($field_key);
+
+    /**
+     * Verifica se un campo è obbligatorio.
+     *
+     * @param string $field_name Nome del campo
+     * @return bool
+     */
+    public function isFieldRequired($field_name);
+
+    /**
+     * Verifica se tutti i campi obbligatori sono stati mappati.
+     *
+     * @return bool
+     */
+    public function areRequiredFieldsMapped();
+
+    /**
+     * Restituisce i record che non sono stati importati a causa di errori.
+     *
+     * @return array
+     */
+    public function getFailedRecords();
+
+    /**
+     * Salva i record falliti in un file CSV.
+     *
+     * @param string $filepath Percorso del file in cui salvare i record falliti
+     * @return string Percorso del file salvato
+     */
+    public function saveFailedRecords($filepath);
 
     /**
      * Restituisce un esempio di dato importabile.

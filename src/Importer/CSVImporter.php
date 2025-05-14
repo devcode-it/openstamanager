@@ -34,6 +34,16 @@ abstract class CSVImporter implements ImporterInterface
     protected $column_associations;
     protected $primary_key;
 
+    /**
+     * Array per memorizzare i record che non sono stati importati a causa di errori.
+     */
+    protected $failed_records = [];
+
+    /**
+     * Array per memorizzare le righe originali che non sono state importate.
+     */
+    protected $failed_rows = [];
+
     public function __construct($file)
     {
         // Impostazione automatica per i caratteri di fine riga
@@ -95,15 +105,60 @@ abstract class CSVImporter implements ImporterInterface
     public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $rows = $this->getRows($offset, $length);
+        $imported_count = 0;
+        $failed_count = 0;
+
         foreach ($rows as $row) {
             // Interpretazione della riga come record
             $record = $this->getRecord($row);
 
+            // Verifica se tutti i campi obbligatori sono presenti
+            $missing_required_fields = [];
+            foreach ($this->getAvailableFields() as $field) {
+                if (isset($field['required']) && $field['required'] === true && array_key_exists($field['field'], $record)) {
+                    if (trim($record[$field['field']]) === '') {
+                        $missing_required_fields[] = $field['field'];
+                    }
+                }
+            }
+
+            // Caso speciale per anagrafiche: almeno uno tra telefono e partita IVA deve essere presente
+            $is_anagrafica_import = strpos(get_class($this), 'Anagrafiche') !== false;
+            if ($is_anagrafica_import) {
+                $telefono_present = !empty($record['telefono']);
+                $piva_present = !empty($record['piva']);
+
+                if (!$telefono_present && !$piva_present) {
+                    $missing_required_fields[] = 'telefono/piva';
+                }
+            }
+
+            // Se mancano campi obbligatori, aggiungi il record ai falliti
+            if (!empty($missing_required_fields)) {
+                $this->failed_records[] = $record;
+                $this->failed_rows[] = $row;
+                $failed_count++;
+                continue;
+            }
+
             // Importazione del record
-            $this->import($record, $update_record, $add_record);
+            $result = $this->import($record, $update_record, $add_record);
+
+            // Se l'importazione fallisce, aggiungi il record ai falliti
+            if ($result === false) {
+                $this->failed_records[] = $record;
+                $this->failed_rows[] = $row;
+                $failed_count++;
+            } else {
+                $imported_count++;
+            }
         }
 
-        return count($rows);
+        return [
+            'imported' => $imported_count,
+            'failed' => $failed_count,
+            'total' => count($rows)
+        ];
     }
 
     abstract public function import($record, $update_record, $add_record);
@@ -130,6 +185,114 @@ abstract class CSVImporter implements ImporterInterface
         }
 
         fclose($file);
+    }
+
+    /**
+     * Verifica se un campo è obbligatorio.
+     *
+     * @param string $field_name Nome del campo
+     * @return bool
+     */
+    public function isFieldRequired($field_name)
+    {
+        foreach ($this->getAvailableFields() as $field) {
+            if ($field['field'] === $field_name) {
+                return isset($field['required']) && $field['required'];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Verifica se tutti i campi obbligatori sono stati mappati.
+     *
+     * @return bool
+     */
+    public function areRequiredFieldsMapped()
+    {
+        $associations = $this->getColumnAssociations();
+        $mapped_fields = array_values($associations);
+
+        // Verifica campi obbligatori standard
+        foreach ($this->getAvailableFields() as $field) {
+            if (isset($field['required']) && $field['required'] === true) {
+                if (!in_array($field['field'], $mapped_fields)) {
+                    return false;
+                }
+            }
+        }
+
+        // Caso speciale per anagrafiche: almeno uno tra telefono e partita IVA deve essere mappato
+        $telefono_mapped = in_array('telefono', $mapped_fields);
+        $piva_mapped = in_array('piva', $mapped_fields);
+
+        // Se entrambi i campi sono marcati come required=false ma sono in realtà
+        // parte di una condizione OR (almeno uno dei due deve essere presente)
+        $fields = $this->getAvailableFields();
+        $has_telefono_field = false;
+        $has_piva_field = false;
+
+        foreach ($fields as $field) {
+            if ($field['field'] === 'telefono' && isset($field['required']) && $field['required'] === false) {
+                $has_telefono_field = true;
+            }
+            if ($field['field'] === 'piva' && isset($field['required']) && $field['required'] === false) {
+                $has_piva_field = true;
+            }
+        }
+
+        // Se entrambi i campi sono presenti con required=false, allora almeno uno deve essere mappato
+        if ($has_telefono_field && $has_piva_field && !$telefono_mapped && !$piva_mapped) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Restituisce i record che non sono stati importati a causa di errori.
+     *
+     * @return array
+     */
+    public function getFailedRecords()
+    {
+        return $this->failed_records;
+    }
+
+    /**
+     * Salva i record falliti in un file CSV.
+     *
+     * @param string $filepath Percorso del file in cui salvare i record falliti
+     * @return string Percorso del file salvato
+     */
+    public function saveFailedRecords($filepath)
+    {
+        if (empty($this->failed_rows)) {
+            return '';
+        }
+
+        // Crea la directory se non esiste
+        $dir = dirname($filepath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        // Scrivi l'intestazione
+        $header = $this->getHeader();
+        fputcsv($file, $header, ';');
+
+        // Scrivi le righe fallite
+        foreach ($this->failed_rows as $row) {
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        return $filepath;
     }
 
     /**

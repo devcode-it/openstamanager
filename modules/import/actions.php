@@ -49,14 +49,30 @@ switch (filter('op')) {
         $import_manager = $import->class;
 
         if (!empty($import_manager)) {
-            // Generazione percorso
-            $file = $modulo_import->upload_directory.'/example-'.strtolower((string) $import->getTranslation('title')).'.csv';
-            $filepath = base_dir().'/'.$file;
+            try {
+                // Generazione percorso
+                $file = $modulo_import->upload_directory.'/example-'.strtolower((string) $import->getTranslation('title')).'.csv';
+                $filepath = base_dir().'/'.$file;
 
-            // Generazione del file
-            $import_manager::createExample($filepath);
+                // Generazione del file
+                $import_manager::createExample($filepath);
 
-            echo base_path().'/'.$file;
+                // Crea un record nella tabella zz_files senza usare la colonna id_category
+                $database = database();
+                $database->query('INSERT INTO `zz_files` (`name`, `original`, `id_module`, `id_plugin`, `id_record`, `size`, `id_adapter`, `filename`, `created_by`, `created_at`)
+                    VALUES ("example-'.strtolower((string) $import->getTranslation('title')).'", "example-'.strtolower((string) $import->getTranslation('title')).'.csv", '.$id_module.', NULL, '.$id_import.', '.filesize($filepath).', 1, "'.basename($filepath).'", '.Auth::user()->id.', NOW())');
+
+                echo base_path().'/'.$file;
+            } catch (\Exception $e) {
+                // Log dell'errore
+                error_log('Errore durante la generazione del file di esempio: ' . $e->getMessage());
+
+                // Risposta di errore
+                echo json_encode([
+                    'error' => true,
+                    'message' => tr('Si è verificato un errore durante la generazione del file di esempio: ').$e->getMessage(),
+                ]);
+            }
         }
 
         break;
@@ -92,23 +108,68 @@ switch (filter('op')) {
         $primary_key = post('primary_key');
         $csv->setPrimaryKey($primary_key - 1);
 
-        // Operazioni di inizializzazione per l'importazione
+        // Verifica che tutti i campi obbligatori siano mappati
         if (!isset($page) || empty($page)) {
+            if (!$csv->areRequiredFieldsMapped()) {
+                // Verifica se è il caso speciale delle anagrafiche (telefono o partita IVA)
+                $is_anagrafica_import = strpos(get_class($csv), 'Anagrafiche') !== false;
+                $error_message = $is_anagrafica_import ?
+                    tr('Alcuni campi obbligatori non sono stati mappati. La ragione sociale è obbligatoria e almeno uno tra telefono e partita IVA deve essere mappato.') :
+                    tr('Alcuni campi obbligatori non sono stati mappati');
+
+                echo json_encode([
+                    'error' => true,
+                    'message' => $error_message,
+                ]);
+                exit;
+            }
+
+            // Operazioni di inizializzazione per l'importazione
             $csv->init();
         }
 
-        $count = $csv->importRows($offset, $limit, post('update_record'), post('add_record'));
-        $more = $count == $limit;
+        $result = $csv->importRows($offset, $limit, post('update_record'), post('add_record'));
+        $more = $result['total'] == $limit;
 
         // Operazioni di finalizzazione per l'importazione
         if (!$more) {
             $csv->complete();
-        }
 
-        echo json_encode([
-            'more' => $more,
-            'count' => $count,
-        ]);
+            // Salva i record falliti in un file CSV se ce ne sono
+            $failed_records_path = '';
+            if (!empty($csv->getFailedRecords())) {
+                // Crea la directory per le anomalie se non esiste
+                $anomalie_dir = base_dir().'/files/anomalie';
+                if (!is_dir($anomalie_dir)) {
+                    mkdir($anomalie_dir, 0777, true);
+                }
+
+                // Genera un nome univoco per il file delle anomalie
+                $filename = 'anomalie_'.date('Ymd_His').'_'.basename($filepath);
+                $failed_records_path = $anomalie_dir.'/'.$filename;
+
+                // Salva i record falliti
+                $csv->saveFailedRecords($failed_records_path);
+
+                // Converti il percorso assoluto in relativo per l'URL
+                $failed_records_path = 'files/anomalie/'.$filename;
+            }
+
+            echo json_encode([
+                'more' => $more,
+                'imported' => $result['imported'],
+                'failed' => $result['failed'],
+                'total' => $result['total'],
+                'failed_records_path' => $failed_records_path,
+            ]);
+        } else {
+            echo json_encode([
+                'more' => $more,
+                'imported' => $result['imported'],
+                'failed' => $result['failed'],
+                'total' => $result['total'],
+            ]);
+        }
 
         break;
 }

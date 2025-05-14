@@ -198,17 +198,7 @@ if (filter('action') == 'do_update') {
                 <h3 class="card-title text-white"><i class="fa fa-times-circle mr-2"></i>'.tr('Errore durante l\'aggiornamento').'</h3>
             </div>
             <div class="card-body">
-                <div class="alert alert-danger shadow-sm">
-                    <div class="d-flex align-items-center">
-                        <div class="mr-3">
-                            <i class="fa fa-times-circle fa-3x text-danger"></i>
-                        </div>
-                        <div class="text-left">
-                            <h5 class="alert-heading mb-1 font-weight-bold">'.tr('Errore durante l\'aggiornamento del database').'</h5>
-                            <p class="mb-0">'.tr('Si è verificato un errore durante l\'aggiornamento del database').'</p>
-                        </div>
-                    </div>
-                </div>
+            
                 <script>
                     $(document).ready(function() {
                         $("#progress-status").html("<i class=\"fa fa-times-circle text-danger mr-1\"></i><span class=\"text-danger\">'.tr('Errore durante l\'aggiornamento').'</span>");

@@ -473,3 +473,5 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 CREATE TABLE `zz_files_categories` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `deleted_at` TIMESTAMP NULL , PRIMARY KEY (`id`));
 ALTER TABLE `zz_files` ADD `id_category` INT NULL AFTER `category`;
+
+CREATE TABLE `em_files_categories_template` (`id` INT NOT NULL AUTO_INCREMENT , `id_category` INT NOT NULL , `id_template` INT NOT NULL , PRIMARY KEY (`id`))

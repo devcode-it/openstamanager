@@ -109,17 +109,27 @@ $selected_prints = array_column($selected_prints, 'id_print');
 $selected_mansioni = $dbo->fetchArray('SELECT idmansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
 $selected_mansioni = array_column($selected_mansioni, 'idmansione');
 
+$selected_categories = $dbo->fetchArray('SELECT id_category FROM em_files_categories_template WHERE id_template = '.prepare($id_record));
+$selected_categories = array_column($selected_categories, 'id_category');
+
 echo '
 
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected_prints).'", "values": "query=SELECT `zz_prints`.`id`, `zz_prints_lang`.`title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare($record['id_module']).' AND `enabled`=1 AND `is_record`=1" ]}
                 </div>
-            </div>
+            </div>';
 
+            echo '
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "select", "multiple": "1", "label": "'.tr('Mansioni').'", "name": "idmansioni[]", "value": "'.implode(',', $selected_mansioni).'", "ajax-source": "mansioni" ]}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Categorie file da allegare').'", "name": "idcategories[]", "value": "'.implode(',', $selected_categories).'", "ajax-source": "categorie-files" ]}
                 </div>
             </div>';
 

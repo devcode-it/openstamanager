@@ -67,7 +67,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
             if (in_array(strtolower($file_extension), $allowed_extension) && $_FILES['upload']['size'] < $max_size) {
                 $upload = Uploads::upload($_FILES['upload'], [
                     'name' => filter('nome_allegato'),
-                    'category' => filter('categoria'),
+                    'id_category' => filter('id_category') ?: null,
                     'id_module' => Module::where('name', 'Gestione documentale')->first()->id,
                     'id_record' => $id_record,
                 ]);

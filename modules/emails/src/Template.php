@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
 use Models\PrintTemplate;
+use Modules\CategorieFiles\Categoria;
 use Traits\LocalPoolTrait;
 use Traits\RecordTrait;
 
@@ -79,6 +80,11 @@ class Template extends Model
     public function prints()
     {
         return $this->belongsToMany(PrintTemplate::class, 'em_print_template', 'id_template', 'id_print');
+    }
+
+     public function categories()
+    {
+        return $this->belongsToMany(Categoria::class, 'em_files_categories_template', 'id_template', 'id_category');
     }
 
     public function translations()

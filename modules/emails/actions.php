@@ -71,6 +71,13 @@ switch (post('op')) {
             }
         }
 
+        $categories[] = post('idcategories');
+        foreach ($categories as $category) {
+            if (!empty($category)) {
+                $dbo->sync('em_files_categories_template', ['id_template' => $id_record], ['id_category' => $category]);
+            }
+        }
+
         flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;

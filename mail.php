@@ -19,6 +19,7 @@
  */
 
 use Models\Module;
+use Models\Upload;
 use Modules\Emails\Template;
 
 include_once __DIR__.'/core.php';
@@ -159,6 +160,15 @@ $uploads = [];
 if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
     $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
     $uploads = array_column($uploads, 'id');
+}
+
+$categories = $template->categories;
+foreach ($categories as $category) {
+    $files = Upload::where('id_category', $category->id)->where('id_module', $id_module)->where('id_record', $id_record)->get();
+    $uploads = array_merge($uploads, $files->pluck('id')->toArray());
+    $files = Upload::where('id_category', $category->id)->where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', setting('Azienda predefinita'))->get();
+    $uploads = array_merge($uploads, $files->pluck('id')->toArray());
+    $uploads = array_unique($uploads);
 }
 
 // Allegati

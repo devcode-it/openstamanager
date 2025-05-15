@@ -38,7 +38,7 @@ if (!empty($id_record)) {
         $is_fiscale = $fattura->isFiscale();
     }
 
-    $record = $dbo->fetchOne('SELECT 
+    $record = $dbo->fetchOne('SELECT
         `co_documenti`.*,
         `co_tipidocumento`.`reversed` AS is_reversed,
         `co_documenti`.`idagente` AS idagente_fattura,
@@ -65,7 +65,7 @@ if (!empty($id_record)) {
         LEFT JOIN `dt_causalet` ON `co_documenti`.`idcausalet`=`dt_causalet`.`id`
         LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
-    WHERE 
+    WHERE
         `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
 
     // Note di credito collegate
@@ -82,10 +82,19 @@ if (!empty($id_record)) {
     $fattura_acquisto_originale = null;
 
     if (!empty($fattura)) {
-        $reverse_charge = $fattura->getRighe()->first(fn ($item, $key) => $item->aliquota != null && $item->aliquota->codice_natura_fe !== null && str_starts_with($item->aliquota->codice_natura_fe, 'N6'))->id;
+        $riga_reverse_charge = null;
+        foreach ($fattura->getRighe() as $riga) {
+            if ($riga->aliquota != null && $riga->aliquota->codice_natura_fe !== null && str_starts_with($riga->aliquota->codice_natura_fe, 'N6')) {
+                $riga_reverse_charge = $riga;
+                break;
+            }
+        }
+        $reverse_charge = $riga_reverse_charge?->id;
         $autofattura_vendita = Fattura::find($fattura->id_autofattura);
 
-        $abilita_autofattura = (($fattura->anagrafica->nazione->iso2 != 'IT' && !empty($fattura->anagrafica->nazione->iso2)) || $reverse_charge) && $dir == 'uscita' && $fattura->id_autofattura == null;
+        $is_fornitore_estero = !empty($fattura->anagrafica->nazione) && !empty($fattura->anagrafica->nazione->iso2) && $fattura->anagrafica->nazione->iso2 != 'IT';
+
+        $abilita_autofattura = $is_fornitore_estero && $dir == 'uscita' && $fattura->id_autofattura == null;
 
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
         $autofattura_collegata = Fattura::where('id_autofattura', '=', $fattura->id)->where('id', '!=', $fattura_acquisto_originale->id)->orderBy('id', 'DESC')->first();

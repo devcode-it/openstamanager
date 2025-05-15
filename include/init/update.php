@@ -165,6 +165,10 @@ if (filter('action') == 'do_update') {
                 $("#current-file").hide();
                 // Mostra tutti i segni di spunta per gli aggiornamenti completati
                 $("#updates-list .fa-check").show();
+                // Mostra i dettagli degli aggiornamenti se sono nascosti
+                if ($("#updates-details").is(":hidden")) {
+                    $("#toggle-updates").click();
+                }
             </script>';
 
         // Instructions for the first installation
@@ -198,7 +202,7 @@ if (filter('action') == 'do_update') {
                 <h3 class="card-title text-white"><i class="fa fa-times-circle mr-2"></i>'.tr('Errore durante l\'aggiornamento').'</h3>
             </div>
             <div class="card-body">
-            
+
                 <script>
                     $(document).ready(function() {
                         $("#progress-status").html("<i class=\"fa fa-times-circle text-danger mr-1\"></i><span class=\"text-danger\">'.tr('Errore durante l\'aggiornamento').'</span>");
@@ -246,48 +250,24 @@ if (filter('action') == 'do_update') {
     if (!empty($updates)) {
         $updates_html .= '
             <div id="updates-container" style="display: none;">
-                <p>'.tr('Verranno applicati i seguenti aggiornamenti').':</p>
-                <div class="card card-body bg-light mb-3">
-                    <div class="row" id="updates-list">';
-
-        // Dividi gli aggiornamenti in 4 colonne
-        $total_updates = count($updates);
-        $updates_per_column = ceil($total_updates / 4);
-        $column_updates = array_chunk($updates, $updates_per_column);
-
-        // Per ogni colonna
-        for ($col = 0; $col < count($column_updates); ++$col) {
-            $updates_html .= '
-                        <div class="col-md-3">
-                            <ul class="list-unstyled mb-0">';
-
-            // Per ogni aggiornamento nella colonna
-            foreach ($column_updates[$col] as $update) {
-                $version_id = str_replace('.', '_', $update['version']);
-                $updates_html .= '
-                                <li class="mb-2">
-                                    <div class="d-flex align-items-center" id="update-item-'.$version_id.'">
-                                        <i class="fa fa-upload text-primary mr-2"></i>
-                                        <span class="font-weight-bold">'.$update['version'].'</span>
-                                        <i class="fa fa-check text-success ml-2" style="display: none;"></i>
-                                        '.($update['script'] ? '<i class="fa fa-check text-info ml-2" id="script-icon-'.$version_id.'" style="display: none;"></i>' : '').'
-                                    </div>
-                                </li>';
-            }
-
-            $updates_html .= '
-                            </ul>
-                        </div>';
-        }
-
-        $updates_html .= '
-                    </div>
-                </div>
+                <p>'.tr('Verranno applicati i seguenti aggiornamenti').'.</p>
             </div>';
 
         echo $updates_html;
     }
     echo '
+                <!-- Progress bar moved to the top -->
+                <div id="progress" class="mb-4" style="display: none;">
+                    <!-- Progress bar personalizzata senza classe progress -->
+                    <div class="progress-container" data-percentage="0%">
+                        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="text-center mt-3 mb-3">
+                        <span class="text-primary" id="progress-status">'.tr('Inizializzazione aggiornamento...').'</span>
+                        <div id="current-file" class="mt-1 text-muted"></div>
+                    </div>
+                </div>
+
                 <div id="install-instructions">
                     <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
         '_BUTTON_' => '<b>"'.$button.'"</b>',
@@ -309,12 +289,19 @@ if (filter('action') == 'do_update') {
                         // Nascondi le istruzioni di installazione
                         $("#install-instructions").hide();
 
-                        $("#updates-container").fadeIn(300);
-
                         // Mostra la barra di progresso
                         $("#progress").fadeIn(300);
                         setPercent(1);
                         updateCurrentFile("'.tr('Avvio aggiornamento...').'");
+
+                        // Mostra il container degli aggiornamenti
+                        $("#updates-container").fadeIn(300);
+
+                        // Mostra il container dei dettagli delle versioni
+                        $("#versions-details-container").fadeIn(300);
+
+                        // Inizialmente nascondi i dettagli delle versioni
+                        $("#updates-details").hide();
 
                         $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
                         $("#continue_button").remove();
@@ -322,17 +309,65 @@ if (filter('action') == 'do_update') {
                 }
                 </script>
 
-                <div id="progress" class="mt-4" style="display: none;">
-                    <!-- Progress bar personalizzata senza classe progress -->
-                    <div class="progress-container" data-percentage="0%">
-                        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                <div id="result" class="mt-3"></div>
+
+                <!-- Dettaglio versioni spostato in fondo -->
+                <div id="versions-details-container" class="mt-4" style="display: none;">
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">'.tr('Dettaglio versioni').'</h5>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-updates">
+                                    <i class="fa fa-chevron-down"></i> '.tr('Mostra/Nascondi').'
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body bg-light" id="updates-details" style="display: none;">
+                            <div class="row" id="updates-list">';
+
+    // Dividi gli aggiornamenti in 4 colonne
+    $total_updates = count($updates);
+    $updates_per_column = ceil($total_updates / 4);
+    $column_updates = array_chunk($updates, $updates_per_column);
+
+    // Per ogni colonna
+    for ($col = 0; $col < count($column_updates); ++$col) {
+        echo '
+                                <div class="col-md-3">
+                                    <ul class="list-unstyled mb-0">';
+
+        // Per ogni aggiornamento nella colonna
+        foreach ($column_updates[$col] as $update) {
+            $version_id = str_replace('.', '_', $update['version']);
+            echo '
+                                        <li class="mb-2">
+                                            <div class="d-flex align-items-center" id="update-item-'.$version_id.'">
+                                                <i class="fa fa-upload text-primary mr-2"></i>
+                                                <span class="font-weight-bold">'.$update['version'].'</span>
+                                                <i class="fa fa-check text-success ml-2" style="display: none;"></i>
+                                                '.($update['script'] ? '<i class="fa fa-check text-info ml-2" id="script-icon-'.$version_id.'" style="display: none;"></i>' : '').'
+                                            </div>
+                                        </li>';
+        }
+
+        echo '
+                                    </ul>
+                                </div>';
+    }
+
+    echo '
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-center mt-3 mb-3">
-                        <span class="text-primary" id="progress-status">'.tr('Inizializzazione aggiornamento...').'</span>
-                        <div id="current-file" class="mt-1 text-muted"></div>
-                    </div>
-                </div>
-                <div id="result" class="mt-3"></div>';
+                    <script>
+                        $(document).ready(function() {
+                            $("#toggle-updates").click(function() {
+                                $("#updates-details").slideToggle(300);
+                                $(this).find("i").toggleClass("fa-chevron-down fa-chevron-up");
+                            });
+                        });
+                    </script>
+                </div>';
 
     $total = 0;
     $updates = Update::getTodoUpdates();
@@ -410,6 +445,11 @@ if (filter('action') == 'do_update') {
                 // Mostra il segno di spunta accanto all\'aggiornamento completato
                 var version_id = version.trim().replace(/\./g, "_");
                 $("#update-item-" + version_id + " .fa-check").show();
+
+                // Se i dettagli sono nascosti, mostrali alla prima versione completata
+                if (current === 1 && $("#updates-details").is(":hidden")) {
+                    $("#toggle-updates").click();
+                }
 
                 // Aggiorna il nome del file corrente
                 updateCurrentFile("'.tr('Installazione di').' " + version.trim());

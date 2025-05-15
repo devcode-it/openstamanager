@@ -19,7 +19,6 @@
  */
 
 use Carbon\Carbon;
-use Models\Module;
 use Modules\Fatture\Fattura;
 use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
@@ -314,8 +313,6 @@ if (!empty($pagamenti)) {
 echo '
     </div>';
 
-
-
 // Tipo del documento
 $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
 $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
@@ -563,7 +560,6 @@ if (!empty($righe)) {
             }
 
             $idconto_acquisto = $database->fetchOne('SELECT `idconto_acquisto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_acquisto'];
-
         }
 
         $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;
@@ -772,10 +768,10 @@ if (!empty($righe)) {
             FROM `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
             WHERE
-                `or_ordini`.`idanagrafica` = ".prepare($anagrafica->id)." AND
-                `or_ordini`.`numero` = ".prepare($riferimento['numero'])." AND
-                DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y') = ".prepare($riferimento['data'])."
-            GROUP BY `or_ordini`.`id`";
+                `or_ordini`.`idanagrafica` = ".prepare($anagrafica->id).' AND
+                `or_ordini`.`numero` = '.prepare($riferimento['numero'])." AND
+                DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y') = ".prepare($riferimento['data']).'
+            GROUP BY `or_ordini`.`id`';
 
             $ordini = $database->fetchArray($query);
 

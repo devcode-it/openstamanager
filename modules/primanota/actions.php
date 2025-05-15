@@ -41,7 +41,7 @@ switch (post('op')) {
             $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
-            
+
             if (empty($dare) && empty($avere)) {
                 continue;
             }

@@ -22,17 +22,17 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Models\Module;
+use Models\OperationLog;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Emails\Template;
 use Modules\Fatture\Export\CSV;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
+use Notifications\EmailNotification;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
-use Modules\Emails\Template;
-use Notifications\EmailNotification;
-use Models\OperationLog;
 use Util\Zip;
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
@@ -216,8 +216,8 @@ switch (post('op')) {
                         $dst = $fe->getFilename();
                         $src = $dbo->selectOne('zz_files', 'filename', ['original' => $dst])['filename'];
                     } else {
-                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filename);
-                        $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
+                        $src = basename((string) $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filename);
+                        $dst = basename((string) $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
                     $file = slashes('files/'.$module->attachments_directory.'/'.$src);
@@ -275,8 +275,8 @@ switch (post('op')) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
                 $zz_file = $dbo->table('zz_files')->where('id_module', '=', $id_module)->where('id_record', '=', $fattura->id)->where('name', 'like', 'Ricevuta%')->first();
-                $src = basename($fattura->uploads()->where('id', $zz_file->id)->first()->filename);
-                $dst = basename($fattura->uploads()->where('id', $zz_file->id)->first()->original_name);
+                $src = basename((string) $fattura->uploads()->where('id', $zz_file->id)->first()->filename);
+                $dst = basename((string) $fattura->uploads()->where('id', $zz_file->id)->first()->original_name);
 
                 $file = slashes($module->upload_directory.'/'.$src);
                 $dest = slashes($dir.'tmp/'.$dst);
@@ -320,22 +320,22 @@ switch (post('op')) {
 
             // + 1 giorno
             if (post('skip_time') == 'Giorno') {
-                $data = date('Y-m-d', strtotime('+1 day', strtotime($fattura->data)));
+                $data = date('Y-m-d', strtotime('+1 day', strtotime((string) $fattura->data)));
             }
 
             // + 1 settimana
             if (post('skip_time') == 'Settimana') {
-                $data = date('Y-m-d', strtotime('+1 week', strtotime($fattura->data)));
+                $data = date('Y-m-d', strtotime('+1 week', strtotime((string) $fattura->data)));
             }
 
             // + 1 mese
             if (post('skip_time') == 'Mese') {
-                $data = date('Y-m-d', strtotime('+1 month', strtotime($fattura->data)));
+                $data = date('Y-m-d', strtotime('+1 month', strtotime((string) $fattura->data)));
             }
 
             // + 1 anno
             if (post('skip_time') == 'Anno') {
-                $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
+                $data = date('Y-m-d', strtotime('+1 year', strtotime((string) $fattura->data)));
             }
 
             $new = $fattura->replicate();
@@ -628,7 +628,7 @@ switch (post('op')) {
 
             // Se non ci sono destinatari, salta questa fattura
             if (empty($emails)) {
-                $failed_count++;
+                ++$failed_count;
                 $failed_emails[] = $fattura->numero_esterno;
                 continue;
             }
@@ -669,10 +669,10 @@ switch (post('op')) {
             if ($email_success) {
                 OperationLog::setInfo('id_email', $mail->id);
                 $list[] = $fattura->numero_esterno;
-                $success_count++;
+                ++$success_count;
             } else {
                 $mail->delete();
-                $failed_count++;
+                ++$failed_count;
                 $failed_emails[] = $fattura->numero_esterno;
             }
         }
@@ -800,13 +800,9 @@ $operations['copy_bulk'] = [
     ],
 ];
 
-
-
 $operations['delete_bulk'] = [
     'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
 ];
-
-
 
 if ($dir == 'entrata') {
     $operations['change_status'] = [
@@ -875,7 +871,6 @@ $operations['export_xml_bulk'] = [
     ],
 ];
 
-
 if ($module->name == 'Fatture di vendita') {
     $operations['generate_xml'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
@@ -899,7 +894,6 @@ $operations['send-invoices'] = [
     ],
 ];
 
-
 $operations['registrazione_contabile'] = [
     'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
     'data' => [
@@ -922,8 +916,5 @@ if (Interaction::isEnabled()) {
         ],
     ];
 }
-
-
-
 
 return $operations;

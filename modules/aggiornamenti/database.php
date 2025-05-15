@@ -25,7 +25,8 @@ echo '<div class="module-aggiornamenti px-3">';
 
 $query_conflitti = [];
 
-function saveQueriesToSession($queries) {
+function saveQueriesToSession($queries)
+{
     $_SESSION['query_conflitti'] = $queries;
 }
 
@@ -148,7 +149,6 @@ $results_settings = settings_diff($data_settings, $settings);
 $results_settings_added = settings_diff($settings, $data_settings);
 
 if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
-
     if ($results) {
         echo '
 <div class="row align-items-center">
@@ -164,10 +164,10 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 <div>
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
-                '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-                '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-                '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
-            ]).'.
+            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+            '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
+        ]).'.
     </div>
 </div>';
 
@@ -296,12 +296,9 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     if ($results_added) {
         foreach ($results_added as $table => $errors) {
             if (($results[$table] && array_keys($results[$table]) != array_keys($errors)) || (empty($results[$table]) && !empty($errors))) {
-
                 $has_content = false;
 
-
                 $table_not_expected = array_key_exists('current', $errors) && $errors['current'] == null;
-
 
                 $has_keys = false;
                 foreach ($errors as $name => $diff) {
@@ -311,9 +308,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     }
                 }
 
-
                 $foreign_keys = $errors['foreign_keys'] ?: [];
-
 
                 if ($table_not_expected || $has_keys || !empty($foreign_keys)) {
                     echo '
@@ -381,14 +376,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     <tbody>';
 
                     foreach ($foreign_keys as $name => $diff) {
-
                         $query = 'ALTER TABLE `'.$table.'` ADD FOREIGN KEY (`'.$name.'`) REFERENCES ';
-
 
                         if (isset($diff['referenced_table']) && isset($diff['referenced_column'])) {
                             $query .= '`'.$diff['referenced_table']['current'].'`(`'.$diff['referenced_column']['current'].'`)';
                         } else {
-
                             $query .= 'altra_tabella(id)';
                         }
                         $query .= ' ON DELETE CASCADE ON UPDATE CASCADE';
@@ -423,7 +415,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         $campi_non_previsti[] = [
                             'tabella' => $table,
                             'campo' => $name,
-                            'valore' => isset($diff['expected']) ? $diff['expected'] : ''
+                            'valore' => $diff['expected'] ?? '',
                         ];
                     }
                 }
@@ -452,7 +444,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
             } else {
                 $class = 'warning';
 
-                $query = "UPDATE `zz_settings` SET `tipo` = ".prepare($setting['expected'])." WHERE `nome` = ".prepare($key);
+                $query = 'UPDATE `zz_settings` SET `tipo` = '.prepare($setting['expected']).' WHERE `nome` = '.prepare($key);
                 $query_conflitti[] = $query.';';
             }
 
@@ -500,7 +492,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 </table>';
     }
 
-
     if (!empty($campi_non_previsti)) {
         echo '
 <h4 class="table-title">Campi non previsti</h4>
@@ -533,7 +524,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
 </div>';
 }
-
 
 if (!empty($query_conflitti)) {
     echo '

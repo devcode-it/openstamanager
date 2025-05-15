@@ -179,7 +179,6 @@ switch (post('op')) {
         break;
 }
 
-
 $operations['change_status'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
@@ -201,7 +200,6 @@ $operations['delete_bulk'] = [
     ],
 ];
 
-
 $operations['create_invoice'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
     'data' => [
@@ -215,6 +213,5 @@ $operations['create_invoice'] = [
         'blank' => false,
     ],
 ];
-
 
 return $operations;

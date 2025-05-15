@@ -170,7 +170,7 @@ if (!empty($elementi)) {
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
-			'_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
+            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
         ]);
 
         if ($elemento['tipo_documento'] == 'Attività') {

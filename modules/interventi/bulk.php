@@ -265,13 +265,13 @@ switch (post('op')) {
                 foreach ($sessioni as $sessione) {
                     // Se è la prima sessione che copio importo la data con quella della richiesta
                     if ($numero_sessione == 0) {
-                        $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                        $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime((string) $sessione->orario_inizio));
                     } else {
-                        $diff = strtotime($sessione->orario_inizio) - strtotime((string) $inizio_old);
-                        $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
+                        $diff = strtotime((string) $sessione->orario_inizio) - strtotime((string) $inizio_old);
+                        $orario_inizio = date('Y-m-d H:i:s', strtotime((string) $new_sessione->orario_inizio) + $diff);
                     }
 
-                    $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                    $diff_fine = strtotime((string) $sessione->orario_fine) - strtotime((string) $sessione->orario_inizio);
                     $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                     $new_sessione = $sessione->replicate();
@@ -530,7 +530,5 @@ $operations['print_summary'] = [
         'blank' => true,
     ],
 ];
-
-
 
 return $operations;

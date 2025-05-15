@@ -73,7 +73,7 @@ if (!empty($fattura)) {
             if ($riga->isArticolo()) {
                 echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
             } else {
-                echo nl2br($riga->descrizione);
+                echo nl2br((string) $riga->descrizione);
             }
 
             echo '

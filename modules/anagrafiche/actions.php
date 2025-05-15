@@ -349,7 +349,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
     $nome = $upload->name;
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
-    if (in_array(strtolower($nome), $logo_stampe)) {
+    if (in_array(strtolower((string) $nome), $logo_stampe)) {
         $nome = 'Logo stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $logo) {
@@ -359,7 +359,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
     }
 
     $filigrana_stampe = ['filigrana stampe', 'filigrana_stampe', 'filigrana stampe.jpg', 'filigrana stampe.png'];
-    if (in_array(strtolower($nome), $filigrana_stampe)) {
+    if (in_array(strtolower((string) $nome), $filigrana_stampe)) {
         $nome = 'Filigrana stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $filigrana) {

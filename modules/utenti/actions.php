@@ -317,7 +317,7 @@ switch (filter('op')) {
         $id = filter('id');
         $valore = filter('valore', null, 1);
 
-        $user_options = json_decode($user->options, true) ?: [];
+        $user_options = json_decode((string) $user->options, true) ?: [];
         $user_options['settings'][$id] = $valore;
 
         $user->options = json_encode($user_options);

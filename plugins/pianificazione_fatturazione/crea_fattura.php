@@ -39,7 +39,7 @@ foreach ($contratto->pianificazioni as $i => $p) {
 $id_module_fattura = Module::where('name', 'Fatture di vendita')->first()->id;
 
 $id_conto = setting('Conto predefinito fatture di vendita');
-$data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
+$data = date('Y-m', strtotime((string) $pianificazione->data_scadenza)).'-'.date('d', strtotime((string) $contratto->data_accettazione));
 
 echo '
 <form action="" method="post">

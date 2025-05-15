@@ -116,14 +116,14 @@ abstract class CSVImporter implements ImporterInterface
             $missing_required_fields = [];
             foreach ($this->getAvailableFields() as $field) {
                 if (isset($field['required']) && $field['required'] === true && array_key_exists($field['field'], $record)) {
-                    if (trim($record[$field['field']]) === '') {
+                    if (trim((string) $record[$field['field']]) === '') {
                         $missing_required_fields[] = $field['field'];
                     }
                 }
             }
 
             // Caso speciale per anagrafiche: almeno uno tra telefono e partita IVA deve essere presente
-            $is_anagrafica_import = strpos(get_class($this), 'Anagrafiche') !== false;
+            $is_anagrafica_import = str_contains(static::class, 'Anagrafiche');
             if ($is_anagrafica_import) {
                 $telefono_present = !empty($record['telefono']);
                 $piva_present = !empty($record['piva']);
@@ -137,7 +137,7 @@ abstract class CSVImporter implements ImporterInterface
             if (!empty($missing_required_fields)) {
                 $this->failed_records[] = $record;
                 $this->failed_rows[] = $row;
-                $failed_count++;
+                ++$failed_count;
                 continue;
             }
 
@@ -148,16 +148,16 @@ abstract class CSVImporter implements ImporterInterface
             if ($result === false) {
                 $this->failed_records[] = $record;
                 $this->failed_rows[] = $row;
-                $failed_count++;
+                ++$failed_count;
             } else {
-                $imported_count++;
+                ++$imported_count;
             }
         }
 
         return [
             'imported' => $imported_count,
             'failed' => $failed_count,
-            'total' => count($rows)
+            'total' => count($rows),
         ];
     }
 
@@ -191,6 +191,7 @@ abstract class CSVImporter implements ImporterInterface
      * Verifica se un campo è obbligatorio.
      *
      * @param string $field_name Nome del campo
+     *
      * @return bool
      */
     public function isFieldRequired($field_name)
@@ -264,6 +265,7 @@ abstract class CSVImporter implements ImporterInterface
      * Salva i record falliti in un file CSV.
      *
      * @param string $filepath Percorso del file in cui salvare i record falliti
+     *
      * @return string Percorso del file salvato
      */
     public function saveFailedRecords($filepath)

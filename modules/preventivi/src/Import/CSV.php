@@ -99,9 +99,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -110,9 +111,9 @@ class CSV extends CSVImporter
             $database = database();
 
             // Validazione dei campi obbligatori
-            if (empty($record['numero']) || empty($record['nome']) || empty($record['ragione_sociale']) ||
-                empty($record['data_bozza']) || empty($record['codice']) || empty($record['qta']) ||
-                empty($record['prezzo_unitario'])) {
+            if (empty($record['numero']) || empty($record['nome']) || empty($record['ragione_sociale'])
+                || empty($record['data_bozza']) || empty($record['codice']) || empty($record['qta'])
+                || empty($record['prezzo_unitario'])) {
                 return false;
             }
 
@@ -138,16 +139,32 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione del preventivo: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione del preventivo: '.$e->getMessage());
+
             return false;
         }
     }
 
     /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
+    public static function getExample()
+    {
+        return [
+            ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '001', '2', '30/04/2024', '50'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '043', '1', '10/05/2024', '100'],
+        ];
+    }
+
+    /**
      * Trova il preventivo esistente in base al numero.
      *
-     * @param array $record Record da importare
+     * @param array  $record   Record da importare
      * @param object $database Connessione al database
+     *
      * @return Preventivo|null
      */
     protected function trovaPreventivo($record, $database)
@@ -157,6 +174,7 @@ class CSV extends CSVImporter
         }
 
         $id_preventivo = $database->fetchOne('SELECT id FROM `co_preventivi` WHERE `numero`='.prepare($record['numero']));
+
         return !empty($id_preventivo) ? Preventivo::find($id_preventivo['id']) : null;
     }
 
@@ -164,6 +182,7 @@ class CSV extends CSVImporter
      * Crea un nuovo preventivo.
      *
      * @param array $record Record da importare
+     *
      * @return Preventivo|null
      */
     protected function creaPreventivo($record)
@@ -187,7 +206,8 @@ class CSV extends CSVImporter
 
             return $preventivo;
         } catch (\Exception $e) {
-            error_log('Errore durante la creazione del preventivo: ' . $e->getMessage());
+            error_log('Errore durante la creazione del preventivo: '.$e->getMessage());
+
             return null;
         }
     }
@@ -196,6 +216,7 @@ class CSV extends CSVImporter
      * Trova o crea l'anagrafica cliente.
      *
      * @param array $record Record da importare
+     *
      * @return Anagrafica|null
      */
     protected function trovaOCreaAnagrafica($record)
@@ -220,6 +241,7 @@ class CSV extends CSVImporter
      * Trova il tipo di intervento.
      *
      * @param array $record Record da importare
+     *
      * @return TipoSessione
      */
     protected function trovaTipoIntervento($record)
@@ -231,7 +253,8 @@ class CSV extends CSVImporter
      * Aggiunge un articolo al preventivo.
      *
      * @param Preventivo $preventivo Preventivo
-     * @param array $record Record da importare
+     * @param array      $record     Record da importare
+     *
      * @return bool
      */
     protected function aggiungiArticoloAlPreventivo($preventivo, $record)
@@ -260,9 +283,11 @@ class CSV extends CSVImporter
             $riga_articolo->qta = $record['qta'];
 
             $riga_articolo->save();
+
             return true;
         } catch (\Exception $e) {
-            error_log('Errore durante l\'aggiunta dell\'articolo al preventivo: ' . $e->getMessage());
+            error_log('Errore durante l\'aggiunta dell\'articolo al preventivo: '.$e->getMessage());
+
             return false;
         }
     }
@@ -271,6 +296,7 @@ class CSV extends CSVImporter
      * Converte una stringa data in un oggetto Carbon.
      *
      * @param string $data_string Stringa data
+     *
      * @return Carbon
      */
     protected function parseData($data_string)
@@ -284,22 +310,9 @@ class CSV extends CSVImporter
             }
 
             // Fallback alla data corrente
-            error_log('Errore nel parsing della data: ' . $e->getMessage());
+            error_log('Errore nel parsing della data: '.$e->getMessage());
+
             return Carbon::now();
         }
-    }
-
-    /**
-     * Restituisce un esempio di file CSV per l'importazione.
-     *
-     * @return array
-     */
-    public static function getExample()
-    {
-        return [
-            ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '001', '2', '30/04/2024', '50'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '043', '1', '10/05/2024', '100'],
-        ];
     }
 }

@@ -141,7 +141,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": <?php echo ($record['idanagrafica'] ?: '""'); ?>, "idsede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": <?php echo $record['idanagrafica'] ?: '""'; ?>, "idsede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-2">
@@ -637,7 +637,7 @@ if (!empty($elementi)) {
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
+            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
         ]);
 
         echo '

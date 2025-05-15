@@ -151,9 +151,9 @@ foreach ($handlers as $handler) {
 $handler = new Monolog\ErrorHandler($logger);
 if (!API\Response::isAPIRequest()) {
     $handler->registerErrorHandler([]);
-    //$handler->registerExceptionHandler(); // Handled by Whoops above
+    // $handler->registerExceptionHandler(); // Handled by Whoops above
 }
-$handler->registerFatalHandler(\Psr\Log\LogLevel::ERROR);
+$handler->registerFatalHandler(Psr\Log\LogLevel::ERROR);
 
 // Database
 $dbo = $database = database();

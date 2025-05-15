@@ -70,9 +70,9 @@ switch (filter('op')) {
         foreach ($queries as $query) {
             try {
                 $dbo->query($query);
-                $executed++;
+                ++$executed;
             } catch (Exception $e) {
-                $errors[] = $query . ' - ' . $e->getMessage();
+                $errors[] = $query.' - '.$e->getMessage();
             }
         }
         $dbo->query('SET FOREIGN_KEY_CHECKS=1');
@@ -86,7 +86,7 @@ switch (filter('op')) {
 
             echo json_encode([
                 'success' => true,
-                'message' => $success_message . '<br><br>' . tr('Query eseguite:') . '<br>' . $debug_queries,
+                'message' => $success_message.'<br><br>'.tr('Query eseguite:').'<br>'.$debug_queries,
                 'flash_message' => true,
             ]);
         } else {
@@ -99,7 +99,7 @@ switch (filter('op')) {
 
             echo json_encode([
                 'success' => false,
-                'message' => $error_message . '<br>' . implode('<br>', $errors) . '<br><br>' . tr('Query da eseguire:') . '<br>' . $debug_queries,
+                'message' => $error_message.'<br>'.implode('<br>', $errors).'<br><br>'.tr('Query da eseguire:').'<br>'.$debug_queries,
                 'flash_message' => true,
             ]);
         }

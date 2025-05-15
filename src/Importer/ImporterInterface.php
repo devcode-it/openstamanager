@@ -92,6 +92,7 @@ interface ImporterInterface
      * Verifica se un campo è obbligatorio.
      *
      * @param string $field_name Nome del campo
+     *
      * @return bool
      */
     public function isFieldRequired($field_name);
@@ -114,6 +115,7 @@ interface ImporterInterface
      * Salva i record falliti in un file CSV.
      *
      * @param string $filepath Percorso del file in cui salvare i record falliti
+     *
      * @return string Percorso del file salvato
      */
     public function saveFailedRecords($filepath);

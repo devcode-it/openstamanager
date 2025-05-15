@@ -18,10 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Doctrine\SqlFormatter\SqlFormatter;
 use Models\Clause;
 use Models\Module;
 use Models\View;
-use Doctrine\SqlFormatter\SqlFormatter;
 
 include_once __DIR__.'/../../core.php';
 

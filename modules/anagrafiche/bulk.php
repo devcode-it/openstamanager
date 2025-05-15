@@ -145,6 +145,4 @@ $operations['search_coordinates'] = [
     ],
 ];
 
-
-
 return $operations;

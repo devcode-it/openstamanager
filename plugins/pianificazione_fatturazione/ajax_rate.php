@@ -55,7 +55,7 @@ switch ($action) {
                 'idContratto' => $pianificazione->idcontratto,
                 'dataScadenza' => dateFormat($pianificazione->data_scadenza),
                 'contratto' => reference($contratto),
-                'ragioneSociale' => Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)),
+                'ragioneSociale' => Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)),
                 'totale' => moneyFormat($pianificazione->totale),
                 'importo' => tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
                     '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),

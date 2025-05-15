@@ -105,7 +105,6 @@ $pageTitle = (!$dbo->isInstalled() || !$dbo->isConnected()) ? tr('Installazione'
 
 include_once App::filepath('include|custom|', 'top.php');
 
-
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
     echo '
@@ -177,7 +176,6 @@ if (!empty(flash()->getMessage('error'))) {
             </script>';
 }
 
-
 if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) {
     echo '
 			<form action="?op=login" method="post" autocomplete="off">
@@ -191,11 +189,11 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
                             <p class="login-box-msg text-secondary mb-4"><i class="fa fa-lock mr-2"></i>'.tr('Accedi con le tue credenziali').'</p>
                             <div class="input-group mb-4">
                                 <input type="text" name="username" autocomplete="username" class="form-control form-control-lg" placeholder="'.tr('Nome utente').'"';
-if (isset($username)) {
-    echo ' value="'.$username.'"';
-}
+    if (isset($username)) {
+        echo ' value="'.$username.'"';
+    }
 
-echo ' required>
+    echo ' required>
                                 <div class="input-group-append">
                                     <div class="input-group-text bg-light">
                                         <i class="fa fa-user text-primary"></i>
@@ -216,8 +214,8 @@ echo ' required>
                                     <i class="fa fa-question-circle mr-1"></i>'.tr('Password dimenticata?').'
                                 </a>
                             </div>';
-if ($microsoft) {
-    echo '
+    if ($microsoft) {
+        echo '
                         <div class="social-auth-links text-center mt-4 pt-3 border-top">
                             <p class="text-muted">'.tr('- oppure -').'</p>
 
@@ -225,8 +223,8 @@ if ($microsoft) {
                                 <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
                             </a>
                         </div>';
-}
-echo '
+    }
+    echo '
                         </div>
                     </div>
                 </div>

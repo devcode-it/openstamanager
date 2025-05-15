@@ -101,7 +101,7 @@ switch (filter('op')) {
             if (setting('Visualizzazione colori sessioni') == 'Sfondo colore stato - bordo colore tecnico') {
                 $backgroundcolor = strtoupper((string) $sessione['colore']);
                 $bordercolor = strtoupper((string) $sessione['colore_tecnico']);
-            } else if (setting('Visualizzazione colori sessioni') == 'Sfondo colore tecnico - bordo colore stato') {
+            } elseif (setting('Visualizzazione colori sessioni') == 'Sfondo colore tecnico - bordo colore stato') {
                 $backgroundcolor = strtoupper((string) $sessione['colore_tecnico']);
                 $bordercolor = strtoupper((string) $sessione['colore']);
             }
@@ -434,7 +434,7 @@ switch (filter('op')) {
                     if (fullEl.is(":visible")) {
                         fullEl.hide();
                         textEl.show();
-                        $(this).text("' . tr('Mostra tutto') . '");
+                        $(this).text("'.tr('Mostra tutto').'");
 
                         // Forza il ridimensionamento del tooltip alla dimensione originale
                         var instance = $(".tooltipstered").tooltipster("instance");
@@ -445,7 +445,7 @@ switch (filter('op')) {
                     } else {
                         textEl.hide();
                         fullEl.show();
-                        $(this).text("' . tr('Comprimi') . '");
+                        $(this).text("'.tr('Comprimi').'");
 
                         // Forza il ridimensionamento del tooltip solo verticalmente
                         var instance = $(".tooltipstered").tooltipster("instance");
@@ -583,7 +583,7 @@ switch (filter('op')) {
                     <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
-                        '.(!empty($sessione['richiesta']) ? '<div class="request-wrapper"><span class="request-text">' . (strlen(strip_tags((string) $sessione['richiesta'])) > 200 ? substr(strip_tags((string) $sessione['richiesta']), 0, 200).'...' : strip_tags((string) $sessione['richiesta'])) . '</span><span class="request-full">' . strip_tags((string) $sessione['richiesta']) . '</span><a href="#" class="request-toggle">' . tr('Mostra tutto') . '</a></div>' : '').'
+                        '.(!empty($sessione['richiesta']) ? '<div class="request-wrapper"><span class="request-text">'.(strlen(strip_tags((string) $sessione['richiesta'])) > 200 ? substr(strip_tags((string) $sessione['richiesta']), 0, 200).'...' : strip_tags((string) $sessione['richiesta'])).'</span><span class="request-full">'.strip_tags((string) $sessione['richiesta']).'</span><a href="#" class="request-toggle">'.tr('Mostra tutto').'</a></div>' : '').'
                         '.(!empty($sessione['numero_contratto']) ? '<span class="badge badge-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="badge badge-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="badge" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
                     </div>';
                 }
@@ -601,13 +601,13 @@ switch (filter('op')) {
                     if (fullEl.is(":visible")) {
                         fullEl.hide();
                         textEl.show();
-                        $(this).text("' . tr('Mostra tutto') . '");
+                        $(this).text("'.tr('Mostra tutto').'");
 
                         // Gli stili sono ora definiti nel CSS
                     } else {
                         textEl.hide();
                         fullEl.show();
-                        $(this).text("' . tr('Comprimi') . '");
+                        $(this).text("'.tr('Comprimi').'");
 
                         // Forza il ridimensionamento del tooltip solo verticalmente
                         var instance = $(".tooltipstered").tooltipster("instance");

@@ -69,9 +69,8 @@ if (empty($id_record)) {
 
     // Caso speciale per anagrafiche: telefono e partita IVA (almeno uno dei due è obbligatorio)
     foreach ($fields as $key => $value) {
-        if (($value['field'] === 'telefono' || $value['field'] === 'piva') &&
-            isset($value['required']) && $value['required'] === false) {
-
+        if (($value['field'] === 'telefono' || $value['field'] === 'piva')
+            && isset($value['required']) && $value['required'] === false) {
             // Sposta questi campi tra quelli obbligatori
             foreach ($campi_opzionali as $index => $campo) {
                 if ($campo['id'] === $key + 1) {
@@ -86,9 +85,7 @@ if (empty($id_record)) {
     }
 
     // Ordina i campi opzionali in ordine alfabetico
-    usort($campi_opzionali, function($a, $b) {
-        return strcmp($a['text'], $b['text']);
-    });
+    usort($campi_opzionali, fn ($a, $b) => strcmp((string) $a['text'], (string) $b['text']));
 
     // Unisci i campi, prima gli obbligatori e poi gli opzionali ordinati alfabeticamente
     $campi_disponibili = array_merge($campi_obbligatori, array_values($campi_opzionali));
@@ -102,41 +99,40 @@ if (empty($id_record)) {
         <i class="fa fa-info-circle"></i> <strong>'.tr('Informazioni importanti:').'</strong>
         <div style="margin-top: 8px;">'.tr('I campi con * sono obbligatori e devono essere mappati nel file CSV.').'</div>';
 
-        if ($import_selezionato === 'Modules\Anagrafiche\Import\CSV') {
-            echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('Mappare almeno uno tra Telefono e Partita IVA.').'</div>
+    if ($import_selezionato === Modules\Anagrafiche\Import\CSV::class) {
+        echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('Mappare almeno uno tra Telefono e Partita IVA.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('I campi Tipo anagrafica e Settore merceologico vengono generati automaticamente se mappati.').'</div>';
-        }
+    }
 
-        if ($import_selezionato === 'Modules\Articoli\Import\CSV') {
-            echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Formato numeri:').'</strong> '.tr('Gli importi inseriti devono avere come separatore il punto e presentare due decimali.').'</div>
+    if ($import_selezionato === Modules\Articoli\Import\CSV::class) {
+        echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Formato numeri:').'</strong> '.tr('Gli importi inseriti devono avere come separatore il punto e presentare due decimali.').'</div>
         <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Associazione anagrafiche:').'</strong> '.tr('L\'importazione dell\'anagrafica collegata all\'articolo avviene utilizzando come chiave primaria la Partita IVA, e in seguito la ragione sociale se non viene trovata corrispondenza. È opportuno pertanto indicare nel file CSV di importazione la partita IVA dell\'anagrafica per associare correttamente l\'anagrafica cliente/fornitore del listino.').'</div>';
-        }
+    }
 
-        if ($import_selezionato === 'Modules\Interventi\Import\CSV') {
-            echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
+    if ($import_selezionato === Modules\Interventi\Import\CSV::class) {
+        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
             <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'attività avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'attività è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-cogs"></i> <strong>'.tr('Impianti:').'</strong> '.tr('Per procedere all\'importazione di attività collegate ad impianti è necessario che la matricola indicata sia già censita in impianti. Procedere quindi prima all\'importazione degli impianti e successivamente delle attività.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('È presente in fase di importazione un automatismo che genera automaticamente i valori dei seguenti campi se mappati: la sessione del tecnico se mappato l\'orario di inizio attività, lo stato attività se non è già presente a gestionale.').'</div>
         </div>';
-        }
+    }
 
-        if ($import_selezionato === 'Modules\Impianti\Import\CSV') {
-            echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
+    if ($import_selezionato === Modules\Impianti\Import\CSV::class) {
+        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
             <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'impianto avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'impianto è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Matricola e Nome sono obbligatori. Inoltre, è necessario mappare almeno uno tra Partita IVA cliente e Codice Fiscale cliente.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Le categorie e sottocategorie vengono create automaticamente se non esistenti. Le marche vengono create automaticamente se non esistenti.').'</div>
         </div>';
-        }
+    }
 
-        if ($import_selezionato === 'Modules\ListiniCliente\Import\CSV') {
-            echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
+    if ($import_selezionato === Modules\ListiniCliente\Import\CSV::class) {
+        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
             <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Nome listino, Codice articolo e Prezzo unitario sono obbligatori.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Se il listino o l\'articolo non esistono, l\'importazione verrà saltata.').'</div>
         </div>';
-        }
-        
+    }
 
-        echo '</div><div class="alert alert-warning" style="background-color: #ffc107; color: #212529; border: none; padding: 10px 15px;">
+    echo '</div><div class="alert alert-warning" style="background-color: #ffc107; color: #212529; border: none; padding: 10px 15px;">
         <i class="fa fa-warning"></i> <strong>'.tr('ATTENZIONE:').'</strong>
         <div style="margin-top: 8px;">'.tr('Per record esistenti, tutti i campi mappati sovrascriveranno i dati attuali, anche se vuoti nel CSV. Non mappare le colonne che non si desidera modificare.').'</div>
     </div>';

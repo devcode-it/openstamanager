@@ -18,12 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\DDT\Causale;
-
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `zz_default_description` WHERE `zz_default_description`.`id`='.prepare($id_record));
     $id_moduli = $dbo->select('zz_default_description_module', '*', [], ['id_description' => $id_record]);
-    $id_moduli = implode(',' ,array_column($id_moduli, 'id_module'));
+    $id_moduli = implode(',', array_column($id_moduli, 'id_module'));
 }

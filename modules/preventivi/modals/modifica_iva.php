@@ -38,7 +38,7 @@ if (!empty($riga_id)) {
     // Caso singola riga
     $riga = Riga::find($riga_id) ?: Articolo::find($riga_id);
     $riga = $riga ?: Sconto::find($riga_id);
-    $righe_totali++;
+    ++$righe_totali;
 
     if (!empty($riga) && !empty($riga->idiva) && !empty($riga->aliquota)) {
         $aliquote_iva[$riga->idiva] = [
@@ -46,19 +46,19 @@ if (!empty($riga_id)) {
             'codice' => $riga->aliquota->codice,
             'descrizione' => $riga->aliquota->getTranslation('title'),
             'percentuale' => $riga->aliquota->percentuale,
-            'count' => 1
+            'count' => 1,
         ];
     } else {
         // Riga senza aliquota IVA o con aliquota non valida
         $righe_senza_iva[] = [
             'id' => $riga->id,
             'descrizione' => $riga->descrizione,
-            'idiva' => $riga->idiva ?: 'N/D'
+            'idiva' => $riga->idiva ?: 'N/D',
         ];
     }
 } elseif (!empty($righe_ids)) {
     // Caso multiple righe
-    $righe_array = explode(',', $righe_ids);
+    $righe_array = explode(',', (string) $righe_ids);
     $righe_totali = count($righe_array);
 
     foreach ($righe_array as $id_riga) {
@@ -72,16 +72,16 @@ if (!empty($riga_id)) {
                     'codice' => $riga->aliquota->codice,
                     'descrizione' => $riga->aliquota->getTranslation('title'),
                     'percentuale' => $riga->aliquota->percentuale,
-                    'count' => 0
+                    'count' => 0,
                 ];
             }
-            $aliquote_iva[$riga->idiva]['count']++;
+            ++$aliquote_iva[$riga->idiva]['count'];
         } elseif (!empty($riga)) {
             // Riga senza aliquota IVA o con aliquota non valida
             $righe_senza_iva[] = [
                 'id' => $riga->id,
                 'descrizione' => $riga->descrizione,
-                'idiva' => $riga->idiva ?: 'N/D'
+                'idiva' => $riga->idiva ?: 'N/D',
             ];
         }
     }
@@ -92,20 +92,20 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
 ?>
 
 <form id="modifica-iva-form">
-    <?php if (count($aliquote_iva) > 0): ?>
+    <?php if (count($aliquote_iva) > 0) { ?>
     <div class="row">
         <div class="col-md-5">
             <div class="alert alert-info">
-                <p><strong><?= tr('Aliquote IVA attuali') ?></strong></p>
+                <p><strong><?php echo tr('Aliquote IVA attuali'); ?></strong></p>
                 <ul class="list-unstyled">
-                <?php foreach ($aliquote_iva as $aliquota): ?>
+                <?php foreach ($aliquote_iva as $aliquota) { ?>
                     <li>
-                        <strong><?= $aliquota['codice'] ?></strong> - <?= $aliquota['descrizione'] ?> (<?= $aliquota['percentuale'] ?>%)
-                        <?php if (count($aliquote_iva) > 1): ?>
-                            <span class="badge"><?= $aliquota['count'] ?> <?= tr('righe') ?></span>
-                        <?php endif; ?>
+                        <strong><?php echo $aliquota['codice']; ?></strong> - <?php echo $aliquota['descrizione']; ?> (<?php echo $aliquota['percentuale']; ?>%)
+                        <?php if (count($aliquote_iva) > 1) { ?>
+                            <span class="badge"><?php echo $aliquota['count']; ?> <?php echo tr('righe'); ?></span>
+                        <?php } ?>
                     </li>
-                <?php endforeach; ?>
+                <?php } ?>
                 </ul>
             </div>
         </div>
@@ -117,38 +117,38 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
         <div class="col-md-5">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><?= tr('Aliquota da applicare') ?></h4>
+                    <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
                     {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
-                    <input type="hidden" name="riga_id" value="<?= get('riga_id') ?>">
-                    <input type="hidden" name="righe" value="<?= $_GET['righe'] ?>">
+                    <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
+                    <input type="hidden" name="righe" value="<?php echo $_GET['righe']; ?>">
                 </div>
             </div>
         </div>
     </div>
-    <?php elseif ($show_form): ?>
+    <?php } elseif ($show_form) { ?>
     <div class="row">
         <div class="col-md-5">
             <div class="alert alert-info">
-                <p><strong><?= tr('Aliquote IVA attuali') ?></strong></p>
+                <p><strong><?php echo tr('Aliquote IVA attuali'); ?></strong></p>
 
-                <?php if (count($aliquote_iva) > 0): ?>
+                <?php if (count($aliquote_iva) > 0) { ?>
                 <ul class="list-unstyled">
-                <?php foreach ($aliquote_iva as $aliquota): ?>
+                <?php foreach ($aliquote_iva as $aliquota) { ?>
                     <li>
-                        <strong><?= $aliquota['codice'] ?></strong> - <?= $aliquota['descrizione'] ?> (<?= $aliquota['percentuale'] ?>%)
-                        <span class="badge"><?= $aliquota['count'] ?> <?= tr('righe') ?></span>
+                        <strong><?php echo $aliquota['codice']; ?></strong> - <?php echo $aliquota['descrizione']; ?> (<?php echo $aliquota['percentuale']; ?>%)
+                        <span class="badge"><?php echo $aliquota['count']; ?> <?php echo tr('righe'); ?></span>
                     </li>
-                <?php endforeach; ?>
+                <?php } ?>
                 </ul>
-                <?php endif; ?>
+                <?php } ?>
 
-                <?php if (count($righe_senza_iva) > 0): ?>
-                <p><strong><?= tr('Righe senza aliquota IVA valida') ?>:</strong> <span class="badge"><?= count($righe_senza_iva) ?></span></p>
-                <?php endif; ?>
+                <?php if (count($righe_senza_iva) > 0) { ?>
+                <p><strong><?php echo tr('Righe senza aliquota IVA valida'); ?>:</strong> <span class="badge"><?php echo count($righe_senza_iva); ?></span></p>
+                <?php } ?>
 
-                <p class="text-muted"><?= tr('Totale righe selezionate') ?>: <?= $righe_totali ?></p>
+                <p class="text-muted"><?php echo tr('Totale righe selezionate'); ?>: <?php echo $righe_totali; ?></p>
             </div>
         </div>
 
@@ -159,31 +159,31 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
         <div class="col-md-5">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><?= tr('Aliquota da applicare') ?></h4>
+                    <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
                     {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
-                    <input type="hidden" name="riga_id" value="<?= get('riga_id') ?>">
-                    <input type="hidden" name="righe" value="<?= get('righe') ?>">
+                    <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
+                    <input type="hidden" name="righe" value="<?php echo get('righe'); ?>">
                 </div>
             </div>
         </div>
     </div>
-    <?php else: ?>
+    <?php } else { ?>
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning">
-                <p><?= tr('Nessuna riga selezionata') ?></p>
+                <p><?php echo tr('Nessuna riga selezionata'); ?></p>
             </div>
         </div>
     </div>
-    <?php endif; ?>
+    <?php } ?>
 
     <!-- PULSANTI -->
     <div class="row">
         <div class="col-md-12 text-right">
             <button type="button" class="btn btn-primary" onclick="salvaIva()">
-                <i class="fa fa-save"></i> <?= tr('Salva') ?>
+                <i class="fa fa-save"></i> <?php echo tr('Salva'); ?>
             </button>
         </div>
     </div>
@@ -216,7 +216,7 @@ function salvaIva() {
                 renderMessages();
             },
             error: function() {
-                alert(<?= json_encode(tr('Errore durante il salvataggio')) ?>);
+                alert(<?php echo json_encode(tr('Errore durante il salvataggio')); ?>);
             }
         });
     } else {
@@ -237,7 +237,7 @@ function salvaIva() {
                 renderMessages();
             },
             error: function() {
-                alert(<?= json_encode(tr('Errore durante il salvataggio')) ?>);
+                alert(<?php echo json_encode(tr('Errore durante il salvataggio')); ?>);
             }
         });
     }

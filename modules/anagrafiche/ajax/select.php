@@ -116,8 +116,8 @@ switch ($resource) {
                 LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
                 LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
                 LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id
-                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).")
-                |where| ".Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
+                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).')
+                |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
             ORDER BY
                 `ragione_sociale`';
 

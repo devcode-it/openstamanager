@@ -68,9 +68,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -110,20 +111,36 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione del piano dei conti: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione del piano dei conti: '.$e->getMessage());
+
             return false;
         }
+    }
+
+    /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
+    public static function getExample()
+    {
+        return [
+            ['Sezione', 'Conto', 'Descrizione', 'Direzione'],
+            ['Economico', '600.000010', 'Costi merci c/acquisto di rivendita', 'uscita'],
+            ['Patrimoniale', '110.000010', 'Riepilogativo clienti', ''],
+        ];
     }
 
     /**
      * Analizza il numero di conto e lo divide in parti.
      *
      * @param array $record Record da importare
+     *
      * @return array|null Array con le parti del conto o null se il formato non è valido
      */
     protected function parseNumeroConto($record)
     {
-        if (empty($record['numero']) || strpos($record['numero'], '.') === false) {
+        if (empty($record['numero']) || !str_contains((string) $record['numero'], '.')) {
             return null;
         }
 
@@ -141,8 +158,9 @@ class CSV extends CSVImporter
     /**
      * Trova il conto di primo livello (sezione) in base alla descrizione.
      *
-     * @param array $record Record da importare
+     * @param array  $record   Record da importare
      * @param object $database Connessione al database
+     *
      * @return array|null
      */
     protected function trovaConto1($record, $database)
@@ -152,6 +170,7 @@ class CSV extends CSVImporter
         }
 
         $result = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['idpianodeiconti1']).')');
+
         return !empty($result) ? $result : null;
     }
 
@@ -159,7 +178,8 @@ class CSV extends CSVImporter
      * Trova il conto di secondo livello in base al numero.
      *
      * @param string $codice_conto2 Codice del conto di secondo livello
-     * @param object $database Connessione al database
+     * @param object $database      Connessione al database
+     *
      * @return array|null
      */
     protected function trovaConto2($codice_conto2, $database)
@@ -169,15 +189,17 @@ class CSV extends CSVImporter
         }
 
         $result = $database->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE numero='.prepare($codice_conto2));
+
         return !empty($result) ? $result : null;
     }
 
     /**
      * Trova il conto di terzo livello in base al numero e al conto2.
      *
-     * @param string $codice_conto3 Codice del conto di terzo livello
-     * @param int $idpianodeiconti2 ID del conto di secondo livello
-     * @param object $database Connessione al database
+     * @param string $codice_conto3    Codice del conto di terzo livello
+     * @param int    $idpianodeiconti2 ID del conto di secondo livello
+     * @param object $database         Connessione al database
+     *
      * @return array|null
      */
     protected function trovaConto3($codice_conto3, $idpianodeiconti2, $database)
@@ -187,17 +209,18 @@ class CSV extends CSVImporter
         }
 
         $result = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2));
+
         return !empty($result) ? $result : null;
     }
 
     /**
      * Aggiunge un nuovo record al piano dei conti.
      *
-     * @param array $conto1 Conto di primo livello
-     * @param array|null $conto2 Conto di secondo livello
-     * @param array $parti_conto Parti del numero di conto
-     * @param array $record Record da importare
-     * @param object $database Connessione al database
+     * @param array      $conto1      Conto di primo livello
+     * @param array|null $conto2      Conto di secondo livello
+     * @param array      $parti_conto Parti del numero di conto
+     * @param array      $record      Record da importare
+     * @param object     $database    Connessione al database
      */
     protected function aggiungiRecord($conto1, $conto2, $parti_conto, $record, $database)
     {
@@ -228,10 +251,10 @@ class CSV extends CSVImporter
     /**
      * Aggiorna un record esistente nel piano dei conti.
      *
-     * @param array|null $conto2 Conto di secondo livello
-     * @param array $parti_conto Parti del numero di conto
-     * @param array $record Record da importare
-     * @param object $database Connessione al database
+     * @param array|null $conto2      Conto di secondo livello
+     * @param array      $parti_conto Parti del numero di conto
+     * @param array      $record      Record da importare
+     * @param object     $database    Connessione al database
      */
     protected function aggiornaRecord($conto2, $parti_conto, $record, $database)
     {
@@ -255,19 +278,5 @@ class CSV extends CSVImporter
                 ]);
             }
         }
-    }
-
-    /**
-     * Restituisce un esempio di file CSV per l'importazione.
-     *
-     * @return array
-     */
-    public static function getExample()
-    {
-        return [
-            ['Sezione', 'Conto', 'Descrizione', 'Direzione'],
-            ['Economico', '600.000010', 'Costi merci c/acquisto di rivendita', 'uscita'],
-            ['Patrimoniale', '110.000010', 'Riepilogativo clienti', ''],
-        ];
     }
 }

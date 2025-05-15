@@ -63,7 +63,7 @@ switch (post('op')) {
         }
 
         if (post('genera_barcode')) {
-            $codice = '200'.str_pad($articolo->id, 9, '0', STR_PAD_LEFT);
+            $codice = '200'.str_pad((string) $articolo->id, 9, '0', STR_PAD_LEFT);
             $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
         }
         $articolo->barcode = $barcode ?: post('barcode');

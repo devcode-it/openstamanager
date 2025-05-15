@@ -69,9 +69,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -109,79 +110,10 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'articolo nel listino: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione dell\'articolo nel listino: '.$e->getMessage());
+
             return false;
         }
-    }
-
-    /**
-     * Trova il listino in base al nome.
-     *
-     * @param array $record Record da importare
-     * @param object $database Connessione al database
-     * @return array|null
-     */
-    protected function trovaListino($record, $database)
-    {
-        if (empty($record['nome_listino'])) {
-            return null;
-        }
-
-        $result = $database->fetchOne('SELECT id FROM mg_listini WHERE nome = '.prepare($record['nome_listino']));
-        return !empty($result) ? $result : null;
-    }
-
-    /**
-     * Trova l'articolo in base al codice.
-     *
-     * @param array $record Record da importare
-     * @param object $database Connessione al database
-     * @return array|null
-     */
-    protected function trovaArticolo($record, $database)
-    {
-        if (empty($record['codice'])) {
-            return null;
-        }
-
-        $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($record['codice']));
-        return !empty($result) ? $result : null;
-    }
-
-    /**
-     * Trova l'articolo nel listino.
-     *
-     * @param int $id_articolo ID dell'articolo
-     * @param int $id_listino ID del listino
-     * @return Articolo|null
-     */
-    protected function trovaArticoloListino($id_articolo, $id_listino)
-    {
-        return Articolo::where('id_articolo', $id_articolo)->where('id_listino', $id_listino)->first();
-    }
-
-    /**
-     * Salva l'articolo nel listino.
-     *
-     * @param Articolo|null $articolo_listino Articolo nel listino esistente
-     * @param array $articolo_originale Articolo originale
-     * @param int $id_listino ID del listino
-     * @param array $record Record da importare
-     */
-    protected function salvaArticoloListino($articolo_listino, $articolo_originale, $id_listino, $record)
-    {
-        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-        $articolo_obj = ArticoloOriginale::find($articolo_originale['id']);
-        $prezzo_unitario = $prezzi_ivati ? $articolo_obj->prezzo_vendita_ivato : $articolo_obj->prezzo_vendita;
-
-        if (!$articolo_listino) {
-            $articolo_listino = Articolo::build($articolo_obj, $id_listino);
-        }
-
-        $articolo_listino->data_scadenza = $record['data_scadenza'] ?: null;
-        $articolo_listino->setPrezzoUnitario($record['prezzo_unitario'] ?: $prezzo_unitario);
-        $articolo_listino->sconto_percentuale = $record['sconto_percentuale'] ?: 0;
-        $articolo_listino->save();
     }
 
     /**
@@ -197,5 +129,80 @@ class CSV extends CSVImporter
             ['Listino 1', '5678', '', '100', '50'],
             ['Listino 1', '9101', '2024-07-31', '100', ''],
         ];
+    }
+
+    /**
+     * Trova il listino in base al nome.
+     *
+     * @param array  $record   Record da importare
+     * @param object $database Connessione al database
+     *
+     * @return array|null
+     */
+    protected function trovaListino($record, $database)
+    {
+        if (empty($record['nome_listino'])) {
+            return null;
+        }
+
+        $result = $database->fetchOne('SELECT id FROM mg_listini WHERE nome = '.prepare($record['nome_listino']));
+
+        return !empty($result) ? $result : null;
+    }
+
+    /**
+     * Trova l'articolo in base al codice.
+     *
+     * @param array  $record   Record da importare
+     * @param object $database Connessione al database
+     *
+     * @return array|null
+     */
+    protected function trovaArticolo($record, $database)
+    {
+        if (empty($record['codice'])) {
+            return null;
+        }
+
+        $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($record['codice']));
+
+        return !empty($result) ? $result : null;
+    }
+
+    /**
+     * Trova l'articolo nel listino.
+     *
+     * @param int $id_articolo ID dell'articolo
+     * @param int $id_listino  ID del listino
+     *
+     * @return Articolo|null
+     */
+    protected function trovaArticoloListino($id_articolo, $id_listino)
+    {
+        return Articolo::where('id_articolo', $id_articolo)->where('id_listino', $id_listino)->first();
+    }
+
+    /**
+     * Salva l'articolo nel listino.
+     *
+     * @param Articolo|null $articolo_listino   Articolo nel listino esistente
+     * @param array         $articolo_originale Articolo originale
+     * @param int           $id_listino         ID del listino
+     * @param array         $record             Record da importare
+     */
+    protected function salvaArticoloListino($articolo_listino, $articolo_originale, $id_listino, $record)
+    {
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $articolo_obj = ArticoloOriginale::find($articolo_originale['id']);
+        $prezzo_unitario = $prezzi_ivati ? $articolo_obj->prezzo_vendita_ivato : $articolo_obj->prezzo_vendita;
+
+        if (!$articolo_listino) {
+            $articolo_listino = Articolo::build($articolo_obj, $id_listino);
+        }
+
+        $articolo_listino->data_scadenza = $record['data_scadenza'] ?: null;
+        $articolo_listino->setPrezzoUnitario($record['prezzo_unitario'] ?: $prezzo_unitario);
+        $articolo_listino->sconto_percentuale = $record['sconto_percentuale'] ?: 0;
+        $articolo_listino->save();
     }
 }

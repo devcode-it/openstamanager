@@ -250,7 +250,7 @@ switch (filter('op')) {
         }
 
         // Individuazione dello spostamento da effettuare
-        $pieces = explode('_', $widget->location);
+        $pieces = explode('_', (string) $widget->location);
         $location = $pieces[0].'_'.($pieces[1] == 'right' ? 'top' : 'right');
 
         // Abilitazione del widget indicato

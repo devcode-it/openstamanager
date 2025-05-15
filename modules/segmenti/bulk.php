@@ -38,28 +38,28 @@ switch (post('op')) {
 $records = array_filter((array) $id_records);
 
 // Default query for when there are no valid records
-$query = "SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
+$query = 'SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
          LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record`
-         AND `zz_groups_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+         AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
          WHERE `zz_groups`.`id` = 1
-         ORDER BY `zz_groups`.`id` ASC";
+         ORDER BY `zz_groups`.`id` ASC';
 
 // If we have valid records, use the full query with IN clause
 if (!empty($records)) {
     $records_list = implode(',', $records);
-    $query = "SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
+    $query = 'SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups`
              LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record`
-             AND `zz_groups_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+             AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
              WHERE `zz_groups`.`id` = 1
              OR `zz_groups`.`id` IN (
                  SELECT DISTINCT `idgruppo` FROM `zz_permissions`
                  WHERE `permessi` IN ('r', 'rw')
                  AND `idmodule` IN (
                      SELECT DISTINCT `id_module` FROM `zz_segments`
-                     WHERE `id` IN (".$records_list.")
+                     WHERE `id` IN (".$records_list.')
                  )
              )
-             ORDER BY `zz_groups`.`id` ASC";
+             ORDER BY `zz_groups`.`id` ASC';
 }
 
 $msg = '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Seleziona i gruppi che avranno accesso ai segmenti selezionati:').'</small>", "values": "query='.$query.'", "name": "gruppi[]" ]}';

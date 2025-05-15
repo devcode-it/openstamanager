@@ -105,7 +105,7 @@ foreach ($righe as $key => $riga) {
                 <td '.$colspan_titolo.'>';
 
     // Descrizione
-    $descrizione = nl2br($riga->descrizione);
+    $descrizione = nl2br((string) $riga->descrizione);
     if ($riga->isArticolo()) {
         $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$descrizione);
     }
@@ -119,7 +119,7 @@ foreach ($righe as $key => $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="text-xs">'.nl2br($riga->note).'</small>';
+                    <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
     }
     echo '
                 </td>

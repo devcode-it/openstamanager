@@ -20,9 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\User;
-use Models\Upload;
 use Models\Module;
+use Models\Upload;
+use Models\User;
 
 Permissions::check('rw');
 

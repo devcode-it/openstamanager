@@ -205,8 +205,8 @@ if (Interaction::isEnabled()) {
     echo '
         <div class="alert alert-info">
             <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le fatture da importare utilizza il pulsante <b>_BUTTON_</b>', [
-                '_BUTTON_' => tr('Ricerca fatture'),
-            ]).'
+        '_BUTTON_' => tr('Ricerca fatture'),
+    ]).'
         </div>';
 } else {
     include $structure->filepath('list.php');

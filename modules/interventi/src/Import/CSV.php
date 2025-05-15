@@ -127,9 +127,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -139,8 +140,8 @@ class CSV extends CSVImporter
             $primary_key = $this->getPrimaryKey();
 
             // Validazione dei campi obbligatori
-            if (empty($record['codice']) || empty($record['data']) || empty($record['data_richiesta']) ||
-                empty($record['ora_inizio']) || empty($record['tecnico']) || empty($record['richiesta'])) {
+            if (empty($record['codice']) || empty($record['data']) || empty($record['data_richiesta'])
+                || empty($record['ora_inizio']) || empty($record['tecnico']) || empty($record['richiesta'])) {
                 return false;
             }
 
@@ -205,15 +206,31 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'intervento: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione dell\'intervento: '.$e->getMessage());
+
             return false;
         }
+    }
+
+    /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
+    public static function getExample()
+    {
+        return [
+            ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
+            ['00001/2024', '123456789', '123456789', '07/11/2024', '03/11/2025', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
+            ['0002/2024', '123456789', '123456789', '08/11/2024', '04/11/2025', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+        ];
     }
 
     /**
      * Trova l'anagrafica cliente in base alla partita IVA o al codice fiscale.
      *
      * @param array $record Record da processare
+     *
      * @return Anagrafica|null Anagrafica trovata o null se non trovata
      */
     protected function trovaAnagrafica($record)
@@ -235,6 +252,7 @@ class CSV extends CSVImporter
      * Trova l'impianto in base alla matricola.
      *
      * @param string $matricola Matricola dell'impianto
+     *
      * @return Impianto|null Impianto trovato o null se non trovato
      */
     protected function trovaImpianto($matricola)
@@ -250,6 +268,7 @@ class CSV extends CSVImporter
      * Trova o crea il tipo di intervento.
      *
      * @param array $record Record da processare
+     *
      * @return TipoIntervento Tipo di intervento
      */
     protected function trovaTipoIntervento($record)
@@ -265,6 +284,7 @@ class CSV extends CSVImporter
      * Trova o crea lo stato dell'intervento.
      *
      * @param array $record Record da processare
+     *
      * @return Stato Stato dell'intervento
      */
     protected function trovaStatoIntervento($record)
@@ -280,7 +300,8 @@ class CSV extends CSVImporter
      * Aggiorna i campi dell'intervento.
      *
      * @param Intervento $intervento Intervento da aggiornare
-     * @param array $record Record da processare
+     * @param array      $record     Record da processare
+     *
      * @return void
      */
     protected function aggiornaIntervento($intervento, $record)
@@ -304,7 +325,8 @@ class CSV extends CSVImporter
      * Collega un impianto all'intervento.
      *
      * @param Intervento $intervento Intervento da collegare
-     * @param Impianto $impianto Impianto da collegare
+     * @param Impianto   $impianto   Impianto da collegare
+     *
      * @return void
      */
     protected function collegaImpianto($intervento, $impianto)
@@ -327,7 +349,8 @@ class CSV extends CSVImporter
      * Crea una sessione di lavoro per l'intervento.
      *
      * @param Intervento $intervento Intervento associato
-     * @param array $record Record da processare
+     * @param array      $record     Record da processare
+     *
      * @return Sessione|null Sessione creata o null se non creata
      */
     protected function creaSessione($intervento, $record)
@@ -364,22 +387,9 @@ class CSV extends CSVImporter
             return $sessione;
         } catch (\Exception $e) {
             // Registra l'errore ma continua con l'importazione
-            error_log('Errore durante la creazione della sessione: ' . $e->getMessage());
+            error_log('Errore durante la creazione della sessione: '.$e->getMessage());
+
             return null;
         }
-    }
-
-    /**
-     * Restituisce un esempio di file CSV per l'importazione.
-     *
-     * @return array
-     */
-    public static function getExample()
-    {
-        return [
-            ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['00001/2024', '123456789', '123456789', '07/11/2024', '03/11/2025', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
-            ['0002/2024', '123456789', '123456789', '08/11/2024', '04/11/2025', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
-        ];
     }
 }

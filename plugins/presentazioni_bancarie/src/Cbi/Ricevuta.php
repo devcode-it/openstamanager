@@ -88,7 +88,7 @@ class Ricevuta extends Elemento
     /**
      * @var string Valore alfanumerico che indica il tipo di bonifico
      */
-     protected $descrizione;
+    protected $descrizione;
     /**
      * @var string Valore alfanumerico di 2 cifre
      */

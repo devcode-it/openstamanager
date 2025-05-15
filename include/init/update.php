@@ -47,7 +47,7 @@ if (filter('action') == 'do_update') {
                 <script>
                     updateCurrentFile("'.tr('Database aggiornato').': '.$update['filename'].'.sql");
                 </script>';
-                } else if (!empty($update['sql'])) {
+                } elseif (!empty($update['sql'])) {
                     echo '
                 <script>
                     updateCurrentFile("'.tr('Aggiornamento database').': '.$update['filename'].'.sql");
@@ -96,7 +96,7 @@ if (filter('action') == 'do_update') {
                         </div>
                         <div class="card-body">
                             <div class="alert alert-light border-left border-danger">
-                                <h5 class="text-danger font-weight-bold"><i class="fa fa-info-circle mr-2"></i>'.tr("Messaggio di errore").'</h5>
+                                <h5 class="text-danger font-weight-bold"><i class="fa fa-info-circle mr-2"></i>'.tr('Messaggio di errore').'</h5>
                                 <p class="mb-0 font-weight-bold">'.$error_message.'</p>
                             </div>';
 
@@ -107,14 +107,14 @@ if (filter('action') == 'do_update') {
                                     <div class="card-header">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="mb-0 font-weight-bold"><i class="fa fa-database mr-2"></i>'.tr("Query SQL che ha causato l'errore").'</h5>
-                                            <button type="button" class="btn btn-sm btn-danger copy-query-btn" data-query="'.htmlspecialchars($error_query).'">
-                                                <i class="fa fa-copy mr-1"></i>'.tr("Copia query").'
+                                            <button type="button" class="btn btn-sm btn-danger copy-query-btn" data-query="'.htmlspecialchars((string) $error_query).'">
+                                                <i class="fa fa-copy mr-1"></i>'.tr('Copia query').'
                                             </button>
                                         </div>
                                     </div>
                                     <div class="card-body p-0">
                                         <div class="p-3 bg-light code-container">
-                                            <pre class="mb-0" style="white-space: pre-wrap; word-wrap: break-word;"><code>'.htmlspecialchars($error_query).'</code></pre>
+                                            <pre class="mb-0" style="white-space: pre-wrap; word-wrap: break-word;"><code>'.htmlspecialchars((string) $error_query).'</code></pre>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@ if (filter('action') == 'do_update') {
                                             // Show feedback
                                             var $btn = $(this);
                                             var originalText = $btn.html();
-                                            $btn.html(\'<i class="fa fa-check mr-1"></i>'.tr("Copiato!").'\');
+                                            $btn.html(\'<i class="fa fa-check mr-1"></i>'.tr('Copiato!').'\');
                                             $btn.addClass("btn-success").removeClass("btn-outline-light");
 
                                             setTimeout(function() {
@@ -173,8 +173,8 @@ if (filter('action') == 'do_update') {
             <div class="alert alert-warning mb-4">
                 <i class="fa fa-exclamation-triangle mr-2"></i>
                 '.tr('Per maggiore sicurezza, rimuovi i permessi di scrittura dal file _FILE_', [
-                    '_FILE_' => '<b>config.inc.php</b>',
-                ]).'
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'
             </div>';
         }
 
@@ -238,7 +238,7 @@ if (filter('action') == 'do_update') {
                 <p><strong>'.tr("Benvenuto! Procediamo con l'installazione del database").'.</strong></p>';
     } else {
         echo '
-                <p>'.tr("È necessario aggiornare il database alla nuova versione").'.</p>';
+                <p>'.tr('È necessario aggiornare il database alla nuova versione').'.</p>';
     }
 
     // Prepara l'HTML per l'elenco degli aggiornamenti, ma non lo mostra ancora
@@ -256,7 +256,7 @@ if (filter('action') == 'do_update') {
         $column_updates = array_chunk($updates, $updates_per_column);
 
         // Per ogni colonna
-        for ($col = 0; $col < count($column_updates); $col++) {
+        for ($col = 0; $col < count($column_updates); ++$col) {
             $updates_html .= '
                         <div class="col-md-3">
                             <ul class="list-unstyled mb-0">';
@@ -290,8 +290,8 @@ if (filter('action') == 'do_update') {
     echo '
                 <div id="install-instructions">
                     <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
-            '_BUTTON_' => '<b>"'.$button.'"</b>',
-        ]).'</p>
+        '_BUTTON_' => '<b>"'.$button.'"</b>',
+    ]).'</p>
                     <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
                 </div>
 

@@ -66,7 +66,6 @@ $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_an
 $id_tipo = $anagrafica['idtipointervento_default'];
 $id_zona = $anagrafica['idzona'];
 
-
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $contratto = $dbo->fetchOne('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id = '.prepare($id_contratto));

@@ -40,7 +40,7 @@ if ($main_check) {
             'label' => tr('Descrizione'),
             'name' => 'content_edit',
             'required' => 1,
-            'value' => htmlentities($record->content),
+            'value' => htmlentities((string) $record->content),
         ]);
 ?>
     </div>

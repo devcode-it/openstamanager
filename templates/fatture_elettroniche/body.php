@@ -34,7 +34,7 @@ if (empty($file)) {
         // Individuazione stylesheet
         $default_stylesheet = 'asso-invoice';
 
-        $name = basename($file->original_name);
+        $name = basename((string) $file->original_name);
         $filename2 = explode('.', $name)[0];
         $pieces = explode('_', $filename2);
         $stylesheet = $pieces[2];

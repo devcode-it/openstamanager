@@ -66,7 +66,7 @@ switch (filter('op')) {
             }
             $results[$setting->sezione][] = [
                 'id' => $setting->id,
-                'nome' => $setting->nome
+                'nome' => $setting->nome,
             ];
         }
 

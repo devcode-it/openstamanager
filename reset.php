@@ -183,7 +183,7 @@ if (empty($token)) {
                     <div class="alert alert-info mb-4">
                         <p class="mb-2">'.tr("Per recuperare l'accesso al tuo account, inserisci:").'</p>
                         <ul class="mb-0">
-                            <li>'.tr("Il tuo nome utente (username)").'</li>
+                            <li>'.tr('Il tuo nome utente (username)').'</li>
                             <li>'.tr("L'indirizzo email registrato nel sistema").'</li>
                         </ul>
                     </div>
@@ -214,7 +214,7 @@ if (empty($token)) {
                     <input type="hidden" name="op" value="update">
 
                     <div class="alert alert-info mb-4">
-                        <p class="mb-0">'.tr("Scegli una nuova password sicura per il tuo account.").'</p>
+                        <p class="mb-0">'.tr('Scegli una nuova password sicura per il tuo account.').'</p>
                     </div>
 
                     <p class="text-muted mb-4">'.tr('Ti consigliamo di utilizzare una password:').'</p>

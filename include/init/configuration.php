@@ -215,8 +215,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 				<h3 class="card-title">'.tr('Configurazione incompleta').'</h3>
 			</div>
 			<div class="card-body">
-				<p>'.tr("Mancano alcuni parametri necessari nella configurazione").'.</p>
-				<p>'.tr("Verifica che il file _FILE_ contenga tutti i parametri di connessione al database", [
+				<p>'.tr('Mancano alcuni parametri necessari nella configurazione').'.</p>
+				<p>'.tr('Verifica che il file _FILE_ contenga tutti i parametri di connessione al database', [
             '_FILE_' => '<b>config.inc.php</b>',
         ]).'.</p>
 				<p>'.tr("Se il problema persiste, contatta l'assistenza").'.</p>
@@ -454,12 +454,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
     <div class="config-section-content">
         <h4 class="config-section-header">'.tr('Benvenuto in _NAME_!', [
-            '_NAME_' => '<strong>OpenSTAManager</strong>',
-        ]).'</h4>
+        '_NAME_' => '<strong>OpenSTAManager</strong>',
+    ]).'</h4>
         <p>'.tr("Prima di procedere con l'installazione, verifica che il sistema soddisfi i seguenti requisiti").'.</p>
         <p class="config-info-text"><i class="fa fa-info-circle text-info mr-1"></i> '.tr('Le impostazioni PHP possono essere modificate nel file _FILE_', [
-            '_FILE_' => '<b>php.ini</b>',
-        ]).'</p>
+        '_FILE_' => '<b>php.ini</b>',
+    ]).'</p>
     </div>';
 
     // REQUISITI PER IL CORRETTO FUNZIONAMENTO
@@ -474,8 +474,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         <div class="config-section-content">
                             <h4 class="config-section-header">'.tr('Licenza del software').'</h4>
                             <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_', [
-                                '_LICENSE_' => '<strong>GPL 3.0</strong>',
-                            ]).':</p>
+        '_LICENSE_' => '<strong>GPL 3.0</strong>',
+    ]).':</p>
                         </div>
 
                         <div class="config-license-container">

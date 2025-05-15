@@ -87,7 +87,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)).'<br><small>Presso: ';
+                    '.Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)).'<br><small>Presso: ';
 
         // Sede promemoria
         if ($promemoria->idsede == '-1') {
@@ -109,7 +109,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
                 <td>'.dateFormat($promemoria->data_richiesta).'</td>
                 <td>'.$promemoria->tipo->getTranslation('title').'</td>
-                <td>'.nl2br($promemoria->richiesta).'</td>
+                <td>'.nl2br((string) $promemoria->richiesta).'</td>
 
                 <td>
 

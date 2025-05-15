@@ -24,7 +24,7 @@ switch (filter('op')) {
     case 'update_conti_movimenti':
         // Aggiornamento dei conti associati ai movimenti
         $idconti = post('idconto');
-        
+
         if (!empty($idconti)) {
             foreach ($idconti as $id_movimento => $id_conto) {
                 $dbo->update('co_movimenti', [
@@ -33,11 +33,11 @@ switch (filter('op')) {
                     'id' => $id_movimento,
                 ]);
             }
-            
+
             flash()->info(tr('Conti aggiornati correttamente!'));
         } else {
             flash()->warning(tr('Nessun movimento da aggiornare!'));
         }
-        
+
         break;
 }

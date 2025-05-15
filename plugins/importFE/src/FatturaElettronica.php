@@ -179,11 +179,11 @@ class FatturaElettronica
             if (!empty($allegato['FormatoAttachment'])) {
                 $extension = '.'.strtolower((string) $allegato['FormatoAttachment']);
             }
-    
+
             if (strtolower($extension) == '.html' || strtolower($extension) == '.htm') {
                 $extension = '.pdf';
             }
-    
+
             if (preg_match('/\./', (string) $allegato['NomeAttachment'])) {
                 $original = $allegato['NomeAttachment'];
             } else {
@@ -200,19 +200,19 @@ class FatturaElettronica
 
         // Registrazione XML come allegato
         $file_content = file_get_contents($this->file);
-        
+
         $original_name = basename($this->file);
         if (empty(pathinfo($original_name, PATHINFO_EXTENSION))) {
             $original_name .= '.xml';
         }
-        
+
         try {
             \Uploads::upload($file_content, array_merge($info, [
                 'name' => tr('Fattura Elettronica'),
                 'original_name' => $original_name,
             ]));
         } catch (\UnexpectedValueException $e) {
-            error_log('Errore durante il caricamento del file XML: ' . $e->getMessage());
+            error_log('Errore durante il caricamento del file XML: '.$e->getMessage());
         }
     }
 
@@ -406,7 +406,7 @@ class FatturaElettronica
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info'], $info['serial']);
 
-        $this->saveAllegati($tipo == 'Cliente' ? 'Fatture di vendita': null);
+        $this->saveAllegati($tipo == 'Cliente' ? 'Fatture di vendita' : null);
 
         $this->getFattura()->save(['forza_emissione']);
 

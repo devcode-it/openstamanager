@@ -120,7 +120,7 @@ echo '
                 </div>
             </div>';
 
-            echo '
+echo '
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "select", "multiple": "1", "label": "'.tr('Mansioni').'", "name": "idmansioni[]", "value": "'.implode(',', $selected_mansioni).'", "ajax-source": "mansioni" ]}

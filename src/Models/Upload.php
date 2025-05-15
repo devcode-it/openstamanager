@@ -22,11 +22,10 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Intervention\Image\ImageManager;
 use Modules\CategorieFiles\Categoria;
 use Modules\FileAdapters\FileAdapter;
 use Modules\FileAdapters\OSMFilesystem;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 
 class Upload extends Model
 {
@@ -402,6 +401,11 @@ class Upload extends Model
         $upload->save([], true);
     }
 
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'id_category');
+    }
+
     /**
      * Genera le thumbnails per le immagini.
      */
@@ -428,10 +432,5 @@ class Upload extends Model
 
         $img->scale(100, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb100.'.$info['extension']));
-    }
-
-    public function categoria()
-    {
-        return $this->belongsTo(Categoria::class, 'id_category');
     }
 }

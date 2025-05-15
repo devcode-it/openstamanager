@@ -80,14 +80,14 @@ if ($show_prezzi) {
             </tr>
         </tbody>';
 
-        // Calcoli
-        $imponibile = abs($intervento->imponibile);
-        $sconto = -$intervento->sconto;
-        $totale_imponibile = abs($intervento->totale_imponibile);
-        $iva = abs($intervento->iva);
-        $totale = abs($intervento->totale);
+    // Calcoli
+    $imponibile = abs($intervento->imponibile);
+    $sconto = -$intervento->sconto;
+    $totale_imponibile = abs($intervento->totale_imponibile);
+    $iva = abs($intervento->iva);
+    $totale = abs($intervento->totale);
 
-        echo '
+    echo '
         <tr>
             <td colspan="3" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
@@ -97,9 +97,9 @@ if ($show_prezzi) {
             </td>
         </tr>';
 
-        // Totale sconto
-        if (!empty($sconto)) {
-            echo '
+    // Totale sconto
+    if (!empty($sconto)) {
+        echo '
         <tr>
             <td colspan="3" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
@@ -109,8 +109,8 @@ if ($show_prezzi) {
             </td>
         </tr>';
 
-            // Totale imponibile
-            echo '
+        // Totale imponibile
+        echo '
         <tr>
             <td colspan="3" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
@@ -119,10 +119,10 @@ if ($show_prezzi) {
                 '.moneyFormat($totale_imponibile, 2).'
             </td>
         </tr>';
-        }
+    }
 
-        // Totale iva
-        echo '
+    // Totale iva
+    echo '
         <tr>
             <td colspan="3" class="text-right">
                 <b><i class="fa fa-question-circle-o tip" title="'.tr("Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni di default del gestionale se non è impostata l'iva predefinita nell'anagrafica").'."></i> '.tr('IVA', [], ['upper' => true]).':</b>
@@ -132,8 +132,8 @@ if ($show_prezzi) {
             </td>
         </tr>';
 
-        // Totale attività
-        echo '
+    // Totale attività
+    echo '
         <tr>
             <td colspan="3" class="text-right">
                 <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
@@ -143,7 +143,7 @@ if ($show_prezzi) {
             </td>
         </tr>';
 
-        echo '
+    echo '
     </table>
 </div>';
 }

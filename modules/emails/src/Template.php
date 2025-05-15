@@ -82,7 +82,7 @@ class Template extends Model
         return $this->belongsToMany(PrintTemplate::class, 'em_print_template', 'id_template', 'id_print');
     }
 
-     public function categories()
+    public function categories()
     {
         return $this->belongsToMany(Categoria::class, 'em_files_categories_template', 'id_template', 'id_category');
     }

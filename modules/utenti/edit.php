@@ -21,8 +21,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Group;
-use Models\Module;
-use Models\User;
 
 $group = Group::find($id_record);
 $record = $group->toArray();
@@ -213,8 +211,8 @@ echo '
 			<div class="card-header">
 				<h3 class="card-title">
 					<i class="fa fa-lock mr-2"></i>'.tr('Permessi del gruppo: _GROUP_', [
-		'_GROUP_' => '<span class="text-primary">'.$record['nome'].'</span>',
-	]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
+    '_GROUP_' => '<span class="text-primary">'.$record['nome'].'</span>',
+]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
 				<div class="card-tools">
 					<btn type="button" class="btn clickable btn-sm btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn>
 				</div>' : '').'

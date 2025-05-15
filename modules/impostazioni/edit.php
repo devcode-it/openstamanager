@@ -69,8 +69,8 @@ foreach ($gruppi as $key => $gruppo) {
         <div class="card-title">
             <i class="fa fa-sliders mr-2"></i>
             '.tr('_SEZIONE_', [
-            '_SEZIONE_' => $gruppo->nome,
-        ]).'
+        '_SEZIONE_' => $gruppo->nome,
+    ]).'
         </div>
         <div class="card-tools pull-right">
             <div class="badge">'.$gruppo->numero.'</div>

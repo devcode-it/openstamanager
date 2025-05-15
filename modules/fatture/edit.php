@@ -195,7 +195,7 @@ if ($dir == 'entrata') {
         $carbonDate = Carbon::createFromFormat($dateFormat, setting('Data inizio verifica contatore fattura di vendita'));
         $data_inizio_verifica_contatore = (($carbonDate !== false) ? strtotime($carbonDate->format('Y-m-d')) : null);
     }
-    $data = ($fattura->data ? strtotime($fattura->data) : '');
+    $data = ($fattura->data ? strtotime((string) $fattura->data) : '');
     if ($data >= $data_inizio_verifica_contatore || empty($data_inizio_verifica_contatore)) {
         $numero_previsto = verifica_numero_fattura($fattura);
     }
@@ -502,8 +502,6 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
     echo '
                     </div>
                     <div class="clearfix"></div>';
-
-                 
 
     foreach ($scadenze as $scadenza) {
         $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;

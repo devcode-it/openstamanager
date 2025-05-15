@@ -63,9 +63,9 @@ switch (filter('op')) {
                     VALUES ("example-'.strtolower((string) $import->getTranslation('title')).'", "example-'.strtolower((string) $import->getTranslation('title')).'.csv", '.$id_module.', NULL, '.$id_import.', '.filesize($filepath).', 1, "'.basename($filepath).'", '.Auth::user()->id.', NOW())');
 
                 echo base_path().'/'.$file;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Log dell'errore
-                error_log('Errore durante la generazione del file di esempio: ' . $e->getMessage());
+                error_log('Errore durante la generazione del file di esempio: '.$e->getMessage());
 
                 // Risposta di errore
                 echo json_encode([
@@ -112,7 +112,7 @@ switch (filter('op')) {
         if (!isset($page) || empty($page)) {
             if (!$csv->areRequiredFieldsMapped()) {
                 // Verifica se è il caso speciale delle anagrafiche (telefono o partita IVA)
-                $is_anagrafica_import = strpos(get_class($csv), 'Anagrafiche') !== false;
+                $is_anagrafica_import = str_contains($csv::class, 'Anagrafiche');
                 $error_message = $is_anagrafica_import ?
                     tr('Alcuni campi obbligatori non sono stati mappati. La ragione sociale è obbligatoria e almeno uno tra telefono e partita IVA deve essere mappato.') :
                     tr('Alcuni campi obbligatori non sono stati mappati');

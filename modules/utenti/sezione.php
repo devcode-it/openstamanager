@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 $sezione = filter('sezione');
 $impostazioni = Setting::where('sezione', $sezione)->where('is_user_setting', 1)
     ->get();
-$user_options = json_decode($user->options, true) ?: [];
+$user_options = json_decode((string) $user->options, true) ?: [];
 
 foreach ($impostazioni as $impostazione) {
     echo '

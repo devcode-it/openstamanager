@@ -165,7 +165,6 @@ switch (post('op')) {
         break;
 }
 
-
 $operations['change_status'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
     'data' => [
@@ -189,6 +188,5 @@ $operations['create_invoice'] = [
         'blank' => false,
     ],
 ];
-
 
 return $operations;

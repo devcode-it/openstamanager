@@ -58,7 +58,7 @@ class Backup
                 $decoded = json_decode($options, true);
 
                 // Se la decodifica fallisce, prova a gestire il caso specifico con $ nella password
-                if ($decoded === null && strpos($options, 'password') !== false) {
+                if ($decoded === null && str_contains($options, 'password')) {
                     // Estrai manualmente il valore di root usando espressioni regolari
                     if (preg_match('/"root":"([^"]+)"/', $options, $matches)) {
                         $backup_dir = $matches[1];
@@ -81,7 +81,7 @@ class Backup
         // Fallback al percorso di configurazione se disponibile
         if (empty($backup_dir)) {
             $config = App::getConfig();
-            $backup_dir = isset($config['backup_dir']) ? $config['backup_dir'] : base_dir().'/backups';
+            $backup_dir = $config['backup_dir'] ?? base_dir().'/backups';
         }
 
         $result = rtrim((string) $backup_dir, '/');
@@ -237,7 +237,7 @@ class Backup
             // Se è impostata una password e ZipArchive è disponibile, crea un backup protetto da password
             if (!empty($password) && class_exists('ZipArchive')) {
                 // Crea un percorso temporaneo per il backup
-                $temp_path = $backup_path . '.tmp';
+                $temp_path = $backup_path.'.tmp';
 
                 // Crea prima un backup normale
                 $result = Zip::create([
@@ -247,16 +247,16 @@ class Backup
 
                 if ($result) {
                     // Crea un nuovo ZIP protetto da password
-                    $zip = new \ZipArchive();
-                    if ($zip->open($backup_path, \ZipArchive::CREATE) === true) {
+                    $zip = new ZipArchive();
+                    if ($zip->open($backup_path, ZipArchive::CREATE) === true) {
                         // Apri il file ZIP originale in lettura
-                        $original_zip = new \ZipArchive();
+                        $original_zip = new ZipArchive();
                         if ($original_zip->open($temp_path) === true) {
                             // Imposta la password per il nuovo ZIP
                             $zip->setPassword($password);
 
                             // Copia tutti i file dal backup originale al nuovo backup protetto da password
-                            for ($i = 0; $i < $original_zip->numFiles; $i++) {
+                            for ($i = 0; $i < $original_zip->numFiles; ++$i) {
                                 $stat = $original_zip->statIndex($i);
                                 $file_content = $original_zip->getFromIndex($i);
 
@@ -264,7 +264,7 @@ class Backup
                                 $zip->addFromString($stat['name'], $file_content);
 
                                 // Cripta il file con AES-256
-                                $zip->setEncryptionIndex($i, \ZipArchive::EM_AES_256, $password);
+                                $zip->setEncryptionIndex($i, ZipArchive::EM_AES_256, $password);
                             }
 
                             // Chiudi i file ZIP
@@ -344,8 +344,8 @@ class Backup
     /**
      * Ripristina un backup esistente.
      *
-     * @param string $path
-     * @param bool $cleanup
+     * @param string      $path
+     * @param bool        $cleanup
      * @param string|null $password Password per decriptare il backup (se criptato)
      */
     public static function restore($path, $cleanup = true, $password = null)
@@ -354,7 +354,7 @@ class Backup
 
         // Se il backup non è una directory e è stata fornita una password, prova a estrarlo con la password
         if (!is_dir($path) && !empty($password) && class_exists('ZipArchive')) {
-            $zip = new \ZipArchive();
+            $zip = new ZipArchive();
             if ($zip->open($path) === true) {
                 // Imposta la password per l'estrazione
                 $zip->setPassword($password);
@@ -452,6 +452,23 @@ class Backup
     }
 
     /**
+     * Restituisce l'adattatore di archiviazione da utilizzare per i backup.
+     *
+     * @return Modules\FileAdapters\FileAdapter
+     */
+    public static function getStorageAdapter()
+    {
+        $adapter_id = setting('Adattatore archiviazione backup');
+
+        // Se non è stato selezionato un adattatore, utilizzo quello predefinito
+        if (empty($adapter_id)) {
+            return Modules\FileAdapters\FileAdapter::getDefaultConnector();
+        }
+
+        return Modules\FileAdapters\FileAdapter::find($adapter_id);
+    }
+
+    /**
      * Restituisce il percorso su cui salvare temporaneamente il dump del database.
      *
      * @return string
@@ -467,31 +484,12 @@ class Backup
         return slashes($result);
     }
 
-
-
     /**
      * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
      */
     protected static function getReplaces()
     {
         return Generator::getReplaces();
-    }
-
-    /**
-     * Restituisce l'adattatore di archiviazione da utilizzare per i backup.
-     *
-     * @return \Modules\FileAdapters\FileAdapter
-     */
-    public static function getStorageAdapter()
-    {
-        $adapter_id = setting('Adattatore archiviazione backup');
-
-        // Se non è stato selezionato un adattatore, utilizzo quello predefinito
-        if (empty($adapter_id)) {
-            return \Modules\FileAdapters\FileAdapter::getDefaultConnector();
-        }
-
-        return \Modules\FileAdapters\FileAdapter::find($adapter_id);
     }
 
     /**

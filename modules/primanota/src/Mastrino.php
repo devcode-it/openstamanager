@@ -263,8 +263,8 @@ class Mastrino extends Model
             $scadenze[$documento] = [];
             $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento));
             foreach ($scadenze_documento as $scadenza_row) {
-                 $id_scadenza = $scadenza_row['id'];
-                 $scadenze[$documento][$id_scadenza] = $id_scadenza; 
+                $id_scadenza = $scadenza_row['id'];
+                $scadenze[$documento][$id_scadenza] = $id_scadenza;
             }
         }
 

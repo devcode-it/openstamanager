@@ -92,7 +92,7 @@ if (Auth::check()) {
     $array = $_SESSION['module_'.$id_module];
     if (!empty($array)) {
         foreach ($array as $field => $value) {
-            if (!empty($value) && str_contains($field, 'search_')) {
+            if (!empty($value) && str_contains((string) $field, 'search_')) {
                 echo '
                 search.push("'.$field.'");
                 search["'.$field.'"] = "'.addslashes((string) $value).'";';
@@ -395,11 +395,9 @@ echo '
 	<body class="sidebar-mini layout-fixed '.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
 		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
-
 $isInstallation = (!$dbo->isInstalled() || !$dbo->isConnected() || Update::isUpdateAvailable());
 
 if (Auth::check()) {
-
     $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'secondary';
 
     echo '
@@ -442,8 +440,8 @@ if (Auth::check()) {
                 <!-- Navbar Right Menu -->
                 <ul class="navbar-nav ml-auto">';
 
-    if (!$config['disable_hooks'] && !$isInstallation) {
-        echo '
+        if (!$config['disable_hooks'] && !$isInstallation) {
+            echo '
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-bell-o"></i>
@@ -715,8 +713,8 @@ if (Auth::check()) {
     }
 
     // Non mostrare la card nella pagina di login quando ci sono solo errori
-    if ((!empty($messages['warning']) || (!empty($messages['error']) && ($pageTitle != tr('Login')))) &&
-        !($pageTitle == tr('Login') && empty($messages['warning']) && !empty($messages['error']))) {
+    if ((!empty($messages['warning']) || (!empty($messages['error']) && ($pageTitle != tr('Login'))))
+        && !($pageTitle == tr('Login') && empty($messages['warning']) && !empty($messages['error']))) {
         echo '
             <div class="card card-warning card-center card-center-large">
                 <div class="card-header with-border text-center">
@@ -746,7 +744,7 @@ if (!empty($messages['error']) && (Auth::check() || $pageTitle != tr('Login'))) 
 
     foreach ($messages['error'] as $value) {
         // Rimuovi il codice errore dal messaggio
-        $value = preg_replace('/\[uid: ([a-z0-9]+)\]/i', '', $value);
+        $value = preg_replace('/\[uid: ([a-z0-9]+)\]/i', '', (string) $value);
 
         if ($is_admin) {
             // Visualizzazione migliorata per amministratori
@@ -793,9 +791,9 @@ if (!empty($messages['warning'])) {
 }
 
 // Chiusura della card informazioni - non mostrare nella pagina di login quando ci sono solo errori
-if (!Auth::check() &&
-    (!empty($messages['info']) || !empty($messages['warning']) ||
-     (!empty($messages['error']) && $pageTitle != tr('Login')))) {
+if (!Auth::check()
+    && (!empty($messages['info']) || !empty($messages['warning'])
+     || (!empty($messages['error']) && $pageTitle != tr('Login')))) {
     echo '
                 </div>
             </div>';

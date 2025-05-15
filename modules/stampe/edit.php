@@ -120,28 +120,28 @@ echo '
 
     <div class="card-body">';
 
-    $available_options = json_decode((string) $record['available_options'], true) ?? [];
+$available_options = json_decode((string) $record['available_options'], true) ?? [];
 
-    // Add the additional options
-    $additional_options = [
-        "font-size" => "Dimensione del font",
-        "header-font-size" => "Dimensione del font dell'intestazione",
-        "orientation" => "Orientamento pagina",
-        "format" => "Formato pagina"
-    ];
+// Add the additional options
+$additional_options = [
+    'font-size' => 'Dimensione del font',
+    'header-font-size' => "Dimensione del font dell'intestazione",
+    'orientation' => 'Orientamento pagina',
+    'format' => 'Formato pagina',
+];
 
-    $available_options = array_merge($available_options, $additional_options);
+$available_options = array_merge($available_options, $additional_options);
 
-    echo '
+echo '
         <p>'.tr('Puoi utilizzare le seguenti opzioni per generare la stampa').':</p>
         <ul>';
 
-    foreach ($available_options as $option => $value) {
-        echo '
-            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="badge badge-default" >'.$value.'</span>' : '').'</li>';
-    }
-
+foreach ($available_options as $option => $value) {
     echo '
+            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="badge badge-default" >'.$value.'</span>' : '').'</li>';
+}
+
+echo '
         </ul>';
 
 echo '

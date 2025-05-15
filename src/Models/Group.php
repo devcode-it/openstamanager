@@ -77,8 +77,9 @@ class Group extends Model
      * Se il gruppo non ha permessi sul modulo, rimuove i permessi sulle viste e segmenti.
      * Se il gruppo ha permessi sul modulo, aggiunge i permessi su tutte le viste e segmenti.
      *
-     * @param int $id_module ID del modulo
-     * @param string $permessi Permessi ('r', 'rw', o '-')
+     * @param int    $id_module ID del modulo
+     * @param string $permessi  Permessi ('r', 'rw', o '-')
+     *
      * @return void
      */
     public function syncModulePermissions($id_module, $permessi)

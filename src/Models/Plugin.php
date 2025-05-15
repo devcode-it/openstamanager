@@ -115,7 +115,7 @@ class Plugin extends Model
     public function getUploadDirectoryAttribute()
     {
         if (!empty($this->script)) {
-            return $this->uploads_directory.'/'.basename($this->script, '.php');
+            return $this->uploads_directory.'/'.basename((string) $this->script, '.php');
         }
 
         return $this->defaultUploadDirectory();

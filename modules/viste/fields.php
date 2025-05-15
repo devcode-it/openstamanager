@@ -71,15 +71,15 @@ foreach ($fields as $key => $field) {
                                         <i class="fa fa-database"></i> '.tr('Query prevista').'
                                     </label>
                                     '.input([
-                                    'type' => 'textarea',
-                                    'name' => 'query['.$key.']',
-                                    'required' => 1,
-                                    'readonly' => ''.(!$editable).'',
-                                    'value' => $field->query,
-                                    'style' => 'height: 80px;',
-                                    'show-label' => '0',
-                                    'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
-                                ]).'
+        'type' => 'textarea',
+        'name' => 'query['.$key.']',
+        'required' => 1,
+        'readonly' => ''.(!$editable).'',
+        'value' => $field->query,
+        'style' => 'height: 80px;',
+        'show-label' => '0',
+        'help' => tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo.').'<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!'),
+    ]).'
                                 </div>
                             </div>
                         </div>
@@ -245,19 +245,19 @@ echo '
                         <div class="col-md-6">
                             {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
 
-    // Ottieni tutti gli ID dei gruppi che hanno accesso al modulo
-    $groups_with_access = $dbo->fetchArray('SELECT DISTINCT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')');
-    $group_ids = array_column($groups_with_access, 'idgruppo');
+// Ottieni tutti gli ID dei gruppi che hanno accesso al modulo
+$groups_with_access = $dbo->fetchArray('SELECT DISTINCT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')');
+$group_ids = array_column($groups_with_access, 'idgruppo');
 
-    // Assicurati che il gruppo Amministratori (ID 1) sia incluso
-    $id_gruppo_admin = 1; // ID del gruppo Amministratori
-    if (!in_array($id_gruppo_admin, $group_ids)) {
-        $group_ids[] = $id_gruppo_admin;
-    }
+// Assicurati che il gruppo Amministratori (ID 1) sia incluso
+$id_gruppo_admin = 1; // ID del gruppo Amministratori
+if (!in_array($id_gruppo_admin, $group_ids)) {
+    $group_ids[] = $id_gruppo_admin;
+}
 
-    echo implode(',', $group_ids);
+echo implode(',', $group_ids);
 
-    echo '" ]}
+echo '" ]}
                 </div>
 
                 <div class="col-md-6">

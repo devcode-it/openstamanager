@@ -40,7 +40,7 @@ if ($source->isArticolo()) {
     $articolo_riga = Articolo::find($source->idarticolo);
     echo $articolo_riga->codice.' - '.$source->descrizione;
 } else {
-    echo nl2br($source->descrizione);
+    echo nl2br((string) $source->descrizione);
 }
 echo '
         </h3>

@@ -102,7 +102,7 @@ class Promemoria extends Document
         // Collego gli impianti del promemoria all'intervento
         $database = database();
         if ($copia_impianti && !empty($this->idimpianti)) {
-            $impianti = explode(',', $this->idimpianti);
+            $impianti = explode(',', (string) $this->idimpianti);
             $impianti = array_unique($impianti);
             foreach ($impianti as $impianto) {
                 $database->insert('my_impianti_interventi', [

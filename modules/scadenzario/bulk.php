@@ -194,7 +194,6 @@ $operations['change-bank'] = [
     ],
 ];
 
-
 $operations['change_distinta'] = [
     'text' => '<span><i class="fa fa-edit"></i> '.tr('Info distinta'),
     'data' => [
@@ -206,7 +205,6 @@ $operations['change_distinta'] = [
         'blank' => false,
     ],
 ];
-
 
 $operations['send_reminder'] = [
     'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail sollecito').'</span>',

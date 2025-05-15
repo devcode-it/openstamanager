@@ -37,7 +37,7 @@ class Impianto extends Model
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');
     }
 
-    public static function build($matricola = null, $nome = null, ?\Modules\Articoli\Categoria $categoria = null, $anagrafica = null)
+    public static function build($matricola = null, $nome = null, ?Categoria $categoria = null, $anagrafica = null)
     {
         $model = new static();
         $model->is_impianto = 1;
@@ -53,6 +53,6 @@ class Impianto extends Model
 
     public function categoria()
     {
-        return $this->belongsTo(\Modules\Articoli\Categoria::class, 'id_categoria');
+        return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 }

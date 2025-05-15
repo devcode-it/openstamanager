@@ -192,9 +192,7 @@ if (empty($record) || !$has_access) {
     // Successivo
     $next = $posizioni[$key + 1]['id'];
 
-
     echo '<span class="d-sm-inline">';
-
 
     echo '
                 <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
@@ -205,9 +203,7 @@ if (empty($record) || !$has_access) {
                 </a>
             </span>';
 
-
     echo '<div class="extra-buttons d-sm-inline">';
-
 
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');

@@ -373,7 +373,7 @@ class Gestore
     {
         $date_key = $data_prevista->format('Y-m-d');
         $customer_key = $controparte->id;
-        $group_key = $date_key . '_' . $customer_key;
+        $group_key = $date_key.'_'.$customer_key;
 
         if (!isset($this->payment_info_by_date_customer[$group_key])) {
             $paymentInformation = new PaymentInformationCBI();

@@ -43,7 +43,7 @@ if (!empty($rs)) {
         $data_conclusione = ($preventivo->data_conclusione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_conclusione) : '';
         $stato_preventivo = Stato::find($preventivo->idstato)->getTranslation('title');
 
-        if (strtotime($preventivo->data_conclusione) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
+        if (strtotime((string) $preventivo->data_conclusione) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
             $attr = ' class="danger"';
         } else {
             $attr = '';

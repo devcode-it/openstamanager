@@ -25,7 +25,7 @@ use Modules\CategorieFiles\Categoria;
 switch (post('op')) {
     case 'update':
         $name = post('name');
-        $categoria_new = Categoria::where('name', '=', $name)->where('deleted_at', '=', null)->where('id','!=', $id_record)->first();
+        $categoria_new = Categoria::where('name', '=', $name)->where('deleted_at', '=', null)->where('id', '!=', $id_record)->first();
 
         if (!empty($categoria_new)) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [

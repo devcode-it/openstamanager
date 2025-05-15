@@ -40,7 +40,7 @@ $conto_bloccato = [
     'Iva su vendite',
     'Iva su acquisti',
     'Iva indetraibile',
-    'Compensazione per autofattura'
+    'Compensazione per autofattura',
 ];
 
 $conto_bloccato = in_array($info['descrizione'], $conto_bloccato);
@@ -71,12 +71,12 @@ if (!$conto_bloccato && $lvl == 3) {
         </div>
 
         <div class="col-md-8">
-            <?php if ($conto_bloccato): ?>
+            <?php if ($conto_bloccato) { ?>
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?>, "readonly": 1, "help": "<?php echo tr('Questo è un conto speciale utilizzato dal sistema. La descrizione non può essere modificata.'); ?>" ]}
             <input type="hidden" name="conto_bloccato" value="1">
-            <?php else: ?>
+            <?php } else { ?>
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?> ]}
-            <?php endif; ?>
+            <?php } ?>
         </div>
     </div>
     <div class="row">

@@ -23,8 +23,8 @@ namespace Modules\TipiIntervento;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Preventivi\Preventivo;
 use Modules\Interventi\Intervento;
+use Modules\Preventivi\Preventivo;
 use Traits\RecordTrait;
 
 class Tipo extends Model
@@ -88,7 +88,6 @@ class Tipo extends Model
 
         $this->fixTecnici();
     }
-
 
     public function preventivi()
     {

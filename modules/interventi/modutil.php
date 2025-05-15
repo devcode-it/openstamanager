@@ -243,7 +243,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             $riga = Riga::build($fattura);
 
             foreach ($gruppo as $sessione) {
-                $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                $dateValue = date('d/m/Y', strtotime((string) $sessione->orario_fine));
                 if (!in_array($dateValue, $date)) {
                     $date[] = $dateValue;
                 }
@@ -293,7 +293,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             $riga = Riga::build($fattura);
 
             foreach ($gruppo as $sessione) {
-                $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                $dateValue = date('d/m/Y', strtotime((string) $sessione->orario_fine));
                 if (!in_array($dateValue, $date)) {
                     $date[] = $dateValue;
                 }
@@ -334,7 +334,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             }
 
             foreach ($gruppo as $sessione) {
-                $dateValue = date('d/m/Y', strtotime($sessione->orario_fine));
+                $dateValue = date('d/m/Y', strtotime((string) $sessione->orario_fine));
                 if (!in_array($dateValue, $date)) {
                     $date[] = $dateValue;
                 }

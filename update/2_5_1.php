@@ -329,7 +329,7 @@ if (database()->columnExists('mg_categorie_lang', 'name')) {
 
 // Rimozione categoria 'Componenti' se non collegata ad articoli
 $categoria = $database->fetchOne('SELECT `mg_categorie`.* FROM `mg_categorie`
-    LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+    LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE `mg_categorie_lang`.`title` = "Componenti"');
 if (!empty($categoria)) {
     $articoli_collegati = $database->fetchNum('SELECT COUNT(*) FROM `mg_articoli` WHERE `id_categoria` = '.prepare($categoria['id']).' OR `id_sottocategoria` = '.prepare($categoria['id']));

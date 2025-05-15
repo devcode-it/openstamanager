@@ -54,7 +54,7 @@ switch ($resource) {
             $where[] = 'my_impianti.idanagrafica='.prepare($superselect['idanagrafica']);
         }
 
-        if (isset($superselect['idsede_destinazione']) && $superselect['idsede_destinazione'] != "") {
+        if (isset($superselect['idsede_destinazione']) && $superselect['idsede_destinazione'] != '') {
             $where[] = 'my_impianti.idsede='.prepare($superselect['idsede_destinazione'] ?: 0);
         }
 

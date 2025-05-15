@@ -196,7 +196,7 @@ echo '
 
                 <div class="mb-3 status-item attivita-item">
                     <div class="d-flex align-items-center mb-2">
-                        <span class="status-icon badge badge-'.(count($interventi_programmati) == 0 ? 'success' : 'warning').' mr-2"><i class="fa fa-'.( count($interventi_programmati) == 0 ? 'check-circle' : 'calendar').'"></i></span>
+                        <span class="status-icon badge badge-'.(count($interventi_programmati) == 0 ? 'success' : 'warning').' mr-2"><i class="fa fa-'.(count($interventi_programmati) == 0 ? 'check-circle' : 'calendar').'"></i></span>
                         <span class="status-text">'.(count($interventi_programmati) == 0 ? tr('Non sono presenti altre attività programmate') : tr('Attività aperte')).'</span>
                     </div>';
 if (count($interventi_programmati) != 0) {

@@ -37,10 +37,10 @@ if (!empty($id_record)) {
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
     <input type="hidden" name="op" value="<?php echo $id_record ? 'update' : 'add'; ?>">
-    <?php if (!empty($id_original)) : ?>
+    <?php if (!empty($id_original)) { ?>
     <input type="hidden" name="is_articolo" value="<?php echo $id_original ? Marca::find($id_original)->is_articolo : 1; ?>">
     <input type="hidden" name="is_impianto" value="<?php echo $id_original ? Marca::find($id_original)->is_impianto : 0; ?>">
-    <?php endif; ?>
+    <?php } ?>
 
 	<div class="row">
 		<div class="col-md-4">

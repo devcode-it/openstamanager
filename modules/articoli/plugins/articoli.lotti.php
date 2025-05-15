@@ -24,8 +24,6 @@ $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_seria
 if (empty($record['abilita_serial'])) {
     echo '
 <script>$("li.btn-default.nav-item:has(#link-tab_'.$plugin['id'].')").addClass("disabled");</script>';
-
-
 }
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato

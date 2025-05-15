@@ -138,7 +138,7 @@ echo '
                         </tr>
                         <tr>
                             <td><i class="fa fa-map-marker mr-1"></i> '.tr('Ubicazione').'</td>
-                            <td class="text-right font-weight-bold">'.($articolo->ubicazione ? $articolo->ubicazione : '<span class="text-muted">-</span>').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->ubicazione ?: '<span class="text-muted">-</span>').'</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-balance-scale mr-1"></i> '.tr('Peso lordo').'</td>

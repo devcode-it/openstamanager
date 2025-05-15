@@ -41,8 +41,6 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\ComponentiImpianti\Componente;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Plugins\PianificazioneInterventi\Promemoria;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
@@ -405,13 +403,13 @@ switch (post('op')) {
                     foreach ($sessioni as $sessione) {
                         // Se è la prima sessione che copio importo la data con quella della richiesta
                         if ($numero_sessione == 0) {
-                            $orario_inizio = date('Y-m-d', strtotime((string) $data_ricorrenza)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                            $orario_inizio = date('Y-m-d', strtotime((string) $data_ricorrenza)).' '.date('H:i:s', strtotime((string) $sessione->orario_inizio));
                         } else {
-                            $diff = strtotime($sessione->orario_inizio) - strtotime((string) $inizio_old);
-                            $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
+                            $diff = strtotime((string) $sessione->orario_inizio) - strtotime((string) $inizio_old);
+                            $orario_inizio = date('Y-m-d H:i:s', strtotime((string) $new_sessione->orario_inizio) + $diff);
                         }
 
-                        $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                        $diff_fine = strtotime((string) $sessione->orario_fine) - strtotime((string) $sessione->orario_inizio);
                         $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                         $new_sessione = $sessione->replicate();
@@ -753,8 +751,8 @@ switch (post('op')) {
                 });
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
-                    $img->brightness((float)setting('Luminosità firma Wacom'));
-                    $img->contrast((float)setting('Contrasto firma Wacom'));
+                    $img->brightness((float) setting('Luminosità firma Wacom'));
+                    $img->contrast((float) setting('Contrasto firma Wacom'));
                 }
 
                 if (!$img->save(base_dir().'/files/interventi/'.$firma_file)) {
@@ -1110,13 +1108,13 @@ switch (post('op')) {
                         foreach ($sessioni as $sessione) {
                             // Se è la prima sessione che copio importo la data con quella della richiesta
                             if ($numero_sessione == 0) {
-                                $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                                $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime((string) $sessione->orario_inizio));
                             } else {
-                                $diff = strtotime($sessione->orario_inizio) - strtotime((string) $inizio_old);
-                                $orario_inizio = date('Y-m-d H:i:s', strtotime($new_sessione->orario_inizio) + $diff);
+                                $diff = strtotime((string) $sessione->orario_inizio) - strtotime((string) $inizio_old);
+                                $orario_inizio = date('Y-m-d H:i:s', strtotime((string) $new_sessione->orario_inizio) + $diff);
                             }
 
-                            $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                            $diff_fine = strtotime((string) $sessione->orario_fine) - strtotime((string) $sessione->orario_inizio);
                             $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                             $new_sessione = $sessione->replicate();

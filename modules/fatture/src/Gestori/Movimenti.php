@@ -170,7 +170,7 @@ class Movimenti
                 }
             }
             // Caso 2: Fattura senza split payment - IVA normale (acquisti o vendite)
-            else if (empty($split_payment)) {
+            elseif (empty($split_payment)) {
                 $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti') : setting('Conto per Iva su vendite');
                 $movimenti[] = [
                     'id_conto' => $id_conto,

@@ -48,7 +48,7 @@ class MessageHandler extends AbstractProcessingHandler
         $line = $context['line'] ?? '';
 
         // Genera un ID univoco per il collapsible
-        $collapse_id = 'error_details_' . uniqid();
+        $collapse_id = 'error_details_'.uniqid();
 
         if ($is_admin) {
             // Messaggio dettagliato per amministratori
@@ -104,25 +104,25 @@ class MessageHandler extends AbstractProcessingHandler
             $error_details .= "Dettagli tecnici dell'errore:\n";
 
             if (!empty($message_text)) {
-                $error_details .= "Messaggio: " . strip_tags($message_text) . "\n";
+                $error_details .= 'Messaggio: '.strip_tags($message_text)."\n";
             }
             if (!empty($file) && !empty($line)) {
-                $error_details .= "File: " . $file . "\n";
-                $error_details .= "Linea: " . $line . "\n";
+                $error_details .= 'File: '.$file."\n";
+                $error_details .= 'Linea: '.$line."\n";
             }
 
             // Aggiungi informazioni sul sistema
             $error_details .= "\nInformazioni di sistema:\n";
-            $error_details .= "Versione PHP: " . phpversion() . "\n";
-            $error_details .= "Sistema operativo: " . php_uname() . "\n";
+            $error_details .= 'Versione PHP: '.phpversion()."\n";
+            $error_details .= 'Sistema operativo: '.php_uname()."\n";
             $error_details .= "Browser: [Inserire il browser utilizzato]\n";
             $error_details .= "Versione OpenSTAManager: [Inserire la versione in uso]\n\n";
 
             // Genera un ID univoco per il contenitore dei dettagli
-            $details_id = 'error_details_clipboard_' . uniqid();
+            $details_id = 'error_details_clipboard_'.uniqid();
 
             // URL del forum semplice
-            $forum_url = "https://forum.openstamanager.com/";
+            $forum_url = 'https://forum.openstamanager.com/';
 
             // Informazioni di assistenza
             $message .= '<div class="alert alert-warning mt-2 mb-0 py-2 px-3">
@@ -130,7 +130,7 @@ class MessageHandler extends AbstractProcessingHandler
                     <i class="fa fa-question-circle text-warning mr-2"></i>
                     <div>
                         '.tr('Se il problema dovesse persistere, invitiamo gli utenti con contratto di assistenza attivo ad aprire un ticket nell\'area clienti. <br>In alternativa, è possibile richiedere supporto tramite il forum ufficiale (_LINK_FORUM_)', [
-                            '_LINK_FORUM_' => '<a href="'.$forum_url.'" target="_blank" class="font-weight-bold mr-2">'.tr('Forum di supporto').'</a>
+                '_LINK_FORUM_' => '<a href="'.$forum_url.'" target="_blank" class="font-weight-bold mr-2">'.tr('Forum di supporto').'</a>
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-xs copy-error-details" data-clipboard-text="'.htmlspecialchars($error_details).'" id="'.$details_id.'">
                                 <i class="fa fa-clipboard mr-1"></i> '.tr('Copia dettagli errore').'
                             </button>
@@ -158,7 +158,7 @@ class MessageHandler extends AbstractProcessingHandler
                                     });
                                 });
                             </script>',
-                        ]).'
+            ]).'
                     </div>
                 </div>
             </div>';

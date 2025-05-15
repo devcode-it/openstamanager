@@ -121,13 +121,13 @@ class Settings
 
         // list
         // verifico che il valore scelto sia nella lista enumerata nel db
-        elseif (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
+        elseif (preg_match("/list\[(.+?)\]/", (string) $setting->tipo, $m)) {
             $validator = v::in(explode(',', $m[1]));
         }
 
         // multiple
         // verifico che il valore scelto sia nella lista enumerata nel db
-        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m[0][0])) {
+        elseif (preg_match("/multiple\[(.+?)\]/", (string) $setting->tipo, $m[0][0])) {
             // $validator =  v::in(explode(',', $m[0][0][1]));
         }
 
@@ -171,19 +171,19 @@ class Settings
         $tooltip = $setting->getTranslation('help');
 
         if ($user) {
-            $user_options = json_decode($user->options ?: '', true);
+            $user_options = json_decode((string) $user->options ?: '', true);
         }
-        
+
         if ($user_options['settings'][$setting->id] !== null) {
             $user_setting_icon = '<i class="fa fa-user text-primary"></i>';
-            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzata dall\'utente').'</em>';
-        } else if ($setting->is_user_setting) {
+            $tooltip .= ($tooltip ? '<br>' : '').'<em>'.tr('Personalizzata dall\'utente').'</em>';
+        } elseif ($setting->is_user_setting) {
             $user_setting_icon = '<i class="fa fa-user text-secondary"></i>';
-            $tooltip .= ($tooltip?'<br>':'').'<em>'.tr('Personalizzabile dall\'utente').'</em>';
+            $tooltip .= ($tooltip ? '<br>' : '').'<em>'.tr('Personalizzabile dall\'utente').'</em>';
         }
 
         // Lista predefinita
-        if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
+        if (preg_match("/list\[(.+?)\]/", (string) $setting->tipo, $m)) {
             $values = explode(',', $m[1]);
 
             $list = [];
@@ -199,14 +199,14 @@ class Settings
         }
 
         // Lista multipla
-        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
+        elseif (preg_match("/multiple\[(.+?)\]/", (string) $setting->tipo, $m)) {
             $list = [];
 
             // Gestisco il multiple da query trasformando i risultati in formato List
-            if (strstr($setting->tipo, 'query=')) {
+            if (strstr((string) $setting->tipo, 'query=')) {
                 $database = database();
 
-                $value = str_replace(']', '', explode('[', $setting->tipo)[1]);
+                $value = str_replace(']', '', explode('[', (string) $setting->tipo)[1]);
                 $query = str_replace('query=', '', $value);
                 $query = str_replace('"', '\"', $query);
                 $rs = $database->fetchArray($query);
@@ -232,7 +232,7 @@ class Settings
         }
 
         // Lista da query
-        elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
+        elseif (preg_match('/^query=(.+?)$/', (string) $setting->tipo, $m)) {
             $result = '
     {[ "type": "select", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$input_value.'", "required": "'.intval($required).'", "help": "'.$tooltip.'"   ]}';
         }

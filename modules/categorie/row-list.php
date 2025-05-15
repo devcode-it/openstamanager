@@ -18,7 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Models\Module;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 
@@ -41,7 +40,7 @@ foreach ($subcategorie as $sub) {
 '.($sub->is_impianto ? '<span class="badge badge-primary"><i class="fa fa-check"></i></span>' : '<span class="badge badge-secondary"><i class="fa fa-times"></i></span>').'
 </td>
 <td class="align-middle">
-<small>'.nl2br(htmlentities(substr($sub->getTranslation('note'), 0, 100))).(strlen($sub->getTranslation('note')) > 100 ? '...' : '').'</small>
+<small>'.nl2br(htmlentities(substr((string) $sub->getTranslation('note'), 0, 100))).(strlen((string) $sub->getTranslation('note')) > 100 ? '...' : '').'</small>
 </td>
 <td class="text-center align-middle">
 <div class="btn-group">

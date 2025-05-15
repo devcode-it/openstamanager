@@ -38,7 +38,6 @@ foreach ($files as $key => $value) {
 
 delete($files);
 
-
 $module = Models\Module::where('name', 'Fatture di acquisto')->first();
 $directory = 'files/fatture/vendite/';
 $files = glob($directory.'*.{xml,pdf}', GLOB_BRACE) ?: [];
@@ -52,7 +51,7 @@ foreach ($files as $file) {
     $filename = basename($file);
     // Sposta solo i file che hanno un record corrispondente nella tabella zz_files
     if (in_array($filename, $attachments_filenames)) {
-        echo "Spostamento file: " . $file . " -> " . $new_folder.$filename . "\n";
+        echo 'Spostamento file: '.$file.' -> '.$new_folder.$filename."\n";
         rename($file, $new_folder.$filename);
     }
 }
@@ -70,11 +69,10 @@ foreach ($files as $file) {
     $filename = basename($file);
     // Sposta solo i file che hanno un record corrispondente nella tabella zz_files
     if (in_array($filename, $attachments_filenames)) {
-        echo "Spostamento file: " . $file . " -> " . $new_folder.$filename . "\n";
+        echo 'Spostamento file: '.$file.' -> '.$new_folder.$filename."\n";
         rename($file, $new_folder.$filename);
     }
 }
-
 
 // Verifica presenza conti
 $conti_speciali_livello2 = [
@@ -118,7 +116,7 @@ foreach ($conti_speciali_livello2 as $conto_livello2 => $sottoconti) {
             $nuovo_numero = $max_numero ? $max_numero['max_numero'] + 1 : 1;
             $nuovo_numero = str_pad($nuovo_numero, 6, '0', STR_PAD_LEFT);
             database()->query('INSERT INTO co_pianodeiconti3 (numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES ('.prepare($nuovo_numero).', '.prepare($sottoconto).', '.prepare($conto2['id']).', "entrata/uscita", 100)');
-            echo "Creato conto di terzo livello: ".$sottoconto." (numero: ".$nuovo_numero.")\n";
+            echo 'Creato conto di terzo livello: '.$sottoconto.' (numero: '.$nuovo_numero.")\n";
         }
     }
 }
@@ -134,7 +132,7 @@ foreach ($conti_speciali_livello3 as $conto_livello3) {
             $nuovo_numero = $max_numero ? $max_numero['max_numero'] + 1 : 1;
             $nuovo_numero = str_pad($nuovo_numero, 6, '0', STR_PAD_LEFT);
             database()->query('INSERT INTO co_pianodeiconti3 (numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES ('.prepare($nuovo_numero).', '.prepare($conto_livello3).', '.prepare($conto2['id']).', "entrata/uscita", 100)');
-            echo "Creato conto di terzo livello speciale: ".$conto_livello3." (numero: ".$nuovo_numero.")\n";
+            echo 'Creato conto di terzo livello speciale: '.$conto_livello3.' (numero: '.$nuovo_numero.")\n";
         }
     }
 }
@@ -147,4 +145,4 @@ foreach ($categories as $categoria) {
     $id = $dbo->lastInsertedId();
     $dbo->query('UPDATE `zz_files` SET `id_category` = '.$id.' WHERE `category` = '.prepare($categoria));
 }
-$dbo->query('ALTER TABLE `zz_files` DROP `category`'); 
+$dbo->query('ALTER TABLE `zz_files` DROP `category`');

@@ -38,7 +38,7 @@ switch (post('op')) {
 
         break;
 
-    // Rimuovo impianto e scollego tutti i suoi componenti
+        // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete_bulk':
         $n_impianti = 0;
 
@@ -104,7 +104,5 @@ $operations['export_csv'] = [
         'blank' => true,
     ],
 ];
-
-
 
 return $operations;

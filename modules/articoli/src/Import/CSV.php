@@ -278,7 +278,7 @@ class CSV extends CSVImporter
                 }
 
                 // Crea una chiave univoca per evitare duplicati
-                $key = $record[$primary_key] . '|' . $record['anagrafica_listino'];
+                $key = $record[$primary_key].'|'.$record['anagrafica_listino'];
                 if (isset($processed_records[$key])) {
                     continue; // Evita di elaborare lo stesso record più volte
                 }
@@ -320,170 +320,12 @@ class CSV extends CSVImporter
     }
 
     /**
-     * Processa la categoria dell'articolo.
-     *
-     * @param array $record Record da processare
-     * @return Categoria|null Categoria processata
-     */
-    protected function processaCategoria($record)
-    {
-        if (empty($record['categoria'])) {
-            return null;
-        }
-
-        $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->where('is_articolo', '=', 0)->first();
-
-        if (empty($categoria)) {
-            $categoria = Categoria::build();
-            $categoria->setTranslation('title', $record['categoria']);
-            $categoria->is_articolo = 1;
-            $categoria->save();
-        }
-
-        return $categoria;
-    }
-
-    /**
-     * Processa la sottocategoria dell'articolo.
-     *
-     * @param array $record Record da processare
-     * @param Categoria|null $categoria Categoria padre
-     * @return Categoria|null Sottocategoria processata
-     */
-    protected function processaSottocategoria($record, $categoria)
-    {
-        if (empty($record['sottocategoria']) || empty($categoria)) {
-            return null;
-        }
-
-        $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
-
-        if (empty($sottocategoria)) {
-            $sottocategoria = Categoria::build();
-            $sottocategoria->setTranslation('title', $record['sottocategoria']);
-            $sottocategoria->parent()->associate($categoria);
-            $sottocategoria->save();
-        }
-
-        return $sottocategoria;
-    }
-
-    /**
-     * Processa la marca dell'articolo.
-     *
-     * @param array $record Record da processare
-     * @return Marca|null Marca processata
-     */
-    protected function processaMarca($record)
-    {
-        if (empty($record['marca'])) {
-            return null;
-        }
-
-        $marca = Marca::where('name', $record['marca'])->first();
-
-        if (empty($marca)) {
-            $marca = Marca::build($record['marca']);
-            $marca->save();
-        }
-
-        return $marca;
-    }
-
-    /**
-     * Processa l'unità di misura dell'articolo.
-     *
-     * @param array $record Record da processare
-     * @return void
-     */
-    protected function processaUnitaMisura($record)
-    {
-        if (empty($record['um'])) {
-            return;
-        }
-
-        $database = database();
-        $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
-        if (empty($um)) {
-            $database->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($record['um']).')');
-        }
-    }
-
-    /**
-     * Processa l'immagine dell'articolo.
-     *
-     * @param Articolo $articolo Articolo da aggiornare
-     * @param string $url URL dell'immagine
-     * @param array $record Record da processare
-     * @return void
-     */
-    protected function processaImmagine($articolo, $url, $record)
-    {
-        if (empty($url) || empty($record['import_immagine'])) {
-            return;
-        }
-
-        try {
-            $file_content = @file_get_contents($url);
-
-            if (empty($file_content)) {
-                return;
-            }
-
-            $database = database();
-
-            /**
-             * Import immagine options:
-             *
-             * - 1: Permette di importare l'immagine come principale dell'articolo mantenendo gli altri allegati già presenti.
-             * - 2: Permette di importare l'immagine come principale dell'articolo rimuovendo tutti gli allegati presenti.
-             * - 3: Permette di importare l'immagine come allegato dell'articolo.
-             * - 4: Permette di importare l'immagine come allegato dell'articolo rimuovendo tutti gli allegati presenti.
-             */
-            if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
-                \Uploads::deleteLinked([
-                    'id_module' => Module::where('name', 'Articoli')->first()->id,
-                    'id_record' => $articolo->id,
-                ]);
-
-                $database->update('mg_articoli', [
-                    'immagine' => '',
-                ], [
-                    'id' => $articolo->id,
-                ]);
-            }
-
-            $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
-
-            $upload = \Uploads::upload($file_content, [
-                'name' => 'Immagine',
-                'category' => 'Immagini',
-                'original_name' => $name,
-                'id_module' => Module::where('name', 'Articoli')->first()->id,
-                'id_record' => $articolo->id,
-            ], [
-                'thumbnails' => true,
-            ]);
-
-            if ($upload && !empty($upload->filename) && ($record['import_immagine'] == 1 || $record['import_immagine'] == 2)) {
-                $database->update('mg_articoli', [
-                    'immagine' => $upload->filename,
-                ], [
-                    'id' => $articolo->id,
-                ]);
-            }
-        } catch (\Exception $e) {
-            // Registra l'errore ma continua con l'importazione
-            error_log('Errore durante l\'importazione dell\'immagine: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -557,7 +399,7 @@ class CSV extends CSVImporter
             $nome_sede = $record['nome_sede'] ?? '';
 
             // Aggiornamento dettaglio prezzi
-            $dettagli['anagrafica_listino'] = $dettagli['anagrafica_listino'] ?? $record['anagrafica_listino'];
+            $dettagli['anagrafica_listino'] ??= $record['anagrafica_listino'];
             $dettagli['partita_iva'] = $record['p_iva'] ?? '';
             $dettagli['qta_minima'] = $record['qta_minima'] ?? '';
             $dettagli['qta_massima'] = $record['qta_massima'] ?? '';
@@ -575,9 +417,9 @@ class CSV extends CSVImporter
 
             // Rimuovi i campi già elaborati
             unset($record['anagrafica_listino'], $record['p_iva'], $record['qta_minima'],
-                  $record['qta_massima'], $record['prezzo_listino'], $record['sconto_listino'],
-                  $record['dir'], $record['codice_fornitore'], $record['barcode_fornitore'],
-                  $record['descrizione_fornitore'], $record['id_fornitore']);
+                $record['qta_massima'], $record['prezzo_listino'], $record['sconto_listino'],
+                $record['dir'], $record['codice_fornitore'], $record['barcode_fornitore'],
+                $record['descrizione_fornitore'], $record['id_fornitore']);
 
             // Gestione immagine
             $this->processaImmagine($articolo, $url, $record);
@@ -617,18 +459,192 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'articolo: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione dell\'articolo: '.$e->getMessage());
+
             return false;
+        }
+    }
+
+    public static function getExample()
+    {
+        return [
+            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'marca', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
+            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', 'DevCode s.r.l.', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '1', '10', '180.00', '20', 'Fornitore', 'Sede'],
+        ];
+    }
+
+    /**
+     * Processa la categoria dell'articolo.
+     *
+     * @param array $record Record da processare
+     *
+     * @return Categoria|null Categoria processata
+     */
+    protected function processaCategoria($record)
+    {
+        if (empty($record['categoria'])) {
+            return null;
+        }
+
+        $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->where('is_articolo', '=', 0)->first();
+
+        if (empty($categoria)) {
+            $categoria = Categoria::build();
+            $categoria->setTranslation('title', $record['categoria']);
+            $categoria->is_articolo = 1;
+            $categoria->save();
+        }
+
+        return $categoria;
+    }
+
+    /**
+     * Processa la sottocategoria dell'articolo.
+     *
+     * @param array          $record    Record da processare
+     * @param Categoria|null $categoria Categoria padre
+     *
+     * @return Categoria|null Sottocategoria processata
+     */
+    protected function processaSottocategoria($record, $categoria)
+    {
+        if (empty($record['sottocategoria']) || empty($categoria)) {
+            return null;
+        }
+
+        $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
+
+        if (empty($sottocategoria)) {
+            $sottocategoria = Categoria::build();
+            $sottocategoria->setTranslation('title', $record['sottocategoria']);
+            $sottocategoria->parent()->associate($categoria);
+            $sottocategoria->save();
+        }
+
+        return $sottocategoria;
+    }
+
+    /**
+     * Processa la marca dell'articolo.
+     *
+     * @param array $record Record da processare
+     *
+     * @return Marca|null Marca processata
+     */
+    protected function processaMarca($record)
+    {
+        if (empty($record['marca'])) {
+            return null;
+        }
+
+        $marca = Marca::where('name', $record['marca'])->first();
+
+        if (empty($marca)) {
+            $marca = Marca::build($record['marca']);
+            $marca->save();
+        }
+
+        return $marca;
+    }
+
+    /**
+     * Processa l'unità di misura dell'articolo.
+     *
+     * @param array $record Record da processare
+     *
+     * @return void
+     */
+    protected function processaUnitaMisura($record)
+    {
+        if (empty($record['um'])) {
+            return;
+        }
+
+        $database = database();
+        $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
+        if (empty($um)) {
+            $database->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($record['um']).')');
+        }
+    }
+
+    /**
+     * Processa l'immagine dell'articolo.
+     *
+     * @param Articolo $articolo Articolo da aggiornare
+     * @param string   $url      URL dell'immagine
+     * @param array    $record   Record da processare
+     *
+     * @return void
+     */
+    protected function processaImmagine($articolo, $url, $record)
+    {
+        if (empty($url) || empty($record['import_immagine'])) {
+            return;
+        }
+
+        try {
+            $file_content = @file_get_contents($url);
+
+            if (empty($file_content)) {
+                return;
+            }
+
+            $database = database();
+
+            /*
+             * Import immagine options:
+             *
+             * - 1: Permette di importare l'immagine come principale dell'articolo mantenendo gli altri allegati già presenti.
+             * - 2: Permette di importare l'immagine come principale dell'articolo rimuovendo tutti gli allegati presenti.
+             * - 3: Permette di importare l'immagine come allegato dell'articolo.
+             * - 4: Permette di importare l'immagine come allegato dell'articolo rimuovendo tutti gli allegati presenti.
+             */
+            if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
+                \Uploads::deleteLinked([
+                    'id_module' => Module::where('name', 'Articoli')->first()->id,
+                    'id_record' => $articolo->id,
+                ]);
+
+                $database->update('mg_articoli', [
+                    'immagine' => '',
+                ], [
+                    'id' => $articolo->id,
+                ]);
+            }
+
+            $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
+
+            $upload = \Uploads::upload($file_content, [
+                'name' => 'Immagine',
+                'category' => 'Immagini',
+                'original_name' => $name,
+                'id_module' => Module::where('name', 'Articoli')->first()->id,
+                'id_record' => $articolo->id,
+            ], [
+                'thumbnails' => true,
+            ]);
+
+            if ($upload && !empty($upload->filename) && ($record['import_immagine'] == 1 || $record['import_immagine'] == 2)) {
+                $database->update('mg_articoli', [
+                    'immagine' => $upload->filename,
+                ], [
+                    'id' => $articolo->id,
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Registra l'errore ma continua con l'importazione
+            error_log('Errore durante l\'importazione dell\'immagine: '.$e->getMessage());
         }
     }
 
     /**
      * Aggiorna la giacenza dell'articolo.
      *
-     * @param Articolo $articolo Articolo da aggiornare
-     * @param float $nuova_qta Nuova quantità
-     * @param string $nome_sede Nome della sede
-     * @param array $record Record da processare
+     * @param Articolo $articolo  Articolo da aggiornare
+     * @param float    $nuova_qta Nuova quantità
+     * @param string   $nome_sede Nome della sede
+     * @param array    $record    Record da processare
+     *
      * @return void
      */
     protected function aggiornaGiacenza($articolo, $nuova_qta, $nome_sede, $record)
@@ -659,16 +675,8 @@ class CSV extends CSVImporter
             }
         } catch (\Exception $e) {
             // Registra l'errore ma continua con l'importazione
-            error_log('Errore durante l\'aggiornamento della giacenza: ' . $e->getMessage());
+            error_log('Errore durante l\'aggiornamento della giacenza: '.$e->getMessage());
         }
-    }
-
-    public static function getExample()
-    {
-        return [
-            ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'marca', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
-            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1', '28/11/2023', 'PZ', '90.00', '180.00', '', '', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '', '', 'Nota ad uso interno', 'DevCode s.r.l.', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '1', '10', '180.00', '20', 'Fornitore', 'Sede'],
-        ];
     }
 
     protected function aggiornaDettaglioPrezzi(Articolo $articolo, $dettagli)
@@ -699,17 +707,11 @@ class CSV extends CSVImporter
         }
 
         $dettagli['dir'] = strtolower((string) $dettagli['dir']);
-        switch ($dettagli['dir']) {
-            case 'fornitore':
-                $dettagli['dir'] = 'uscita';
-                break;
-            case 'cliente':
-                $dettagli['dir'] = 'entrata';
-                break;
-            default:
-                $dettagli['dir'] = null;
-                break;
-        }
+        $dettagli['dir'] = match ($dettagli['dir']) {
+            'fornitore' => 'uscita',
+            'cliente' => 'entrata',
+            default => null,
+        };
 
         // Aggiungo Listino
         if (!empty($anagrafica) && !empty($dettagli['dir']) && $dettagli['prezzo_listino']) {

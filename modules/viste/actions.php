@@ -145,7 +145,7 @@ switch (filter('op')) {
         }
 
         // Prepara il nome del file
-        $filename = 'module_' . strtolower(str_replace(' ', '_', $module->name)) . '.json';
+        $filename = 'module_'.strtolower(str_replace(' ', '_', $module->name)).'.json';
 
         // Restituisci i dati in formato JSON
         echo json_encode([

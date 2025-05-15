@@ -24,12 +24,12 @@
  * @since 2.4.2
  */
 use Common\Components\Accounting;
+use Intervention\Image\ImageManager;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
-use Intervention\Image\ImageManager;
 
 /**
  * Esegue una somma precisa tra due interi/array.
@@ -429,6 +429,7 @@ function hasArticoliFiglio($id_articolo)
  *
  * @return ImageManager
  */
-function getImageManager() {
+function getImageManager()
+{
     return extension_loaded('gd') ? ImageManager::gd() : ImageManager::imagick();
 }

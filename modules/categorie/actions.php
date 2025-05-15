@@ -27,8 +27,8 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
-        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
-        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
+        $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
+        $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
 
         // Verifica che almeno uno dei due flag sia selezionato
         if ($is_articolo == 0 && $is_impianto == 0) {
@@ -92,8 +92,8 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
         $id_original = filter('id_original') ?: null;
-        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
-        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
+        $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
+        $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
 
         // Verifica che almeno uno dei due flag sia selezionato
         if ($is_articolo == 0 && $is_impianto == 0) {

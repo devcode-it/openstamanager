@@ -115,7 +115,7 @@ class Validate
 
             // Indirizzo
             $address = $data->company_address ?: '';
-            $info = explode(PHP_EOL, $address);
+            $info = explode(PHP_EOL, (string) $address);
             $fields['indirizzo'] = $info[0];
 
             $info = explode(' ', $info[1] ?: '');

@@ -152,11 +152,11 @@ echo '
     <div class="card-header">
         <h3 class="card-title">
             <i class="fa fa-history mr-2"></i>'.tr('Stampe definitive _NOME_ _DIR_ dal _START_ al _END_', [
-        '_NOME_' => $nome_stampa,
-        '_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
-        '_START_' => dateFormat($_SESSION['period_start']),
-        '_END_' => dateFormat($_SESSION['period_end']),
-    ]).'
+    '_NOME_' => $nome_stampa,
+    '_DIR_' => ($dir ? ($dir == 'entrata' ? 'vendite' : 'acquisti') : ''),
+    '_START_' => dateFormat($_SESSION['period_start']),
+    '_END_' => dateFormat($_SESSION['period_end']),
+]).'
         </h3>
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
@@ -183,7 +183,7 @@ if (!empty($elementi)) {
 
         $file = $dbo->selectOne('zz_files', '*', [
             'id_module' => $id_module,
-            'id_record' => $elemento['id']
+            'id_record' => $elemento['id'],
         ]);
 
         echo '

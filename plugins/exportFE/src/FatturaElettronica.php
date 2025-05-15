@@ -712,7 +712,7 @@ class FatturaElettronica implements \Stringable
             // $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
 
             // Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
-            $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', (string) $anagrafica['codice_fiscale']);
+            $result['CodiceFiscale'] = preg_replace('/^'.preg_quote((string) $anagrafica->nazione->iso2, '/').'/', '', (string) $anagrafica['codice_fiscale']);
         }
 
         // Partita IVA: se privato estero non va considerato il codice fiscale ma la partita iva con 9 zeri
@@ -1690,7 +1690,7 @@ class FatturaElettronica implements \Stringable
 
             // BIC senza parte per filiale (causa errori di validazione)
             if (!empty($banca->bic)) {
-                $pagamento['BIC'] = substr($banca->bic, 0, 8);
+                $pagamento['BIC'] = substr((string) $banca->bic, 0, 8);
             }
 
             $result[]['DettaglioPagamento'] = $pagamento;

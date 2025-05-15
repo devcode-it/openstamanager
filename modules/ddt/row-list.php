@@ -105,7 +105,7 @@ foreach ($righe as $riga) {
     if ($riga->isArticolo()) {
         echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
-        echo nl2br($riga->descrizione);
+        echo nl2br((string) $riga->descrizione);
     }
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
@@ -128,7 +128,7 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="text-xs">'.nl2br($riga->note).'</small>';
+                    <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
     }
     echo '
                 </td>';

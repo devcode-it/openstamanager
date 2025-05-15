@@ -66,8 +66,8 @@ if ($fattura !== null) {
     echo '
     <div class="alert alert-info">
         <i class="fa fa-info-circle mr-2"></i>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
-            '_BTN_' => '<b>Genera</b>',
-        ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'
+        '_BTN_' => '<b>Genera</b>',
+    ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'
     </div>
 
     <div class="alert alert-light border">

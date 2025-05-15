@@ -110,9 +110,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -179,15 +180,34 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'impianto: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione dell\'impianto: '.$e->getMessage());
+
             return false;
         }
+    }
+
+    /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
+    public static function getExample()
+    {
+        return [
+            ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione', 'Marca', 'Modello'],
+            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice Samsung', '12345678901', '', 'Elettrodomestici', 'Lavatrici', 'Sede Principale', 'Lavatrice a carica frontale 8kg', '2023-01-01', 'Samsung', 'WW80TA046AX'],
+            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia Ariston', '', 'RSSMRA80A01H501U', 'Riscaldamento', 'Caldaie', 'Sede Secondaria', 'Caldaia a condensazione 24kW', '2023-03-06', 'Ariston', 'Genus One Net'],
+            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno Electrolux', '98765432109', '', 'Elettrodomestici', 'Forni', 'Sede Principale', 'Forno elettrico multifunzione', '2023-04-01', 'Electrolux', 'EOC6P77WX'],
+            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie Bosch', '12345678901', '', 'Elettrodomestici', 'Lavastoviglie', 'Sede Principale', 'Lavastoviglie da incasso 60cm', '2023-08-06', 'Bosch', 'SMV4HCX48E'],
+            ['00005', '', '', 'Condizionatore Daikin', '', 'VRDLGI75M15F205Z', 'Climatizzazione', 'Split', 'Sede Principale', 'Condizionatore inverter 12000 BTU', '2023-05-15', 'Daikin', 'FTXM35R'],
+        ];
     }
 
     /**
      * Trova l'anagrafica cliente in base alla partita IVA o al codice fiscale.
      *
      * @param array $record Record da importare
+     *
      * @return Anagrafica|null
      */
     protected function trovaAnagrafica($record)
@@ -208,8 +228,9 @@ class CSV extends CSVImporter
     /**
      * Trova l'impianto esistente in base alla chiave primaria.
      *
-     * @param array $record Record da importare
+     * @param array  $record      Record da importare
      * @param string $primary_key Chiave primaria
+     *
      * @return Impianto|null
      */
     protected function trovaImpianto($record, $primary_key)
@@ -225,6 +246,7 @@ class CSV extends CSVImporter
      * Processa la categoria dell'impianto.
      *
      * @param array $record Record da importare
+     *
      * @return Categoria|null
      */
     protected function processaCategoria($record)
@@ -247,8 +269,9 @@ class CSV extends CSVImporter
     /**
      * Processa la sottocategoria dell'impianto.
      *
-     * @param array $record Record da importare
+     * @param array          $record    Record da importare
      * @param Categoria|null $categoria Categoria padre
+     *
      * @return Categoria|null
      */
     protected function processaSottocategoria($record, $categoria)
@@ -272,8 +295,9 @@ class CSV extends CSVImporter
     /**
      * Processa la marca dell'impianto.
      *
-     * @param array $record Record da importare
+     * @param array  $record   Record da importare
      * @param object $database Connessione al database
+     *
      * @return int|null
      */
     protected function processaMarca($record, $database)
@@ -297,10 +321,10 @@ class CSV extends CSVImporter
     /**
      * Aggiorna i campi dell'impianto.
      *
-     * @param Impianto $impianto Impianto da aggiornare
-     * @param array $record Record da importare
+     * @param Impianto   $impianto   Impianto da aggiornare
+     * @param array      $record     Record da importare
      * @param Anagrafica $anagrafica Anagrafica cliente
-     * @param int|null $id_marca ID della marca
+     * @param int|null   $id_marca   ID della marca
      */
     protected function aggiornaImpianto($impianto, $record, $anagrafica, $id_marca)
     {
@@ -324,8 +348,8 @@ class CSV extends CSVImporter
     /**
      * Collega la sede all'impianto.
      *
-     * @param Impianto $impianto Impianto da aggiornare
-     * @param array $record Record da importare
+     * @param Impianto   $impianto   Impianto da aggiornare
+     * @param array      $record     Record da importare
      * @param Anagrafica $anagrafica Anagrafica cliente
      */
     protected function collegaSede($impianto, $record, $anagrafica)
@@ -347,9 +371,9 @@ class CSV extends CSVImporter
      * Processa l'immagine dell'impianto.
      *
      * @param Impianto $impianto Impianto da aggiornare
-     * @param string $url URL dell'immagine
-     * @param array $record Record da importare
-     * @param object $database Connessione al database
+     * @param string   $url      URL dell'immagine
+     * @param array    $record   Record da importare
+     * @param object   $database Connessione al database
      */
     protected function processaImmagine($impianto, $url, $record, $database)
     {
@@ -398,24 +422,7 @@ class CSV extends CSVImporter
             }
         } catch (\Exception $e) {
             // Registra l'errore ma continua con l'importazione
-            error_log('Errore durante l\'importazione dell\'immagine: ' . $e->getMessage());
+            error_log('Errore durante l\'importazione dell\'immagine: '.$e->getMessage());
         }
-    }
-
-    /**
-     * Restituisce un esempio di file CSV per l'importazione.
-     *
-     * @return array
-     */
-    public static function getExample()
-    {
-        return [
-            ['Matricola', 'Immagine', 'Import immagine', 'Nome', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Categoria', 'Sottocategoria', 'Sede', 'Descrizione', 'Data installazione', 'Marca', 'Modello'],
-            ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice Samsung', '12345678901', '', 'Elettrodomestici', 'Lavatrici', 'Sede Principale', 'Lavatrice a carica frontale 8kg', '2023-01-01', 'Samsung', 'WW80TA046AX'],
-            ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia Ariston', '', 'RSSMRA80A01H501U', 'Riscaldamento', 'Caldaie', 'Sede Secondaria', 'Caldaia a condensazione 24kW', '2023-03-06', 'Ariston', 'Genus One Net'],
-            ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno Electrolux', '98765432109', '', 'Elettrodomestici', 'Forni', 'Sede Principale', 'Forno elettrico multifunzione', '2023-04-01', 'Electrolux', 'EOC6P77WX'],
-            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie Bosch', '12345678901', '', 'Elettrodomestici', 'Lavastoviglie', 'Sede Principale', 'Lavastoviglie da incasso 60cm', '2023-08-06', 'Bosch', 'SMV4HCX48E'],
-            ['00005', '', '', 'Condizionatore Daikin', '', 'VRDLGI75M15F205Z', 'Climatizzazione', 'Split', 'Sede Principale', 'Condizionatore inverter 12000 BTU', '2023-05-15', 'Daikin', 'FTXM35R'],
-        ];
     }
 }

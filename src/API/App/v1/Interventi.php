@@ -22,12 +22,11 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Carbon\Carbon;
+use Intervention\Image\ImageManager;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 
 class Interventi extends AppResource
 {

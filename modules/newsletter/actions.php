@@ -199,7 +199,7 @@ switch (filter('op')) {
             $lista = Lista::find($id_list);
             $query = $lista->query;
             if (check_query($query)) {
-                $lista->query = html_entity_decode($query);
+                $lista->query = html_entity_decode((string) $query);
             }
             $lista->save();
 

@@ -152,7 +152,7 @@ foreach ($righe as $riga) {
     if ($riga->isArticolo()) {
         echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
-        echo nl2br($riga->descrizione);
+        echo nl2br((string) $riga->descrizione);
     }
 
     if ($riga->isArticolo() && !empty($riga->articolo->deleted_at)) {
@@ -186,9 +186,9 @@ foreach ($righe as $riga) {
     }
 
     if (!empty($riga->note)) {
-        if (strlen($riga->note) > 50) {
-            $prima_parte = substr($riga->note, 0, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
-            $seconda_parte = substr($riga->note, (strpos($riga->note, ' ', 50) < 60) && (!str_starts_with($riga->note, ' ')) ? strpos($riga->note, ' ', 50) : 50);
+        if (strlen((string) $riga->note) > 50) {
+            $prima_parte = substr((string) $riga->note, 0, (strpos((string) $riga->note, ' ', 50) < 60) && (!str_starts_with((string) $riga->note, ' ')) ? strpos((string) $riga->note, ' ', 50) : 50);
+            $seconda_parte = substr((string) $riga->note, (strpos((string) $riga->note, ' ', 50) < 60) && (!str_starts_with((string) $riga->note, ' ')) ? strpos((string) $riga->note, ' ', 50) : 50);
             $stringa_modificata = '<span class="text-xs">'.$prima_parte.'</small>
                 <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="text-xs">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {

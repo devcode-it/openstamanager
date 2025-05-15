@@ -172,8 +172,8 @@ if (Interaction::isEnabled()) {
     echo '
         <div class="alert alert-info">
             <i class="fa fa-info-circle mr-2"></i>'.tr('Per vedere le ricevute da importare utilizza il pulsante _BUTTON_', [
-            '_BUTTON_' => '<b>'.tr('Ricerca ricevute').'</b>',
-        ]).'
+        '_BUTTON_' => '<b>'.tr('Ricerca ricevute').'</b>',
+    ]).'
         </div>';
 } else {
     include $structure->filepath('list.php');

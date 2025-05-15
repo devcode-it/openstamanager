@@ -1,10 +1,11 @@
 <?php
-use Modules\Fatture\Fattura;
+
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
 
 include __DIR__.'/../config.inc.php';
 
-$module = \Models\Module::where('name', 'Fatture di vendita')->first();
+$module = Models\Module::where('name', 'Fatture di vendita')->first();
 $directory = 'files/fatture/';
 $files = glob($directory.'*.xml');
 $new_folder = 'files/'.$module->attachments_directory.'/';
@@ -36,7 +37,7 @@ foreach ($files as $key => $value) {
 delete($files);
 
 // Fix conti collegati alle anagrafiche
-$anagrafiche =  Anagrafica::all();
+$anagrafiche = Anagrafica::all();
 
 foreach ($anagrafiche as $anagrafica) {
     if ($anagrafica->isTipo('Cliente')) {
@@ -70,7 +71,6 @@ foreach ($fatture as $fattura) {
     if ($conto_cliente) {
         $dbo->query('UPDATE co_movimenti SET idconto = '.$conto_cliente.' WHERE iddocumento = '.$fattura->id.' AND idconto = '.$riepilogativo_clienti);
     }
-
 }
 
 // Fix registrazioni contabili associate a conti rimossi
@@ -82,7 +82,7 @@ foreach ($fatture_senzanome as $fattura) {
         if ($anagrafica) {
             $conto = ($documento->tipo->dir == 'uscita' ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente);
             $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
-        } 
+        }
     } else {
         $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.$fattura['iddocumento']);
     }

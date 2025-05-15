@@ -54,22 +54,22 @@ if (!function_exists('renderChecklist')) {
                         <td style="border-top:0px;">
                             <span class="badge text-muted pull-right verificato '.(!$check->checked_at ? 'hidden' : '').'" style="margin-right:5px;padding:6px 8px;">
                                 '.(!empty($check->checked_at) ? tr('Verificato da _NAME_ _DATE_', [
-                                    '_NAME_' => $check->checkUser->username.' <br>',
-                                    '_DATE_' => timestampFormat($check->checked_at),
-                                ]) : '').'
+                '_NAME_' => $check->checkUser->username.' <br>',
+                '_DATE_' => timestampFormat($check->checked_at),
+            ]) : '').'
                             </span>
                         </td>';
 
             $result .= '
                         <td style="width:400px;border-top:0px;"> 
                             '.input([
-                                'type' => 'textarea',
-                                'name' => 'note_checklist',
-                                'id' => 'note_'.$check->id,
-                                'class' => 'unblockable',
-                                'placeholder' => tr('Note').'...',
-                                'value' => $check->note,
-                            ]).'
+                'type' => 'textarea',
+                'name' => 'note_checklist',
+                'id' => 'note_'.$check->id,
+                'class' => 'unblockable',
+                'placeholder' => tr('Note').'...',
+                'value' => $check->note,
+            ]).'
                         </td>';
 
             $result .= '

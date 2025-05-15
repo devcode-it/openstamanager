@@ -111,7 +111,7 @@ function setting($name, $again = false)
 
     $user = Auth::user();
     if ($user) {
-        $user_options = json_decode($user->options ?: '', true) ?: [];
+        $user_options = json_decode((string) $user->options ?: '', true) ?: [];
     }
 
     if ($user_options['settings'][$setting->id] !== null) {

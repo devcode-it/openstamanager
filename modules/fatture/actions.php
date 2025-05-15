@@ -924,7 +924,7 @@ switch ($op) {
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
-            ->sum('subtotale');     
+            ->sum('subtotale');
 
         $sconto = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
@@ -943,7 +943,7 @@ switch ($op) {
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->sum('sconto');
-        
+
         $iva_indetraibile = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
@@ -953,8 +953,8 @@ switch ($op) {
         if ($imponibile) {
             $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile - $sconto) + (($imponibile - $sconto) * $iva->percentuale / 100) : ($imponibile - $sconto);
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
-        } else if ($imponibile_indetraibile) {
-            $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile_indetraibile - $sconto_indetraibile) + (($imponibile_indetraibile - $sconto_indetraibile) * $iva_indetraibile->percentuale / 100) : ($imponibile_indetraibile -    $sconto_indetraibile);
+        } elseif ($imponibile_indetraibile) {
+            $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile_indetraibile - $sconto_indetraibile) + (($imponibile_indetraibile - $sconto_indetraibile) * $iva_indetraibile->percentuale / 100) : ($imponibile_indetraibile - $sconto_indetraibile);
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
         }
 
@@ -967,9 +967,9 @@ switch ($op) {
 
         $riga = Riga::build($autofattura);
         $riga->descrizione = $tipo->getTranslation('title');
-        $riga->id_iva = $imponibile ? $iva->id: $iva_indetraibile->id;
+        $riga->id_iva = $imponibile ? $iva->id : $iva_indetraibile->id;
         $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
-        $riga->setPrezzoUnitario($totale_imponibile, $imponibile ? $iva->id: $iva_indetraibile->id);
+        $riga->setPrezzoUnitario($totale_imponibile, $imponibile ? $iva->id : $iva_indetraibile->id);
         $riga->qta = 1;
         $riga->save();
 

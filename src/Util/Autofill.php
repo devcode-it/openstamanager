@@ -47,11 +47,11 @@ class Autofill
 
     public function count($text, $small = null)
     {
-        $count = 0; 
-        $textLines = explode("\n", (string)$text); 
+        $count = 0;
+        $textLines = explode("\n", (string) $text);
 
         foreach ($textLines as $line) {
-            $count += ceil(strlen($line) / $this->char_number); 
+            $count += ceil(strlen($line) / $this->char_number);
         }
 
         if ($count > 1) {
@@ -60,8 +60,8 @@ class Autofill
 
         if ($small) {
             $count /= 1.538461538;
-        } 
-        
+        }
+
         $this->set($count);
     }
 

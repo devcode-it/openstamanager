@@ -27,7 +27,7 @@ $referenti = implode(',', array_column($referenti, 'id'));
 
 $id_azienda = setting('Azienda predefinita');
 if ($id_parent == $id_azienda) {
-	$utenti = $dbo->fetchNum('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record));
+    $utenti = $dbo->fetchNum('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record));
 }
 
 echo '
@@ -39,7 +39,7 @@ echo '
 	<input type="hidden" name="op" value="updatesede">';
 
 if (!$utenti && $id_parent == $id_azienda && !$record['is_automezzo']) {
-	echo '
+    echo '
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>
 	</div>';

@@ -257,5 +257,4 @@ if ($module->name == 'Ordini cliente') {
     }
 }
 
-
 return $operations;

@@ -106,7 +106,7 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="text-xs">'.nl2br($riga->note).'</small>';
+                    <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
     }
     echo '
                 </td>

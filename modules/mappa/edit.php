@@ -93,8 +93,8 @@ include_once __DIR__.'/../../core.php';
                         <?php
                             $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
 
-                            foreach ($rs_stati as $stato) {
-                        ?>
+foreach ($rs_stati as $stato) {
+    ?>
                             <div class="stato-item">
                                 <div class="switch-container">
                                     <label class="switch">
@@ -105,8 +105,8 @@ include_once __DIR__.'/../../core.php';
                                 <label class="stato-label"><?php echo $stato['title']; ?></label>
                             </div>
                         <?php
-                            }
-                        ?>
+}
+?>
                         </div>
                     </div>
                 </div>

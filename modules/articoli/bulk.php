@@ -582,7 +582,6 @@ $operations['add_price_list'] = [
     ],
 ];
 
-
 $operations['change_active'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Attiva/disattiva articoli').'</span>',
     'data' => [
@@ -629,8 +628,6 @@ $operations['create_estimate'] = [
     ],
 ];
 
-
-
 $operations['generate_barcode_bulk'] = [
     'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',
     'data' => [
@@ -676,7 +673,5 @@ $operations['print_labels'] = [
         'blank' => true,
     ],
 ];
-
-
 
 return $operations;

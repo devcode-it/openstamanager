@@ -19,26 +19,25 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\DDT\Causale;
 
 switch (filter('op')) {
     case 'update':
         $dbo->update('zz_default_description', [
             'name' => filter('name'),
             'descrizione' => filter('descrizione'),
-            'note' => filter('note')
+            'note' => filter('note'),
         ], [
-            'id' => $id_record
+            'id' => $id_record,
         ]);
 
         $dbo->delete('zz_default_description_module', [
-            'id_description' => $id_record
+            'id_description' => $id_record,
         ]);
         $id_moduli = (array) post('id_moduli');
         foreach ($id_moduli as $id_modulo) {
             $dbo->insert('zz_default_description_module', [
                 'id_description' => $id_record,
-                'id_module' => $id_modulo
+                'id_module' => $id_modulo,
             ]);
         }
 
@@ -50,7 +49,7 @@ switch (filter('op')) {
         $dbo->insert('zz_default_description', [
             'name' => filter('name'),
             'descrizione' => filter('descrizione'),
-            'note' => filter('note')
+            'note' => filter('note'),
         ]);
 
         $id_record = $dbo->lastInsertedId();
@@ -58,7 +57,7 @@ switch (filter('op')) {
         foreach ($id_moduli as $id_modulo) {
             $dbo->insert('zz_default_description_module', [
                 'id_description' => $id_record,
-                'id_module' => $id_modulo
+                'id_module' => $id_modulo,
             ]);
         }
 
@@ -68,7 +67,7 @@ switch (filter('op')) {
 
     case 'delete':
         $dbo->delete('zz_default_description', [
-            'id' => $id_record
+            'id' => $id_record,
         ]);
 
         flash()->info(tr('Risposta predefinita eliminata!'));

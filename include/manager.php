@@ -124,7 +124,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             $attr_td .= " width='100'";
         }
 
-        //Immagine
+        // Immagine
         elseif (trim((string) $field) == '_img_') {
             $attr_td .= " width='30'";
             $field = str_replace('_img_', '', $field);

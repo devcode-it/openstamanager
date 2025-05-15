@@ -148,7 +148,7 @@ switch (post('op')) {
         // Lettura righe selezionate
         foreach ($id_records as $id) {
             $contratto = Contratto::find($id);
-            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_bloccato& $contratto->rinnovabile;
+            $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_bloccato & $contratto->rinnovabile;
 
             if ($rinnova) {
                 $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);

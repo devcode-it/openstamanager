@@ -9,7 +9,7 @@ if (!empty($codici)) {
     $maxCodice = $max + 1;
 
     foreach ($codici as $codice) {
-        database()->query('UPDATE co_iva SET codice = ' . $maxCodice . ' WHERE id = ' . $codice['id']);
-        $maxCodice++;
+        database()->query('UPDATE co_iva SET codice = '.$maxCodice.' WHERE id = '.$codice['id']);
+        ++$maxCodice;
     }
 }

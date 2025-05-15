@@ -248,9 +248,10 @@ class CSV extends CSVImporter
     /**
      * Importa un record nel database.
      *
-     * @param array $record Record da importare
-     * @param bool $update_record Se true, aggiorna i record esistenti
-     * @param bool $add_record Se true, aggiunge nuovi record
+     * @param array $record        Record da importare
+     * @param bool  $update_record Se true, aggiorna i record esistenti
+     * @param bool  $add_record    Se true, aggiunge nuovi record
+     *
      * @return bool|null True se l'importazione è riuscita, false altrimenti, null se l'operazione è stata saltata
      */
     public function import($record, $update_record = true, $add_record = true)
@@ -273,7 +274,7 @@ class CSV extends CSVImporter
         if (empty($record['ragione_sociale']) && (!empty($record['cognome']) && !empty($record['nome']))) {
             $record['ragione_sociale'] = trim($record['cognome'].' '.$record['nome']);
         }
-        
+
         // Rimuovo i campi già utilizzati per la ragione sociale
         $nome = $record['nome'] ?? '';
         $cognome = $record['cognome'] ?? '';
@@ -335,12 +336,12 @@ class CSV extends CSVImporter
 
         // Aggiorno l'anagrafica
         $anagrafica->fill($record);
-        
+
         // Aggiorno le tipologie solo se sono state passate nel file
         if (!empty($tipologie)) {
             $anagrafica->tipologie = $tipologie;
         }
-        
+
         $anagrafica->id_settore = $id_settore;
         $anagrafica->tipo = $tipo;
         $anagrafica->save();
@@ -354,9 +355,23 @@ class CSV extends CSVImporter
     }
 
     /**
+     * Restituisce un esempio di file CSV per l'importazione.
+     *
+     * @return array
+     */
+    public static function getExample()
+    {
+        return [
+            ['Codice', 'Ragione sociale', 'Nome', 'Cognome', 'Codice destinatario', 'Provincia', 'Città', 'Telefono', 'Indirizzo', 'CAP',  'Cellulare', 'Fax', 'Email', 'PEC', 'Sito Web', 'Codice fiscale', 'Data di nascita', 'Luogo di nascita', 'Sesso', 'Partita IVA', 'IBAN', 'Note', 'Nazione', 'ID Agente', 'ID pagamento', 'Tipo', 'Tipologia', 'Split Payment', 'Settore merceologico'],
+            ['001', 'Mario Rossi', '', '', '12345', 'PD', 'Este', '+39 0429 60 25 12', 'Via Rovigo, 51', '35042', '+39 321 12 34 567', '', 'email@anagrafica.it', 'email@pec.it', 'www.sito.it', '', '', '', '', '123456789', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Italia', '', '', 'Cliente', 'Privato', '0', 'Tessile'],
+        ];
+    }
+
+    /**
      * Processa le tipologie dell'anagrafica.
      *
      * @param array $record Record da processare
+     *
      * @return array Array di ID delle tipologie
      */
     private function processaTipologie($record)
@@ -382,7 +397,7 @@ class CSV extends CSVImporter
             if (empty($id_tipo)) {
                 $database->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, 1)');
                 $id_tipo = $database->lastInsertedID();
-                
+
                 $database->insert('an_tipianagrafiche_lang', [
                     'id_lang' => \Models\Locale::getDefault()->id,
                     'id_record' => $id_tipo,
@@ -400,6 +415,7 @@ class CSV extends CSVImporter
      * Processa il settore merceologico.
      *
      * @param array $record Record da processare
+     *
      * @return string|null ID del settore merceologico
      */
     private function processaSettore($record)
@@ -409,20 +425,20 @@ class CSV extends CSVImporter
         }
 
         $database = database();
-        $settore = trim($record['id_settore']);
-        
+        $settore = trim((string) $record['id_settore']);
+
         $result = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` 
             LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` 
             AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
             WHERE LOWER(`title`) = LOWER('.prepare($settore).')');
-        
+
         $id_settore = !empty($result) ? $result[0]['id'] : null;
 
         if (empty($id_settore)) {
             $database->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) 
                 VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
             $id_settore = $database->lastInsertedID();
-            
+
             $database->insert('an_settori_lang', [
                 'id_lang' => \Models\Locale::getDefault()->id,
                 'id_record' => $id_settore,
@@ -436,8 +452,9 @@ class CSV extends CSVImporter
     /**
      * Processa l'IBAN.
      *
-     * @param array $record Record da processare
+     * @param array      $record     Record da processare
      * @param Anagrafica $anagrafica Anagrafica associata
+     *
      * @return string|null ID della banca
      */
     private function processaIBAN($record, $anagrafica)
@@ -447,18 +464,18 @@ class CSV extends CSVImporter
         }
 
         $database = database();
-        $iban = trim($record['codiceiban']);
-        
+        $iban = trim((string) $record['codiceiban']);
+
         $result = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche` 
             WHERE LOWER(`iban`) = LOWER('.prepare($iban).') 
             AND `id_anagrafica` = '.$anagrafica->id.' 
             AND deleted_at IS NULL');
-        
+
         $id_banca = !empty($result) ? $result['id'] : null;
 
         if (empty($id_banca)) {
             $database->query('INSERT INTO `co_banche` (`iban`, `nome`, `id_anagrafica`) 
-                VALUES ('.prepare($iban).', "Banca da importazione '.addslashes($anagrafica->ragione_sociale).'", '.$anagrafica->id.')');
+                VALUES ('.prepare($iban).', "Banca da importazione '.addslashes((string) $anagrafica->ragione_sociale).'", '.$anagrafica->id.')');
             $id_banca = $database->lastInsertedID();
         }
 
@@ -468,8 +485,9 @@ class CSV extends CSVImporter
     /**
      * Estrae i dati della sede legale dal record.
      *
-     * @param array $record Record da processare
+     * @param array  $record      Record da processare
      * @param string $primary_key Chiave primaria
+     *
      * @return array Dati della sede legale
      */
     private function estraiDatiSede(&$record, $primary_key)
@@ -500,18 +518,5 @@ class CSV extends CSVImporter
         }
 
         return $dati_sede;
-    }
-
-    /**
-     * Restituisce un esempio di file CSV per l'importazione.
-     *
-     * @return array
-     */
-    public static function getExample()
-    {
-        return [
-            ['Codice', 'Ragione sociale', 'Nome', 'Cognome', 'Codice destinatario', 'Provincia', 'Città', 'Telefono', 'Indirizzo', 'CAP',  'Cellulare', 'Fax', 'Email', 'PEC', 'Sito Web', 'Codice fiscale', 'Data di nascita', 'Luogo di nascita', 'Sesso', 'Partita IVA', 'IBAN', 'Note', 'Nazione', 'ID Agente', 'ID pagamento', 'Tipo', 'Tipologia', 'Split Payment', 'Settore merceologico'],
-            ['001', 'Mario Rossi', '', '', '12345', 'PD', 'Este', '+39 0429 60 25 12', 'Via Rovigo, 51', '35042', '+39 321 12 34 567', '', 'email@anagrafica.it', 'email@pec.it', 'www.sito.it', '', '', '', '', '123456789', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Italia', '', '', 'Cliente', 'Privato', '0', 'Tessile'],
-        ];
     }
 }

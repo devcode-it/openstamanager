@@ -116,7 +116,7 @@ foreach ($pianificazioni as $pianificazione) {
                         <small>'.reference($contratto).'</small>
                     </td>
                     <td>
-                        '.Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)).'
+                        '.Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)).'
                     </td>
                     <td>
                         <div>'.moneyFormat($pianificazione->totale).'</div>

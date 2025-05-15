@@ -33,7 +33,7 @@ if (!empty($record['last_executed_at'])) {
         $status_class = 'success';
         $status_text = tr('Eseguito recentemente');
         $status_icon = 'fa-check-circle';
-    } else if ($diff->days < 7) {
+    } elseif ($diff->days < 7) {
         $status_class = 'info';
         $status_text = tr('Eseguito da %d giorni', [$diff->days]);
         $status_icon = 'fa-clock-o';

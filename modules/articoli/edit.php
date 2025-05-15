@@ -443,7 +443,7 @@ if (!empty($elementi)) {
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? "(".$elemento['stato_documento'].")" : ''),
+            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
         ]);
 
         // se non è un preventivo è un ddt o una fattura

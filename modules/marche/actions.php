@@ -28,9 +28,8 @@ switch (post('op')) {
         $nome = filter('name');
         $link = filter('link');
         $id_original = filter('id_original') ?: null;
-        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
-        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
-
+        $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
+        $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
 
         // Verifica che almeno uno dei due flag sia selezionato
         if ($is_articolo == 0 && $is_impianto == 0) {
@@ -59,7 +58,6 @@ switch (post('op')) {
             $marca->is_impianto = $is_impianto;
             $marca->save();
         }
-
 
         // Aggiorna i flag delle sottocategorie se è un parent
         $modello = Marca::where('parent', '=', $id_record)->get();
@@ -129,8 +127,8 @@ switch (post('op')) {
         $nome = filter('name');
         $link = filter('link');
         $id_original = filter('id_original') ?: null;
-        $is_articolo = filter('is_articolo_add') ?: filter('is_articolo') ?: 0;
-        $is_impianto = filter('is_impianto_add') ?: filter('is_impianto') ?: 0;
+        $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
+        $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
 
         // Verifica che almeno uno dei due flag sia selezionato
         if ($is_articolo == 0 && $is_impianto == 0) {

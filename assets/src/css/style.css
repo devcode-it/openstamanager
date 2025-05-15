@@ -2819,6 +2819,226 @@ section.content, .main-footer {
     font-size: 13px;
 }
 
+/* ===== CONFIGURATION WIZARD STYLES ===== */
+
+/* Main container for configuration wizard */
+.config-wizard-container {
+    max-width: 1200px !important;
+    margin: 3% auto !important;
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Header styling for configuration wizard */
+.config-wizard-header {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding: 20px !important;
+    text-align: center !important;
+}
+
+.config-wizard-header img {
+    max-width: 280px !important;
+}
+
+/* Navigation tabs styling */
+.config-wizard-tabs {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    list-style: none !important;
+    padding: 0 !important;
+}
+
+.config-wizard-tabs li {
+    flex: 1 !important;
+    text-align: center !important;
+}
+
+.config-wizard-tabs li a {
+    padding: 15px 0 !important;
+    display: block !important;
+    color: #495057 !important;
+    text-decoration: none !important;
+}
+
+.config-wizard-tabs li.active a {
+    color: #3c8dbc !important;
+    font-weight: bold !important;
+    border-bottom: 2px solid #3c8dbc !important;
+}
+
+.config-wizard-tabs li a h3 {
+    margin: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+/* Content area styling */
+.config-wizard-content {
+    padding: 25px 30px !important;
+}
+
+/* SmartWizard specific fixes */
+.sw-theme-default {
+    border: none !important;
+}
+
+.sw-theme-default .sw-toolbar {
+    display: none !important;
+}
+
+.sw-theme-default .step-content {
+    padding: 0 !important;
+    border: none !important;
+}
+
+.sw-theme-default .sw-toolbar-bottom {
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.sw-theme-default > ul.step-anchor > li.active > a {
+    color: #3c8dbc !important;
+    border-bottom: 2px solid #3c8dbc !important;
+    background: transparent !important;
+}
+
+.sw-theme-default > ul.step-anchor > li > a,
+.sw-theme-default > ul.step-anchor > li > a:hover {
+    background: transparent !important;
+    border: none !important;
+}
+
+.sw-theme-default > ul.step-anchor > li.done > a {
+    color: #5cb85c !important;
+    background: transparent !important;
+}
+
+/* Fix for step content display */
+#steps > div[id^="step-"] {
+    display: none;
+}
+
+#steps > div#step-1 {
+    display: block;
+}
+
+/* Requirements cards styling */
+.requirements-card {
+    border-radius: 6px !important;
+    margin-bottom: 15px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+}
+
+.requirements-card-header {
+    padding: 12px 15px !important;
+}
+
+.requirements-card-header-success {
+    background-color: #f0f9f0 !important;
+}
+
+.requirements-card-header-danger {
+    background-color: #fff1f1 !important;
+}
+
+.requirements-card-title {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+.requirements-card-title-success {
+    color: #28a745 !important;
+}
+
+.requirements-card-title-danger {
+    color: #dc3545 !important;
+}
+
+.requirements-icon {
+    font-size: 16px !important;
+}
+
+/* Requirements table styling */
+.requirements-table {
+    margin-bottom: 0 !important;
+}
+
+.requirements-table-icon-col {
+    width: 40px !important;
+}
+
+.requirements-table-type-col {
+    width: 120px !important;
+}
+
+.requirements-table-name-col {
+    width: 300px !important;
+}
+
+/* Section headers */
+.config-section-header {
+    color: #3c8dbc !important;
+    font-weight: 600 !important;
+    margin-bottom: 15px !important;
+}
+
+/* Section content */
+.config-section-content {
+    margin-bottom: 25px !important;
+}
+
+.config-section-content p {
+    margin-bottom: 15px !important;
+    color: #555 !important;
+    line-height: 1.5 !important;
+}
+
+.config-info-text {
+    color: #666 !important;
+    font-size: 13px !important;
+}
+
+/* License container */
+.config-license-container {
+    border: 1px solid #e9ecef !important;
+    border-radius: 6px !important;
+    background-color: #f8f9fa !important;
+    margin-bottom: 20px !important;
+}
+
+.config-license-container textarea {
+    border: none !important;
+    background-color: #f8f9fa !important;
+    font-family: monospace !important;
+    font-size: 12px !important;
+}
+
+/* License acceptance box */
+.config-acceptance-box {
+    border-radius: 6px !important;
+    border: 1px solid #e9ecef !important;
+    background-color: #f8f9fa !important;
+    padding: 15px !important;
+    margin-top: 10px !important;
+}
+
+.config-acceptance-text {
+    font-weight: 600 !important;
+    color: #555 !important;
+}
+
+/* Language selector */
+.config-language-selector {
+    padding: 15px 20px 0 0 !important;
+}
+
+.config-language-selector select {
+    border-radius: 4px !important;
+}
+
 /* Stili per il modal di controllo database */
 
 /* Stili per i pulsanti */

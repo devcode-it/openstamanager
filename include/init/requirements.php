@@ -443,9 +443,11 @@ foreach ($requirements as $key => $values) {
     }
 
     echo '
-<div class="card card-outline card-'.($general_status ? 'success collapsed-card' : 'danger').'">
-    <div class="card-header with-border">
-        <h3 class="card-title">'.$key.'</h3>';
+<div class="card card-outline card-'.($general_status ? 'success collapsed-card' : 'danger').' requirements-card">
+    <div class="card-header with-border requirements-card-header requirements-card-header-'.($general_status ? 'success' : 'danger').'">
+        <h3 class="card-title requirements-card-title requirements-card-title-'.($general_status ? 'success' : 'danger').'">
+            <i class="fa fa-'.($general_status ? 'check-circle' : 'exclamation-circle').' mr-2"></i>'.$key.'
+        </h3>';
 
     if ($general_status) {
         echo '
@@ -459,19 +461,29 @@ foreach ($requirements as $key => $values) {
     echo '
     </div>
     <div class="card-body no-padding">
-        <table class="table">';
+        <table class="table table-striped requirements-table">
+            <thead>
+                <tr>
+                    <th class="requirements-table-icon-col"></th>
+                    <th class="requirements-table-type-col">'.tr('Tipo').'</th>
+                    <th class="requirements-table-name-col">'.tr('Nome').'</th>
+                    <th>'.tr('Descrizione').'</th>
+                </tr>
+            </thead>
+            <tbody>';
 
     foreach ($values as $value) {
         echo '
-            <tr class="'.($value['status'] ? 'success' : 'danger').'">
-                <td style="width: 10px"><i class="fa fa-'.($value['status'] ? 'check' : 'times').'"></i></td>
-                <td style="width: 120px" >'.$value['type'].'</td>
-                <td style="width: 300px" >'.$value['name'].'</td>
+            <tr>
+                <td class="text-center"><i class="fa fa-'.($value['status'] ? 'check text-success' : 'times text-danger').' requirements-icon"></i></td>
+                <td>'.$value['type'].'</td>
+                <td><strong>'.$value['name'].'</strong></td>
                 <td>'.$value['description'].'</td>
             </tr>';
     }
 
     echo '
+            </tbody>
         </table>
     </div>
 </div>';

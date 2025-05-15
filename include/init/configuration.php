@@ -233,13 +233,52 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 useURLhash: false,
                 showStepURLhash: false,
                 theme: "default",
-                transitionEffect: "slideLeft",
-                lang : {
+                transitionEffect: "fade",
+                toolbarSettings: {
+                    toolbarPosition: "bottom",
+                    toolbarButtonPosition: "right",
+                    showNextButton: true,
+                    showPreviousButton: true
+                },
+                anchorSettings: {
+                    anchorClickable: true,
+                    enableAllAnchors: true,
+                    markDoneStep: true,
+                    markAllPreviousStepsAsDone: true
+                },
+                lang: {
                     next: "'.tr('Successivo').'",
                     previous: "'.tr('Precedente').'",
                 }
             });
 
+            // Custom tab navigation
+            $(".config-wizard-tabs li a").click(function(e) {
+                e.preventDefault();
+                var targetStep = $(this).attr("href").replace("#", "");
+
+                // Remove active class from all tabs
+                $(".config-wizard-tabs li").removeClass("active");
+
+                // Add active class to current tab
+                $(this).parent().addClass("active");
+
+                // Hide all steps
+                $("#steps > div[id^=\'step-\']").hide();
+
+                // Show target step
+                $("#" + targetStep).show();
+
+                // Scroll to top of steps
+                $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
+            });
+
+            // Set first tab as active by default
+            $(".config-wizard-tabs li:first").addClass("active");
+            $("#steps > div[id^=\'step-\']").hide();
+            $("#step-1").show();
+
+            // Original leaveStep handler
             $("#smartwizard").on("leaveStep", function(e, anchorObject, stepNumber, stepDirection) {
                 result = true;
                 if(stepDirection == "forward" && $("#step-" + (stepNumber + 1) + " form").length){
@@ -307,13 +346,13 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         </script>';
 
     echo '
-        <div class="card card-center-large card-warning">
-            <div class="card-header with-border text-center">
-                <img src="'.$img.'/logo_completo.png" width="300" alt="'.tr('OSM Logo').'">
+        <div class="card card-center-large shadow-lg config-wizard-container">
+            <div class="card-header config-wizard-header">
+                <img src="'.$img.'/logo_completo.png" alt="'.tr('OSM Logo').'">
             </div>
 
-            <div class="card-body" id="smartwizard">
-                <span class="pull-right col-md-4">
+            <div class="card-body" id="smartwizard" style="padding: 0;">
+                <span class="float-right col-md-4 config-language-selector">
                     <select class="form-control hide" id="language" required="1">';
 
     $languages = [
@@ -393,36 +432,35 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     </script>
                 </span>
 
-                <ul>
+                <ul class="config-wizard-tabs">
                     <li><a href="#step-1">
-                        <h3>'.tr('Requisiti').'</h3>
+                        <h3><i class="fa fa-check-circle mr-2"></i>'.tr('Requisiti').'</h3>
                     </a></li>
 
                     <li><a href="#step-2">
-                        <h3>'.tr('Licenza').'</h3>
+                        <h3><i class="fa fa-file-text mr-2"></i>'.tr('Licenza').'</h3>
                     </a></li>
 
                     <li><a href="#step-3">
-                        <h3>'.tr('Configurazione').'</h3>
+                        <h3><i class="fa fa-cog mr-2"></i>'.tr('Configurazione').'</h3>
                     </a></li>
                 </ul>
 
-                <div id="steps">
+                <div id="steps" class="config-wizard-content">
 
                     <div id="step-1">';
 
     // Introduzione
     echo '
-    <p>'.tr('Benvenuto in _NAME_!', [
-        '_NAME_' => '<strong>OpenSTAManager</strong>',
-    ]).'</p>
-    <p>'.tr("Prima di procedere con l'installazione, verifica che il sistema soddisfi i seguenti requisiti").'.</p>
-    <br>
-
-    <p>'.tr('Le impostazioni PHP possono essere modificate nel file _FILE_', [
-        '_FILE_' => '<b>php.ini</b>',
-    ]).'.</p>
-    <hr>';
+    <div class="config-section-content">
+        <h4 class="config-section-header">'.tr('Benvenuto in _NAME_!', [
+            '_NAME_' => '<strong>OpenSTAManager</strong>',
+        ]).'</h4>
+        <p>'.tr("Prima di procedere con l'installazione, verifica che il sistema soddisfi i seguenti requisiti").'.</p>
+        <p class="config-info-text"><i class="fa fa-info-circle text-info mr-1"></i> '.tr('Le impostazioni PHP possono essere modificate nel file _FILE_', [
+            '_FILE_' => '<b>php.ini</b>',
+        ]).'</p>
+    </div>';
 
     // REQUISITI PER IL CORRETTO FUNZIONAMENTO
     include __DIR__.'/requirements.php';
@@ -433,22 +471,34 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // LICENZA
     echo '
                     <div id="step-2">
-                        <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_', [
-        '_LICENSE_' => 'GPL 3.0',
-    ]).':</p>
+                        <div class="config-section-content">
+                            <h4 class="config-section-header">'.tr('Licenza del software').'</h4>
+                            <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_', [
+                                '_LICENSE_' => '<strong>GPL 3.0</strong>',
+                            ]).':</p>
+                        </div>
 
-                        <textarea class="form-control autosize" rows="15" readonly>'.file_get_contents('LICENSE').'</textarea><br>
-                        <a class="pull-left" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">[ '.tr('Versioni tradotte').' ]</a><hr>
+                        <div class="config-license-container">
+                            <textarea class="form-control autosize" rows="15" readonly>'.file_get_contents('LICENSE').'</textarea>
+                        </div>
 
-                        <div class="row">
-                            <div class="col-md-8">
-                                <span class="pull-left" title="'.tr('Visiona e accetta la licenza per proseguire').'">'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
+                        <div class="config-section-content">
+                            <a class="text-info" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank"><i class="fa fa-external-link mr-1"></i> '.tr('Versioni tradotte').'</a>
+                        </div>
+
+                        <div class="config-acceptance-box">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <span class="config-acceptance-text" title="'.tr('Visiona e accetta la licenza per proseguire').'">'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
+                                </div>
+
+                                <form class="col-md-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="agree" name="agree" data-parsley-required="true" class="custom-control-input">
+                                        <label class="custom-control-label" for="agree">'.tr('Ho visionato e accetto').'.</label>
+                                    </div>
+                                </form>
                             </div>
-
-                            <form class="col-md-4">
-                                <input type="checkbox" id="agree" name="agree" data-parsley-required="true">
-                                <label for="agree">'.tr('Ho visionato e accetto').'.</label>
-                            </form>
                         </div>
                     </div>';
 
@@ -474,18 +524,20 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         <form action="?action=updateconfig&firstuse=true" method="post" id="config-form">
                             <input type="hidden" name="lang" value="'.trans()->getCurrentLocale().'">
 
-                            <h4>'.tr('Formato date').'</h4>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Formato data lunga').'", "name": "timestamp_format", "value": "d/m/Y H:i", "required": 1 ]}
-                                </div>
+                            <div class="config-section-content">
+                                <h4 class="config-section-header">'.tr('Formato date').'</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {[ "type": "text", "label": "'.tr('Formato data lunga').'", "name": "timestamp_format", "value": "d/m/Y H:i", "required": 1 ]}
+                                    </div>
 
-                                <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Formato data corta').'", "name": "date_format", "value": "d/m/Y", "required": 1 ]}
-                                </div>
+                                    <div class="col-md-4">
+                                        {[ "type": "text", "label": "'.tr('Formato data corta').'", "name": "date_format", "value": "d/m/Y", "required": 1 ]}
+                                    </div>
 
-                                <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Formato orario').'", "name": "time_format", "value": "H:i", "required": 1 ]}
+                                    <div class="col-md-4">
+                                        {[ "type": "text", "label": "'.tr('Formato orario').'", "name": "time_format", "value": "H:i", "required": 1 ]}
+                                    </div>
                                 </div>
                             </div>
 
@@ -564,7 +616,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             <!-- PULSANTI -->
                             <div class="row">
                                 <div class="col-md-4">
-                                    <span>*<small><small>'.tr('Campi obbligatori').'</small></small></span>
+                                    <span class="config-info-text">*<small>'.tr('Campi obbligatori').'</small></span>
                                 </div>
                                 <div class="col-md-4 text-right">
                                     <button type="button" id="test" class="btn btn-info btn-block">

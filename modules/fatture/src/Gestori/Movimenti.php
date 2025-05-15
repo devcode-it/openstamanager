@@ -21,6 +21,7 @@
 namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
+use Modules\Iva\Aliquota;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
@@ -122,7 +123,7 @@ class Movimenti
         $righe = $this->fattura->getRighe();
         foreach ($righe as $riga) {
             // Retro-compatibilità per versioni <= 2.4
-            $id_conto = $riga->id_conto ?: $this->fattura->idconto;
+            $id_conto = $riga->idconto ?: $this->fattura->idconto;
 
             $indetraibile = $riga->iva_indetraibile;
             $imponibile = $riga->totale_imponibile + $indetraibile;
@@ -157,7 +158,7 @@ class Movimenti
 
                 // Aggiunta dell'IVA al conto di costo per fatture di acquisto con split payment
                 foreach ($righe as $riga) {
-                    $id_conto = $riga->id_conto ?: $this->fattura->idconto;
+                    $id_conto = $riga->idconto ?: $this->fattura->idconto;
                     $iva_riga = $riga->iva;
 
                     if (!empty($iva_riga)) {
@@ -240,8 +241,6 @@ class Movimenti
         }
 
         // Registrazione dei singoli Movimenti nel relativo Mastrino
-        $i = 0;
-
         $totale_dare = 0;
         $totale_avere = 0;
 
@@ -257,6 +256,37 @@ class Movimenti
             $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
             $movimento->setTotale($avere, $dare);
             $movimento->save();
+        }
+
+        if ($is_acquisto && !$is_nota) {
+            $is_fornitore_italiano = $this->fattura->anagrafica->nazione && $this->fattura->anagrafica->nazione->iso2 == 'IT';
+
+            $righe_reverse_charge = [];
+            $totale_imponibile_reverse = 0;
+            $aliquota_iva = null;
+
+            foreach ($this->fattura->getRighe() as $riga) {
+                if ($riga->aliquota != null && $riga->aliquota->codice_natura_fe !== null && str_starts_with($riga->aliquota->codice_natura_fe, 'N6')) {
+                    $righe_reverse_charge[] = $riga;
+                    $totale_imponibile_reverse += $riga->totale_imponibile;
+
+                    if ($aliquota_iva === null) {
+                        $aliquota_iva = Aliquota::find(setting('Iva predefinita'));
+                    }
+                }
+            }
+
+            if ($is_fornitore_italiano && !empty($righe_reverse_charge) && $aliquota_iva) {
+                $importo_iva = $totale_imponibile_reverse * $aliquota_iva->percentuale / 100;
+
+                $movimento = Movimento::build($mastrino, setting('Conto per Iva su vendite'), $this->fattura);
+                $movimento->setTotale(0, $importo_iva);
+                $movimento->save();
+
+                $movimento = Movimento::build($mastrino, setting('Conto per Iva su acquisti'), $this->fattura);
+                $movimento->setTotale($importo_iva, 0);
+                $movimento->save();
+            }
         }
 
         // Nel penultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale,

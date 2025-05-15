@@ -132,7 +132,7 @@ switch (filter('op')) {
             'data_registrazione' => post('data_registrazione'),
             'articoli' => post('articoli'),
             'iva' => post('iva'),
-            'conto' => post('conto'),
+            'conto' => post('conti'),
             'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
             'id_riga_riferimento' => post('id_riga_riferimento'),
             'tipo_riga_riferimento_vendita' => post('tipo_riga_riferimento_vendita'),

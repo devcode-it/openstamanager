@@ -1700,7 +1700,7 @@ table.dataTable {
 .select2-selection__placeholder,
 .select2-selection__rendered,
 .select2-results__option {
-    font-size: 11px !important;
+    font-size: 13px !important;
 }
 
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {

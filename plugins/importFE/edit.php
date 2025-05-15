@@ -95,7 +95,7 @@ echo '
                 {[ "type": "file", "name": "blob", "required": 1, "placeholder": "'.tr('Seleziona un file XML, P7M o ZIP').'" ]}
             </div>
 
-            <div class="col-md-3 d-flex align-items-end">
+            <div class="col-md-3 align-items-end">
                 <button type="button" class="btn btn-primary btn-block" onclick="upload(this)">
                     <i class="fa fa-upload mr-1"></i> '.tr('Carica documento').'
                 </button>

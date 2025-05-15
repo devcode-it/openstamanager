@@ -165,10 +165,6 @@ if (filter('action') == 'do_update') {
                 $("#current-file").hide();
                 // Mostra tutti i segni di spunta per gli aggiornamenti completati
                 $("#updates-list .fa-check").show();
-                // Mostra i dettagli degli aggiornamenti se sono nascosti
-                if ($("#updates-details").is(":hidden")) {
-                    $("#toggle-updates").click();
-                }
             </script>';
 
         // Instructions for the first installation
@@ -250,7 +246,6 @@ if (filter('action') == 'do_update') {
     if (!empty($updates)) {
         $updates_html .= '
             <div id="updates-container" style="display: none;">
-                <p>'.tr('Verranno applicati i seguenti aggiornamenti').'.</p>
             </div>';
 
         echo $updates_html;
@@ -323,6 +318,7 @@ if (filter('action') == 'do_update') {
                             </div>
                         </div>
                         <div class="card-body bg-light" id="updates-details" style="display: none;">
+                            <p>'.tr('Verranno applicati i seguenti aggiornamenti').':</p>
                             <div class="row" id="updates-list">';
 
     // Dividi gli aggiornamenti in 4 colonne
@@ -446,10 +442,6 @@ if (filter('action') == 'do_update') {
                 var version_id = version.trim().replace(/\./g, "_");
                 $("#update-item-" + version_id + " .fa-check").show();
 
-                // Se i dettagli sono nascosti, mostrali alla prima versione completata
-                if (current === 1 && $("#updates-details").is(":hidden")) {
-                    $("#toggle-updates").click();
-                }
 
                 // Aggiorna il nome del file corrente
                 updateCurrentFile("'.tr('Installazione di').' " + version.trim());

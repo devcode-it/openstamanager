@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.8 (2025-05-20](#28-2025-05-20)
 - [2.7.3 (2025-04-15](#273-2025-04-15)
 - [2.7.2 (2025-03-26)](#272-2025-03-26)
 - [2.7.1 (2025-03-05)](#271-2025-03-05)
@@ -53,6 +54,76 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.8 (2025-05-20)
+### Aggiunto (Added)
+- Aggiunta stato documento in riferimento documenti collegati
+- Aggiunta variabile header-font-size e font-size per le stampe
+- Aggiunta tabella in consuntivo con totale delle ore, km, costi e totale scontato suddivisi per i mesi in cui sono stati effettuati gli interventi
+- Aggiunta la modifica del cliente da azioni di gruppo in Impianti
+- Aggiunta la gestione delle immagini nelle viste
+- Aggiunto l'aggiornamento automatico della versione di OSM su docker
+- Aggiunti il nome e indirizzo sede in stampa riepilogo interventi
+- Aggiunta la colonna Residuo in Contratti
+- Aggiunta la stampa liquidazione IVA definitiva
+- Aggiunti nuovi filtri data
+- Aggiunto pulsante ckeditor per generare testo tramite IA
+- Aggiunta gestione IA con OpenRouter e Prompt di sistema per modello AI
+- Aggiunto servizio di verifica iban tramite ibanapi
+- Aggiunta la gestione delle descrizioni predefinite delle righe
+- Aggiunte le colonne Note e bg in Categorie impianti
+- Aggiunte le colonne Totale, Residuo e bg in Assicurazione crediti
+- Aggiunto il campo Note in Impianti
+- Aggiunta la modifica dell'aliquota IVA da azioni di gruppo sulle righe
+- Aggiunto il colore per i tecnici in selezione tecnico
+- Aggiunta l'importazione del marchio da CSV articoli
+- Aggiunta la cifratura del backup tramite password
+- Aggiunta tasto Seleziona tutti sui gruppi in Viste
+- Aggiunta la correzione massiva dei problemi database
+- Aggiunto l'invio dei PDF delle fatture da azioni di gruppo
+- Aggiunto controllo di Importazione fatture elettroniche attiva solo se ZIP
+- Aggiunta gestione campi obbligatori in fase di importazione di CSV
+- Aggiunta l'associazione di categorie file a template per invio email con allegati da includere
+- Aggiunta la possibilità di modificare i conti da plugin Movimenti contabili
+- Aggiunta controllo disponibilità spazio per backup
+- Aggiunta gestione dell'eliminazione righe prima nota
+- Aggiunta la visualizzazione degli allegati categoria
+- Aggiunta l'integrazione automatica IVA per reverse charge in fattura
+
+### Modificato (Changed)
+- Migliorata la visualizzazione grafica dei modal
+- Migliorato il select impianti in Attività in base al contratto e sede
+- Uniformate le operazioni da azioni di gruppo
+- Rinominato il flag Completato in Bloccato
+- Rimosse le dipendenze JS simili
+- Migliorata la gestione e visualizzazione dei moduli Viste, Backup, Aggiornamenti, Segmenti, Utenti e permessi, Statistiche, Mappa, Stato dei servizi, Impostaizoni, Gestione task e Stampe contabili
+- Migliorata la visualizzazione dei tooltips
+- Riordinati i tasti nei plugin
+- Bloccata la modifica di alcuni conti predefiniti
+- Uniformate categorie e sottocategorie in Articoli e Impianti
+- Uniformati marca e modello in Articoli e Impianti
+- Aggiornate le dipendenze minime
+- Migliorati gli header di Articoli e Attività
+- Migliorati graficamente il form di login, configurazione, aggiornamento e la barra dei plugins
+- Spostati i rinnovi dal plugin Rinnovi alla schermata di modifica Contratto
+- Migliorata la gestione degli allegati
+- Migliorati graficamente i temi
+
+### Fixed
+- Corretta l'associazione dell'articolo in importazione di una fattura elettronica
+- Corretta la visualizzazione della tabella del plugin Serial in Articoli
+- Corretta la funzione di cambio stato della Newsletter
+- Corretto il salvataggio del pagamento
+- Corretto lo spostamento degli allegati di fatture di acquisto e vendita
+- Corretta la duplicazione del preventivo
+- Corretta la registrazione delle fatture di acquisto con split payment
+- Corretto l'avviso per fatture doppie per anno in fatture di acquisto
+- Corretta la visualizzazione del nome articolo in Automezzi
+- Corretta la ricerca delle impostazioni
+- Corretta la generazione di presentazioni bancarie raggruppate per scadenza
+- Corretta la generazione di autofatture in caso di IVA indetraibile
+- Corretto il blocco dei fornitori in base alla relazione
+- Corretta l'inizializzazione di reverse charge e autofatture per le fatture
 
 ## 2.7.3 (2025-04-15)
 ### Modificato (Changed)

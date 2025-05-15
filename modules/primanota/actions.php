@@ -41,6 +41,11 @@ switch (post('op')) {
             $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
+            
+            if (empty($dare) && empty($avere)) {
+                continue;
+            }
+
             $scadenza = Scadenza::find($id_scadenza);
             $fattura = Fattura::find($id_documento);
 
@@ -104,6 +109,10 @@ switch (post('op')) {
             $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
+
+            if (empty($dare) && empty($avere)) {
+                continue;
+            }
 
             $scadenza = Scadenza::find($id_scadenza);
             $fattura = Fattura::find($id_documento);

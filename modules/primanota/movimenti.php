@@ -30,6 +30,12 @@ function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
         <input type="hidden" name="id_documento['.$id.']" value="'.$riga['iddocumento'].'">
         <input type="hidden" name="id_scadenza['.$id.']" value="'.$riga['id_scadenza'].'">
 
+        <td class="text-center" style="width:40px;">
+            <button type="button" class="btn btn-danger btn-xs" onclick="deleteRiga(this)">
+                <i class="fa fa-times"></i>
+            </button>
+        </td>
+
         <td>
             {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
         </td>';
@@ -70,6 +76,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
     <table class="table table-striped table-sm table-hover table-bordered scadenze">
         <thead>
             <tr>
+                <th width="40px"></th>
                 <th>'.tr('Conto').'</th>
                 <th width="20%">'.tr('Dare').'</th>
                 <th width="20%">'.tr('Avere').'</th>
@@ -88,6 +95,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
 
         <tfoot>
             <tr>
+                <td></td>
                 <td class="text-right"><b>'.tr('Totale').':</b></td>';
 
     // Totale dare
@@ -390,5 +398,19 @@ $(document).on("change", "[id*=dare], [id*=avere]", function() {
 function visualizzaMovimenti(button) {
     let id_conto = $(button).parent().parent().parent().find("select").val();
     openModal("'.tr('Ultimi 25 movimenti').'", "'.$module->fileurl('dettagli.php').'?id_module=" + globals.id_module + "&id_conto=" + id_conto);
+}
+
+function deleteRiga(button) {
+    // Get the row
+    let row = $(button).closest("tr");
+
+    // Remove the row
+    row.remove();
+
+    // Recalculate totals and check balance
+    controllaConti();
+
+    // Trigger change event to update totals
+    $("[id*=dare], [id*=avere]").trigger("change");
 }
 </script>';

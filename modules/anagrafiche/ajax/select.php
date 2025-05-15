@@ -99,12 +99,13 @@ switch ($resource) {
 
         $query = "SELECT
             `an_anagrafiche`.`idanagrafica` AS id,
-            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione,
+            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice`) AS descrizione,
             `idtipointervento_default` AS `idtipointervento`,
             `co_pagamenti`.`id` AS id_pagamento,
             `co_pagamenti_lang`.`title` AS desc_pagamento,
             `banca_acquisti`.`id` AS id_banca_acquisti,
-            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti
+            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti,
+            `an_relazioni`.`is_bloccata` AS is_bloccata
         FROM
             `an_anagrafiche`
             INNER JOIN (
@@ -114,6 +115,8 @@ switch ($resource) {
                 LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`idpagamento_acquisti`=`co_pagamenti`.`id`
                 LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
                 LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
+                LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id
+                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).")
                 |where| ".Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
             ORDER BY
                 `ragione_sociale`';
@@ -135,6 +138,21 @@ switch ($resource) {
             $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
+
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
+
+        foreach ($rs as $k => $r) {
+            $rs[$k] = array_merge($r, [
+                'text' => $r['descrizione'],
+                'disabled' => $r['is_bloccata'],
+            ]);
+        }
+
+        $results = [
+            'results' => $rs,
+            'recordsFiltered' => $data['recordsFiltered'],
+        ];
 
         break;
 

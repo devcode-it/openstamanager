@@ -422,13 +422,14 @@ class Backup
 
         // Informazioni di base sui limiti di spazio
         $spazio_libero = disk_free_space('.');
-        if (!empty(setting('Soft quota'))) {
-            $soft_quota = (float) setting('Soft quota'); // Impostazione in GB
-            $soft_quota = $soft_quota * (1024 ** 3); // Trasformazione in GB
-        }
 
-        // Informazioni sullo spazio occupato
-        $spazio_occupato = $spazio_necessario = FileSystem::folderSize(base_dir(), ['htaccess']);
+        // Calcolo dello spazio necessario per gli allegati (dimensione totale * 2 per garantire margine di sicurezza)
+        $database = database();
+        $allegati_size = $database->fetchOne('SELECT COALESCE(SUM(`size`), 0) AS total_size FROM `zz_files`');
+        $spazio_allegati = $allegati_size['total_size'] * 2; // Raddoppio per garantire spazio sufficiente durante il processo di backup
+
+        // Calcolo dello spazio necessario per il backup
+        $spazio_necessario = FileSystem::folderSize(base_dir(), ['htaccess']);
         $cartelle_ignorate = [
             self::getDirectory(),
             'node_modules',
@@ -439,11 +440,14 @@ class Backup
             $spazio_necessario -= FileSystem::folderSize($path);
         }
 
-        // Errori visualizzati
-        if (isset($soft_quota) && $soft_quota < ($spazio_necessario + $spazio_occupato) * $scarto) {
-            throw new InvalidArgumentException('Spazio disponibile in esaurimento');
-        } elseif ($spazio_libero < $spazio_necessario * $scarto) {
-            throw new InvalidArgumentException('Spazio del server in esaurimento');
+        // Aggiungi lo spazio necessario per gli allegati allo spazio totale necessario
+        $spazio_necessario += $spazio_allegati;
+
+        // Controllo semplificato: confronto tra spazio disponibile e spazio necessario
+        if ($spazio_libero < $spazio_necessario * $scarto) {
+            $spazio_richiesto = FileSystem::formatBytes($spazio_necessario * $scarto);
+            $spazio_disponibile = FileSystem::formatBytes($spazio_libero);
+            throw new InvalidArgumentException('Spazio disco insufficiente per eseguire il backup. Richiesti: '.$spazio_richiesto.', Disponibili: '.$spazio_disponibile);
         }
     }
 

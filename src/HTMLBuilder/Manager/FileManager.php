@@ -33,7 +33,7 @@ class FileManager implements ManagerInterface
 {
     /**
      * Gestione "filelist_and_upload".
-     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false" )}.
+     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "category": "" )}.
      *
      * @param array $options
      *
@@ -71,7 +71,9 @@ class FileManager implements ManagerInterface
             $result .= '
     <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">'.tr('Allegati').'</h3>
+            <h3 class="card-title">
+                '.tr('Allegati').($options['category'] ? ' ('.tr('_CATEGORY_', ['_CATEGORY_' => $options['category']]).')' : '').'
+            </h3>
         </div>
         <div class="card-body">';
         }

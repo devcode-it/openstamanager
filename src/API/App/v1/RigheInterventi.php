@@ -135,6 +135,7 @@ class RigheInterventi extends AppResource
             'totale_imponibile' => $riga->totale_imponibile,
             'iva' => $riga->iva,
             'totale' => $riga->totale,
+            'serials' => implode(',', $riga->serials),
         ];
 
         return $record;
@@ -238,6 +239,10 @@ class RigheInterventi extends AppResource
         $sconto = $data['sconto_percentuale'] ?: $data['sconto_unitario'];
         if (!empty($sconto)) {
             $record->setSconto($sconto, $data['tipo_sconto']);
+        }
+
+        if($data['is_articolo']){
+            $record->serials = explode(',', $data['serials']);
         }
     }
 }

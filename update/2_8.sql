@@ -474,4 +474,10 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 CREATE TABLE `zz_files_categories` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `deleted_at` TIMESTAMP NULL , PRIMARY KEY (`id`));
 ALTER TABLE `zz_files` ADD `id_category` INT NULL AFTER `category`;
 
-CREATE TABLE `em_files_categories_template` (`id` INT NOT NULL AUTO_INCREMENT , `id_category` INT NOT NULL , `id_template` INT NOT NULL , PRIMARY KEY (`id`))
+CREATE TABLE `em_files_categories_template` (`id` INT NOT NULL AUTO_INCREMENT , `id_category` INT NOT NULL , `id_template` INT NOT NULL , PRIMARY KEY (`id`));
+
+-- Api seriali
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'retrieve', 'seriali-cleanup', 'API\\App\\v1\\Seriali', 1),
+(NULL, 'app-v1', 'retrieve', 'seriali', 'API\\App\\v1\\Seriali', 1),
+(NULL, 'app-v1', 'retrieve', 'seriale', 'API\\App\\v1\\Seriali', 1);

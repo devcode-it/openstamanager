@@ -260,6 +260,29 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'change_payment':
+        $n_contratti = 0;
+
+        // Lettura righe selezionate
+        foreach ($id_records as $id) {
+            $contratto = Contratto::find($id);
+
+            $contratto->idpagamento = post('idpagamento');
+            $contratto->save();
+
+            ++$n_contratti;
+        }
+
+        if ($n_contratti > 0) {
+            flash()->info(tr('Metodo di pagamento aggiornato a _NUM_ contratti!', [
+                '_NUM_' => $n_contratti,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun metodo di pagamento aggiornato!'));
+        }
+
+        break;
 }
 
 $operations['change_status'] = [
@@ -267,6 +290,17 @@ $operations['change_status'] = [
     'data' => [
         'title' => tr('Vuoi davvero aggiornare lo stato di questi contratti?'),
         'msg' => '<br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` AS descrizione, `colore` as _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['change_payment'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia metodo di pagamento'),
+    'data' => [
+        'title' => tr('Vuoi davvero aggiornare il metodo di pagamento di questi contratti?'),
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Metodo di pagamento').'", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

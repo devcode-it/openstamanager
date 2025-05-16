@@ -279,7 +279,7 @@ class Mail extends Model
         }
 
         // Inclusione allegati predefiniti
-        $uploads = $template->uploads;
+        $uploads = $template->uploads($this->id_record);
         foreach ($uploads as $upload) {
             $this->addUpload($upload['id']);
         }

@@ -86,24 +86,13 @@ class Template extends Model
     {
         return $this->belongsToMany(Categoria::class, 'em_files_categories_template', 'id_template', 'id_category');
     }
-    
-    /**
-     * Accessor che ottiene dinamicamente gli uploads in base alle categorie selezionate.
-     * Questo metodo viene chiamato quando si accede a $template->uploads come proprietà.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getUploadsAttribute()
-    {
-        return $this->getUploadsFromCategories();
-    }
-    
+
     /**
      * Ottiene tutti gli allegati associati alle categorie del template.
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getUploadsFromCategories()
+    public function uploads($id_record = null)
     {
         $uploads = [];
         
@@ -116,6 +105,7 @@ class Template extends Model
             if ($this->id_module) {
                 $files = \Models\Upload::where('id_category', $category->id)
                     ->where('id_module', $this->id_module)
+                    ->where('id_record', $id_record)
                     ->get();
                 
                 $uploads = array_merge($uploads, $files->all());

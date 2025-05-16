@@ -163,7 +163,7 @@ if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
 }
 
 // Ottieni gli allegati dalle categorie associate al template
-$template_uploads = $template->uploads;
+$template_uploads = $template->uploads($id_record);
 if (!empty($template_uploads)) {
     $uploads = array_merge($uploads, $template_uploads->pluck('id')->toArray());
     $uploads = array_unique($uploads);

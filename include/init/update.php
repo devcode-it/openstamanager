@@ -165,6 +165,8 @@ if (filter('action') == 'do_update') {
                 $("#current-file").hide();
                 // Mostra tutti i segni di spunta per gli aggiornamenti completati
                 $("#updates-list .fa-check").show();
+
+                $("#versions-details-container").after(\'<div class="mt-4"><a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'"><i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'</a></div>\');
             </script>';
 
         // Instructions for the first installation
@@ -177,11 +179,6 @@ if (filter('action') == 'do_update') {
             ]).'
             </div>';
         }
-
-        echo '
-            <a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'">
-                <i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'
-            </a>';
     }
 
     exit;
@@ -451,4 +448,13 @@ if (filter('action') == 'do_update') {
     </div>
 
     </div>';
+
+    if (Update::isUpdateCompleted()) {
+        echo '
+        <div class="mt-4">
+            <a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'">
+                <i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'
+            </a>
+        </div>';
+    }
 }

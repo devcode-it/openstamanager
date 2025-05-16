@@ -86,6 +86,62 @@ class Template extends Model
     {
         return $this->belongsToMany(Categoria::class, 'em_files_categories_template', 'id_template', 'id_category');
     }
+    
+    /**
+     * Accessor che ottiene dinamicamente gli uploads in base alle categorie selezionate.
+     * Questo metodo viene chiamato quando si accede a $template->uploads come proprietà.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUploadsAttribute()
+    {
+        return $this->getUploadsFromCategories();
+    }
+    
+    /**
+     * Ottiene tutti gli allegati associati alle categorie del template.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUploadsFromCategories()
+    {
+        $uploads = [];
+        
+        // Recupera le categorie associate al template
+        $categories = $this->categories;
+        
+        // Per ogni categoria, recupera i file associati
+        foreach ($categories as $category) {
+            // Recupera i file del modulo corrente
+            if ($this->id_module) {
+                $files = \Models\Upload::where('id_category', $category->id)
+                    ->where('id_module', $this->id_module)
+                    ->get();
+                
+                $uploads = array_merge($uploads, $files->all());
+            }
+            
+            // Recupera anche i file dell'azienda predefinita
+            $id_module_anagrafiche = \Models\Module::where('name', 'Anagrafiche')->first()->id;
+            $id_record_azienda = setting('Azienda predefinita');
+            if ($id_record_azienda) {
+                $files = \Models\Upload::where('id_category', $category->id)
+                    ->where('id_module', $id_module_anagrafiche)
+                    ->where('id_record', $id_record_azienda)
+                    ->get();
+                    
+                $uploads = array_merge($uploads, $files->all());
+            }
+        }
+        
+        // Rimuovi eventuali duplicati
+        $unique_uploads = [];
+        foreach ($uploads as $upload) {
+            $unique_uploads[$upload->id] = $upload;
+        }
+        
+        return collect(array_values($unique_uploads));
+    }
 
     public function translations()
     {

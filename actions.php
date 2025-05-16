@@ -368,6 +368,7 @@ elseif (post('op') == 'send-email') {
 
     // Rimozione allegati predefiniti
     $mail->resetPrints();
+    $mail->resetUploads();
 
     // Destinatari
     $receivers = array_clean(post('destinatari'));

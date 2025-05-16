@@ -73,6 +73,11 @@ class Mail extends Model
         $this->uploads()->attach($file_id, ['id_email' => $this->id, 'name' => $name]);
     }
 
+    public function resetUploads()
+    {
+        $this->uploads()->detach();
+    }
+
     /**
      * Aggiunge una stampa alla notifica.
      *
@@ -267,10 +272,16 @@ class Mail extends Model
             $this->addReceiver($template['bcc'], 'bcc');
         }
 
-        // Incluesione stampe predefinite
+        // Inclusione stampe predefinite
         $prints = $template->prints;
         foreach ($prints as $print) {
             $this->addPrint($print['id']);
+        }
+
+        // Inclusione allegati predefiniti
+        $uploads = $template->uploads;
+        foreach ($uploads as $upload) {
+            $this->addUpload($upload['id']);
         }
     }
 }

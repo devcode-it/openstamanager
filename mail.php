@@ -162,12 +162,10 @@ if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
     $uploads = array_column($uploads, 'id');
 }
 
-$categories = $template->categories;
-foreach ($categories as $category) {
-    $files = Upload::where('id_category', $category->id)->where('id_module', $id_module)->where('id_record', $id_record)->get();
-    $uploads = array_merge($uploads, $files->pluck('id')->toArray());
-    $files = Upload::where('id_category', $category->id)->where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', setting('Azienda predefinita'))->get();
-    $uploads = array_merge($uploads, $files->pluck('id')->toArray());
+// Ottieni gli allegati dalle categorie associate al template
+$template_uploads = $template->uploads;
+if (!empty($template_uploads)) {
+    $uploads = array_merge($uploads, $template_uploads->pluck('id')->toArray());
     $uploads = array_unique($uploads);
 }
 

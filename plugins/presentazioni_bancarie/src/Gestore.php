@@ -372,27 +372,25 @@ class Gestore
     public function aggiungiDebitoDiretto(int $identifier, Anagrafica $controparte, Banca $banca_controparte, string $descrizione, $totale, \DateTime $data_prevista, $method, $codice_sequenza)
     {
         $date_key = $data_prevista->format('Y-m-d');
-        $customer_key = $controparte->id;
-        $group_key = $date_key.'_'.$customer_key;
 
-        if (!isset($this->payment_info_by_date_customer[$group_key])) {
+        if (!isset($this->payment_info_by_date_customer[$date_key])) {
             $paymentInformation = new PaymentInformationCBI();
             $paymentInformation
                 ->setCreditorName($this->azienda->ragione_sociale)
                 ->setCreditorIBAN($this->banca_azienda->iban)
                 ->setCreditorId($this->banca_azienda->creditor_id)
-                ->setPaymentInformationIdentification($group_key)
+                ->setPaymentInformationIdentification($date_key)
                 ->setRequestedExecutionDate($date_key)
                 ->setLocalMethod($method)
                 ->setServiceLevel('SEPA')
                 ->setSeqType($codice_sequenza != '' ? $codice_sequenza : 'RCUR');
 
-            $this->payment_info_by_date_customer[$group_key] = $paymentInformation;
+            $this->payment_info_by_date_customer[$date_key] = $paymentInformation;
 
             $this->debito_diretto->addPaymentInformation($paymentInformation);
         }
 
-        $paymentInformation = $this->payment_info_by_date_customer[$group_key];
+        $paymentInformation = $this->payment_info_by_date_customer[$date_key];
         $mandato = $this->getMandato($banca_controparte);
         $payment = new PaymentCBI();
         $payment

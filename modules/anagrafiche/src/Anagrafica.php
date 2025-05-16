@@ -185,7 +185,7 @@ class Anagrafica extends Model
         $diff = $actual->diff($previous);
 
         foreach ($diff as $tipo) {
-            $method = 'fix'.$tipo->getTranslation('title');
+            $method = 'fix'.$tipo->name;
             if (method_exists($this, $method)) {
                 self::$method($this);
             }

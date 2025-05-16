@@ -195,12 +195,15 @@ if (empty($record) || !$has_access) {
     echo '<span class="d-sm-inline">';
 
     echo '
-                <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
-                    <i class="fa fa-arrow-circle-left"></i>
-                </a>
-                <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
-                    <i class="fa fa-arrow-circle-right"></i>
-                </a>
+                <div class="btn-group">
+                    <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
+                        <i class="fa fa-arrow-circle-left"></i>
+                    </a>
+                    <span class="btn btn-default disabled">'.($key + 1).'/'.count($posizioni).'</span>
+                    <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
             </span>';
 
     echo '<div class="extra-buttons d-sm-inline">';

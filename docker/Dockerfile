@@ -35,8 +35,7 @@ COPY php.ini /usr/local/etc/php/
 
 WORKDIR ${APP_DIR}
 
-RUN --mount=type=cache,target=/tmp \
-    last_version_v=$(curl -s ${LAST_VERSION_URL} | grep tag_name | cut -d '"' -f 4) && \
+RUN last_version_v=$(curl -s ${LAST_VERSION_URL} | grep tag_name | cut -d '"' -f 4) && \
     last_version=$(echo $last_version_v | sed 's/^v//') && \
     wget -O openstamanager.zip "https://github.com/devcode-it/openstamanager/releases/download/${last_version_v}/openstamanager-${last_version}.zip" && \
     unzip openstamanager.zip && \

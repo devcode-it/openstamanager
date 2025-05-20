@@ -318,6 +318,9 @@ DELETE FROM `zz_modules` WHERE `name` = 'Marche impianti';
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_marche` WHERE 1=1 AND parent = 0 HAVING 2=2 ORDER BY `zz_marche`.`name`' WHERE `zz_modules`.`name` = 'Marche'; 
 
+DROP TABLE `my_impianti_marche`;
+DROP TABLE `my_impianti_marche_lang`;
+
 -- Allineamento vista Impianti
 UPDATE `zz_modules` SET `options` = "
 SELECT

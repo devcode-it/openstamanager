@@ -318,6 +318,8 @@ DELETE FROM `zz_modules` WHERE `name` = 'Marche impianti';
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_marche` WHERE 1=1 AND parent = 0 HAVING 2=2 ORDER BY `zz_marche`.`name`' WHERE `zz_modules`.`name` = 'Marche'; 
 
+ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_1`;
+ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_2`;
 DROP TABLE `my_impianti_marche`;
 DROP TABLE `my_impianti_marche_lang`;
 

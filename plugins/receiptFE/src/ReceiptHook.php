@@ -78,13 +78,15 @@ class ReceiptHook extends Manager
         for ($i = 0; $i < 10 && $i < $count; ++$i) {
             $element = $todo[$i];
 
-            // Importazione ricevuta
-            $name = $element['name'];
-            $fattura = Ricevuta::process($name);
+            if ($element !== null) {
+                // Importazione ricevuta
+                $name = $element['name'];
+                $fattura = Ricevuta::process($name);
 
-            if (!empty($fattura)) {
-                $completed[] = $element;
-                unset($todo[$i]);
+                if ($fattura !== null) {
+                    $completed[] = $element;
+                    unset($todo[$i]);
+                }
             }
         }
 

@@ -22,6 +22,9 @@ include_once __DIR__.'/../../core.php';
 // Imposto come azienda l'azienda predefinita per selezionare le sedi a cui ho accesso
 // select-options
 
+// Variabile per il controllo di permetti_movimento_a_zero
+$permetti_articoli_qta_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
+
 if (setting('Attiva scorciatoie da tastiera')) {
     echo '<div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Scorciatoie da tastiera: <b>F7</b> - Barcode, <b>F8</b> - Carico, <b>F9</b> - Scarico, <b>F10</b> - Spostamento').'
@@ -105,11 +108,11 @@ echo '
 if (setting('Attiva scorciatoie da tastiera')) {
     echo 'EnableHotkeys()';
 }
-echo '  
+echo '
         $("#barcode").focus();
         $("#causale").trigger("change");
     });
-    
+
     $(document).on("keyup", function (event) {
         if ($(":focus").is("input, textarea")) {
             return;
@@ -118,7 +121,7 @@ echo '
         let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");
-            
+
         if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
             swal("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
         }
@@ -145,11 +148,27 @@ echo '
     }
 
     $(document).ready(function () {
+        // Trigger causale change on page load to set initial permetti_movimento_a_zero value
+        setTimeout(function() {
+            $("#causale").trigger("change");
+        }, 100);
+
         $("#causale").on("change", function () {
             let data = $(this).selectData();
             if (data) {
                 $("#movimento").val(data.descrizione);
                 $("#tipo_movimento").val(data.tipo_movimento);
+
+                let permetti_movimento_a_zero;
+                if ('.$permetti_articoli_qta_zero.') {
+                    permetti_movimento_a_zero = true;
+                } else {
+                    permetti_movimento_a_zero = data.tipo_movimento !== "scarico";
+                    if (data.tipo_movimento === "scarico" && $("#idarticolo").val() !== null) {
+                        $("#idarticolo").selectReset();
+                    }
+                }
+                $("#idarticolo").setSelectOption("permetti_movimento_a_zero", permetti_movimento_a_zero ? 1 : 0);
 
                 if (data.tipo_movimento === "carico") {
                     disabilitaSede("#idsede_partenza");
@@ -228,33 +247,53 @@ echo '
 
         let qta_movimento = qta_input.get();
 
-        let alert_type, icon, text, qta_rimanente;
+        let alert_type, card_type, bg_type, icon, text, qta_rimanente;
         if (tipo_movimento === "carico") {
             alert_type = "alert-success";
+            card_type = "card-success";
+            bg_type = "bg-success";
             icon = "fa-arrow-up";
             text = "Carico";
             qta_rimanente = parseFloat(articolo.qta) + parseFloat(qta_movimento);
         } else if (tipo_movimento === "scarico") {
             alert_type = "alert-danger";
+            card_type = "card-danger";
+            bg_type = "bg-danger";
             icon = "fa-arrow-down";
             text = "Scarico";
             qta_rimanente = parseFloat(articolo.qta) - parseFloat(qta_movimento);
         } else if (tipo_movimento === "spostamento") {
             alert_type = "alert-info";
-            icon = "fa-arrow-down";
+            card_type = "card-info";
+            bg_type = "bg-info";
+            icon = "fa-exchange";
             text = "Spostamento";
             qta_rimanente = parseFloat(articolo.qta);
         }
 
         if (articolo.descrizione) {
+            let immagine = articolo.immagine ? globals.rootdir + "/files/articoli/" + articolo.immagine : globals.rootdir + "/assets/dist/img/logo_header.png";
+            let barcode = articolo.barcode ? "<span class=\"badge badge-secondary\"><i class=\"fa fa-barcode mr-1\"></i> " + articolo.barcode + "</span>" : "";
+            let categoria = articolo.categoria ? articolo.categoria : "";
+
             let testo = $("#info-articolo").html();
 
-            testo = testo.replace("|alert-type|", alert_type)
+            testo = testo.replace("|card-type|", card_type)
+                .replace("|bg-type|", bg_type)
+                .replace("|alert-type|", alert_type)
                 .replace("|icon|", icon)
+                .replace("|icon|", icon)
+                .replace("|icon|", icon)
+                .replace("|immagine|", immagine)
                 .replace("|descrizione|", articolo.descrizione)
                 .replace("|codice|", articolo.codice)
+                .replace("|barcode|", barcode)
+                .replace("|categoria|", categoria)
                 .replace("|misura|", articolo.um)
                 .replace("|misura|", articolo.um)
+                .replace("|misura|", articolo.um)
+                .replace("|descrizione-movimento|", text)
+                .replace("|descrizione-movimento|", text)
                 .replace("|descrizione-movimento|", text)
                 .replace("|movimento|", qta_movimento.toLocale())
                 .replace("|rimanente|", qta_rimanente.toLocale())
@@ -286,19 +325,19 @@ echo '
 
         hotkeys("f7,f8,f9,f10", function(event, handler) {
             switch (handler.key) {
-                case "f7": 
+                case "f7":
                     event.preventDefault();
                     $("#barcode").focus();
                 break;
-                case "f8": 
+                case "f8":
                     event.preventDefault();
                     input("causale").set("1").trigger("change");
                 break;
-                case "f9": 
+                case "f9":
                     event.preventDefault();
                     input("causale").set("2").trigger("change");
                 break;
-                case "f10": 
+                case "f10":
                     event.preventDefault();
                     input("causale").set("3").trigger("change");
                 break;
@@ -313,30 +352,54 @@ echo '
 <div class="hidden" id="info-articolo">
     <div class="row">
         <div class="col-md-6">
-            <div class="alert alert-info text-left">
-                <h3>
-                    <b>'.tr('Codice').':</b> |codice|
-                </h3>
-                <p><b>'.tr('Descrizione').':</b> |descrizione|</p>
-                <p><b>'.tr('Prezzo acquisto').':</b> |prezzo_acquisto| '.currency().'</p>
-                <p><b>'.tr('Prezzo vendita').':</b> |prezzo_vendita| '.currency().'</p>
-                <p><b>'.tr('IVA').':</b> |iva_vendita|</p>
+            <div class="card card-primary card-outline shadow">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-vcard"></i> '.tr('Articolo').'</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="|immagine|" class="img-fluid img-thumbnail">
+                        </div>
+                        <div class="col-md-9">
+                            <h4 class="mb-2 text-primary"><b>|descrizione|</b></h4>
+                            <p class="mb-2"><b>|codice|</b> |barcode|</p>
+                            <p class="mb-2"><i class="fa fa-tag mr-1"></i> <span class="badge badge-info p-2">|categoria|</span></p>
+                            <p class="mb-2"><i class="fa fa-money mr-1"></i> <b>'.tr('Acquisto').':</b> |prezzo_acquisto| '.currency().' - <b>'.tr('Vendita').':</b> |prezzo_vendita| '.currency().'</p>
+                            <p class="mb-2"><i class="fa fa-percent mr-1"></i> <b>'.tr('IVA').':</b> |iva_vendita|</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-6">
-
-            <div class="alert |alert-type| text-center" style="margin-bottom:6px;" >
-                <h3>
-                    <i class="fa |icon|"></i> |descrizione-movimento| |movimento| |misura|
-                </h3>
+            <div class="card |card-type| card-outline shadow">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa |icon|"></i> |descrizione-movimento|</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-box |bg-type|">
+                                <span class="info-box-icon"><i class="fa |icon|"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">|descrizione-movimento|</span>
+                                    <span class="info-box-number">|movimento| |misura|</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fa fa-cubes"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">'.tr('Rimanenti').'</span>
+                                    <span class="info-box-number">|rimanente| |misura|</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="alert alert-info text-center">
-                <h3>
-                    <i class="fa fa-cubes"></i> |rimanente| |misura| rimanenti
-                </h3>
-            </div>
-
         </div>
     </div>
 </div>';

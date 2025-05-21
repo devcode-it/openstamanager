@@ -122,12 +122,22 @@ class Fattura extends Document
         }
         $model->idagente = $anagrafica->idagente ?: '';
 
-        // Sede aziendale scelta tra le sedi disponibili per l'utente
-        $id_sede = $user->sedi[0];
+        $id_sede = null;
+        foreach ($user->sedi as $sede) {
+            if ($sede != 0 || count($user->sedi) == 1) {
+                $id_sede = $sede;
+                break;
+            }
+        }
+
+        if ($id_sede === null && !empty($user->sedi)) {
+            $id_sede = $user->sedi[0];
+        }
+
         if ($direzione == 'entrata') {
-            $model->idsede_destinazione = $id_sede;
-        } else {
             $model->idsede_partenza = $id_sede;
+        } else {
+            $model->idsede_destinazione = $id_sede;
         }
 
         // Ritenuta contributi predefinita

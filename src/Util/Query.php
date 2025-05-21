@@ -241,7 +241,7 @@ class Query
                         }
                     } elseif ($notequal) {
                         $value = trim(str_replace(['!='], '', $value));
-                        $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %'));
+                        $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %').' OR '.$search_query.' IS NULL');
                     } elseif ($start_with) {
                         $value = trim(str_replace(['^'], '', $value));
                         $search_filters[] = ($search_query.' LIKE '.prepare($value.'%'));

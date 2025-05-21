@@ -71,6 +71,20 @@ class Intervento extends Document
         $model->idagente = $anagrafica->idagente;
         $model->idpagamento = setting('Tipo di pagamento predefinito');
 
+        $user = \Auth::user();
+        $id_sede = null;
+        foreach ($user->sedi as $sede) {
+            if ($sede != 0 || count($user->sedi) == 1) {
+                $id_sede = $sede;
+                break;
+            }
+        }
+
+        if ($id_sede === null && !empty($user->sedi)) {
+            $id_sede = $user->sedi[0];
+        }
+
+        $model->idsede_partenza = $id_sede;
         $model->save();
 
         return $model;

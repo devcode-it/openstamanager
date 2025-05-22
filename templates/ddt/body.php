@@ -31,7 +31,7 @@ $autofill->setRows($rows_per_page, 0, $options['last-page-footer'] ? 34 : $rows_
 $c = 0;
 ($f_sitoweb || $f_pec) ? ++$c : null;
 ($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null;
-($destinazione && $partenza) ? $c += 3 : (($destinazione || $partenza) ? ++$c : null);
+($destinazione || $partenza) ? $c += 3 : (($destinazione || $partenza) ? ++$c : null);
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, $rows_per_page - $c);

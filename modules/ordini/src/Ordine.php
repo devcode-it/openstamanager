@@ -170,13 +170,51 @@ class Ordine extends Document
             $stato_attuale = $this->stato;
             $nome_stato = (database()->isConnected() && database()->tableExists('or_statiordine_lang') ? $stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id) : $stato_attuale->descrizione);
 
+            $righe_fatturate = $righe->where('qta_evasa', '>', 0);
+            $qta_fatturate = 0;
+            $fatture_collegate_totali = 0;
+
+            foreach ($righe_fatturate as $riga) {
+                $fatture_collegate = database()->table('co_righe_documenti')
+                    ->where('original_id', $riga->id)
+                    ->where('original_type', get_class($riga))
+                    ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                    ->count();
+
+                $fatture_collegate_totali += $fatture_collegate;
+
+                if ($fatture_collegate > 0) {
+                    $qta_fatturate += $riga->qta;
+                }
+            }
+
+            $parziale_fatturato = $qta != $qta_fatturate;
+
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Accettato';
-            } elseif (!in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
+            } elseif ($trigger->getDocument() instanceof \Modules\Fatture\Fattura) {
+                $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+            } elseif ($trigger->getDocument() instanceof \Modules\DDT\DDT) {
+                $ddt = $trigger->getDocument();
+                $fatture_ddt = database()->table('co_righe_documenti')
+                    ->where('idddt', $ddt->id)
+                    ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                    ->count();
+
+                if ($fatture_ddt > 0) {
+                    $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+                } else {
+                    $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
+                }
+            } elseif ($fatture_collegate_totali > 0) {
+                $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+            } elseif (in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato'])) {
+                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
+            } elseif ($qta_evasa > 0) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
-                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+                $descrizione = $nome_stato;
             }
 
             if (database()->isConnected() && database()->tableExists('or_statiordine_lang')) {

@@ -222,25 +222,89 @@ class DDT extends Document
             $qta_evasa = $righe->sum('qta_evasa');
             $parziale = $qta != $qta_evasa;
 
+            $fatture_collegate = database()->table('co_righe_documenti')
+                ->where('idddt', $this->id)
+                ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                ->count();
+
+            $qta_fatturate = 0;
+            $parziale_fatturato = true;
             $fattura = Fattura::find($trigger->iddocumento);
             if (!empty($fattura)) {
-                $righe_fatturate = $fattura->getRighe()->where('idddt', '=', $this->id);
+                $righe_fatturate = $fattura->getRighe()->where('idddt', $this->id);
                 $qta_fatturate = $righe_fatturate->sum('qta');
                 $parziale_fatturato = $qta != $qta_fatturate;
             }
 
+            $collegato_a_ordine = false;
+            foreach ($righe as $riga) {
+                if (!empty($riga->original_id) && !empty($riga->original_type) && strpos($riga->original_type, 'Ordini') !== false) {
+                    $collegato_a_ordine = true;
+                    break;
+                }
+            }
+
             // Impostazione del nuovo stato
-            if ($qta_evasa == 0) {
+            if ($qta_evasa == 0 && !$collegato_a_ordine) {
                 $descrizione = 'Bozza';
-            } elseif (empty($qta_fatturate)) {
-                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-            } else {
+            } elseif ($fatture_collegate > 0) {
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             }
 
             $stato = Stato::where('name', $descrizione)->first()->id;
             $this->stato()->associate($stato);
             $this->save();
+
+            if ($descrizione == 'Fatturato' || $descrizione == 'Parzialmente fatturato') {
+                $this->aggiornaStatiOrdiniCollegati();
+            }
+        }
+    }
+
+    /**
+     * Aggiorna lo stato degli ordini collegati a questo DDT.
+     * Quando il DDT passa a "Fatturato" o "Parzialmente fatturato", anche gli ordini collegati
+     * devono passare a "Fatturato" o "Parzialmente fatturato".
+     */
+    public function aggiornaStatiOrdiniCollegati()
+    {
+        $righe_ddt = $this->getRighe();
+
+        foreach ($righe_ddt as $riga_ddt) {
+            if (!empty($riga_ddt->original_id) && !empty($riga_ddt->original_type) && strpos($riga_ddt->original_type, 'Ordini') !== false) {
+                $riga_ordine = $riga_ddt->getOriginalComponent();
+
+                if (!empty($riga_ordine)) {
+                    $ordine = $riga_ordine->getDocument();
+
+                    if (!empty($ordine)) {
+                        $fatture_collegate = database()->table('co_righe_documenti')
+                            ->where('idddt', $this->id)
+                            ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                            ->count();
+
+                        if ($fatture_collegate > 0) {
+                            $righe_ordine = $ordine->getRighe();
+                            $qta = $righe_ordine->sum('qta');
+                            $qta_evasa = $righe_ordine->sum('qta_evasa');
+                            $parziale = $qta != $qta_evasa;
+
+                            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+
+                            if (database()->isConnected() && database()->tableExists('or_statiordine_lang')) {
+                                $stato = \Modules\Ordini\Stato::where('name', $descrizione)->first()->id;
+                            } else {
+                                $stato = \Modules\Ordini\Stato::where('descrizione', $descrizione)->first()->id;
+                            }
+
+                            $ordine->stato()->associate($stato);
+                            $ordine->save();
+                        }
+                    }
+                }
+            }
         }
     }
 

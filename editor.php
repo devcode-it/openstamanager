@@ -186,25 +186,27 @@ if (empty($record) || !$has_access) {
     $posizioni = $module_query ? $dbo->fetchArray($module_query) : 0;
     $key = $posizioni ? array_search($id_record, array_column($posizioni, 'id')) : 0;
 
-    // Precedente
-    $prev = $posizioni[$key - 1]['id'];
+    if (is_array($posizioni)) {
+        // Precedente
+        $prev = $posizioni[$key - 1]['id'];
 
-    // Successivo
-    $next = $posizioni[$key + 1]['id'];
+        // Successivo
+        $next = $posizioni[$key + 1]['id'];
 
-    echo '<span class="d-sm-inline">';
+        echo '<span class="d-sm-inline">';
 
-    echo '
-                <div class="btn-group">
-                    <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
-                        <i class="fa fa-arrow-circle-left"></i>
-                    </a>
-                    <span class="btn btn-default disabled">'.($key + 1).'/'.count($posizioni).'</span>
-                    <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
-                        <i class="fa fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </span>';
+        echo '
+                    <div class="btn-group">
+                        <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
+                            <i class="fa fa-arrow-circle-left"></i>
+                        </a>
+                        <span class="btn btn-default disabled">'.($key + 1).'/'.count($posizioni).'</span>
+                        <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </span>';
+    }
 
     echo '<div class="extra-buttons d-sm-inline">';
 

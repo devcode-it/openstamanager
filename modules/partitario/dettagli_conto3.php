@@ -66,7 +66,11 @@ if (!empty($movimenti)) {
         if (!empty($movimento['primanota'])) {
             echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
         } else {
-            echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['iddocumento'], $movimento['descrizione']);
+            if (strpos($movimento['descrizione'], 'Vendita al banco') === 0) {
+                echo Modules::link('Vendita al banco', $movimento['iddocumento'], $movimento['descrizione']);
+            } else {
+                echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['iddocumento'], $movimento['descrizione']);
+            }
         }
 
         echo '

@@ -106,7 +106,9 @@ switch (filter('op')) {
 
         // Gestione automatica dei valori convertiti
         $primary_key = post('primary_key');
-        $csv->setPrimaryKey($primary_key - 1);
+        if (!empty($primary_key)) {
+            $csv->setPrimaryKey($primary_key - 1);
+        }
 
         // Verifica che tutti i campi obbligatori siano mappati
         if (!isset($page) || empty($page)) {

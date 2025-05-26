@@ -68,11 +68,20 @@ if ($has_image) {
 $autofill = new Util\Autofill($columns);
 $rows_per_page = 22;
 $rows_first_page = 36;
-$autofill->setRows($rows_per_page, 0, $rows_first_page);
-
 // Conto le righe da diminuire
 $c = 0;
-$destinazione ? $c += 2 : null;
+$destinazione ? $c += 2 : 0;
+
+$descrizione_righe = 0;
+if (!empty($documento['descrizione'])) {
+    $descrizione_text = (string) $documento['descrizione'];
+    $descrizione_lines = explode("\n", $descrizione_text);
+    foreach ($descrizione_lines as $line) {
+        $descrizione_righe += ceil(strlen($line) / 70);
+    }
+    $descrizione_righe += 2;
+    $c += $descrizione_righe;
+}
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, $rows_first_page - $c);
@@ -82,7 +91,6 @@ if (!empty($documento['descrizione'])) {
     echo '
 <p>'.nl2br((string) $documento['descrizione']).'</p>
 <br>';
-    $autofill->count($documento['descrizione']);
 }
 
 // Intestazione tabella per righe
@@ -204,6 +212,7 @@ foreach ($righe as $key => $riga) {
 
                     echo '
                     <br><small class="text-muted">'.$text.'</small>';
+                    $autofill->count($text, true);
                 }
 
                 echo '

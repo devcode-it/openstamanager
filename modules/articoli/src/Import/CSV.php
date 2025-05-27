@@ -376,6 +376,7 @@ class CSV extends CSVImporter
             // Creazione o aggiornamento dell'articolo
             if (empty($articolo)) {
                 $articolo = Articolo::build($record['codice'], $categoria, $sottocategoria);
+                $articolo->name = $record['descrizione'];
                 if (!empty($record['descrizione'])) {
                     $articolo->setTranslation('title', $record['descrizione']);
                 }

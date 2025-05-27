@@ -45,21 +45,38 @@ class Autofill
         $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
+    // Costanti per i fattori di scala ottimizzati
+    private const MULTILINE_FACTOR = 0.8;
+    private const SMALL_TEXT_FACTOR = 0.65;
+
     public function count($text, $small = null)
     {
         $count = 0;
-        $textLines = explode("\n", (string) $text);
+        $text = (string) $text;
 
-        foreach ($textLines as $line) {
-            $count += ceil(strlen($line) / $this->char_number);
+        // Usa mb_strlen per supporto multibyte corretto
+        if (empty($text)) {
+            $this->set(0);
+            return;
         }
 
+        $textLines = explode("\n", $text);
+
+        foreach ($textLines as $line) {
+            // Usa mb_strlen per caratteri multibyte
+            $line_length = mb_strlen(trim($line), 'UTF-8');
+            if ($line_length > 0) {
+                $count += ceil($line_length / $this->char_number);
+            }
+        }
+
+        // Applica fattori di scala ottimizzati
         if ($count > 1) {
-            $count /= 1.25;
+            $count *= self::MULTILINE_FACTOR;
         }
 
         if ($small) {
-            $count /= 1.538461538;
+            $count *= self::SMALL_TEXT_FACTOR;
         }
 
         $this->set($count);
@@ -76,25 +93,35 @@ class Autofill
         $this->current = 0;
     }
 
+    /**
+     * Reset completo dello stato dell'oggetto.
+     * Utile per riutilizzare la stessa istanza per documenti diversi.
+     */
+    public function reset()
+    {
+        $this->space = 0;
+        $this->current = 0;
+    }
+
     public function getAdditionalNumber()
     {
-        if ($this->space <= $this->max_rows) {
-            $page = 1;
-        } else {
-            if ($this->space <= $this->max_rows_first_page) {
-                $page = 2;
-            } else {
-                $page = ceil(1 + (($this->space - $this->max_rows_first_page) / $this->max_rows));
-            }
-        }
+        $space = $this->space;
+        $number = 0;
 
-        if ($page > 1) {
-            $rows = $this->space - $this->max_rows_first_page * ($page - 1);
+        // Algoritmo per il calcolo delle pagine
+        if ($space <= $this->max_rows) {
+            // Prima pagina - calcolo diretto
+            $number = max(0, $this->max_rows - ceil($space));
+        } elseif ($space <= $this->max_rows_first_page) {
+            // Seconda pagina - calcolo diretto
+            $number = max(0, $this->max_rows - ceil($space - $this->max_rows_first_page));
         } else {
-            $rows = ceil($this->space);
+            // Pagine successive - calcolo
+            $remaining_space = $space - $this->max_rows_first_page;
+            $additional_pages = ceil($remaining_space / $this->max_rows);
+            $rows_on_last_page = $remaining_space - (($additional_pages - 1) * $this->max_rows);
+            $number = max(0, $this->max_rows - ceil($rows_on_last_page));
         }
-
-        $number = $this->max_rows - $rows;
 
         return $number;
     }
@@ -103,23 +130,31 @@ class Autofill
     {
         $this->next();
 
-        $result = '';
-
         $number = $this->getAdditionalNumber();
 
-        for ($i = 0; $i < $number; ++$i) {
-            $result .= '
-                    <tr>';
-
-            for ($c = 0; $c < $this->column_number; ++$c) {
-                $result .= '
-                        <td>&nbsp;</td>';
-            }
-
-            $result .= '
-                    </tr>';
+        // Se non ci sono righe da generare, ritorna stringa vuota
+        if ($number <= 0) {
+            return '';
         }
 
-        return $result;
+        // Genera template per una singola riga
+        $single_row_template = "\n                    <tr>";
+        for ($c = 0; $c < $this->column_number; ++$c) {
+            $single_row_template .= "\n                        <td>&nbsp;</td>";
+        }
+        $single_row_template .= "\n                    </tr>";
+
+        // Usa str_repeat per generazione
+        return str_repeat($single_row_template, $number);
+    }
+
+    /**
+     * Restituisce lo spazio attualmente utilizzato.
+     *
+     * @return float
+     */
+    public function getSpace()
+    {
+        return $this->space;
     }
 }

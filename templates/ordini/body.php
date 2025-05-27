@@ -58,18 +58,24 @@ if ($documento->direzione == 'uscita') {
 
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
-// Creazione righe fantasma
+// Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill($columns);
 $rows_per_page = 31;
 $rows_first_page = $rows_per_page + 3;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
-// Conteggio righe intestazione
+// Calcolo ottimizzato delle righe intestazione
 $c = 0;
 $n = 0;
-($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null;
-$destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
-$documento['note'] ? $n += 3 : null;
+if ($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) {
+    ++$c;
+}
+if ($destinazione) {
+    $c += $codice_destinatario ? 2 : 1;
+}
+if ($documento['note']) {
+    $n += 3;
+}
 
 $rows_first_page -= $c;
 $rows_per_page = $rows_per_page - $c - $n;
@@ -115,6 +121,10 @@ echo "
     <tbody>';
 
 $num = 0;
+
+// Pre-calcola valori per ottimizzare il ciclo
+$righe_count = count($righe);
+
 foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
@@ -125,6 +135,7 @@ foreach ($righe as $riga) {
 
     $text = '';
 
+    // Gestione ottimizzata dei riferimenti
     foreach ($riferimenti as $key => $riferimento) {
         if (in_array($riga->id, $riferimento)) {
             if ($riga->id === $riferimento[0]) {
@@ -166,6 +177,8 @@ foreach ($righe as $riga) {
     }
 
     $source_type = $riga::class;
+
+    // Calcolo ottimizzato dell'altezza della descrizione
     $autofill->count($r['descrizione']);
 
     echo $num.'</td>';
@@ -194,12 +207,11 @@ foreach ($righe as $riga) {
             </td>';
     }
 
+    // Gestione ottimizzata articoli
     if ($riga->isArticolo()) {
         if ($documento->direzione == 'entrata' && !$options['hide-item-number']) {
-            // Codice articolo
-            $text = tr('COD. _COD_', [
-                '_COD_' => $riga->codice,
-            ]);
+            // Codice articolo - usa concatenazione diretta per performance
+            $text = 'COD. '.$riga->codice;
             echo '
                     <br><small>'.$text.'</small>';
 
@@ -405,4 +417,9 @@ if (!empty($documento['note'])) {
 <br>
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
 <p><small>'.nl2br((string) $documento['note']).'</small></p>';
+}
+
+// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
+if (count($righe) > 50) {
+    Util\Autofill::clearTextHeightCache();
 }

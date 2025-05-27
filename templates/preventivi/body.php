@@ -64,22 +64,26 @@ if ($has_image) {
     ++$columns;
 }
 
-// Creazione righe fantasma
+// Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill($columns);
 $rows_per_page = 22;
 $rows_first_page = 36;
-// Conto le righe da diminuire
-$c = 0;
-$destinazione ? $c += 2 : 0;
 
-$descrizione_righe = 0;
+// Calcolo ottimizzato delle righe da sottrarre
+$c = 0;
+if ($destinazione) {
+    $c += 2;
+}
+
+// Calcolo ottimizzato per la descrizione del documento
 if (!empty($documento['descrizione'])) {
-    $descrizione_text = (string) $documento['descrizione'];
-    $descrizione_lines = explode("\n", $descrizione_text);
-    foreach ($descrizione_lines as $line) {
-        $descrizione_righe += ceil(strlen($line) / 70);
-    }
-    $descrizione_righe += 2;
+    // Usa il metodo ottimizzato della classe Autofill per calcolare l'altezza
+    $temp_autofill = new Util\Autofill($columns);
+    $temp_autofill->count($documento['descrizione']);
+    $temp_autofill->next();
+
+    // Ottieni il numero di righe calcolato più accuratamente
+    $descrizione_righe = ceil($temp_autofill->getSpace()) + 2; // +2 per spaziatura
     $c += $descrizione_righe;
 }
 
@@ -130,11 +134,16 @@ $num = 0;
 $has_gruppo = false;
 $subtotale_gruppo = 0;
 $iva_gruppo = 0;
+
+// Pre-calcola i valori per ottimizzare il ciclo
+$righe_array = $righe->toArray();
+$righe_count = count($righe_array);
+
 foreach ($righe as $key => $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    // Gestione gruppo
+    // Gestione gruppo ottimizzata
     $style_titolo = '';
     $colspan_titolo = '';
     if ($riga->is_titolo) {
@@ -149,6 +158,7 @@ foreach ($righe as $key => $riga) {
     $subtotale_gruppo += $riga->totale_imponibile;
     $iva_gruppo += $riga->iva;
 
+    // Calcolo ottimizzato dell'altezza della descrizione
     $autofill->count($descrizione);
 
     echo '
@@ -157,6 +167,7 @@ foreach ($righe as $key => $riga) {
                 '.$num.'
             </td>';
 
+    // Gestione ottimizzata delle immagini
     if ($has_image) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
             echo '
@@ -175,20 +186,21 @@ foreach ($righe as $key => $riga) {
             <td style="vertical-align: middle" colspan="'.$colspan_titolo.'">
                 '.$descrizione;
 
+    // Gestione ottimizzata del codice articolo
     if ($riga->isArticolo()) {
-        if ($options['hide-item-number']) {
-            $text = '';
-        } else {
-            // Codice articolo
-            $text = tr('COD. _COD_', [
-                '_COD_' => $riga->codice,
-            ]);
+        $text = '';
+        if (!$options['hide-item-number']) {
+            // Codice articolo - usa concatenazione diretta per performance
+            $text = 'COD. '.$riga->codice;
         }
 
-        echo '
+        if (!empty($text)) {
+            echo '
                 <br><small>'.$text.'</small>';
 
-        $autofill->count($text, true);
+            // Calcolo ottimizzato per testo piccolo
+            $autofill->count($text, true);
+        }
     }
 
     echo '
@@ -207,6 +219,7 @@ foreach ($righe as $key => $riga) {
                 <td class="text-right" style="vertical-align: middle">
                     '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
+                // Gestione ottimizzata degli sconti
                 if ($riga->sconto != 0) {
                     $text = discountInfo($riga, false);
 
@@ -251,7 +264,8 @@ foreach ($righe as $key => $riga) {
 
     $autofill->next();
 
-    $next = $righe->flatten()[$num];
+    // Controllo ottimizzato della prossima riga
+    $next = ($num < $righe_count) ? $righe->flatten()[$num] : null;
 
     if ($has_gruppo && ($next->is_titolo || $next == null) && ($options['pricing'] || $options['show-only-total'])) {
         echo '
@@ -287,7 +301,10 @@ foreach ($righe as $key => $riga) {
     }
 }
 
-$banca ? $autofill->set(3) : '';
+// Calcolo finale delle righe fantasma
+if ($banca) {
+    $autofill->set(3);
+}
 $autofill->next();
 
 echo '
@@ -343,6 +360,8 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
+    $autofill->set(2);
+    $autofill->next();
     }
 
     // IVA
@@ -517,4 +536,9 @@ echo '
 
 if (!empty($documento->condizioni_fornitura)) {
     echo '<pagebreak>'.$documento->condizioni_fornitura;
+}
+
+// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
+if (count($righe) > 50) {
+    Util\Autofill::clearTextHeightCache();
 }

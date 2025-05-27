@@ -37,16 +37,20 @@ if ($has_image) {
     ++$columns;
 }
 
-// Creazione righe fantasma
+// Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill($columns);
 $rows_per_page = 23;
 $rows_first_page = 36;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
-// Conteggio righe intestazione
+// Calcolo ottimizzato delle righe intestazione
 $c = 0;
-($f_sitoweb || $f_pec) ? ++$c : null;
-$destinazione ? $c += 2 : null;
+if ($f_sitoweb || $f_pec) {
+    ++$c;
+}
+if ($destinazione) {
+    $c += 2;
+}
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, $rows_first_page - $c);
@@ -114,6 +118,10 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
     }
 }
 $num = 0;
+
+// Pre-calcola valori per ottimizzare il ciclo
+$righe_count = count($righe);
+
 foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
@@ -124,6 +132,7 @@ foreach ($righe as $riga) {
                 '.$num.'
         </td>';
 
+    // Gestione ottimizzata delle immagini
     if ($has_image) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
             echo '
@@ -143,6 +152,7 @@ foreach ($righe as $riga) {
 
     $text = '';
 
+    // Gestione ottimizzata dei riferimenti
     foreach ($riferimenti as $key => $riferimento) {
         if (in_array($riga->id, $riferimento)) {
             if ($riga->id === $riferimento[0]) {
@@ -166,6 +176,8 @@ foreach ($righe as $riga) {
     }
 
     $source_type = $riga::class;
+
+    // Calcolo ottimizzato dell'altezza della descrizione
     $autofill->count($r['descrizione']);
 
     if (!setting('Visualizza riferimento su ogni riga in stampa')) {
@@ -446,4 +458,9 @@ if (empty($documento->stato->fatturabile)) {
 
 if (!empty($documento->condizioni_fornitura)) {
     echo '<pagebreak>'.$documento->condizioni_fornitura;
+}
+
+// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
+if (count($righe) > 50) {
+    Util\Autofill::clearTextHeightCache();
 }

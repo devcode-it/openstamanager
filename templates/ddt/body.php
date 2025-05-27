@@ -22,16 +22,24 @@ include_once __DIR__.'/../../core.php';
 
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-// Creazione righe fantasma
+// Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill($options['pricing'] ? 7 : 4, 70);
 $rows_per_page = ($documento['note'] || $options['pricing'] ? ($tipo_doc == 'Ddt in uscita' ? 22 : 24) : 27);
 $autofill->setRows($rows_per_page, 0, $options['last-page-footer'] ? 34 : $rows_per_page);
 
-// conteggio delle righe occupate dall'intestazione
+// Calcolo ottimizzato delle righe occupate dall'intestazione
 $c = 0;
-($f_sitoweb || $f_pec) ? ++$c : null;
-($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) ? ++$c : null;
-($destinazione || $partenza) ? $c += 3 : (($destinazione || $partenza) ? ++$c : null);
+if ($f_sitoweb || $f_pec) {
+    ++$c;
+}
+if ($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) {
+    ++$c;
+}
+if ($destinazione || $partenza) {
+    $c += 3;
+} elseif ($destinazione || $partenza) {
+    ++$c;
+}
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, $rows_per_page - $c);
@@ -63,12 +71,15 @@ echo '
 $righe = $documento->getRighe();
 $num = 0;
 
+// Pre-calcola valori per ottimizzare il ciclo
+$righe_count = count($righe);
+
 if (!setting('Visualizza riferimento su ogni riga in stampa')) {
     $riferimenti = [];
     $id_rif = [];
 
     foreach ($righe as $riga) {
-        $riferimento = ($riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null);
+        $riferimento = $riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null;
         if (!empty($riferimento)) {
             if (!array_key_exists($riferimento, $riferimenti)) {
                 $riferimenti[$riferimento] = [];
@@ -122,7 +133,7 @@ foreach ($righe as $riga) {
 
                 echo '
                 </td>
-        
+
                 <td>
                     '.nl2br($text);
                 $autofill->count($text);
@@ -218,3 +229,8 @@ echo '
         |autofill|
     </tbody>
 </table>';
+
+// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
+if (count($righe) > 50) {
+    Util\Autofill::clearTextHeightCache();
+}

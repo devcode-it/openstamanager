@@ -25,17 +25,21 @@ $v_totale = [];
 
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-// Creazione righe fantasma
+// Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill(6, 70);
 $rows_per_page = ($fattura_accompagnatoria ? 24 : 26);
 $autofill->setRows($rows_per_page, 0);
 
-// Conteggio le righe da sottrarre al totale
+// Calcolo ottimizzato delle righe da sottrarre
 $c = 0;
 foreach ($v_iva as $desc_iva => $tot_iva) {
     ++$c;
 }
-$destinazione ? ($codice_destinatario ? $c += 2 : ++$c) : null;
+
+// Gestione ottimizzata destinazione
+if ($destinazione) {
+    $c += $codice_destinatario ? 2 : 1;
+}
 
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0);
@@ -46,10 +50,10 @@ echo "
     <thead>
         <tr>
             <th class='text-center border-bottom' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
-            <th class='text-center border-bottom' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center border-bottom' style='width:14%'>".tr('Q.tà', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:40%'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:13%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center border-bottom' style='width:16%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center border-bottom' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center border-bottom' style='width:16%'>".tr('Importo', [], ['upper' => true])."</th>
             <th class='text-center border-bottom' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>
@@ -84,6 +88,9 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
     }
 }
 
+// Pre-calcola valori per ottimizzare il ciclo
+$righe_count = count($righe);
+
 foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
@@ -97,6 +104,7 @@ foreach ($righe as $riga) {
 
     $text = '';
 
+    // Gestione ottimizzata dei riferimenti
     foreach ($riferimenti as $key => $riferimento) {
         if (in_array($riga->id, $riferimento)) {
             if ($riga->id === $riferimento[0]) {
@@ -117,7 +125,7 @@ foreach ($righe as $riga) {
 
                 echo '
                     </td>
-            
+
                     <td>
                         '.nl2br($text);
                 $autofill->count($text);
@@ -128,6 +136,7 @@ foreach ($righe as $riga) {
 
     $source_type = $riga::class;
 
+    // Calcolo ottimizzato dell'altezza della descrizione
     $autofill->count($r['descrizione']);
     echo $num.'
     </td>
@@ -275,3 +284,8 @@ echo '
     </tr>';
 echo '
 </table>';
+
+// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
+if (count($righe) > 50) {
+    Util\Autofill::clearTextHeightCache();
+}

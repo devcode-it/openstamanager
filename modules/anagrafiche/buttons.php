@@ -64,7 +64,7 @@ if (!$is_anagrafica_deleted) {
         if (in_array($id_fornitore, $tipi_anagrafica)) {
             echo '
                 
-            <a class="btn dropdown-item" data-title="'.tr('Aggiungi ordine fornitore').'" data-widget="modal" data-data-href="add.php?id_module='.Module::where('name', 'Ordini fornitore')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i> '.tr('Nuovo ordine fornitore').'</a>
+            <a class="btn dropdown-item" data-title="'.tr('Aggiungi ordine fornitore').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ordini fornitore')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i> '.tr('Nuovo ordine fornitore').'</a>
 
             <a class="btn dropdown-item" data-title="'.tr('Aggiungi ddt in entrata').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ddt in entrata')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i> '.tr('Nuovo ddt in entrata').'</a>
 
@@ -82,7 +82,7 @@ if (!$is_anagrafica_deleted) {
 if (in_array($id_agente, $tipi_anagrafica)) {
     // Aggiunta liquidazione provvigioni per agente
     echo '
-        <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" >
+        <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" >
             <i class="fa fa-print"></i> '.tr('Liquida Provvigioni').'
         </button>';
 }

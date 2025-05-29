@@ -124,7 +124,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per gli Interventi
-    elseif ($final_module->getTranslation('title') == 'Attività') {
+    elseif ($final_module->name == 'Interventi') {
         echo '
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
@@ -136,7 +136,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per i Contratti
-    elseif ($final_module->getTranslation('title') == 'Contratti') {
+    elseif ($final_module->name == 'Contratti') {
         $stato_predefinito = StatoContratto::where('name', 'Bozza')->first()->id;
 
         echo '
@@ -146,7 +146,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per i DDT
-    elseif (in_array($final_module->getTranslation('title'), ['Ddt in uscita', 'Ddt in entrata'])) {
+    elseif (in_array($final_module->name, ['Ddt in uscita', 'Ddt in entrata'])) {
         $stato_predefinito = Stato::where('name', 'Bozza')->first()->id;
 
         echo '
@@ -160,7 +160,7 @@ if (!empty($options['create_document'])) {
     }
 
     // Opzioni aggiuntive per gli Ordini
-    elseif (in_array($final_module->getTranslation('title'), ['Ordini cliente', 'Ordini fornitore'])) {
+    elseif (in_array($final_module->name, ['Ordini cliente', 'Ordini fornitore'])) {
         $stato_predefinito = StatoOrdine::where('name', 'Bozza')->first()->id;
 
         echo '
@@ -190,7 +190,7 @@ if (!empty($options['create_document'])) {
 }
 
 // Conto, rivalsa INPS, ritenuta d'acconto e ritenuta previdenziale
-if (in_array($final_module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module->getTranslation('title'), ['Fatture di vendita', 'Fatture di acquisto'])) {
+if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     $id_rivalsa_inps = setting('Cassa previdenziale predefinita');
     if ($dir == 'uscita') {
         $id_ritenuta_acconto = $documento->anagrafica->id_ritenuta_acconto_acquisti;
@@ -337,14 +337,14 @@ echo '
             <tbody id="righe_documento_importato">';
 
 foreach ($righe as $i => $riga) {
-    if ($final_module->getTranslation('title') == 'Ordini fornitore') {
+    if ($final_module->name == 'Ordini fornitore') {
         $qta_rimanente = $riga['qta'];
     } else {
         $qta_rimanente = $riga['qta_rimanente'];
     }
 
     $attr = 'checked="checked"';
-    if ($original_module->getTranslation('title') == 'Preventivi') {
+    if ($original_module->name == 'Preventivi') {
         if (empty($riga['confermato']) && $riga['is_descrizione'] == 0) {
             $attr = '';
         }

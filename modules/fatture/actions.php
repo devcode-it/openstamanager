@@ -38,7 +38,7 @@ use Util\XML;
 
 $module = Module::find($id_module);
 $op = post('op');
-if ($module->getTranslation('title', Models\Locale::getPredefined()->id) == 'Fatture di vendita') {
+if ($module->name == 'Fatture di vendita') {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';

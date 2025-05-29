@@ -2663,6 +2663,12 @@ section.content, .main-footer {
     .signature-pad {
         margin: 10%;
     }
+
+    .btn-group .dropdown-menu-right {
+    transform: none !important;
+    top: 40px !important;
+    }
+
 }
 
 @media screen and (max-width: 992px) {

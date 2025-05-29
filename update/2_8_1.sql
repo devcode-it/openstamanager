@@ -23,3 +23,4 @@ ORDER BY
     `mg_articoli_lang`.`title`" WHERE `zz_modules`.`name` = 'Giacenze sedi';
 
 UPDATE `zz_prints` SET `available_options` = '{"pricing":"Visualizzare i prezzi", "hide-total": "Nascondere i totali delle righe", "show-only-total": "Visualizzare solo i totali del documento", "hide-header": "Nascondere intestazione", "hide-footer": "Nascondere footer", "last-page-footer": "Visualizzare footer solo su ultima pagina", "hide-item-number": "Nascondere i codici degli articoli"}' WHERE `zz_prints`.`id_module` = (SELECT id FROM `zz_modules` WHERE `name` = 'Preventivi');
+ALTER TABLE `zz_prints` DROP `default`;

@@ -310,6 +310,8 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
+    $autofill->set(3);
+    $autofill->next();
     }
     if (!$options['no-iva']) {
         // IVA
@@ -458,9 +460,4 @@ if (empty($documento->stato->fatturabile)) {
 
 if (!empty($documento->condizioni_fornitura)) {
     echo '<pagebreak>'.$documento->condizioni_fornitura;
-}
-
-// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
-if (count($righe) > 50) {
-    Util\Autofill::clearTextHeightCache();
 }

@@ -24,3 +24,13 @@ ORDER BY
 
 UPDATE `zz_prints` SET `available_options` = '{"pricing":"Visualizzare i prezzi", "hide-total": "Nascondere i totali delle righe", "show-only-total": "Visualizzare solo i totali del documento", "hide-header": "Nascondere intestazione", "hide-footer": "Nascondere footer", "last-page-footer": "Visualizzare footer solo su ultima pagina", "hide-item-number": "Nascondere i codici degli articoli"}' WHERE `zz_prints`.`id_module` = (SELECT id FROM `zz_modules` WHERE `name` = 'Preventivi');
 ALTER TABLE `zz_prints` DROP `default`;
+
+INSERT INTO `co_pianodeiconti3` (`numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES ('000040', 'Iva transitoria', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione` = 'Conti transitori'), '', '100.00'); 
+
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
+('Conto per Iva transitoria', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione` = 'Iva transitoria'), "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC", '1', 'Piano dei conti', NULL, '0');
+
+SELECT @id_record := `id` FROM `zz_settings` WHERE `nome` = 'Conto per Iva transitoria';
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+('1', @id_record, 'Conto per Iva transitoria', ''), 
+('2', @id_record, 'Conto per Iva transitoria', '');

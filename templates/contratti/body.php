@@ -237,7 +237,7 @@ foreach ($righe as $riga) {
             // Imponibile
             echo '
             <td class="text-right">
-				'.moneyFormat($riga->subtotale + $riga->iva, $d_importi).'
+            '.moneyFormat($prezzi_ivati ? $riga->totale : $riga->totale_imponibile, $d_importi).'
             </td>';
         }
     } else {

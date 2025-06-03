@@ -38,6 +38,7 @@ $v_totale = [];
 if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     $query = '
     SELECT
+        `data_competenza_iva`,
         `data_registrazione`,
         `numero_esterno`,
         `data`,
@@ -53,8 +54,13 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `codice_anagrafica`
     FROM
     (
-        SELECT 
-        `co_documenti`.`data_registrazione`, 
+        SELECT
+        IF(
+            (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
+            DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
+            DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
+        ) AS data_competenza_iva,
+        `co_documenti`.`data_registrazione`,
         `co_documenti`.`numero_esterno`,
         `co_documenti`.`data`,
         `co_tipidocumento`.`codice_tipo_documento_fe`,
@@ -74,13 +80,16 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
-    WHERE 
-        `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
-    GROUP BY 
+    WHERE
+        `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+    GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
+    HAVING
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).'
     UNION
-    SELECT 
-        `vb_venditabanco`.`data` as data_registrazione, 
+    SELECT
+        `vb_venditabanco`.`data` as data_competenza_iva,
+        `vb_venditabanco`.`data` as data_registrazione,
         `vb_venditabanco`.`numero` as numero_esterno,
         `vb_venditabanco`.`data` as data,
         "Vendita al banco" as codice_tipo_documento_fe,
@@ -101,19 +110,24 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         LEFT JOIN `in_interventi` ON `vb_righe_venditabanco`.`idintervento` = `in_interventi`.`id`
         LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `in_interventi`.`idanagrafica`
     WHERE
-        `vb_venditabanco`.`data` >= '.prepare($date_start).' AND `vb_venditabanco`.`data` <= '.prepare($date_end).' AND `vb_stati_vendita`.`descrizione` = "Pagato"
+        `vb_stati_vendita`.`descrizione` = "Pagato"
     GROUP BY
         `co_iva`.`id`, `id`, `an_anagrafiche`.`idanagrafica`
+    HAVING
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).'
     ) AS tabella
     GROUP BY
-    `iva`, `id`, `data_registrazione`, `data`, `numero_esterno`, `codice_tipo_documento_fe`, `percentuale`, `descrizione`, `numero`, `ragione_sociale`, `codice_anagrafica`
+    `data_competenza_iva`, `iva`, `id`, `data_registrazione`, `data`, `numero_esterno`, `codice_tipo_documento_fe`, `percentuale`, `descrizione`, `numero`, `ragione_sociale`, `codice_anagrafica`
     ORDER BY CAST(`numero_esterno` AS UNSIGNED)';
 } else {
     $query = '
-SELECT 
-    `co_documenti`.`data_registrazione`, 
+SELECT
+    IF(
+        (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
+        DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
+        DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
+    ) AS data_competenza_iva,
     `co_documenti`.`numero_esterno`,
-    `co_documenti`.`data`,
     `co_tipidocumento`.`codice_tipo_documento_fe`,
     `co_iva`.`percentuale`,
     `co_iva_lang`.`title` as descrizione,
@@ -131,11 +145,13 @@ FROM
     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
-WHERE 
-    `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
-GROUP BY 
+WHERE
+    `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+GROUP BY
     `co_iva`.`id`, `co_documenti`.`id`
-ORDER BY 
+HAVING
+    data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).'
+ORDER BY
     CAST( IF(`dir`="entrata", `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED)';
 }
 $records = $dbo->fetchArray($query);

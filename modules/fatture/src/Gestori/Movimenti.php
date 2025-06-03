@@ -289,6 +289,63 @@ class Movimenti
             }
         }
 
+        /*
+         * Controllo per giroconto IVA su fatture di acquisto
+         * Se la data di registrazione è in un mese successivo alla data di competenza
+         * e il giorno è minore del 16, viene effettuato un giroconto per spostare l'IVA a credito
+         */
+        if ($is_acquisto && !$is_nota && !empty($iva_detraibile)) {
+            $data_registrazione = \Carbon\Carbon::parse($this->fattura->data_registrazione);
+            $data_competenza = \Carbon\Carbon::parse($this->fattura->data_competenza);
+
+            // Verifica se il mese della data di registrazione è successivo al mese della data di competenza
+            // e se il giorno della data di registrazione è minore del 16
+            $mese_registrazione_successivo = false;
+
+            if (($data_registrazione->year == $data_competenza->year && $data_registrazione->month > $data_competenza->month && $data_registrazione->day >= 16) || ($data_registrazione->year > $data_competenza->year)) {
+                $mese_registrazione_successivo = true;
+            }
+
+            if ($mese_registrazione_successivo) {
+                // Data del giroconto: primo giorno del mese successivo alla data di registrazione
+                $data_giroconto = $this->fattura->data_registrazione;
+                $descrizione_giroconto = 'Giroconto IVA al mese successivo';
+            
+
+                if (isset($data_giroconto)) {
+                    // Crea un mastrino per il giroconto con data di competenza (per lo storno)
+                    $mastrino_storno = Mastrino::build('Storno IVA da data competenza - ' . $this->fattura->getReference(1), $this->fattura->data_competenza, false, false);
+
+                    // Movimento di storno: Azzera l'IVA dalla data di competenza (DARE)
+                    $movimento_storno = Movimento::build($mastrino_storno, setting('Conto per Iva transitoria'), $this->fattura);
+                    $movimento_storno->setTotale(0, $iva_detraibile);
+                    $movimento_storno->descrizione = 'Storno IVA da data competenza - ' . $this->fattura->getReference(1);
+                    $movimento_storno->save();
+
+                    // Movimento di storno: Azzera l'IVA dalla data di competenza (AVERE)
+                    $movimento_storno = Movimento::build($mastrino_storno, setting('Conto per Iva su acquisti'), $this->fattura);
+                    $movimento_storno->setTotale($iva_detraibile, 0);
+                    $movimento_storno->descrizione = 'Storno IVA da data competenza - ' . $this->fattura->getReference(1);
+                    $movimento_storno->save();
+
+                    // Crea un mastrino per il giroconto con la data corretta (per la registrazione)
+                    $mastrino_giroconto = Mastrino::build($descrizione_giroconto . ' - ' . $this->fattura->getReference(1), $data_giroconto, false, false);
+
+                    // Movimento di giroconto: Registra l'IVA nella data corretta (DARE)
+                    $movimento_giroconto = Movimento::build($mastrino_giroconto, setting('Conto per Iva su acquisti'), $this->fattura);
+                    $movimento_giroconto->setTotale(0, $iva_detraibile);
+                    $movimento_giroconto->descrizione = $descrizione_giroconto . ' - ' . $this->fattura->getReference(1);
+                    $movimento_giroconto->save();
+
+                    // Movimento di giroconto: Registra l'IVA nella data corretta (AVERE)
+                    $movimento_giroconto = Movimento::build($mastrino_giroconto, setting('Conto per Iva transitoria'), $this->fattura);
+                    $movimento_giroconto->setTotale($iva_detraibile, 0);
+                    $movimento_giroconto->descrizione = $descrizione_giroconto . ' - ' . $this->fattura->getReference(1);
+                    $movimento_giroconto->save();
+                }
+            }
+        }
+
         // Nel penultimo conto del mastrino inserisco l'eventuale differenza per evitare sbilanci nel totale,
         // evitando di mettere differenze nell'iva
         $diff = round($totale_avere - $totale_dare, 4);
@@ -319,6 +376,31 @@ class Movimenti
 
         if (!empty($mastrino)) {
             $mastrino->delete();
+        }
+
+        // Elimina anche tutti i mastrini correlati ai giroconti IVA
+        $this->rimuoviGirocontiIVA();
+    }
+
+    /**
+     * Elimina tutti i mastrini correlati ai giroconti IVA della fattura.
+     */
+    protected function rimuoviGirocontiIVA()
+    {
+        $riferimento_fattura = $this->fattura->getReference(1);
+
+        // Cerca tutti i mastrini che contengono il riferimento della fattura e sono giroconti IVA
+        $mastrini_giroconti = Mastrino::where('primanota', false)
+            ->where(function ($query) use ($riferimento_fattura) {
+                $query->where('descrizione', 'like', "%Giroconto IVA a credito anno precedente - {$riferimento_fattura}%")
+                      ->orWhere('descrizione', 'like', "%Giroconto IVA al mese successivo - {$riferimento_fattura}%")
+                      ->orWhere('descrizione', 'like', "%Storno IVA da data competenza - {$riferimento_fattura}%");
+            })
+            ->get();
+
+        // Elimina tutti i mastrini trovati
+        foreach ($mastrini_giroconti as $mastrino_giroconto) {
+            $mastrino_giroconto->delete();
         }
     }
 }

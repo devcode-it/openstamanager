@@ -537,8 +537,3 @@ echo '
 if (!empty($documento->condizioni_fornitura)) {
     echo '<pagebreak>'.$documento->condizioni_fornitura;
 }
-
-// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
-if (count($righe) > 50) {
-    Util\Autofill::clearTextHeightCache();
-}

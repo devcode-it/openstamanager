@@ -418,8 +418,3 @@ if (!empty($documento['note'])) {
 <p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
 <p><small>'.nl2br((string) $documento['note']).'</small></p>';
 }
-
-// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
-if (count($righe) > 50) {
-    Util\Autofill::clearTextHeightCache();
-}

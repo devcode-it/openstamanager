@@ -284,8 +284,3 @@ echo '
     </tr>';
 echo '
 </table>';
-
-// Pulizia cache per ottimizzare la memoria (solo per documenti con molte righe)
-if (count($righe) > 50) {
-    Util\Autofill::clearTextHeightCache();
-}

@@ -23,9 +23,11 @@ use API\Response;
 function serverError()
 {
     $error = error_get_last();
-    if ($error['type'] == E_ERROR) {
-        ob_end_clean();
-        echo Response::error('serverError');
+    if (isset($error['type'])) {
+        if ($error['type'] == E_ERROR) {
+            ob_end_clean();
+            echo Response::error('serverError');
+        }
     }
 }
 

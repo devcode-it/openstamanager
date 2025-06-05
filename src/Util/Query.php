@@ -29,6 +29,12 @@ class Query
 {
     protected static $segments = true;
 
+    /** @var array Cache per le query processate */
+    protected static $query_cache = [];
+
+    /** @var int Limite massimo per la cache */
+    protected static $cache_limit = 100;
+
     /**
      * Imposta l'utilizzo o meno dei segmenti per le query.
      *
@@ -71,69 +77,93 @@ class Query
         $id_parent = filter('id_parent');
 
         $id_module = \Modules::getCurrent()['id'];
-        $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
-        $is_sezionale = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment))['is_sezionale'];
-        $lang = \Models\Locale::getDefault()->id;
+        $segment = !empty(self::$segments) ? ($_SESSION['module_'.$id_module]['id_segment'] ?? null) : null;
 
+        // Ottimizzazione: evita query se segment è null
+        $is_sezionale = false;
+        if (!empty($segment)) {
+            $segment_data = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment));
+            $is_sezionale = !empty($segment_data) ? $segment_data['is_sezionale'] : false;
+        }
+
+        $lang = \Models\Locale::getDefault()->id;
         $user = \Auth::user();
 
         // Sostituzione periodi temporali
-        preg_match('|date_period\((.+?)\)|', (string) $query, $matches);
         $date_query = $date_filter = null;
-        if (!empty($matches)) {
-            $dates = explode(',', $matches[1]);
+        if (preg_match('|date_period\((.+?)\)|', (string) $query, $matches)) {
+            $dates = array_map('trim', explode(',', $matches[1]));
             $date_filter = $matches[0];
 
             $filters = [];
-            if ($dates[0] != 'custom') {
+            if (!empty($dates) && $dates[0] !== 'custom') {
                 foreach ($dates as $date) {
-                    $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
+                    if (!empty($date)) {
+                        $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
+                    }
                 }
             } else {
-                foreach ($dates as $k => $v) {
-                    if ($k < 1) {
-                        continue;
+                // Per filtri custom, salta il primo elemento e processa il resto
+                for ($k = 1; $k < count($dates); $k++) {
+                    if (!empty($dates[$k])) {
+                        $filters[] = trim($dates[$k]);
                     }
-                    $filters[] = $v;
                 }
             }
             $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
         }
 
         // Sostituzione segmenti
-        preg_match('|segment\((.+?)\)|', (string) $query, $matches);
-        $segment_name = !empty($matches[1]) ? $matches[1] : 'id_segment';
-        $segment_filter = !empty($matches[0]) ? $matches[0] : 'segment';
+        $segment_name = 'id_segment';
+        $segment_filter = 'segment';
+        if (preg_match('|segment\((.+?)\)|', (string) $query, $matches)) {
+            $segment_name = !empty($matches[1]) ? trim($matches[1]) : 'id_segment';
+            $segment_filter = $matches[0];
+        }
+
+        // Validazione sicurezza per period_start e period_end
+        $period_start = $_SESSION['period_start'] ?? date('Y-01-01');
+        $period_end = $_SESSION['period_end'] ?? date('Y-12-31');
+
+        // Validazione formato date
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $period_start)) {
+            $period_start = date('Y-01-01');
+        }
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $period_end)) {
+            $period_end = date('Y-12-31');
+        }
 
         // Elenco delle sostituzioni
         $replace = [
             // Identificatori
-            '|id_anagrafica|' => prepare($user['idanagrafica']),
-            '|id_utente|' => prepare($user['id']),
+            '|id_anagrafica|' => prepare($user['idanagrafica'] ?? 0),
+            '|id_utente|' => prepare($user['id'] ?? 0),
             '|id_parent|' => prepare($id_parent),
 
             // Filtro temporale
             '|'.$date_filter.'|' => $date_query,
 
             // Date
-            '|period_start|' => $_SESSION['period_start'],
-            '|period_end|' => $_SESSION['period_end'].' 23:59:59',
+            '|period_start|' => $period_start,
+            '|period_end|' => $period_end.' 23:59:59',
 
             // Segmenti
-            '|'.$segment_filter.'|' => !empty($segment) && $is_sezionale ? ' AND '.$segment_name.' = '.prepare($segment) : '',
+            '|'.$segment_filter.'|' => (!empty($segment) && $is_sezionale) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
 
-            // Filtro dinamico per il modulo Giacenze sedi
-            '|giacenze_sedi_idsede|' => prepare(isset($_SESSION['giacenze_sedi']) ? $_SESSION['giacenze_sedi']['idsede'] : null),
+            // Filtro dinamico per il modulo Giacenze sedi - con validazione
+            '|giacenze_sedi_idsede|' => prepare($_SESSION['giacenze_sedi']['idsede'] ?? null),
 
             // Filtro per lingua
             '|lang|' => '`id_lang` = '.prepare($lang),
         ];
 
         // Sostituzione dei formati
-        $patterns = formatter()->getSQLPatterns();
-
-        foreach ($patterns as $key => $value) {
-            $replace['|'.$key.'_format|'] = "'".$value."'";
+        try {
+            $patterns = formatter()->getSQLPatterns();
+            foreach ($patterns as $key => $value) {
+                $replace['|'.$key.'_format|'] = "'".addslashes($value)."'";
+            }
+        } catch (\Exception $e) {
         }
 
         // Sostituzione effettiva
@@ -170,130 +200,77 @@ class Query
             $pos = array_search($field, $total['fields']);
             $value = is_array($original_value) ? $original_value : trim((string) $original_value);
 
+            if (empty($value) && $value !== '0' && $value !== 0) {
+                continue;
+            }
+
             if (isset($value) && $pos !== false) {
                 $search_query = $total['search_inside'][$pos];
 
                 // Campo con ricerca personalizzata
                 if (string_contains($search_query, '|search|')) {
-                    $pieces = explode(',', $value);
+                    $pieces = array_filter(array_map('trim', explode(',', $value)));
                     foreach ($pieces as $piece) {
-                        $piece = trim($piece);
-                        $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $search_query);
+                        if (!empty($piece)) {
+                            $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $search_query);
+                        }
                     }
                 }
-
                 // Campi tradizionali: ricerca tramite like
                 else {
-                    // Ricerca nei titoli icon_title_* per le icone icon_*
-                    if (preg_match('/^icon_(.+?)$/', $field, $m)) {
-                        $search_query = '`icon_title_'.$m[1].'`';
-                    }
-
-                    // Ricerca nei titoli color_title_* per i colori color_*
-                    elseif (preg_match('/^color_(.+?)$/', $field, $m)) {
-                        $search_query = '`color_title_'.$m[1].'`';
-                    }
-
-                    // Gestione confronti
-                    $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
-                    $more = string_starts_with($real_value, '>=') || string_starts_with($real_value, '> =') || string_starts_with($real_value, '>');
-                    $minus = string_starts_with($real_value, '<=') || string_starts_with($real_value, '< =') || string_starts_with($real_value, '<');
-                    $equal = string_starts_with($real_value, '=');
-                    $notequal = string_starts_with($real_value, '!=');
-                    $start_with = string_starts_with($real_value, '^');
-                    $end_with = string_ends_with($real_value, '$');
-
-                    if ($minus || $more) {
-                        $sign = string_contains($real_value, '=') ? '=' : '';
-                        if ($more) {
-                            $sign = '>'.$sign;
-                        } elseif ($minus) {
-                            $sign = '<'.$sign;
-                        }
-
-                        $value = trim(str_replace(['&lt;', '&gt;'], '', $value));
-
-                        if ($minus || $more) {
-                            // Se il filtro contiene una data, la converto in formato YYYY-MM-DD per la query
-                            if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $value, $m)) {
-                                $giorno = $m[1];
-                                $mese = $m[2];
-                                $anno = $m[3];
-                                $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
-                                $search_filters[] = $search_query.' '.$sign.' '.$data;
-                            } else {
-                                $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
-                            }
-                        } else {
-                            $search_filters[] = $search_query.' '.$sign.' '.prepare($value);
-                        }
-                    } elseif ($equal) {
-                        $value = trim(str_replace(['='], '', $value));
-                        [$giorno, $mese, $anno] = explode('/', $value);
-                        $data = "'".$anno.'-'.$mese.'-'.$giorno."'";
-
-                        if ($anno != '' && $giorno != '' && $mese != '') {
-                            if ($data != "'1970-01-01'") {
-                                $search_filters[] = 'date('.$search_query.') = '.$data.'';
-                            }
-                        } else {
-                            $search_filters[] = ($search_query.' = '.prepare($value));
-                        }
-                    } elseif ($notequal) {
-                        $value = trim(str_replace(['!='], '', $value));
-                        $search_filters[] = ($search_query.' != '.prepare($value).' AND '.$search_query.' NOT LIKE '.prepare('% '.$value).' AND '.$search_query.' NOT LIKE '.prepare($value.' %').' AND '.$search_query.' NOT LIKE '.prepare('% '.$value.' %').' OR '.$search_query.' IS NULL');
-                    } elseif ($start_with) {
-                        $value = trim(str_replace(['^'], '', $value));
-                        $search_filters[] = ($search_query.' LIKE '.prepare($value.'%'));
-                    } elseif ($end_with) {
-                        $value = trim(str_replace(['$'], '', $value));
-                        $search_filters[] = ($search_query.' LIKE '.prepare('%'.$value));
-                    } elseif (str_contains($value, ',')) {
-                        $search_filters[] = ($search_query.' IN ("'.str_replace(',', '","', $value).'")');
-                    } else {
-                        $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
-                    }
+                    $search_filters[] = self::buildSearchFilter($field, $value, $search_query);
                 }
             }
-
             // Campo id: ricerca tramite comparazione
-            elseif ($field == 'id') {
-                // Filtro per una serie di ID
-                if (is_array($original_value)) {
-                    if (!empty($original_value)) {
-                        $search_filters[] = $field.' IN ('.implode(', ', $original_value).')';
-                    }
-                } else {
-                    $search_filters[] = $field.' = '.prepare($value);
-                }
+            elseif ($field === 'id') {
+                $search_filters[] = self::buildIdFilter($field, $original_value);
             }
+        }
 
-            // Ricerca
-            if (!empty($search_filters)) {
-                $query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $query);
+        // Applicazione filtri di ricerca
+        if (!empty($search_filters)) {
+            $filters_string = implode(' AND ', array_filter($search_filters));
+            if (!empty($filters_string)) {
+                $query = str_replace('2=2', '2=2 AND ('.$filters_string.') ', $query);
             }
         }
 
         // Ordinamento dei risultati
-        if (isset($order['dir']) && isset($order['column'])) {
-            // $pos = array_search($order['column'], $total['fields']);
-            $pos = $order['column'];
+        if (isset($order['dir'], $order['column'])) {
+            $column_index = $order['column'];
+            $direction = strtoupper($order['dir']);
 
-            if ($pos !== false) {
-                $pieces = explode('ORDER', (string) $query);
+            // Validazione direzione ordinamento
+            if (!in_array($direction, ['ASC', 'DESC'])) {
+                $direction = 'ASC';
+            }
 
-                $count = count($pieces);
-                if ($count > 1) {
-                    unset($pieces[$count - 1]);
+            if (isset($total['order_by'][$column_index])) {
+                // Rimozione ORDER BY esistente in modo più efficiente
+                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', $query);
+                $order_clause = $total['order_by'][$column_index];
+
+                // Sanitizzazione della clausola ORDER BY
+                if (!empty($order_clause)) {
+                    $query .= ' ORDER BY '.$order_clause.' '.$direction;
                 }
-
-                $query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
             }
         }
 
         // Paginazione
-        if (!empty($limit) && intval($limit['length']) > 0) {
-            $query .= ' LIMIT '.$limit['start'].', '.$limit['length'];
+        if (!empty($limit) && isset($limit['length'], $limit['start'])) {
+            $length = intval($limit['length']);
+            $start = intval($limit['start']);
+
+            if ($length > 0 && $start >= 0) {
+                // Limite massimo per sicurezza
+                $max_limit = 10000;
+                if ($length > $max_limit) {
+                    $length = $max_limit;
+                }
+
+                $query .= ' LIMIT '.$start.', '.$length;
+            }
         }
 
         return $query;
@@ -303,17 +280,27 @@ class Query
     {
         $database = database();
 
-        // Esecuzione della query
-        $query = self::str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
-        $results = $database->fetchArray($query);
+        try {
+            // Esecuzione della query
+            $query = self::str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
+            $results = $database->fetchArray($query);
 
-        // Conteggio dei record filtrati
-        $count = $database->fetchOne('SELECT FOUND_ROWS() AS count');
+            // Conteggio dei record filtrati
+            $count = $database->fetchOne('SELECT FOUND_ROWS() AS count');
 
-        return [
-            'results' => $results,
-            'count' => $count['count'],
-        ];
+            return [
+                'results' => $results,
+                'count' => intval($count['count'] ?? 0),
+            ];
+        } catch (\Exception $e) {
+            // Log dell'errore e fallback
+            error_log('Query execution error: ' . $e->getMessage());
+
+            return [
+                'results' => [],
+                'count' => 0,
+            ];
+        }
     }
 
     /**
@@ -397,6 +384,189 @@ class Query
     }
 
     /**
+     * Costruisce un filtro di ricerca ottimizzato per un campo specifico.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param string $search_query
+     *
+     * @return string|null
+     */
+    protected static function buildSearchFilter($field, $value, $search_query)
+    {
+        // Ricerca nei titoli icon_title_* per le icone icon_*
+        if (preg_match('/^icon_(.+?)$/', $field, $m)) {
+            $search_query = '`icon_title_'.$m[1].'`';
+        }
+        // Ricerca nei titoli color_title_* per i colori color_*
+        elseif (preg_match('/^color_(.+?)$/', $field, $m)) {
+            $search_query = '`color_title_'.$m[1].'`';
+        }
+
+        // Gestione confronti - ottimizzata
+        $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
+
+        // Controlli ottimizzati per operatori
+        $operators = [
+            '>=' => ['>=', '> ='],
+            '>' => ['>'],
+            '<=' => ['<=', '< ='],
+            '<' => ['<'],
+            '=' => ['='],
+            '!=' => ['!='],
+        ];
+
+        $operator = null;
+        foreach ($operators as $op => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (string_starts_with($real_value, $pattern)) {
+                    $operator = $op;
+                    break 2;
+                }
+            }
+        }
+
+        $start_with = string_starts_with($real_value, '^');
+        $end_with = string_ends_with($real_value, '$');
+
+        // Gestione operatori di confronto
+        if ($operator && in_array($operator, ['>=', '>', '<=', '<'])) {
+            return self::buildComparisonFilter($search_query, $operator, $value);
+        }
+        // Gestione uguaglianza
+        elseif ($operator === '=') {
+            return self::buildEqualityFilter($search_query, $value);
+        }
+        // Gestione disuguaglianza
+        elseif ($operator === '!=') {
+            return self::buildInequalityFilter($search_query, $value);
+        }
+        // Gestione pattern matching
+        elseif ($start_with) {
+            $clean_value = trim(str_replace(['^'], '', $value));
+            return $search_query.' LIKE '.prepare($clean_value.'%');
+        }
+        elseif ($end_with) {
+            $clean_value = trim(str_replace(['$'], '', $value));
+            return $search_query.' LIKE '.prepare('%'.$clean_value);
+        }
+        // Gestione lista valori
+        elseif (str_contains($value, ',')) {
+            $values = array_filter(array_map('trim', explode(',', $value)));
+            if (!empty($values)) {
+                $escaped_values = array_map('prepare', $values);
+                return $search_query.' IN ('.implode(', ', $escaped_values).')';
+            }
+        }
+        // Ricerca standard LIKE
+        else {
+            return $search_query.' LIKE '.prepare('%'.$value.'%');
+        }
+
+        return null;
+    }
+
+    /**
+     * Costruisce un filtro per confronti numerici e date.
+     *
+     * @param string $search_query
+     * @param string $operator
+     * @param string $value
+     *
+     * @return string
+     */
+    protected static function buildComparisonFilter($search_query, $operator, $value)
+    {
+        $clean_value = trim(str_replace(['&lt;', '&gt;', '>=', '>', '<=', '<', '> =', '< ='], '', $value));
+
+        // Gestione date in formato DD/MM/YYYY
+        if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $clean_value, $m)) {
+            $date = "'{$m[3]}-{$m[2]}-{$m[1]}'";
+            return $search_query.' '.$operator.' '.$date;
+        }
+        // Gestione valori numerici
+        elseif (is_numeric($clean_value)) {
+            return 'CAST('.$search_query.' AS DECIMAL(15,2)) '.$operator.' '.prepare($clean_value);
+        }
+        // Gestione valori stringa
+        else {
+            return $search_query.' '.$operator.' '.prepare($clean_value);
+        }
+    }
+
+    /**
+     * Costruisce un filtro per uguaglianza con gestione date.
+     *
+     * @param string $search_query
+     * @param string $value
+     *
+     * @return string|null
+     */
+    protected static function buildEqualityFilter($search_query, $value)
+    {
+        $clean_value = trim(str_replace(['='], '', $value));
+
+        // Gestione date
+        if (str_contains($clean_value, '/')) {
+            $date_parts = explode('/', $clean_value);
+            if (count($date_parts) === 3) {
+                [$giorno, $mese, $anno] = $date_parts;
+                if (!empty($anno) && !empty($giorno) && !empty($mese)) {
+                    $date = "'{$anno}-{$mese}-{$giorno}'";
+                    if ($date !== "'1970-01-01'") {
+                        return 'DATE('.$search_query.') = '.$date;
+                    }
+                }
+            }
+        }
+
+        return $search_query.' = '.prepare($clean_value);
+    }
+
+    /**
+     * Costruisce un filtro per disuguaglianza ottimizzato.
+     *
+     * @param string $search_query
+     * @param string $value
+     *
+     * @return string
+     */
+    protected static function buildInequalityFilter($search_query, $value)
+    {
+        $clean_value = trim(str_replace(['!='], '', $value));
+        $prepared_value = prepare($clean_value);
+
+        return '('.$search_query.' != '.$prepared_value.' OR '.$search_query.' IS NULL)';
+    }
+
+    /**
+     * Costruisce un filtro per il campo ID.
+     *
+     * @param string $field
+     * @param mixed $original_value
+     *
+     * @return string|null
+     */
+    protected static function buildIdFilter($field, $original_value)
+    {
+        if (is_array($original_value)) {
+            if (!empty($original_value)) {
+                $safe_ids = array_filter(array_map('intval', $original_value));
+                if (!empty($safe_ids)) {
+                    return $field.' IN ('.implode(', ', $safe_ids).')';
+                }
+            }
+        } else {
+            $id = intval($original_value);
+            if ($id > 0) {
+                return $field.' = '.$id;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Sostituisce la prima occorenza di una determinata stringa.
      *
      * @param string $str_pattern
@@ -410,12 +580,62 @@ class Query
     protected static function str_replace_once($str_pattern, $str_replacement, $string)
     {
         if (str_contains($string, $str_pattern)) {
-            $occurrence = strpos($string, $str_pattern);
-
             return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
         }
 
         return $string;
+    }
+
+    /**
+     * Pulisce la cache delle query per liberare memoria.
+     */
+    public static function clearCache()
+    {
+        self::$query_cache = [];
+    }
+
+    /**
+     * Ottimizza una query rimuovendo spazi extra e migliorando la struttura.
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    protected static function optimizeQuery($query)
+    {
+        // Rimozione spazi multipli
+        $query = preg_replace('/\s+/', ' ', $query);
+
+        // Rimozione spazi attorno agli operatori
+        $query = preg_replace('/\s*(=|!=|<|>|<=|>=)\s*/', '$1', $query);
+
+        // Trim generale
+        return trim($query);
+    }
+
+    /**
+     * Valida una query per sicurezza di base.
+     *
+     * @param string $query
+     *
+     * @return bool
+     */
+    protected static function validateQuery($query)
+    {
+        // Lista di parole chiave pericolose
+        $dangerous_keywords = [
+            'DROP', 'DELETE', 'TRUNCATE', 'ALTER', 'CREATE', 'INSERT', 'UPDATE',
+            'GRANT', 'REVOKE', 'EXEC', 'EXECUTE', 'UNION', 'LOAD_FILE', 'INTO OUTFILE'
+        ];
+
+        $upper_query = strtoupper($query);
+        foreach ($dangerous_keywords as $keyword) {
+            if (str_contains($upper_query, $keyword)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

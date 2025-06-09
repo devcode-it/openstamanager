@@ -75,7 +75,8 @@ class Group extends Model
     /**
      * Sincronizza i permessi delle viste e dei segmenti per un modulo specifico.
      * Se il gruppo non ha permessi sul modulo, rimuove i permessi sulle viste e segmenti.
-     * Se il gruppo ha permessi sul modulo, aggiunge i permessi su tutte le viste e segmenti.
+     * Se il gruppo ha permessi sul modulo, aggiunge i permessi alle viste predefinite e al segmento predefinito.
+     * Gli Amministratori mantengono sempre accesso completo.
      *
      * @param int    $id_module ID del modulo
      * @param string $permessi  Permessi ('r', 'rw', o '-')
@@ -86,31 +87,44 @@ class Group extends Model
     {
         $database = database();
 
+        // Gli Amministratori mantengono sempre accesso completo - non modificare i loro permessi
+        if ($this->nome === 'Amministratori') {
+            return;
+        }
+
         // Se i permessi sono di lettura o lettura/scrittura
         if ($permessi == 'r' || $permessi == 'rw') {
-            // Sincronizza i permessi delle viste
-            $count_views = $database->fetchNum('SELECT * FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).')');
+            // Aggiungi accesso alle viste predefinite se non ce l'ha già
+            $default_views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' AND `default` = 1');
 
-            if (empty($count_views)) {
-                $views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module));
+            foreach ($default_views as $view) {
+                // Controlla se il gruppo ha già accesso a questa vista specifica
+                $has_view_access = $database->fetchNum('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
 
-                foreach ($views as $view) {
-                    $database->attach('zz_group_view', ['id_vista' => $view['id']], ['id_gruppo' => $this->id]);
+                if ($has_view_access == 0) {
+                    $database->insert('zz_group_view', [
+                        'id_gruppo' => $this->id,
+                        'id_vista' => $view['id']
+                    ]);
                 }
             }
 
-            // Sincronizza i permessi dei segmenti
-            $count_segments = $database->fetchNum('SELECT * FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` IN (SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).')');
+            // Aggiungi accesso ai segmenti predefiniti se non ce l'ha già
+            $default_segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).' AND `predefined` = 1');
 
-            if (empty($count_segments)) {
-                $segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module));
+            foreach ($default_segments as $segment) {
+                // Controlla se il gruppo ha già accesso a questo segmento specifico
+                $has_segment_access = $database->fetchNum('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($segment['id']))['cont'];
 
-                foreach ($segments as $segment) {
-                    $database->attach('zz_group_segment', ['id_segment' => $segment['id']], ['id_gruppo' => $this->id]);
+                if ($has_segment_access == 0) {
+                    $database->insert('zz_group_segment', [
+                        'id_gruppo' => $this->id,
+                        'id_segment' => $segment['id']
+                    ]);
                 }
             }
         } else {
-            // Se i permessi sono stati rimossi, rimuovi anche i permessi su viste e segmenti
+            // Se i permessi sono stati rimossi, rimuovi tutti i permessi su viste e segmenti del modulo
             $database->query('DELETE FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).')');
             $database->query('DELETE FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` IN (SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).')');
         }

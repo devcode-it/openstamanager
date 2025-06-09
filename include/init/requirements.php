@@ -138,12 +138,12 @@ $settings = [
 
     'upload_max_filesize' => [
         'type' => 'value',
-        'description' => '>32M',
+        'description' => '>64M',
     ],
 
     'post_max_size' => [
         'type' => 'value',
-        'description' => '>32M',
+        'description' => '>64M',
     ],
 
     'max_input_vars' => [

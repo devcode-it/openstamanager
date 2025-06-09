@@ -44,4 +44,4 @@ UPDATE `zz_views` SET `query` = '`mg_articoli`.`qta`' WHERE `zz_views`.`name` = 
 UPDATE `zz_views` SET `query` = '`mg_articoli`.`qta`-IFNULL(a.qta_impegnata, 0)' WHERE `zz_views`.`name` =  'Q.tà disponibile' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
  
 UPDATE `an_anagrafiche` SET `capitale_sociale` = 0 WHERE `capitale_sociale` NOT REGEXP '^[0-9]{1,15}(\\.[0-9]{1,6})?$';
-ALTER TABLE `an_anagrafiche` CHANGE `capitale_sociale` `capitale_sociale` DECIMAL(15,6) NOT NULL
+ALTER TABLE `an_anagrafiche` CHANGE `capitale_sociale` `capitale_sociale` DECIMAL(15,6) NOT NULL DEFAULT 0;

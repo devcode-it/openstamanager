@@ -11,6 +11,50 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
+#### 2.8-beta - 20/05/2025
+
+##### Problemi noti
+- Presenza di vecchi file nella cartella vendor che danno errore in fase di installazione
+https://github.com/devcode-it/openstamanager/commit/9d7120319
+
+- Campi delle tabelle che non filtrano correttamente
+https://github.com/devcode-it/openstamanager/commit/6649dbc2b
+
+- Mancato salvataggio partita iva, codice fiscale e note da plugin sedi aggiuntive
+https://github.com/devcode-it/openstamanager/commit/a093d7e1f
+
+- Stampa errata dei contratti se presente uno sconto
+https://github.com/devcode-it/openstamanager/commit/9c61ac4c4
+
+- Creazione ordine nel caso di modulo rinominato o tradotto
+https://github.com/devcode-it/openstamanager/commit/9eb2c0dc6
+
+- Visualizzazione errata tasti in anagrafica
+https://github.com/devcode-it/openstamanager/commit/30236f967
+
+- Importazione errata CSV articoli non imposta correttamente il nome
+https://github.com/devcode-it/openstamanager/commit/667c3d1f3
+
+- Stampa errata di preventivi con descrizione
+https://github.com/devcode-it/openstamanager/commit/331470044
+
+- Errore nella vista del modulo Giacenze sedi
+https://github.com/devcode-it/openstamanager/commit/c8ab59c32
+
+- Bug cambio di stato automatico documenti (#1518)
+https://github.com/devcode-it/openstamanager/commit/d0a914c67
+
+- Navigazione record per moduli custom
+https://github.com/devcode-it/openstamanager/commit/4ab83c587
+
+- Info di ricevute scadute se prima della data da impostazioni
+https://github.com/devcode-it/openstamanager/commit/e2730e695
+
+- Blocco importazione ricevute infinita
+https://github.com/devcode-it/openstamanager/commit/1164762c3
+
+- Selezione sede partenza azienda
+https://github.com/devcode-it/openstamanager/commit/6f9c71e7b
 
 #### 2.7.3 - 15/04/2025
 
@@ -80,7 +124,7 @@ https://github.com/devcode-it/openstamanager/commit/5c86d3b7489431b2e8001841b077
 ##### Problemi noti
 - In fase di installazione non viene compilato il file config se assente
 
-##### Soluzione 
+##### Soluzione
 Modificare il file index.php sostituendo il blocco di codice che inizia alla riga 30 con
 
 ```php
@@ -99,7 +143,7 @@ oppure aggiornare alla **v.2.5** di OpenSTAManager.
 - Colonna **id_module_start** mancante per tabella **zz_groups**
 - Icona non aggiornata per il modulo **Causali movimenti**
 
-##### Soluzione 
+##### Soluzione
 Eseguire a database le seguenti query di allineamento:
 ```bash
 UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `title` = 'Causali movimenti';

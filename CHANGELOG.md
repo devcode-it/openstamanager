@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.8.1 (2025-06-10](#281-2025-06-10)
 - [2.8 (2025-05-20](#28-2025-05-20)
 - [2.7.3 (2025-04-15](#273-2025-04-15)
 - [2.7.2 (2025-03-26)](#272-2025-03-26)
@@ -54,6 +55,31 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.8.1 (2025-06-10)
+### Modificato (Changed)
+- Miglioria grafica menu dropdown
+- Miglioria generazione stampe
+
+### Fixed
+- Corretta sovrascrittura vendor in fase di installazione
+- Corretti e ottimizzati i filtri delle tabelle
+- Corretto salvataggio partita iva, codice fiscale e note da plugin sedi aggiuntive
+- Corretti movimenti di giroconto per fatture
+- Corretta la stampa dei contratti
+- Corretta creazione ordine per moduli tradotti
+- Corretti tasti in anagrafica
+- Corretta l'importazione degli articoli
+- Corretta stampa preventivi con descrizione
+- Corretto allineamento query vista Giacenze sedi
+- Corretto bug cambio di stato automatico documenti 
+- Corretto import anche senza primary key
+- Corretta navigazione record per moduli custom
+- Corretta stampa ddt con sede destinazione diversa
+- Corretto l'avviso di ricevute scadute in base alla data da impostazioni
+- Corretto blocco importazione ricevute infinita
+- Corretta selezione sede partenza azienda
+
 
 ## 2.8 (2025-05-20)
 ### Aggiunto (Added)
@@ -233,7 +259,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunte impostazioni per gestire la fatturazione massiva da azioni di gruppo
 - Aggiunta la gestione delle spese di incasso in fattura
 - Aggiunta del progetto in Docker
-- Aggiunte sottocartelle temporanee in files 
+- Aggiunte sottocartelle temporanee in files
 - Aggiunta la lista di aggiornamenti da applicare
 - Aggiunti i riferimenti alle attività nei documenti
 - Aggiunta la generazione automatica del barcode in articoli
@@ -540,7 +566,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Fixed
 - Corretta la procedura di installazione dei moduli e plugins
 - Corretta l'esportazione delle scadenze con più banche
-- Corretta gestione dei plugin 
+- Corretta gestione dei plugin
 - Corretti i requisiti di installazione
 - Corretti i plugins **Statistiche di vendita**, **Listino fornitori**, **Pianificazione fatturazione contratti**, **Impianti del cliente**, **Statistiche anagrafiche**, **Allegati**,**Contratti del cliente**, **DDT del cliente**, **Listino clienti**, **Componenti**,  **Dichiarazioni d'intento** e **Note**
 - Corretti i widgets **Promemoria attività da pianificare**, **Stampa calendario** e **Anagrafiche**
@@ -591,7 +617,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta la gestione del calcolo della media sulle colonne delle viste
 - Aggiunti Marca e Modello su Impianti
 - Aggiunto avviso in caso di permessi assenti sui vari segmenti
-- Aggiunta legenda in Scadenzario 
+- Aggiunta legenda in Scadenzario
 - Aggiunti nuovi temi grafici
 - Aggiunta funzione di ridimensionamento immagini
 
@@ -629,7 +655,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Fixed
 - Corretto il salvataggio nome in **Viste**
-- Ripristinata la verifica query in **Viste** 
+- Ripristinata la verifica query in **Viste**
 - Corretta la gestione degli allegati
 - Corretta l'azione di gruppo per il download degli allegati
 - Corretta la selezione anagrafiche clienti-fornitori
@@ -762,7 +788,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Migliorate le ricerche indirizzo in italiano
 
 ### Fixed
-- Corretto filtro articoli negli **Automezzi** per visualizzare correttamente la giacenza della sede centrale 
+- Corretto filtro articoli negli **Automezzi** per visualizzare correttamente la giacenza della sede centrale
 - Corretta selezione automatica iva all'aggiunta degli articoli nei documenti di vendita. Il sistema da priorità all'iva del fornitore se presente, altrimenti passa all'iva dell'articolo se presente, altrimenti assegna l'iva di default definita in impostazioni.
 - Corretta la vista riferimenti negli **Ordini cliente** aggiungendo il numero esterno del DDT al posto dell'id come veniva erroneamente visualizzato prima
 - Corretta l'applicazione della rivalsa sulla marca da bollo
@@ -1134,7 +1160,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta possibilità di cambiare gruppo agli utenti
 - Aggiunto messaggio aggiornamento utente
 - Aggiunta possibilità di generare password casuali
-- Aggiunta inserimento seriale in fatture di acquisto emesse 
+- Aggiunta inserimento seriale in fatture di acquisto emesse
 - Aggiunta impostazione per forzare la dimensione dei widget in Dashboard
 ### Modificato (Changed)
 - Migliorata la visualizzazione delle attività in Dashboard
@@ -1311,7 +1337,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta verifica prezzo minimo di vendita
 - Corretta notifica inserimento fattura
 - Corretto redirect da fatturazione rate contratto a Fatture di vendita
-- Corretta visualizzazione rate da fatturare 
+- Corretta visualizzazione rate da fatturare
 - Corretta visualizzazione query viste
 - Corretto calcolo prezzo di vendita da cambio coefficiente da azione di gruppo
 - Corretta query elenco di scadenze scadute per cliente in nuova fattura di vendita
@@ -1344,7 +1370,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta condizione di fornitura in ordini
 - Aggiunto avviso per fatture scartate
 ### Modificato(Changed)
-- Miglioria per velocizzazione apertura DDT 
+- Miglioria per velocizzazione apertura DDT
 - Migliorie modulo Causali
 - Miglioria cartelle escluse in fase di verifica numero file e spazio
 - Miglioria statistiche interventi in base alla data di inizio sessione
@@ -1409,7 +1435,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Aggiunto (Added)
 - Aggiunta la possibilità di scrivere **note interne** per ogni riga dei documenti (fatture, preventivi, ecc)
-- Aggiunta unità di misura nella finestra di inserimento nuovo articolo 
+- Aggiunta unità di misura nella finestra di inserimento nuovo articolo
 - Aggiunta distinzione fra margine e ricarico nelle finestre di inserimento righe dei documenti
 - Aggiunto in visualizzazione il codice fornitore nelle righe da importare fra documenti di acquisto
 - Nuovo pulsante **Copia riferimento vendita** in importazione fatture elettroniche passive
@@ -1426,7 +1452,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Correzione ordinamento fatture di acquisto per num. protocollo in stampa registri iva
 - Correzione ricerca iscritto newsletter per **PHP 8.0**
 - Correzione della selezione banca nelle fatture
-- Correzione cambio stato alla firma dell'attività 
+- Correzione cambio stato alla firma dell'attività
 - Correzione calcolo sconto combinato in importazione fattura elettronica
 - Correzione sconti multipli in fattura
 - Correzioni minori in fattura elettronica
@@ -1436,24 +1462,24 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunte 3 nuove colonne nella vista attività, di default disattivate: ore, ricavi, costi
 - Gestione **provvigioni**
 - Gestione nodo CodiceArticolo da attributi avanzati
-- Aggiunta creazione al volo del preventivo dall'attività 
-- Gestione articolo confermato in fase di aggiunta articolo nei documenti tramite barcode 
+- Aggiunta creazione al volo del preventivo dall'attività
+- Gestione articolo confermato in fase di aggiunta articolo nei documenti tramite barcode
 - Aggiunta impostazione per controlli su stati FE
 - Aggiunta visualizzazione **eventi** in dashboard
-- Aggiunta azione di gruppo per eliminazione **Impianti** 
+- Aggiunta azione di gruppo per eliminazione **Impianti**
 - Aggiunta stampa **barcode** come azione di gruppo
 - Aggiunti controlli su eliminazione **Impianti**
 - Aggiunta scelta minuti di snap in **Dashboard**
-- Aggiunta stampa **scadenza** 
+- Aggiunta stampa **scadenza**
 - Aggiunto filtro per mostrare **Preventivi** ai clienti
-- Aggiunto pulsante allega fattura in **Scadenzario** 
+- Aggiunto pulsante allega fattura in **Scadenzario**
 - Aggiunto nuovo modulo **Provenienze**
 - Aggiunto nuovo modulo per gestire i **Settori merceologici**
 - Gestione chiusura scadenze in fase di registrazione contabile
 - Aggiunto controllo per seriali duplicati
 - Aggiunto link alla guida su pagina info
 - Aggiunto nuovo plugin **Statistiche vendita** in Articoli
-- Aggiunto grafico **Nuovi clienti** per mese in Statistiche 
+- Aggiunto grafico **Nuovi clienti** per mese in Statistiche
 - Aggiunto avviso per **sessioni di lavoro** a zero
 - Aggiunto riferimento fattura di acquisto su **autofattura**
 - Aggiunto flag autofatture in **Segmenti** per calcolo statistiche
@@ -1467,22 +1493,22 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Rimossa visualizzazione pulsanti nel top per utenti diversi da amministratori
  - Modifica controlli fatture di vendita duplicate
  - Rimozione replace caratteri in fase di export FE
- 
+
 ### Fixed
  - Fix css personalizzato
  - Fix controllo invio fatture in ritardo
  - Fix colorazione agente di default
  - Fix visualizzazione totale righe intervento
- - Fix export righe con ritenuta 
- - Fix set sezionale in fase di creazione fattura da bulk 
- - Fix aggiunta intervento al preventivo 
- - Fix ajax select fasce orarie 
+ - Fix export righe con ritenuta
+ - Fix set sezionale in fase di creazione fattura da bulk
+ - Fix aggiunta intervento al preventivo
+ - Fix ajax select fasce orarie
  - Fix invio allegati stampe mail
  - Fix esportazioni bancarie
  - Fix visualizzazione dati sede in attività
  - Fix set stato in fase di creazione nota di credito
  - Fix eliminazione fattura collegata a Nota di credito
- - Fix visualizzazione fatture scadute in fase di aggiunta fattura 
+ - Fix visualizzazione fatture scadute in fase di aggiunta fattura
  - Fix modifica orario intervento in Dashboard
  - Fix calcolo colonna Netto a pagare in Fatture
  - Fix visualizzazione scadenze in Fatture
@@ -1493,35 +1519,35 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.4.33 (2022-05-17)
 
 ### Aggiunto (Added)
- - Introduzione modulo **fasce orarie** e modulo **eventi** 
+ - Introduzione modulo **fasce orarie** e modulo **eventi**
  - Aggiunto pulsante per visualizzare movimenti prima nota
  - Cambio prezzo unitario listino da azioni di gruppo
  - Introduzione fasce orarie per il tipo di attività
  - Aggiunta selezione righe nei documenti per eliminazione e duplicazione
  - Aggiunte colonne Contratto, Preventivo, Ordine in Attività
  - Aggiunto controllo totale tra documento e FE per fatture di vendita
- - Calcolo iva intervento in base all'iva predefinita dell'anagrafica 
+ - Calcolo iva intervento in base all'iva predefinita dell'anagrafica
  - Aggiunti alert in fase di aggiunta riga per importi negativi e sconti
  - Aggiunta visualizzazione campi collegati alla sede
  - Aggiunto help su conto predefinito nelle banche
  - Aggiunta tabella **regioni**
- - Aggiunto sezionale fatture di acquisto non elettroniche 
- - Aggiunta azione di gruppo per l'importazione delle **ricevute** 
+ - Aggiunto sezionale fatture di acquisto non elettroniche
+ - Aggiunta azione di gruppo per l'importazione delle **ricevute**
  - Aggiunta al volo Sede dal plugin Referenti
  - Gestione installazione da zip per i templates di stampa
  - Aggiunta **ricerca** datatables per i valori !=
  - Gestione esclusione allegati import FE
- - Aggiunto controllo su fattura già importata 
+ - Aggiunto controllo su fattura già importata
  - Aggiunta gestione **Autofattura**
- - Aggiunti controlli sulla stato documento delle fatture di vendita 
- - Gestione conti predefiniti crediti e debiti tramite impostazione 
+ - Aggiunti controlli sulla stato documento delle fatture di vendita
+ - Gestione conti predefiniti crediti e debiti tramite impostazione
  - Aggiunta possibilità di selezionare la creazione degli articoli in fase di importazione FE
 
 ### Modificato (Changed)
  - Spostamento pulsante seleziona/deseleziona in fase di import tra documenti
  - Ordinamento vista N. Prot.
  - Rimozione visualizzazione azioni di gruppo per utenti con permessi in sola lettura
- 
+
 ### Fixed
  - Fix calcolo sconto finale
  - Fix visualizzazione colonne Totali in fatture
@@ -1534,20 +1560,20 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix ricerca riferimenti FE
  - Fix selezione spunte su datatables dopo azione di gruppo
  - Fix visualizzazione totali Piano dei conti
- - Fix gestione causali movimenti 
+ - Fix gestione causali movimenti
  - Fix bulk cambio stato intervento
  - Fix set prezzo listino fornitore
  - Fix riapertura fatture pagate
  - Fix aggiunta articolo in Attività da Barcode
  - Fix esportazione csv fatture
- - Fix visualizzazione immagine in stampa preventivi 
- - Fix avviso aggiunta scadenza generica 
+ - Fix visualizzazione immagine in stampa preventivi
+ - Fix avviso aggiunta scadenza generica
  - Fix ricalcola totale in fase di importazione tra documenti
  - Fix widget attività da programmare
  - Fix visualizzazione ultimi prezzi
  - Fix ordinamento righe in fattura
  - Fix pianificazione fatturazione contratto
- - Fix visualizzazione residuo dichiarazione d'intento 
+ - Fix visualizzazione residuo dichiarazione d'intento
  - Fix widget Scadenze
 
 ## 2.4.32 (2022-03-24)
@@ -1557,10 +1583,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta visualizzazione Agenda in Dashboard
  - Aggiunta variabile impianti nei template Interventi
  - Aggiunta colonna Impianti in Attività
- 
+
 ### Modificato (Changed)
  - Gestione contratto predefinito e miglioramenti plugin Contratti del cliente
- 
+
 ### Fixed
  - Fix aggiunta articolo importFE
  - Fix stampa DDT
@@ -1582,17 +1608,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta colonna **Inviato** in Scadenzario
  - Imposta data fine sessione in base al **tempo standard**
  - Aggiunta azione di gruppo **Emetti fatture**
- - Aggiunto campo **barcode** nel listino fornitori 
+ - Aggiunto campo **barcode** nel listino fornitori
  - Aggiunta importazione dettagli fornitore per gli articoli
  - Aggiunta **ricerca** articolo per barcode fornitore
- - Aggiunto creazione al volo referente e contratto in creazione attività 
+ - Aggiunto creazione al volo referente e contratto in creazione attività
  - Aggiunta impostazione scelta colore sessioni dashboard
- - Aggiunto **link** listino articolo in fase di aggiunta riga 
+ - Aggiunto **link** listino articolo in fase di aggiunta riga
  - Aggiunta impostazione per mantenere tutti i riferimenti nelle righe
- - Aggiunta colonna **Codice** in Anagrafiche 
+ - Aggiunta colonna **Codice** in Anagrafiche
  - Aggiunta informazione Esigibilità IVA in fase di creazione aliquota
  - Aggiunte configurazioni per gestione **immagini** in fase di import articoli
- - Aggiunta gestione righe dinamiche per i modelli prima nota 
+ - Aggiunta gestione righe dinamiche per i modelli prima nota
  - Seleziona tutte le righe in fase di importazione tra documenti
  - Aggiunta opzione formattazione HTML in viste per campi ckeditor
  - Aggiunta colonna **Servizio** per vista Articoli
@@ -1600,22 +1626,22 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Gestione stampa definitiva registri iva
  - Aggiunto **coefficiente** di vendita in articoli e azione di gruppo collegata
  - Aggiunte colonne codice e barcode fornitore in listini
- - Aggiunta campi in import anagrafiche 
+ - Aggiunta campi in import anagrafiche
  - Creazione **attività** da Preventivo
  - Aggiunta azione di gruppo per esportazione PDF prima nota
- - Badge contatore numero record all'interno del plugin 
+ - Badge contatore numero record all'interno del plugin
  - Aggiunta possibilità di tornare all'elenco delle fatture da registrazione di prima nota
- - Aggiunto plugin **Regole pagamenti** in Anagrafiche 
+ - Aggiunto plugin **Regole pagamenti** in Anagrafiche
  - Aggiunta impostazione per personalizzare **dicitura** riferimento attività
  - Aggiunto abilita serial in fase di creazione articolo
  - Aggiunto plugin **Registrazioni** in Fatture
  - Aggiunta azione massiva export **ricevute** FE
- 
+
 ### Modificato (Changed)
  - Aggiornato **README**
  - Migliorie per dichiarazione d'intento
- - Spostamento generazione xml nella classe Fattura 
- - Verifica numerazione DDT 
+ - Spostamento generazione xml nella classe Fattura
+ - Verifica numerazione DDT
  - Ampliamento visualizzazione movimenti contabili
  - Miglioramenti dati **trasporto** fattura accompagnatoria
  - Miglioramento importazione FE sui riferimenti dei documenti
@@ -1623,7 +1649,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Modifiche modulo **Piano dei conti**
  - Modifiche stampe **registri iva**
  - Predisposizione conti registrazione contabile ritenuta
- 
+
 ### Fixed
  - Fix stampa consuntivo contratto/preventivo
  - Fix messaggio firma mancante
@@ -1646,7 +1672,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix widget valore magazzino
  - Fix destinatari in fase di invio mail
  - Fix importazione FE con codice articolo vuoto
- - Fix selezione seriali in fase di creazione documento 
+ - Fix selezione seriali in fase di creazione documento
  - Fix PEC per variabili email
 
 ## 2.4.30 (2022-02-05)
@@ -1654,10 +1680,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
  - Aggiunta azione di gruppo **Copia listini**
  - Aggiunta stampa riepilogo interventi **interno**
- 
+
 ### Modificato (Changed)
  - Spostamento movimento cassa previdenziale a costo per acquisti
- 
+
 ### Fixed
  - Fix partita iva FE per privati esteri
  - Fix calcolo **scadenze**
@@ -1696,7 +1722,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramenti compilazione automatica import FE
  - Aggiornamento terminologie fiscali
  - Modificato controllo **stato** per rinnovo contratti
- 
+
 ### Fixed
  - Fix calcolo margine percentuale
  - Fix per import articoli senza quantità
@@ -1707,7 +1733,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix calcolo numero protocollo in base a data registrazione
  - Fix controllo numero intervento
  - Fix widget preventivi in lavorazione
- - Fix avviso modulo Iva 
+ - Fix avviso modulo Iva
  - Fix numero lettera intento
  - Fix numerazione rata
  - Fix validità contratto
@@ -1733,17 +1759,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta azione di gruppo per aggiornare liste **newsletter**
  - Aggiunta azione di gruppo in **articoli** per aggiornare conto acquisto/vendita
  - Aggiunta colonna mail Inviata in **attività**
- - Aggiunta gestione dell'arrotondamento nell'azione di gruppo per aggiornare il prezzo di vendita 
- - Aggiunta impostazione per riportare il riferimento del documento 
- - Aggiunto controllo widget Fatturato per escludere le fatture in stato Bozza 
+ - Aggiunta gestione dell'arrotondamento nell'azione di gruppo per aggiornare il prezzo di vendita
+ - Aggiunta impostazione per riportare il riferimento del documento
+ - Aggiunto controllo widget Fatturato per escludere le fatture in stato Bozza
  - Aggiunta stampa **libro giornale**
  - Aggiunta creazione sottocategoria al volo dal modulo **articoli**
  - Aggiunta creazione dinamica della sede in attività
  - Aggiunta tabella **mansioni** e gestione aggiunta destinatari mail
- - Aggiunte impostazioni per notificare intervento ai tecnici 
+ - Aggiunte impostazioni per notificare intervento ai tecnici
  - Aggiunte nuove colonne nel widget **interventi da programmare**
  - Aggiunto filtro di ricerca nel Piano dei conti
- - Aggiunto plugin **Movimenti contabili** in Fatture e Anagrafiche 
+ - Aggiunto plugin **Movimenti contabili** in Fatture e Anagrafiche
  - Aggiunta possibilità di associare varianti della combinazione collegandole ad articoli esistenti
  - Aggiunto plugin **Presentazioni bancarie** in Scadenzario
  - Aggiunta gestione Abi e Cab in fase di creazione banca
@@ -1753,9 +1779,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta azione di gruppo Aggiorna banca da Scadenzario e Fatture
  - Aggiunto pulsante di modifica per le varianti di una combinazione
  - Aggiunte note interne in Preventivi e Contratti
- 
+
 ### Modificato (Changed)
- - Compilazione automatica tipo documento in fase di import FE solo se il campo non è impostato 
+ - Compilazione automatica tipo documento in fase di import FE solo se il campo non è impostato
  - Rimossa data conclusione preventivo automatica
  - Miglioramenti modal modifica sessione tecnico
  - Modifica apertura attività in dashboard con click e doppio click da smartphone
@@ -1788,21 +1814,21 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunto select **conto acquisto/vendita** in fase di creazione articolo
  - Aggiunto select per aggiornare i prezzi di acquisto dell'articolo in fase di importazione fattura elettronica
  - Aggiunto filtro per mostrare gli impianti ai tecnici assegnati
- - Aggiunto ordinamento righe in interventi 
- - Aggiunta azione di gruppo per **rincaro prezzi di vendita** articoli con possibilità di scelta del prezzo di partenza 
+ - Aggiunto ordinamento righe in interventi
+ - Aggiunta azione di gruppo per **rincaro prezzi di vendita** articoli con possibilità di scelta del prezzo di partenza
  - Aggiunta azione di gruppo per cambiare la **categoria** degli articoli
  - Aggiunta azione di gruppo per aggiornare l'aliquota iva degli articoli
  - Aggiunto **Mese prossimo** nel calendario
  - Aggiunta variabile ragione sociale per l'invio mail da ddt
  - Aggiunta immagine in import CSV articoli
  - Aggiunta selezione prezzo di acquisto per stampa inventario
- - Aggiunto costo medio in fase di aggiunta riga articolo 
+ - Aggiunto costo medio in fase di aggiunta riga articolo
  - Aggiunta azione di gruppo per aggiornare il prezzo di acquisto per gli articoli a cui non è impostato, in base all'ultima fattura di acquisto
 
 ### Modificato (Changed)
  - Ampliata **ricerca articoli** in importazione fatturazione elettronica per collegamento automatico
  - Ridotto il valid time per la cache
- - Ordinamento **gestione documentale** per data decrescente 
+ - Ordinamento **gestione documentale** per data decrescente
  - Spostamento stampe situazione contabile e bilancio in **Stampe contabili**
 
 ### Fixed
@@ -1820,7 +1846,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Aggiunto (Added)
  - Aggiunto modal in fase di **Stampa Bilancio** per visualizzare o meno l'elenco analitico dei clienti e fornitori
- - Aggiunta scelta del tipo documento in fase di creazione fattura da un altro documento 
+ - Aggiunta scelta del tipo documento in fase di creazione fattura da un altro documento
  - Aggiunta possibilità di creare delle ricorrenze per gli **Interventi** in fase di aggiunta
  - Aggiunta scelta del tipo documento in fase di creazione fattura da un azione di gruppo di un altro documento
  - Aggiunta sistema di gestione Combinazioni Articoli
@@ -1830,7 +1856,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix orario della modifica del listino di riferimento dell'articolo
  - Fix movimentazione articoli tra due sedi tramite **DDT**
  - Fix duplicazione **Pagamenti**
- 
+
 ## 2.4.25 (2021-08-25)
 
 ### Aggiunto (Added)

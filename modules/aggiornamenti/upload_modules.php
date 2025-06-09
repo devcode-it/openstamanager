@@ -42,9 +42,18 @@ $extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 if (file_exists($extraction_dir.'/VERSION')) {
     // Salva il file di configurazione
     $config = file_get_contents(base_dir().'/config.inc.php');
+    
+    // Rinomina la cartella vendor per evitare conflitti
+    if (is_dir(base_dir().'/vendor')) {
+        copyr(base_dir().'/vendor', base_dir().'/vendor.old');
+        copyr($extraction_dir.'/vendor', base_dir().'/vendor.new');
+    }
 
     // Copia i file dalla cartella temporanea alla root
     copyr($extraction_dir, base_dir());
+    delete(base_dir().'/vendor');
+    rename(base_dir().'/vendor.new', base_dir().'/vendor');
+    delete(base_dir().'/vendor.old');
 
     // Ripristina il file di configurazione dell'installazione
     file_put_contents(base_dir().'/config.inc.php', $config);

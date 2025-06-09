@@ -127,7 +127,7 @@ echo '
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-                <button type="button" class="btn btn-primary" onclick="search(this)">
+                <button type="button" class="btn btn-primary" onclick="searchInvoices(this)">
                     <i class="fa fa-refresh"></i> '.tr('Ricerca fatture').'
                 </button>';
 }
@@ -265,7 +265,7 @@ function importAll(btn) {
 }
 echo '
 
-function search(btn) {
+function searchInvoices(btn) {
     var restore = buttonLoading(btn);
 
     // Mostra un\'animazione di caricamento nella lista

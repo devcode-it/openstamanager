@@ -161,7 +161,7 @@ if (Interaction::isEnabled()) {
                     <i class="fa fa-cloud-download mr-1"></i> '.tr('Importa tutte').'
                 </button>
 
-                <button type="button" class="btn btn-primary" onclick="search(this)">
+                <button type="button" class="btn btn-primary" onclick="searchReceipts(this)">
                     <i class="fa fa-refresh mr-1"></i> '.tr('Ricerca ricevute').'
                 </button>
             </div>
@@ -238,7 +238,7 @@ function applySearchFilter() {
     }
 }
 
-function search(button) {
+function searchReceipts(button) {
     var restore = buttonLoading(button);
 
     // Mostra un\'animazione di caricamento nella lista

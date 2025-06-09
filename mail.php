@@ -19,7 +19,6 @@
  */
 
 use Models\Module;
-use Models\Upload;
 use Modules\Emails\Template;
 
 include_once __DIR__.'/core.php';

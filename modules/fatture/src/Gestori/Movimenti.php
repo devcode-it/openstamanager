@@ -310,37 +310,36 @@ class Movimenti
                 // Data del giroconto: primo giorno del mese successivo alla data di registrazione
                 $data_giroconto = $this->fattura->data_registrazione;
                 $descrizione_giroconto = 'Giroconto IVA al mese successivo';
-            
 
                 if (isset($data_giroconto)) {
                     // Crea un mastrino per il giroconto con data di competenza (per lo storno)
-                    $mastrino_storno = Mastrino::build('Storno IVA da data competenza - ' . $this->fattura->getReference(1), $this->fattura->data_competenza, false, false);
+                    $mastrino_storno = Mastrino::build('Storno IVA da data competenza - '.$this->fattura->getReference(1), $this->fattura->data_competenza, false, false);
 
                     // Movimento di storno: Azzera l'IVA dalla data di competenza (DARE)
                     $movimento_storno = Movimento::build($mastrino_storno, setting('Conto per Iva transitoria'), $this->fattura);
                     $movimento_storno->setTotale(0, $iva_detraibile);
-                    $movimento_storno->descrizione = 'Storno IVA da data competenza - ' . $this->fattura->getReference(1);
+                    $movimento_storno->descrizione = 'Storno IVA da data competenza - '.$this->fattura->getReference(1);
                     $movimento_storno->save();
 
                     // Movimento di storno: Azzera l'IVA dalla data di competenza (AVERE)
                     $movimento_storno = Movimento::build($mastrino_storno, setting('Conto per Iva su acquisti'), $this->fattura);
                     $movimento_storno->setTotale($iva_detraibile, 0);
-                    $movimento_storno->descrizione = 'Storno IVA da data competenza - ' . $this->fattura->getReference(1);
+                    $movimento_storno->descrizione = 'Storno IVA da data competenza - '.$this->fattura->getReference(1);
                     $movimento_storno->save();
 
                     // Crea un mastrino per il giroconto con la data corretta (per la registrazione)
-                    $mastrino_giroconto = Mastrino::build($descrizione_giroconto . ' - ' . $this->fattura->getReference(1), $data_giroconto, false, false);
+                    $mastrino_giroconto = Mastrino::build($descrizione_giroconto.' - '.$this->fattura->getReference(1), $data_giroconto, false, false);
 
                     // Movimento di giroconto: Registra l'IVA nella data corretta (DARE)
                     $movimento_giroconto = Movimento::build($mastrino_giroconto, setting('Conto per Iva su acquisti'), $this->fattura);
                     $movimento_giroconto->setTotale(0, $iva_detraibile);
-                    $movimento_giroconto->descrizione = $descrizione_giroconto . ' - ' . $this->fattura->getReference(1);
+                    $movimento_giroconto->descrizione = $descrizione_giroconto.' - '.$this->fattura->getReference(1);
                     $movimento_giroconto->save();
 
                     // Movimento di giroconto: Registra l'IVA nella data corretta (AVERE)
                     $movimento_giroconto = Movimento::build($mastrino_giroconto, setting('Conto per Iva transitoria'), $this->fattura);
                     $movimento_giroconto->setTotale($iva_detraibile, 0);
-                    $movimento_giroconto->descrizione = $descrizione_giroconto . ' - ' . $this->fattura->getReference(1);
+                    $movimento_giroconto->descrizione = $descrizione_giroconto.' - '.$this->fattura->getReference(1);
                     $movimento_giroconto->save();
                 }
             }

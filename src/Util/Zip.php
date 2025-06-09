@@ -96,8 +96,17 @@ class Zip
                 $finder->notName($value);
             }
 
+            // Aggiungi i file all'archivio, gestendo eventuali errori
             foreach ($finder as $file) {
-                $zip->addFile($file, $file->getRelativePathname());
+                try {
+                    // Verifica se il file è accessibile prima di aggiungerlo
+                    if (is_readable($file->getRealPath())) {
+                        $zip->addFile($file, $file->getRelativePathname());
+                    }
+                } catch (\Exception $e) {
+                    // Log dell'errore ma continua con gli altri file
+                    error_log('Errore durante l\'aggiunta del file ' . $file->getPathname() . ' al backup: ' . $e->getMessage());
+                }
             }
             $zip->close();
         } else {

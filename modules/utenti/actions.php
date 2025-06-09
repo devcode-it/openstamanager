@@ -246,7 +246,11 @@ switch (filter('op')) {
             $permessi['Magazzino'] = 'rw';
             $permessi['Articoli'] = 'rw';
 
+            // Rimuovi tutti i permessi esistenti
             $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
+
+            // Ottieni il gruppo per la sincronizzazione
+            $group = Group::find($id_record);
 
             foreach ($permessi as $module_name => $permesso) {
                 $module_id = Module::where('name', $module_name)->first()->id;
@@ -256,6 +260,9 @@ switch (filter('op')) {
                     'idmodule' => $module_id,
                     'permessi' => $permesso,
                 ]);
+
+                // Sincronizza i permessi delle viste e dei segmenti per ogni modulo
+                $group->syncModulePermissions($module_id, $permesso);
             }
 
             flash()->info(tr('Permessi reimpostati'));

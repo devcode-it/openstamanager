@@ -148,6 +148,9 @@ if (Auth::check()) {
         'signatureMissing' => tr('Firma mancante.'),
         'readmore' => tr('Mostra tutto'),
         'readless' => tr('Mostra meno'),
+        'no_results_found' => tr('Nessun risultato trovato per'),
+        'searching' => tr('Ricerca in corso...'),
+        'processing' => tr('Elaborazione in corso...'),
     ];
     foreach ($translations as $key => $value) {
         echo '

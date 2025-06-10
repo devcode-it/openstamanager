@@ -32,7 +32,7 @@ switch (post('op')) {
         $data = post('data');
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
-        $descrizione = post('descrizione');
+        $descrizione = strip_tags(post('descrizione'));
         $iddocumento = post('iddocumento') ?: '';
         $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
@@ -51,7 +51,7 @@ switch (post('op')) {
     case 'update':
         $idanagrafica = post('idanagrafica');
         $tipo = post('tipo');
-        $descrizione = post('descrizione');
+        $descrizione = strip_tags(post('descrizione'));
         $iddocumento = post('iddocumento') ?: 0;
         if (!empty($iddocumento)) {
             $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();

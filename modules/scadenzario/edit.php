@@ -88,7 +88,7 @@ if (!empty($documento)) {
                             <th>'.tr('Numero').':</th>
                             <td>'.$numero.'</td>
                         </tr>
-                    </table>    
+                    </table>
 
                     <table class="table table-striped table-hover table-sm table-bordered">
                         <tr>
@@ -108,44 +108,64 @@ if (!empty($documento)) {
                         </tr>
                     </table>
 
-                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
-                </div>';
+                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
+
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
-    echo '          
-                    <table class="table table-striped table-hover table-sm table-bordered">
-                        <tr>
-                            <td>';
-    echo input([
-        'type' => 'ckeditor',
-        'label' => tr('Descrizione'),
-        'name' => 'descrizione',
-        'required' => 1,
-        'extra' => 'rows="2"',
-        'value' => $record['descrizione'],
-    ]);
     echo '
-                            </td>
-                        </tr>
-                    </table>
-                </div>';
+                    </table>                
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">'.tr('Descrizione').'</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped table-hover table-sm table-bordered">
+                                <tr>
+                                    <td>';
+echo input([
+    'type' => 'ckeditor',
+    'name' => 'descrizione',
+    'extra' => 'rows="2"',
+    'value' => $record['descrizione'],
+]);
+echo '
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>';
+}
+
+// Visualizzazione movimenti di prima nota con primanota = 1
+include_once __DIR__.'/../primanota/movimenti_utils.php';
+
+if (!empty($documento)) {
+    echo renderTabellaMovimentiPrimaNota($documento->id, null);
+} else {
+    echo renderTabellaMovimentiPrimaNota(null, $id_record);
 }
 
 echo '
+
+                </div>
                 <div class="col-md-6">
-                    <table class="table table-striped table-hover table-sm table-bordered">
-                        <tr>
-                            <td>';
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">'.tr('Note').'</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped table-hover table-sm table-bordered">
+                                <tr>
+                                    <td>';
 echo input([
     'type' => 'ckeditor',
-    'label' => tr('Note'),
     'name' => 'note',
     'extra' => 'rows="2"',
     'value' => $record['note'],
 ]);
 echo '
-                            </td>
-                        </tr>';
+                                    </td>
+                                </tr>';
 
 if (!empty($record['presentazioni_exported_at'])) {
     $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_', [
@@ -155,9 +175,8 @@ if (!empty($record['presentazioni_exported_at'])) {
     $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
 }
 echo '
-                    </table>';
-
-echo '
+                        </table>
+                    </div>
 				</div>
             </div>
         </div>
@@ -178,8 +197,8 @@ echo '
                     <table class="table table-hover table-sm table-bordered">
                         <thead>
                             <tr>
-                                <th style="width:17%;">'.tr('Banca accredito').'</th> 
-                                <th style="width:16%;">'.tr('Banca addebito').'</th> 
+                                <th style="width:17%;">'.tr('Banca accredito').'</th>
+                                <th style="width:16%;">'.tr('Banca addebito').'</th>
                                 <th style="width:20%;">'.tr('Metodo di pagamento').'</th>
                                 <th style="width:10%;">'.tr('Data').'</th>
                                 <th style="width:10%;">'.tr('Data concordata').'</th>
@@ -340,14 +359,14 @@ echo '
                     <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.$id_modulo_prima_nota.'&id_scadenze=-id-\');" class="btn btn-sm btn-primary">
                         <i class="fa fa-euro"></i> '.($dir == 'entrata' ? tr('Incassa') : tr('Paga')).'
                     </a>
-                </td>      
-            </input>    
+                </td>
+            </input>
         </tr>
     </tbody>
 </table>
 
 <script>
-    
+
 	$(document).on("click", "#add-scadenza", function() {
         this.disabled = true;
         var i = '.$i.';

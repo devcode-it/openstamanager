@@ -58,16 +58,17 @@ class Upload extends Model
      */
     public function getCategoryAttribute()
     {
-        return $this->attributes['category'] ?: 'Generale';
+        $categoria = database()->fetchOne('SELECT `name` FROM `zz_files_categories` WHERE `id` = '.prepare($this->attributes['id_category']));
+        return $categoria['name'] ?? 'Generale';
     }
 
     public function setCategoryAttribute($value)
     {
         if ($value == 'Generale' || $value == '') {
-            $value = null;
+            $value = 0;
         }
 
-        $this->attributes['category'] = $value;
+        $this->attributes['id_category'] = $value;
     }
 
     /**

@@ -27,8 +27,11 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill(6, 70);
-$rows_per_page = ($fattura_accompagnatoria ? 24 : 26);
-$autofill->setRows($rows_per_page, 0);
+if ($fattura_accompagnatoria) {
+    $autofill->setRows(21, 0, 35);
+} else {
+    $autofill->setRows(26, 0);
+}
 
 // Calcolo ottimizzato delle righe da sottrarre
 $c = 0;

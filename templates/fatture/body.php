@@ -27,16 +27,20 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma ottimizzata
 $autofill = new Util\Autofill(6, 70);
-if ($fattura_accompagnatoria) {
-    $autofill->setRows(21, 0, 35);
-} else {
-    $autofill->setRows(26, 0);
-}
+$rows_per_page = 25;
 
 // Calcolo ottimizzato delle righe da sottrarre
 $c = 0;
 foreach ($v_iva as $desc_iva => $tot_iva) {
     ++$c;
+}
+
+// Calcolo ottimizzato delle righe intestazione
+if ($f_sitoweb || $f_pec) {
+    ++$c;
+}
+if ($destinazione) {
+    $c += 2;
 }
 
 // Gestione ottimizzata destinazione
@@ -45,7 +49,11 @@ if ($destinazione) {
 }
 
 // Diminuisco le righe disponibili per pagina
-$autofill->setRows($rows_per_page - $c, 0);
+if ($fattura_accompagnatoria) {
+    $autofill->setRows(20 - $c, 0, 35);
+} else {
+    $autofill->setRows($rows_per_page - $c, 0, 30);
+}
 
 // Intestazione tabella per righe
 echo "

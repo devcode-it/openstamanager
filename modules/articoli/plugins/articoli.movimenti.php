@@ -88,7 +88,8 @@ if (!empty($movimenti)) {
         <table class="table table-striped table-sm table-bordered">
             <tr>
                  <th class="text-center" width="40">#</th>
-                <th class="text-center" width="120">'.tr('Q.tà').'</th>
+                <th class="text-center" width="120">'.tr('Carico').'</th>
+                <th class="text-center" width="120">'.tr('Scarico').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
                 <th>'.tr('Operazione').'</th>
                 <th>'.tr('Controparte').'</th>
@@ -116,10 +117,12 @@ if (!empty($movimenti)) {
                 <td class="text-center">
                     '.count($movimenti) - $i.'
                 </td>
-                <td class="text-center" style="color: '.($movimento->qta < 0 ? 'red' : 'green').';">
-                    '.numberFormat($movimento->qta, 'qta').' '.$record['um'].'
+                <td class="text-center" style="color: green;">
+                    '.($movimento->qta > 0 ? numberFormat($movimento->qta, 'qta').' '.$record['um'] : '').'
                 </td>
-
+                <td class="text-center" style="color: red;">
+                    '.($movimento->qta < 0 ? numberFormat(abs($movimento->qta), 'qta').' '.$record['um'] : '').'
+                </td>
                 <td class="text-center">
                     '.numberFormat($movimento['progressivo_iniziale'], 'qta').' '.$record['um'].'
                     <i class="fa fa-arrow-circle-right"></i>

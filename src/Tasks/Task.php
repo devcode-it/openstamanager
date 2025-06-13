@@ -40,8 +40,8 @@ class Task extends Model
     ];
 
     protected $casts = [
-        'next_execution_at' => 'date',
-        'last_executed_at' => 'date',
+        'next_execution_at' => 'datetime',
+        'last_executed_at' => 'datetime',
     ];
 
     public function log($level, $message, $context = [])
@@ -71,7 +71,7 @@ class Task extends Model
         // Esecuzione
         $result = $manager->execute();
 
-        // Salvtagggio dell'esecuzione
+        // Salvataggio dell'esecuzione
         $this->last_executed_at = new Carbon();
 
         // Individuazione della data per la prossima esecuzione dalla relativa espressione

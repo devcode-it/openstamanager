@@ -19,7 +19,9 @@
  */
 
 include_once __DIR__.'/../../../core.php';
+
 use Models\Module;
+use Modules\Anagrafiche\Anagrafica;
 
 $idarticolo = get('idarticolo');
 $limit = get('limit');
@@ -42,7 +44,8 @@ switch ($resource) {
                     (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
                     `co_documenti`.`numero` AS n_documento, 
                     `co_documenti`.`numero_esterno` AS n2_documento, 
-                    `co_documenti`.`data` AS data_documento 
+                    `co_documenti`.`data` AS data_documento,
+                    `co_documenti`.`idanagrafica` AS idanagrafica
                 FROM 
                     `co_righe_documenti`
                     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
@@ -57,7 +60,8 @@ switch ($resource) {
                     (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
                     (SELECT `numero` FROM `dt_ddt` WHERE `id`=`idddt`) AS n_documento, 
                     (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`idddt`) AS n2_documento, 
-                    (SELECT `data` FROM `dt_ddt` WHERE `id`=`idddt`) AS data_documento 
+                    (SELECT `data` FROM `dt_ddt` WHERE `id`=`idddt`) AS data_documento,
+                    `dt_ddt`.`idanagrafica` AS idanagrafica
                 FROM 
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -103,7 +107,8 @@ switch ($resource) {
                 ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
-                `co_documenti`.`data` AS data_documento
+                `co_documenti`.`data` AS data_documento,
+                `co_documenti`.`idanagrafica` AS idanagrafica
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
@@ -119,7 +124,8 @@ switch ($resource) {
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,
-                `dt_ddt`.`data` AS data_documento
+                `dt_ddt`.`data` AS data_documento,
+                `dt_ddt`.`idanagrafica` AS idanagrafica
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -128,18 +134,22 @@ switch ($resource) {
             WHERE
                 `idarticolo` = '.prepare($idarticolo).' AND `dir` = "entrata"
         ORDER BY
-            `id` DESC');
+            data_documento
+        DESC LIMIT 0,20');
 
         if (sizeof($documenti) > 0) {
             echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
-            echo "<th width='100' class='text-right' >Totale</th></tr>\n";
+            echo "<th width='170'>Anagrafica</th>\n";
+            echo "<th width='80' class='text-right' >Totale</th></tr>\n";
 
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
                 $link_id = Module::where('name', $documenti[$i]['modulo'])->first()->id;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
+                $anagrafica = Anagrafica::find($documenti[$i]['idanagrafica']);
+                echo "<td class='table_cell text-left'>".$anagrafica->ragione_sociale."</td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
             }
@@ -188,18 +198,22 @@ switch ($resource) {
             WHERE
                 `idarticolo` = '.prepare($idarticolo).' AND `dir` = "uscita"
         ORDER BY
-            `id` DESC');
+            data_documento
+        DESC LIMIT 0,20');
 
         if (sizeof($documenti) > 0) {
             echo "<table class='table table-striped table-bordered table-extra-condensed' >\n";
             echo "<tr><th width='180'>Documento</th>\n";
-            echo "<th width='100' class='text-right' >Totale</th></tr>\n";
+            echo "<th width='170'>Anagrafica</th>\n";
+            echo "<th width='80' class='text-right' >Totale</th></tr>\n";
 
             for ($i = 0; $i < sizeof($documenti); ++$i) {
                 ($documenti[$i]['n2_documento'] != '') ? $n_documento = $documenti[$i]['n2_documento'] : $n_documento = $documenti[$i]['n_documento'];
 
                 $link_id = Module::where('name', $documenti[$i]['modulo'])->first()->id;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
+                $anagrafica = Anagrafica::find($documenti[$i]['idanagrafica']);
+                echo "<td class='table_cell text-left'>".$anagrafica->ragione_sociale."</td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
             }

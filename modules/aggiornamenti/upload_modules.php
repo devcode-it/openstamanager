@@ -136,6 +136,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $insert['idmodule_from'] = Module::where('name', $info['module_from'])->first()->id;
             $insert['idmodule_to'] = Module::where('name', $info['module_to'])->first()->id;
             $insert['position'] = $info['position'];
+            $insert['default'] = 0;
         }
 
         // Templates
@@ -148,6 +149,12 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $insert['is_record'] = $info['is_record'];
             $insert_lang['filename'] = $info['filename'];
             $insert['icon'] = $info['icon'];
+            $insert['predefined'] = 0;
+        }
+
+        // Modules
+        else{
+            $insert['default'] = 0;
         }
 
         // Copia dei file nella cartella relativa
@@ -166,7 +173,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
                     'version' => $info['version'],
                     'compatibility' => $info['compatibility'],
                     'order' => 100,
-                    'default' => 0,
                     'enabled' => 1,
                 ]));
                 $id_record = $dbo->lastInsertedID();
@@ -191,7 +197,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
                     'is_record' => $insert['is_record'],
                     'icon' => $insert['icon'],
                     'order' => 100,
-                    'default' => 0,
                     'enabled' => 1,
                 ]));
                 $id_record = $dbo->lastInsertedID();

@@ -827,7 +827,6 @@ echo '
 function copia() {
     let conti = $("select[name^=conti]");
     let iva = $("select[name^=iva]");
-    let articoli = $("select[name^=articoli]");
     let update_info = $("select[name^=update_info]");
 
     // Individuazione del primo conto selezionato
@@ -846,16 +845,6 @@ function copia() {
         const data = $(i).selectData();
         if (data && data.id) {
             iva_selezionata = data;
-            break;
-        }
-    }
-
-    // Individuazione del primo articolo selezionato
-    let articolo_selezionato = null;
-    for (const articolo of articoli) {
-        const data = $(articolo).selectData();
-        if (data && data.id) {
-            articolo_selezionato = data;
             break;
         }
     }
@@ -881,13 +870,6 @@ function copia() {
     if (iva_selezionata) {
         iva.each(function() {
             $(this).selectSetNew(iva_selezionata.id, iva_selezionata.text, iva_selezionata);
-        });
-    }
-
-    // Selezione generale per l\'articolo
-    if (articolo_selezionato) {
-        articoli.each(function() {
-            $(this).selectSetNew(articolo_selezionato.id, articolo_selezionato.text, articolo_selezionato);
         });
     }
 

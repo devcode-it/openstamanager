@@ -309,7 +309,12 @@ class FatturaOrdinaria extends FatturaElettronica
                 $target_type = Riga::class;
             }
 
-            $obj->descrizione = $riga['Descrizione'];
+            // Imposta la descrizione dalla fattura elettronica per righe e descrizioni
+            // Per gli articoli, mantieni la descrizione originale dell'articolo
+            if (!$obj->isArticolo()) {
+                $obj->descrizione = $riga['Descrizione'];
+            }
+
             $obj->save();
 
             // Collegamento al documento di riferimento
@@ -319,8 +324,15 @@ class FatturaOrdinaria extends FatturaElettronica
                 [$riferimento_precedente, $nuovo_riferimento] = $obj->impostaOrigine($riga_origine);
 
                 // Correzione della descrizione
-                $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';
-                $obj->descrizione .= $nuovo_riferimento;
+                // Per gli articoli collegati a ordini, mantieni la descrizione dell'articolo e aggiungi solo il riferimento
+                if ($obj->isArticolo()) {
+                    // Mantieni la descrizione dell'articolo e aggiungi solo il riferimento al documento
+                    $obj->descrizione = $obj->articolo->getTranslation('title') . $nuovo_riferimento;
+                } else {
+                    // Per righe e descrizioni, gestisci normalmente
+                    $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';
+                    $obj->descrizione .= $nuovo_riferimento;
+                }
 
                 $serials_rif = $riga_origine->serials;
                 if ($serials_rif && $obj->abilita_serial) {

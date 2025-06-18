@@ -98,7 +98,8 @@ class Task extends Model
     public function registerNextExecution(Carbon $now)
     {
         $cron = CronExpression::factory($this->expression);
-        $this->next_execution_at = Carbon::instance($cron->getNextRunDate($now));
+        $next_time = $now->copy()->addSecond();
+        $this->next_execution_at = Carbon::instance($cron->getNextRunDate($next_time));
     }
 
     public function delete()

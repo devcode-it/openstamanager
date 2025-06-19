@@ -99,7 +99,15 @@ class Task extends Model
     {
         $cron = CronExpression::factory($this->expression);
         $next_time = $now->copy()->addSecond();
-        $this->next_execution_at = Carbon::instance($cron->getNextRunDate($next_time));
+        $calculated_next = Carbon::instance($cron->getNextRunDate($next_time));
+
+        // Correzione bug: verifica che la prossima esecuzione non sia nel passato
+        if ($calculated_next->lessThanOrEqualTo($now)) {
+            // Se la data calcolata è nel passato o uguale a ora, calcola la successiva
+            $calculated_next = Carbon::instance($cron->getNextRunDate($calculated_next->addSecond()));
+        }
+
+        $this->next_execution_at = $calculated_next;
     }
 
     public function delete()

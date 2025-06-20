@@ -45,19 +45,14 @@ use Modules\Iva\Aliquota;
 
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             {[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$", "validation": "codice" ]}
                         </div>
 
-                        <div class="col-md-3">
-                            <button type="button" class="btn btn-default btn-xs tip pull-right" id="generaBarcode"><i class="fa fa-refresh"></i> <?php echo tr('Genera'); ?></button>
-                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "validation": "barcode", "class": "text-center", "value": "$barcode$" ]}
-                        </div>
-
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate.'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                         </div>
                     </div>
@@ -383,28 +378,6 @@ $("#scorporaIva").click( function() {
 	scorporaIva();
 });
 
-function generaBarcode() {
-    $.ajax({
-        url: globals.rootdir + "/actions.php",
-        type: "POST",
-        data: {
-            id_module: globals.id_module,
-            id_record: globals.id_record,
-            op: "generate-barcode"
-        },
-        success: function(response) {
-            response = JSON.parse(response);
-            let input = $("#barcode");
-            input.val(response.barcode);
-        },
-        error: function(xhr, status, error) {
-        }
-    });
-}
-
-$("#generaBarcode").click( function() {
-	generaBarcode();
-});
 </script>
 
 

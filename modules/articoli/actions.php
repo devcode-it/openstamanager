@@ -62,11 +62,6 @@ switch (post('op')) {
             $articolo->name = post('descrizione');
         }
 
-        if (post('genera_barcode')) {
-            $codice = '200'.str_pad((string) $articolo->id, 9, '0', STR_PAD_LEFT);
-            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
-        }
-        $articolo->barcode = $barcode ?: post('barcode');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -96,6 +91,19 @@ switch (post('op')) {
 
         $id_record = $articolo->id;
         $iva = post('idiva_vendita') ? Aliquota::find(post('idiva_vendita')) : null;
+
+        if (post('genera_barcode')) {
+            $codice = '200'.str_pad((string) $articolo->id, 9, '0', STR_PAD_LEFT);
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+        }
+
+        $barcode = ($barcode ? $barcode : post('barcode'));
+        if (!empty($barcode)) {
+            $dbo->insert('mg_articoli_barcode', [
+               'idarticolo' => $id_record,
+               'barcode' => $barcode,
+           ]);
+        }
 
         if (isAjaxRequest()) {
             echo json_encode([
@@ -139,7 +147,6 @@ switch (post('op')) {
         }
 
         $articolo->codice = post('codice', true);
-        $articolo->barcode = post('barcode');
         $articolo->um = post('um');
         $articolo->id_categoria = post('categoria');
         $articolo->id_sottocategoria = post('subcategoria');

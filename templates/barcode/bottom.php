@@ -20,19 +20,4 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Articoli\Articolo;
-
-if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
-    $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    unset($_SESSION['superselect']['id_articolo_barcode']);
-    $records = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
-} elseif( !empty(get('idbarcode')) ){
-    $records = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
-} else {
-    $articoli = Articolo::where('id', '=', $id_record)->get();
-    $records = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
-}
-
-$pages = count($records);
-$page = 0;
-$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+echo '';

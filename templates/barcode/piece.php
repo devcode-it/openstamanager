@@ -22,17 +22,32 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Articolo;
 
-if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
-    $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    unset($_SESSION['superselect']['id_articolo_barcode']);
-    $records = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
-} elseif( !empty(get('idbarcode')) ){
-    $records = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
-} else {
-    $articoli = Articolo::where('id', '=', $id_record)->get();
-    $records = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+echo '<style>
+.barcode {
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
 }
+.barcode-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+</style>';
 
-$pages = count($records);
-$page = 0;
-$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+$barcode = $record->barcode;
+$articolo = Articolo::find($record->idarticolo);
+
+echo '
+<div class="barcode-cell">
+    <p style="font-size:11pt;"><b>'.$articolo->codice.'</b></p>
+    <p style="font-size:10pt;">'.$articolo->getTranslation('title').'</p><br>
+    <p style="font-size:15pt;"><b>'.moneyFormat($prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita).'</b></p>
+    <barcode code="'.$barcode.'" type="C39" height="2" size="0.65" class="barcode" />
+    <p><b>'.$barcode.'</b></p>
+</div>';
+
+++$page;
+
+if ($page < $pages) {
+    echo '<pagebreak>';
+}

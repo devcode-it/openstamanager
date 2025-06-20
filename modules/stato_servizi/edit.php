@@ -304,6 +304,17 @@ echo '
             </div>
         </div>
 
+        <div class="card card-info card-outline mt-3">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa fa-history mr-2"></i>'.tr('Ultime operazioni').'
+                </div>
+            </div>
+
+            <div class="card-body p-0" id="operazioni">
+            </div>
+        </div>
+
     </div>
 </div>';
 
@@ -475,11 +486,53 @@ function caricaElencoSessioni() {
     });
 }
 
+function caricaElencoOperazioni() {
+    let container = $("#operazioni");
+
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+
+        init();
+    });
+}
+
+function caricaAltreOperazioni(offset, limit) {
+    let container = $("#operazioni");
+    let currentContent = container.find("table tbody");
+    let loadMoreButton = container.find(".text-center");
+
+    // Mostra loading sul pulsante
+    loadMoreButton.html("<i class=\"fa fa-refresh fa-spin\"></i> '.tr('Caricamento...').'");
+
+    $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'&offset=" + offset + "&limit=" + limit, function(data) {
+        let newData = $(data);
+        let newRows = newData.find("tbody tr");
+        let newLoadMore = newData.find(".text-center");
+
+        // Aggiungi le nuove righe alla tabella esistente
+        if (newRows.length > 0) {
+            currentContent.append(newRows);
+        }
+
+        // Sostituisci il pulsante "Carica di più" o rimuovilo se non ci sono più dati
+        if (newLoadMore.length > 0) {
+            loadMoreButton.replaceWith(newLoadMore);
+        } else {
+            loadMoreButton.remove();
+        }
+
+        init();
+    });
+}
+
 $(document).ready(function() {
     caricaElencoModuli();
     caricaElencoWidget();
     caricaElencoHooks();
     caricaElencoSessioni();
+    caricaElencoOperazioni();
 
     init();
 });

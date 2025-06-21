@@ -1,0 +1,96 @@
+publiccodeYmlVersion: 0.4.0
+name: OpenSTAManager
+url: https://github.com/devcode-it/openstamanager/
+landingURL: https://openstamanager.com
+softwareVersion: 2.8.1
+releaseDate: 2025-06-10
+logo: https://shop.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png
+platforms:
+  - web
+categories:
+  - billing-and-invoicing
+  - customer-service-and-support
+  - it-service-management
+developmentStatus: stable
+softwareType: standalone/web
+description:
+  it-IT:
+    localisedName: OpenSTAManager
+    shortDescription: Il gestionale per l'assistenza tecnica e la fatturazione elettronica
+    longDescription: >-
+      E' un software gestionale per l'assistenza tecnica e la fatturazione
+      elettronica. Permette di gestire delle attività di assistenza ma non solo,
+      potendo assegnare anche attività generali a tecnici o operatori, con
+      annesso calendario. Utile per gestire manutenzioni presso i propri clienti
+      o manutenzioni dei propri impianti o apparecchiature.
+
+      Permette di inviare e ricevere fatture elettroniche attraverso lo SDI.
+
+      E' presente la gestione di un inventario di articoli, anche dislocato in
+      più sedi o magazzini, con gestione limiti delle giacenze. Per la
+      spedizione degli articoli è possibile generare o registrare ddt (documenti
+      di trasporto).
+
+      E' presente anche una gestione degli ordini di vendita o dei fornitori,
+      generazione di preventivi e contratti.
+
+      Fra i vari documenti, è possibile evadere singolarmente o parzialmente le
+      righe, per avere sempre il controllo di quando è, per esempio, da
+      fatturare o da spedire, senza perdere traccia di quanto già evaso.
+    documentation: https://docs.openstamanager.com
+    apiDocumentation: https://api.docs.openstamanager.com/#guida-alla-configurazione-api
+    features:
+      - crm
+      - gestione clienti
+      - magazzino
+      - manutenzioni
+      - anagrafiche
+      - fatturazione elettronica
+    screenshots:
+      - https://raw.githubusercontent.com/devcode-it/openstamanager/master/assets/src/img/screenshot.jpg
+  en:
+    localisedName: OpenSTAManager
+    shortDescription: The management software for technical assistance and electronic invoicing
+    longDescription: >-
+      It is a management software for technical assistance and electronic
+      billing. It allows you to manage service activities but not only, being
+      able to assign general activities to technicians or operators as well,
+      with attached calendar. Useful for managing maintenance at your customers'
+      premises or maintenance of your own facilities or equipment.
+
+      Allows you to send and receive electronic invoices through the SDI.
+
+      There is management of an inventory of items, even located in multiple
+      locations or warehouses, with stock limit management. It is possible to
+      generate or record ddt (transport documents) for shipping items.
+
+      There is also management of sales orders or suppliers, generation of
+      quotations and contracts.
+
+      Among the various documents, it is possible to process lines individually
+      or partially, so that you always have control over when it is, for
+      example, to be invoiced or shipped, without losing track of what has
+      already been processed.
+    features:
+      - crm
+      - customer management
+      - invoice
+      - stock management
+      - registries
+      - shipment
+    screenshots:
+      - https://raw.githubusercontent.com/devcode-it/openstamanager/master/assets/src/img/screenshot.jpg
+legal:
+  license: GPL-3.0-or-later
+maintenance:
+  type: contract
+  contractors:
+    - name: DevCode Srl
+      until: 2050-01-01
+      email: info@openstamanager.com
+      website: https://openstamanager.com
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - it-IT
+    - en

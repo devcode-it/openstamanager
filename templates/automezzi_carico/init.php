@@ -36,7 +36,7 @@ $query = '
         `mg_articoli`.`codice`,
         `mg_articoli`.`prezzo_vendita`,
         `co_iva`.`percentuale` AS iva,
-        `mg_categorie_lang`.`title` AS subcategoria,
+        `zz_categorie_lang`.`title` AS subcategoria,
         `mg_articoli_lang`.`title` AS descrizione,
         `mg_movimenti`.`qta`,
         `mg_movimenti`.`idutente`,
@@ -52,8 +52,8 @@ $query = '
         LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        LEFT JOIN `mg_categorie` ON `mg_categorie`.`id`=`mg_articoli`.`id_sottocategoria`
-        LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id`=`mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `zz_categorie` ON `zz_categorie`.`id`=`mg_articoli`.`id_sottocategoria`
+        LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
         `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND

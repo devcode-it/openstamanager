@@ -31,8 +31,8 @@ $fields = [
     'codice' => '`mg_articoli`.`codice`',
     'barcode' => '`mg_articoli`.`barcode`',
     'descrizione' => '`mg_articoli_lang`.`title`',
-    'categoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
-    'subcategoria' => '(SELECT `title` FROM `mg_categorie` LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
+    'categoria' => '(SELECT `title` FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
+    'subcategoria' => '(SELECT `title` FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',
     'Note' => 'note',
     'serial' => '`mg_prodotti`.`serial`',
 ];

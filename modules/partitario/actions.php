@@ -255,10 +255,10 @@ switch (post('op')) {
         $id_conti3 = 0;
 
         if (!empty($text)) {
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%'));
+            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
             $id_conti2 = array_column($id_conti, 'idpianodeiconti2');
 
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%'));
+            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
 
             $id_conti3 = array_column($id_conti, 'idpianodeiconti3');
             $id_conti2_3 = array_column($id_conti, 'idpianodeiconti2');

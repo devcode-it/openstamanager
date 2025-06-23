@@ -710,10 +710,10 @@ $operations['set_commission'] = [
 ];
 
 $operations['print_labels'] = [
-    'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
+    'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa barcode').'</span>',
     'data' => [
-        'title' => tr('Stampare le etichette?'),
-        'msg' => tr('Per ciascun articolo selezionato, verrà stampata un\'etichetta').'<br><br>
+        'title' => tr('Stampare i barcode?'),
+        'msg' => tr('Verranno stampati i barcode per ciascun articolo selezionato').'<br><br>
         {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

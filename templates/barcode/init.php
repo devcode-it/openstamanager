@@ -24,8 +24,8 @@ use Modules\Articoli\Articolo;
 
 if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    unset($_SESSION['superselect']['id_articolo_barcode']);
     $records = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
+    unset($_SESSION['superselect']['id_articolo_barcode']);
 } elseif( !empty(get('idbarcode')) ){
     $records = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
 } else {

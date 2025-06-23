@@ -72,7 +72,7 @@ class CSV extends CSVExporter
                 'type' => 'number',
             ],
             [
-                'field' => 'mg_categorie_lang.title',
+                'field' => 'zz_categorie_lang.title',
                 'label' => 'Categoria',
             ],
             [

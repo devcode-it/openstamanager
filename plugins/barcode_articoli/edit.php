@@ -37,7 +37,7 @@ echo '
 	<div class="row">
 		<div class="col-md-12">
             <button type="button" class="btn btn-default btn-xs tip pull-right" id="generaBarcode"><i class="fa fa-refresh"></i> '.tr('Genera').'</button>
-			{[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode", "required": 1, "value": "'.$barcode->barcode.'" ]}
+			{[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode", "required": 1, "value": "'.$barcode->barcode.'", "validation": "barcode|'.$id_module.'|'.$id_record.'" ]}
 		</div>
 	</div>
 

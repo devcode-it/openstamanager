@@ -19,18 +19,43 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Articolo;
+
 $operazione = filter('op');
 
 switch ($operazione) {
     case 'addbarcode':
          if (!empty(post('barcode'))) {
-             $dbo->insert('mg_articoli_barcode', [
-                'idarticolo' => $id_parent,
-                'barcode' => post('barcode'),
-            ]);
-            $id_record = $dbo->lastInsertedID();
-            
-            flash()->info(tr('Aggiunto un nuovo barcode!'));
+             // Controllo aggiuntivo per verificare l'unicità del barcode prima dell'inserimento
+             // anche se la validazione dovrebbe già averlo controllato
+             $barcode_value = post('barcode');
+
+             // Verifica che il barcode non sia già presente nella tabella mg_articoli
+             $esistente_articoli = Articolo::where('barcode', $barcode_value)->count() > 0;
+
+             // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode
+             $esistente_barcode = $dbo->table('mg_articoli_barcode')
+                 ->where('barcode', $barcode_value)
+                 ->count() > 0;
+
+             // Verifica che il barcode non coincida con un codice articolo esistente
+             $coincide_codice = Articolo::where([
+                 ['codice', $barcode_value],
+                 ['barcode', '=', '']
+             ])->count() > 0;
+
+             // Se il barcode è unico, procede con l'inserimento
+             if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
+                 $dbo->insert('mg_articoli_barcode', [
+                    'idarticolo' => $id_parent,
+                    'barcode' => $barcode_value,
+                ]);
+                $id_record = $dbo->lastInsertedID();
+
+                flash()->info(tr('Aggiunto un nuovo barcode!'));
+             } else {
+                 flash()->error(tr('Il barcode è già utilizzato in un altro articolo o nei suoi barcode aggiuntivi'));
+             }
          } else {
              flash()->warning(tr('Errore durante aggiunta del barcode'));
          }
@@ -38,11 +63,36 @@ switch ($operazione) {
         break;
 
     case 'updatebarcode':
-        $dbo->update('mg_articoli_barcode', [
-            'barcode' => post('barcode'),
-        ], ['id' => $id_record]);
+        // Controllo aggiuntivo per verificare l'unicità del barcode prima dell'aggiornamento
+        // anche se la validazione dovrebbe già averlo controllato
+        $barcode_value = post('barcode');
 
-        flash()->info(tr('Salvataggio completato!'));
+        // Verifica che il barcode non sia già presente nella tabella mg_articoli
+        $esistente_articoli = Articolo::where('barcode', $barcode_value)->count() > 0;
+
+        // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode
+        // escludendo il record corrente che stiamo modificando
+        $esistente_barcode = $dbo->table('mg_articoli_barcode')
+            ->where('barcode', $barcode_value)
+            ->where('id', '<>', $id_record)
+            ->count() > 0;
+
+        // Verifica che il barcode non coincida con un codice articolo esistente
+        $coincide_codice = Articolo::where([
+            ['codice', $barcode_value],
+            ['barcode', '=', '']
+        ])->count() > 0;
+
+        // Se il barcode è unico, procede con l'aggiornamento
+        if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
+            $dbo->update('mg_articoli_barcode', [
+                'barcode' => $barcode_value,
+            ], ['id' => $id_record]);
+
+            flash()->info(tr('Salvataggio completato!'));
+        } else {
+            flash()->error(tr('Il barcode è già utilizzato in un altro articolo o nei suoi barcode aggiuntivi'));
+        }
 
         break;
 

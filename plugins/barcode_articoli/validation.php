@@ -26,36 +26,26 @@ $name = filter('name');
 $value = filter('value');
 
 switch ($name) {
-    case 'codice':
-        $disponibile = Articolo::where([
-            ['codice', $value],
-            ['id', '<>', $id_record],
-        ])->count() == 0;
-
-        $message = $disponibile ? tr('Il codice è disponbile') : tr('Il codice è già utilizzato in un altro articolo');
-
-        $response = [
-            'result' => $disponibile,
-            'message' => $message,
-        ];
-
-        break;
-
     case 'barcode':
         // Controllo duplicati nella tabella principale mg_articoli (campo barcode)
         // Verifica che il barcode non sia già utilizzato come barcode principale di un altro articolo
         $disponibile = Articolo::where([
             ['barcode', $value],
-            ['id', '<>', $id_record],
         ])->count() == 0;
 
         // Controllo duplicati nella tabella mg_articoli_barcode (barcode multipli)
         // Verifica che il barcode non sia già presente tra i barcode aggiuntivi di altri articoli
+        // Esclude il record corrente se stiamo modificando un barcode esistente
         if ($disponibile) {
-            $disponibile = $dbo->table('mg_articoli_barcode')
-                ->where('barcode', $value)
-                ->where('idarticolo', '<>', $id_record)
-                ->count() == 0;
+            $query = $dbo->table('mg_articoli_barcode')
+                ->where('barcode', $value);
+
+            // Se stiamo modificando un barcode esistente, escludiamo il record corrente dalla verifica
+            if (!empty($id_record) && $id_record != 0) {
+                $query->where('id', '<>', $id_record);
+            }
+
+            $disponibile = $query->count() == 0;
         }
 
         // Controllo se il barcode coincide con un codice articolo esistente
@@ -64,7 +54,6 @@ switch ($name) {
             $disponibile = Articolo::where([
                 ['codice', $value],
                 ['barcode', '=', ''],
-                ['id', '<>', $id_record],
             ])->count() == 0;
         }
 

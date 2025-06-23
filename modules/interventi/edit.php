@@ -565,16 +565,6 @@ echo '
         $("#idsede_partenza").trigger("change");
 
         $("#id_articolo").on("change", function(e) {
-            if ($(this).val()) {
-                var data = $(this).selectData();
-
-                if (data.barcode) {
-                    $("#barcode").val(data.barcode);
-                } else {
-                    $("#barcode").val("");
-                }
-            }
-
             e.preventDefault();
 
             setTimeout(function(){

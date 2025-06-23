@@ -116,9 +116,9 @@ foreach ($righe as $riga) {
         }
     }
 
-    if ($riga->isArticolo() && !empty($riga->articolo->barcode)) {
+    if ($riga->isArticolo() && !empty($riga->barcode)) {
         echo '
-        <br><small><i class="fa fa-barcode"></i> '.$riga->articolo->barcode.'</small>';
+        <br><small><i class="fa fa-barcode"></i> '.$riga->barcode.'</small>';
     }
 
     if (!empty($riga->note)) {

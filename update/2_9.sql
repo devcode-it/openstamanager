@@ -26,3 +26,11 @@ UPDATE `zz_modules` SET `options` = 'SELECT\r\n |select|\r\nFROM\r\n `mg_articol
 
 -- Aggiorno la vista barcode nella scheda articolo
 UPDATE `zz_views` SET `query`='`barcode`.`lista`', `html_format`=1 WHERE `name` = 'barcode' AND `id_module` = @id_module;
+
+-- Gestione barcode nelle righe dei documenti
+ALTER TABLE `co_righe_contratti` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+ALTER TABLE `co_righe_preventivi` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+ALTER TABLE `or_righe_ordini` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+ALTER TABLE `co_righe_documenti` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+ALTER TABLE `dt_righe_ddt` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+ALTER TABLE `in_righe_interventi` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;

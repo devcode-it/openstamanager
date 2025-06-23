@@ -1187,7 +1187,7 @@ switch (post('op')) {
         $dir = 'entrata';
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => $barcode])['id'];
+            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
             if (empty($id_articolo)) {
                 $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
             }
@@ -1207,6 +1207,7 @@ switch (post('op')) {
                 $qta = 1;
 
                 $articolo->um = $originale->um;
+                $articolo->barcode = $barcode;
                 $articolo->qta = 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 

@@ -29,7 +29,7 @@ $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] ==
 $fields = [
     'idarticolo' => '`mg_articoli`.`id`',
     'codice' => '`mg_articoli`.`codice`',
-    'barcode' => '`mg_articoli`.`barcode`',
+    'barcode' => '`barcode`.`lista`',
     'descrizione' => '`mg_articoli_lang`.`title`',
     'categoria' => '(SELECT `title` FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_categorie`.`id` =  `mg_articoli`.`id_categoria`)',
     'subcategoria' => '(SELECT `title` FROM `zz_categorie` LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_categorie`.`id` =  `mg_articoli`.`id_sottocategoria`)',

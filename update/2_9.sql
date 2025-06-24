@@ -34,3 +34,11 @@ ALTER TABLE `or_righe_ordini` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
 ALTER TABLE `dt_righe_ddt` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
 ALTER TABLE `in_righe_interventi` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
+
+-- Impostazione per raggruppamento righe per articolo e barcode nei DDT
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+('Raggruppa gli articoli con stesso barcode nei DDT', '0', 'boolean', '1', 'Ddt', NULL);
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+(1, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Raggruppa gli articoli con stesso barcode nei DDT', ''),
+(2, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Group the items with the same barcode in the delivery notes', '');

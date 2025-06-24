@@ -583,12 +583,20 @@ switch (filter('op')) {
                 $response['error'] = tr('Quantità a magazzino non sufficiente');
                 echo json_encode($response);
             } else {
-                $articolo = Articolo::build($ddt, $originale);
-                $qta = 1;
+                if( setting('Raggruppa gli articoli con stesso barcode nei DDT') ){
+                    $articolo = Articolo::where('idddt',$ddt->id)
+                        ->where('barcode',$barcode)
+                        ->where('idarticolo',$originale->id)
+                        ->first();
+                }
+    
+                if( empty($articolo) ){
+                    $articolo = Articolo::build($ddt, $originale);
+                }
 
                 $articolo->um = $originale->um;
                 $articolo->barcode = $barcode;
-                $articolo->qta = 1;
+                $articolo->qta += 1;
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
                 // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione

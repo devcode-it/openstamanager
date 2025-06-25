@@ -96,7 +96,7 @@ $totali = [];
 
 foreach ($data['results'] as $r) {
     $articolo = Articolo::find($r['id']);
-    $valore_magazzino = $articolo->prezzo_acquisto * $articolo->qta;
+    $valore_magazzino = ($articolo->fattore_um_secondaria != 0 ? $articolo->fattore_um_secondaria : 1) * $articolo->prezzo_acquisto * $articolo->qta;
 
     echo '
         <tr>

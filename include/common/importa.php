@@ -34,11 +34,25 @@ if (empty($documento)) {
 }
 
 // Informazioni utili
-$dir = $documento->direzione;
 $original_module = Module::where('name', $documento->module)->first();
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
 $final_module = Module::where('name', $name)->first();
+
+// Determina la direzione in base al tipo di modulo finale
+if (in_array($final_module->name, ['Fatture di acquisto', 'Ordini fornitore', 'Ddt in entrata'])) {
+    $dir = 'uscita';
+} elseif (in_array($final_module->name, ['Fatture di vendita', 'Ordini cliente', 'Ddt in uscita', 'Interventi', 'Contratti', 'Preventivi'])) {
+    $dir = 'entrata';
+} else {
+    // Fallback: usa la direzione del documento finale se disponibile, altrimenti quella del documento iniziale
+    $dir = !empty($documento_finale) && !empty($documento_finale->direzione) ? $documento_finale->direzione : $documento->direzione;
+}
+
+// Se la direzione è specificata nelle opzioni, usa quella (ha precedenza)
+if (!empty($options['dir'])) {
+    $dir = $options['dir'];
+}
 $id_segment = $_SESSION['module_'.$final_module->id]['id_segment'];
 
 // IVA predefinita
@@ -117,7 +131,7 @@ if (!empty($options['create_document'])) {
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` = '.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}
             </div>
-            
+
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
@@ -268,7 +282,7 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
                 CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
                 IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
             FROM
-                `in_interventi` 
+                `in_interventi`
                 INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
                 LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
@@ -684,7 +698,7 @@ echo '
         ricalcolaTotale();
     });
 
-    $("#import_all").click(function(){    
+    $("#import_all").click(function(){
         if( $(this).is(":checked") ){
             $(".check").each(function(){
                 if( !$(this).is(":checked") ){

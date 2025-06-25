@@ -32,5 +32,7 @@ switch ($resource) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Mansioni';
+
         break;
 }

@@ -47,5 +47,7 @@ switch ($resource) {
             }
         }
 
+        $custom['link'] = 'module:IVA';
+
         break;
 }

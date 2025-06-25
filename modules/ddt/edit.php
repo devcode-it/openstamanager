@@ -115,14 +115,14 @@ if (setting('Cambia automaticamente stato ddt fatturati')) {
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
 } else {
-    echo '    
+    echo '
         {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
 }
 
 echo '
         </div>
     </div>
-    
+
 	<!-- DATI INTESTAZIONE -->
     <div class="card card-primary collapsable">
         <div class="card-header with-border">
@@ -134,30 +134,21 @@ echo '
             </div>
         </div>
 
-      
+
         <div class="card-body">
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-3">
-                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                 </div>';
 if ($dir == 'entrata') {
     echo '
-                <div class="col-md-3">';
-    if ($record['idagente'] != 0) {
-        echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-    }
-    echo '
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                 </div>';
 }
 echo '
-                <div class="col-md-3">';
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
-echo '
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
                 </div>
             </div>
@@ -181,7 +172,7 @@ echo '
                             {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
                         </div>';
                             }
-?>   
+?>
                         <div class="col-md-2">
                             {[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
                         </div>
@@ -267,9 +258,6 @@ if ($dir == 'entrata') {
 
 				<div class="col-md-3">
                     <?php
-    if (!empty($record['idvettore'])) {
-        echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
-    }
 $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
@@ -368,7 +356,7 @@ if ($dir == 'entrata') {
     <div class="card card-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
         <div class=" card-header">
             <h4 class=" card-title">
-                
+
                 <?php echo tr('Dati appalto'); ?></h4>
 
                 <div class="card-tools pull-right">
@@ -376,7 +364,7 @@ if ($dir == 'entrata') {
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>
-            
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -410,36 +398,36 @@ if ($dir == 'entrata') {
 
 if (!$block_edit) {
     // Lettura ordini (cliente o fornitore)
-    $ordini_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
-            `or_ordini` 
-            INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine` 
-            INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` 
-            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id` 
+    $ordini_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
+            `or_ordini`
+            INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+            INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
+            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        WHERE 
-            `idanagrafica`='.prepare($record['idanagrafica']).' 
+        WHERE
+            `idanagrafica`='.prepare($record['idanagrafica']).'
             AND `or_statiordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
             AND `or_tipiordine`.`dir`='.prepare($dir).'
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
-        GROUP BY 
+        GROUP BY
             `or_ordini`.`id`';
     $tot_ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
-    $ddt_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
-            `dt_ddt` 
+    $ddt_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
+            `dt_ddt`
             INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-        WHERE 
-            `title` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND 
-            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND 
+        WHERE
+            `title` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND
+            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND
             (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
-        GROUP BY 
+        GROUP BY
             `dt_ddt`.`id`';
     $tot_ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
@@ -462,11 +450,11 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
-                    
+
                     <div class="btn-group tip" data-card-widget="tooltip">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-list"></i> '.tr('Altro').'
@@ -476,7 +464,7 @@ if (!$block_edit) {
                             <a style="cursor:pointer" class="btn dropdown-item" onclick="gestioneDescrizione(this)" data-title="'.tr('Aggiungi descrizione').'">
                                 <i class="fa fa-plus"></i> '.tr('Descrizione').'
                             </a>
-                            
+
                             <a style="cursor:pointer"  class="btn dropdown-item" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                             </a>
@@ -484,7 +472,7 @@ if (!$block_edit) {
                             <a class="'.(!empty($tot_ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                 <i class="fa fa-plus"></i> '.tr('Ddt').'
                             </a>
-                        
+
                             <a class="'.(!empty($tot_ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                 <i class="fa fa-plus"></i> '.tr('Ordine').'
                             </a>

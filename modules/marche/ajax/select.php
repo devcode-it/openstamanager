@@ -17,6 +17,8 @@ switch ($resource) {
             $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Marche';
+
         break;
 
         /*
@@ -37,6 +39,8 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
             }
+
+            $custom['link'] = 'module:Marche';
         }
         break;
 }

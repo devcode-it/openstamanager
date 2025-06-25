@@ -32,5 +32,7 @@ switch ($resource) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Zone';
+
         break;
 }

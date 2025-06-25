@@ -217,6 +217,7 @@ switch ($resource) {
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],
+            'link' => 'module:Articoli',
         ];
 
         break;
@@ -234,6 +235,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Categorie';
 
         break;
 
@@ -255,6 +258,8 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
+
+            $custom['link'] = 'module:Categorie';
         }
         break;
 

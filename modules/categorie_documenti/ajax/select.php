@@ -36,5 +36,7 @@ switch ($resource) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Categorie documenti';
+
         break;
 }

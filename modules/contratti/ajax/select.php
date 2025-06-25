@@ -39,11 +39,11 @@ switch ($resource) {
                 `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
                 `in_tipiintervento`.`tempo_standard` AS tempo_standard
             FROM
-                `co_contratti` 
+                `co_contratti`
                 INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
                 LEFT JOIN `in_tipiintervento` ON (`co_contratti`.`idtipointervento`=`in_tipiintervento`.`id`)
                 LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-            |where| 
+            |where|
             ORDER BY
                 `co_contratti`.`id`';
 
@@ -64,6 +64,7 @@ switch ($resource) {
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
+        $contratti_results = [];
         foreach ($rs as $r) {
             $contratto = Contratto::find($r['id']);
             $ore_erogate = $contratto->interventi->sum('ore_totali');
@@ -83,7 +84,7 @@ switch ($resource) {
                 '_PREVISTE_' => Translator::numberToLocale($ore_previste, 2),
             ]) : $r['descrizione']);
 
-            $results[] = [
+            $contratti_results[] = [
                 'id' => $r['id'],
                 'text' => $descrizione,
                 'descrizione' => $descrizione,
@@ -92,6 +93,12 @@ switch ($resource) {
                 'idtipointervento_descrizione' => $r['idtipointervento_descrizione'],
             ];
         }
+
+        $results = [
+            'results' => $contratti_results,
+            'recordsFiltered' => $data['recordsFiltered'],
+            'link' => 'module:Contratti',
+        ];
 
         break;
 
@@ -107,6 +114,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Categorie contratti';
 
         break;
 
@@ -127,6 +136,8 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
+
+            $custom['link'] = 'module:Categorie contratti';
         }
         break;
 }

@@ -54,7 +54,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
         </div>
 
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT `mg_causali_movimenti`.`id`, `title` as text, `description` as descrizione, `tipo_movimento` FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = <?php echo Models\Locale::getDefault()->id; ?>) ORDER BY `title` ASC", "value": 1, "required": 1 ]}
+            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT `mg_causali_movimenti`.`id`, `title` as text, `description` as descrizione, `tipo_movimento` FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = <?php echo Models\Locale::getDefault()->id; ?>) ORDER BY `title` ASC", "value": 1, "required": 1, "link": "module:Causali movimenti" ]}
             <input type="hidden" name="tipo_movimento" id="tipo_movimento" value="carico">
         </div>
     </div>
@@ -105,11 +105,11 @@ echo '
 if (setting('Attiva scorciatoie da tastiera')) {
     echo 'EnableHotkeys()';
 }
-echo '  
+echo '
         $("#barcode").focus();
         $("#causale").trigger("change");
     });
-    
+
     $(document).on("keyup", function (event) {
         if ($(":focus").is("input, textarea")) {
             return;
@@ -118,7 +118,7 @@ echo '
         let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");
-            
+
         if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
             swal("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
         }
@@ -286,19 +286,19 @@ echo '
 
         hotkeys("f7,f8,f9,f10", function(event, handler) {
             switch (handler.key) {
-                case "f7": 
+                case "f7":
                     event.preventDefault();
                     $("#barcode").focus();
                 break;
-                case "f8": 
+                case "f8":
                     event.preventDefault();
                     input("causale").set("1").trigger("change");
                 break;
-                case "f9": 
+                case "f9":
                     event.preventDefault();
                     input("causale").set("2").trigger("change");
                 break;
-                case "f10": 
+                case "f10":
                     event.preventDefault();
                     input("causale").set("3").trigger("change");
                 break;

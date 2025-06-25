@@ -29,7 +29,7 @@ switch ($resource) {
         // Filtri per banche dell'Azienda
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT 
+        $query = "SELECT
             `co_pagamenti`.`id`,
             CONCAT_WS(' - ', `codice_modalita_pagamento_fe`, `title`) AS descrizione,
             `codice_modalita_pagamento_fe`,
@@ -43,8 +43,8 @@ switch ($resource) {
             LEFT JOIN `co_banche` banca_cliente ON `banca_cliente`.`id_anagrafica` = '.prepare($superselect['idanagrafica']).' AND `banca_cliente`.`deleted_at` IS NULL
             LEFT JOIN `co_banche` banca_vendite ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_pianodeiconti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL
             LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_pianodeiconti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL
-        |where| 
-        GROUP BY 
+        |where|
+        GROUP BY
             `co_pagamenti_lang`.`title` ORDER BY `co_pagamenti_lang`.`title` ASC';
 
         foreach ($elements as $element) {
@@ -80,6 +80,7 @@ switch ($resource) {
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],
+            'link' => 'module:Pagamenti',
         ];
 
         break;

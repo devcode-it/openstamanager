@@ -48,7 +48,7 @@ $tags = $database->fetchArray('SELECT `id_tag` FROM `in_interventi_tags` WHERE i
 $tags = $tags ? array_column($tags, 'id_tag') : [];
 
 echo '
-    
+
 <br>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -68,7 +68,7 @@ echo '
                         </button>
                     </div>
                 </div>
-            
+
                 <div class="card-body">
                     <div class="card-body">
                         <!-- RIGA 1 -->
@@ -95,27 +95,16 @@ echo '
                         </div>
                         <!-- RIGA 2 -->
                         <div class="row">
-                            <div class="col-md-3">';
-if ($record['idagente'] != 0) {
-    echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
-}
-echo '
-
+                            <div class="col-md-3">
                                 {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
                             </div>
 
 
-                            <div class="col-md-3">';
-echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : '';
-echo '
+                            <div class="col-md-3">
                                 {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                             </div>
-                            
+
                             <div class="col-md-6">';
-if (!empty($record['idpreventivo'])) {
-    echo '
-                            '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
-}
 echo '
                                 {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
                             </div>
@@ -124,10 +113,6 @@ echo '
 
 $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-if (!empty($record['idcontratto'])) {
-    echo '
-                                    '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
-}
 echo '
 
                                 {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
@@ -227,7 +212,7 @@ echo '
                     {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.Module::where('name', 'Tags')->first()->id.'|" ]}
+                    {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.Module::where('name', 'Tags')->first()->id.'|", "link": "module:Tags" ]}
                 </div>
             </div>
             <!-- RIGA 5 -->
@@ -288,7 +273,7 @@ if (!empty($record['idcontratto'])) {
             </div>
         </div>
 
-            
+
         <div class="card-body">
             <div class="card-body">
                 <div class="row">
@@ -352,13 +337,13 @@ if (!empty($record['idcontratto'])) {
 
 if (!$block_edit) {
     // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-    $prev_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
+    $prev_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
-        WHERE 
+        WHERE
             idanagrafica='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
@@ -367,16 +352,16 @@ if (!$block_edit) {
     $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
 
     // Lettura ddt (entrata o uscita)
-    $ddt_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
+    $ddt_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
             `dt_ddt`
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-        WHERE 
+        WHERE
             `idanagrafica`='.prepare($record['idanagrafica']).'
             AND `dt_statiddt_lang`.`title` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
             AND `dt_tipiddt`.`dir` = '.prepare($intervento->direzione).'
@@ -403,7 +388,7 @@ if (!$block_edit) {
                             <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                             </button>
-                            
+
                             <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                                 <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
@@ -419,15 +404,15 @@ if (!$block_edit) {
                                     <a class="btn dropdown-item" style="cursor:pointer" onclick="gestioneSconto(this)" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                                         <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                                     </a>
-                                   
+
                                     <a class="'.(!empty($preventivi) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                     </a>
-                            
+
                                     <a class="'.(!empty($contratti) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Contratto').'
                                     </a>
-                                  
+
 
                                     <a class="'.(!empty($ddt) ? '' : ' disabled').' dropdown-item" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ddt').'
@@ -638,7 +623,7 @@ echo '
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
         input("idreferente").getElement().selectReset();
-        
+
         let data = sede.getData();
 		if (data) {
 		    input("idzona").set(data.idzona ? data.idzona : "");
@@ -705,7 +690,7 @@ echo '
     async function salvaArticolo() {
         // Salvataggio via AJAX
         await salvaForm("#edit-form");
-        
+
         $("#link_form").ajaxSubmit({
             url: globals.rootdir + "/actions.php",
             data: {
@@ -727,7 +712,7 @@ echo '
                         text: response.error,
                     });
                 }
-    
+
                 $("#barcode").val("");
                 $("#id_articolo").selectReset();
                 content_was_modified = false;
@@ -736,7 +721,7 @@ echo '
             }
         });
     }
-    
+
     $("#link_form").bind("keypress", function(e) {
         if (e.keyCode == 13) {
             e.preventDefault();

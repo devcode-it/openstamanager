@@ -32,6 +32,8 @@ switch ($resource) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Listini cliente';
+
         break;
 
     case 'articoli_listino':

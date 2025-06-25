@@ -275,7 +275,12 @@ class Modules
      */
     public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null, $params = null)
     {
-        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
+        // Se non viene fornito un testo, non creare alcun link
+        if (!isset($testo) || empty($testo)) {
+            return '';
+        }
+
+        $testo = nl2br($testo);
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
 
         // Aggiunta automatica dell'icona di riferimento

@@ -84,6 +84,8 @@ switch ($resource) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Piano dei conti';
+
         break;
 
     case 'conti-acquisti':
@@ -98,6 +100,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Piano dei conti';
 
         break;
 

@@ -282,7 +282,7 @@ $query .= ' ORDER BY `title`';
 
 
     <div class="row">
-   
+
     <?php if ($dir == 'entrata') { ?>
         <div class="col-md-4 col-lg-2 offset-md-4 offset-lg-8 " <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
             {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
@@ -308,8 +308,7 @@ $query .= ' ORDER BY `title`';
         <div class="card-body">
             <!-- RIGA 1 -->
             <div class="row">
-                <div class="col-md-3">
-                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+                <div class="col-md-3">';
 
 if ($dir == 'entrata') {
     ?>
@@ -326,20 +325,13 @@ echo '
 
 if ($dir == 'entrata') {
     echo '
-				<div class="col-md-3">';
-    if ($record['idagente'] != 0) {
-        echo Modules::link('Anagrafiche', $record['idagente_fattura'], null, null, 'class="pull-right"');
-    }
-    echo '
+				<div class="col-md-3">
 					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
 }
 
 echo '
                 <div class="col-md-3">';
-if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-}
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 echo '
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
@@ -355,7 +347,7 @@ echo '
 
 		<div class="card-body">
 			<div class="row">
-                
+
                 <!-- id_segment -->
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
@@ -422,17 +414,13 @@ if ($dir == 'entrata') {
 
 					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
-                
-				<div class="col-md-3">
-                    <?php echo !empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : ''; ?>
 
+				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"if($(this).selectData()) {$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change();} \" " ]}
 				</div>
 
 				<div class="col-md-3">
-                    <?php if ($record['id_banca_azienda'] != 0) {
-                        echo Modules::link('Banche', $record['id_banca_azienda'], null, null, 'class="pull-right"');
-                    }
+<?php
 $id_module_banche = Module::where('name', 'Banche')->first()->id;
 if ($dir == 'entrata') {
     echo '
@@ -629,9 +617,6 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">';
-    if (!empty($record['idvettore'])) {
-        echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
-    }
     $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
         'id' => $record['idspedizione'],
     ])['esterno']; ?>
@@ -818,13 +803,13 @@ if (!$block_edit) {
             }
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-            $prev_query = 'SELECT 
-                    COUNT(*) AS tot 
-                FROM 
+            $prev_query = 'SELECT
+                    COUNT(*) AS tot
+                FROM
                     `co_preventivi`
                     LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.idpreventivo
                     INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.idstato
-                WHERE 
+                WHERE
                     `idanagrafica`='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
@@ -838,16 +823,16 @@ if (!$block_edit) {
         $id_stato_parz_fatt = StatoDDT::where('name', 'Parzialmente fatturato')->first()->id;
 
         // Lettura ddt (entrata o uscita)
-        $ddt_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
+        $ddt_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
             `dt_ddt`
             INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-        WHERE 
+        WHERE
             `idanagrafica`='.prepare($record['idanagrafica']).'
             AND `dt_statiddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
             AND `dt_tipiddt`.`dir` = '.prepare($dir).'
@@ -861,17 +846,17 @@ if (!$block_edit) {
         $id_stato_parz_evaso = StatoOrdine::where('name', 'Parzialmente evaso')->first()->id;
         $id_stato_parz_fatt = StatoOrdine::where('name', 'Parzialmente fatturato')->first()->id;
 
-        $ordini_query = 'SELECT 
-                COUNT(*) AS tot 
-            FROM 
+        $ordini_query = 'SELECT
+                COUNT(*) AS tot
+            FROM
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                 INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
-            WHERE 
-                idanagrafica='.prepare($record['idanagrafica']).' 
-                AND `or_statiordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).') 
+            WHERE
+                idanagrafica='.prepare($record['idanagrafica']).'
+                AND `or_statiordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
                 AND `dir`='.prepare($dir).'
                 AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
@@ -896,11 +881,11 @@ if (!$block_edit) {
                             <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                                 <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                             </button>
-                            
+
                             <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                                 <i class="fa fa-plus"></i> '.tr('Riga').'
                             </a>
-                            
+
                             <div class="btn-group tip" data-card-widget="tooltip">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa fa-list"></i> '.tr('Altro').'
@@ -1034,7 +1019,7 @@ echo '
         let data = $(this).selectData();
         if (data) {
             // Impostazione del tipo di pagamento da anagrafica
-            if (data.id_pagamento) { 
+            if (data.id_pagamento) {
                 input("idpagamento").getElement()
                     .selectSetNew(data.id_pagamento, data.desc_pagamento, {"id_banca_vendite": data.id_banca_vendite, "id_banca_acquisti": data.id_banca_acquisti, "descrizione_banca_vendite": data.descrizione_banca_vendite, "descrizione_banca_acquisti": data.descrizione_banca_acquisti});
             }
@@ -1183,7 +1168,7 @@ if ($dir == 'entrata') {
             input("bollo").disable();
             $("#bollo").val('.setting('Importo marca da bollo').');
             $("addebita_bollo").hide();
-            input("addebita_bollo").disable(); 
+            input("addebita_bollo").disable();
         }
     }
     $(document).ready(function() {

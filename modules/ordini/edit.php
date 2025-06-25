@@ -93,7 +93,6 @@ echo '
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-4">';
-echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
 if ($dir == 'entrata') {
     ?>
@@ -129,7 +128,7 @@ if ($dir == 'entrata') {
 
 echo '
             </div>
-            
+
             <div class="row">
                 <div class="col-md-4">';
 if (!empty($record['idreferente'])) {
@@ -183,11 +182,11 @@ echo '
 
             <div class="row">
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idspedizione$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idspedizione$", "link": "module:Spedizioni" ]}
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$", "link": "module:Porto" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -266,7 +265,7 @@ if ($dir == 'entrata') {
 ?>
                 </div>
 			</div>
-            
+
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
@@ -289,7 +288,7 @@ if ($dir == 'entrata') {
     <!-- Fatturazione Elettronica PA-->
     <div class="card card-primary collapsed-card <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
         <div class="card-header">
-            <h4 class="card-title">    
+            <h4 class="card-title">
                 <?php echo tr('Dati appalto'); ?>
             </h4>
 
@@ -298,7 +297,7 @@ if ($dir == 'entrata') {
                 <i class="fa fa-plus"></i>
                 </button>
             </div>
-            
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -333,13 +332,13 @@ echo '
 	<div class="card-body">';
 
 if (!$block_edit) {
-    $prev_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
+    $prev_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
-        WHERE 
+        WHERE
             `idanagrafica`='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa` > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
     echo '
@@ -364,7 +363,7 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
@@ -475,7 +474,7 @@ $("#idanagrafica").change(function() {
 
 	$("#idsede").selectReset();
     $("#idpagamento").selectReset();
-    
+
     let data = $(this).selectData();
 	if (data) {
         // Impostazione del tipo di pagamento da anagrafica
@@ -511,7 +510,7 @@ $(document).ready(function() {
 async function salvaArticolo() {
     // Salvataggio via AJAX
     await salvaForm("#edit-form");
-    
+
     $("#link_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {

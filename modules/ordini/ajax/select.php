@@ -27,17 +27,17 @@ switch ($resource) {
      */
     case 'ordini-cliente':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT 
+            $query = 'SELECT
                 `or_ordini`.`id` AS id,
                 CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`title` , "]") AS descrizione
-            FROM 
+            FROM
                 `or_ordini`
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
                 INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
                 INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             |where|
-            ORDER BY 
+            ORDER BY
                 `or_ordini`.`id`';
 
             foreach ($elements as $element) {
@@ -52,6 +52,8 @@ switch ($resource) {
                 $where[] = '`or_statiordine`.'.$stato.' = 1';
             }
         }
+
+        $custom['link'] = 'module:Ordini cliente';
 
         break;
 }

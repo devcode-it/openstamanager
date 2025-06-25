@@ -32,6 +32,9 @@ switch ($resource) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'matricola LIKE '.prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Impianti';
+
         break;
 
         /*
@@ -142,6 +145,8 @@ switch ($resource) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Categorie';
+
         break;
 
         /*
@@ -162,6 +167,8 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
+
+            $custom['link'] = 'module:Categorie';
         }
         break;
 
@@ -179,6 +186,8 @@ switch ($resource) {
             $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Marche';
+
         break;
 
     case 'modello':
@@ -195,6 +204,8 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
             }
+
+            $custom['link'] = 'module:Marche';
         }
         break;
 }

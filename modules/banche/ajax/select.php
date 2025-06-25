@@ -44,5 +44,7 @@ switch ($resource) {
             $search_fields[] = 'iban LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Banche';
+
         break;
 }

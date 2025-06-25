@@ -62,18 +62,20 @@ switch ($resource) {
             ];
         }
 
+        $custom['link'] = 'module:Anagrafiche';
+
         break;
 
     case 'utenti':
         $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`idanagrafica` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup
-        FROM 
+        FROM
             `zz_users`
             LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`=".prepare(Models\Locale::getDefault()->id).')
-        |where| 
-        ORDER BY 
+        |where|
+        ORDER BY
             `optgroup` ASC';
 
         $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
@@ -127,6 +129,8 @@ switch ($resource) {
             $search_fields[] = '`zz_groups_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['link'] = 'module:Utenti e permessi';
+
         break;
 
     case 'moduli_gruppo':
@@ -144,6 +148,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`zz_modules_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Moduli';
 
         break;
 }

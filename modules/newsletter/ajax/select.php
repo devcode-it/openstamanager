@@ -39,12 +39,12 @@ switch ($resource) {
         $query = "SELECT CONCAT('anagrafica_', `an_anagrafiche`.`idanagrafica`) AS id,
            CONCAT(`an_anagrafiche`.`ragione_sociale`, IF(`an_anagrafiche`.`citta` != '' OR `an_anagrafiche`.`provincia` != '', CONCAT(' (', `an_anagrafiche`.`citta`, IF(`an_anagrafiche`.`provincia` != '', `an_anagrafiche`.`provincia`, ''), ')'), ''), ' [', `email`, ']') AS text,
            `an_tipianagrafiche_lang`.`title` AS optgroup
-        FROM 
+        FROM
             `an_anagrafiche`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-        WHERE 
+        WHERE
             `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
         ORDER BY
             `optgroup` ASC, `ragione_sociale` ASC';
@@ -60,12 +60,12 @@ switch ($resource) {
         $query = "SELECT CONCAT('sede_', `an_sedi`.`id`) AS id,
            CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_sedi`.`nomesede`, IF(`an_sedi`.`citta` != '' OR `an_sedi`.`provincia` != '', CONCAT(' :', `an_sedi`.`citta`, IF(`an_sedi`.`provincia` != '', `an_sedi`.`provincia`, ''), ''), ''), ')', ' [', `an_sedi`.`email`, ']') AS text,
            'Sedi' AS optgroup
-        FROM 
+        FROM
             `an_sedi`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_sedi`.`idanagrafica`
-        WHERE 
+        WHERE
             `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
-        ORDER BY 
+        ORDER BY
             `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
@@ -79,12 +79,12 @@ switch ($resource) {
         $query = "SELECT CONCAT('referente_', `an_referenti`.`id`) AS id,
            CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_referenti`.`nome`, ') [', `an_referenti`.`email`, ']') AS text,
            'Referenti' AS optgroup
-        FROM 
+        FROM
             `an_referenti`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_referenti`.`idanagrafica`
-        WHERE 
+        WHERE
             `an_anagrafiche`.`deleted_at` IS NULL AND `an_anagrafiche`.`enable_newsletter` = 1 AND 1=1
-        ORDER BY 
+        ORDER BY
             `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
@@ -122,6 +122,8 @@ switch ($resource) {
         if (!empty($filter)) {
             $where[] = '('.implode(' OR ', $filter).')';
         }
+
+        $custom['link'] = 'module:Liste newsletter';
 
         break;
 }

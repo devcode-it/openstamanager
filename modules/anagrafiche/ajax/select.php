@@ -89,6 +89,7 @@ switch ($resource) {
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],
+            'link' => 'module:Anagrafiche',
         ];
 
         break;

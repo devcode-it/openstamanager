@@ -73,8 +73,16 @@ class AJAX
 
         $results ??= [];
 
+        $link = $options['link'] ?? ($results['link'] ?? null);
+        unset($results['link']);
+
         $total = array_key_exists('recordsFiltered', $results) ? $results['recordsFiltered'] : count($results);
         $list = array_key_exists('results', $results) ? $results['results'] : $results;
+
+        // Applicazione della trasformazione dei link se specificata nelle opzioni
+        if (!empty($link) && !empty($list)) {
+            $list = self::applyLinkTransformation($list, $link);
+        }
 
         return [
             'results' => $list ?: [],
@@ -125,6 +133,7 @@ class AJAX
         return [
             'results' => $results,
             'recordsFiltered' => $data['count'],
+            'link' => $custom['link'] ?? null
         ];
     }
 
@@ -264,6 +273,56 @@ class AJAX
         }
 
         return $results ?? null;
+    }
+
+    /**
+     * Applica la trasformazione dei link agli elementi del select.
+     *
+     * @param array  $list
+     * @param string $link
+     *
+     * @return array
+     */
+    protected static function applyLinkTransformation($list, $link)
+    {
+        foreach ($list as &$element) {
+            // Gestione degli elementi con children (optgroup)
+            if (isset($element['children']) && is_array($element['children'])) {
+                $element['children'] = self::applyLinkTransformation($element['children'], $link);
+            } else {
+                // Applicazione della trasformazione del link all'elemento singolo
+                $element = self::transformElementLink($element, $link);
+            }
+        }
+
+        return $list;
+    }
+
+    /**
+     * Trasforma il link di un singolo elemento applicando la stessa logica del SelectHandler.
+     *
+     * @param array  $element
+     * @param string $link
+     *
+     * @return array
+     */
+    protected static function transformElementLink($element, $link)
+    {
+        if ($link == 'stampa') {
+            $element['title'] = ' ';
+            $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+        } elseif ($link == 'allegato') {
+            $element['title'] = ' ';
+            $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+        } elseif (string_contains($link, 'module:')) {
+            $element['title'] = ' ';
+            $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+        } elseif (string_contains($link, 'plugin:')) {
+            $element['title'] = ' ';
+            $element['text'] = \Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+        }
+
+        return $element;
     }
 
     /**

@@ -1703,6 +1703,10 @@ table.dataTable {
     font-size: 13px !important;
 }
 
+.select2-container--bootstrap4 .select2-results__option--highlighted > a {
+    color: #fff;
+}
+
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {
     margin: 2px 0px;
 }

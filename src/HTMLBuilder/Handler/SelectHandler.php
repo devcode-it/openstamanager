@@ -73,11 +73,15 @@ class SelectHandler implements HandlerInterface
 
             // Informazioni aggiuntive per il select
             $infos = $values['select-options'] ?? [];
+            // Aggiunta dell'informazione del link alle opzioni per le chiamate AJAX
+            if (!empty($values['link'])) {
+                $infos['link'] = $values['link'];
+            }
             $values['data-select-options'] = json_encode($infos);
             unset($values['select-options']);
 
             if (!empty($values['value']) || is_numeric($values['value'])) {
-                $result .= $this->select2($source, $values['value'], $infos, $values['link']);
+                $result .= $this->select2($source, $values['value'], $infos);
             }
         } else {
             if (!in_array('multiple', $extras)) {
@@ -142,7 +146,7 @@ class SelectHandler implements HandlerInterface
      *
      * @return string
      */
-    protected function select2($op, $elements, $info, $link = null)
+    protected function select2($op, $elements, $info)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
         $response = \AJAX::select($op, $elements, null, 0, 100, $info);
@@ -158,14 +162,6 @@ class SelectHandler implements HandlerInterface
             $attributes = [];
             if (in_array($element['id'], $elements)) {
                 $attributes[] = 'selected';
-            }
-
-            if ($link == 'stampa') {
-                $element['title'] = ' ';
-                $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
-            } elseif ($link == 'allegato') {
-                $element['title'] = ' ';
-                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             }
 
             if (!empty($element['_bgcolor_'])) {
@@ -209,10 +205,16 @@ class SelectHandler implements HandlerInterface
 
             if ($link == 'stampa') {
                 $element['title'] = ' ';
-                $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+                $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif ($link == 'allegato') {
                 $element['title'] = ' ';
-                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" class="text-black" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            } elseif (string_contains($link, 'module:')) {
+                $element['title'] = ' ';
+                $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+            } elseif (string_contains($link, 'plugin:')) {
+                $element['title'] = ' ';
+                $element['text'] = \Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
             }
 
             $attributes = [];

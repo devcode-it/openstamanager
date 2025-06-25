@@ -47,7 +47,7 @@ switch ($op) {
             echo '
             <div class="col-md-6 mb-3">
                 <div class="alert alert-light">
-                    <h6 class="text-primary"><i class="fa fa-file-text-o"></i> '.tr('Ultimi _NUM_ Contratti', ['_NUM_' => $numero_documenti]).'</h6>
+                    <h6><i class="fa fa-file-text-o"></i> '.tr('Ultimi _NUM_ Contratti', ['_NUM_' => $numero_documenti]).'</h6>
                     <ul class="list-unstyled">';
             if (!$contratti->isEmpty()) {
                 foreach ($contratti as $contratto) {
@@ -76,7 +76,7 @@ switch ($op) {
             echo '
             <div class="col-md-6 mb-3">
                 <div class="alert alert-light">
-                    <h6 class="text-primary"><i class="fa fa-file-o"></i> '.tr('Ultimi _NUM_ Preventivi', ['_NUM_' => $numero_documenti]).'</h6>
+                    <h6><i class="fa fa-file-o"></i> '.tr('Ultimi _NUM_ Preventivi', ['_NUM_' => $numero_documenti]).'</h6>
                     <ul class="list-unstyled">';
             if (!$preventivi->isEmpty()) {
                 foreach ($preventivi as $preventivo) {
@@ -102,7 +102,7 @@ switch ($op) {
             echo '
             <div class="col-md-6 mb-3">
                 <div class="alert alert-light">
-                    <h6 class="text-primary"><i class="fa fa-wrench"></i> '.tr('Ultime _NUM_ Attività', ['_NUM_' => $numero_documenti]).'</h6>
+                    <h6><i class="fa fa-wrench"></i> '.tr('Ultime _NUM_ Attività', ['_NUM_' => $numero_documenti]).'</h6>
                     <ul class="list-unstyled">';
             if (!$interventi->isEmpty()) {
                 foreach ($interventi as $intervento) {
@@ -133,7 +133,7 @@ switch ($op) {
             echo '
             <div class="col-md-6 mb-3">
                 <div class="alert alert-light">
-                    <h6 class="text-primary"><i class="fa fa-file-pdf-o"></i> '.tr('Ultime _NUM_ Fatture', ['_NUM_' => $numero_documenti]).'</h6>
+                    <h6><i class="fa fa-file-pdf-o"></i> '.tr('Ultime _NUM_ Fatture', ['_NUM_' => $numero_documenti]).'</h6>
                     <ul class="list-unstyled">';
             if (!$fatture->isEmpty()) {
                 foreach ($fatture as $fattura) {
@@ -158,7 +158,7 @@ switch ($op) {
             echo '
             <div class="col-md-12">
                 <div class="alert alert-warning">
-                    <h6 class="text-primary"><i class="fa fa-sticky-note-o"></i> '.tr('Note interne sul cliente').'</h6>
+                    <h6><i class="fa fa-sticky-note-o"></i> '.tr('Note interne sul cliente').'</h6>
                     <p class="mb-0">'.(!empty($note_anagrafica) ? $note_anagrafica : tr('Nessuna nota interna per questo cliente')).'</p>
                 </div>
             </div>';

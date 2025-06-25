@@ -3122,6 +3122,10 @@ section.content, .main-footer {
     border-radius: 8px;
 }
 
+.alert a {
+  color: #007bff;
+}
+
 /* Stili per il controllo database */
 .row.align-items-center {
     margin-bottom: 15px;

@@ -52,7 +52,7 @@ if (!empty(setting('Magazzino cespiti'))) {
     $totale_qta = 0;
     $totali = [];
     foreach ($data['results'] as $r) {
-        $valore_magazzino = $r['acquisto'] * $r['qta_totale'];
+        $valore_magazzino = ($r['fattore_um_secondaria'] != 0 ? $r['fattore_um_secondaria'] : 1) * $r['acquisto'] * $r['qta_totale'];
 
         echo '
             <tr>

@@ -508,7 +508,7 @@ switch (post('op')) {
                 $copia->qta_evasa = 0;
                 $copia->costo_unitario = 0;
 
-                // Impostazione al prezzo di acquisto per Articoli
+                // Impostazione al prezzo di acquisto per tutte le righe
                 if ($copia->isArticolo()) {
                     $copia->setSconto(0, 'PRC');
 
@@ -519,10 +519,23 @@ switch (post('op')) {
                         $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
                     }
 
-                    $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
+                    // Calcolo del prezzo di acquisto per articoli
+                    if (!empty($fornitore)) {
+                        $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
+                        $sconto_percentuale = $fornitore->sconto_percentuale ?: 0;
+                    } else {
+                        // Se non c'è un listino specifico per il fornitore, usa il prezzo di acquisto dell'articolo
+                        $prezzo_unitario = $articolo->prezzo_acquisto;
+                        $sconto_percentuale = 0;
+                    }
 
-                    $copia->setPrezzoUnitario($fornitore ? $prezzo_unitario : $articolo->prezzo_acquisto, $copia->aliquota->id);
-                    $copia->setSconto($fornitore->sconto_percentuale ?: 0, 'PRC');
+                    $copia->setPrezzoUnitario($prezzo_unitario, $copia->aliquota->id);
+                    $copia->setSconto($sconto_percentuale, 'PRC');
+                } else {
+                    // Per righe non-articolo, usa il costo unitario se presente, altrimenti mantieni il prezzo di vendita come costo
+                    $costo_unitario = $riga->costo_unitario ?: $riga->prezzo_unitario;
+                    $copia->setPrezzoUnitario($costo_unitario, $copia->aliquota->id);
+                    $copia->setSconto(0, 'PRC');
                 }
 
                 $copia->save();
@@ -583,7 +596,7 @@ switch (post('op')) {
                 $copia->ora_evasione = null;
                 $copia->confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
 
-                // Impostazione al prezzo di acquisto per Articoli
+                // Impostazione al prezzo di acquisto per tutte le righe
                 if ($copia->isArticolo()) {
                     $copia->setSconto(0, 'PRC');
 
@@ -594,10 +607,24 @@ switch (post('op')) {
                         $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
                     }
 
-                    $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
+                    // Calcolo del prezzo di acquisto per articoli
+                    if (!empty($fornitore)) {
+                        $prezzo_unitario = $fornitore->prezzo_unitario - ($fornitore->prezzo_unitario * $fornitore->percentuale / 100);
+                        $sconto_percentuale = $fornitore->sconto_percentuale ?: 0;
+                    } else {
+                        // Se non c'è un listino specifico per il fornitore, usa il prezzo di acquisto dell'articolo
+                        $prezzo_unitario = $articolo->prezzo_acquisto;
+                        $sconto_percentuale = 0;
+                    }
 
-                    $copia->setPrezzoUnitario($fornitore ? $prezzo_unitario : $articolo->prezzo_acquisto, $copia->aliquota->id);
-                    $copia->setSconto($fornitore->sconto_percentuale ?: 0, 'PRC');
+                    // Forza l'impostazione dei prezzi di acquisto sovrascrivendo quelli di vendita
+                    $copia->setPrezzoUnitario($prezzo_unitario, $copia->aliquota->id);
+                    $copia->setSconto($sconto_percentuale, 'PRC');
+                } else {
+                    // Per righe non-articolo, usa il costo unitario se presente, altrimenti mantieni il prezzo di vendita come costo
+                    $costo_unitario = $riga->costo_unitario ?: $riga->prezzo_unitario;
+                    $copia->setPrezzoUnitario($costo_unitario, $copia->aliquota->id);
+                    $copia->setSconto(0, 'PRC');
                 }
 
                 $copia->save();

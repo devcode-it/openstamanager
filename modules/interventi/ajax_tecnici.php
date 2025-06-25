@@ -139,13 +139,13 @@ if (!empty($sessioni)) {
         // Orario di inizio
         echo '
             <td>
-            {[ "type": "timestamp", "name": "data_inizio_'.$sessione['id'].'", "required": 1, "value": "'.$sessione['orario_inizio'].'", "disabled": "'.$block_edit.'" ]}
+            {[ "type": "timestamp", "name": "data_inizio_'.$sessione['id'].'", "value": "'.$sessione['orario_inizio'].'", "disabled": "'.$block_edit.'" ]}
             </td>';
 
         // Orario di fine
         echo '
             <td>
-            {[ "type": "timestamp", "name": "data_fine_'.$sessione['id'].'", "required": 1, "value": "'.$sessione['orario_fine'].'",  "disabled": "'.$block_edit.'" ]}
+            {[ "type": "timestamp", "name": "data_fine_'.$sessione['id'].'", "value": "'.$sessione['orario_fine'].'",  "disabled": "'.$block_edit.'" ]}
             </td>';
 
         // ORE
@@ -153,7 +153,7 @@ if (!empty($sessioni)) {
         <td style="border-right:1px solid #aaa;">'.((Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->eq(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine'])) || Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->gt(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine']))) ? '<i  title="'.tr('Questa sessione non ha una durata valida.').'" class="fa fa-warning tip text-warning"></i>' : '').' 
         </td>
         <td style="border-right:1px solid #aaa;"> 
-            {[ "type": "number", "name": "ore_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
+            {[ "type": "number", "name": "ore_'.$sessione['id'].'", "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
 
                 <div class="extra hide">
                     <table class="table table-sm table-bordered">
@@ -182,7 +182,7 @@ if (!empty($sessioni)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "sessione_km_'.$sessione['id'].'", "required": 1, "value": "'.numberFormat($sessione['km'], 'qta').'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.$block_edit.'" ]}
+                {[ "type": "number", "name": "sessione_km_'.$sessione['id'].'", "value": "'.numberFormat($sessione['km'], 'qta').'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "disabled": "'.$block_edit.'" ]}
 
                 <div class="extra hide">
                     <table class="table table-sm table-bordered">

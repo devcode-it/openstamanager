@@ -490,7 +490,7 @@ switch (post('op')) {
 
     case 'update_inline':
         $id_riga = post('riga_id');
-        $riga = $riga ?: Riga::find($id_riga);
+        $riga = Riga::find($id_riga);
         $riga = $riga ?: Articolo::find($id_riga);
         $riga = $riga ?: Sconto::find($id_riga);
 
@@ -599,7 +599,7 @@ switch (post('op')) {
         $id_riga = post('riga_id');
         $id_iva = post('iva_id');
 
-        $riga = $riga ?: Riga::find($id_riga);
+        $riga = Riga::find($id_riga);
         $riga = $riga ?: Articolo::find($id_riga);
         $riga = $riga ?: Sconto::find($id_riga);
 

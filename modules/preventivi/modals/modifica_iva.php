@@ -120,7 +120,7 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
                     <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
-                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
+                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "values": "query=SELECT `co_iva`.`id`, IF(`deleted_at` IS NOT NULL, CONCAT(`codice`, ' - ', `title`, ' (<?php echo tr('eliminata'); ?>)'), CONCAT(`codice`, ' - ', `title`)) AS `descrizione` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC" ]}
                     <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
                     <input type="hidden" name="righe" value="<?php echo $_GET['righe']; ?>">
                 </div>
@@ -162,7 +162,7 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
                     <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
-                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
+                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "values": "query=SELECT `co_iva`.`id`, IF(`deleted_at` IS NOT NULL, CONCAT(`codice`, ' - ', `title`, ' (<?php echo tr('eliminata'); ?>)'), CONCAT(`codice`, ' - ', `title`)) AS `descrizione` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC" ]}
                     <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
                     <input type="hidden" name="righe" value="<?php echo get('righe'); ?>">
                 </div>

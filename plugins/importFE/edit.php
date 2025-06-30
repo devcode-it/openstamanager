@@ -177,90 +177,132 @@ if (Interaction::isEnabled()) {
     echo '
 function importAll(btn) {
     swal({
-        title: "'.tr('Importare tutte le fatture?').'",
-        html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
+        title: "'.tr('Importare tutte le fatture in sequenza?').'",
+        html: "'.tr('Verranno importate manualmente tutte le fatture presenti. Continuare?').'",
         showCancelButton: true,
         confirmButtonText: "'.tr('Procedi').'",
         type: "info",
     }).then(function (result) {
-        var restore = buttonLoading(btn);
+        if (result) {
+            var restore = buttonLoading(btn);
+            $("#main_loading").show();
 
-        // Mostra l\'animazione di caricamento
-        $("#main_loading").show();
+            // Ottieni la lista delle fatture per trovare la prima da importare
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                data: {
+                    op: "list",
+                    id_module: "'.$id_module.'",
+                    id_plugin: "'.$id_plugin.'",
+                },
+                type: "post",
+                success: function(data){
+                    try {
+                        data = JSON.parse(data);
 
-        // Mostra un messaggio di caricamento
-        $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">'.tr('Importazione fatture in corso...').'</div></div>");
+                        if (data.length > 0) {
+                            // Avvia l\'importazione in sequenza dalla prima fattura
+                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+                        } else {
+                            $("#main_loading").hide();
+                            buttonRestore(btn, restore);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            data: {
-                op: "list",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-            },
-            type: "post",
-            success: function(data){
-                data = JSON.parse(data);
-
-                count = data.length;
-                counter = 0;
-                data.forEach(function(element) {
-                    $.ajax({
-                        url: globals.rootdir + "/actions.php",
-                        type: "get",
-                        data: {
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                            op: "prepare",
-                            name: element.name,
-                        },
-                        success: function(data) {
-                            counter ++;
-
-                            importComplete(count, counter, btn, restore);
-                        },
-                        error: function(data) {
-                            counter ++;
-
-                            importComplete(count, counter, btn, restore);
+                            swal({
+                                title: "'.tr('Nessuna fattura da importare').'",
+                                html: "'.tr('Non sono presenti fatture da importare.').'",
+                                type: "warning",
+                            });
                         }
+                    } catch (e) {
+                        $("#main_loading").hide();
+                        buttonRestore(btn, restore);
+
+                        swal({
+                            title: "'.tr('Errore').'",
+                            html: "'.tr('Errore durante il caricamento delle fatture.').'",
+                            type: "error",
+                        });
+                    }
+                },
+                error: function(data) {
+                    $("#main_loading").hide();
+                    buttonRestore(btn, restore);
+
+                    swal({
+                        title: "'.tr('Errore').'",
+                        html: "'.tr('Errore durante il caricamento delle fatture.').'",
+                        type: "error",
                     });
-                });
-
-                importComplete(count, counter, btn, restore);
-            },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
-
-				$("#main_loading").fadeOut();
-                buttonRestore(btn, restore);
-            }
-        });
+                }
+            });
+        }
     });
-}
-
-function importComplete(count, counter, btn, restore) {
-    // Se tutte le fatture sono state elaborate, reindirizza
-    if(counter == count){
-        $("#main_loading").fadeOut();
-        buttonRestore(btn, restore);
-
-        // Mostra un messaggio di successo prima del reindirizzamento
-        swal({
-            title: "'.tr('Importazione completata!').'",
-            text: "'.tr('Tutte le fatture sono state importate con successo.').'",
-            type: "success",
-            timer: 2000,
-            showConfirmButton: false
-        }).then(function() {
-            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
-        });
-    }
 }';
 } else {
     echo '
 function importAll(btn) {
-    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+    swal({
+        title: "'.tr('Importare tutte le fatture in sequenza?').'",
+        html: "'.tr('Verranno importate manualmente tutte le fatture presenti nella cartella di importazione. Continuare?').'",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Procedi').'",
+        type: "info",
+    }).then(function (result) {
+        if (result) {
+            var restore = buttonLoading(btn);
+            $("#main_loading").show();
+
+            // Carica la lista delle fatture locali per trovare la prima da importare
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                data: {
+                    op: "get_local_files",
+                    id_module: "'.$id_module.'",
+                    id_plugin: "'.$id_plugin.'",
+                },
+                type: "post",
+                success: function(data){
+                    try {
+                        data = JSON.parse(data);
+
+                        if (data.length > 0) {
+                            // Avvia l\'importazione in sequenza dal primo file (record 1)
+                            // Il record ID corrisponde alla posizione nell\'array + 1
+                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+                        } else {
+                            $("#main_loading").hide();
+                            buttonRestore(btn, restore);
+
+                            swal({
+                                title: "'.tr('Nessuna fattura da importare').'",
+                                html: "'.tr('Non sono presenti fatture nella cartella di importazione.').'",
+                                type: "warning",
+                            });
+                        }
+                    } catch (e) {
+                        $("#main_loading").hide();
+                        buttonRestore(btn, restore);
+
+                        swal({
+                            title: "'.tr('Errore').'",
+                            html: "'.tr('Errore durante il caricamento delle fatture.').'",
+                            type: "error",
+                        });
+                    }
+                },
+                error: function(data) {
+                    $("#main_loading").hide();
+                    buttonRestore(btn, restore);
+
+                    swal({
+                        title: "'.tr('Errore').'",
+                        html: "'.tr('Errore durante il caricamento delle fatture.').'",
+                        type: "error",
+                    });
+                }
+            });
+        }
+    });
 }';
 }
 echo '

@@ -544,6 +544,10 @@ class Query
             }
         }
 
+        if (!$clean_value) {
+            return ($search_query.' IS NULL OR '.$search_query.' = \'\'');
+        }
+
         return $search_query.' = '.prepare($clean_value);
     }
 

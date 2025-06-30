@@ -684,7 +684,7 @@ if (!empty($righe)) {
                         <div class="col-md-11">
                             <div class="row">
                                 <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'uscita', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.tr('Crea articolo').'|'.base_path().'/add.php?id_module='.Modules::get('Articoli')['id'].'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
+                                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'uscita', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.\Models\Module::where('name', 'Articoli')->first()->id.'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
                                 </div>
 
                                 <div class="col-md-3">

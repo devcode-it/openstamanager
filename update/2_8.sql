@@ -211,14 +211,25 @@ ALTER TABLE `zz_categorie` ADD `is_impianto` TINYINT(1) NOT NULL DEFAULT 0;
 UPDATE `zz_categorie` SET `is_articolo` = 1 WHERE `id` IN (SELECT DISTINCT `id_categoria` FROM `mg_articoli` WHERE `id_categoria` IS NOT NULL AND `id_categoria` > 0)
 OR `id` IN (SELECT DISTINCT `id_sottocategoria` FROM `mg_articoli` WHERE `id_sottocategoria` IS NOT NULL AND `id_sottocategoria` > 0);
 
+-- Inserisci prima le categorie senza parent (categorie principali)
 INSERT INTO `zz_categorie` (`colore`, `parent`, `is_articolo`, `is_impianto`)
-SELECT `colore`, `parent`, 0, 1 FROM `my_impianti_categorie`;
+SELECT `colore`, NULL, 0, 1 FROM `my_impianti_categorie` WHERE `parent` IS NULL OR `parent` = 0;
+
+-- Inserisci le sottocategorie con parent, mappando i parent ID dalla vecchia alla nuova tabella
+INSERT INTO `zz_categorie` (`colore`, `parent`, `is_articolo`, `is_impianto`)
+SELECT `mic`.`colore`, `zz_cat_parent`.`id`, 0, 1
+FROM `my_impianti_categorie` `mic`
+JOIN `my_impianti_categorie` `mic_parent` ON `mic`.`parent` = `mic_parent`.`id`
+JOIN `zz_categorie` `zz_cat_parent` ON `zz_cat_parent`.`is_impianto` = 1 AND `zz_cat_parent`.`colore` = `mic_parent`.`colore`
+WHERE `mic`.`parent` IS NOT NULL AND `mic`.`parent` > 0;
 
 INSERT INTO `zz_categorie_lang` (`id_lang`, `id_record`, `title`)
 SELECT `mic_lang`.`id_lang`, `zz_cat`.`id`, `mic_lang`.`title`
 FROM `my_impianti_categorie_lang` `mic_lang`
 JOIN `my_impianti_categorie` `mic` ON `mic_lang`.`id_record` = `mic`.`id`
 JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore` = `mic`.`colore`;
+
+ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_1`;
 
 UPDATE `my_impianti` `imp`
 JOIN `my_impianti_categorie` `mic` ON `imp`.`id_categoria` = `mic`.`id`
@@ -231,7 +242,6 @@ JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore`
 SET `imp`.`id_sottocategoria` = `zz_cat`.`id`;
 
 DROP TABLE IF EXISTS `my_impianti_categorie_lang`;
-ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_1`;
 DROP TABLE IF EXISTS `my_impianti_categorie`;
 
 UPDATE `zz_modules` SET `name` = 'Categorie' WHERE `name` = 'Categorie articoli' ;
@@ -250,7 +260,7 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Impianto' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie')), 'Impianto'),
 (2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Impianto' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie')), 'Equipment');
 
-UPDATE `zz_modules` SET `directory` = 'categorie' WHERE `zz_modules`.`name` = 'Categorie'; 
+UPDATE `zz_modules` SET `directory` = 'categorie' WHERE `zz_modules`.`name` = 'Categorie';
 UPDATE `zz_modules` SET `attachments_directory` = 'categorie' WHERE `zz_modules`.`name` = 'Categorie';
 
 -- Allineamento vista Articoli
@@ -269,7 +279,7 @@ FROM
     LEFT JOIN `mg_categorie_lang` ON (`mg_categorie`.`id` = `mg_categorie_lang`.`id_record` AND `mg_categorie_lang`.|lang|)
     LEFT JOIN `mg_categorie` AS sottocategorie ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`
     LEFT JOIN `mg_categorie_lang` AS sottocategorie_lang ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.|lang|)
-    LEFT JOIN (SELECT `co_iva`.`percentuale` AS perc, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id`=`zz_settings`.`valore`)AS iva ON `iva`.`nome`= 'Iva predefinita' 
+    LEFT JOIN (SELECT `co_iva`.`percentuale` AS perc, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id`=`zz_settings`.`valore`)AS iva ON `iva`.`nome`= 'Iva predefinita'
     LEFT JOIN mg_scorte_sedi ON mg_scorte_sedi.id_articolo = mg_articoli.id
     LEFT JOIN (SELECT CASE WHEN MIN(differenza) < 0 THEN -1 WHEN MAX(threshold_qta) > 0 THEN 1 ELSE 0 END AS stato_giacenza, idarticolo FROM (SELECT SUM(mg_movimenti.qta) - COALESCE(mg_scorte_sedi.threshold_qta, 0) AS differenza, COALESCE(mg_scorte_sedi.threshold_qta, 0) as threshold_qta, mg_movimenti.idarticolo FROM mg_movimenti LEFT JOIN mg_scorte_sedi ON mg_scorte_sedi.id_sede = mg_movimenti.idsede AND mg_scorte_sedi.id_articolo = mg_movimenti.idarticolo GROUP BY mg_movimenti.idarticolo, mg_movimenti.idsede) AS subquery GROUP BY idarticolo) AS giacenze ON giacenze.idarticolo = mg_articoli.id
 WHERE
@@ -292,17 +302,17 @@ UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_categorie', 'zz_ca
 
 RENAME TABLE `mg_marchi` TO `zz_marche`;
 
-ALTER TABLE `zz_marche` ADD `parent` INT NOT NULL AFTER `link`, ADD `is_articolo` BOOLEAN NOT NULL DEFAULT 1, ADD `is_impianto` BOOLEAN NOT NULL DEFAULT 0; 
+ALTER TABLE `zz_marche` ADD `parent` INT NOT NULL AFTER `link`, ADD `is_articolo` BOOLEAN NOT NULL DEFAULT 1, ADD `is_impianto` BOOLEAN NOT NULL DEFAULT 0;
 
-ALTER TABLE `mg_articoli` CHANGE `id_marchio` `id_marca` INT NULL DEFAULT NULL; 
-ALTER TABLE `mg_articoli` CHANGE `modello` `id_modello` INT NULL DEFAULT NULL; 
+ALTER TABLE `mg_articoli` CHANGE `id_marchio` `id_marca` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_articoli` CHANGE `modello` `id_modello` INT NULL DEFAULT NULL;
 
 UPDATE `zz_marche` SET `is_articolo` = 1 WHERE `id` IN (SELECT DISTINCT `id_marca` FROM `mg_articoli` WHERE `id_marca` IS NOT NULL AND `id_marca` > 0) OR `id` IN (SELECT DISTINCT `id_modello` FROM `mg_articoli` WHERE `id_modello` IS NOT NULL AND `id_modello` > 0);
 
 INSERT INTO `zz_marche` (`name`,`parent`, `is_articolo`, `is_impianto`) SELECT `title`, `parent`, 0, 1 FROM `my_impianti_marche` INNER JOIN `my_impianti_marche_lang` ON `my_impianti_marche`.`id` = `my_impianti_marche_lang`.`id_record` AND `my_impianti_marche_lang`.`id_lang` = 1;
 
-UPDATE `zz_modules` SET `name` = 'Marche', `directory` = 'marche' WHERE `zz_modules`.`name` = 'Marchi'; 
-UPDATE `zz_modules_lang` SET `title` = 'Marche' WHERE `zz_modules_lang`.`title` = 'Marchi'; 
+UPDATE `zz_modules` SET `name` = 'Marche', `directory` = 'marche' WHERE `zz_modules`.`name` = 'Marchi';
+UPDATE `zz_modules_lang` SET `title` = 'Marche' WHERE `zz_modules_lang`.`title` = 'Marchi';
 
 UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'mg_marchi', 'zz_marche') WHERE `options` LIKE '%mg_marchi%';
 
@@ -316,7 +326,10 @@ UPDATE `zz_views` SET `query` = REPLACE(`query`, 'my_impianti_marche', 'zz_march
 
 DELETE FROM `zz_modules` WHERE `name` = 'Marche impianti';
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_marche` WHERE 1=1 AND parent = 0 HAVING 2=2 ORDER BY `zz_marche`.`name`' WHERE `zz_modules`.`name` = 'Marche'; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `zz_marche` WHERE 1=1 AND parent = 0 HAVING 2=2 ORDER BY `zz_marche`.`name`' WHERE `zz_modules`.`name` = 'Marche';
+
+ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_1`;
+ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_2`;
 
 DROP TABLE `my_impianti_marche`;
 DROP TABLE `my_impianti_marche_lang`;
@@ -328,7 +341,7 @@ SELECT
 FROM
     `my_impianti`
     LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
-    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico` 
+    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico`
     LEFT JOIN `zz_categorie` ON `zz_categorie`.`id` = `my_impianti`.`id_categoria`
     LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
     LEFT JOIN `zz_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
@@ -350,7 +363,7 @@ UPDATE `zz_views` SET `query` = 'modello.name' WHERE `name` = 'Modello' AND `id_
 -- Allineamento vista Preventivi
 UPDATE `zz_modules` SET `options` = "
 SELECT
-    |select| 
+    |select|
 FROM
     `co_preventivi`
     LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
@@ -360,13 +373,13 @@ FROM
     LEFT JOIN (SELECT `an_anagrafiche`.`idanagrafica`, `an_anagrafiche`.`ragione_sociale` AS nome FROM `an_anagrafiche`)AS agente ON `agente`.`idanagrafica`=`co_preventivi`.`idagente`
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idpreventivo` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type`='Modules\Preventivi\Preventivo' GROUP BY `idpreventivo`, `original_document_id`) AS `fattura` ON `fattura`.`idpreventivo` = `co_preventivi`.`id`
     LEFT JOIN (SELECT COUNT(id) as emails, em_emails.id_record FROM em_emails INNER JOIN zz_operations ON zz_operations.id_email = em_emails.id WHERE id_module IN(SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_operations`.`op` = 'send-email' GROUP BY em_emails.id_record) AS `email` ON `email`.`id_record` = `co_preventivi`.`id`
-WHERE 
+WHERE
     1=1 |segment(`co_preventivi`.`id_segment`)| |date_period(custom,'|period_start|' >= `data_bozza` AND '|period_start|' <= `data_conclusione`,'|period_end|' >= `data_bozza` AND '|period_end|' <= `data_conclusione`,`data_bozza` >= '|period_start|' AND `data_bozza` <= '|period_end|',`data_conclusione` >= '|period_start|' AND `data_conclusione` <= '|period_end|',`data_bozza` >= '|period_start|' AND `data_conclusione` = NULL)| AND `default_revision` = 1
-GROUP BY 
+GROUP BY
     `co_preventivi`.`id`, `fattura`.`info`
-HAVING 
+HAVING
     2=2
-ORDER BY 
+ORDER BY
     `co_preventivi`.`data_bozza` DESC, numero ASC" WHERE `zz_modules`.`name` = 'Preventivi';
 
 -- Allineamento vista Contratti

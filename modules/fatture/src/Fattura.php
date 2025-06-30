@@ -122,7 +122,7 @@ class Fattura extends Document
         }
         $model->idagente = $anagrafica->idagente ?: '';
 
-        $id_sede = null;
+        $id_sede = 0;
         foreach ($user->sedi as $sede) {
             if ($sede != 0 || count($user->sedi) == 1) {
                 $id_sede = $sede;

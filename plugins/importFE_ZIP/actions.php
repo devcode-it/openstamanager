@@ -365,13 +365,21 @@ switch (filter('op')) {
         $id_tipo = $tipi->sort()->keys()->last();
 
         // Ricerca del conto più utilizzato
-        $conti = $righe->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
-        $id_conto = $conti->sort()->keys()->last();
-        $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
+        // Filtro le righe che hanno un conto valido (maggiore di 0)
+        $righe_con_conto = $righe->filter(fn ($item) => !empty($item->idconto) && $item->idconto > 0);
+
+        $conto = null;
+        if ($righe_con_conto->isNotEmpty()) {
+            $conti = $righe_con_conto->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
+            $id_conto = $conti->sort()->keys()->last();
+            $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
+        }
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
-        $percentuali_iva = $righe->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
+        // Filtro le righe che hanno un'aliquota IVA valida
+        $righe_con_iva = $righe->filter(fn ($item) => !empty($item->idiva) && $item->idiva > 0 && !empty($item->aliquota));
+        $percentuali_iva = $righe_con_iva->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
         foreach ($percentuali_iva as $key => $values) {
             $aliquote = $values->mapToGroups(fn ($item, $key) => [$item->aliquota->id => $item->aliquota]);
             $id_aliquota = $aliquote->map(fn ($item, $key) => $item->count())->sort()->keys()->last();
@@ -383,14 +391,20 @@ switch (filter('op')) {
             ];
         }
 
-        echo json_encode([
+        $response = [
             'id_tipo' => $id_tipo,
-            'conto' => [
+            'iva' => $iva,
+        ];
+
+        // Aggiungo il conto solo se è stato trovato
+        if (!empty($conto)) {
+            $response['conto'] = [
                 'id' => $conto['id'],
                 'descrizione' => $conto['descrizione'],
-            ],
-            'iva' => $iva,
-        ]);
+            ];
+        }
+
+        echo json_encode($response);
         break;
 
     case 'riferimenti-automatici':

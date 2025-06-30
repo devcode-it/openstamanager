@@ -64,14 +64,19 @@ function compile(btn) {
                 $("#id_tipo").selectSet(response.id_tipo);
             }
 
+            // Compila i campi IVA - prova a impostare la prima IVA disponibile per tutti i campi vuoti
             $("select[name^=iva]").each(function(){
-                var aliquota = $(this).closest("tr").find("[id^=aliquota]").text();
-                if (response.iva[aliquota] !== undefined && !$(this).val()){
-                    $(this).selectSet(response.iva[aliquota].id);
+                if (!$(this).val() && response.iva){
+                    // Prende la prima aliquota IVA disponibile
+                    var firstIva = Object.values(response.iva)[0];
+                    if (firstIva) {
+                        $(this).selectSetNew(firstIva.id, firstIva.descrizione);
+                    }
                 }
             });
 
-            $("select[name^=conto]").each(function(){
+            // Compila i campi conto - il nome corretto è "conti" non "conto"
+            $("select[name^=conti]").each(function(){
                 if (!$(this).val()){
                     $(this).selectSetNew(response.conto.id, response.conto.descrizione);
                 }

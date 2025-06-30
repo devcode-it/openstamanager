@@ -147,19 +147,18 @@ foreach ($categories as $categoria) {
 }
 $dbo->query('ALTER TABLE `zz_files` DROP `category`');
 
-
 // Rimozione delle foreign key dalla tabella my_impianti_marche_lang
 try {
     $dbo->query('ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_1`');
 } catch (Exception $e) {
     // Log dell'errore senza interrompere l'esecuzione
-    error_log("Errore rimozione foreign key my_impianti_marche_lang_ibfk_1: " . $e->getMessage());
+    error_log('Errore rimozione foreign key my_impianti_marche_lang_ibfk_1: '.$e->getMessage());
 }
 try {
     $dbo->query('ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_2`');
 } catch (Exception $e) {
     // Log dell'errore senza interrompere l'esecuzione
-    error_log("Errore rimozione foreign key my_impianti_marche_lang_ibfk_2: " . $e->getMessage());
+    error_log('Errore rimozione foreign key my_impianti_marche_lang_ibfk_2: '.$e->getMessage());
 }
 
 // Rimozione delle tabelle my_impianti_marche_lang e my_impianti_marche
@@ -167,11 +166,11 @@ try {
     $dbo->query('DROP TABLE `my_impianti_marche_lang`');
 } catch (Exception $e) {
     // Log dell'errore senza interrompere l'esecuzione
-    error_log("Errore rimozione tabella my_impianti_marche_lang: " . $e->getMessage());
+    error_log('Errore rimozione tabella my_impianti_marche_lang: '.$e->getMessage());
 }
 try {
     $dbo->query('DROP TABLE `my_impianti_marche`');
 } catch (Exception $e) {
     // Log dell'errore senza interrompere l'esecuzione
-    error_log("Errore rimozione tabella my_impianti_marche: " . $e->getMessage());
+    error_log('Errore rimozione tabella my_impianti_marche: '.$e->getMessage());
 }

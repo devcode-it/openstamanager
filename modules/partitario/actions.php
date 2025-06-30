@@ -30,7 +30,7 @@ switch (post('op')) {
         $numero = post('numero');
         $descrizione = post('descrizione');
         $lvl = post('lvl');
-        $percentuale = post('percentuale_deducibile')?:0;
+        $percentuale = post('percentuale_deducibile') ?: 0;
 
         if (post('id_conto') !== null) {
             if ($lvl == '2') {
@@ -68,7 +68,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $dir = post('dir');
         $conto_bloccato = post('conto_bloccato');
-        $percentuale = post('percentuale_deducibile')?:0;
+        $percentuale = post('percentuale_deducibile') ?: 0;
 
         $lvl = post('lvl');
 

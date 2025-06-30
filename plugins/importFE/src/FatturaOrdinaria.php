@@ -327,7 +327,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Per gli articoli collegati a ordini, mantieni la descrizione dell'articolo e aggiungi solo il riferimento
                 if ($obj->isArticolo()) {
                     // Mantieni la descrizione dell'articolo e aggiungi solo il riferimento al documento
-                    $obj->descrizione = $obj->articolo->getTranslation('title') . $nuovo_riferimento;
+                    $obj->descrizione = $obj->articolo->getTranslation('title').$nuovo_riferimento;
                 } else {
                     // Per righe e descrizioni, gestisci normalmente
                     $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';

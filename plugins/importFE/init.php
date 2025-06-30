@@ -59,7 +59,7 @@ if (!empty($id_record)) {
 
         if (!empty($next_file)) {
             flash()->info(tr('La fattura _NAME_ è già stata importata, passaggio alla successiva...', [
-                '_NAME_' => $record['name']
+                '_NAME_' => $record['name'],
             ]));
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$next_record.'&sequence=1');
         } else {

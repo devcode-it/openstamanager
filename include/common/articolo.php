@@ -24,7 +24,7 @@ $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' =>
 
 // Articolo
 $database = database();
-$articolo = $database->fetchOne('SELECT 
+$articolo = $database->fetchOne('SELECT
         `mg_articoli`.`id`,
         `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore,
         IFNULL(`mg_fornitore_articolo`.`codice_fornitore`, `mg_articoli`.`codice`) AS codice,
@@ -33,7 +33,7 @@ $articolo = $database->fetchOne('SELECT
     FROM `mg_articoli`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`id` = '.prepare($result['id_dettaglio_fornitore']).'
-    WHERE 
+    WHERE
         `mg_articoli`.`id` = '.prepare($result['idarticolo']));
 
 $qta_minima = $articolo['qta_minima'];
@@ -43,6 +43,9 @@ echo '
 
     <script>
         $(document).ready(function (){
+            // Preimpostazione del prezzo di acquisto per articolo già selezionato
+            $("#costo_unitario").val("'.$articolo['prezzo_acquisto'].'");
+
             ottieniDettagliArticolo("'.$articolo['id'].'").then(function (){
                 verificaPrezzoArticolo();
                 verificaScontoArticolo();
@@ -138,6 +141,11 @@ $("#idarticolo").on("change", function() {
 
     // Autoimpostazione dei campi relativi all\'articolo
     let $data = $(this).selectData();
+
+    // Preimpostazione immediata del prezzo di acquisto e descrizione
+    $("#costo_unitario").val($data.prezzo_acquisto);
+    $("#descrizione_riga").val($data.descrizione);
+
     ottieniDettagliArticolo($data.id).then(function() {
         if ($("#prezzo_unitario").val().toEnglish() === 0){
             aggiornaPrezzoArticolo();
@@ -151,27 +159,24 @@ $("#idarticolo").on("change", function() {
             verificaScontoArticolo();
         }
 
-        $("#costo_unitario").val($data.prezzo_acquisto);
-        $("#descrizione_riga").val($data.descrizione);
-
         if (direzione === "entrata") {
             if($data.idiva_vendita) {
                 $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita, {"percentuale": $data.percentuale});
             }
         }
-    
+
         else {
             $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
             $("#qta_minima").val($data.qta_minima);
             aggiornaQtaMinima();
         }
-    
+
         let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
         let id_conto_title = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
         if(id_conto) {
             $("#idconto").selectSetNew(id_conto, id_conto_title);
         }
-    
+
         $("#um").selectSetNew($data.um, $data.um);
 
         if ($data.provvigione) {
@@ -295,7 +300,7 @@ function getPrezziListinoVisibili(nome = "") {
                     dettaglio_prezzi_visibili = parseFloat(dettaglio.prezzo_unitario_listino_visibile);
                     continue;
                 }
-            } else {                
+            } else {
                 dettaglio_prezzi_visibili.push(dettaglio);
             }
         }
@@ -385,7 +390,7 @@ function verificaPrezzoArticolo() {
     }
     let table = $(".table-prezzi");
 
-    if (prezzo_anagrafica) { 
+    if (prezzo_anagrafica) {
         table.append(`<tr><td class="pr_anagrafica"><small>'.($options['dir'] == 'uscita' ? tr('Prezzo listino') : tr('Netto cliente')).': '.Plugins::link($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Netto Clienti', $result['idarticolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_anagrafica"><small>` + prezzo_anagrafica.toLocale() + ` ` + globals.currency + `</small></td>`);
 
         let tr = $(".pr_anagrafica").parent();
@@ -531,7 +536,7 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
         prezzo3 = getPrezzoScheda();
         prezzo_previsto = (!prezzo1 ? prezzo2 : (!prezzo2 ? prezzo1 : (prezzo1 > prezzo2 ? prezzo2 : prezzo1)));
         prezzo_previsto = (prezzo_previsto ? prezzo_previsto : prezzo3);
-    } 
+    }
 
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
     $("#sconto").val(0).trigger("change");
@@ -619,7 +624,7 @@ function verificaMinimoVendita() {
         if (input("blocca_minimo_vendita").get() == "1") {
             prezzo_unitario_input.val(minimo_vendita);
             div.html(`<p class="badge-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
-        } 
+        }
     }
 }
 </script>';

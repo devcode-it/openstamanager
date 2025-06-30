@@ -97,7 +97,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta", "value": "<?php echo htmlentities(filter('qta')) ?: ''; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -111,7 +111,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "<?php echo htmlentities(filter('um')) ?: ''; ?>", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
@@ -255,5 +255,12 @@ function scorpora_iva_add() {
 
 $("#genera_barcode").click(function(){
     $(".modal #barcode").attr("disabled", $(this).is(":checked")).val("");
+});
+
+// Espandi automaticamente la sezione "Informazioni aggiuntive" se sono precompilati dati dall'ImportFE
+$(document).ready(function() {
+    if (input("prezzo_acquisto").get() > 0 || input("qta").get() > 0 || input("um").get()) {
+        $(".card.collapsed-card .card-tools button[data-card-widget='collapse']").click();
+    }
 });
 </script>

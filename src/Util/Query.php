@@ -250,9 +250,25 @@ class Query
                 $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', $query);
                 $order_clause = $total['order_by'][$column_index];
 
-                // Sanitizzazione della clausola ORDER BY
+                // Determina la clausola di ordinamento da usare
+                $final_order_clause = '';
                 if (!empty($order_clause)) {
-                    $query .= ' ORDER BY '.$order_clause.' '.$direction;
+                    $final_order_clause = $order_clause;
+                } else {
+                    // Se order_by è vuoto, usa il nome del campo come fallback
+                    if (isset($total['fields'][$column_index])) {
+                        $field_name = $total['fields'][$column_index];
+                        $field_name = preg_replace('/[^a-zA-Z0-9_.]/', '', $field_name);
+                        if (!empty($field_name)) {
+                            $final_order_clause = '`'.$field_name.'`';
+                        }
+                    }
+                }
+
+                // Applica l'ordinamento solo se abbiamo una clausola valida
+                if (!empty($final_order_clause)) {
+                    $query = preg_replace('/\s+ORDER\s+BY\s+.*$/is', '', $query);
+                    $query .= ' ORDER BY '.$final_order_clause.' '.$direction;
                 }
             }
         }

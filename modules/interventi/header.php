@@ -342,7 +342,24 @@ echo '
         const indirizzo = getIndirizzoAnagrafica();
 
         const destinazione = (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) ? indirizzo[0] + ","+ indirizzo[1] : indirizzo[2];
-        if (isMobile.any) {
+
+        // Funzione di fallback per rilevare dispositivi mobili
+        function isMobileDevice() {
+            // Controlla se isMobile è disponibile
+            if (typeof isMobile !== "undefined" && isMobile.any) {
+                return true;
+            }
+
+            // Fallback usando globals.is_mobile se disponibile
+            if (typeof globals !== "undefined" && globals.is_mobile) {
+                return true;
+            }
+
+            // Fallback usando user agent
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        if (isMobileDevice()) {
             window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
         } else {
             if (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) {
@@ -359,7 +376,23 @@ echo '
 
         const destinazione = (!isNaN(indirizzo_destinazione[0]) && !isNaN(indirizzo_destinazione[1])) ? indirizzo_destinazione[0] + ","+ indirizzo_destinazione[1] : indirizzo_destinazione[2];
 
-        if (isMobile.any) {
+        // Funzione di fallback per rilevare dispositivi mobili
+        function isMobileDevice() {
+            // Controlla se isMobile è disponibile
+            if (typeof isMobile !== "undefined" && isMobile.any) {
+                return true;
+            }
+
+            // Fallback usando globals.is_mobile se disponibile
+            if (typeof globals !== "undefined" && globals.is_mobile) {
+                return true;
+            }
+
+            // Fallback usando user agent
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        if (isMobileDevice()) {
             window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
         } else {
             window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + destinazione);

@@ -127,22 +127,22 @@ if (sizeof($problemi_anagrafica) > 0) {
                    <div class="col-md-4">
                        {[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
                    </div>
-               
+
                    <div class="col-md-4">
                        {[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
                    </div>
-               
+
                    <div class="col-md-4">
                        {[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
                    </div>
                </div>
                <?php } ?>
-               
+
                <div class="row">
                    <div class="col-md-2">
                        {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
                    </div>
-               
+
                    <div class="col-md-2">
                        <?php
                                         $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
@@ -316,7 +316,24 @@ echo '
                 const indirizzo = getIndirizzoAnagrafica();
 
                 const destinazione = (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) ? indirizzo[0] + ","+ indirizzo[1] : indirizzo[2];
-                if (isMobile.any) {
+
+                // Funzione di fallback per rilevare dispositivi mobili
+                function isMobileDevice() {
+                    // Controlla se isMobile è disponibile
+                    if (typeof isMobile !== "undefined" && isMobile.any) {
+                        return true;
+                    }
+
+                    // Fallback usando globals.is_mobile se disponibile
+                    if (typeof globals !== "undefined" && globals.is_mobile) {
+                        return true;
+                    }
+
+                    // Fallback usando user agent
+                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                }
+
+                if (isMobileDevice()) {
                     window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
                 } else {
                     if (!isNaN(indirizzo[0]) && !isNaN(indirizzo[1])) {
@@ -333,7 +350,23 @@ echo '
 
                 const destinazione = (!isNaN(indirizzo_destinazione[0]) && !isNaN(indirizzo_destinazione[1])) ? indirizzo_destinazione[0] + ","+ indirizzo_destinazione[1] : indirizzo_destinazione[2];
 
-                if (isMobile.any) {
+                // Funzione di fallback per rilevare dispositivi mobili
+                function isMobileDevice() {
+                    // Controlla se isMobile è disponibile
+                    if (typeof isMobile !== "undefined" && isMobile.any) {
+                        return true;
+                    }
+
+                    // Fallback usando globals.is_mobile se disponibile
+                    if (typeof globals !== "undefined" && globals.is_mobile) {
+                        return true;
+                    }
+
+                    // Fallback usando user agent
+                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                }
+
+                if (isMobileDevice()) {
                     window.open("geo:" + destinazione + "?z=16&q=" + destinazione);
                 } else {
                     window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + destinazione);
@@ -371,9 +404,9 @@ echo '
                     swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
                     return false;
                 }
-                    
-                var container = L.DomUtil.get("map-edit"); 
-                if(container._leaflet_id != null){ 
+
+                var container = L.DomUtil.get("map-edit");
+                if(container._leaflet_id != null){
                     map.eachLayer(function (layer) {
                         if(layer instanceof L.Marker) {
                             map.removeLayer(layer);
@@ -383,13 +416,13 @@ echo '
                     map = L.map("map-edit", {
                         gestureHandling: true
                     });
-            
+
                     L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
                         maxZoom: 17,
                         attribution: "© OpenStreetMap"
                     }).addTo(map);
                 }
-            
+
                 var icon = new L.Icon({
                     iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
                     shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
@@ -413,7 +446,7 @@ echo '
                     forcePseudoFullscreen: true,
                     fullscreenElement: false
                 }).addTo(map);
-            
+
                 map.setView([lat, lng], 14);
             }
 
@@ -473,7 +506,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="row">
-                                
+
                             </div>';
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
@@ -509,7 +542,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                         {[ "type": "select", "label": "'.tr('Provenienza').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Module::where('name', 'Provenienze')->first()->id.'" ]}
                                 </div>
-                            
+
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_vendite$" ]}
                                 </div>
@@ -519,7 +552,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Banca predefinita azienda per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
                                 </div>
-                            
+
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$" ]}
                                 </div>
@@ -529,7 +562,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
                                 </div>
-                            
+
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Piano di sconto/magg. su articoli').'", "name": "id_piano_sconto_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_piani_sconto ORDER BY nome ASC", "value": "$id_piano_sconto_vendite$" ]}
                                 </div>
@@ -539,7 +572,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
                                 </div>
-                            
+
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
                                 </div>
@@ -836,7 +869,7 @@ if (empty($record['deleted_at'])) {
 ?>
 
 <script>
-    
+
     var an_sdi = <?php echo ($anagrafica->tipo == 'Azienda') ? $dbo->fetchOne('SELECT JSON_ARRAYAGG(`codice`) AS `elenco_codici` FROM `an_sdi`')['elenco_codici'] : []; ?>;
 
     $(document).ready(function() {

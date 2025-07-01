@@ -327,7 +327,23 @@ $('#idanagrafica').change(function() {
 });
 
 function calcolaPercorso(indirizzo_partenza, indirizzo_destinazione) {
-    if (isMobile.any) {
+    // Funzione di fallback per rilevare dispositivi mobili
+    function isMobileDevice() {
+        // Controlla se isMobile è disponibile
+        if (typeof isMobile !== 'undefined' && isMobile.any) {
+            return true;
+        }
+
+        // Fallback usando globals.is_mobile se disponibile
+        if (typeof globals !== 'undefined' && globals.is_mobile) {
+            return true;
+        }
+
+        // Fallback usando user agent
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    if (isMobileDevice()) {
         window.open("geo:" + indirizzo_destinazione + "?z=16&q=" + indirizzo_destinazione);
     } else {
         window.open("https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" + indirizzo_partenza + ";" + indirizzo_destinazione);

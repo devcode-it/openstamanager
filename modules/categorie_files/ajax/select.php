@@ -36,7 +36,7 @@ switch ($resource) {
             $search_fields[] = '`zz_files_categories`.`name` LIKE '.prepare('%'.$search.'%');
         }
 
-        $custom['link'] = 'module:Categorie files';
+        $custom['link'] = 'module:Categorie file';
 
         break;
 }

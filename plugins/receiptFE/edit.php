@@ -157,7 +157,7 @@ if (Interaction::isEnabled()) {
             </div>
 
             <div class="btn-group btn-group-sm d-inline-flex">
-                <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                <button type="button" class="btn btn-warning" onclick="importAllReceipt(this)">
                     <i class="fa fa-cloud-download mr-1"></i> '.tr('Importa tutte').'
                 </button>
 
@@ -244,8 +244,8 @@ function searchReceipts(button) {
     // Mostra un\'animazione di caricamento nella lista
     $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
 
-    // Carica la lista delle ricevute
-    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+    // Carica la lista delle ricevute con parametro per forzare refresh cache
+    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&refresh_cache=" + Date.now(), function() {
         buttonRestore(button, restore);
 
         // Applica il filtro di ricerca se presente
@@ -317,7 +317,7 @@ function importMessage(data) {
     }
 }
 
-function importAll(btn) {
+function importAllReceipt(btn) {
     swal({
         title: "'.tr('Importare tutte le ricevute?').'",
         html: "'.tr('Importando le ricevute, verranno aggiornati gli stati di invio delle fatture elettroniche. Continuare?').'",

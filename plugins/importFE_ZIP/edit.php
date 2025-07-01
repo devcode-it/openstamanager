@@ -183,7 +183,7 @@ echo '
             </div>
 
             <div class="btn-group btn-group-sm d-inline-flex">
-                <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                <button type="button" class="btn btn-warning" onclick="importAllZip(this)">
                     <i class="fa fa-cloud-download mr-1"></i> '.tr('Importa tutte').'
                 </button>';
 
@@ -238,7 +238,7 @@ $(document).ready(function() {
 
 if (Interaction::isEnabled()) {
     echo '
-function importAll(btn) {
+function importAllZip(btn) {
     swal({
         title: "'.tr('Importare tutte le fatture?').'",
         html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
@@ -307,7 +307,7 @@ function importComplete(count, counter, btn, restore) {
 }';
 } else {
     echo '
-function importAll(btn) {
+function importAllZip(btn) {
     redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
 }';
 }

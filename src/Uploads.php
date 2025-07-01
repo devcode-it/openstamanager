@@ -79,7 +79,7 @@ class Uploads
      */
     public static function upload($source, $data, $options = [])
     {
-        return Upload::build($source, $data, null, "fattura elettronica");
+        return Upload::build($source, $data);
     }
 
     /**

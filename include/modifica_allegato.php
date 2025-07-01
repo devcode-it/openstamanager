@@ -38,7 +38,7 @@ if (sizeof($id_allegati) == 1) {
             {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome_allegato", "value": "'.$allegato->name.'" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "ajax-source": "categorie-files", "value": "'.$allegato->id_category.'", "disabled": "'.intval(in_array($allegato->categoria->name, ['Fattura Elettronica'])).'", "icon-after": "add|'.Module::where('name', 'Categorie file')->first()->id.'" ]}
+            {[ "type": "select", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "ajax-source": "categorie-files", "value": "'.$allegato->id_category.'", "disabled": "'.intval(in_array($allegato->categoria->name, ['Fattura elettronica'])).'", "icon-after": "add|'.Module::where('name', 'Categorie file')->first()->id.'" ]}
         </div>';
 } else {
     $allegato = Upload::find($id_allegati[0]);

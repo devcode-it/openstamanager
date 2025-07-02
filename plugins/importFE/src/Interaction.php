@@ -88,9 +88,7 @@ class Interaction extends Services
             }
         }
 
-        // Riordina l'array per garantire indici sequenziali
-        // Questo è importante per l'importazione in sequenza
-        return array_values($list);
+        return $list;
     }
 
     public static function getInvoiceFile($name)

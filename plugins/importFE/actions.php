@@ -41,14 +41,6 @@ switch (filter('op')) {
 
         break;
 
-    case 'get_local_files':
-        // Ottiene solo i file locali per l'importazione in sequenza
-        $list = Interaction::getFileList();
-
-        echo json_encode($list);
-
-        break;
-
     case 'save':
         $temp_name = $_FILES['blob']['tmp_name'];
         $name = $_FILES['blob']['name'];
@@ -197,60 +189,26 @@ switch (filter('op')) {
             $process_result = Interaction::processInvoice($filename);
             if ($process_result != '') {
                 flash()->error($process_result);
-
-                // Se siamo in modalità sequenza, continua con il prossimo file
-                if (get('sequence') == 1) {
-                    // Usa la lista appropriata in base alle API
-                    if (Interaction::isEnabled()) {
-                        $files = Interaction::getInvoiceList();
-                    } else {
-                        $files = Interaction::getFileList();
-                    }
-                    $next_record = $id_record + 1;
-                    $next_file = $files[$next_record - 1] ?? null;
-
-                    if (!empty($next_file)) {
-                        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$next_record.'&sequence=1');
-                    } else {
-                        flash()->info(tr('Tutte le fatture salvate sono state importate!'));
-                        redirect(base_path().'/controller.php?id_module='.$id_module);
-                    }
-                } else {
-                    redirect(base_path().'/controller.php?id_module='.$id_module);
-                }
+                redirect(base_path().'/controller.php?id_module='.$id_module);
 
                 return;
             }
         }
 
-        // Usa la lista appropriata in base alle API
-        if (Interaction::isEnabled()) {
-            $files = Interaction::getInvoiceList();
-        } else {
-            $files = Interaction::getFileList();
-        }
-        $file = $files[$id_record - 1] ?? null;
+        $files = Interaction::getFileList();
+        $file = $files[$id_record - 1];
 
 
 
         if (get('sequence') == null) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {
-            // Calcola il prossimo record per l'importazione in sequenza
-            $next_record = $id_record + 1;
-            $next_file = $files[$next_record - 1] ?? null;
-
-            if (!empty($next_file)) {
-                redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$next_record.'&sequence=1');
-                flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
-                    '_NUM_' => $fattura->numero,
-                    '_DATA_' => dateFormat($fattura->data),
-                    '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,
-                ]));
-            } else {
-                flash()->info(tr('Tutte le fatture salvate sono state importate!'));
-                redirect(base_path().'/controller.php?id_module='.$id_module);
-            }
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+            flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
+                '_NUM_' => $fattura->numero,
+                '_DATA_' => dateFormat($fattura->data),
+                '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,
+            ]));
         } else {
             flash()->info(tr('Tutte le fatture salvate sono state importate!'));
             redirect(base_path().'/controller.php?id_module='.$id_module);
@@ -303,21 +261,13 @@ switch (filter('op')) {
         $id_tipo = $tipi->sort()->keys()->last();
 
         // Ricerca del conto più utilizzato
-        // Filtro le righe che hanno un conto valido (maggiore di 0)
-        $righe_con_conto = $righe->filter(fn ($item) => !empty($item->idconto) && $item->idconto > 0);
-
-        $conto = null;
-        if ($righe_con_conto->isNotEmpty()) {
-            $conti = $righe_con_conto->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
-            $id_conto = $conti->sort()->keys()->last();
-            $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
-        }
+        $conti = $righe->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
+        $id_conto = $conti->sort()->keys()->last();
+        $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
-        // Filtro le righe che hanno un'aliquota IVA valida
-        $righe_con_iva = $righe->filter(fn ($item) => !empty($item->idiva) && $item->idiva > 0 && !empty($item->aliquota));
-        $percentuali_iva = $righe_con_iva->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
+        $percentuali_iva = $righe->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
         foreach ($percentuali_iva as $key => $values) {
             $aliquote = $values->mapToGroups(fn ($item, $key) => [$item->aliquota->id => $item->aliquota]);
             $id_aliquota = $aliquote->map(fn ($item, $key) => $item->count())->sort()->keys()->last();
@@ -329,20 +279,14 @@ switch (filter('op')) {
             ];
         }
 
-        $response = [
+        echo json_encode([
             'id_tipo' => $id_tipo,
-            'iva' => $iva,
-        ];
-
-        // Aggiungo il conto solo se è stato trovato
-        if (!empty($conto)) {
-            $response['conto'] = [
+            'conto' => [
                 'id' => $conto['id'],
                 'descrizione' => $conto['descrizione'],
-            ];
-        }
-
-        echo json_encode($response);
+            ],
+            'iva' => $iva,
+        ]);
         break;
 
     case 'riferimenti-automatici':
@@ -499,14 +443,14 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica è indicato un DDT cerco quel documento specifico
             $ddt = $dati_ddt[$numero_linea];
-            $query = "SELECT
-                `dt_righe_ddt`.`id`,
-                `dt_righe_ddt`.`idddt` AS id_documento,
-                `dt_righe_ddt`.`is_descrizione`,
-                `dt_righe_ddt`.`idarticolo`,
+            $query = "SELECT 
+                `dt_righe_ddt`.`id`, 
+                `dt_righe_ddt`.`idddt` AS id_documento, 
+                `dt_righe_ddt`.`is_descrizione`, 
+                `dt_righe_ddt`.`idarticolo`, 
                 `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
                 CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
-            FROM
+            FROM 
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                 INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
@@ -540,12 +484,12 @@ switch (filter('op')) {
             // cerco per quell'ordine
             if (empty($collegamento)) {
                 $ordine = $dati_ordini[$numero_linea];
-                $query = "SELECT
-                    `or_righe_ordini`.`id`,
-                    `or_righe_ordini`.`idordine` AS id_documento,
-                    `or_righe_ordini`.`is_descrizione`,
-                    `or_righe_ordini`.`idarticolo`,
-                    `or_righe_ordini`.`is_sconto`,
+                $query = "SELECT 
+                    `or_righe_ordini`.`id`, 
+                    `or_righe_ordini`.`idordine` AS id_documento, 
+                    `or_righe_ordini`.`is_descrizione`, 
+                    `or_righe_ordini`.`idarticolo`, 
+                    `or_righe_ordini`.`is_sconto`, 
                     'ordine' AS ref,
                     CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
                 FROM `or_righe_ordini`
@@ -585,45 +529,45 @@ switch (filter('op')) {
             // Se non ci sono Ordini o DDT cerco per contenuto
             if (empty($collegamento)) {
                 $match_documento_da_fe = false;
-                $query = "SELECT
-                        `dt_righe_ddt`.`id`,
-                        `dt_righe_ddt`.`idddt` AS id_documento,
-                        `dt_righe_ddt`.`is_descrizione`,
-                        `dt_righe_ddt`.`idarticolo`,
-                        `dt_righe_ddt`.`is_sconto`,
+                $query = "SELECT 
+                        `dt_righe_ddt`.`id`, 
+                        `dt_righe_ddt`.`idddt` AS id_documento, 
+                        `dt_righe_ddt`.`is_descrizione`, 
+                        `dt_righe_ddt`.`idarticolo`, 
+                        `dt_righe_ddt`.`is_sconto`, 
                         'ddt' AS ref,
                         CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
-                    FROM
+                    FROM 
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                         INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
                         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-                    WHERE
-                        `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND
-                        |where_ddt| AND
-                        `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
+                    WHERE 
+                        `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
+                        |where_ddt| AND 
+                        `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND 
                         `dt_statiddt_lang`.`title` != 'Fatturato' AND
                         `dt_tipiddt`.`dir` = 'uscita'
-                UNION
-                    SELECT
+                UNION 
+                    SELECT 
                         `or_righe_ordini`.`id`,
                         `or_righe_ordini`.`idordine` AS id_documento,
-                        `or_righe_ordini`.`is_descrizione`,
-                        `or_righe_ordini`.`idarticolo`,
-                        `or_righe_ordini`.`is_sconto`,
+                        `or_righe_ordini`.`is_descrizione`, 
+                        `or_righe_ordini`.`idarticolo`, 
+                        `or_righe_ordini`.`is_sconto`, 
                         'ordine' AS ref,
                         CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `idstatoordine`)  , ']') AS opzione
-                    FROM
+                    FROM 
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                         INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
                         LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-                    WHERE
-                        `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND
-                        |where_ordini| AND
-                        `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND
+                    WHERE 
+                        `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND 
+                        |where_ordini| AND 
+                        `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND 
                         `or_statiordine_lang`.`title` != 'Fatturato' AND
                         `or_tipiordine`.`dir` ='uscita'";
 

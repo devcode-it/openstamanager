@@ -24,12 +24,7 @@ use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
 if (!empty($id_record)) {
-    // Usa la lista appropriata in base alle API
-    if (Interaction::isEnabled()) {
-        $files = Interaction::getInvoiceList();
-    } else {
-        $files = Interaction::getFileList();
-    }
+    $files = Interaction::getFileList();
     $record = $files[$id_record - 1] ?? null;
 
     $has_next = isset($files[$id_record]);

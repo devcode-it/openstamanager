@@ -65,7 +65,7 @@ echo '
 						buttonRestore(btn, restore);
                     },
                     error: function(xhr) {
-                        alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
+                        swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
                         buttonRestore(btn, restore);
                     }
@@ -80,13 +80,15 @@ echo '
     }
 </script>
 
-<div class="card card-outline card-success">
-    <div class="card-header">
+<div class="card card-success">
+    <div class="card-header with-border">
         <h3 class="card-title">
-            <i class="fa fa-file-code-o mr-2"></i>'.tr('Carica un XML').'
-            <span class="tip ml-1" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
+            '.tr('Carica un XML').'
+
+            <span class="tip" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
+
         </h3>
     </div>
     <div class="card-body" id="upload">
@@ -95,9 +97,9 @@ echo '
                 {[ "type": "file", "name": "blob", "required": 1, "placeholder": "'.tr('Seleziona un file XML, P7M o ZIP').'" ]}
             </div>
 
-            <div class="col-md-3 align-items-end">
-                <button type="button" class="btn btn-primary btn-block" onclick="upload(this)">
-                    <i class="fa fa-upload mr-1"></i> '.tr('Carica documento').'
+            <div class="col-md-3">
+                <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
+                    <i class="fa fa-upload"></i> '.tr('Carica documento fornitore').'
                 </button>
             </div>
         </div>
@@ -105,10 +107,10 @@ echo '
 </div>';
 
 echo '
-<div class="card card-outline card-info mt-3">
-    <div class="card-header">
+<div class="card card-info">
+    <div class="card-header with-border">
         <h3 class="card-title">
-            <i class="fa fa-file-text-o mr-2"></i>'.tr('Fatture da importare').'
+            '.tr('Fatture da importare').'</span>
         </h3>
 
         <div class="card-tools">
@@ -127,9 +129,9 @@ echo '
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-                <button type="button" class="btn btn-primary" onclick="searchInvoices(this)">
-                    <i class="fa fa-refresh"></i> '.tr('Ricerca fatture').'
-                </button>';
+            <button type="button" class="btn btn-primary" onclick="searchInvoices(this)">
+                <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
+            </button>';
 }
 
 echo '
@@ -183,126 +185,69 @@ function importAll(btn) {
         confirmButtonText: "'.tr('Procedi').'",
         type: "info",
     }).then(function (result) {
-        if (result) {
-            var restore = buttonLoading(btn);
-            $("#main_loading").show();
+        var restore = buttonLoading(btn);
+        $("#main_loading").show();
 
-            // Ottieni la lista delle fatture per trovare la prima da importare
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                data: {
-                    op: "list",
-                    id_module: "'.$id_module.'",
-                    id_plugin: "'.$id_plugin.'",
-                },
-                type: "post",
-                success: function(data){
-                    try {
-                        data = JSON.parse(data);
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            data: {
+                op: "list",
+                id_module: "'.$id_module.'",
+                id_plugin: "'.$id_plugin.'",
+            },
+            type: "post",
+            success: function(data){
+                data = JSON.parse(data);
 
-                        if (data.length > 0) {
-                            // Avvia l\'importazione in sequenza dalla prima fattura
-                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
-                        } else {
-                            $("#main_loading").hide();
-                            buttonRestore(btn, restore);
+                count = data.length;
+                counter = 0;
+                data.forEach(function(element) {
+                    $.ajax({
+                        url: globals.rootdir + "/actions.php",
+                        type: "get",
+                        data: {
+                            id_module: "'.$id_module.'",
+                            id_plugin: "'.$id_plugin.'",
+                            op: "prepare",
+                            name: element.name,
+                        },
+                        success: function(data) {
+                            counter ++;
 
-                            swal({
-                                title: "'.tr('Nessuna fattura da importare').'",
-                                html: "'.tr('Non sono presenti fatture da importare.').'",
-                                type: "warning",
-                            });
+                            importComplete(count, counter, btn, restore);
+                        },
+                        error: function(data) {
+                            counter ++;
+
+                            importComplete(count, counter, btn, restore);
                         }
-                    } catch (e) {
-                        $("#main_loading").hide();
-                        buttonRestore(btn, restore);
-
-                        swal({
-                            title: "'.tr('Errore').'",
-                            html: "'.tr('Errore durante il caricamento delle fatture.').'",
-                            type: "error",
-                        });
-                    }
-                },
-                error: function(data) {
-                    $("#main_loading").hide();
-                    buttonRestore(btn, restore);
-
-                    swal({
-                        title: "'.tr('Errore').'",
-                        html: "'.tr('Errore durante il caricamento delle fatture.').'",
-                        type: "error",
                     });
-                }
-            });
-        }
+                });
+
+                importComplete(count, counter, btn, restore);
+            },
+            error: function(data) {
+                alert("'.tr('Errore').': " + data);
+
+				$("#main_loading").fadeOut();
+                buttonRestore(btn, restore);
+            }
+        });
     });
+}
+
+function importComplete(count, counter, btn, restore) {
+    if(counter == count){
+        $("#main_loading").fadeOut();
+        buttonRestore(btn, restore);
+
+        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+    }
 }';
 } else {
     echo '
 function importAll(btn) {
-    swal({
-        title: "'.tr('Importare tutte le fatture in sequenza?').'",
-        html: "'.tr('Verranno importate manualmente tutte le fatture presenti nella cartella di importazione. Continuare?').'",
-        showCancelButton: true,
-        confirmButtonText: "'.tr('Procedi').'",
-        type: "info",
-    }).then(function (result) {
-        if (result) {
-            var restore = buttonLoading(btn);
-            $("#main_loading").show();
-
-            // Carica la lista delle fatture locali per trovare la prima da importare
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                data: {
-                    op: "get_local_files",
-                    id_module: "'.$id_module.'",
-                    id_plugin: "'.$id_plugin.'",
-                },
-                type: "post",
-                success: function(data){
-                    try {
-                        data = JSON.parse(data);
-
-                        if (data.length > 0) {
-                            // Avvia l\'importazione in sequenza dal primo file (record 1)
-                            // Il record ID corrisponde alla posizione nell\'array + 1
-                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
-                        } else {
-                            $("#main_loading").hide();
-                            buttonRestore(btn, restore);
-
-                            swal({
-                                title: "'.tr('Nessuna fattura da importare').'",
-                                html: "'.tr('Non sono presenti fatture nella cartella di importazione.').'",
-                                type: "warning",
-                            });
-                        }
-                    } catch (e) {
-                        $("#main_loading").hide();
-                        buttonRestore(btn, restore);
-
-                        swal({
-                            title: "'.tr('Errore').'",
-                            html: "'.tr('Errore durante il caricamento delle fatture.').'",
-                            type: "error",
-                        });
-                    }
-                },
-                error: function(data) {
-                    $("#main_loading").hide();
-                    buttonRestore(btn, restore);
-
-                    swal({
-                        title: "'.tr('Errore').'",
-                        html: "'.tr('Errore durante il caricamento delle fatture.').'",
-                        type: "error",
-                    });
-                }
-            });
-        }
-    });
+    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
 }';
 }
 echo '

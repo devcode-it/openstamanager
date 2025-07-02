@@ -187,8 +187,7 @@ echo '
                 </h3>
             </div>
             <div class="card-body">
-                <h5>'.$ragione_sociale.'</h5>
-                '.(empty($anagrafica) ? '<span class="badge badge-warning">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '').'</small>').'
+                <h4>'.$ragione_sociale.' '.(empty($anagrafica) ? '<span class="badge badge-warning">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '').'</small>').'</h4>
                 <hr>
                 <small>
                     '.(!empty($codice_fiscale) ? ('<strong>'.tr('Codice Fiscale').':</strong> '.$codice_fiscale.'<br>') : '').'
@@ -207,10 +206,10 @@ echo '
                 </h3>
             </div>
             <div class="card-body">
-                <h5>'.$dati_generali['Numero'].'</h5>
+                <h5>'.tr('N° ').$dati_generali['Numero'].'
                 <a href="'.$structure->fileurl('view.php').'?filename='.$record['name'].'" class="btn btn-info btn-sm" target="_blank" >
-                    <i class="fa fa-eye"></i> '.tr('Visualizza XML').'
-                </a>
+                    <i class="fa fa-eye"></i>
+                </a></h5>
                 <hr>
                 <small>
                     <strong>'.tr('Tipo').':</strong> '.$tipo_documento.'<br>
@@ -357,44 +356,44 @@ if (!empty($anagrafica)) {
 }
 
 echo '
-        </div>
-    </div>';
+        </div>';
 
 // Pagamento
 $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
 echo '
-    <div class="row" >
-		<div class="col-md-3">
-		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
-		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
-            </button>
+        <div class="row">
+            <div class="col-md-3">
+                <button type="button" class="btn btn-info btn-xs pull-right" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
+                    <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
+                </button>
 
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).', "value": "'.$pagamento->id.'" ]}
-        </div>';
+                {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).', "value": "'.$pagamento->id.'" ]}
+            </div>';
 
 // Movimentazioni
 echo '
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": "'.setting('Movimenta magazzino da fatture di acquisto').'" ]}
-        </div>
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": "'.setting('Movimenta magazzino da fatture di acquisto').'" ]}
+            </div>
 
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr('Nel caso di righe con almeno un nodo \'CodiceArticolo\', il gestionale procede alla creazione dell\'articolo se la riga non risulta assegnata manualmente').'." ]}
-        </div>
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "flag_crea_articoli", "value": 0, "help": "'.tr('Nel caso di righe con almeno un nodo \'CodiceArticolo\', il gestionale procede alla creazione dell\'articolo se la riga non risulta assegnata manualmente').'." ]}
+            </div>
 
-        <div class="col-md-3">
-            {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
-        </div>';
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
+            </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];
 
 if (!empty($ritenuta)) {
     echo '
-            <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr('Attivare se la ritenuta è stata pagata dal fornitore').'" ]}
-            </div>';
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr('Attivare se la ritenuta è stata pagata dal fornitore').'" ]}
+                </div>';
 }
 echo '
+            </div>
 		</div>
 	</div>
 	<br>';
@@ -746,17 +745,21 @@ if (!empty($righe)) {
             }
         }
 
-        // Selezione generale per l\'IVA
+        // Selezione generale per l\'IVA (solo per campi vuoti)
         if (iva_selezionata) {
             aliquote.each(function() {
-                $(this).selectSet(iva_selezionata.id);
+                if (!$(this).val()) {
+                    $(this).selectSet(iva_selezionata.id);
+                }
             });
         }
 
-        // Selezione generale per il conto
+        // Selezione generale per il conto (solo per campi vuoti)
         if (conto_selezionato) {
             conti.each(function() {
-                $(this).selectSetNew(conto_selezionato.id, conto_selezionato.text, conto_selezionato);
+                if (!$(this).val()) {
+                    $(this).selectSetNew(conto_selezionato.id, conto_selezionato.text, conto_selezionato);
+                }
             });
         }
     }
@@ -889,6 +892,9 @@ function impostaRiferimento(id_riga, documento, riga) {
     $("#id_riga_riferimento_" + id_riga).val(riga.id);
 
     // Gestione della selezione
+    if (documento.id && documento.opzione) {
+        input("selezione_riferimento[" + id_riga + "]").getElement().selectSetNew(documento.id, documento.opzione);
+    }
     input("selezione_riferimento[" + id_riga + "]").disable();
     $("#rimuovi_riferimento_" + id_riga).removeClass("disabled");
 
@@ -929,9 +935,10 @@ function impostaRiferimento(id_riga, documento, riga) {
 
     if (riga.id_articolo) {
         input("articoli["+id_riga+"]").getElement().selectSetNew(riga.id_articolo, riga.desc_articolo.replace(/_/g, " ").replace(/\n/g, "<br>"));
-        if (riga.id_conto) {
-            input("conto["+id_riga+"]").getElement().selectSetNew(riga.id_conto, riga.desc_conto.replace(/_/g, " ").replace(/\n/g, "<br>"));
-        }
+    }
+
+    if (riga.id_conto && riga.desc_conto !== null && riga.desc_conto !== undefined) {
+        input("conto["+id_riga+"]").getElement().selectSetNew(riga.id_conto, riga.desc_conto.replace(/_/g, " ").replace(/\n/g, "<br>"));
     }
 }
 
@@ -966,6 +973,9 @@ function impostaRiferimentoVendita(id_riga, documento, riga) {
     $("#id_riga_riferimento_vendita_" + id_riga).val(riga.id);
 
     // Gestione della selezione
+    if (documento.id && documento.opzione) {
+        input("selezione_riferimento_vendita[" + id_riga + "]").getElement().selectSetNew(documento.id, documento.opzione);
+    }
     input("selezione_riferimento_vendita[" + id_riga + "]").disable();
     $("#rimuovi_riferimento_vendita_" + id_riga).removeClass("disabled");
 }
@@ -986,7 +996,7 @@ $("[id^=\'articoli\']").change(function() {
     $("#conto-"+$(this).data("id")).selectReset();
     updateSelectOption("id_articolo", $(this).val());
     let data = $(this).selectData();
-    if(data!==undefined){
+    if(data !== undefined && data.idconto_acquisto && data.idconto_acquisto_title){
         $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
     }
 

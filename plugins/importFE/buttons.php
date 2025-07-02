@@ -72,7 +72,7 @@ function compile(btn) {
             });
 
             $("select[name^=conto]").each(function(){
-                if (!$(this).val()){
+                if (!$(this).val() && response.conto){
                     $(this).selectSetNew(response.conto.id, response.conto.descrizione);
                 }
             });
@@ -109,7 +109,7 @@ function compilaRiferimenti(btn) {
                 data = response[id_riga];
 
                 // Selezione dinamica
-                $("#selezione_riferimento" + id_riga).addClass("already-loaded").selectSetNew(data.documento.id, data.documento.opzione).removeClass("already-loaded");
+                $("#selezione_riferimento[" + id_riga + "]").addClass("already-loaded").selectSetNew(data.documento.id, data.documento.opzione).removeClass("already-loaded");
 
                 // Impostazione del riferimento
                 impostaRiferimento(id_riga, data.documento, data.riga);

@@ -42,3 +42,6 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 (1, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Raggruppa gli articoli con stesso barcode nei DDT', ''),
 (2, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Group the items with the same barcode in the delivery notes', '');
+
+-- Data competenza movimenti
+ALTER TABLE `co_movimenti` ADD `data_inizio_competenza` DATE NULL AFTER `data`, ADD `data_fine_competenza` DATE NULL AFTER `data_inizio_competenza`; 

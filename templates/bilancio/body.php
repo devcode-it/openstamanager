@@ -34,7 +34,7 @@ echo '
                     <tr>
                         <th width="15%">CONTO</th>
                         <th width="60%">DESCRIZIONE</th>
-                        <th width="25%">SALDO</th>
+                        <th width="25%">SALDO FINALE</th>
 
                     </tr>
                 </thead>
@@ -122,7 +122,7 @@ echo '
                     <tr>
                         <th width="20%">CONTO</th>
                         <th width="55%">DESCRIZIONE</th>
-                        <th width="25%">SALDO</th>
+                        <th width="25%">SALDO FINALE</th>
 
                     </tr>
                 </thead>
@@ -220,8 +220,8 @@ echo '
                     <tr>
                         <th width="12%">CONTO</th>
                         <th>DESCRIZIONE</th>
-                        <th width="21%">SALDO</th>
-                        <th width="21%">REDDITO</th>
+                        <th width="21%">SALDO FINALE</th>
+                        <th width="21%">IMPORTO REDDITO</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -231,11 +231,15 @@ foreach ($liv2_economico as $liv2_e) {
     $totale_livello3 = 0;
     $totale_reddito_livello3 = 0;
     foreach ($liv3_economico as $liv3_e) {
-        if ($liv3_e['totale'] > 0) {
+        if ($liv2_e['id'] == $liv3_e['idpianodeiconti2']) {
+            $utile_perdita_reddito += $liv3_e['totale_reddito'];
+        }
+        if ($liv3_e['totale'] >= 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
+            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
                 $totale_costi += $liv3_e['totale'];
                 $totale_livello3 += $liv3_e['totale'];
+                $totale_costi_reddito += $liv3_e['totale_reddito'];
                 $totale_reddito_livello3 += $liv3_e['totale_reddito'];
                 $livello3 .= '
                                     <tr>
@@ -248,7 +252,7 @@ foreach ($liv2_economico as $liv2_e) {
         }
     }
 
-    if ($totale_livello3 != 0) {
+    if ($totale_livello3 != 0 || $totale_reddito_livello3 != 0) {
         echo '
                             <tr>
                                 <td><b>'.$liv2_e['numero'].'</b></td>
@@ -264,18 +268,18 @@ echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale costi</b></h6></td>
                         <td class="text-right" style="font-size:8pt;"><b>'.($totale_costi ? numberFormat(abs($totale_costi), 2) : '').'</b></td>
-                        <td></td>
+                        <td class="text-right" style="font-size:8pt;"><b>'.($totale_costi_reddito ? numberFormat(abs($totale_costi_reddito), 2) : '').'</b></td>
                     </tr>';
 if ($utile_perdita < 0) {
     echo '
                         <tr>
                             <td colspan="2"><h6><b>Utile</b></h6></td>
                             <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita), 2).'</b></td>
-                            <td></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita_reddito), 2).'</b></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></h6></td>
-                            <td class="text-right" style="font-size:8pt;"><b>'.($totale_costi ? numberFormat(abs($totale_costi)) : 0) + ($utile_perdita ? numberFormat(abs($utile_perdita), 2) : 0).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(($totale_costi ? abs($totale_costi) : 0) + ($utile_perdita ? abs($utile_perdita) : 0), 2).'</b></td>
                             <td></td>
                         </tr>';
 }
@@ -294,8 +298,8 @@ echo '
                     <tr>
                         <th width="12%">CONTO</th>
                         <th>DESCRIZIONE</th>
-                        <th width="21%">SALDO</th>
-                        <th width="21%">REDDITO</th>
+                        <th width="21%">SALDO FINALE</th>
+                        <th width="21%">IMPORTO REDDITO</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -305,11 +309,12 @@ foreach ($liv2_economico as $liv2_e) {
     $totale_livello3 = 0;
     $totale_reddito_livello3 = 0;
     foreach ($liv3_economico as $liv3_e) {
-        if ($liv3_e['totale'] < 0) {
+        if ($liv3_e['totale'] <= 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && $liv3_e['totale'] != 0) {
+            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
                 $totale_ricavi += $liv3_e['totale'];
                 $totale_livello3 += $liv3_e['totale'];
+                $totale_ricavi_reddito += $liv3_e['totale_reddito'];
                 $totale_reddito_livello3 += $liv3_e['totale_reddito'];
                 $livello3 .= '
                                 <tr>
@@ -322,7 +327,7 @@ foreach ($liv2_economico as $liv2_e) {
         }
     }
 
-    if ($totale_livello3 != 0) {
+    if ($totale_livello3 != 0 || $totale_reddito_livello3 != 0) {
         echo '
                         <tr>
                             <td><b>'.$liv2_e['numero'].'</b></td>
@@ -337,18 +342,19 @@ echo '
                     <tr>
                         <td colspan="2"><h6><b>Totale ricavi</b></h6></td>
                         <td style="font-size:8pt;" class="text-right"><b>'.($totale_ricavi ? numberFormat(abs($totale_ricavi), 2) : '').'</b></td>
-                        <td></td>
+                        <td style="font-size:8pt;" class="text-right"><b>'.($totale_ricavi_reddito ? numberFormat(abs($totale_ricavi_reddito), 2) : '').'</b></td>
                     </tr>';
 if ($utile_perdita > 0) {
     echo '
                         <tr>
                             <td colspan="2"><h6><b>Perdita</b></h6></td>
                             <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita), 2).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(abs($utile_perdita_reddito), 2).'</b></td>
                         </tr>
                         <tr>
                             <td colspan="2"><h6><b>Totale a pareggio</b></td>
-                            <td class="text-right" style="font-size:8pt;"><b>'.$utile_perdita ? (numberFormat(abs($utile_perdita), 2)) : ''.'</b></td>
-                            <td></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(($totale_ricavi ? abs($totale_ricavi) : 0) + ($utile_perdita ? abs($utile_perdita) : 0), 2).'</b></td>
+                            <td class="text-right" style="font-size:8pt;"><b>'.numberFormat(($totale_ricavi_reddito ? abs($totale_ricavi_reddito) : 0) + ($utile_perdita_reddito ? abs($utile_perdita_reddito) : 0), 2).'</b></td>
                         </tr>';
 }
 echo '

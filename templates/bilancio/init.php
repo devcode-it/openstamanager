@@ -30,11 +30,89 @@ $esercizio = $esercizio->format('Y');
 
 $liv2_patrimoniale = $dbo->fetchArray('SELECT co_pianodeiconti2.numero AS numero, co_pianodeiconti2.descrizione AS descrizione, SUM(totale) AS totale, co_pianodeiconti2.id AS id FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale"))) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idpianodeiconti2 ORDER BY co_pianodeiconti2.numero');
 
-$liv2_economico = $dbo->fetchArray('SELECT co_pianodeiconti2.numero AS numero, co_pianodeiconti2.descrizione AS descrizione, SUM(totale) AS totale, SUM(totale_reddito) AS totale_reddito, co_pianodeiconti2.id AS id FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico"))) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idpianodeiconti2 ORDER BY co_pianodeiconti2.numero');
+$liv2_economico = $dbo->fetchArray('SELECT co_pianodeiconti2.numero AS numero, co_pianodeiconti2.descrizione AS descrizione, SUM(
+    CASE
+        WHEN co_movimenti.data BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' THEN
+            totale
+        ELSE
+            0
+    END
+) AS totale, SUM(
+    CASE
+        WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
+            totale_reddito
+        ELSE
+            totale_reddito * (
+                DATEDIFF(
+                    LEAST(data_fine_competenza, '.prepare($date_end).'),
+                    GREATEST(data_inizio_competenza, '.prepare($date_start).')
+                ) + 1
+            ) / (
+                DATEDIFF(data_fine_competenza, data_inizio_competenza) + 1
+            )
+    END
+) AS totale_reddito, co_pianodeiconti2.id AS id FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico"))) AND (
+    (co_movimenti.data BETWEEN '.prepare($date_start).' AND '.prepare($date_end).') 
+    OR 
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND 
+     data_fine_competenza >= '.prepare($date_start).' AND 
+     data_inizio_competenza <= '.prepare($date_end).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_inizio_competenza < '.prepare($date_start).' AND
+     data_fine_competenza > '.prepare($date_end).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_inizio_competenza <= '.prepare($date_end).' AND
+     data_inizio_competenza >= '.prepare($date_start).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_fine_competenza >= '.prepare($date_start).' AND
+     data_fine_competenza <= '.prepare($date_end).')
+) GROUP BY idpianodeiconti2 ORDER BY co_pianodeiconti2.numero');
 
 $liv3_patrimoniale = $dbo->fetchArray('SELECT co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(totale) AS totale, co_pianodeiconti3.idpianodeiconti2 AS idpianodeiconti2 FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale"))) '.(empty(get('elenco_analitico')) ? 'AND co_pianodeiconti3.id NOT IN (SELECT idconto_cliente FROM an_anagrafiche) AND co_pianodeiconti3.id NOT IN (SELECT idconto_fornitore FROM an_anagrafiche)' : '').' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idconto ORDER BY co_pianodeiconti3.numero');
 
-$liv3_economico = $dbo->fetchArray('SELECT  co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(totale) AS totale, SUM(totale_reddito) AS totale_reddito, co_pianodeiconti3.idpianodeiconti2 AS idpianodeiconti2 FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico"))) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idconto ORDER BY co_pianodeiconti3.numero');
+$liv3_economico = $dbo->fetchArray('SELECT co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(
+    CASE
+        WHEN co_movimenti.data BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' THEN
+            totale
+        ELSE
+            0
+    END
+) AS totale, SUM(
+    CASE
+        WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
+            totale_reddito
+        ELSE
+            totale_reddito * (
+                DATEDIFF(
+                    LEAST(data_fine_competenza, '.prepare($date_end).'),
+                    GREATEST(data_inizio_competenza, '.prepare($date_start).')
+                ) + 1
+            ) / (
+                DATEDIFF(data_fine_competenza, data_inizio_competenza) + 1
+            )
+    END
+) AS totale_reddito, co_pianodeiconti3.idpianodeiconti2 AS idpianodeiconti2 FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico"))) AND (
+    (co_movimenti.data BETWEEN '.prepare($date_start).' AND '.prepare($date_end).') 
+    OR 
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND 
+     data_fine_competenza >= '.prepare($date_start).' AND 
+     data_inizio_competenza <= '.prepare($date_end).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_inizio_competenza < '.prepare($date_start).' AND
+     data_fine_competenza > '.prepare($date_end).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_inizio_competenza <= '.prepare($date_end).' AND
+     data_inizio_competenza >= '.prepare($date_start).')
+    OR
+    (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+     data_fine_competenza >= '.prepare($date_start).' AND
+     data_fine_competenza <= '.prepare($date_end).')
+) GROUP BY idconto ORDER BY co_pianodeiconti3.numero');
 
 $utile_perdita = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico")))AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end))['totale'];
 

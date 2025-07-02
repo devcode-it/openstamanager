@@ -25,6 +25,7 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Contratti\Contratto;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
@@ -835,6 +836,16 @@ switch ($op) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
+                }
+
+                if ($documento instanceof Contratto) {
+                    if ($documento->data_accettazione && $documento->data_conclusione) {
+                        $copia->dati_aggiuntivi_fe = [
+                            'id_riga' => $copia->id,
+                            'data_inizio_periodo' => $documento->data_accettazione->format('Y-m-d'),
+                            'data_fine_periodo' => $documento->data_conclusione->format('Y-m-d'),
+                        ];
+                    }
                 }
 
                 $copia->save();

@@ -37,10 +37,49 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
         LEFT OUTER JOIN (
             SELECT COUNT(idconto) AS numero_movimenti,
             idconto,
-            SUM(totale) AS totale,
-            SUM(totale_reddito) AS totale_reddito
+            SUM(
+                CASE
+                    WHEN co_movimenti.data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' THEN
+                        totale
+                    ELSE
+                        0
+                END
+            ) AS totale,
+            SUM(
+                CASE
+                    WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
+                        totale_reddito
+                    ELSE
+                        totale_reddito * (
+                            DATEDIFF(
+                                LEAST(data_fine_competenza, '.prepare($_SESSION['period_end']).'),
+                                GREATEST(data_inizio_competenza, '.prepare($_SESSION['period_start']).')
+                            ) + 1
+                        ) / (
+                            DATEDIFF(data_fine_competenza, data_inizio_competenza) + 1
+                        )
+                END
+            ) AS totale_reddito
             FROM co_movimenti
-            WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
+            WHERE (
+                (data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).') 
+                OR 
+                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND 
+                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND 
+                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).')
+                OR
+                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                 data_inizio_competenza < '.prepare($_SESSION['period_start']).' AND
+                 data_fine_competenza > '.prepare($_SESSION['period_end']).')
+                OR
+                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).' AND
+                 data_inizio_competenza >= '.prepare($_SESSION['period_start']).')
+                OR
+                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
+                 data_fine_competenza <= '.prepare($_SESSION['period_end']).')
+            ) GROUP BY idconto
         ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
     WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
 
@@ -50,17 +89,6 @@ if (!empty($terzo_livello)) {
     echo '
     <div class="table-responsive">
         <table class="table table-striped table-hover table-sm">
-            <thead>
-                <tr>
-                    <th>'.tr('Descrizione').'</th>
-                    <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
-    if ($conto_primo['descrizione'] == 'Economico') {
-        echo '
-                        <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
-    }
-    echo '
-                </tr>
-            </thead>
             <tbody>';
     foreach ($terzo_livello as $conto_terzo) {
         // Se il conto non ha documenti collegati posso eliminarlo
@@ -69,8 +97,8 @@ if (!empty($terzo_livello)) {
         $totale_conto = $conto_terzo['totale'];
         $totale_reddito = $conto_terzo['totale_reddito'];
         if ($conto_primo['descrizione'] != 'Patrimoniale') {
-            $totale_conto = -$totale_conto;
-            $totale_reddito = -$totale_reddito;
+            $totale_conto = -$totale_conto ?: 0;
+            $totale_reddito = -$totale_reddito ?: 0;
         }
 
         $totale_conto2 += $totale_conto;
@@ -134,16 +162,17 @@ if (!empty($terzo_livello)) {
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
 
-                    <td class="text-right">
+                    <td width="10%" class="text-right">
                         '.moneyFormat($totale_conto, 2).'
                     </td>';
         if ($conto_primo['descrizione'] == 'Economico') {
             echo '
-                    <td class="text-right">
+                    <td width="10%" class="text-right">
                         '.moneyFormat($totale_reddito, 2).'
                     </td>';
         }
         echo '
+                    <td width="5%"></td>
                 </tr>';
     }
 } else {

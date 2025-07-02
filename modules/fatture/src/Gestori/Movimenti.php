@@ -136,9 +136,13 @@ class Movimenti
             }
 
             if (!empty($imponibile)) {
+                $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
+
                 $movimenti[] = [
                     'id_conto' => $id_conto,
                     'avere' => $imponibile,
+                    'data_inizio_competenza' => $dati_aggiuntivi['data_inizio_periodo'],
+                    'data_fine_competenza' => $dati_aggiuntivi['data_fine_periodo'],
                 ];
             }
         }
@@ -254,6 +258,8 @@ class Movimenti
             $totale_avere += $avere;
 
             $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
+            $movimento->data_inizio_competenza = $element['data_inizio_competenza'] ?? null;
+            $movimento->data_fine_competenza = $element['data_fine_competenza'] ?? null;
             $movimento->setTotale($avere, $dare);
             $movimento->save();
         }

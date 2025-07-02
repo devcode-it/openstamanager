@@ -74,66 +74,156 @@ foreach ($primo_livello as $conto_primo) {
         </h3>
     </div>
 
-    <div class="card-body">';
+    <div class="card-body">
+        <!-- Intestazione colonne -->
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>'.tr('Descrizione').'</th>
+                        <th width="10%" class="text-center">'.tr('Importo').'</th>';
+                    if ($conto_primo['descrizione'] == 'Economico') {
+                        echo '
+                        <th width="10%" class="text-center">'.tr('Importo reddito').'</th>';
+                    } else {
+                        echo '
+                        <th width="10%"></th>';
+                    }
+                    echo '
+                        <th width="5%" class="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody>';
 
-    // Livello 2
-    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
-    $secondo_livello = $dbo->fetchArray($query2);
+                // Livello 2
+                $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
+                $secondo_livello = $dbo->fetchArray($query2);
 
-    foreach ($secondo_livello as $conto_secondo) {
-        // Livello 2
-        if ($conto_primo['descrizione'] == 'Economico') {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
-        } else {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
-        }
+                foreach ($secondo_livello as $conto_secondo) {
+                    // Livello 2
+                    if ($conto_primo['descrizione'] == 'Economico') {
+                        $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+                        
+                        // Calcolo del totale_reddito con gestione dei risconti
+                        $totale_reddito2 = $dbo->fetchOne('
+                            SELECT SUM(
+                                CASE
+                                    WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
+                                        -totale_reddito
+                                    ELSE
+                                        -totale_reddito * (
+                                            DATEDIFF(
+                                                LEAST(data_fine_competenza, '.prepare($_SESSION['period_end']).'),
+                                                GREATEST(data_inizio_competenza, '.prepare($_SESSION['period_start']).')
+                                            ) + 1
+                                        ) / (
+                                            DATEDIFF(data_fine_competenza, data_inizio_competenza) + 1
+                                        )
+                                END
+                            ) AS totale_reddito
+                            FROM `co_movimenti` 
+                            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id 
+                            WHERE idconto IN(
+                                SELECT id FROM co_pianodeiconti3 
+                                WHERE idpianodeiconti2='.prepare($conto_secondo['id']).'
+                            ) 
+                            AND (
+                                (co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).') 
+                                OR 
+                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND 
+                                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND 
+                                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).')
+                                OR
+                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                                 data_inizio_competenza <= '.prepare($_SESSION['period_start']).' AND
+                                 data_fine_competenza >= '.prepare($_SESSION['period_end']).')
+                                OR
+                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).' AND
+                                 data_inizio_competenza >= '.prepare($_SESSION['period_start']).')
+                                OR
+                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
+                                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
+                                 data_fine_competenza <= '.prepare($_SESSION['period_end']).')
+                            )
+                        ')['totale_reddito'];
+                    } else {
+                        $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+                        $totale_reddito2 = 0;
+                    }
 
-        echo '
-        <div class="conto2" id="conto2-'.$conto_secondo['id'].'">
-            <div class="float-right d-none d-sm-inline">
-                <b>'.moneyFormat($totale_conto2, 2).'</b>&ensp;&ensp;
-                '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
+                    echo '
+                    <tr class="conto2" id="conto2-'.$conto_secondo['id'].'">
+                        <td>
+                            <h5>
+                                <button type="button" id="conto2-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
+                                <span class="clickable" id="conto2-'.$conto_secondo['id'].'">
+                                    <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+                                </span>
+                                <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
+                            </h5>
+                        </td>
 
-                <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
-                    <i class="fa fa-edit"></i>
-                </button>
+                        <td class="text-right">
+                            <b>'.moneyFormat($totale_conto2, 2).'</b>
+                        </td>';
 
-                <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
-                <i class="fa fa-plus-circle"></i>
-                </button>
-            </div>
+                    if ($conto_primo['descrizione'] == 'Economico') {
+                        echo '
+                        <td class="text-right">
+                            <b>'.moneyFormat($totale_reddito2, 2).'</b>
+                        </td>';
+                    } else {
+                        echo '
+                        <td></td>';
+                    }
 
-            <h5>
-                <button type="button" id="conto2-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
-                <span class="clickable" id="conto2-'.$conto_secondo['id'].'">
-                    <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
-                </span>
-                <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
-            </h5>
-           
-        </div>';
-        // Somma dei totali
-        if ($totale_conto2) {
-            if ($conto_primo['descrizione'] == 'Patrimoniale') {
-                if ($totale_conto2 > 0) {
-                    $totale_attivita[] = abs($totale_conto2);
-                } else {
-                    $totale_passivita[] = abs($totale_conto2);
+                    echo '
+                        <td class="text-right">
+                            '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
+
+                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+                            <i class="fa fa-plus-circle"></i>
+                            </button>
+                        </td>
+                    </tr>';
+                    // Somma dei totali
+                    if ($totale_conto2) {
+                        if ($conto_primo['descrizione'] == 'Patrimoniale') {
+                            if ($totale_conto2 > 0) {
+                                $totale_attivita[] = abs($totale_conto2);
+                            } else {
+                                $totale_passivita[] = abs($totale_conto2);
+                            }
+                        } else {
+                            if ($totale_conto2 > 0) {
+                                $totale_ricavi[] = abs($totale_conto2);
+                            } else {
+                                $totale_costi[] = abs($totale_conto2);
+                            }
+                        }
+                    }
+                    if ($totale_reddito2) {
+                        if ($conto_primo['descrizione'] == 'Economico') {
+                            if ($totale_reddito2 > 0) {
+                                $totale_ricavi_reddito[] = abs($totale_reddito2);
+                            } else {
+                                $totale_costi_reddito[] = abs($totale_reddito2);
+                            }
+                        }
+                    }
+
+                    $totale_conto2 = 0;
+                    $totale_reddito2 = 0;
                 }
-            } else {
-                if ($totale_conto2 > 0) {
-                    $totale_ricavi[] = abs($totale_conto2);
-                } else {
-                    $totale_costi[] = abs($totale_conto2);
-                }
-            }
-        }
-
-        $totale_conto2 = 0;
-        $totale_reddito2 = 0;
-    }
 
     echo '
+            </tbody>
+        </table>
     </div>
 
         <table class="table table-sm table-hover totali">';
@@ -170,7 +260,7 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat($passivita, 2).'</big>
                 </td>
-                <td width="100"></td>
+                <td width="5%"></td>
             </tr>';
 
         // Perdita d'esercizio
@@ -232,7 +322,10 @@ foreach ($primo_livello as $conto_primo) {
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
                 </td>
-                <td width="100"></td>
+                <td class="text-right" width="10%">
+                    <big>'.moneyFormat(sum($totale_ricavi_reddito), 2).'</big>
+                </td>
+                <td width="5%"></td>
             </tr>
 
             <tr>
@@ -241,6 +334,9 @@ foreach ($primo_livello as $conto_primo) {
                 </th>
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_costi), 2).'</big>
+                </td>
+                <td class="text-right">
+                    <big>'.moneyFormat(sum($totale_costi_reddito), 2).'</big>
                 </td>
                 <td></td>
             </tr>
@@ -251,6 +347,9 @@ foreach ($primo_livello as $conto_primo) {
                 </th>
                 <td class="text-right" width="150">
                     <big>'.moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2).'</big>
+                </td>
+                <td class="text-right">
+                    <big>'.moneyFormat(sum($totale_ricavi_reddito) - abs(sum($totale_costi_reddito)), 2).'</big>
                 </td>
                 <td></td>
             </tr>';
@@ -293,16 +392,28 @@ echo '
 
         $("button[id^=conto2-], span[id^=conto2-]").each(function() {
             $(this).on("click", function() {
-                let conto3 = $(this).parent().find("div[id^=conto2_]");
-
+                // Ottieni l\'ID del conto
+                let id_conto = $(this).attr("id").split("-").pop();
+                let tr = $("#conto2-" + id_conto);
+                let conto3 = $("#conto2_" + id_conto);
+                
+                // Aggiungi una riga dopo la riga corrente se non esiste
+                if (!$("#conto3-row-" + id_conto).length) {
+                    tr.after(\'<tr id="conto3-row-\' + id_conto + \'" class="conto3-container"><td colspan="4"><div id="conto3-content-\' + id_conto + \'"></div></td></tr>\');
+                    // Sposta il div dei contenuti nella nuova riga
+                    conto3.appendTo("#conto3-content-" + id_conto);
+                }
+                
+                // Mostra/nascondi la riga dei contenuti
+                $("#conto3-row-" + id_conto).toggle();
+                
                 if(!conto3.html()) {
-                    let id_conto = $(this).attr("id").split("-").pop();
-                    caricaConti3(conto3.attr("id"), id_conto);
-                } else {
-                    conto3.slideToggle();
+                    $("#conto3-row-" + id_conto).show();
+                    caricaConti3("conto2_" + id_conto, id_conto);
                 }
 
-                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
+                // Cambia l\'icona plus/minus
+                tr.find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
             });
         });
     });

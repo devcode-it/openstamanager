@@ -45,7 +45,9 @@ $(document).ready(function() {
 });
 </script>';
 
-$skip_link = $has_next ? base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence') : base_path().'/editor.php?id_module='.$id_module;
+// Ottimizzazione: mantieni il parametro total nel link di navigazione
+$total_param = get('total') ? '&total='.get('total') : '';
+$skip_link = $has_next ? base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence').$total_param : base_path().'/editor.php?id_module='.$id_module;
 
 if (empty($fattura_pa)) {
     if (!empty($error)) {
@@ -1052,93 +1054,37 @@ $(document).ready(function() {
     if (isNaN(currentIndex) || currentIndex < 1) {
         currentIndex = 1;
     }
-    // Verifica se ci sono altri documenti dopo questo
-    let hasNext = '.($has_next ? 'true' : 'false').';
 
-    // Mostra una stima iniziale in base a hasNext
-    if (hasNext) {
-        let minTotalDocuments = currentIndex + 1;
-        updateProgressBar(currentIndex, minTotalDocuments);
-    } else {
-        updateProgressBar(currentIndex, currentIndex);
-    }
+    // Ottimizzazione: usa il parametro total dall\'URL se disponibile
+    let urlParams = new URLSearchParams(window.location.search);
+    let totalFromUrl = urlParams.get("total");
 
-    // Ottieni il numero totale di documenti da importare
-    $.ajax({
-        url: globals.rootdir + "/actions.php",
-        data: {
-            op: "list",
-            id_module: "'.$id_module.'",
-            id_plugin: "'.$id_plugin.'",
-        },
-        type: "post",
-        dataType: "json",
-        success: function(data) {
-            try {
-                // Assicurati che i dati siano in formato JSON
-                let jsonData = data;
-                if (typeof data === "string") {
-                    try {
-                        jsonData = JSON.parse(data);
-                    } catch (e) {
-                        console.error("Errore nel parsing JSON:", e);
-                    }
-                }
+    if (totalFromUrl && !isNaN(parseInt(totalFromUrl))) {
+        let totalDocuments = parseInt(totalFromUrl);
 
-                // Verifica che jsonData sia un array
-                if (!Array.isArray(jsonData)) {
-                    if (jsonData && typeof jsonData === "object") {
-                        for (let key in jsonData) {
-                            if (Array.isArray(jsonData[key])) {
-                                jsonData = jsonData[key];
-                                break;
-                            }
-                        }
-                    }
-
-                    // Se ancora non è un array, usa una stima
-                    if (!Array.isArray(jsonData)) {
-                        if (hasNext) {
-                            updateProgressBar(currentIndex, currentIndex + 1);
-                        } else {
-                            updateProgressBar(currentIndex, currentIndex);
-                        }
-                        return;
-                    }
-                }
-
-                let totalDocuments = jsonData.length;
-
-                // Se non ci sono documenti, usa 1 come fallback
-                if (totalDocuments === 0) {
-                    totalDocuments = 1;
-                }
-
-                // Assicurati che totalDocuments sia almeno uguale a currentIndex
-                if (totalDocuments < currentIndex) {
-                    totalDocuments = currentIndex;
-                }
-
-                // Aggiorna la barra di progresso con i valori corretti
-                updateProgressBar(currentIndex, totalDocuments);
-            } catch (e) {
-                // In caso di errore, usa una stima basata su hasNext
-                if (hasNext) {
-                    updateProgressBar(currentIndex, currentIndex + 1);
-                } else {
-                    updateProgressBar(currentIndex, currentIndex);
-                }
-            }
-        },
-        error: function(xhr, status, error) {
-            // In caso di errore, usa una stima basata su hasNext
-            if (hasNext) {
-                updateProgressBar(currentIndex, currentIndex + 1);
-            } else {
-                updateProgressBar(currentIndex, currentIndex);
-            }
+        // Assicurati che totalDocuments sia almeno uguale a currentIndex
+        if (totalDocuments < currentIndex) {
+            totalDocuments = currentIndex;
         }
-    });
+
+        // Aggiorna la barra di progresso con i valori corretti
+        updateProgressBar(currentIndex, totalDocuments);
+
+        console.log("Progress bar inizializzata con total dall\'URL:", totalDocuments);
+    } else {
+        // Fallback: verifica se ci sono altri documenti dopo questo
+        let hasNext = '.($has_next ? 'true' : 'false').';
+
+        // Mostra una stima iniziale in base a hasNext
+        if (hasNext) {
+            let minTotalDocuments = currentIndex + 1;
+            updateProgressBar(currentIndex, minTotalDocuments);
+        } else {
+            updateProgressBar(currentIndex, currentIndex);
+        }
+
+        console.log("Progress bar inizializzata con stima hasNext:", hasNext);
+    }
 });
 
 function copy_rif() {

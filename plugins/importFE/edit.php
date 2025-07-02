@@ -188,61 +188,45 @@ function importAll(btn) {
         var restore = buttonLoading(btn);
         $("#main_loading").show();
 
+        // Ottimizzazione: una sola chiamata AJAX per ottenere la lista e preparare tutto
         $.ajax({
             url: globals.rootdir + "/actions.php",
             data: {
-                op: "list",
+                op: "prepare-all",
                 id_module: "'.$id_module.'",
                 id_plugin: "'.$id_plugin.'",
             },
             type: "post",
             success: function(data){
-                data = JSON.parse(data);
+                try {
+                    data = JSON.parse(data);
 
-                count = data.length;
-                counter = 0;
-                data.forEach(function(element) {
-                    $.ajax({
-                        url: globals.rootdir + "/actions.php",
-                        type: "get",
-                        data: {
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                            op: "prepare",
-                            name: element.name,
-                        },
-                        success: function(data) {
-                            counter ++;
+                    if (data.success && data.total > 0) {
+                        // Reindirizza direttamente alla prima fattura con il totale
+                        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1&total=" + data.total);
+                    } else {
+                        $("#main_loading").fadeOut();
+                        buttonRestore(btn, restore);
 
-                            importComplete(count, counter, btn, restore);
-                        },
-                        error: function(data) {
-                            counter ++;
-
-                            importComplete(count, counter, btn, restore);
+                        if (data.total === 0) {
+                            swal("'.tr('Informazione').'", "'.tr('Nessuna fattura da importare').'", "info");
+                        } else {
+                            swal("'.tr('Errore').'", data.message || "'.tr('Errore durante la preparazione delle fatture').'", "error");
                         }
-                    });
-                });
-
-                importComplete(count, counter, btn, restore);
+                    }
+                } catch (e) {
+                    $("#main_loading").fadeOut();
+                    buttonRestore(btn, restore);
+                    swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta').'", "error");
+                }
             },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
-
-				$("#main_loading").fadeOut();
+            error: function(xhr, status, error) {
+                $("#main_loading").fadeOut();
                 buttonRestore(btn, restore);
+                swal("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
             }
         });
     });
-}
-
-function importComplete(count, counter, btn, restore) {
-    if(counter == count){
-        $("#main_loading").fadeOut();
-        buttonRestore(btn, restore);
-
-        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
-    }
 }';
 } else {
     echo '

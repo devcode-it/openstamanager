@@ -42,6 +42,54 @@ switch (filter('op')) {
 
         break;
 
+    case 'prepare-all':
+        // Ottimizzazione: prepara tutte le fatture in una sola chiamata
+        try {
+            $list = Interaction::getInvoiceList();
+            $total = count($list);
+
+            if ($total === 0) {
+                echo json_encode([
+                    'success' => false,
+                    'total' => 0,
+                    'message' => tr('Nessuna fattura da importare')
+                ]);
+                break;
+            }
+
+            // Pre-validazione delle fatture per evitare errori durante l'importazione sequenziale
+            $valid_count = 0;
+            $errors = [];
+
+            foreach ($list as $invoice) {
+                try {
+                    $file = Interaction::getInvoiceFile($invoice['name']);
+                    if (FatturaElettronica::isValid($file)) {
+                        $valid_count++;
+                    }
+                } catch (Exception $e) {
+                    $errors[] = $invoice['name'] . ': ' . $e->getMessage();
+                }
+            }
+
+            echo json_encode([
+                'success' => true,
+                'total' => $total,
+                'valid_count' => $valid_count,
+                'errors' => $errors,
+                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata')
+            ]);
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'total' => 0,
+                'message' => tr('Errore durante la preparazione').': ' . $e->getMessage()
+            ]);
+        }
+
+        break;
+
     case 'save':
         $temp_name = $_FILES['blob']['tmp_name'];
         $name = $_FILES['blob']['name'];

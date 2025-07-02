@@ -42,26 +42,36 @@ if ($tipo_documento == 'ordine') {
 }
 
 echo '
-<div class="row">
-    <div class="col-md-8">
-        Riga: <strong>'.$descrizione.'</strong>
+<div class="card card-outline card-info">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fa fa-link"></i> '.tr('Selezione riferimento').'
+        </h3>
     </div>
-    <div class="col-md-4 text-right">
-        Quantità: <strong>'.$qta.'</strong> - Prezzo unitario: <strong>'.number_format($prezzo_unitario, 2, ',', '.').'</strong>
-    </div>
-</div>
-<br>
-<table class="table table-striped table-hover table-sm table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th class="text-center" width="120">
-            '.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i>
-        </th>
-        <th class="text-center" width="120">'.tr('Prezzo unitario').'</th>
-        <th class="text-center" width="60">#</th>
-    </tr>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <strong>'.tr('Riga').':</strong> '.$descrizione.'
+            </div>
+            <div class="col-md-4 text-right">
+                <strong>'.tr('Q.tà').':</strong> '.$qta.' - <strong>'.tr('Prezzo').':</strong> '.moneyFormat($prezzo_unitario).'
+            </div>
+        </div>
 
-    <tbody>';
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-center" width="120">
+                            '.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i>
+                        </th>
+                        <th class="text-center" width="120">'.tr('Prezzo unitario').'</th>
+                        <th class="text-center" width="60">#</th>
+                    </tr>
+                </thead>
+
+                <tbody>';
 
 $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
@@ -108,8 +118,11 @@ foreach ($righe as $riga) {
 }
 
 echo '
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>$(document).ready(init)</script>
 

@@ -88,6 +88,15 @@ if (!$conto_bloccato && $lvl == 3) {
             {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "value": "<?php echo $info['dir']; ?>", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"entrata/uscita\":\"Ricavo e Costo\", \"\": \"Non usare\"" ]}
         </div>
     </div>
+
+    <?php
+    if ($lvl == 3) {
+        echo '
+            <div class="alert alert-info hidden" id="alert-ricalcolo">
+                <i class="fa fa-info-circle"></i> '.tr('Per ricalcolare l\'importo deducibile dei movimenti già registrati, salva le modifiche e poi premi il pulsante <span class="btn btn-xs btn-primary"><i class="fa fa-refresh"></i></span> a fianco del conto').'
+            </div>';
+    }
+    ?>
     <br>
 
     <div class="float-right d-none d-sm-inline">
@@ -98,5 +107,10 @@ if (!$conto_bloccato && $lvl == 3) {
     <div class="clearfix"></div>
 </form>
 
-<script>$(document).ready(init)</script>
+<script>
+    $(document).ready(init);
+    $('#percentuale_deducibile').keyup(function() {
+        $('#alert-ricalcolo').removeClass('hidden');
+    });
+</script>
 

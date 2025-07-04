@@ -28,6 +28,7 @@ use Models\Plugin;
 use Models\User;
 use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\HierarchyTrait;
+use Models\Upload;
 
 class Check extends Model
 {
@@ -138,7 +139,16 @@ class Check extends Model
      */
     public static function deleteLinked($data)
     {
-        database()->delete('zz_checks', $data);
+        $record = Check::where('id_module', $data['id_module'])
+            ->where('id_module', $data['id_module'])
+            ->where('id_record', $data['id_record'])
+            ->where('id_module_from', $data['id_module_from'])
+            ->where('id_record_from', $data['id_record_from'])
+            ->get();
+
+        foreach($record as $r){
+            $r->delete();
+        };
     }
 
     /* Relazioni Eloquent */
@@ -166,5 +176,47 @@ class Check extends Model
     public function module()
     {
         return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function getImageAttribute()
+    {
+        if (empty($this->id_immagine)) {
+            return null;
+        }
+
+        $file = Upload::find($this->id_immagine);
+
+        $module = Module::where('id',$file->id_module)->first();
+        $fileinfo = \Uploads::fileInfo($file->filename);
+
+        $directory = '/'.$module->upload_directory.'/';
+        $image = $directory.$file->filename;
+        $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+        $url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
+
+        return $url;
+    }
+
+    public function delete()
+    {
+        if( !empty($this->id_immagine) ){
+            //Se sono valorizzati id_module_from e id_record_from verifico l'id_immagine. Se non presente allora è stato inserito per la check e posso eliminare il file
+            if( !empty($this->id_module_from) && !empty($this->id_record_from) ){
+                $check = Check::where('id_module_from', $this->id_module_from)->where('id_record_from', $this->id_record_from)->where('id_immagine', $this->id_immagine)->where('id','!=', $this->id)->first();
+                if( !empty($check) ){
+                    return parent::delete();
+                }
+            }
+
+            $file = Upload::find($this->id_immagine);
+
+            \Uploads::delete($file->filename, [
+                'id_module' => $this->id_module,
+                'id_record' => $this->id_record,
+            ]);
+        }
+            
+        return parent::delete();
     }
 }

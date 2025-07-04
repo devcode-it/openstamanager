@@ -33,7 +33,6 @@ switch (post('op')) {
         } else {
             $record = Check::find($id);
         }
-
         $record->delete();
 
         break;
@@ -94,6 +93,37 @@ switch (post('op')) {
             $record = ChecklistItem::find($id_record);
         } else {
             $record = Check::find($id_record);
+        }
+
+        // Upload file
+        if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
+            $upload = Uploads::upload($_FILES['immagine'], [
+                'name' => 'Immagine',
+                'id_category' => null,
+                'id_module' => $record->id_module,
+                'id_record' => $record->id_record,
+            ], [
+                'thumbnails' => true,
+            ]);
+            $id_immagine = $upload->id;
+
+            if (!empty($id_immagine)) {
+                $record->id_immagine = $id_immagine;
+            } else {
+                flash()->warning(tr("Errore durante il caricamento dell'immagine!"));
+            }
+        }
+
+        // Eliminazione file
+        if (!empty(post('delete_immagine'))) {
+            $file = Models\Upload::find($record->id_immagine);
+
+            Uploads::delete($file->filename, [
+                'id_module' => $record->id_module,
+                'id_record' => $record->id_record,
+            ]);
+
+            $record->id_immagine = null;
         }
 
         $record->content = post('content');

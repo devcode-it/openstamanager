@@ -61,8 +61,10 @@ $checks = $structure->mainChecks($id_record);
 
 echo "      <table class='table table-sm'>
                 <tbody class='sort' data-sonof='0'>";
+
+$has_images = $checks->where('id_immagine','!=', null)->count();
 foreach ($checks as $check) {
-    echo renderChecklist($check);
+    echo renderChecklist($check, 1, 0, $has_images);
 }
 echo '          </tbody>
             </table>';
@@ -173,7 +175,7 @@ function delete_check(id){
 }
 
 function edit_check(id){
-    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record="+id, 1);
 }
 
 function reload(){

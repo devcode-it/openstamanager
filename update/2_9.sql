@@ -115,3 +115,8 @@ INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `title`, `filename`)
 INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `title`, `filename`) VALUES (NULL, '2', (SELECT id FROM zz_prints WHERE name = 'QR Code'), 'QR Code', 'QR Code');
 
 INSERT INTO zz_files_categories (name) VALUES ('Allegati caricati tramite accesso condiviso');
+
+-- Aggiunta campo per immagine nelle check
+ALTER TABLE `zz_checks` 
+  ADD `id_immagine` INT NULL DEFAULT NULL,
+  ADD CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_immagine`) REFERENCES `zz_files`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT; 

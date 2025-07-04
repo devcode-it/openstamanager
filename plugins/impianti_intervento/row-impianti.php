@@ -222,7 +222,7 @@ function delete_check(id){
 }
 
 function edit_check(id){
-    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_record="+id, 1);
+    launch_modal("Modifica checklist", "'.$checklist_module->fileurl('components/edit-check.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record="+id, 1);
 }
 
 function saveNota(id) {

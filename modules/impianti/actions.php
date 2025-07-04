@@ -136,6 +136,7 @@ switch ($op) {
                 $check = Check::build($user, $structure, $id_record, $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
                 $check->id_plugin = null;
                 $check->note = $check_categoria['note'];
+                $check->id_immagine = $check_categoria['id_immagine'];
                 $check->save();
 
                 // Riporto anche i permessi della check
@@ -216,6 +217,7 @@ switch ($op) {
             $check = Check::build($user, $structure, $id_record, $check_categoria['content'], $id_parent_new, $check_categoria['is_titolo'], $check_categoria['order']);
             $check->id_plugin = null;
             $check->note = $check_categoria['note'];
+            $check->id_immagine = $check_categoria['id_immagine'];
             $check->save();
         }
         flash()->info(tr('Checklist importate correttamente!'));

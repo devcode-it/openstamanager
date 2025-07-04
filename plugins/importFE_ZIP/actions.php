@@ -19,9 +19,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
-include __DIR__.'/settings.php';
+include_once __DIR__.'/init.php';
 
 use Carbon\Carbon;
+use Models\Module;
 use Modules\Anagrafiche\Tipo;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
@@ -38,42 +39,59 @@ use Util\XML;
 $file = null;
 switch (filter('op')) {
     case 'list':
-        $list = Interaction::getRemoteList();
+        $list = Interaction::getInvoiceList();
 
         echo json_encode($list);
 
         break;
 
-    case 'prepare':
-        if (!isset($file)) {
-            $name = filter('name');
-            $file = Interaction::getInvoiceFile($name);
-        }
-
+    case 'prepare-all':
+        // Ottimizzazione: prepara tutte le fatture in una sola chiamata
         try {
-            if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
+            $list = Interaction::getInvoiceList();
+            $total = count($list);
+
+            if ($total === 0) {
                 echo json_encode([
-                    'already' => 1,
+                    'success' => false,
+                    'total' => 0,
+                    'message' => tr('Nessuna fattura da importare')
                 ]);
-
-                return;
-            }
-        } catch (Exception) {
-        }
-
-        // Individuazione ID fisico
-        $files = Interaction::getFileList([], 'Fatture di vendita', 'Importazione FE');
-        foreach ($files as $key => $value) {
-            if ($value['name'] == $file) {
-                $index = $key;
-
                 break;
             }
+
+            // Pre-validazione delle fatture per evitare errori durante l'importazione sequenziale
+            $valid_count = 0;
+            $errors = [];
+
+            foreach ($list as $invoice) {
+                try {
+                    $file = Interaction::getInvoiceFile($invoice['name']);
+                    if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
+                        $valid_count++;
+                    }
+                } catch (Exception $e) {
+                    $errors[] = $invoice['name'] . ': ' . $e->getMessage();
+                }
+            }
+
+            echo json_encode([
+                'success' => true,
+                'total' => $total,
+                'valid_count' => $valid_count,
+                'errors' => $errors,
+                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata')
+            ]);
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'total' => 0,
+                'message' => tr('Errore durante la preparazione').': ' . $e->getMessage()
+            ]);
         }
 
-        echo json_encode([
-            'id' => $index + 1,
-        ]);
+        break;
 
     case 'save':
         $directory = FatturaElettronica::getImportDirectory('Fatture di vendita', 'Importazione FE');
@@ -113,10 +131,10 @@ switch (filter('op')) {
 
                         $data = $file['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento']['Data'];
 
-                        $fattura_pa = FatturaElettronica::manage($xml, 'Fattura di vendita', 'Importazione FE');
+                        $fattura = FatturaElettronica::manage($xml, 'Fattura di vendita', 'Importazione FE');
 
                         // Tipo documento
-                        $fattura_body = $fattura_pa->getBody();
+                        $fattura_body = $fattura->getBody();
                         $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
                         $id_tipo = $database->fetchOne('SELECT id FROM co_tipidocumento WHERE dir = "entrata" AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];
 
@@ -134,12 +152,16 @@ switch (filter('op')) {
                         if (!empty($pagamento)) {
                             $id_pagamento = $pagamento->id;
                         } else {
-                            $id_pagamento = $settings['id_pagamento'];
+                            $id_pagamento = setting('Tipo di pagamento predefinito');
                         }
 
-                        $fattura_pa->saveFattura($id_pagamento, $settings['id_segment'], $id_tipo, $data, false, false, 'Cliente');
+                        // Ottieni il sezionale predefinito per le fatture di vendita
+                        $id_module_fatture_vendita = Module::where('name', 'Fatture di vendita')->first()->id;
+                        $id_segment_predefinito = getSegmentPredefined($id_module_fatture_vendita);
 
-                        $righe = $fattura_pa->getRighe();
+                        $fattura->saveFattura($id_pagamento, $id_segment_predefinito, $id_tipo, $data, false, false, 'Cliente');
+
+                        $righe = $fattura->getRighe();
 
                         $articoli = [];
                         $iva = [];
@@ -150,16 +172,16 @@ switch (filter('op')) {
 
                             $aliquota_iva = $riga['AliquotaIVA'];
 
-                            $iva[$key] = $settings['iva'][$aliquota_iva];
+                            $iva[$key] = setting('Iva predefinita');
 
-                            $conti[$key] = $settings['id_conto'];
+                            $conti[$key] = setting('Conto predefinito fatture di vendita');
                         }
 
-                        $fattura_pa->saveRighe($articoli, $iva, $conti);
+                        $fattura->saveRighe($articoli, $iva, $conti);
 
-                        $fattura_pa->saveAllegati('Fatture di vendita');
+                        $fattura->saveAllegati('Fatture di vendita');
 
-                        $id_record = $fattura_pa->getFattura()->id;
+                        $id_record = $fattura->getFattura()->id;
                         $fattura = Fattura::find($id_record);
                         $fattura->gestoreMovimenti = new GestoreMovimenti($fattura);
 
@@ -217,6 +239,7 @@ switch (filter('op')) {
 
         $directory = FatturaElettronica::getImportDirectory('Fatture di vendita');
         $files = Interaction::getFileList([], 'Fatture di vendita', 'Importazione FE');
+
         $file = $files[$file_id];
 
         if (!empty($file)) {
@@ -248,9 +271,9 @@ switch (filter('op')) {
             'serial' => post('flag_crea_seriali') ? post('serial') : [],
         ];
 
-        $fattura_pa = FatturaElettronica::manage($filename, 'Fatture di vendita', 'Importazione FE');
-        $id_fattura = $fattura_pa->save($info, 'Cliente');
-        $fattura_pa->delete();
+        $fattura = FatturaElettronica::manage($filename, 'Fatture di vendita', 'Importazione FE');
+        $id_fattura = $fattura->save($info, 'Cliente');
+        $fattura->delete();
         $fattura = Fattura::find($id_fattura);
         $id_autofattura = post('autofattura');
         $new_stato = Stato::where('name', 'Pagato')->first()->id;
@@ -315,7 +338,6 @@ switch (filter('op')) {
             flash()->info(tr('Tutte le fatture salvate sono state importate!'));
             redirect(base_path().'/controller.php?id_module='.$id_module);
         }
-
         $record = null;
         break;
 
@@ -340,7 +362,7 @@ switch (filter('op')) {
             return;
         }
 
-        $fatture = $anagrafica->fattureAcquisto()
+        $fatture = $anagrafica->fattureVendita()
             ->contabile()
             ->orderBy('created_at', 'DESC')
             ->take(10)
@@ -365,21 +387,13 @@ switch (filter('op')) {
         $id_tipo = $tipi->sort()->keys()->last();
 
         // Ricerca del conto più utilizzato
-        // Filtro le righe che hanno un conto valido (maggiore di 0)
-        $righe_con_conto = $righe->filter(fn ($item) => !empty($item->idconto) && $item->idconto > 0);
-
-        $conto = null;
-        if ($righe_con_conto->isNotEmpty()) {
-            $conti = $righe_con_conto->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
-            $id_conto = $conti->sort()->keys()->last();
-            $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
-        }
+        $conti = $righe->groupBy(fn ($item, $key) => $item->idconto)->transform(fn ($item, $key) => $item->count());
+        $id_conto = $conti->sort()->keys()->last();
+        $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
-        // Filtro le righe che hanno un'aliquota IVA valida
-        $righe_con_iva = $righe->filter(fn ($item) => !empty($item->idiva) && $item->idiva > 0 && !empty($item->aliquota));
-        $percentuali_iva = $righe_con_iva->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
+        $percentuali_iva = $righe->groupBy(fn ($item, $key) => $item->aliquota->percentuale);
         foreach ($percentuali_iva as $key => $values) {
             $aliquote = $values->mapToGroups(fn ($item, $key) => [$item->aliquota->id => $item->aliquota]);
             $id_aliquota = $aliquote->map(fn ($item, $key) => $item->count())->sort()->keys()->last();
@@ -391,20 +405,14 @@ switch (filter('op')) {
             ];
         }
 
-        $response = [
+        echo json_encode([
             'id_tipo' => $id_tipo,
-            'iva' => $iva,
-        ];
-
-        // Aggiungo il conto solo se è stato trovato
-        if (!empty($conto)) {
-            $response['conto'] = [
+            'conto' => [
                 'id' => $conto['id'],
                 'descrizione' => $conto['descrizione'],
-            ];
-        }
-
-        echo json_encode($response);
+            ],
+            'iva' => $iva,
+        ]);
         break;
 
     case 'riferimenti-automatici':
@@ -417,8 +425,8 @@ switch (filter('op')) {
         $results = [];
 
         // Dati ordini
-        $DatiOrdini = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
-        $DatiDDT = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiDDT']);
+        $DatiOrdini = XML::forceArray($fattura->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
+        $DatiDDT = XML::forceArray($fattura->getBody()['DatiGenerali']['DatiDDT']);
 
         $replaces = ['n ', 'N ', 'n. ', 'N. ', 'nr ', 'NR ', 'nr. ', 'NR. ', 'num ', 'NUM ', 'num. ', 'NUM. ', 'numero ', 'NUMERO '];
 
@@ -510,7 +518,7 @@ switch (filter('op')) {
         }
 
         // Iterazione sulle singole righe
-        $righe = $fattura_pa->getRighe();
+        $righe = $fattura->getRighe();
         foreach ($righe as $key => $riga) {
             // Se la riga è descrittiva non la collego a documenti
             if ($riga['PrezzoTotale'] == 0) {
@@ -740,8 +748,9 @@ switch (filter('op')) {
                 $riga = $documento->getRiga($namespace.$type, $collegamento['id']);
                 $riga_origine = $riga->getOriginalComponent();
 
+                $desc_conto = '';
                 if (!empty($riga->idarticolo)) {
-                    $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_acquisto))['descrizione'];
+                    $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_vendita))['descrizione'];
                 }
 
                 // Compilazione dei dati
@@ -764,8 +773,8 @@ switch (filter('op')) {
                         'iva_percentuale' => $riga->aliquota->percentuale,
                         'id_articolo' => $riga->idarticolo,
                         'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
-                        'id_conto' => $riga->articolo->idconto_acquisto,
-                        'desc_conto' => str_replace(' ', '_', $desc_conto),
+                        'id_conto' => $riga->articolo->idconto_vendita,
+                        'desc_conto' => str_replace(' ', '_', $desc_conto ?: ''),
                     ],
                 ];
             }

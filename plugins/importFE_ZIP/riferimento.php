@@ -42,26 +42,36 @@ if ($tipo_documento == 'ordine') {
 }
 
 echo '
-<div class="row">
-    <div class="col-md-8">
-        Riga: <strong>'.$descrizione.'</strong>
+<div class="card card-outline card-info">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fa fa-link"></i> '.tr('Selezione riferimento').'
+        </h3>
     </div>
-    <div class="col-md-4 text-right">
-        Quantità: <strong>'.$qta.'</strong> - Prezzo unitario: <strong>'.number_format($prezzo_unitario, 2, ',', '.').'</strong>
-    </div>
-</div>
-<br>
-<table class="table table-striped table-hover table-sm table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th class="text-center" width="120">
-            '.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i>
-        </th>
-        <th class="text-center" width="120">'.tr('Prezzo unitario').'</th>
-        <th class="text-center" width="60">#</th>
-    </tr>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <strong>'.tr('Riga').':</strong> '.$descrizione.'
+            </div>
+            <div class="col-md-4 text-right">
+                <strong>'.tr('Q.tà').':</strong> '.$qta.' - <strong>'.tr('Prezzo').':</strong> '.moneyFormat($prezzo_unitario).'
+            </div>
+        </div>
 
-    <tbody>';
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-center" width="120">
+                            '.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i>
+                        </th>
+                        <th class="text-center" width="120">'.tr('Prezzo unitario').'</th>
+                        <th class="text-center" width="60">#</th>
+                    </tr>
+                </thead>
+
+                <tbody>';
 
 $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
@@ -70,7 +80,7 @@ foreach ($righe as $riga) {
     $riga_origine = $riga->getOriginalComponent();
 
     if (!empty($riga->idarticolo)) {
-        $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_acquisto))['descrizione'];
+        $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_vendita))['descrizione'];
     }
 
     $dettagli = [
@@ -84,7 +94,7 @@ foreach ($righe as $riga) {
         'iva_percentuale' => $riga->aliquota->percentuale,
         'id_articolo' => $riga->idarticolo,
         'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
-        'id_conto' => $riga->articolo->idconto_acquisto,
+        'id_conto' => $riga->articolo->idconto_vendita,
         'desc_conto' => $desc_conto ? str_replace(' ', '_', $desc_conto) : null,
     ];
 
@@ -108,8 +118,11 @@ foreach ($righe as $riga) {
 }
 
 echo '
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>$(document).ready(init)</script>
 

@@ -26,6 +26,10 @@ $filename = get('filename');
 
 $content = file_get_contents($directory.'/'.$filename);
 
+if (empty($content)) {
+    return;
+}
+
 // XML
 $xml = new DOMDocument();
 $xml->loadXML($content);

@@ -172,6 +172,7 @@ switch (post('op')) {
 
     case 'print_labels':
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
+        $qta = (post('qta')>0 ? post('qta') : 1);
 
         if (post('tipologia') == 'singola') {
             $id_print = Prints::getPrints()['Barcode'];
@@ -179,7 +180,7 @@ switch (post('op')) {
             $id_print = Prints::getPrints()['Barcode bulk'];
         }
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id);
+        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id.'&qta='.$qta);
         exit;
 
     case 'change_quantity':
@@ -714,6 +715,8 @@ $operations['print_labels'] = [
     'data' => [
         'title' => tr('Stampare i barcode?'),
         'msg' => tr('Verranno stampati i barcode per ciascun articolo selezionato').'<br><br>
+        {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "1", "decimals":"0", "help":"'.tr('Definisci quante etichette stampare per questo barcode').'" ]}
+        <br>
         {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

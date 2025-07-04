@@ -34,8 +34,24 @@ echo '<style>
 }
 </style>';
 
-$articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-unset($_SESSION['superselect']['id_articolo_barcode']);
+if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
+    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
+    unset($_SESSION['superselect']['id_articolo_barcode']);
+} elseif( !empty(get('idbarcode')) ){
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
+} else {
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+}
+
+if( !empty(get('qta')) ){
+    foreach($barcodes as $barcode) {
+        for( $i=0; $i<get('qta'); $i++ ){
+            $records[] = $barcode;
+        }
+    }
+}else{
+    $records = $barcodes;
+}
 
 echo "
 <table style='width:100%'>
@@ -44,8 +60,9 @@ echo "
 $i = 0;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-foreach ($articoli as $articolo) {
-    $barcode = $articolo->barcode ?: $articolo->codice;
+foreach ($records as $record) {
+    $articolo = Articolo::find($record->idarticolo);
+    $barcode = $record->barcode;
 
     if ($i % 5 == 0) {
         echo '</tr><tr>';

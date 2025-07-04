@@ -37,7 +37,7 @@ echo '
 	<div class="row">
 		<div class="col-md-12">
             <button type="button" class="btn btn-default btn-xs tip pull-right" id="generaBarcode"><i class="fa fa-refresh"></i> '.tr('Genera').'</button>
-			{[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode", "required": 1, "value": "'.$barcode->barcode.'", "validation": "barcode|'.$id_module.'|'.$id_record.'" ]}
+			{[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode", "required": 1, "value": "'.$barcode->barcode.'", "validation": "barcode|'.$id_module.'|'.$id_record.'", "class": "text-center" ]}
 		</div>
 	</div>
 
@@ -48,7 +48,7 @@ echo '
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </button>
 
-            <a type="button" class="btn btn-info" href="'.$rootdir.'/pdfgen.php?id_print='.Prints::getPrints()['Barcode'].'&id_record='.$id_parent.'&idbarcode='.$id_record.'" target="_blank"><i class="fa fa-print"></i> '.tr('Stampa barcode').'</a>
+            <a type="button" class="btn btn-info" onclick="launch_modal(\''.tr('Stampa barcode').'\', \''.$rootdir.'/plugins/barcode_articoli/print_barcode.php?id_record='.$id_record.'&id_parent='.$id_parent.'\');"><i class="fa fa-print"></i> '.tr('Stampa barcode').'</a>
 			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-edit"></i> '.tr('Modifica').'</button>
 		</div>
 	</div>

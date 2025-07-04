@@ -24,13 +24,23 @@ use Modules\Articoli\Articolo;
 
 if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    $records = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
     unset($_SESSION['superselect']['id_articolo_barcode']);
 } elseif( !empty(get('idbarcode')) ){
-    $records = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
 } else {
     $articoli = Articolo::where('id', '=', $id_record)->get();
-    $records = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+}
+
+if( !empty(get('qta')) ){
+    foreach($barcodes as $barcode) {
+        for( $i=0; $i<get('qta'); $i++ ){
+            $records[] = $barcode;
+        }
+    }
+}else{
+    $records = $barcodes;
 }
 
 $pages = count($records);

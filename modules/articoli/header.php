@@ -54,8 +54,26 @@ if ($articolo->id_categoria) {
 }
 echo '
                         <h4 class="mb-2 text-primary"><b>'.$articolo->getTranslation('title').'</b> '.($articolo->attivo ? '<span class="badge badge-success"><i class="fa fa-check"></i> '.tr('Attivo').'</span>' : '<span class="badge badge-danger"><i class="fa fa-times"></i> '.tr('Disattivato').'</span>').'</h4>
-                        <p class="mb-2"><b>'.$articolo->codice.'</b> '.($articolo->barcode ? ' <span class="badge badge-secondary"><i class="fa fa-barcode mr-1"></i> '.$articolo->barcode.'</span>' : '').'</p>
-                        '.($articolo->note ? '<p class="alert alert-warning p-2 mt-2"><i class="fa fa-pencil-square-o mr-1"></i> '.$articolo->note.'</p>' : '').'
+                        <p class="mb-2"><b>'.$articolo->codice.'</b></p>
+                        '.($articolo->note ? '<p class="alert alert-warning p-2 mt-2"><i class="fa fa-pencil-square-o mr-1"></i> '.$articolo->note.'</p>' : '');
+                    if( !empty($articolo->barcode) ){
+                        
+                        echo '
+                            <div class="readmore">
+                                <table class="table">
+                                    <tbody>';
+                                foreach ($articolo->barcodes as $barcode) {
+                                    echo '
+                                        <tr>
+                                            <td><i class="fa fa-barcode mr-1"></i> '.$barcode.'</td>
+                                        </tr>';
+                                }
+                        echo '
+                                    </tbody>
+                                </table>
+                            </div>';
+                    }
+echo '
                     </div>
                 </div>
             </div>

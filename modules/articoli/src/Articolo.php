@@ -503,6 +503,14 @@ class Articolo extends Model
         return $prezzo_vendita;
     }
 
+    public function getBarcodesAttribute()
+    {
+        $barcode = database()->table('mg_articoli_barcode')->where('idarticolo', $this->id)->pluck('barcode');
+
+        return $barcode;
+    }
+
+
     /**
      * @version distinta_base
      */

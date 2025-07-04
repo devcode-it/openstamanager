@@ -45,3 +45,73 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 
 -- Data competenza movimenti
 ALTER TABLE `co_movimenti` ADD `data_inizio_competenza` DATE NULL AFTER `data`, ADD `data_fine_competenza` DATE NULL AFTER `data_inizio_competenza`; 
+
+-- Aggiunta della tabella per gestire i token OTP per l'autenticazione
+CREATE TABLE IF NOT EXISTS `zz_otp_tokens` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id_utente` int(11) NULL,
+    `token` varchar(255) NOT NULL,
+    `descrizione` varchar(255),
+    `tipo_accesso` varchar(255) NOT NULL,
+    `valido_dal` DATETIME NULL,
+    `valido_al` DATETIME NULL,
+    `id_module_target` int(11) NOT NULL,
+    `id_record_target` int(11) NOT NULL,
+    `permessi` enum('r', 'rw') NULL,
+    `email` varchar(255) NOT NULL,
+    `enabled` tinyint(1) NOT NULL DEFAULT 0,
+    `last_otp` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Aggiunta del modulo per la gestione dei token OTP
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Accesso con Token/OTP', 'otp_tokens', 'SELECT |select| FROM `zz_otp_tokens` WHERE 1=1 HAVING 2=2', '', 'fa fa-link', '2.9', '2.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP';
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', @id_module, 'Accesso con Token/OTP', 'Accesso con Token/OTP'),
+('2', @id_module, 'OTP/Token login', 'OTP/Token login');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+(@id_module, 'id', '`zz_otp_tokens`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1'),
+(@id_module, 'Descrizione', '`zz_otp_tokens`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1');
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description');
+
+-- Aggiunta del template email per la richiesta del codice OTP
+INSERT INTO `em_templates` (`id`, `id_module`, `name`, `icon`, `tipo_reply_to`, `reply_to`, `cc`, `bcc`, `read_notify`, `predefined`, `note_aggiuntive`, `enabled`, `type`, `indirizzi_proposti`, `deleted_at`, `id_account`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Utenti e permessi'), 'Richiesta codice OTP', 'fa fa-envelope', '', '', '', '', 0, 0, '', 1, 'a', 0, NULL, 1);
+
+INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `title`, `subject`, `body`) VALUES
+(NULL, 1, (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'Richiesta codice OTP', 'Richiesta codice OTP', '<p>Gentile {username},</p>\n\n<p>di seguito il codice OTP per il login:</p>\n\n<p><strong>{codice_otp}</strong></p>\n\n<p> </p>\n\n<p> </p>\n\n<p>Se non sei il responsabile della richiesta in questione, contatta l\'amministratore il prima possibile.</p>\n\n<p> </p>\n\n<p>Distinti saluti</p>'),
+(NULL, 2, (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'OTP code request', 'OTP code request', '<p>Dear {username},</p>\n\n<p>below is the OTP code for login:</p>\n\n<p><strong>{codice_otp}</strong></p>\n\n<p> </p>\n\n<p> </p>\n\n<p>If you are not responsible for the request in question, please contact the administrator as soon as possible.</p>\n\n<p> </p>\n\n<p>Best regards</p>');
+
+-- Aggiunta impostazione per il template email della richiesta del codice OTP
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Template email richiesta codice OTP', (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'query=SELECT `em_templates`.`id`, `name` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates_lang`.`id_record` = `em_templates`.`id` AND `em_templates_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \"Lingua\"))', '1', 'Generali', '2', '0');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Template email richiesta codice OTP'), 'Template email richiesta codice OTP', '');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Template email richiesta codice OTP'), 'OTP code request email template', '');
+
+-- Sposto tutti i metodi di accesso sotto un'unica sezione
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Gestione accessi', '', 'menu', '', 'fa fa-key', '2.9', '2.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Gestione accessi';
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', @id_module, 'Gestione accessi', 'Gestione accessi'),
+('2', @id_module, 'Login management', 'Login management');
+
+UPDATE `zz_modules` SET `parent` = @id_module WHERE `name` IN ('Accesso con Token/OTP', 'Utenti e permessi', 'Accesso con OAuth');
+
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name = 'Accesso con Token/OTP'), '1', 'QR Code', 'qrcode', '', '{\"width\": 54, \"height\": 20, \"format\": [64, 55], \"margins\": {\"top\": 5,\"bottom\": 0,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', '0', '1', '1', NULL);
+
+INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `title`, `filename`) VALUES (NULL, '1', (SELECT id FROM zz_prints WHERE name = 'QR Code'), 'QR Code', 'QR Code');
+
+INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `title`, `filename`) VALUES (NULL, '2', (SELECT id FROM zz_prints WHERE name = 'QR Code'), 'QR Code', 'QR Code');
+
+INSERT INTO zz_files_categories (name) VALUES ('Allegati caricati tramite accesso condiviso');

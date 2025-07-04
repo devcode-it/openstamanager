@@ -337,4 +337,84 @@ switch (filter('op')) {
         flash()->info('Impostazione modificata con successo!');
 
         break;
+
+    // Abilita OTP per l'utente
+    case 'enable_otp':
+        $utente = User::find($id_utente);
+
+        if ($utente) {
+
+            $id_token = filter('id_token');
+
+            // Aggiorna il token esistente per abilitare OTP
+            $dbo->query('UPDATE zz_otp_tokens SET enabled = 1, email = '.prepare($utente->email).' WHERE id = '.prepare($id_token));
+
+            ob_end_clean();
+            echo 'ok';
+        } else {
+            ob_end_clean();
+            echo 'error';
+        }
+
+        break;
+
+    // Disabilita OTP per l'utente
+    case 'disable_otp':
+        $utente = User::find($id_utente);
+
+        if ($utente) {
+
+            $id_token = filter('id_token');
+
+            // Disabilita OTP nel token dell'utente e resetta last_otp
+            $dbo->query('UPDATE zz_otp_tokens SET enabled = 0, last_otp = "", valido_dal = NULL, valido_al = NULL, email = '.prepare($utente->email).' WHERE id = '.prepare($id_token));
+
+            ob_end_clean();
+            echo 'ok';
+        } else {
+            ob_end_clean();
+            echo 'error';
+        }
+
+        break;
+
+    // Aggiorna configurazione OTP completa
+    case 'update_otp':
+        $utente = User::find($id_utente);
+        $id_token = filter('id_token');
+        $valido_dal = filter('valido_dal');
+        $valido_al = filter('valido_al');
+
+        if ($utente && !empty($id_token)) {
+            
+            if (!empty($valido_dal)) {
+                // Valida che la data sia futura
+                if (strtotime($valido_dal) <= time()) {
+                    flash()->error(tr('La data di inizio validità deve essere futura'));
+                    break;
+                }
+                $valido_dal_mysql = date('Y-m-d H:i:s', strtotime($valido_dal));
+            } else {
+                $valido_dal_mysql = null;
+            }
+
+            if (!empty($valido_al)) {
+                // Valida che la data sia futura
+                if (strtotime($valido_al) <= time()) {
+                    flash()->error(tr('La data di fine validità deve essere futura'));
+                    break;
+                }
+                $valido_al_mysql = date('Y-m-d H:i:s', strtotime($valido_al));
+            } else {
+                $valido_al_mysql = null;
+            }
+
+            $dbo->query('UPDATE zz_otp_tokens SET valido_dal = '.prepare($valido_dal_mysql).', valido_al = '.prepare($valido_al_mysql).', email = '.prepare($utente->email).' WHERE id = '.prepare($id_token));
+
+            flash()->info(tr('Configurazione OTP aggiornata con successo!'));
+        } else {
+            flash()->error(tr('Errore durante l\'aggiornamento della configurazione OTP'));
+        }
+
+        break;
 }

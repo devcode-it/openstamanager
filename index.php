@@ -25,6 +25,7 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 
 $op = filter('op');
+$token = filter('token');
 
 $microsoft = null;
 
@@ -77,6 +78,13 @@ switch ($op) {
 }
 
 if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
+    if (Permissions::isTokenAccess()) {
+        if (!empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
+            redirect(base_path().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
+            exit;
+        }
+    }
+        
     $module = Auth::firstModule();
 
     if (!empty($module)) {
@@ -84,6 +92,12 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     } else {
         redirect(base_path().'/index.php?op=logout');
     }
+    exit;
+}
+
+// Gestione accesso tramite token OTP
+if (!empty($token) && $dbo->isConnected() && $dbo->isInstalled()) {
+    redirect(base_path().'/token_login.php?token='.urlencode($token));
     exit;
 }
 

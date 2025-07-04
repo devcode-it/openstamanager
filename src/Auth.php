@@ -65,6 +65,8 @@ class Auth extends Util\Singleton
 
     /** @var array Informazioni riguardanti l'utente autenticato */
     protected $user;
+    /** @var array|null Informazioni riguardanti il token di accesso */
+    protected $token_user;
     /** @var string Stato del tentativo di accesso */
     protected $current_status;
     /** @var string|null Nome del primo modulo su cui l'utente ha permessi di navigazione */
@@ -92,6 +94,11 @@ class Auth extends Util\Singleton
 
             if (!empty($id)) {
                 $this->identifyUser($id);
+            }
+
+            // Carica il token dalla sessione se presente
+            if (!empty($_SESSION['token_user']) && !empty($_SESSION['token_access'])) {
+                $this->loadTokenFromSession();
             }
 
             $this->saveToSession();
@@ -185,7 +192,25 @@ class Auth extends Util\Singleton
      */
     public function isAuthenticated()
     {
-        return !empty($this->user);
+        // Controllo autenticazione normale
+        if (!empty($this->user)) {
+            return true;
+        }
+
+        // Controllo autenticazione tramite token
+        if (!empty($this->token_user)) {
+            // Verifica che il token sia ancora valido
+            return $this->isTokenStillValid();
+        }
+
+        // Retrocompatibilità: controlla anche la sessione
+        if (!empty($_SESSION['token_user']) && !empty($_SESSION['token_access'])) {
+            // Carica il token dalla sessione se non è già caricato nella classe
+            $this->loadTokenFromSession();
+            return $this->isTokenStillValid();
+        }
+
+        return false;
     }
 
     /**
@@ -244,6 +269,7 @@ class Auth extends Util\Singleton
     {
         if ($this->isAuthenticated() || !empty($_SESSION['id_utente'])) {
             $this->user = [];
+            $this->token_user = null;
             $this->first_module = null;
 
             session_unset();
@@ -492,5 +518,469 @@ class Auth extends Util\Singleton
         } catch (PDOException) {
             $this->destory();
         }
+    }
+
+    /**
+     * Genera un token OTP sicuro per l'utente.
+     *
+     * Genera un codice OTP alfanumerico di 6 caratteri utilizzando caratteri
+     * facilmente distinguibili per evitare confusione durante l'inserimento.
+     * Esclude caratteri ambigui come 0, O, 1, I, l per migliorare l'usabilità.
+     *
+     * @param int $length Lunghezza del codice OTP (default: 6)
+     * @return string Codice OTP generato
+     */
+    public function getOTP($length = 6)
+    {
+        // Caratteri utilizzabili per l'OTP (esclusi caratteri ambigui)
+        // Esclusi: 0 (zero), O (o maiuscola), 1 (uno), I (i maiuscola), l (L minuscola)
+        $characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $otp = '';
+
+        // Genera il codice OTP carattere per carattere
+        for ($i = 0; $i < $length; $i++) {
+            // Utilizza random_int per una generazione crittograficamente sicura
+            $randomIndex = random_int(0, $charactersLength - 1);
+            $otp .= $characters[$randomIndex];
+        }
+
+        return $otp;
+    }
+
+    /**
+     * Valida un codice OTP.
+     *
+     * Verifica che il codice OTP fornito sia nel formato corretto:
+     * - Lunghezza esatta di 6 caratteri
+     * - Solo caratteri alfanumerici maiuscoli
+     * - Esclude caratteri ambigui (0, O, 1, I, l)
+     *
+     * @param string $otp Codice OTP da validare
+     * @return bool True se il codice è valido, false altrimenti
+     */
+    public function validateOTP($otp)
+    {
+        // Verifica lunghezza
+        if (strlen($otp) !== 6) {
+            return false;
+        }
+
+        // Verifica che contenga solo caratteri validi
+        $validCharacters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        for ($i = 0; $i < strlen($otp); $i++) {
+            if (strpos($validCharacters, $otp[$i]) === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Normalizza un codice OTP rimuovendo spazi e convertendo in maiuscolo.
+     *
+     * @param string $otp Codice OTP da normalizzare
+     * @return string Codice OTP normalizzato
+     */
+    public function normalizeOTP($otp)
+    {
+        // Rimuove spazi e converte in maiuscolo
+        $normalized = strtoupper(trim($otp));
+
+        // Rimuove caratteri non alfanumerici
+        $normalized = preg_replace('/[^A-Z0-9]/', '', $normalized);
+
+        return $normalized;
+    }
+
+    /**
+     * Effettua il login tramite token OTP.
+     *
+     * Verifica la validità del token, del codice OTP e effettua l'autenticazione
+     * dell'utente associato. Gestisce anche la pulizia del codice OTP utilizzato
+     * e il logging dell'accesso.
+     *
+     * @param string $token Token di accesso
+     * @param string $otp_code Codice OTP inserito dall'utente
+     * @return array Risultato dell'operazione con status e messaggio
+     */
+    public function attemptOTPLogin($token, $otp_code)
+    {
+        $database = database();
+
+        // Normalizza il codice OTP
+        $otp_code = $this->normalizeOTP($otp_code);
+
+        // Verifica formato OTP
+        if (!$this->validateOTP($otp_code)) {
+            return [
+                'success' => false,
+                'status' => 'invalid_otp_format',
+                'message' => tr('Formato codice OTP non valido')
+            ];
+        }
+
+        // Verifica token e OTP nel database
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+
+        if (empty($token_record)) {
+            return [
+                'success' => false,
+                'status' => 'invalid_token',
+                'message' => tr('Token non valido o OTP non abilitato')
+            ];
+        }
+
+        // Verifica se il token ha delle date impostate e se è attivo
+        $is_not_active = $this->checkTokenValidity($token_record);
+        if ($is_not_active) {
+            return [
+                'success' => false,
+                'status' => 'token_not_active',
+                'message' => tr('Token non attivo')
+            ];
+        }
+
+        // Verifica corrispondenza OTP
+        if ($token_record['last_otp'] !== $otp_code || empty($otp_code)) {
+            return [
+                'success' => false,
+                'status' => 'invalid_otp',
+                'message' => tr('Codice OTP non valido o scaduto')
+            ];
+        }
+
+        // Effettua il login
+        session_regenerate_id();
+
+        $utente = null;
+
+        // Se il token ha un utente associato, usa l'autenticazione normale
+        if (!empty($token_record['id_utente'])) {
+            $utente = User::find($token_record['id_utente']);
+            if (!$utente || !$utente->enabled) {
+                return [
+                    'success' => false,
+                    'status' => 'user_disabled',
+                    'message' => tr('Utente non abilitato')
+                ];
+            }
+
+            $this->identifyUser($utente->id);
+
+            if (!$this->isAuthenticated()) {
+                return [
+                    'success' => false,
+                    'status' => 'auth_failed',
+                    'message' => tr('Errore durante l\'autenticazione')
+                ];
+            }
+
+            // Verifica permessi modulo per utenti normali
+            $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
+            $module = $gruppo->id_module_start;
+            $module = $this->getFirstModule($module);
+
+            if (empty($module)) {
+                $this->destory();
+                return [
+                    'success' => false,
+                    'status' => 'no_permissions',
+                    'message' => tr('Utente senza permessi di accesso')
+                ];
+            }
+        } else {
+            // Se non c'è un utente associato, crea una sessione virtuale basata sul token
+            $this->identifyByToken($token_record);
+
+            // Verifica che il token abbia almeno un modulo target
+            if (empty($token_record['id_module_target'])) {
+                $this->destory();
+                return [
+                    'success' => false,
+                    'status' => 'no_module_target',
+                    'message' => tr('Token senza modulo di destinazione')
+                ];
+            }
+        }
+
+        // Salva nella sessione (solo per utenti normali)
+        if ($utente) {
+            $this->saveToSession();
+        }
+
+        // Salva informazioni del token nella sessione per gestire permessi limitati (solo se non già fatto da identifyByToken)
+        if (empty($_SESSION['token_access'])) {
+            $_SESSION['token_access'] = [
+                'token_id' => $token_record['id'],
+                'tipo_accesso' => $token_record['tipo_accesso'],
+                'id_module_target' => $token_record['id_module_target'],
+                'id_record_target' => $token_record['id_record_target'],
+                'permessi' => $token_record['permessi']
+            ];
+        }
+
+        // Pulisci l'OTP utilizzato
+        $database->query('UPDATE `zz_otp_tokens` SET `last_otp` = "" WHERE `id` = '.prepare($token_record['id']));
+
+        // Pulisci le sessioni OTP
+        unset($_SESSION['otp_last_sent_' . $token_record['id']]);
+
+        // Log del login
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
+        $user_id = $utente ? $utente->id : NULL;
+
+        $database->insert('zz_logs', [
+            'username' => $username,
+            'ip' => get_client_ip(),
+            'stato' => self::getStatus()['success']['code'],
+            'id_utente' => $user_id,
+            'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
+        ]);
+
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => tr('Login effettuato con successo'),
+            'user' => $utente,
+            'token_info' => $token_record,
+        ];
+    }
+
+    /**
+     * Effettua il login tramite token diretto (senza OTP).
+     *
+     * Verifica la validità del token e effettua l'autenticazione dell'utente associato.
+     * Questo metodo è utilizzato per l'accesso diretto tramite token OAuth.
+     *
+     * @param string $token Token di accesso
+     * @return array Risultato dell'operazione con status e messaggio
+     */
+    public function attemptTokenLogin($token)
+    {
+        $database = database();
+
+        // Verifica token nel database
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+
+        if (empty($token_record)) {
+            return [
+                'success' => false,
+                'status' => 'invalid_token',
+                'message' => tr('Token non valido o non abilitato')
+            ];
+        }
+
+        // Verifica se il token ha delle date impostate e se è attivo
+        $is_not_active = $this->checkTokenValidity($token_record);
+        if ($is_not_active) {
+            return [
+                'success' => false,
+                'status' => 'token_not_active',
+                'message' => tr('Token non attivo')
+            ];
+        }
+
+        // Effettua il login
+        session_regenerate_id();
+
+        $utente = null;
+
+        // Se il token ha un utente associato, usa l'autenticazione normale
+        if (!empty($token_record['id_utente'])) {
+            $utente = User::find($token_record['id_utente']);
+            if (!$utente || !$utente->enabled) {
+                return [
+                    'success' => false,
+                    'status' => 'user_disabled',
+                    'message' => tr('Utente non abilitato')
+                ];
+            }
+
+            $this->identifyUser($utente->id);
+
+            if (!$this->isAuthenticated()) {
+                return [
+                    'success' => false,
+                    'status' => 'auth_failed',
+                    'message' => tr('Errore durante l\'autenticazione')
+                ];
+            }
+
+            // Verifica permessi modulo (solo se l'utente non è admin)
+            if (!$this->isAdmin()) {
+                $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
+                $module = $gruppo->id_module_start;
+                $module = $this->getFirstModule($module);
+
+                if (empty($module)) {
+                    $this->destory();
+                    return [
+                        'success' => false,
+                        'status' => 'no_permissions',
+                        'message' => tr('Utente senza permessi di accesso')
+                    ];
+                }
+            }
+        } else {
+            // Se non c'è un utente associato, crea una sessione virtuale basata sul token
+            $this->identifyByToken($token_record);
+
+            // Verifica che il token abbia almeno un modulo target
+            if (empty($token_record['id_module_target'])) {
+                $this->destory();
+                return [
+                    'success' => false,
+                    'status' => 'no_module_target',
+                    'message' => tr('Token senza modulo di destinazione')
+                ];
+            }
+        }
+
+        // Salva nella sessione (solo per utenti normali)
+        if ($utente) {
+            $this->saveToSession();
+        }
+
+        // Salva informazioni del token nella sessione per gestire permessi limitati (solo se non già fatto da identifyByToken)
+        if (empty($_SESSION['token_access'])) {
+            $_SESSION['token_access'] = [
+                'token_id' => $token_record['id'],
+                'tipo_accesso' => $token_record['tipo_accesso'],
+                'id_module_target' => $token_record['id_module_target'],
+                'id_record_target' => $token_record['id_record_target'],
+                'permessi' => $token_record['permessi']
+            ];
+        }
+
+        // Log del login
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
+        $user_id = $utente ? $utente->id : NULL;
+
+        $database->insert('zz_logs', [
+            'username' => $username,
+            'ip' => get_client_ip(),
+            'stato' => self::getStatus()['success']['code'],
+            'id_utente' => $user_id,
+            'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
+        ]);
+
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => tr('Login effettuato con successo'),
+            'user' => $utente,
+            'token_info' => $token_record,
+        ];
+    }
+
+    /**
+     * Identifica l'utente tramite token senza utente associato.
+     * Crea una sessione virtuale basata sui permessi del token.
+     *
+     * @param array $token_record Record del token dal database
+     */
+    protected function identifyByToken($token_record)
+    {
+        // Crea un utente virtuale per la sessione
+        $this->user = (object) [
+            'id' => 0,
+            'username' => 'token_' . $token_record['id'],
+            'nome' => 'Token Access',
+            'cognome' => '',
+            'email' => '',
+            'gruppo' => 'Token',
+            'is_admin' => false,
+            'enabled' => true,
+            'idanagrafica' => 0,
+            'idgruppo' => 0,
+        ];
+
+        // Salva le informazioni del token nella classe
+        $this->token_user = [
+            'token_id' => $token_record['id'],
+            'tipo_accesso' => $token_record['tipo_accesso'],
+            'id_module_target' => $token_record['id_module_target'],
+            'id_record_target' => $token_record['id_record_target'],
+            'permessi' => $token_record['permessi']
+        ];
+
+        // Salva nella sessione le informazioni del token (per retrocompatibilità)
+        $_SESSION['token_user'] = true;
+        $_SESSION['token_access'] = $this->token_user;
+    }
+
+    /**
+     * Verifica se il token corrente è ancora valido.
+     *
+     * @return bool
+     */
+    protected function isTokenStillValid()
+    {
+        if (empty($this->token_user)) {
+            return false;
+        }
+
+        $database = database();
+
+        // Recupera il token dal database per verificare lo stato attuale
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `id` = '.prepare($this->token_user['token_id']).' AND `enabled` = 1');
+
+        if (empty($token_record)) {
+            // Token non trovato o disabilitato
+            $this->clearTokenAuthentication();
+            return false;
+        }
+
+        // Verifica validità temporale
+        if ($this->checkTokenValidity($token_record)) {
+            // Token scaduto
+            $this->clearTokenAuthentication();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Carica le informazioni del token dalla sessione nella classe.
+     */
+    protected function loadTokenFromSession()
+    {
+        if (!empty($_SESSION['token_access'])) {
+            $this->token_user = $_SESSION['token_access'];
+        }
+    }
+
+    /**
+     * Pulisce l'autenticazione tramite token.
+     */
+    protected function clearTokenAuthentication()
+    {
+        $this->token_user = null;
+        unset($_SESSION['token_user']);
+        unset($_SESSION['token_access']);
+    }
+
+    /**
+     * Verifica la validità temporale di un token.
+     *
+     * @param array $token_record Record del token dal database
+     * @return bool True se il token non è attivo, false se è attivo
+     */
+    private function checkTokenValidity($token_record)
+    {
+        $is_not_active = false;
+
+        if (!empty($token_record['valido_dal']) && !empty($token_record['valido_al'])) {
+            $is_not_active = strtotime($token_record['valido_dal']) > time() || strtotime($token_record['valido_al']) < time();
+        } elseif (!empty($token_record['valido_dal']) && empty($token_record['valido_al'])) {
+            $is_not_active = strtotime($token_record['valido_dal']) > time();
+        } elseif (empty($token_record['valido_dal']) && !empty($token_record['valido_al'])) {
+            $is_not_active = strtotime($token_record['valido_al']) < time();
+        }
+
+        return $is_not_active;
     }
 }

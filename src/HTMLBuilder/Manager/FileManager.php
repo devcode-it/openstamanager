@@ -33,7 +33,7 @@ class FileManager implements ManagerInterface
 {
     /**
      * Gestione "filelist_and_upload".
-     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "category": "" )}.
+     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "category": "", "upload_only": "false", "disable_edit": "false" )}.
      *
      * @param array $options
      *
@@ -41,8 +41,15 @@ class FileManager implements ManagerInterface
      */
     public function manage($options)
     {
+        // Abilita la sola visualizzazione
         $options['readonly'] = !empty($options['readonly']) ? true : false;
+        // Abilita la visualizzazione all'interno di una card
         $options['showcard'] ??= true;
+
+        // Abilita la sola visualizzazione e il caricamento di nuovi allegati
+        $options['upload_only'] = ($options['upload_only'] === true || $options['upload_only'] === 'true' || $options['upload_only'] === '1') ? true : false;
+        // Disabilita la modifica dei nomi e delle categorie
+        $options['disable_edit'] = ($options['disable_edit'] === true || $options['disable_edit'] === 'true' || $options['disable_edit'] === '1') ? true : false;
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
@@ -65,7 +72,7 @@ class FileManager implements ManagerInterface
 
         // Codice HTML
         $result = '
-<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'" data-id_category="'.$id_categoria.'">';
+<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'" data-id_category="'.$id_categoria.'" data-upload_only="'.($options['upload_only'] ? 'true' : 'false').'" data-disable_edit="'.($options['disable_edit'] ? 'true' : 'false').'">';
 
         if (!empty($options['showcard'])) {
             $result .= '
@@ -126,8 +133,14 @@ class FileManager implements ManagerInterface
 
                     $result .= '
         <tr id="row_'.$file->id.'" data-id="'.$file->id.'" data-filename="'.$file->filename.'" data-nome="'.$file->name.'">
-            <td class="text-center">
-                <input class="check_files unblockable" type="checkbox"/>
+            <td class="text-center">';
+
+                    if (!$options['upload_only']) {
+                        $result .= '
+                <input class="check_files unblockable" type="checkbox"/>';
+                    }
+
+                    $result .= '
             </td>
             <td align="left">';
 
@@ -169,11 +182,13 @@ class FileManager implements ManagerInterface
                 </button>';
                     }
 
-                    if (!$options['readonly']) {
-                        $result .= '
+                    if (!$options['readonly'] && !$options['upload_only']) {
+                        if (!$options['disable_edit']) {
+                            $result .= '
                 <button type="button" class="btn btn-xs btn-warning" onclick="modificaAllegato(this,[$(this).closest(\'tr\').data(\'id\')])">
                     <i class="fa fa-edit"></i>
                 </button>';
+                        }
                         if (!$file->isFatturaElettronica() || $options['abilita_genera']) {
                             $result .= '
                 <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviAllegato(this)">
@@ -200,7 +215,7 @@ class FileManager implements ManagerInterface
             }
         }
 
-        if (!empty($file)) {
+        if (!empty($file) && !$options['upload_only']) {
             $result .= '
     <div class="btn-group">
         <button type="button" class="btn btn-xs btn-default">
@@ -220,7 +235,7 @@ class FileManager implements ManagerInterface
         }
 
         // Form per l'upload di un nuovo file
-        if (!$options['readonly']) {
+        if (!$options['readonly'] || $options['upload_only']) {
             $result .= '
     <div id="upload-form" class="row">
         <div class="col-md-12">
@@ -231,7 +246,7 @@ class FileManager implements ManagerInterface
     </div>';
         }
         // In caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
-        elseif ($count == 0) {
+        elseif ($count == 0 && !$options['upload_only']) {
             $result .= '
         <div class="alert alert-info" style="margin-bottom:0px;" >
             <i class="fa fa-info-circle"></i>

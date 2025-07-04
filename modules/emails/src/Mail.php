@@ -39,14 +39,14 @@ class Mail extends Model
     {
         $model = new static();
 
-        $model->created_by = $user->id;
+        $model->created_by = (!empty($user) ? $user->id : null);
 
         if (!empty($template)) {
             $model->id_template = $template->id;
             $model->id_account = $template->account->id;
         }
 
-        $model->id_record = $id_record;
+        $model->id_record = (!empty($id_record) ? $id_record : null);
 
         $model->save();
 

@@ -59,6 +59,7 @@ $width = round(100 / ($show_sconto ? 5 : 3), 2);
 $has_rivalsa = !empty($rivalsa);
 $has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi);
 $has_split_payment = !empty($record['split_payment']);
+$sconto_finale = $documento->sconto_finale_percentuale ? $documento->totale*$documento->sconto_finale_percentuale/100 : $documento->sconto_finale;
 $has_sconto_finale = !empty($sconto_finale);
 
 $etichette = [
@@ -462,13 +463,18 @@ if ($has_split_payment) {
  * Sconto in | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
  */
 if ($has_sconto_finale) {
-    $first_colspan = 1;
-    $second_colspan = 2;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
-        <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Sconto in fattura', [], ['upper' => true]).($documento->sconto_finale_percentuale ? ' ('.numberFormat($documento->sconto_finale_percentuale, 2).'%)' : '').'
+        <th class="text-center small" colspan="'.$first_colspan.'">';
+            if ($documento->sconto_finale_percentuale) {
+                echo tr('Sconto in fattura', [], ['upper' => true]).' ('.numberFormat($documento->sconto_finale_percentuale, 2).'%)';
+            } else {
+                echo tr('Sconto in fattura', [], ['upper' => true]).' ('.moneyFormat($documento->sconto_finale, 2).')';
+            }
+            echo'
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">

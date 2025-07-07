@@ -311,7 +311,7 @@ if ($has_rivalsa) {
 $first_colspan = 3;
 $second_colspan = 2;
 
-if (empty($sconto)) {
+if (empty($sconto) || $has_sconto_finale) {
     --$first_colspan;
     --$second_colspan;
 }

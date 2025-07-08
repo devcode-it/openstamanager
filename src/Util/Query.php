@@ -265,7 +265,7 @@ class Query
 
                 // Applica l'ordinamento solo se abbiamo una clausola valida
                 if (!empty($final_order_clause)) {
-                    $query = preg_replace('/\s+ORDER\s+BY\s+.*$/is', '', $query);
+                    $query = preg_replace('/\s+ORDER\s+BY\s+.*$/is', '', (string) $query);
                     $query .= ' ORDER BY '.$final_order_clause.' '.$direction;
                 }
             }
@@ -545,7 +545,7 @@ class Query
         }
 
         if (!$clean_value) {
-            return ('('.$search_query.' IS NULL OR '.$search_query.' = \'\')');
+            return '('.$search_query.' IS NULL OR '.$search_query.' = \'\')';
         }
 
         return $search_query.' = '.prepare($clean_value);

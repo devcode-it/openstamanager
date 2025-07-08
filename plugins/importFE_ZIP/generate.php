@@ -19,7 +19,6 @@
  */
 
 use Carbon\Carbon;
-use Models\Module;
 use Modules\Fatture\Fattura;
 use Modules\Pagamenti\Pagamento;
 use Plugins\ImportFE\FatturaElettronica;
@@ -235,8 +234,8 @@ if (!empty($pagamenti)) {
             </div>
             <div class="card-body">
                 <p>'.tr('La fattura presenta _NUM_ rat_E_ di pagamento', [
-    '_NUM_' => count($metodi),
-    '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+        '_NUM_' => count($metodi),
+        '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
     ]).':</p>
                 <ul class="list-unstyled">';
 
@@ -397,7 +396,6 @@ echo '
 		</div>
 	</div>
 	<br>';
-
 
 $righe = $fattura->getRighe();
 if (!empty($righe)) {

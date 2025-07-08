@@ -22,7 +22,6 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Plugins\ImportFE\Interaction;
-use Util\XML;
 
 $list = Interaction::getInvoiceList('Fatture di vendita', 'Importazione FE');
 

@@ -55,7 +55,7 @@ switch (filter('op')) {
                 echo json_encode([
                     'success' => false,
                     'total' => 0,
-                    'message' => tr('Nessuna fattura da importare')
+                    'message' => tr('Nessuna fattura da importare'),
                 ]);
                 break;
             }
@@ -68,10 +68,10 @@ switch (filter('op')) {
                 try {
                     $file = Interaction::getInvoiceFile($invoice['name']);
                     if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
-                        $valid_count++;
+                        ++$valid_count;
                     }
                 } catch (Exception $e) {
-                    $errors[] = $invoice['name'] . ': ' . $e->getMessage();
+                    $errors[] = $invoice['name'].': '.$e->getMessage();
                 }
             }
 
@@ -80,14 +80,13 @@ switch (filter('op')) {
                 'total' => $total,
                 'valid_count' => $valid_count,
                 'errors' => $errors,
-                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata')
+                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata'),
             ]);
-
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
                 'total' => 0,
-                'message' => tr('Errore durante la preparazione').': ' . $e->getMessage()
+                'message' => tr('Errore durante la preparazione').': '.$e->getMessage(),
             ]);
         }
 

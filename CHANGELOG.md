@@ -4,9 +4,10 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.8.1 (2025-06-10](#281-2025-06-10)
-- [2.8 (2025-05-20](#28-2025-05-20)
-- [2.7.3 (2025-04-15](#273-2025-04-15)
+- [2.8.2 (2025-07-09)](#282-2025-07-09)
+- [2.8.1 (2025-06-10)](#281-2025-06-10)
+- [2.8 (2025-05-20)](#28-2025-05-20)
+- [2.7.3 (2025-04-15)](#273-2025-04-15)
 - [2.7.2 (2025-03-26)](#272-2025-03-26)
 - [2.7.1 (2025-03-05)](#271-2025-03-05)
 - [2.7 (2025-02-12)](#27-2025-02-12)
@@ -56,6 +57,44 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
+## 2.8.2 (2025-07-09)
+### Modificato (Changed)
+- Ottimizzata l'importazione delle fatture di acquisto per migliorare le performance
+- Ottimizzato il caricamento delle fatture da importare in sequenza
+
+### Fixed
+- Corretta stampa fattura di vendita
+- Corretta configurazione PHP ini per Docker
+- Corretta visualizzazione tabella movimenti
+- Corretto calcolo data prossima esecuzione task
+- Risolta inaggiornabilità/installabilità moduli con templates
+- Corretta importazione articoli collegati a ordini in importazione fatture di acquisto
+- Corretto numero di ore in stampa riepilogo senza prezzi
+- Corretto riferimento tabella zz_categorie
+- Corretta stampa inventario in base a fattore moltiplicativo
+- Corretto link modulo Aggiornamenti
+- Corretta impostazione prezzo in base a tipo di documento creato
+- Rimossi required non necessari
+- Corretta selezione aliquota in cambio iva da bulk righe preventivi
+- Ripristinato tasto add articolo in ImportFE
+- Corretta compilazione conto e iva in ImportFE
+- Ripristinata compilazione automatica codice e descrizione articolo in ImportFE
+- Corretta sede in creazione fattura
+- Corretta selezione prezzo di acquisto in aggiunta articolo da ImportFE
+- Corretto template DDT senza prezzi
+- Corretta visualizzazione link in aggiunta attività
+- Corretto ordinamento tabelle
+- Corretta ricerca datatables campi vuoti tramite '='
+- Corretto tooltip al mouseover su icona
+- Corretto redirect plugin ricevute FE
+- Corretta associazione categoria allegati
+- Corretto errore calcola percorso da mobile
+- Corretta importazione fatture di vendita zip
+- Corretto problema di aggiornamento data scadenza cache
+- Corretta stampa fattura con sconto in fattura
+- Corretta impostazione multiple con query
+
+
 ## 2.8.1 (2025-06-10)
 ### Modificato (Changed)
 - Miglioria grafica menu dropdown
@@ -72,7 +111,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta l'importazione degli articoli
 - Corretta stampa preventivi con descrizione
 - Corretto allineamento query vista Giacenze sedi
-- Corretto bug cambio di stato automatico documenti 
+- Corretto bug cambio di stato automatico documenti
 - Corretto import anche senza primary key
 - Corretta navigazione record per moduli custom
 - Corretta stampa ddt con sede destinazione diversa

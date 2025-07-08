@@ -208,7 +208,7 @@ class Settings
 
                 $value = str_replace(']', '', explode('[', (string) $setting->tipo)[1]);
                 $query = str_replace('query=', '', $value);
-                $query = str_replace('"', '\"', $query);
+                //$query = str_replace('"', '\"', $query);
                 $rs = $database->fetchArray($query);
                 foreach ($rs as $r) {
                     $list[] = [

@@ -164,4 +164,11 @@ INSERT INTO zz_files_categories (name) VALUES ('Allegati caricati tramite access
 -- Aggiunta campo per immagine nelle check
 ALTER TABLE `zz_checks` 
   ADD `id_immagine` INT NULL DEFAULT NULL,
-  ADD CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_immagine`) REFERENCES `zz_files`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT; 
+  ADD CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_immagine`) REFERENCES `zz_files`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;
+
+-- Rimozione record orfani in co_provvigioni
+DELETE FROM `co_provvigioni` WHERE `idagente` NOT IN (SELECT `id` FROM `an_anagrafiche`) OR `idarticolo` NOT IN (SELECT `id` FROM `mg_articoli`);
+
+-- Aggiunta foreign key su co_provvigioni
+ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;

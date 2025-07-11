@@ -92,7 +92,7 @@ class Upload extends Model
         }
 
         $category = $data['category'] ?? $category;
-        $id_category = 0;
+        $id_category = null;
         if ($category) {
             $id_category = Categoria::where('name', '=', $category)->first()->id;
         }

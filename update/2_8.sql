@@ -53,34 +53,30 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 -- Nuovo modulo "Descrizioni predefinite"
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Descrizioni predefinite', 'descrizioni_predefinite', 'SELECT |select| FROM `zz_default_description` WHERE 1=1 HAVING 2=2', '', 'fa fa-circle-o', '2.8', '2.8', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Tabelle'), '1', '1', '1', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-('1', @id_module, 'Descrizioni predefinite', 'Descrizioni predefinite'),
-('2', @id_module, 'Descrizioni predefinite', 'Descrizioni predefinite');
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite'), 'Descrizioni predefinite', 'Descrizioni predefinite'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite'), 'Descrizioni predefinite', 'Descrizioni predefinite');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Descrizione', '`zz_default_description`.`descrizione`', '3', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'Nome', 'zz_default_description.name', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'id', '`zz_default_description`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite'), 'Descrizione', '`zz_default_description`.`descrizione`', '3', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite'), 'Nome', 'zz_default_description.name', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite'), 'id', '`zz_default_description`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = @id_module), 'Nome'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = @id_module), 'Name'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id');
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'Nome'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'Name'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Descrizioni predefinite')), 'id');
 
 CREATE TABLE `zz_default_description` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `descrizione` TEXT NOT NULL , `note` TEXT NOT NULL , PRIMARY KEY (`id`));
 CREATE TABLE `zz_default_description_module` (`id` INT NOT NULL AUTO_INCREMENT , `id_description` INT NOT NULL , `id_module` INT NOT NULL , PRIMARY KEY (`id`));
 
 -- Aggiunte colonne Note e _bg_ in Categorie impianti
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Note', '`nota`', 3, 1, 0, 0, 0, '', '', 1, 0, 0, 0),
-(@id_module, '_bg_', '`colore`', 4, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Note', '`nota`', 3, 1, 0, 0, 0, '', '', 1, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), '_bg_', '`colore`', 4, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
 
 SELECT @id:= MAX(`id`) FROM `zz_views`;
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
@@ -379,22 +375,19 @@ ORDER BY
 -- Nuovo modulo "Categorie file"
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Categorie file', 'categorie_files', 'SELECT |select| FROM `zz_files_categories` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2', '', 'fa fa-circle-o', '2.8', '2.8', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Tabelle'), '1', '1', '1', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-('1', @id_module, 'Categorie file', 'Categorie file'),
-('2', @id_module, 'Categorie file', 'Categorie file');
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file'), 'Categorie file', 'Categorie file'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file'), 'Categorie file', 'Categorie file');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Descrizione', 'zz_files_categories.name', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'id', '`zz_files_categories`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file'), 'Descrizione', 'zz_files_categories.name', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file'), 'id', '`zz_files_categories`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Categorie file';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id');
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file')), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file')), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file')), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie file')), 'id');
 
 CREATE TABLE `zz_files_categories` (`id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `deleted_at` TIMESTAMP NULL , PRIMARY KEY (`id`));
 ALTER TABLE `zz_files` ADD `id_category` INT NULL AFTER `category`;

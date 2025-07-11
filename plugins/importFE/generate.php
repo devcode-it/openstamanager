@@ -642,10 +642,6 @@ if (!empty($righe)) {
                                 {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
                             </div>
 
-                                <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Conto').'", "name": "conti['.$key.']", "ajax-source": "conti-acquisti", "value": "'.$idconto_acquisto.'", "required": 1 ]}
-                                </div>
-
                             <div class="col-md-3">
                                 {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
                             </div>

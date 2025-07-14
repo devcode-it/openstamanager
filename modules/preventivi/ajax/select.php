@@ -61,7 +61,10 @@ switch ($resource) {
             }
 
             if (!empty($search)) {
-                $search_fields[] = '`nome` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`co_preventivi`.`nome` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`co_preventivi`.`numero` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`co_preventivi`.`data_bozza` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`co_statipreventivi_lang`.`title` LIKE '.prepare('%'.$search.'%');
             }
         }
 

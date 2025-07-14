@@ -18,17 +18,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+//use Modules\Articoli\Articolo;
 use Modules\Articoli\Marca;
 
 // Modelli (marche con parent = id_record)
 $modelli = Marca::where('parent', $id_record)->get();
+//$modelli = Marca::where('parent', '=', $id_record)->get();
 
 foreach ($modelli as $modello) {
     echo '
 <tr>
-    <td class="text-center">
+    <!--<td class="text-center">
         '.(!empty($modello->immagine) ? '<img src="'.base_path().'/files/marche/'.$modello->immagine.'" class="img-thumbnail" style="max-height: 30px;">' : '<i class="fa fa-image text-muted"></i>').'
-    </td>
+    </td>-->
     <td>'.$modello->name.'</td>
     <td>'.(!empty($modello->link) ? '<a href="'.$modello->link.'" target="_blank">'.$modello->link.'</a>' : '').'</td>
     <td class="text-center">
@@ -43,8 +45,11 @@ foreach ($modelli as $modello) {
     </td>
     <td class="text-center">
         <div class="btn-group">
-            <a class="btn btn-xs btn-warning" data-href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$modello->id.'" data-toggle="tooltip" title="'.tr('Modifica').'">
+            <!--<a class="btn btn-xs btn-warning" data-href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$modello->id.'" data-toggle="tooltip" title="'.tr('Modifica').'">
                 <i class="fa fa-edit"></i>
+            </a>-->
+            <a class="btn btn-xs btn-warning" title="'.tr('Modifica').'" onclick="launch_modal(\''.tr('Modifica Modello').'\', \''.base_path().'/add.php?id_module='.$id_module.'&id_record='.$modello->id.'&id_original='.$id_record.'\');">
+            <i class="fa fa-edit"></i>
             </a>
             <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-op="delete" data-id="'.$modello->id.'" data-toggle="tooltip" title="'.tr('Elimina').'">
                 <i class="fa fa-trash"></i>

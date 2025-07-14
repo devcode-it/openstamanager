@@ -44,7 +44,7 @@ if (!empty($id_record)) {
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1]}
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$name$" ]}
 		</div>
 		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Link produttore'); ?>", "name": "link", "value":"$link$"]}

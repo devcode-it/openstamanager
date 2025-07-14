@@ -31,13 +31,16 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'change-conto':
         $conti = (array) post('idconto');
+        $conti_cespiti = (array) post('idconto_cespiti');
+        $cespiti = (array) post('is_cespite');
 
         foreach ($conti as $id_riga => $conto) {
             $riga = RigaArticolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
 
             // Modifica descrizione fornitore
-            $riga->id_conto = $conto;
+            $riga->id_conto = $cespiti[$id_riga] ? $conti_cespiti[$id_riga] : $conto;
+            $riga->is_cespite = $cespiti[$id_riga] ?? 0;
             $riga->save();
         }
 

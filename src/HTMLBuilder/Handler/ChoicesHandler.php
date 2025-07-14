@@ -76,11 +76,14 @@ class ChoicesHandler implements HandlerInterface
             <span class="text-danger">'.str_replace('"', '', $valori_custom[1]).'</span>';
         }
 
+        // Converti l'array delle classi in una stringa
+        $class_string = is_array($values['class']) ? implode(' ', $values['class']) : $values['class'];
+
         // Generazione del codice HTML
         // "+ this.checked" rende il valore booleano un numero
         $result = '
-        <input type="hidden" name="|name|" value="|value|" class="openstamanager-input">
-        <input type="checkbox" id="|id|" value="|value|" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
+        <input type="hidden" name="|name|" value="|value|" class="openstamanager-input '.$class_string.'">
+        <input type="checkbox" id="|id|" value="|value|" class="hidden '.$class_string.'" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
         <div class="btn-group checkbox-buttons">
             <label for="|id|" class="btn btn-default'.$class.'">
                 <span class="fa fa-check text-success"></span>

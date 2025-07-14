@@ -113,6 +113,30 @@ include $structure->filepath('movimenti.php');
     });
 </script>
 
-<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $record['idmastrino']; ?>">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+<?php
+// Controllo se il mastrino è collegato a un ammortamento
+$ammortamento = $dbo->fetchOne('SELECT co_righe_ammortamenti.id, co_righe_documenti.id AS id_riga FROM co_righe_ammortamenti 
+    INNER JOIN co_righe_documenti ON co_righe_documenti.id = co_righe_ammortamenti.id_riga 
+    WHERE co_righe_ammortamenti.id_mastrino = '.prepare($id_record));
+
+// Se il mastrino è collegato a un ammortamento, mostro un avviso e disabilito il pulsante elimina
+if (!empty($ammortamento)) {
+    echo '
+    <div class="alert alert-warning text-center">
+        <i class="fa fa-warning"></i> '.tr('Non è possibile eliminare questo movimento perché generato da un ammortamento.').
+        ' '.Modules::link('Ammortamenti / Cespiti', $ammortamento['id_riga']).'
+    </div>';
+    
+    // Disabilito il pulsante elimina
+    echo '
+    <a class="btn btn-danger disabled">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
+} else {
+    // Mostro il pulsante elimina normalmente
+    echo '
+    <a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="'.$record['idmastrino'].'">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
+}
+?>

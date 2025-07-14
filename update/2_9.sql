@@ -225,3 +225,46 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors'):
+
+-- Gestione ammortamenti
+ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;
+
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Ammortamenti / Cespiti', 'ammortamenti', 'SELECT |select| FROM `co_righe_documenti` LEFT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE 1=1 AND `is_cespite` = 1 HAVING 2=2', '', 'fa fa-circle-o', '2.9', '2.9', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Contabilità'), '1', '1', '1', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti'),
+('2', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+(@id_module, 'Descrizione', '`co_righe_documenti`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(@id_module, 'Importo', '`co_righe_documenti`.`subtotale`', '3', '1', '0', '1', '0', NULL, NULL, '1', '1', '0', '1'),
+(@id_module, 'Fattura', 'CONCAT("Fattura ", `co_documenti`.`numero_esterno`, " del ", YEAR(`co_documenti`.`data`))', '4', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(@id_module, 'Anni', 'CONCAT(`co_righe_ammortamenti`.`anno`, " ")', '5', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(@id_module, 'id', '`co_righe_documenti`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
+
+SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = @id_module), 'Importo'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = @id_module), 'Amount'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = @id_module), 'Fattura'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = @id_module), 'Invoice'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = @id_module), 'Anni'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = @id_module), 'Years'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id');
+
+CREATE TABLE `co_righe_ammortamenti` (`id` INT NOT NULL AUTO_INCREMENT , `id_riga` INT NOT NULL , `percentuale` INT NOT NULL , `anno` INT NOT NULL , `id_conto` INT NOT NULL , `id_mastrino` INT NOT NULL , PRIMARY KEY (`id`));
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Conto predefinito per i cespiti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Immobilizzazioni'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Conto predefinito per i cespiti', '');
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Default account for assets', '');
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Conto predefinito per gli ammortamenti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Fondi ammortamento'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Conto predefinito per gli ammortamenti', '');
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Default account for depreciation', '');

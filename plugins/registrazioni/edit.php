@@ -25,6 +25,10 @@ if ($id_module == Module::where('name', 'Fatture di acquisto')->first()->id) {
 } else {
     $conti = 'conti-vendite';
 }
+$optionsConti = AJAX::select($conti, [], null, 0, 10000);
+
+$conti_cespiti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " - ", co_pianodeiconti3.descrizione) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idpianodeiconti2='.prepare(setting('Conto predefinito per i cespiti')));
+$optionsConti_cespiti['results'] = $conti_cespiti;
 
 echo '
 <form action="" method="post" role="form">
@@ -49,13 +53,13 @@ echo '
                     <th class="text-center" width="100">'.tr('Q.tà').'</th>
                     <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>
                     <th width="450">'.tr('Conto').'</th>
+                    <th width="200">'.tr('Cespite').'</th>
                 </tr>
             </thead>
             <tbody class="sortable">';
 
 // Righe documento
 if (!empty($fattura)) {
-    $optionsConti = AJAX::select($conti, [], null, 0, 10000);
     $righe = $fattura->getRighe();
     $num = 0;
     foreach ($righe as $riga) {
@@ -108,7 +112,16 @@ if (!empty($fattura)) {
                     </td>
 
                     <td>
-                        {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
+                        <div id="select-conto-standard-'.$riga['id'].'" '.($riga->is_cespite ? 'style="display:none;"' : '').'>
+                            {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
+                        </div>
+                        <div id="select-conto-cespite-'.$riga['id'].'" '.(!$riga->is_cespite ? 'style="display:none;"' : '').'>
+                            {[ "type": "select", "name": "idconto_cespiti['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
+                        </div>
+                    </td>
+
+                    <td>
+                        {[ "type": "checkbox", "name": "is_cespite['.$riga['id'].']", "value": "'.$riga->is_cespite.'", "values": "Sì,No", "class": "unblockable" ]}
                     </td>
                 </tr>';
         }
@@ -149,4 +162,21 @@ function copy() {
         });
     }
 }
+
+// Gestione del reset del conto quando si cambia lo stato del cespite
+$(document).ready(function() {
+    $("input[name^=\'is_cespite\']").change(function() {
+        const id = $(this).attr("name").match(/\[(.*?)\]/)[1];
+        const is_cespite = $(this).val() == 1;
+
+        // Mostra/nascondi i selettori appropriati
+        if (is_cespite) {
+            $("#select-conto-standard-" + id).hide();
+            $("#select-conto-cespite-" + id).show();
+        } else {
+            $("#select-conto-standard-" + id).show();
+            $("#select-conto-cespite-" + id).hide();
+        }
+    });
+});
 </script>';

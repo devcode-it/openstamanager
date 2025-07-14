@@ -44,6 +44,11 @@ class SollecitoTask extends Manager
 
     public function execute()
     {
+        $result = [
+            'response' => 1,
+            'message' => tr('Solleciti inviati correttamente!'),
+        ];
+
         if (setting('Invio solleciti in automatico') > 0) {
             $giorni_promemoria = setting('Intervallo di giorni in anticipo per invio promemoria scadenza');
             $giorni_scadenza = setting('Ritardo in giorni della scadenza della fattura per invio sollecito pagamento');
@@ -264,6 +269,13 @@ class SollecitoTask extends Manager
                     }
                 }
             }
+        }else{
+            $result = [
+                'response' => 2,
+                'message' => tr('Invio solleciti disattivato'),
+            ];
         }
+
+        return $result;
     }
 }

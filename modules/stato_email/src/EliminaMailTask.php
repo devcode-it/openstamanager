@@ -44,12 +44,31 @@ class EliminaMailTask extends Manager
 
     public function execute()
     {
+        $result = [
+            'response' => 1,
+            'message' => tr('Email eliminate correttamente!'),
+        ];
+
         if (setting('Numero di giorni mantenimento coda di invio') > 0) {
             $rs = database()->fetchArray('SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY) AND id_newsletter IS NOT NULL');
+
+            if( empty($rs) ){
+                $result = [
+                    'response' => 1,
+                    'message' => tr('Nessuna email da eliminare'),
+                ];
+            }
 
             foreach ($rs as $r) {
                 database()->query('DELETE FROM em_emails WHERE id='.prepare($r['id']));
             }
+        }else{
+            $result = [
+                'response' => 2,
+                'message' => tr('Eliminazione automatica disattivata'),
+            ];
         }
+
+        return $result;
     }
 }

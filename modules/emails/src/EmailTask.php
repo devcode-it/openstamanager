@@ -36,7 +36,19 @@ class EmailTask extends Manager
 
     public function execute()
     {
+        $result = [
+            'response' => 1,
+            'message' => tr('Email inviate correttamente!'),
+        ];
+
         $lista = database()->fetchArray('SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at LIMIT 0,'.setting('Numero email da inviare in contemporanea per account'));
+
+        if( empty($lista) ){
+            $result = [
+                'response' => 1,
+                'message' => tr('Nessuna email da inviare'),
+            ];
+        }
 
         foreach ($lista as $mail) {
             $mail = Mail::find($mail['id']);
@@ -46,9 +58,14 @@ class EmailTask extends Manager
                 $email->send();
             } catch (Exception $e) {
                 echo $e;
+
+                $result['response'] = 2;
+                $result['message'] = tr('Errore durante l\'invio delle email: _ERR_', [
+                    '_ERR_' => $e->getMessage(),
+                ])."<br>";
             }
         }
 
-        return $lista;
+        return $result;
     }
 }

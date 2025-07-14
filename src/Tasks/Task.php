@@ -44,10 +44,12 @@ class Task extends Model
         'last_executed_at' => 'datetime',
     ];
 
-    public function log($level, $message, $context = [])
+    public function log($level, $message, $context = [], $log = null)
     {
         if (!empty($context)) {
-            $log = new Log();
+            if( empty($log) ){
+                $log = new Log();
+            }
 
             $log->level = $level;
             $log->message = $message;
@@ -57,12 +59,14 @@ class Task extends Model
 
             $log->save();
         }
+
+        return $log;
     }
 
     public function execute()
     {
         // Registrazione dell'inizio nei log
-        $this->log('info', 'Inizio esecuzione');
+        $log = $this->log('warning', 'Inizio esecuzione');
 
         // Individuazione del gestore
         $class = $this->attributes['class'];
@@ -79,7 +83,8 @@ class Task extends Model
         $this->save();
 
         // Registrazione del completamento nei log
-        $this->log('info', 'Fine esecuzione');
+        $level = ($result['response']==1 ? 'info' : ($result['response']==2 ? 'warning' : 'error'));
+        $this->log($level, 'Fine esecuzione', $result['message'], $log);
 
         return $result;
     }

@@ -172,3 +172,56 @@ DELETE FROM `co_provvigioni` WHERE `idagente` NOT IN (SELECT `id` FROM `an_anagr
 -- Aggiunta foreign key su co_provvigioni
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
+-- Modulo per log esecuzione task
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Log task', 'log_task', 'SELECT |select| FROM `zz_tasks_logs` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
+
+SELECT @id_module := MAX(id) FROM zz_modules;
+INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
+(NULL, '1', @id_module, 'Log task'),
+(NULL, '2', @id_module, 'Log task');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES 
+(NULL, @id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+(NULL, @id_module, 'Nome task', '(SELECT `name` FROM `zz_tasks` WHERE `id` = `zz_tasks_logs`.`id_task`)', '2', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(NULL, @id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(NULL, @id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(NULL, @id_module, 'Contesto', 'IF(CHAR_LENGTH(context) > 200, CONCAT(SUBSTRING(context, 1, 200), \'<a title="\', REPLACE(context, \'"\', \'&quot;\'), \'">\', \'[...]\', \'</a>\') , context )', '5', '1', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(NULL, @id_module, 'contesto_esteso', 'context', '5', '1', '0', '0', NULL, NULL, '0', '0', '0', '1'),
+(NULL, @id_module, 'Data inizio', 'created_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
+(NULL, @id_module, 'Data fine', 'updated_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
+(NULL, @id_module, '_bg_', 'IF(level=\'info\', \'#dff0d8\', IF(level=\'error\', \'#f2dede\', \'#fcf8e3\'))
+', '4', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+(NULL, @id_module, 'Eseguito in', 'CONCAT(TIMESTAMPDIFF(SECOND, created_at, updated_at), \'secondi\')', '7', '1', '0', '1', NULL, NULL, '0', '0', '0', '0');
+
+INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Nome task'), 'Nome task'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Nome task'), 'Task name'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Livello'), 'Livello'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Livello'), 'Level'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Messaggio'), 'Messaggio'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Messaggio'), 'Message'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Contesto'), 'Contesto'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Contesto'), 'Context'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data inizio'), 'Data inizio'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data inizio'), 'Start date'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data fine'), 'Data fine'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data fine'), 'End date'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'contesto_esteso'), 'contesto_esteso'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'contesto_esteso'), 'contesto_esteso'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Eseguito in'), 'Eseguito in'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Eseguito in'), 'Executed in'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_');
+
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES 
+(NULL, @id_module, 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'), 
+(NULL, @id_module, 'Errori', '1=1 AND Livello=error', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
+
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors'):

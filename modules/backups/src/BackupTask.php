@@ -35,8 +35,25 @@ class BackupTask extends Manager
 
     public function execute()
     {
+        $result = [
+            'response' => 1,
+            'message' => tr('Backup generato correttamente!'),
+        ];
+
         if (setting('Backup automatico') && !\Backup::isDailyComplete()) {
             \Backup::daily();
+        }elseif(!setting('Backup automatico')){
+            $result = [
+                'response' => 2,
+                'message' => tr('Backup automatico disattivato'),
+            ];
+        }else{
+            $result = [
+                'response' => 2,
+                'message' => tr('Backup già eseguito'),
+            ];
         }
+
+        return $result;
     }
 }

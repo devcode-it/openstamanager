@@ -31,11 +31,27 @@ class ReceiptTask extends Manager
 {
     public function execute()
     {
+        $result = [
+            'response' => 1,
+            'message' => tr('Ricevute importate correttamente!'),
+        ];
+
         if (!Interaction::isEnabled()) {
-            return;
+            $result = [
+                'response' => 2,
+                'message' => tr('Importazione automatica disattivata'),
+            ];
+            return $result; 
         }
 
         $list = Interaction::getReceiptList();
+
+        if( empty($list) ){
+            $result = [
+                'response' => 1,
+                'message' => tr('Nessuna ricevuta da importare'),
+            ];
+        }
 
         // Esecuzione dell'importazione
         foreach ($list as $element) {
@@ -43,5 +59,7 @@ class ReceiptTask extends Manager
 
             Ricevuta::process($name);
         }
+
+        return $result;
     }
 }

@@ -59,7 +59,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>||hide" ]}
+            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=0|hide" ]}
         </div>
 	</div>
 
@@ -190,6 +190,11 @@ $(document).ready(function () {
             modello.parent().find(".input-group-append button").addClass("hide");
         }
     });
+
+    // Nascondi il pulsante modello se non c'è una marca selezionata all'inizio
+    if(!$('#add-form').find('#id_marca').val()) {
+        modello.parent().find(".input-group-append button").addClass("hide");
+    }
 
     input("coefficiente").on('keyup', function(){
         if (iva_vendita.val()) {

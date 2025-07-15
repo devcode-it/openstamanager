@@ -61,20 +61,20 @@ use Modules\Iva\Aliquota;
                         <div class="col-md-3">
                             <?php echo (!empty($record['id_categoria'])) ?
                                 Modules::link('Categorie', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria_edit", "id": "categoria_edit", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
                         </div>
 
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria_edit", "id": "subcategoria_edit", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
 
                         <div class="col-md-3">
                             <?php echo !empty($record['id_marca']) ? Modules::link('Marche', $record['id_marca'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca_edit", "id": "id_marca_edit", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
                         </div>
                         <div class="col-md-3">
                             <?php echo !empty($record['id_modello']) ? Modules::link('Marche', $record['id_modello'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello_edit", "id": "id_modello_edit", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
                         </div>
                     </div>
                     <div class="row">
@@ -338,22 +338,37 @@ $(document).ready(function() {
     });
 });
 
-$("#categoria").change(function() {
+$("#categoria_edit").change(function() {
     updateSelectOption("id_categoria", $(this).val());
 
-	$("#subcategoria").val(null).trigger("change");
+	$("#subcategoria_edit").val(null).trigger("change");
+
+	// Gestione del pulsante "aggiungi" per sottocategoria
+	var sub = $("#subcategoria_edit");
+	var button = sub.parent().find(".input-group-append button");
+
+	if($(this).val()) {
+		button.removeClass("hide");
+		var original = button.attr("onclick");
+		if(original && original.indexOf("id_original=") !== -1) {
+			var newOnclick = original.replace(/id_original=\d+/, "id_original=" + $(this).val());
+			button.attr("onclick", newOnclick);
+		}
+	} else {
+		button.addClass("hide");
+	}
 });
 
 // Gestione del cambio marca per aggiornare i modelli
-$("#id_marca").change(function() {
+$("#id_marca_edit").change(function() {
     updateSelectOption("id_marca", $(this).val());
 
     // Reset del modello
-    $("#id_modello").val(null).trigger("change");
+    $("#id_modello_edit").val(null).trigger("change");
 
     // Aggiornamento dell'icona "aggiungi" per il modello
     if($(this).val()) {
-        var button = $("#id_modello").parent().find(".input-group-append button");
+        var button = $("#id_modello_edit").parent().find(".input-group-append button");
         var original = button.attr("onclick");
         if(original) {
             var newOnclick = original.replace(/id_original=\d+/, "id_original=" + $(this).val());
@@ -361,7 +376,7 @@ $("#id_marca").change(function() {
             button.removeClass("hide");
         }
     } else {
-        $("#id_modello").parent().find(".input-group-append button").addClass("hide");
+        $("#id_modello_edit").parent().find(".input-group-append button").addClass("hide");
     }
 });
 

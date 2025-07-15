@@ -174,7 +174,7 @@ echo '
             </div>
         </div>
     </div>
-</div>';
+</div>
 
 <script>$(document).ready(init)</script>
 

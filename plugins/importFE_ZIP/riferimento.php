@@ -120,9 +120,61 @@ foreach ($righe as $riga) {
 echo '
                 </tbody>
             </table>
+        </div>';
+
+// Verifica se ci sono righe selezionabili e se c'è già un riferimento selezionato
+$righe_selezionabili = 0;
+$riferimento_gia_selezionato = !empty($id_riferimento);
+
+foreach ($righe as $riga) {
+    $qta_rimanente = $riga->qta_rimanente - (float) $righe_utilizzate[$riga->id];
+    if ($qta_rimanente >= $qta || !empty(setting('Permetti il superamento della soglia quantità dei documenti di origine'))) {
+        $righe_selezionabili++;
+    }
+}
+
+if ($righe_selezionabili == 0) {
+    echo '
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Nessun riferimento disponibile').'</strong><br>
+            '.tr('Non sono presenti righe compatibili per il collegamento. Verifica che ci siano ordini o DDT con quantità disponibili per questo fornitore').'.
+        </div>';
+} else {
+    echo '
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> '.tr('Seleziona una riga dalla tabella per collegare il riferimento').'.
+        </div>';
+}
+
+echo '
+    </div>
+
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-md-6">';
+
+if ($riferimento_gia_selezionato) {
+    echo '
+                <span class="text-success">
+                    <i class="fa fa-check-circle"></i> <strong>'.tr('Selezione riferimenti completata').'</strong>
+                </span>';
+} elseif ($righe_selezionabili == 0) {
+    echo '
+                <small class="text-muted">
+                    <i class="fa fa-lightbulb-o"></i> '.tr('Suggerimento: verifica che esistano ordini o DDT aperti per questo fornitore').'
+                </small>';
+}
+
+echo '
+            </div>
+            <div class="col-md-6 text-right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-times"></i> '.tr('Chiudi').'
+                </button>
+            </div>
         </div>
     </div>
-</div>
+</div>';
 
 <script>$(document).ready(init)</script>
 

@@ -141,8 +141,8 @@ switch (post('op')) {
         $articolo->codice = post('codice', true);
         $articolo->barcode = post('barcode');
         $articolo->um = post('um');
-        $articolo->id_categoria = post('categoria');
-        $articolo->id_sottocategoria = post('subcategoria');
+        $articolo->id_categoria = post('categoria_edit') ?: post('categoria');
+        $articolo->id_sottocategoria = post('subcategoria_edit') ?: post('subcategoria');
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
         $articolo->coefficiente = post('coefficiente');
@@ -155,8 +155,8 @@ switch (post('op')) {
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
-        $articolo->id_marca = post('id_marca');
-        $articolo->id_modello = post('id_modello');
+        $articolo->id_marca = post('id_marca_edit') ?: post('id_marca');
+        $articolo->id_modello = post('id_modello_edit') ?: post('id_modello');
 
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');

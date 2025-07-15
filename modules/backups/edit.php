@@ -149,37 +149,40 @@ echo '
             </div>
             <div class="card-body">
                 <div class="row">
-                    <p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="info-box bg-info">
-                            <span class="info-box-icon"><i class="fa fa-folder"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">'.tr('Percorso backup').'</span>
-                                <span class="info-box-number">'.slashes($backup_dir).'</span>
+                    <div class="col-md-8">
+                        <p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>
+
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-box bg-info">
+                                        <span class="info-box-icon"><i class="fa fa-folder"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Percorso backup').'</span>
+                                            <span class="info-box-number">'.slashes($backup_dir).'</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-success">
+                                        <span class="info-box-icon"><i class="fa fa-hdd-o"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Spazio occupato').'</span>
+                                            <span class="info-box-number" id="total_size">'.tr('Calcolo in corso').'...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-warning">
+                                        <span class="info-box-icon"><i class="fa fa-files-o"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">'.tr('Numero backup').'</span>
+                                            <span class="info-box-number">'.count($backups).'</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="info-box bg-success">
-                            <span class="info-box-icon"><i class="fa fa-hdd-o"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">'.tr('Spazio occupato').'</span>
-                                <span class="info-box-number" id="total_size">'.tr('Calcolo in corso').'...</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="info-box bg-warning">
-                            <span class="info-box-icon"><i class="fa fa-files-o"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">'.tr('Numero backup').'</span>
-                                <span class="info-box-number">'.count($backups).'</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>';
+                        </div>';
 
 if (string_starts_with($backup_dir, base_dir())) {
     echo '
@@ -232,13 +235,14 @@ if (setting('Permetti il ripristino di backup da file esterni')) {
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    </div>';
+}
+echo'
                 </div>
             </div>
         </div>
     </div>
 </div>';
-}
 
 // Lettura file di backup
 if (file_exists($backup_dir)) {

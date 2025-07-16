@@ -565,6 +565,8 @@ export function release(done) {
         '!vendor/mpdf/mpdf/ttfonts/*',
         'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
         'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
+        'vendor/mpdf/mpdf/ttfonts/ocrbinfo.txt',
+        'vendor/mpdf/mpdf/ttfonts/ocrb10.ttf',
         '!vendor/respect/validation/tests/**',
         '!vendor/willdurand/geocoder/tests/**',
         '!docker/**',

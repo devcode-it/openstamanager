@@ -25,7 +25,7 @@ if ($column_exists['cont'] == 0) {
         FROM `zz_categorie`
         WHERE (`colore` IS NULL OR `colore` = "")
             AND `is_impianto` = 1
-            AND `id_parent` IS NULL
+            AND `parent` IS NULL
         ORDER BY `id` ASC
     ');
 

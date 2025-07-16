@@ -62,6 +62,12 @@ $has_split_payment = !empty($record['split_payment']);
 $sconto_finale = $documento->sconto_finale_percentuale ? $documento->totale*$documento->sconto_finale_percentuale/100 : $documento->sconto_finale;
 $has_sconto_finale = !empty($sconto_finale);
 
+// Determina quale è l'ultima riga dei totali da visualizzare
+$is_last_total_sconto_finale = $has_sconto_finale;
+$is_last_total_split_payment = !$has_sconto_finale && $has_split_payment;
+$is_last_total_ritenuta = !$has_sconto_finale && !$has_split_payment && $has_ritenuta;
+$is_last_total_basic = !$has_sconto_finale && !$has_split_payment && !$has_ritenuta;
+
 $etichette = [
     'totale' => tr('Totale imponibile', [], ['upper' => true]),
     'totale_parziale' => tr('Totale documento', [], ['upper' => true]),
@@ -112,8 +118,8 @@ if (!empty($rs2)) {
     }
 }
 
-echo '            
-   
+echo '
+
                         </table>
                     </td>';
 // Fine elenco scadenze
@@ -333,11 +339,11 @@ echo '
             '.moneyFormat($totale_iva, $d_totali).'
         </td>';
 if ($has_ritenuta || $has_rivalsa || $has_split_payment || $has_sconto_finale) {
-    echo '<td class="cell-padded text-center" colspan="'.$second_colspan.'">
+    echo '<td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:'.($is_last_total_basic ? '#90EE90' : 'transparent').';">
             '.moneyFormat($totale, $d_totali);
 } else {
     echo '
-            <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
+            <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:'.($is_last_total_basic ? '#90EE90' : 'transparent').';">
             <b>'.moneyFormat($totale, $d_totali).'</b>';
 }
 echo '
@@ -420,7 +426,7 @@ if ($has_ritenuta) {
     $totale = $totale - ($ritenuta_acconto_totale + $ritenuta_contributi_totale);
     echo '
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:'.($is_last_total_ritenuta ? '#90EE90' : 'transparent').';">
             <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';
@@ -452,7 +458,7 @@ if ($has_split_payment) {
             '.moneyFormat($totale_iva, 2).'
         </td>
 
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'" >
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:'.($is_last_total_split_payment ? '#90EE90' : 'transparent').';">
             <b>'.moneyFormat($totale, 2).'</b>
         </td>
     </tr>';
@@ -477,7 +483,7 @@ if ($has_sconto_finale) {
             echo'
         </th>
 
-        <th class="text-center small" colspan="'.$second_colspan.'">
+        <th class="text-center small" colspan="'.$second_colspan.'" style="background-color:#C0C0C0;">
             '.tr('Netto a pagare', [], ['upper' => true]).'
         </th>
     </tr>';
@@ -488,7 +494,7 @@ if ($has_sconto_finale) {
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'" style="background-color:'.($is_last_total_sconto_finale ? '#90EE90' : 'transparent').';">
             '.moneyFormat($totale, 2).'
         </td>
     </tr>';

@@ -202,6 +202,19 @@ ORDER BY
     `co_documenti`.`data` DESC,
     CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
 
+-- Aggiungi colonna name alle tabelle delle categorie prima della migrazione
+ALTER TABLE `mg_categorie` ADD `name` VARCHAR(255) NULL;
+ALTER TABLE `my_impianti_categorie` ADD `name` VARCHAR(255) NULL;
+
+-- Popola la colonna name con i valori title dalla tabella _lang per id_lang=1
+UPDATE `mg_categorie` `cat`
+JOIN `mg_categorie_lang` `cat_lang` ON `cat`.`id` = `cat_lang`.`id_record` AND `cat_lang`.`id_lang` = 1
+SET `cat`.`name` = `cat_lang`.`title`;
+
+UPDATE `my_impianti_categorie` `cat`
+JOIN `my_impianti_categorie_lang` `cat_lang` ON `cat`.`id` = `cat_lang`.`id_record` AND `cat_lang`.`id_lang` = 1
+SET `cat`.`name` = `cat_lang`.`title`;
+
 RENAME TABLE `mg_categorie` TO `zz_categorie`;
 RENAME TABLE `mg_categorie_lang` TO `zz_categorie_lang`;
 
@@ -212,33 +225,35 @@ UPDATE `zz_categorie` SET `is_articolo` = 1 WHERE `id` IN (SELECT DISTINCT `id_c
 OR `id` IN (SELECT DISTINCT `id_sottocategoria` FROM `mg_articoli` WHERE `id_sottocategoria` IS NOT NULL AND `id_sottocategoria` > 0);
 
 -- Inserisci prima le categorie senza parent (categorie principali)
-INSERT INTO `zz_categorie` (`colore`, `parent`, `is_articolo`, `is_impianto`)
-SELECT `colore`, NULL, 0, 1 FROM `my_impianti_categorie` WHERE `parent` IS NULL OR `parent` = 0;
+INSERT INTO `zz_categorie` (`name`, `colore`, `parent`, `is_articolo`, `is_impianto`)
+SELECT `name`, `colore`, NULL, 0, 1 FROM `my_impianti_categorie` WHERE `parent` IS NULL OR `parent` = 0;
+
+ALTER TABLE `zz_categorie_lang` CHANGE `note` `note` VARCHAR(255) NULL;
 
 -- Inserisci le sottocategorie con parent, mappando i parent ID dalla vecchia alla nuova tabella
-INSERT INTO `zz_categorie` (`colore`, `parent`, `is_articolo`, `is_impianto`)
-SELECT `mic`.`colore`, `zz_cat_parent`.`id`, 0, 1
+INSERT INTO `zz_categorie` (`name`, `colore`, `parent`, `is_articolo`, `is_impianto`)
+SELECT `mic`.`name`, `mic`.`colore`, `zz_cat_parent`.`id`, 0, 1
 FROM `my_impianti_categorie` `mic`
 JOIN `my_impianti_categorie` `mic_parent` ON `mic`.`parent` = `mic_parent`.`id`
-JOIN `zz_categorie` `zz_cat_parent` ON `zz_cat_parent`.`is_impianto` = 1 AND `zz_cat_parent`.`colore` = `mic_parent`.`colore`
+JOIN `zz_categorie` `zz_cat_parent` ON `zz_cat_parent`.`is_impianto` = 1 AND `zz_cat_parent`.`name` = `mic_parent`.`name`
 WHERE `mic`.`parent` IS NOT NULL AND `mic`.`parent` > 0;
 
 INSERT INTO `zz_categorie_lang` (`id_lang`, `id_record`, `title`)
-SELECT `mic_lang`.`id_lang`, `zz_cat`.`id`, `mic_lang`.`title`
+SELECT DISTINCT `mic_lang`.`id_lang`, `zz_cat`.`id`, `mic_lang`.`title`
 FROM `my_impianti_categorie_lang` `mic_lang`
-JOIN `my_impianti_categorie` `mic` ON `mic_lang`.`id_record` = `mic`.`id`
-JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore` = `mic`.`colore`;
+JOIN `my_impianti_categorie` `mic` ON (`mic_lang`.`id_record` = `mic`.`id` AND `mic_lang`.`id_lang` = 1)
+JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`name` = `mic`.`name`;
 
 ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_1`;
 
 UPDATE `my_impianti` `imp`
 JOIN `my_impianti_categorie` `mic` ON `imp`.`id_categoria` = `mic`.`id`
-JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore` = `mic`.`colore`
+JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`name` = `mic`.`name`
 SET `imp`.`id_categoria` = `zz_cat`.`id`;
 
 UPDATE `my_impianti` `imp`
 JOIN `my_impianti_categorie` `mic` ON `imp`.`id_sottocategoria` = `mic`.`id`
-JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`colore` = `mic`.`colore`
+JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`name` = `mic`.`name`
 SET `imp`.`id_sottocategoria` = `zz_cat`.`id`;
 
 DROP TABLE IF EXISTS `my_impianti_categorie_lang`;

@@ -99,7 +99,7 @@ class Group extends Model
 
             foreach ($default_views as $view) {
                 // Controlla se il gruppo ha già accesso a questa vista specifica
-                $has_view_access = $database->fetchNum('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
+                $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
 
                 if ($has_view_access == 0) {
                     $database->insert('zz_group_view', [
@@ -114,7 +114,7 @@ class Group extends Model
 
             foreach ($default_segments as $segment) {
                 // Controlla se il gruppo ha già accesso a questo segmento specifico
-                $has_segment_access = $database->fetchNum('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($segment['id']))['cont'];
+                $has_segment_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($segment['id']))['cont'];
 
                 if ($has_segment_access == 0) {
                     $database->insert('zz_group_segment', [

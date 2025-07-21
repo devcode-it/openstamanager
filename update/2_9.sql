@@ -224,7 +224,7 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors'):
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
 
 -- Gestione ammortamenti
 ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;

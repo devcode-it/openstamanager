@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Modules\Fatture\Stato;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
@@ -123,7 +124,7 @@ foreach ($id_documenti as $id_documento) {
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
-    if (!in_array($fattura->stato->getTranslation('title'), ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+    if (!in_array($fattura->stato->name, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
         ++$counter;
         continue;
     }
@@ -243,21 +244,21 @@ if ($numero_documenti + $numero_scadenze > 1) {
     ]);
 }
 
-if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
+if (!empty($id_records) && get('origine') == 'fatture' && $counter > 0) {
     $descrizione_stati = [];
-    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `name` IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY `name`");
-    foreach ($stati as $stato) {
-        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['title'].'</small>';
-    }
+    $stati = Stato::whereIn('name', ['Emessa', 'Parzialmente pagato', 'Pagato'])->get()->pluck('name');
+    $descrizione_stati = implode(', ', $stati->toArray());
 
     echo '
 <div class="alert alert-info">
-<p>'.tr('Solo le fatture in stato _STATE_ possono essere registrate contabilmente ignorate', [
-        '_STATE_' => implode(', ', $descrizione_stati),
-    ]).'.</p>
-<p><b>'.tr('Sono state ignorate _NUM_ fatture', [
-        '_NUM_' => $counter,
-    ]).'.</b></p>
+'.tr('Solo le fatture in stato _STATE_ possono essere registrate contabilmente', [
+        '_STATE_' => '<strong>'.$descrizione_stati.'</strong>',
+    ]).'.
+</div>
+<div class="alert alert-warning">
+'.tr('Fatture ignorate: _NUM_', [
+        '_NUM_' => '<strong>'.$counter.'</strong>',
+    ]).'
 </div>';
 }
 if (!empty(get('id_anagrafica'))) {

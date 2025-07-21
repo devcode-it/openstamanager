@@ -1055,6 +1055,8 @@ echo '
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
+{( "name": "log_sms", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
 $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';

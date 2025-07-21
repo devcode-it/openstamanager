@@ -314,6 +314,28 @@ class HTMLWrapper implements WrapperInterface
                     'descrizione' => tr('anno/i'),
                 ],
             ];
+        } elseif ($type == 'prefissi') {
+            // Gestione dei prefissi telefonici dalla tabella sms_prefissi
+            $database = database();
+            $prefissi = $database->fetchArray('SELECT dial_code as id, CONCAT(name, " (", dial_code, ")") as descrizione FROM sms_prefissi ORDER BY name');
+
+            $choices = [];
+            foreach ($prefissi as $prefisso) {
+                $choices[] = [
+                    'id' => $prefisso['id'],
+                    'descrizione' => $prefisso['descrizione'],
+                ];
+            }
+
+            // Se non ci sono prefissi nella tabella, aggiungi almeno l'Italia come default
+            if (empty($choices)) {
+                $choices = [
+                    [
+                        'id' => '+39',
+                        'descrizione' => 'Italia (+39)',
+                    ],
+                ];
+            }
         }
 
         $disabled = '';

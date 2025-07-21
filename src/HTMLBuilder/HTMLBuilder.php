@@ -98,6 +98,7 @@ class HTMLBuilder
             'custom_fields' => Manager\FieldManager::class,
             'widgets' => Manager\WidgetManager::class,
             'log_email' => Manager\EmailManager::class,
+            'log_sms' => Manager\SMSManager::class,
         ],
         'instances' => [],
     ];

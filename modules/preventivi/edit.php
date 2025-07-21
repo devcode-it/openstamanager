@@ -314,6 +314,8 @@ echo '
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
+{( "name": "log_sms", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
 <script type="text/javascript">
 function gestioneSconto(button) {
     gestioneRiga(button, "is_sconto=1");

@@ -182,7 +182,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     </table>';
 
     echo '
-    <div class="row" data-target="'.$table_id.'">
+    <div class="row datatables-buttons" data-target="'.$table_id.'">
         <div class="col-md-5">
             <div class="btn-group select-controller-container" role="group">
                 <button type="button" class="btn btn-primary btn-select-all">'.tr('Seleziona tutto').'</button>

@@ -84,7 +84,7 @@ class Intervento extends Document
             $id_sede = $user->sedi[0];
         }
 
-        $model->idsede_partenza = $id_sede;
+        $model->idsede_partenza = $id_sede ?: 0;
         $model->save();
 
         return $model;

@@ -195,9 +195,9 @@ if (Auth::check()) {
                 },
                 datatables: {
                     "emptyTable": "'.tr('Nessun dato presente nella tabella').'",
-                    "info": "'.tr('Vista da _START_ a _END_ di _TOTAL_ elementi').'",
-                    "infoEmpty": "'.tr('Vista da 0 a 0 di 0 elementi').'",
-                    "infoFiltered": "('.tr('filtrati da _MAX_ elementi totali').')",
+                    "info": "'.tr('_TOTAL_ elementi').'",
+                    "infoEmpty": "'.tr('Nessun risultato').'",
+                    "infoFiltered": "('.tr('_MAX_ totali').')",
                     "infoPostFix": "",
                     "lengthMenu": "'.tr('Visualizza _MENU_ elementi').'",
                     "loadingRecords": " ",

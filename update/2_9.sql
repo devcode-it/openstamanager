@@ -174,26 +174,27 @@ ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY 
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- Modulo per log esecuzione task
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Log task', 'log_task', 'SELECT |select| FROM `zz_tasks_logs` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log task', 'log_task', 'SELECT |select| FROM `zz_tasks_logs` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
 
-SELECT @id_module := MAX(id) FROM zz_modules;
-INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
-(NULL, '1', @id_module, 'Log task'),
-(NULL, '2', @id_module, 'Log task');
+SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES 
+('1', @id_module, 'Log task'),
+('2', @id_module, 'Log task');
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES 
-(NULL, @id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(NULL, @id_module, 'Nome task', '(SELECT `name` FROM `zz_tasks` WHERE `id` = `zz_tasks_logs`.`id_task`)', '2', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(NULL, @id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(NULL, @id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(NULL, @id_module, 'Contesto', 'IF(CHAR_LENGTH(context) > 200, CONCAT(SUBSTRING(context, 1, 200), \'<a title="\', REPLACE(context, \'"\', \'&quot;\'), \'">\', \'[...]\', \'</a>\') , context )', '5', '1', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(NULL, @id_module, 'contesto_esteso', 'context', '5', '1', '0', '0', NULL, NULL, '0', '0', '0', '1'),
-(NULL, @id_module, 'Data inizio', 'created_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
-(NULL, @id_module, 'Data fine', 'updated_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
-(NULL, @id_module, '_bg_', 'IF(level=\'info\', \'#dff0d8\', IF(level=\'error\', \'#f2dede\', \'#fcf8e3\'))
-', '4', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(NULL, @id_module, 'Eseguito in', 'CONCAT(TIMESTAMPDIFF(SECOND, created_at, updated_at), \'secondi\')', '7', '1', '0', '1', NULL, NULL, '0', '0', '0', '0');
+SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES 
+(@id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+(@id_module, 'Nome task', '(SELECT `name` FROM `zz_tasks` WHERE `id` = `zz_tasks_logs`.`id_task`)', '2', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(@id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(@id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
+(@id_module, 'Contesto', 'IF(CHAR_LENGTH(context) > 200, CONCAT(SUBSTRING(context, 1, 200), "<a title=\", REPLACE(context, """, "&quot;"), "">", "[...]", "</a>") , context )', '5', '1', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+(@id_module, 'contesto_esteso', 'context', '5', '1', '0', '0', NULL, NULL, '0', '0', '0', '1'),
+(@id_module, 'Data inizio', 'created_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
+(@id_module, 'Data fine', 'updated_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
+(@id_module, '_bg_', 'IF(level="info", "#dff0d8", IF(level="error", "#f2dede", "#fcf8e3"))', '0', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+(@id_module, 'Eseguito in', 'CONCAT(TIMESTAMPDIFF(SECOND, created_at, updated_at), \'secondi\')', '7', '1', '0', '1', NULL, NULL, '0', '0', '0', '0');
 
+SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
@@ -216,15 +217,17 @@ INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_'),
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_');
 
+SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES 
 (NULL, @id_module, 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'), 
 (NULL, @id_module, 'Errori', '1=1 AND Livello=error', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
 
+SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
 
 -- Gestione ammortamenti
 ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;
@@ -236,13 +239,12 @@ INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VA
 ('1', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti'),
 ('2', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Descrizione', '`co_righe_documenti`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'Importo', '`co_righe_documenti`.`subtotale`', '3', '1', '0', '1', '0', NULL, NULL, '1', '1', '0', '1'),
-(@id_module, 'Fattura', 'CONCAT("Fattura ", `co_documenti`.`numero_esterno`, " del ", YEAR(`co_documenti`.`data`))', '4', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'Anni', 'CONCAT(`co_righe_ammortamenti`.`anno`, " ")', '5', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'id', '`co_righe_documenti`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Descrizione', '`co_righe_documenti`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Importo', '`co_righe_documenti`.`subtotale`', '3', '1', '0', '1', '0', NULL, NULL, '1', '1', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Fattura', 'CONCAT("Fattura ", `co_documenti`.`numero_esterno`, " del ", YEAR(`co_documenti`.`data`))', '4', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Anni', 'CONCAT(`co_righe_ammortamenti`.`anno`, " ")', '5', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'id', '`co_righe_documenti`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
 
 SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
@@ -259,12 +261,12 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 CREATE TABLE `co_righe_ammortamenti` (`id` INT NOT NULL AUTO_INCREMENT , `id_riga` INT NOT NULL , `percentuale` INT NOT NULL , `anno` INT NOT NULL , `id_conto` INT NOT NULL , `id_mastrino` INT NOT NULL , PRIMARY KEY (`id`));
 
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Conto predefinito per i cespiti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Immobilizzazioni'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Conto predefinito per i cespiti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Immobilizzazioni'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
 
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Conto predefinito per i cespiti', '');
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Default account for assets', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Conto predefinito per i cespiti', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per i cespiti'), 'Default account for assets', '');
 
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Conto predefinito per gli ammortamenti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Fondi ammortamento'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Conto predefinito per gli ammortamenti', (SELECT id FROM `co_pianodeiconti2` WHERE `descrizione` = 'Fondi ammortamento'), 'query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione=\'Patrimoniale\')', '1', 'Piano dei conti', NULL, '0');
 
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Conto predefinito per gli ammortamenti', '');
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Default account for depreciation', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Conto predefinito per gli ammortamenti', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Default account for depreciation', '');

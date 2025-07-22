@@ -384,6 +384,20 @@ if (!$block_edit) {
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
+    $ordini_query = 'SELECT 
+            COUNT(*) AS tot 
+        FROM 
+            `or_ordini`
+            INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+            INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+        WHERE 
+            ((`or_tipiordine`.`dir` = "entrata" AND `idanagrafica`='.prepare($record['idanagrafica']).') || `or_tipiordine`.`dir` = "uscita")
+            AND `or_statiordine_lang`.`title` IN ("Accettato")
+            AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
+    $ordine = $dbo->fetchArray($ordini_query)[0]['tot'];
+
     // Form di inserimento riga documento
     echo '
                 <form id="link_form" action="" method="post">
@@ -431,6 +445,10 @@ if (!$block_edit) {
 
                                     <a class="'.(!empty($ddt) ? '' : ' disabled').' dropdown-item" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ddt').'
+                                    </a>
+
+                                    <a class="'.(!empty($ordine) ? '' : ' disabled').' dropdown-item" title="'.tr('Ordini che si trovano nello stato Accettato').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                        <i class="fa fa-plus"></i> '.tr('Ordine').'
                                     </a>
 
                                 </ul>
@@ -775,11 +793,11 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $fattura) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
             '_DOC_' => $fattura['tipo_documento'],
             '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
             '_DATE_' => Translator::dateToLocale($fattura['data']),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
+            '_STATE_' => $fattura['stato_documento'],
         ]);
 
         $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';

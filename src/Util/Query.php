@@ -564,7 +564,7 @@ class Query
         $clean_value = trim(str_replace(['!='], '', $value));
         $prepared_value = prepare($clean_value);
 
-        return '('.$search_query.' != '.$prepared_value.' OR '.$search_query.' IS NULL)';
+        return '('.$search_query.' != '.$prepared_value.')';
     }
 
     /**

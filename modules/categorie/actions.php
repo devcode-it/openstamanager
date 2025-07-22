@@ -102,7 +102,7 @@ switch (filter('op')) {
         }
 
         // Verifica se esiste già una categoria con lo stesso nome
-        $categoria_new = (new Categoria())->getByField('title', $nome);
+        $categoria_new = Categoria::where('name', $nome)->where('id', '!=', $id_record)->where('parent', '=', $id_original)->first();
 
         if (!empty($categoria_new)) {
             // Mostra un messaggio di errore con link alla categoria esistente

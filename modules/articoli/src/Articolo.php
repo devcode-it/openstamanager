@@ -99,8 +99,15 @@ class Articolo extends Model
                 } else {
                     $descrizione_ricorsivo = tr('Scomposizione articolo');
                 }
-                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false);
-                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo);
+
+                // Passa la sede del documento anche ai movimenti automatici
+                $array_automatico = $array;
+                if (isset($array['idsede'])) {
+                    $array_automatico['idsede'] = $array['idsede'];
+                }
+
+                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_automatico);
+                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo, $data, false, $array_automatico);
             }
 
             if (!$this->componenti->isEmpty() && setting('Scomponi articolo padre in fase di acquisto') && $manuale == false && $dir == 'uscita' && $descrizone != "tr('Produzione articolo')" && $descrizone != "tr('Scomposizione articolo')") {
@@ -109,8 +116,15 @@ class Articolo extends Model
                 } else {
                     $descrizione_ricorsivo = tr('Scomposizione articolo');
                 }
-                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false);
-                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo);
+
+                // Passa la sede del documento anche ai movimenti automatici
+                $array_automatico = $array;
+                if (isset($array['idsede'])) {
+                    $array_automatico['idsede'] = $array['idsede'];
+                }
+
+                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_automatico);
+                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo, $data, false, $array_automatico);
             }
 
             if (!$this->componenti->isEmpty() && setting('Movimenta gli articoli figlio tramite i movimenti manuali') && $manuale) {
@@ -119,8 +133,15 @@ class Articolo extends Model
                 } else {
                     $descrizione_ricorsivo = tr('Scomposizione articolo');
                 }
-                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false);
-                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo);
+
+                // Passa la sede anche ai movimenti manuali
+                $array_manuale = $array;
+                if (isset($array['idsede'])) {
+                    $array_manuale['idsede'] = $array['idsede'];
+                }
+
+                $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_manuale);
+                $this->movimentaRicorsivo($qta, $descrizione_ricorsivo, $data, false, $array_manuale);
             }
         }
 
@@ -273,9 +294,9 @@ class Articolo extends Model
 
     public function getNomeVarianteAttribute()
     {
-        $valori = database()->fetchArray("SELECT 
+        $valori = database()->fetchArray("SELECT
             CONCAT(`mg_attributi_lang`.`title`, ': ', `mg_valori_attributi`.`nome`) AS nome
-        FROM 
+        FROM
             `mg_articolo_attributo`
             INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
             INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
@@ -283,9 +304,9 @@ class Articolo extends Model
             INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
             INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
             INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
-        WHERE 
+        WHERE
             `mg_articoli`.`id` = '.prepare($this->id).'
-        ORDER BY 
+        ORDER BY
             `mg_attributo_combinazione`.`order`');
 
         return implode(', ', array_column($valori, 'nome'));
@@ -475,7 +496,14 @@ class Articolo extends Model
 
         foreach ($componenti as $componente) {
             $qta_componente = $qta * $componente->pivot->qta;
-            $componente->movimenta($qta_componente, $descrizone, $data, $manuale, $array);
+
+            // Passa la sede anche ai componenti
+            $array_componente = $array;
+            if (isset($array['idsede'])) {
+                $array_componente['idsede'] = $array['idsede'];
+            }
+
+            $componente->movimenta($qta_componente, $descrizone, $data, $manuale, $array_componente);
         }
     }
 

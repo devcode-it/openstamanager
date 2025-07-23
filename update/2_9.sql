@@ -270,3 +270,6 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('1', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Conto predefinito per gli ammortamenti', '');
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES ('2', (SELECT id FROM `zz_settings` WHERE `nome` = 'Conto predefinito per gli ammortamenti'), 'Default account for depreciation', '');
+
+-- Gestione salvataggio allegati email
+CREATE TABLE `em_email_attachment` (`id` INT NOT NULL AUTO_INCREMENT , `id_email` INT NOT NULL , `id_file` INT NOT NULL , `name` VARCHAR(255) NULL , `type` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));

@@ -133,16 +133,10 @@ class EmailNotification extends PHPMailer implements NotificationInterface
             $this->addReceiver($receiver['address'], $receiver['type']);
         }
 
-        // Allegati
-        $uploads = $mail->uploads;
+        // Allegati e stampe
+        $uploads = $mail->attachments()->get();
         foreach ($uploads as $upload) {
             $this->addUpload($upload->id);
-        }
-
-        // Stampe
-        $prints = $mail->prints;
-        foreach ($prints as $print) {
-            $this->addPrint($print['id'], $mail->id_record);
         }
 
         // Conferma di lettura
@@ -251,23 +245,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
 
         $this->addAttachment(base_dir().'/'.\Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
-    }
-
-    /**
-     * Aggiunge una stampa alla notifica.
-     *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $name
-     */
-    public function addPrint($print, $id_record, $name = null)
-    {
-        $print = \Prints::get($print);
-
-        $info = \Prints::render($print['id'], $id_record, null, true);
-        $name = $name ?: $info['path'];
-
-        $this->AddStringAttachment($info['pdf'], $name);
     }
 
     /**

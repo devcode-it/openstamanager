@@ -98,27 +98,36 @@ echo '
     </div>';
 
 // Stampe
-$prints = $mail->prints;
+$prints_old = $mail->prints;
+$prints = $mail->attachments()->where('type', 'print')->get();
 echo '
     <div class="col-md-4">
         <h4>'.tr('Stampe').'</h4>
         <table class="table table-sm table-striped">
             <thead>
                 <tr>
-                    <th>'.tr('Stampa').'</th>
                     <th>'.tr('Nome').'</th>
                 </tr>
             </thead>
 
             <tbody>';
 
-foreach ($prints as $print) {
+foreach ($prints_old as $print) {
     echo '
                 <tr>
                     <td>
                         <a href="'.Prints::getHref($print->getTranslation('title'), $mail->id_record).'" target="_blank">'.$print->getTranslation('title').'</a>
                     </td>
-                    <td>'.$print->pivot->name.'</td>
+                </tr>';
+}
+
+
+foreach ($prints as $print) {
+    echo '
+                <tr>
+                    <td>
+                        <a href="'.base_path().'/view.php?file_id='.$print->id.'" target="_blank">'.$print->original.'</a>
+                    </td>
                 </tr>';
 }
 
@@ -128,27 +137,34 @@ echo '
     </div>';
 
 // Stampe
-$uploads = $mail->uploads;
+$uploads_old = $mail->uploads;
+$uploads = $mail->attachments()->where('type', 'file')->get();
 echo '
     <div class="col-md-4">
         <h4>'.tr('Allegati').'</h4>
         <table class="table table-sm table-striped">
             <thead>
                 <tr>
-                    <th>'.tr('Allegato').'</th>
                     <th>'.tr('Nome').'</th>
                 </tr>
             </thead>
 
             <tbody>';
 
+foreach ($uploads_old as $upload) {
+    echo '
+                <tr>
+                    <td>
+                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
+                    </td>
+                </tr>';
+}
 foreach ($uploads as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->name.'</a>
+                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
                     </td>
-                    <td>'.$upload->pivot->name.'</td>
                 </tr>';
 }
 

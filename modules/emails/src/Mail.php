@@ -70,12 +70,27 @@ class Mail extends Model
      */
     public function addUpload($file_id, $name = null)
     {
-        $this->uploads()->attach($file_id, ['id_email' => $this->id, 'name' => $name]);
+        $file = Upload::find($file_id);
+
+        // duplica il file
+        $upload = $file->copia([
+            'id_module' => \Models\Module::where('name', 'Stato email')->first()->id,
+            'id_record' => $this->id,
+        ]);
+
+        $name = $name ?: $file->name;
+
+        $this->attachments()->attach($upload->id, ['id_email' => $this->id, 'name' => $name, 'type' => 'file']);
     }
 
     public function resetUploads()
     {
-        $this->uploads()->detach();
+        // Rimuove gli allegati associati
+        $uploads = $this->attachments()->where('type', 'file')->get();
+        foreach ($uploads as $upload) {
+            $upload->delete();
+        }
+        $this->attachments()->where('type', 'file')->detach();
     }
 
     /**
@@ -85,12 +100,35 @@ class Mail extends Model
      */
     public function addPrint($print_id, $name = null)
     {
-        $this->prints()->attach($print_id, ['id_email' => $this->id, 'name' => $name]);
+        // Genera la stampa come PDF
+        $print = \Prints::render($print_id, $this->id_record, null, true);
+        
+        // Ottieni il modulo "Coda d'invio"
+        $id_module = \Models\Module::where("name", "Stato email")->first()->id;
+
+        $name = $name ?: $print['name'];
+        
+        // Salva il file nella tabella zz_files
+        $upload = \Uploads::upload($print['pdf'], [
+            'name' => $name,
+            'original_name' => $name,
+            'id_category' => null,
+            'id_module' => $id_module,
+            'id_record' => $this->id,
+        ]);
+        
+        // Collega il file alla tabella em_email_attachment
+        $this->attachments()->attach($upload->id, ['id_email' => $this->id, 'name' => $name, 'type' => 'print']);
     }
 
     public function resetPrints()
     {
-        $this->prints()->detach();
+        // Rimuove le stampe associate
+        $uploads = $this->attachments()->where('type', 'print')->get();
+        foreach ($uploads as $upload) {
+            $upload->delete();
+        }
+        $this->attachments()->where('type', 'print')->detach();
     }
 
     /**
@@ -234,6 +272,12 @@ class Mail extends Model
     public function prints()
     {
         return $this->belongsToMany(PrintTemplate::class, 'em_email_print', 'id_email', 'id_print')->withPivot('name');
+    }
+
+
+    public function attachments()
+    {
+        return $this->belongsToMany(Upload::class, 'em_email_attachment', 'id_email', 'id_file')->withPivot('name');
     }
 
     protected function resetFromTemplate()

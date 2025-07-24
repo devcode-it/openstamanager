@@ -132,7 +132,7 @@ while (true) {
     }
 
     // Aggiornamento dei cron disponibili
-    $tasks = Task::all();
+    $tasks = Task::all()->where('enabled', 1);
     foreach ($tasks as $task) {
         $adesso = new Carbon();
 

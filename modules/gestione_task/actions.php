@@ -32,6 +32,7 @@ switch (post('op')) {
             $task->setTranslation('title', $name);
             $task->class = post('class');
             $task->expression = post('expression');
+            $task->enabled = post('enabled');
             $task->save();
         }
 

@@ -174,25 +174,25 @@ ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY 
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- Modulo per log esecuzione task
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log task', 'log_task', 'SELECT |select| FROM `zz_tasks_logs` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES 
-('1', @id_module, 'Log task'),
-('2', @id_module, 'Log task');
+('1', @id_module, 'Log eventi'),
+('2', @id_module, 'Events log');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES 
 (@id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(@id_module, 'Nome task', '(SELECT `name` FROM `zz_tasks` WHERE `id` = `zz_tasks_logs`.`id_task`)', '2', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(@id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(@id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, NULL, '1', '0', '0', '0'),
-(@id_module, 'Contesto', 'IF(CHAR_LENGTH(context) > 200, CONCAT(SUBSTRING(context, 1, 200), "<a title=\", REPLACE(context, """, "&quot;"), "">", "[...]", "</a>") , context )', '5', '1', '0', '0', NULL, NULL, '1', '0', '0', '1'),
-(@id_module, 'contesto_esteso', 'context', '5', '1', '0', '0', NULL, NULL, '0', '0', '0', '1'),
-(@id_module, 'Data inizio', 'created_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
-(@id_module, 'Data fine', 'updated_at', '6', '1', '0', '1', NULL, NULL, '1', '0', '0', '0'),
-(@id_module, '_bg_', 'IF(level="info", "#dff0d8", IF(level="error", "#f2dede", "#fcf8e3"))', '0', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(@id_module, 'Eseguito in', 'CONCAT(TIMESTAMPDIFF(SECOND, created_at, updated_at), \'secondi\')', '7', '1', '0', '1', NULL, NULL, '0', '0', '0', '0');
+(@id_module, 'Nome task', 'name', '2', '1', '0', '0', NULL, 'name', '1', '0', '0', '0'),
+(@id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, 'level', '1', '0', '0', '0'),
+(@id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, 'message', '1', '0', '0', '0'),
+(@id_module, 'Contesto', '`Contesto`', '5', '1', '0', '0', NULL, 'contesto_esteso', '1', '0', '0', '1'),
+(@id_module, 'contesto_esteso', 'contesto_esteso', '5', '1', '0', '0', NULL, 'contesto_esteso', '0', '0', '0', '1'),
+(@id_module, 'Data inizio', '`Data inizio`', '6', '1', '0', '1', NULL, '`Data inizio`', '1', '0', '0', '0'),
+(@id_module, 'Data fine', '`Data fine`', '6', '1', '0', '1', NULL, '`Data fine`', '1', '0', '0', '0'),
+(@id_module, '_bg_', '_bg_', '0', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+(@id_module, 'Eseguito in', '`Eseguito in`', '7', '1', '0', '1', NULL, '`Eseguito in`', '0', '0', '0', '0');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log task';
 INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
@@ -273,3 +273,7 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 
 -- Gestione salvataggio allegati email
 CREATE TABLE `em_email_attachment` (`id` INT NOT NULL AUTO_INCREMENT , `id_email` INT NOT NULL , `id_file` INT NOT NULL , `name` VARCHAR(255) NULL , `type` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));
+
+-- Tasto per disattivazione dei task
+ALTER TABLE `zz_tasks` ADD `enabled` TINYINT NOT NULL DEFAULT '0';
+UPDATE `zz_tasks` SET `enabled` = '1';

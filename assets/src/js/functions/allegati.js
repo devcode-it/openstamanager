@@ -143,9 +143,7 @@ function ricaricaAllegati(gestione) {
         id_module: gestione.data('id_module'),
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
-        id_category: gestione.data('id_category'),
-        upload_only: gestione.data('upload_only') === true || gestione.data('upload_only') === 'true' ? 'true' : 'false',
-        disable_edit: gestione.data('disable_edit') === true || gestione.data('disable_edit') === 'true' ? 'true' : 'false'
+        id_category: gestione.data('id_category')
     }).toString();
 
     $(id).load(globals.rootdir + "/ajax.php?" + params, function () {

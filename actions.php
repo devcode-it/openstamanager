@@ -29,7 +29,6 @@ use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
 use Util\Zip;
-use Permissions;
 
 if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
@@ -42,28 +41,7 @@ $database->beginTransaction();
 // Upload allegati e rimozione
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
-    $has_write_permission = false;
-
-    // Verifica permessi in base al tipo di accesso
-    if (Permissions::isTokenAccess()) {
-        // Per accesso tramite token, verifica i permessi del token
-        $token_info = $_SESSION['token_access'];
-        $token_permission = $token_info['permessi'] ?? 'r';
-
-        // Per gli allegati, verifica i permessi specifici del token
-        if (filter('op') == 'aggiungi-allegato') {
-            // Caricamento allegati: permessi 'ra', 'rwa' o 'rw'
-            $has_write_permission = in_array($token_permission, ['ra', 'rwa', 'rw']);
-        } elseif (filter('op') == 'rimuovi-allegato') {
-            // Rimozione allegati: solo permessi 'rwa' o 'rw'
-            $has_write_permission = in_array($token_permission, ['rwa', 'rw']);
-        }
-    } else {
-        // Per accesso normale, usa i permessi standard del modulo
-        $has_write_permission = (Modules::getPermission($id_module) == 'rw');
-    }
-
-    if (!$has_write_permission) {
+    if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
             '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
         ]));
@@ -176,14 +154,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
             }
         }
 
-        // Determina il redirect appropriato in base al tipo di accesso
-        if (Permissions::isTokenAccess() && !empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
-            // Per accesso tramite token, redirect a shared_editor.php
-            redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
-        } else {
-            // Per accesso normale, redirect a editor.php
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
-        }
+        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
 }
 

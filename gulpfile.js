@@ -41,7 +41,6 @@ const concat = require('gulp-concat');
 // Altro
 const flatten = require('gulp-flatten');
 const rename = require('gulp-rename');
-const replace = require('gulp-replace');
 
 // Release
 const md5File = require('md5-file')
@@ -441,53 +440,21 @@ function csrf() {
 }
 
 function pdfjs() {
-    // Copia i file .mjs della web, li rinomina in .js e sostituisce i riferimenti interni
-    const webMjs = gulp.src([
-        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.mjs',
-    ])
-        .pipe(replace(/pdf\.worker\.mjs/g, 'pdf.worker.js'))
-        .pipe(rename(function (path) {
-            path.extname = '.js';
-        }))
-        .pipe(gulp.dest(config.production + '/pdfjs/web'));
-
-    // Copia i file .mjs della build, li rinomina in .js e sostituisce i riferimenti interni
-    const buildMjs = gulp.src([
-        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*.mjs',
-    ])
-        .pipe(replace(/pdf\.worker\.mjs/g, 'pdf.worker.js'))
-        .pipe(rename(function (path) {
-            path.extname = '.js';
-        }))
-        .pipe(gulp.dest(config.production + '/pdfjs/build'));
-
-    // Modifica il file viewer.html per referenziare viewer.js e pdf.js invece di viewer.mjs e pdf.mjs
-    const viewerHtml = gulp.src([
-        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/viewer.html',
-    ])
-        .pipe(replace('viewer.mjs', 'viewer.js'))
-        .pipe(replace('pdf.mjs', 'pdf.js'))
-        .pipe(gulp.dest(config.production + '/pdfjs/web'));
-
-    // Copia tutti gli altri file (esclusi .mjs e viewer.html già gestiti sopra)
-    const webOther = gulp.src([
-        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/**/*',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.mjs',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/viewer.html',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/cmaps/*',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.map',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/web/*.pdf',
+    const web = gulp.src([
+        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/**/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/*.map',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/web/*.pdf',
     ], {encoding: false})
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
-    const buildOther = gulp.src([
-        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*.mjs',
-        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-4.0.379-dist/build/*.map',
+    const build = gulp.src([
+        config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/build/*',
+        '!' + config.nodeDirectory + '/pdfjs-viewer-element/dist/pdfjs-*-dist/build/*.map',
     ], {encoding: false})
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 
-    return merge(webMjs, buildMjs, viewerHtml, webOther, buildOther);
+    return merge(web, build);
 }
 
 function uaparser() {
@@ -565,8 +532,6 @@ export function release(done) {
         '!vendor/mpdf/mpdf/ttfonts/*',
         'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
         'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
-        'vendor/mpdf/mpdf/ttfonts/ocrbinfo.txt',
-        'vendor/mpdf/mpdf/ttfonts/ocrb10.ttf',
         '!vendor/respect/validation/tests/**',
         '!vendor/willdurand/geocoder/tests/**',
         '!docker/**',

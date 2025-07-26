@@ -371,7 +371,8 @@ span.form-control {
 #pulsanti {
     position: sticky;
     top: 0;
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     z-index: 999;
     background: #f6f6f6;
     line-height: 3;
@@ -1700,10 +1701,6 @@ table.dataTable {
 .select2-selection__rendered,
 .select2-results__option {
     font-size: 13px !important;
-}
-
-.select2-container--bootstrap4 .select2-results__option--highlighted > a {
-    color: #fff;
 }
 
 .btn-group>.btn-xs>input[type="checkbox"], .label>input[type="checkbox"] {

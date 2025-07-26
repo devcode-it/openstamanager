@@ -1,0 +1,22 @@
+{
+
+        "dir" : "ltr",
+        "lang" : "it-IT",
+        "name" : "OpenSTAManager",
+        "scope" : ".",
+        "display" : "fullscreen",
+        "start_url" : "./",
+        "short_name" : "OSM",
+        "theme_color" : "transparent",
+        "description" : "OpenSTAManager",
+        "orientation" : "any",
+        "background_color" : "transparent",
+        "generated" : "true",
+        "icons" : [
+            {
+                "src": "/openstamanager/assets/dist/img/logo_completo.png",
+                "type": "image/png",
+                "sizes": "489x91"
+            }
+        ]
+}

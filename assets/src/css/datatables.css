@@ -242,11 +242,3 @@ div.dataTables_wrapper {
 {
     z-index: 1050
 }
-
-div.dataTables_wrapper div.dataTables_info {
-    padding-bottom: 8px;
-}
-
-.datatables-buttons {
-    padding-bottom: 16px;
-}

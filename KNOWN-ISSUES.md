@@ -14,10 +14,6 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 #### 2.8-beta - 20/05/2025
 
 ##### Problemi noti
-- La cache degli hook veniva considerata scaduta fino a quando non trascorreva un intero giorno, causando l'esecuzione continua di alcuni hook per aggiornare la cache. 
-Questa modifica corregge la logica di validazione della cache, riducendo le chiamate non necessarie e migliorando le prestazioni.
-https://github.com/devcode-it/openstamanager/commit/254a00c9c265c990ee708141455d30b9080132ff
-
 - Presenza di vecchi file nella cartella vendor che danno errore in fase di installazione
 https://github.com/devcode-it/openstamanager/commit/9d7120319
 

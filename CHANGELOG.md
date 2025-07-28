@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.8.3 (2025-07-29)](#283-2025-07-29)
 - [2.8.2 (2025-07-09)](#282-2025-07-09)
 - [2.8.1 (2025-06-10)](#281-2025-06-10)
 - [2.8 (2025-05-20)](#28-2025-05-20)
@@ -56,6 +57,32 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.8.3 (2025-07-29)
+### Modificato (Changed)
+- Migliorie grafiche minori
+- Miglioria form selezione riferimenti
+
+### Fixed
+- Corretta importazione fatture da zip
+- Corretti riferimenti per colonna email inviata nei moduli
+- Corretta gestione sede per distinta base
+- Corretto inserimento ordini
+- Corretta ricerca datatables
+- Corretta visualizzazione mappa
+- Corretta aggiunta sottocategoria
+- Corretta visualizzazione errata valori tabelle
+- Corretta creazione intervento
+- Corretta registrazione contabile da bulk
+- Corretto problema abilitazione permessi utenti
+- Corretta migrazione categorie impianto
+- Corretta query migrazione categorie impianto
+- Corretta aggiunta categoria e marca da modale su edit
+- Corretto modulo backup
+- Corretta importazione FE da zip
+- Corretta aggiunta righe descrittive in creazione ordine fornitore da ordine cliente
+- Corretti allegati senza categoria
+- Corretta esclusione agenti da plugin Provvigioni
 
 ## 2.8.2 (2025-07-09)
 ### Modificato (Changed)

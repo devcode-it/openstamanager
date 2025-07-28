@@ -147,7 +147,7 @@ FROM
         ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
     LEFT JOIN (
         SELECT
-            COUNT(`emails`.`id`) AS `emails`,
+            COUNT(`em_emails`.`id`) AS `emails`,
             `em_emails`.`id_record`
         FROM
             `em_emails`

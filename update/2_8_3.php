@@ -18,7 +18,6 @@ $column_exists = $dbo->fetchOne('
 if ($column_exists['cont'] == 0) {
     $dbo->query('ALTER TABLE `zz_categorie` ADD `name` VARCHAR(255) NULL');
 
-
     // Estrai tutte le categorie senza colore con is_impianto = 1, ordinate per ID
     $categorie_senza_colore = $dbo->fetchArray('
         SELECT `id`
@@ -67,12 +66,10 @@ if ($column_exists['cont'] == 0) {
                 ], [
                     'id' => $id_categoria,
                 ]);
-
             }
 
             // Passa alla traduzione successiva
-            $indice_traduzione++;
+            ++$indice_traduzione;
         }
     }
 }
-

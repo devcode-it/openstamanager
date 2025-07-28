@@ -11,7 +11,7 @@ FROM
     LEFT JOIN `co_statipreventivi_lang`
         ON (
             `co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record`
-            AND co_statipreventivi_lang.|lang|
+            AND co_statipreventivi_lang.id_lang = |lang|
         )
     LEFT JOIN (
         SELECT
@@ -48,7 +48,7 @@ FROM
         ON `fattura`.`idpreventivo` = `co_preventivi`.`id`
     LEFT JOIN (
         SELECT
-            COUNT(en_emails.id) AS emails,
+            COUNT(em_emails.id) AS emails,
             em_emails.id_record
         FROM
             em_emails
@@ -68,14 +68,7 @@ FROM
 WHERE
     1 = 1
     |segment(`co_preventivi`.`id_segment`)|
-    |date_period(
-        custom,
-        \'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`,
-        \'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`,
-        `data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\',
-        `data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\',
-        `data_bozza` >= \'|period_start|\' AND `data_conclusione` = NULL
-    )|
+    |date_period(custom,\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`,\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`,`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\',`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\',`data_bozza` >= \'|period_start|\' AND `data_conclusione` = NULL)|
     AND `default_revision` = 1
 GROUP BY
     `co_preventivi`.`id`,
@@ -192,7 +185,7 @@ FROM
                 FROM `co_tipidocumento`
                 WHERE `dir` = \'entrata\'
             )
-            AND `numero_esterno` != \'\' 
+            AND `numero_esterno` != \'\'
             |date_period(`co_documenti`.`data`)|
         GROUP BY
             `id_segment`, `numero_esterno`, `idtipodocumento`
@@ -730,4 +723,4 @@ HAVING
     2 = 2
 ORDER BY
     `id`,
-    `nome` ASC' WHERE `zz_modules`.`name` = 'Utenti e permessi'; 
+    `nome` ASC' WHERE `zz_modules`.`name` = 'Utenti e permessi';

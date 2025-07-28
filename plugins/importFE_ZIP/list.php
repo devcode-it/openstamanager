@@ -59,7 +59,7 @@ if (!empty($list)) {
             <td class="text-center">-</td>
 
             <td class="text-center">
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
+                <button type="button" class="btn btn-danger" onclick="delete_fe_vendita(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
@@ -143,20 +143,39 @@ function import_fe_vendita(button, file, data_registrazione) {
             name: file,
         },
         success: function(data) {
-            data = JSON.parse(data);
+            try {
+                if (!data || data.trim() === "") {
+                    swal({
+                        title: "'.tr('Errore').'",
+                        text: "'.tr('Risposta vuota dal server').'",
+                        type: "error",
+                    });
+                    buttonRestore(button, restore);
+                    return;
+                }
 
-            if (!data.already) {
-                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
-            } else {
+                data = JSON.parse(data);
+
+                if (!data.already) {
+                    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
+                } else {
+                    swal({
+                        title: "'.tr('Fattura già importata.').'",
+                        type: "info",
+                    });
+
+                    $(button).prop("disabled", true);
+                }
+
+                buttonRestore(button, restore);
+            } catch (e) {
                 swal({
-                    title: "'.tr('Fattura già importata.').'",
-                    type: "info",
+                    title: "'.tr('Errore').'",
+                    text: "'.tr('Errore durante l\'elaborazione della risposta del server').'",
+                    type: "error",
                 });
-
-				$(button).prop("disabled", true);
+                buttonRestore(button, restore);
             }
-
-            buttonRestore(button, restore);
         },
         error: function(xhr) {
             alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
@@ -186,9 +205,33 @@ function process_fe_vendita(button, file) {
                 name: file,
             },
             success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    buttonRestore(button, restore);
-                });
+                try {
+                    if (!data || data.trim() === "") {
+                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                        buttonRestore(button, restore);
+                        return;
+                    }
+
+                    var response = JSON.parse(data);
+
+                    if (response.success) {
+                        swal("'.tr('Successo').'", response.message || "'.tr('File processato correttamente').'", "success");
+                    } else if (response.success === false) {
+                        swal("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
+                    }
+
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        buttonRestore(button, restore);
+                    });
+                } catch (e) {
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        buttonRestore(button, restore);
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                swal("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
+                buttonRestore(button, restore);
             }
         });
     });
@@ -214,9 +257,32 @@ function delete_fe_vendita(button, file_id) {
                 file_id: file_id,
             },
             success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                try {
+                    if (!data || data.trim() === "") {
+                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                        buttonRestore(button, restore);
+                        return;
+                    }
+
+                    var response = JSON.parse(data);
+
+                    if (response.success) {
+                        swal("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
+                        $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                            buttonRestore(button, restore);
+                        });
+                    } else {
+                        swal("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'eliminazione del file').'", "error");
+                        buttonRestore(button, restore);
+                    }
+                } catch (e) {
+                    swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                     buttonRestore(button, restore);
-                });
+                }
+            },
+            error: function(xhr, status, error) {
+                swal("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
+                buttonRestore(button, restore);
             }
         });
     });

@@ -32,6 +32,15 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                             $("#main_loading").fadeOut();
 
                             try {
+                                // Verifica se la risposta è vuota
+                                if (!data || data.trim() === "") {
+                                    console.error("Risposta vuota dal server");
+                                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                    $("#blob1").val("");
+                                    buttonRestore(btn, restore);
+                                    return;
+                                }
+
                                 var response = JSON.parse(data);
                                 if (response.error) {
                                     swal("'.tr('Errore').'", response.error, "error");
@@ -40,7 +49,12 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                     return;
                                 }
                             } catch (e) {
-                                // Se non è JSON valido, continua normalmente
+                                console.error("Errore parsing JSON:", e);
+                                console.error("Dati ricevuti:", data);
+                                swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                                $("#blob1").val("");
+                                buttonRestore(btn, restore);
+                                return;
                             }
 
                             swal("Caricamento completato!", "", "success");
@@ -96,6 +110,15 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                             $("#main_loading").fadeOut();
 
                             try {
+                                // Verifica se la risposta è vuota
+                                if (!data || data.trim() === "") {
+                                    console.error("Risposta vuota dal server");
+                                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                    $("#blob1").val("");
+                                    buttonRestore(btn, restore);
+                                    return;
+                                }
+
                                 data = JSON.parse(data);
 
                                 // Controlla se c\'è un messaggio di errore nella risposta
@@ -117,7 +140,8 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                     $("#blob1").val("");
                                 }
                             } catch (e) {
-                                // Se non è JSON valido, mostra un errore generico
+                                console.error("Errore parsing JSON:", e);
+                                console.error("Dati ricevuti:", data);
                                 swal("'.tr('Errore').'", "'.tr('Si è verificato un errore durante l\'elaborazione della risposta').'", "error");
                                 $("#blob1").val("");
                             }
@@ -258,7 +282,25 @@ function importAllZip(btn) {
             },
             type: "post",
             success: function(data){
-                data = JSON.parse(data);
+                try {
+                    // Verifica se la risposta è vuota
+                    if (!data || data.trim() === "") {
+                        console.error("Risposta vuota dal server");
+                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                        buttonRestore(btn, restore);
+                        $("#main_loading").fadeOut();
+                        return;
+                    }
+
+                    data = JSON.parse(data);
+                } catch (e) {
+                    console.error("Errore parsing JSON:", e);
+                    console.error("Dati ricevuti:", data);
+                    swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                    buttonRestore(btn, restore);
+                    $("#main_loading").fadeOut();
+                    return;
+                }
 
                 count = data.length;
                 counter = 0;

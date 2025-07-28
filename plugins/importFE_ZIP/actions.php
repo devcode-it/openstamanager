@@ -220,15 +220,68 @@ switch (filter('op')) {
 
         break;
 
+    case 'prepare':
+        $name = filter('name');
+
+        try {
+            $file = Interaction::getInvoiceFile($name, 'Fatture di vendita', 'Importazione FE');
+
+            if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
+                echo json_encode([
+                    'already' => 0,
+                    'id' => 1,
+                    'message' => tr('Fattura pronta per l\'importazione')
+                ]);
+            } else {
+                echo json_encode([
+                    'already' => 1,
+                    'message' => tr('Fattura già importata')
+                ]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'error' => tr('Errore durante la preparazione della fattura').': '.$e->getMessage()
+            ]);
+        }
+
+        break;
+
     case 'delete':
         $file_id = get('file_id');
 
-        $directory = FatturaElettronica::getImportDirectory('Fatture di vendita', 'Importazione FE');
-        $files = Interaction::getFileList([], 'Fatture di vendita', 'Importazione FE');
-        $file = $files[$file_id];
+        try {
+            $directory = FatturaElettronica::getImportDirectory('Fatture di vendita', 'Importazione FE');
+            $files = Interaction::getFileList([], 'Fatture di vendita', 'Importazione FE');
 
-        if (!empty($file)) {
-            delete($directory.'/'.$file['name']);
+            if (!isset($files[$file_id])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => tr('File non trovato con ID: ') . $file_id,
+                    'debug' => [
+                        'file_id' => $file_id,
+                        'available_files' => array_keys($files)
+                    ]
+                ]);
+                break;
+            }
+
+            $file = $files[$file_id];
+            $file_path = $directory.'/'.$file['name'];
+
+            if (file_exists($file_path)) {
+                if (delete($file_path)) {
+                    echo json_encode(['success' => true, 'message' => tr('File eliminato correttamente')]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => tr('Impossibile eliminare il file')]);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => tr('File fisico non trovato: ') . $file['name']]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Errore durante l\'eliminazione: ') . $e->getMessage()
+            ]);
         }
 
         break;
@@ -243,6 +296,9 @@ switch (filter('op')) {
 
         if (!empty($file)) {
             download($directory.'/'.$file['name']);
+            // Note: download() function handles the response and exits
+        } else {
+            echo json_encode(['success' => false, 'message' => tr('File non trovato')]);
         }
 
         break;
@@ -348,7 +404,12 @@ switch (filter('op')) {
             $process_result = Interaction::processInvoice($name);
             if (!empty($process_result)) {
                 flash()->error($process_result);
+                echo json_encode(['success' => false, 'message' => $process_result]);
+            } else {
+                echo json_encode(['success' => true, 'message' => tr('File processato correttamente')]);
             }
+        } else {
+            echo json_encode(['success' => false, 'message' => tr('Interazione non abilitata')]);
         }
 
         break;
@@ -781,5 +842,12 @@ switch (filter('op')) {
 
         echo json_encode($results);
 
+        break;
+
+    default:
+        echo json_encode([
+            'error' => tr('Operazione non riconosciuta'),
+            'operation' => filter('op')
+        ]);
         break;
 }

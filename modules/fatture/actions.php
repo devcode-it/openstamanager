@@ -955,18 +955,30 @@ switch ($op) {
             ->where('co_iva.indetraibile', 100)
             ->sum('sconto');
 
-        $iva_indetraibile = $database->table('co_righe_documenti')
+        $iva_indetraibile_id = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
             ->where('co_righe_documenti.iddocumento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
-            ->first();
+            ->value('co_iva.id');
+
+        // Recupera l'oggetto Aliquota per l'IVA indetraibile se esiste
+        $iva_indetraibile = null;
+        if ($iva_indetraibile_id) {
+            $iva_indetraibile = Aliquota::find($iva_indetraibile_id);
+        }
 
         if ($imponibile) {
             $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile - $sconto) + (($imponibile - $sconto) * $iva->percentuale / 100) : ($imponibile - $sconto);
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
-        } elseif ($imponibile_indetraibile) {
+        } elseif ($imponibile_indetraibile && $iva_indetraibile) {
             $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile_indetraibile - $sconto_indetraibile) + (($imponibile_indetraibile - $sconto_indetraibile) * $iva_indetraibile->percentuale / 100) : ($imponibile_indetraibile - $sconto_indetraibile);
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
+        }
+
+        // Se non ci sono importi da fatturare, non creare l'autofattura
+        if (empty($totale_imponibile)) {
+            flash()->warning(tr('Nessun importo da integrare per il reverse charge'));
+            break;
         }
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
@@ -978,9 +990,21 @@ switch ($op) {
 
         $riga = Riga::build($autofattura);
         $riga->descrizione = $tipo->getTranslation('title');
-        $riga->id_iva = $imponibile ? $iva->id : $iva_indetraibile->id;
+
+        // Determina quale IVA utilizzare, con fallback all'IVA predefinita
+        $id_iva_da_usare = null;
+        if ($imponibile && $iva) {
+            $id_iva_da_usare = $iva->id;
+        } elseif ($imponibile_indetraibile && $iva_indetraibile) {
+            $id_iva_da_usare = $iva_indetraibile->id;
+        } else {
+            // Fallback all'IVA predefinita se non troviamo nessuna IVA appropriata
+            $id_iva_da_usare = $iva->id;
+        }
+
+        $riga->id_iva = $id_iva_da_usare;
         $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
-        $riga->setPrezzoUnitario($totale_imponibile, $imponibile ? $iva->id : $iva_indetraibile->id);
+        $riga->setPrezzoUnitario($totale_imponibile, $id_iva_da_usare);
         $riga->qta = 1;
         $riga->save();
 

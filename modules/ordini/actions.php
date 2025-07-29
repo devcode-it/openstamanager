@@ -873,9 +873,15 @@ switch (post('op')) {
         $riga = $riga ?: Sconto::find($id_riga);
 
         if (!empty($riga)) {
-            // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
-            $prezzo_unitario = $riga->prezzo_unitario;
-            $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+            if ($riga->isSconto()) {
+                // Per gli sconti, aggiorna l'IVA mantenendo lo stesso valore di sconto
+                $sconto_unitario = $riga->sconto_unitario;
+                $riga->setScontoUnitario($sconto_unitario, $id_iva);
+            } else {
+                // Per articoli e righe, aggiorna l'IVA mantenendo lo stesso prezzo unitario
+                $prezzo_unitario = $riga->prezzo_unitario;
+                $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+            }
             $riga->save();
 
             flash()->info(tr('IVA aggiornata!'));
@@ -893,9 +899,15 @@ switch (post('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
 
             if (!empty($riga)) {
-                // Aggiorna l'IVA mantenendo lo stesso prezzo unitario
-                $prezzo_unitario = $riga->prezzo_unitario;
-                $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                if ($riga->isSconto()) {
+                    // Per gli sconti, aggiorna l'IVA mantenendo lo stesso valore di sconto
+                    $sconto_unitario = $riga->sconto_unitario;
+                    $riga->setScontoUnitario($sconto_unitario, $id_iva);
+                } else {
+                    // Per articoli e righe, aggiorna l'IVA mantenendo lo stesso prezzo unitario
+                    $prezzo_unitario = $riga->prezzo_unitario;
+                    $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
+                }
                 $riga->save();
                 ++$numero_totale;
             }

@@ -120,7 +120,7 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
                     <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
-                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "values": "query=SELECT `co_iva`.`id`, IF(`deleted_at` IS NOT NULL, CONCAT(`codice`, ' - ', `title`, ' (<?php echo tr('eliminata'); ?>)'), CONCAT(`codice`, ' - ', `title`)) AS `descrizione` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC" ]}
+                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
                     <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
                     <input type="hidden" name="righe" value="<?php echo $_GET['righe']; ?>">
                 </div>
@@ -162,7 +162,7 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
                     <h4 class="panel-title"><?php echo tr('Aliquota da applicare'); ?></h4>
                 </div>
                 <div class="panel-body">
-                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "values": "query=SELECT `co_iva`.`id`, IF(`deleted_at` IS NOT NULL, CONCAT(`codice`, ' - ', `title`, ' (<?php echo tr('eliminata'); ?>)'), CONCAT(`codice`, ' - ', `title`)) AS `descrizione` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC" ]}
+                    {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
                     <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
                     <input type="hidden" name="righe" value="<?php echo get('righe'); ?>">
                 </div>
@@ -190,6 +190,47 @@ $show_form = count($aliquote_iva) > 0 || count($righe_senza_iva) > 0 || (!empty(
 </form>
 
 <script>
+// Inizializzazione dei select AJAX quando il modal viene caricato
+$(document).ready(function() {
+    initializeAjaxSelects();
+});
+
+// Inizializzazione quando il modal viene mostrato
+$('#modals').on('shown.bs.modal', function() {
+    initializeAjaxSelects();
+});
+
+// Funzione per inizializzare i select AJAX
+function initializeAjaxSelects() {
+    // Forza l'inizializzazione dei select con ajax-source
+    $('#modifica-iva-form .superselectajax').each(function() {
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            console.log('Inizializzazione select AJAX:', $(this).attr('name'));
+            input(this);
+        }
+    });
+
+    // Se non ci sono select con classe superselectajax, proviamo a inizializzare tutti i select con data-source
+    $('#modifica-iva-form select[data-source]').each(function() {
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            console.log('Aggiunta classe superselectajax e inizializzazione:', $(this).attr('name'));
+            $(this).addClass('superselectajax');
+            input(this);
+        }
+    });
+
+    // Timeout per riprovare l'inizializzazione se necessario
+    setTimeout(function() {
+        $('#modifica-iva-form select[name="iva_id"]').each(function() {
+            if (!$(this).hasClass('select2-hidden-accessible') && $(this).data('source')) {
+                console.log('Inizializzazione ritardata per select iva_id');
+                $(this).addClass('superselectajax');
+                input(this);
+            }
+        });
+    }, 500);
+}
+
 function salvaIva() {
     var riga_id = $('#modifica-iva-form input[name=riga_id]').val();
     var righe = $('#modifica-iva-form input[name=righe]').val();

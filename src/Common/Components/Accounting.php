@@ -106,6 +106,9 @@ abstract class Accounting extends Component
      */
     public function setPrezzoUnitario($prezzo_unitario, $id_iva)
     {
+        // Salva il valore dello sconto esistente prima di cambiare l'aliquota IVA
+        $sconto_esistente = $this->sconto_unitario;
+
         $this->id_iva = $id_iva;
 
         // Gestione IVA incorporata
@@ -113,6 +116,11 @@ abstract class Accounting extends Component
             $this->prezzo_unitario_ivato = $prezzo_unitario;
         } else {
             $this->prezzo_unitario = $prezzo_unitario;
+        }
+
+        // Ricalcola l'IVA dello sconto esistente con la nuova aliquota
+        if ($sconto_esistente > 0) {
+            $this->sconto_unitario = $sconto_esistente;
         }
     }
 

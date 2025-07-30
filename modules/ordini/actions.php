@@ -596,8 +596,11 @@ switch (post('op')) {
                 $copia->ora_evasione = null;
                 $copia->confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
 
-                // Impostazione al prezzo di acquisto per tutte le righe
-                if ($copia->isArticolo()) {
+                // Impostazione al prezzo di acquisto per tutte le righe (esclusi gli sconti)
+                if ($copia->isSconto()) {
+                    // Per gli sconti, non modificare il prezzo unitario - mantieni il valore dello sconto originale
+                    // Gli sconti non hanno prezzi unitari, solo valori di sconto
+                } elseif ($copia->isArticolo()) {
                     $copia->setSconto(0, 'PRC');
 
                     $articolo = $copia->articolo;

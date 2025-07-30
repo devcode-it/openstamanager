@@ -172,7 +172,7 @@ switch (filter('op')) {
                             $aliquota_iva = $riga['AliquotaIVA'];
 
                             // Ricerca dell'aliquota IVA corretta basata sulla percentuale dell'XML
-                            $query = "SELECT `co_iva`.`id` FROM `co_iva` WHERE `deleted_at` IS NULL AND `percentuale` = ".prepare($aliquota_iva);
+                            $query = 'SELECT `co_iva`.`id` FROM `co_iva` WHERE `deleted_at` IS NULL AND `percentuale` = '.prepare($aliquota_iva);
                             $start_query = $query;
 
                             // Se presente, considera anche il codice natura FE

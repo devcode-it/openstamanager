@@ -171,7 +171,25 @@ switch (filter('op')) {
 
                             $aliquota_iva = $riga['AliquotaIVA'];
 
-                            $iva[$key] = setting('Iva predefinita');
+                            // Ricerca dell'aliquota IVA corretta basata sulla percentuale dell'XML
+                            $query = "SELECT `co_iva`.`id` FROM `co_iva` WHERE `deleted_at` IS NULL AND `percentuale` = ".prepare($aliquota_iva);
+                            $start_query = $query;
+
+                            // Se presente, considera anche il codice natura FE
+                            if (!empty($riga['Natura'])) {
+                                $query .= ' AND `codice_natura_fe` = '.prepare($riga['Natura']);
+
+                                // Fallback per natura iva mancante
+                                if (empty($database->fetchArray($query))) {
+                                    $query = $start_query;
+                                }
+                            }
+
+                            $query .= ' ORDER BY `id` ASC LIMIT 1';
+                            $aliquota_trovata = $database->fetchArray($query);
+
+                            // Usa l'aliquota trovata o fallback all'IVA predefinita
+                            $iva[$key] = (!empty($aliquota_trovata) && isset($aliquota_trovata[0]['id'])) ? $aliquota_trovata[0]['id'] : setting('Iva predefinita');
 
                             $conti[$key] = setting('Conto predefinito fatture di vendita');
                         }

@@ -277,3 +277,67 @@ CREATE TABLE `em_email_attachment` (`id` INT NOT NULL AUTO_INCREMENT , `id_email
 -- Tasto per disattivazione dei task
 ALTER TABLE `zz_tasks` ADD `enabled` TINYINT NOT NULL DEFAULT '0';
 UPDATE `zz_tasks` SET `enabled` = '1';
+
+
+-- Aggiunta Modulo Ubicazioni
+CREATE TABLE `mg_ubicazioni` (
+  `id` int(11) NOT NULL,
+  `u_label` varchar(255) NOT NULL,
+  `colore` varchar(255) DEFAULT NULL,
+  `u_tags` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `mg_ubicazioni`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `mg_ubicazioni`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+CREATE TABLE `mg_ubicazioni_lang` (
+  `id` int(11) NOT NULL,
+  `id_lang` int(11) NOT NULL,
+  `id_record` int(11) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `mg_ubicazioni_lang`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mg_ubicazioni_lang_ibfk_2` (`id_lang`) USING BTREE,
+  ADD KEY `mg_ubicazioni_lang_ibfk_1` (`id_record`) USING BTREE;
+
+ALTER TABLE `mg_ubicazioni_lang`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `mg_ubicazioni_lang`
+  ADD CONSTRAINT `mg_ubicazioni_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `mg_ubicazioni` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mg_ubicazioni_lang_ibfk_2` FOREIGN KEY (`id_lang`) REFERENCES `zz_langs` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+INSERT INTO `zz_modules` (`name`, `directory`, `attachments_directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES
+('Ubicazioni', 'ubicazioni', 'ubicazioni', 'SELECT |select| FROM `mg_ubicazioni` LEFT JOIN `mg_ubicazioni_lang` ON (`mg_ubicazioni`.`id` = `mg_ubicazioni_lang`.`id_record` AND `mg_ubicazioni_lang`.|lang|) WHERE 1=1 HAVING 2=2 ORDER BY TRIM(`mg_ubicazioni`.`u_label`)', '', 'nav-icon fa fa-circle-o', '2.8.1', '2.8.1', 110, 20, 1, 1, 0, 0);
+
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+( 1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 'Ubicazioni', 'Ubicazioni');
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+( 2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 'Ubicazioni', 'Ubicazioni');
+
+-- Aggiornamento zz_prints per nuovo template per modulo Ubicazioni
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`, `created_at`, `updated_at`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'Barcode', 'ubicazione', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, '2022-09-20 16:42:15', '2024-11-02 14:00:07', 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'BarcodeBig', 'ubicazioneBig', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, '2022-09-20 16:42:15', '2024-11-20 10:53:02', 1);
+COMMIT;
+
+--Aggiornamento zz_prints_lang per nuovo template per modulo Ubicazioni
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
+(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Barcode' AND `directory` = 'ubicazione'), 'Barcode', 'Barcode'),
+(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Barcode' AND `directory` = 'ubicazione'), 'Barcode', 'Barcode'),
+(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'BarcodeBig' AND `directory` = 'ubicazioneBig'), 'BarcodeBig', 'Barcode'),
+(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'BarcodeBig' AND `directory` = 'ubicazioneBig'), 'BarcodeBig', 'Barcode');
+COMMIT;

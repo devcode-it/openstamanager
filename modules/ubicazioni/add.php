@@ -27,14 +27,8 @@ include_once __DIR__.'/../../core.php';
 		<div class="col-md-3">
 			{[ "type": "text", "label": "<?php echo tr('Etichetta'); ?>", "name": "u_label", "required": 1, "value": "$u_label$" ]}
 		</div>
-		<!--<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "u_label_info", "value": "$u_label_info$" ]}
-		</div>
-		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Note'); ?>", "name": "u_notes", "value": "$u_notes$" ]}
-		</div>-->
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "title", "value": "$title$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "title", "required": 1, "value": "$title$" ]}
 		</div>
 		<div class="col-md-8">
 			{[ "type": "text", "label": "<?php echo tr('Note'); ?>", "name": "notes", "value": "$notes$" ]}

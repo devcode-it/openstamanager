@@ -174,7 +174,7 @@ ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY 
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- Modulo per log esecuzione task
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT zz_tasks_logs.id, name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT zz_api_log.id, NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES 
@@ -228,6 +228,19 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
 (NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
+
+-- Gestione log API
+-- Creazione tabella di appoggio
+CREATE TABLE `zz_api_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `level` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `message` VARCHAR(255) NULL DEFAULT NULL,
+  `context` TEXT NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Gestione ammortamenti
 ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;

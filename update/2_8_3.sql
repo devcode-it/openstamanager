@@ -108,12 +108,12 @@ FROM
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT \'DDT \', `dt_ddt`.`numero_esterno` SEPARATOR \', \') AS `info`, `dt_righe_ddt`.`original_document_id` AS `idddt` FROM `dt_ddt` INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt` WHERE `original_document_type` = \'ModulesOrdiniOrdine\' GROUP BY `original_document_id`) AS `ddt` ON `ddt`.`idddt` = `or_ordini`.`id`
     LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ordini cliente\') AND `zz_operations`.`op` = \'send-email\' GROUP BY `em_emails`.`id_record`) AS email ON `email`.`id_record` = `or_ordini`.`id`
 WHERE
-    1 = 1
+    1=1
     |segment(`or_ordini`.`id_segment`)|
     AND `dir` = \'entrata\'
     |date_period(`or_ordini`.`data`)|
 HAVING
-    2 = 2
+    2=2
 ORDER BY
     `data` DESC,
     CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente';

@@ -99,7 +99,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
 
     $scadenze = $scadenze_anagrafica->sortBy('scadenza');
     foreach ($scadenze as $scadenza) {
-        $totale = abs($scadenza->da_pagare) - abs($scadenza->pagato);
+        $totale = -($scadenza->da_pagare - $scadenza->pagato);
 
         echo '
         <tr>

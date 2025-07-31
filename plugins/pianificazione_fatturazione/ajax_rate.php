@@ -54,14 +54,14 @@ switch ($action) {
                 'idPianificazione' => $pianificazione->id,
                 'idContratto' => $pianificazione->idcontratto,
                 'dataScadenza' => dateFormat($pianificazione->data_scadenza),
+                'dataScadenzaRaw' => $pianificazione->data_scadenza,
                 'contratto' => reference($contratto),
-                'ragioneSociale' => Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)),
+                'ragioneSociale' => '<span class="font-weight-bold">'.Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)).'</span>',
                 'totale' => moneyFormat($pianificazione->totale),
-                'importo' => tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
+                'importo' => tr('Rata _IND_/_NUM_', [
                     '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
                     '_NUM_' => numberFormat($numero_pianificazioni, 0),
-                    '_TOT_' => moneyFormat($contratto->totale),
-                ]),
+                ]).'<br>'.tr('Totale: _TOT_', ['_TOT_' => moneyFormat($contratto->totale)]),
             ];
         }
 

@@ -43,14 +43,20 @@ if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
 }
 
-if( !empty(get('qta')) ){
-    foreach($barcodes as $barcode) {
-        for( $i=0; $i<get('qta'); $i++ ){
-            $records[] = $barcode;
+// Inizializza $records come array vuoto
+$records = [];
+
+// Verifica che $barcodes non sia null o vuoto
+if (!empty($barcodes) && is_array($barcodes)) {
+    if( !empty(get('qta')) ){
+        foreach($barcodes as $barcode) {
+            for( $i=0; $i<get('qta'); $i++ ){
+                $records[] = $barcode;
+            }
         }
+    }else{
+        $records = $barcodes;
     }
-}else{
-    $records = $barcodes;
 }
 
 echo "
@@ -60,7 +66,9 @@ echo "
 $i = 0;
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-foreach ($records as $record) {
+// Verifica che ci siano records da elaborare
+if (!empty($records)) {
+    foreach ($records as $record) {
     $articolo = Articolo::find($record->idarticolo);
     $barcode = $record->barcode;
 
@@ -77,6 +85,7 @@ foreach ($records as $record) {
     </td><br><br>';
 
     ++$i;
+    }
 }
 
 echo '

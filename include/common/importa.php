@@ -560,24 +560,24 @@ echo '
     function controllaMagazzino() {
         if(!abilita_scorte) return;
 
-        let righe = $("#righe_documento_importato tr");
+        let righe = $("#righe_documento_importato tr", "#modals");
 
         // Lettura delle righe selezionate per l\'improtazione
         let richieste = {};
         for(const r of righe) {
             let riga = $(r);
             let id = $(riga).data("local_id");
-            let id_articolo = riga.find("[id^=id_articolo_]").text();
+            let id_articolo = riga.find("#modals [id^=id_articolo_]").text();
 
-            if (!$("#checked_" + id).is(":checked") || !id_articolo) {
+            if (!$("#checked_" + id, "#modals").is(":checked") || !id_articolo) {
                 continue;
             }
 
-            let qta = parseFloat(riga.find("input[id^=qta_]").val());
+            let qta = parseFloat(riga.find("#modals input[id^=qta_]").val());
             richieste[id_articolo] = richieste[id_articolo] ? richieste[id_articolo] + qta : qta;
         }
 
-        let sottoscorta = $("#articoli_sottoscorta");
+        let sottoscorta = $("#modals #articoli_sottoscorta");
         let body = sottoscorta.find("tbody");
         body.html("");
 
@@ -601,15 +601,15 @@ echo '
         }
     }
 
-    $("input[name=righe]").each(function() {
+    $("#modals input[name=righe]").each(function() {
         ricalcolaTotaleRiga($(this).val(), first = true);
     });
 
     function ricalcolaTotaleRiga(r, first) {
-        let prezzo_unitario = $("#prezzo_unitario_" + r).val();
-        let sconto = $("#sconto_unitario_" + r).val();
+        let prezzo_unitario = $("#modals #prezzo_unitario_" + r).val();
+        let sconto = $("#modals #sconto_unitario_" + r).val();
 
-        let max_qta_input = $("#max_qta_" + r);
+        let max_qta_input = $("#modals #max_qta_" + r);
         let qta_max = max_qta_input.val();
 
         prezzo_unitario = parseFloat(prezzo_unitario);
@@ -618,30 +618,30 @@ echo '
 
         let prezzo_scontato = prezzo_unitario - sconto;
 
-        let qta = ($("#qta_" + r).val()).toEnglish();
+        let qta = ($("#modals #qta_" + r).val()).toEnglish();
 
         // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
         if (qta > qta_max) {
             qta = qta_max;
 
-            $("#qta_" + r).val(qta);
+            $("#modals #qta_" + r).val(qta);
         }
 
         // Se tolgo la spunta della casella dell\'evasione devo azzerare i conteggi
-        if (isNaN(qta) || !$("#checked_" + r).is(":checked")) {
+        if (isNaN(qta) || !$("#modals #checked_" + r).is(":checked")) {
             qta = 0;
         }
 
         if (!first) {
-            let serial_select = $("#serial_" + r);
+            let serial_select = $("#modals #serial_" + r);
             serial_select.selectClear();
             serial_select.data("maximum", qta);
-            initSelectInput("#serial_" + r);
+            initSelectInput("#modals #serial_" + r);
         }
 
         let subtotale = (prezzo_scontato * qta).toLocale();
 
-        $("#subtotale_" + r).html(subtotale + " " + globals.currency);
+        $("#modals #subtotale_" + r).html(subtotale + " " + globals.currency);
 
 
         ricalcolaTotale();
@@ -651,16 +651,16 @@ echo '
         let totale = 0.00;
         let totale_qta = 0;
 
-        $("input[id*=qta_]").each(function() {
+        $("#modals input[id*=qta_]").each(function() {
             let qta = $(this).val().toEnglish();
             let r = $(this).attr("id").replace("qta_", "");
 
-            if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
+            if (!$("#modals #checked_" + r).is(":checked") || isNaN(qta)) {
                 qta = 0;
             }
 
-            let prezzo_unitario = $("#prezzo_unitario_" + r).val();
-            let sconto = $("#sconto_unitario_" + r).val();
+            let prezzo_unitario = $("#modals #prezzo_unitario_" + r).val();
+            let sconto = $("#modals #sconto_unitario_" + r).val();
 
             prezzo_unitario = parseFloat(prezzo_unitario);
             sconto = parseFloat(sconto);
@@ -674,31 +674,31 @@ echo '
             totale_qta += qta;
         });
 
-        $("#totale").html((totale.toLocale()) + " " + globals.currency);
+        $("#modals #totale").html((totale.toLocale()) + " " + globals.currency);
 
         controllaMagazzino();
     }
 
     $(document).ready(function(){
         if(input("id_ritenuta_acconto").get()) {
-            $("#calcolo_ritenuta_acconto").prop("required", true);
+            $("#modals #calcolo_ritenuta_acconto").prop("required", true);
         } else{
-            $("#calcolo_ritenuta_acconto").prop("required", false);
+            $("#modals #calcolo_ritenuta_acconto").prop("required", false);
             input("calcolo_ritenuta_acconto").set("");
         }
 
-        $("#id_ritenuta_acconto").on("change", function(){
+        $("#modals #id_ritenuta_acconto").on("change", function(){
             if(input("id_ritenuta_acconto").get()) {
-                $("#calcolo_ritenuta_acconto").prop("required", true);
+                $("#modals #calcolo_ritenuta_acconto").prop("required", true);
             } else{
-                $("#calcolo_ritenuta_acconto").prop("required", false);
+                $("#modals #calcolo_ritenuta_acconto").prop("required", false);
                 input("calcolo_ritenuta_acconto").set("");
             }
         });
         ricalcolaTotale();
     });
 
-    $("#import_all").click(function(){
+    $("#modals #import_all").click(function(){
         if( $(this).is(":checked") ){
             $(".check").each(function(){
                 if( !$(this).is(":checked") ){

@@ -35,8 +35,8 @@ if ($f_sitoweb || $f_pec) {
 if ($replaces['c_indirizzo'] || $replaces['c_città_full'] || $replaces['c_telefono'] || $replaces['c_cellulare']) {
     ++$c;
 }
-if ($destinazione || $partenza) {
-    $c += 3;
+if ($destinazione && $partenza) {
+    $c += 4;
 } elseif ($destinazione || $partenza) {
     ++$c;
 }

@@ -72,6 +72,10 @@ class Mail extends Model
     {
         $file = Upload::find($file_id);
 
+        if (!$file) {
+            return false;
+        }
+
         // duplica il file
         $upload = $file->copia([
             'id_module' => \Models\Module::where('name', 'Stato email')->first()->id,
@@ -81,6 +85,8 @@ class Mail extends Model
         $name = $name ?: $file->name;
 
         $this->attachments()->attach($upload->id, ['id_email' => $this->id, 'name' => $name, 'type' => 'file']);
+
+        return true;
     }
 
     public function resetUploads()
@@ -102,12 +108,12 @@ class Mail extends Model
     {
         // Genera la stampa come PDF
         $print = \Prints::render($print_id, $this->id_record, null, true);
-        
+
         // Ottieni il modulo "Coda d'invio"
         $id_module = \Models\Module::where("name", "Stato email")->first()->id;
 
         $name = $name ?: $print['name'];
-        
+
         // Salva il file nella tabella zz_files
         $upload = \Uploads::upload($print['pdf'], [
             'name' => $name,
@@ -116,7 +122,7 @@ class Mail extends Model
             'id_module' => $id_module,
             'id_record' => $this->id,
         ]);
-        
+
         // Collega il file alla tabella em_email_attachment
         $this->attachments()->attach($upload->id, ['id_email' => $this->id, 'name' => $name, 'type' => 'print']);
     }

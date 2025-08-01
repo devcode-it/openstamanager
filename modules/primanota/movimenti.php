@@ -24,11 +24,16 @@ use Modules\Fatture\Fattura;
 
 function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
 {
+    global $id_record;
+
+    // Determina se siamo nell'add (non c'è $id_record) o nell'edit
+    $suffix = empty($id_record) ? '_add' : '';
+
     // Conto
     echo '
     <tr>
-        <input type="hidden" name="id_documento['.$id.']" value="'.$riga['iddocumento'].'">
-        <input type="hidden" name="id_scadenza['.$id.']" value="'.$riga['id_scadenza'].'">
+        <input type="hidden" name="id_documento'.$suffix.'['.$id.']" value="'.$riga['iddocumento'].'">
+        <input type="hidden" name="id_scadenza'.$suffix.'['.$id.']" value="'.$riga['id_scadenza'].'">
 
         <td class="text-center" style="width:40px;">
             <button type="button" class="btn btn-danger btn-xs" onclick="deleteRiga(this)">
@@ -37,19 +42,19 @@ function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
         </td>
 
         <td>
-            {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
+            {[ "type": "select", "name": "idconto'.$suffix.'['.$id.']", "id": "conto'.$suffix.'_'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
         </td>';
 
     // Dare
     echo '
         <td>
-            {[ "type": "number", "name": "dare['.$id.']", "id": "dare'.$id.'", "value": "'.($riga['dare'] ?: 0).'" ]}
+            {[ "type": "number", "name": "dare'.$suffix.'['.$id.']", "id": "dare'.$suffix.'_'.$id.'", "value": "'.($riga['dare'] ?: 0).'" ]}
         </td>';
 
     // Avere
     echo '
         <td>
-            {[ "type": "number", "name": "avere['.$id.']", "id": "avere'.$id.'", "value": "'.($riga['avere'] ?: 0).'" ]}
+            {[ "type": "number", "name": "avere'.$suffix.'['.$id.']", "id": "avere'.$suffix.'_'.$id.'", "value": "'.($riga['avere'] ?: 0).'" ]}
         </td>
     </tr>';
 
@@ -197,12 +202,13 @@ echo '
 </table>';
 
 // Nuova riga
+$suffix = empty($id_record) ? '_add' : '';
 echo '
 <table class="table table-bordered">
     <tr>
         <th class="text-right">'.tr('Totale').'</th>
-        <th id="totale_dare" class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
-        <th id="totale_avere" class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
+        <th id="totale_dare'.$suffix.'" class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
+        <th id="totale_avere'.$suffix.'" class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
     </tr>
 </table>';
 
@@ -334,7 +340,7 @@ $(document).ready(function() {
     // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
     $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
-    $("select[id*=idconto]").click(function() {
+    $("select[id*=conto]").click(function() {
         $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
     });
 });
@@ -379,20 +385,48 @@ $(document).on("keyup change", "input[id*=avere]", function() {
     }
 });
 
-$(document).on("change", "[id*=dare], [id*=avere]", function() {
+// Funzione per aggiornare i totali dell\'edit
+function aggiornaTotaliEdit() {
   var totalDare = 0;
   var totalAvere = 0;
 
-  $("[id*=dare]").each(function() {
+  $("[id*=dare]:not([id*=_add_])").each(function() {
     totalDare += parseFloat($(this).val().toEnglish()) || 0;
   });
 
-  $("[id*=avere]").each(function() {
+  $("[id*=avere]:not([id*=_add_])").each(function() {
     totalAvere += parseFloat($(this).val().toEnglish()) || 0;
   });
 
   $("#totale_dare").text(totalDare.toLocale());
   $("#totale_avere").text(totalAvere.toLocale());
+}
+
+// Funzione per aggiornare i totali dell\'add
+function aggiornaTotaliAdd() {
+  var totalDare = 0;
+  var totalAvere = 0;
+
+  $("[id*=dare_add_]").each(function() {
+    totalDare += parseFloat($(this).val().toEnglish()) || 0;
+  });
+
+  $("[id*=avere_add_]").each(function() {
+    totalAvere += parseFloat($(this).val().toEnglish()) || 0;
+  });
+
+  $("#totale_dare_add").text(totalDare.toLocale());
+  $("#totale_avere_add").text(totalAvere.toLocale());
+}
+
+// Event handler per i campi dell\'edit
+$(document).on("change", "[id*=dare]:not([id*=_add_]), [id*=avere]:not([id*=_add_])", function() {
+  aggiornaTotaliEdit();
+});
+
+// Event handler per i campi dell\'add
+$(document).on("change", "[id*=dare_add_], [id*=avere_add_]", function() {
+  aggiornaTotaliAdd();
 });
 
 function visualizzaMovimenti(button) {

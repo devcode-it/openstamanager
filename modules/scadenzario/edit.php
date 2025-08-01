@@ -61,7 +61,6 @@ echo '
 		<div class="card-header">
 			<h3 class="card-title">
 			    '.tr('Dettagli scadenza').'
-                </button>
             </h3>
 		</div>
 
@@ -113,7 +112,7 @@ if (!empty($documento)) {
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
     echo '
-                    </table>                
+                    </table>
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">'.tr('Descrizione').'</h5>
@@ -146,7 +145,6 @@ if (!empty($documento)) {
 }
 
 echo '
-
                 </div>
                 <div class="col-md-6">
                     <div class="card">
@@ -175,9 +173,10 @@ if (!empty($record['presentazioni_exported_at'])) {
     $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');
 }
 echo '
-                        </table>
+                            </table>
+                        </div>
                     </div>
-				</div>
+                </div>
             </div>
         </div>
     </div>

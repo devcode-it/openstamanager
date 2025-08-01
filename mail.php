@@ -158,7 +158,7 @@ echo '
 
 $uploads = [];
 if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
-    $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
+    $uploads = $dbo->fetchArray('SELECT zz_files.id FROM zz_files LEFT JOIN zz_files_categories ON zz_files.id_category = zz_files_categories.id WHERE zz_files.id_module = '.prepare($module['id']).' AND zz_files.id_record = '.prepare($id_record).' AND zz_files_categories.name = \'Fattura Elettronica\'');
     $uploads = array_column($uploads, 'id');
 }
 

@@ -157,17 +157,23 @@ echo '
         </div>';
 
 $uploads = [];
+
 if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
-    $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
-    $uploads = array_column($uploads, 'id');
+    $pec_uploads = $dbo->fetchArray('SELECT zz_files.id FROM zz_files LEFT JOIN zz_files_categories ON zz_files.id_category = zz_files_categories.id WHERE zz_files.id_module = '.prepare($module['id']).' AND zz_files.id_record = '.prepare($id_record).' AND (zz_files_categories.name = \'Fattura Elettronica\' OR zz_files_categories.name = \'Fattura elettronica\')');
+    $uploads = array_merge($uploads, array_column($pec_uploads, 'id'));
 }
 
-// Ottieni gli allegati dalle categorie associate al template
 $template_uploads = $template->uploads($id_record);
 if (!empty($template_uploads)) {
     $uploads = array_merge($uploads, $template_uploads->pluck('id')->toArray());
-    $uploads = array_unique($uploads);
 }
+
+if (empty($template->categories) && empty($uploads)) {
+    $all_document_uploads = $dbo->fetchArray('SELECT `id` FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record));
+    $uploads = array_merge($uploads, array_column($all_document_uploads, 'id'));
+}
+
+$uploads = array_unique($uploads);
 
 // Allegati
 echo '

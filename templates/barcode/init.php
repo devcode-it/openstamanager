@@ -33,14 +33,20 @@ if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
 }
 
-if( !empty(get('qta')) ){
-    foreach($barcodes as $barcode) {
-        for( $i=0; $i<get('qta'); $i++ ){
-            $records[] = $barcode;
+// Inizializza $records come array vuoto
+$records = [];
+
+// Verifica che $barcodes non sia null o vuoto
+if (!empty($barcodes) && is_array($barcodes)) {
+    if( !empty(get('qta')) ){
+        foreach($barcodes as $barcode) {
+            for( $i=0; $i<get('qta'); $i++ ){
+                $records[] = $barcode;
+            }
         }
+    }else{
+        $records = $barcodes;
     }
-}else{
-    $records = $barcodes;
 }
 
 $pages = count($records);

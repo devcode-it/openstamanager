@@ -27,20 +27,20 @@ use Modules\Scadenzario\Scadenza;
 
 switch (post('op')) {
     case 'add':
-        $data = post('data');
-        $descrizione = post('descrizione');
+        $data = post('data_add');
+        $descrizione = post('descrizione_add');
         $is_insoluto = post('is_insoluto');
         $id_anagrafica = post('id_anagrafica');
         $chiudi_scadenza = post('chiudi_scadenza_add');
         $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
 
-        $conti = post('idconto');
+        $conti = post('idconto_add');
         $scadenze = [];
         foreach ($conti as $i => $id_conto) {
-            $id_scadenza = post('id_scadenza')[$i];
-            $id_documento = post('id_documento')[$i];
-            $dare = post('dare')[$i];
-            $avere = post('avere')[$i];
+            $id_scadenza = post('id_scadenza_add')[$i];
+            $id_documento = post('id_documento_add')[$i];
+            $dare = post('dare_add')[$i];
+            $avere = post('avere_add')[$i];
 
             if (empty($dare) && empty($avere)) {
                 continue;
@@ -84,7 +84,7 @@ switch (post('op')) {
             }
 
             foreach ($conti as $i => $id_conto) {
-                $idconto = post('idconto')[$i];
+                $idconto = post('idconto_add')[$i];
                 $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($descrizione).', '.prepare($id_conto).')';
                 $dbo->query($query);
             }

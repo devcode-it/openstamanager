@@ -291,11 +291,11 @@ if ($permetti_modelli) {
 echo '
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data movimento').'", "name": "data", "required": 1, "value": "-now-" ]}
+			{[ "type": "date", "label": "'.tr('Data movimento').'", "name": "data_add", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "'.tr('Causale').'", "name": "descrizione", "id": "desc", "required": 1, "value": '.json_encode($descrizione).' ]}
+			{[ "type": "text", "label": "'.tr('Causale').'", "name": "descrizione_add", "id": "desc_add", "required": 1, "value": '.json_encode($descrizione).' ]}
 		</div>
     </div>';
 
@@ -404,11 +404,11 @@ if ($permetti_modelli) {
                 causale = causale.replace(key, value);
             }
 
-            $("#modals > div #desc").val(causale);
+            $("#modals > div #desc_add").val(causale);
         }
 
-        if ($("#modals > div #desc").val() == "") {
-            $("#modals > div #desc").val(causale);
+        if ($("#modals > div #desc_add").val() == "") {
+            $("#modals > div #desc_add").val(causale);
         }
 
         $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&idmastrino=" + id_mastrino, function(data) {

@@ -81,15 +81,15 @@ ALTER TABLE `dt_righe_ddt` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
 ALTER TABLE `in_righe_interventi` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
 
 -- Impostazione per raggruppamento righe per articolo e barcode nei DDT
-INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 ('Raggruppa gli articoli con stesso barcode nei DDT', '0', 'boolean', '1', 'Ddt', NULL);
 
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Raggruppa gli articoli con stesso barcode nei DDT', ''),
 (2, (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome`='Raggruppa gli articoli con stesso barcode nei DDT'), 'Group the items with the same barcode in the delivery notes', '');
 
 -- Data competenza movimenti
-ALTER TABLE `co_movimenti` ADD `data_inizio_competenza` DATE NULL AFTER `data`, ADD `data_fine_competenza` DATE NULL AFTER `data_inizio_competenza`; 
+ALTER TABLE `co_movimenti` ADD `data_inizio_competenza` DATE NULL AFTER `data`, ADD `data_fine_competenza` DATE NULL AFTER `data_inizio_competenza`;
 
 -- Aggiunta della tabella per gestire i token OTP per l'autenticazione
 CREATE TABLE IF NOT EXISTS `zz_otp_tokens` (
@@ -162,7 +162,7 @@ INSERT INTO `zz_prints_lang` (`id`, `id_lang`, `id_record`, `title`, `filename`)
 INSERT INTO zz_files_categories (name) VALUES ('Allegati caricati tramite accesso condiviso');
 
 -- Aggiunta campo per immagine nelle check
-ALTER TABLE `zz_checks` 
+ALTER TABLE `zz_checks`
   ADD `id_immagine` INT NULL DEFAULT NULL,
   ADD CONSTRAINT `zz_checks_ibfk_6` FOREIGN KEY (`id_immagine`) REFERENCES `zz_files`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;
 
@@ -174,15 +174,15 @@ ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_1` FOREIGN KEY 
 ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- Modulo per log esecuzione task
-INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT zz_tasks_logs.id, name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT zz_api_log.id, NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
-INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES 
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES
 ('1', @id_module, 'Log eventi'),
 ('2', @id_module, 'Events log');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES 
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES
 (@id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
 (@id_module, 'Nome task', 'name', '2', '1', '0', '0', NULL, 'name', '1', '0', '0', '0'),
 (@id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, 'level', '1', '0', '0', '0'),
@@ -195,7 +195,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 (@id_module, 'Eseguito in', '`Eseguito in`', '7', '1', '0', '1', NULL, '`Eseguito in`', '0', '0', '0', '0');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
-INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
+INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
 (NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Nome task'), 'Nome task'),
@@ -218,16 +218,29 @@ INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
-INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES 
-(NULL, @id_module, 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'), 
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES
+(NULL, @id_module, 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'),
 (NULL, @id_module, 'Errori', '1=1 AND Livello=error', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
 
 SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
-INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES 
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
 (NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
+
+-- Gestione log API
+-- Creazione tabella di appoggio
+CREATE TABLE `zz_api_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `level` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `message` VARCHAR(255) NULL DEFAULT NULL,
+  `context` TEXT NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Gestione ammortamenti
 ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;
@@ -277,7 +290,6 @@ CREATE TABLE `em_email_attachment` (`id` INT NOT NULL AUTO_INCREMENT , `id_email
 -- Tasto per disattivazione dei task
 ALTER TABLE `zz_tasks` ADD `enabled` TINYINT NOT NULL DEFAULT '0';
 UPDATE `zz_tasks` SET `enabled` = '1';
-
 
 -- Aggiunta Modulo Ubicazioni
 CREATE TABLE `mg_ubicazioni` (
@@ -329,10 +341,9 @@ INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VA
 ( 2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 'Ubicazioni', 'Ubicazioni');
 
 -- Aggiornamento zz_prints per nuovo template per modulo Ubicazioni
-INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`, `created_at`, `updated_at`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'Barcode', 'ubicazione', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, '2022-09-20 16:42:15', '2024-11-02 14:00:07', 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'BarcodeBig', 'ubicazioneBig', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, '2022-09-20 16:42:15', '2024-11-20 10:53:02', 1);
-COMMIT;
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'Barcode', 'ubicazione', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ubicazioni'), 1, 'BarcodeBig', 'ubicazioneBig', '', '{\"width\": 56, \"height\": 32, \"format\": [80, 60], \"margins\": {\"top\": 5,\"bottom\": 5,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', 0, 0, 1, NULL, 1);
 
 --Aggiornamento zz_prints_lang per nuovo template per modulo Ubicazioni
 INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
@@ -340,4 +351,21 @@ INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUE
 (2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Barcode' AND `directory` = 'ubicazione'), 'Barcode', 'Barcode'),
 (1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'BarcodeBig' AND `directory` = 'ubicazioneBig'), 'BarcodeBig', 'Barcode'),
 (2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'BarcodeBig' AND `directory` = 'ubicazioneBig'), 'BarcodeBig', 'Barcode');
-COMMIT;
+
+-- Aggiunta footer alle email
+UPDATE `em_templates_lang`
+SET `body` = CONCAT(`body`, '<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 11px; color: #666;">
+    <p style="margin: 0 0 15px 0;">
+        <span style="color: #888; font-size: 10px;">Email generata da </span>
+        <a href="https://openstamanager.com" style="color: #007bff; text-decoration: none; font-size: 10px;">OpenSTAManager</a>
+    </p>
+
+    <p style="margin: 0 0 10px 0; font-size: 10px; line-height: 1.4; text-align: justify;">
+        Le informazioni contenute nella presente comunicazione e relativi allegati possono essere riservate e sono comunque destinate esclusivamente alle persone o all\'ente sopra indicati. Se aveste ricevuto questa email per errore, ci scusiamo per l\'accaduto, Vi invitiamo cortesemente a darcene notizia ed a distruggerla. Vi ricordiamo che la diffusione, l\'utilizzo e/o la conservazione dei dati ricevuti per errore costituiscono violazioni alle disposizioni del regolamento UE 2016/679 (GDPR) denominato "Codice in materia di protezione dei dati personali".
+    </p>
+
+    <p style="margin: 0; font-size: 10px; color: #4CAF50;">
+        <strong>Rispetta l\'ambiente: non stampare questa email a meno che non sia veramente necessario.</strong>
+    </p>
+</div>')
+WHERE `id_lang` = 1;

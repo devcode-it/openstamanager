@@ -37,63 +37,100 @@ $mesi = [
 ];
 
 echo '
-<div class="container">
-    <div class="row">
-        <div class="col-md-2 offset-md-9">
+<div class="container-fluid">
+    <!-- Filtro data compatto -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label class="control-label text-muted small">'.tr('Anno').'</label>
             <select class="form-control select-input openstamanager-input superselect select-year">';
 
 for ($i = intval(date('Y')) - 1; $i <= intval(date('Y')) + 10; ++$i) {
     $selectType = ($i == date('Y')) ? 'selected' : '';
-    echo '      <option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
+    echo '              <option value="'.$i.'" '.$selectType.'>'.$i.'</option>';
 }
 
-echo '      </select>
+echo '          </select>
+        </div>
+        <div class="col-md-10">
+            <label class="control-label text-muted small">'.tr('Seleziona mese').'</label>
+            <div class="div-month d-flex flex-wrap justify-content-start">';
+for ($i = 1; $i <= 12; ++$i) {
+    $btnType = ($i == date('m')) ? 'btn-primary' : 'btn-outline-secondary';
+    $count = $conteggio[$i - 1]->conto;
+    $badgeClass = $count > 0 ? 'badge-danger' : 'badge-light';
+    $badgeTextClass = $count > 0 ? 'text-white' : 'text-muted';
+
+    // Abbreviazione del mese per una visualizzazione più compatta
+    $meseAbbr = substr($mesi[$i], 0, 3);
+
+    echo '
+                <div class="month-button-wrapper mr-2 mb-2">
+                    <button type="button" class="btn '.$btnType.' btn-month position-relative d-flex align-items-center justify-content-center"
+                            data-month="'.$i.'" onclick="month_click($(this))"
+                            style="min-width: 70px; height: 45px; border-radius: 8px; transition: all 0.2s ease;">
+                        <div class="month-name font-weight-bold" style="font-size: 12px;">'.$meseAbbr.'</div>
+                        <span class="badge '.$badgeClass.' '.$badgeTextClass.' position-absolute"
+                              style="top: -8px; right: -8px; font-size: 10px; min-width: 20px; height: 20px;
+                                     display: flex; align-items: center; justify-content: center; border-radius: 50%;">'.$count.'</span>
+                    </button>
+                </div>';
+}
+
+echo '          </div>
         </div>
     </div>
-    <br>
-    <div class="div-month row">';
-for ($i = 1; $i <= 12; ++$i) {
-    $btnType = ($i == date('m')) ? 'btn-primary' : '';
-    echo '
-        <div class="col-md-1">
-            <a class="btn btn-month '.$btnType.'" data-month="'.$i.'" style="cursor:pointer" onclick="month_click($(this))">'.$mesi[$i].' </br>('.$conteggio[$i - 1]->conto.')</a>
-        </div>';
-}
 
-echo '
-    </div>';
-
-echo '
+    <!-- Template nascosto per i mesi (aggiornato via AJAX) -->
     <div style="display:none" class="template-month">
-        <div class="col-md-1" style="margin:0px 0px; padding:0px;">
-            <a class="btn btn-month" onclick="month_click($(this))">
-                <div class="text"></div>
-                <div class="text-count"></div>
-            </a>
+        <div class="month-button-wrapper mr-2 mb-2">
+            <button type="button" class="btn btn-month position-relative d-flex align-items-center justify-content-center"
+                    onclick="month_click($(this))"
+                    style="min-width: 70px; height: 45px; border-radius: 8px; transition: all 0.2s ease;">
+                <div class="month-name font-weight-bold text" style="font-size: 12px;"></div>
+                <span class="badge position-absolute text-count"
+                      style="top: -8px; right: -8px; font-size: 10px; min-width: 20px; height: 20px;
+                             display: flex; align-items: center; justify-content: center; border-radius: 50%;"></span>
+            </button>
         </div>
     </div>';
 ?>
 
-    <div class="row">
+    <!-- Filtro di ricerca migliorato -->
+    <div class="row mb-3">
         <div class="col-md-6">
-            <br>
-            <input type="text" class="filter-input form-control" placeholder="<?php echo tr('Applica filtro...'); ?>">
-            <br>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-search"></i></span>
+                </div>
+                <input type="text" class="filter-input form-control" placeholder="<?php echo tr('Cerca per ragione sociale, contratto o importo...'); ?>">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="$('.filter-input').val('').trigger('keyup');">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <?php
 
 echo '
-    <div>
-        <table id="tbl-rate" class="table-rate table table-hover table-striped">
-            <thead>
+    <!-- Tabella rate contrattuali -->
+    <div class="table-responsive">
+        <table id="tbl-rate" class="table-rate table table-hover table-sm mb-0">
+            <thead class="thead-light">
                 <tr>
-                    <th width="4%">'.tr(' ').'</th>
-                    <th width="28%">'.tr('Scadenza').'</th>
-                    <th width="32%">'.tr('Ragione sociale').'</th>
-                    <th width="26%">'.tr('Importo').'</th>
-                    <th width="10%"></th>
+                    <th width="4%" class="text-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="select-all-header">
+                            <label class="form-check-label" for="select-all-header"></label>
+                        </div>
+                    </th>
+                    <th width="25%"><i class="fa fa-calendar text-muted"></i> '.tr('Scadenza').'</th>
+                    <th width="35%"><i class="fa fa-user text-muted"></i> '.tr('Cliente').'</th>
+                    <th width="20%"><i class="fa fa-euro text-muted"></i> '.tr('Importo').'</th>
+                    <th width="16%" class="text-center"><i class="fa fa-cogs text-muted"></i> '.tr('Azioni').'</th>
                 </tr>
             </thead>
             <tbody>';
@@ -103,85 +140,152 @@ foreach ($pianificazioni as $pianificazione) {
     $contratto = $pianificazione->contratto;
     $anagrafica = $contratto->anagrafica;
     $numero_pianificazioni = $contratto->pianificazioni()->count();
+
+    // Calcolo giorni alla scadenza per indicatori visivi
+    $oggi = new DateTime();
+    $scadenza = new DateTime($pianificazione->data_scadenza);
+    $giorni_scadenza = $oggi->diff($scadenza)->days;
+    $scaduto = $scadenza < $oggi;
+
+    // Classi CSS per indicatori visivi
+    $row_class = '';
+    $status_icon = '';
+    $status_class = '';
+
+    if ($scaduto) {
+        $row_class = 'table-danger';
+        $status_icon = 'fa-exclamation-triangle';
+        $status_class = 'text-danger';
+    } elseif ($giorni_scadenza <= 7) {
+        $row_class = 'table-warning';
+        $status_icon = 'fa-clock-o';
+        $status_class = 'text-warning';
+    } else {
+        $status_icon = 'fa-calendar-check-o';
+        $status_class = 'text-success';
+    }
+
     echo '
-                <tr>
-                    <td>
+                <tr class="'.$row_class.'">
+                    <td class="text-center">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox"
                             data-contrattoId="'.$contratto->id.'" data-pianificazioneId="'.$pianificazione->id.'">
                         </div>
                     </td>
                     <td>
-                        <div>'.dateFormat($pianificazione->data_scadenza).'</div>
-                        <small>'.reference($contratto).'</small>
+                        <div class="d-flex align-items-center">
+                            <i class="fa '.$status_icon.' '.$status_class.' mr-2"></i>
+                            <div>
+                                <div class="font-weight-bold">'.dateFormat($pianificazione->data_scadenza).'</div>
+                                <small class="text-muted">'.reference($contratto).'</small>';
+
+    if ($scaduto) {
+        echo '                      <br><small class="text-danger"><i class="fa fa-exclamation-triangle"></i> '.tr('Scaduta').'</small>';
+    } elseif ($giorni_scadenza <= 7) {
+        echo '                      <br><small class="text-warning"><i class="fa fa-clock-o"></i> '.tr('Scade tra _DAYS_ giorni', ['_DAYS_' => $giorni_scadenza]).'</small>';
+    }
+
+    echo '                      </div>
+                        </div>
                     </td>
                     <td>
-                        '.Modules::link('Anagrafiche', $anagrafica->id, nl2br((string) $anagrafica->ragione_sociale)).'
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-user text-muted mr-2"></i>
+                            <div>
+                                '.Modules::link('Anagrafiche', $anagrafica->id, '<span class="font-weight-bold">'.nl2br((string) $anagrafica->ragione_sociale).'</span>').'
+                            </div>
+                        </div>
                     </td>
                     <td>
-                        <div>'.moneyFormat($pianificazione->totale).'</div>
-                        <small>'.tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-euro text-muted mr-2"></i>
+                            <div>
+                                <div class="font-weight-bold text-primary">'.moneyFormat($pianificazione->totale).'</div>
+                                <small class="text-muted">'.tr('Rata _IND_/_NUM_', [
         '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
         '_NUM_' => numberFormat($numero_pianificazioni, 0),
-        '_TOT_' => moneyFormat($contratto->totale),
-    ]).
-            '           </small>
+    ]).'</small>
+                                <br><small class="text-muted">'.tr('Totale: _TOT_', ['_TOT_' => moneyFormat($contratto->totale)]).'</small>
+                            </div>
+                        </div>
                     </td>';
 
     // Pulsanti
     echo '
                     <td class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')">
-                            <i class="fa fa-euro"></i> '.tr('Crea fattura').'
+                        <button type="button" class="btn btn-success btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')" title="'.tr('Crea fattura').'">
+                            <i class="fa fa-plus"></i> <i class="fa fa-file-text-o"></i>
                         </button>
                     </td>
                 </tr>';
 }
 
-echo '</tbody>
-                <tfoot style="display:none">
-                <tr>
-
-                    <td class="seleziona">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox">
-                        </div>
-                    </td>
-                    <td class="data-scadenza">
-                        <div class="text"></div>
-                        <small></small>
-                    </td>
-
-                    <td class="ragione-sociale">
-                    </td>
-
-                    <td class="importo">
-                        <div class="text"></div>
-                        <small></small>
-                    </td>
-                    <td class="text-center azione">
-                        <button type="button" class="btn btn-default btn-sm">
-                            <i class="fa fa-euro"></i> '.tr('Crea fattura').'
-                        </button>
-                    </td>
-
-                </tr>
-            </tfoot>
-        </table><br>
-    </div>';
-?>
-    <div class="row">
-        <div class="col-md-4">
-            <a class="btn btn-primary seleziona-tutti"><?php echo tr('Seleziona tutti'); ?></a>
-            <a class="btn btn-default deseleziona-tutti"><?php echo tr('Deseleziona tutti'); ?></a>
+echo '              </tbody>
+                    <tfoot style="display:none">
+                        <tr>
+                            <td class="seleziona text-center">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox">
+                                </div>
+                            </td>
+                            <td class="data-scadenza">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-calendar text-muted mr-2"></i>
+                                    <div>
+                                        <div class="text font-weight-bold"></div>
+                                        <small class="text-muted"></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="ragione-sociale">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-user text-muted mr-2"></i>
+                                    <div></div>
+                                </div>
+                            </td>
+                            <td class="importo">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-euro text-muted mr-2"></i>
+                                    <div>
+                                        <div class="text font-weight-bold text-primary"></div>
+                                        <small class="text-muted"></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center azione">
+                                <button type="button" class="btn btn-success btn-sm" title="'.tr('Crea fattura').'">
+                                    <i class="fa fa-plus"></i> <i class="fa fa-file-text-o"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+            </table>
         </div>
-        <?php
-    echo '
-    
-        <div class="col-md-3 offset-md-5">
-            <button type="button" class="btn btn-primary" onclick="crea_fattura_multipla($(this))">
-                <i class="fa fa-euro"></i> '.tr('Fattura tutti i selezionati').'
-            </button>
+
+        <!-- Controlli compatti -->
+        <div class="row mt-3 align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <span class="text-muted mr-3">
+                        <i class="fa fa-info-circle"></i>
+                        <span id="selected-count">0</span> '.tr('elementi selezionati').'
+                    </span>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary seleziona-tutti">
+                            <i class="fa fa-check-square-o"></i> '.tr('Tutti').'
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary deseleziona-tutti">
+                            <i class="fa fa-square-o"></i> '.tr('Nessuno').'
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-right">
+                <button type="button" class="btn btn-primary" onclick="crea_fattura_multipla($(this))" disabled id="btn-fattura-multipla">
+                    <i class="fa fa-files-o"></i> '.tr('Crea fatture selezionate').'
+                </button>
+            </div>
         </div>
     </div>
 </div>';
@@ -193,6 +297,7 @@ echo '
 <script>
 
 $(document).ready(function () {
+    // Gestione cambio anno
     $(".select-year").on("change", function() {
         var $this = $(this);
         var currentMonth = $(".div-month .btn-primary").data("month");
@@ -200,31 +305,103 @@ $(document).ready(function () {
         update_month(currentMonth, currentYear);
         update_table(currentMonth, currentYear);
     });
+
+    // Filtro di ricerca migliorato
     $(".filter-input").on("keyup", function() {
         var value = $(this).val().toLowerCase();
+        var visibleRows = 0;
         $("#tbl-rate tbody tr").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            var show = $(this).text().toLowerCase().indexOf(value) > -1;
+            $(this).toggle(show);
+            if (show) visibleRows++;
+            return show;
         });
+
+
+        updateSelectedCount();
     });
+
+    // Checkbox "seleziona tutti" nell\'header
+    $("#select-all-header").on("change", function() {
+        var isChecked = $(this).prop("checked");
+        $("#tbl-rate tbody input[type=checkbox]").each(function() {
+            if ($(this).closest("tr").css("display") != "none") {
+                $(this).prop("checked", isChecked);
+            }
+        });
+        updateSelectedCount();
+    });
+
+    // Gestione selezione singola
+    $(document).on("change", "#tbl-rate tbody input[type=checkbox]", function() {
+        updateSelectedCount();
+
+        // Aggiorna checkbox header
+        var totalVisible = $("#tbl-rate tbody tr:visible").length;
+        var totalChecked = $("#tbl-rate tbody tr:visible input[type=checkbox]:checked").length;
+        $("#select-all-header").prop("checked", totalVisible > 0 && totalChecked === totalVisible);
+    });
+
+    // Pulsanti seleziona/deseleziona tutti
     $(".seleziona-tutti").on("click", function() {
-        $("#tbl-rate").find("input[type=checkbox]").each(function() {
+        $("#tbl-rate tbody input[type=checkbox]").each(function() {
             if ($(this).closest("tr").css("display") != "none") {
                 $(this).prop("checked", true);
             }
         });
+        $("#select-all-header").prop("checked", true);
+        updateSelectedCount();
     });
-    $(".deseleziona-tutti").on("click", function() {
-        $("#tbl-rate").find("input[type=checkbox]").prop("checked", false);
-    });
-    $(".select-year").change();
 
+    $(".deseleziona-tutti").on("click", function() {
+        $("#tbl-rate tbody input[type=checkbox]").prop("checked", false);
+        $("#select-all-header").prop("checked", false);
+        updateSelectedCount();
+    });
+
+    // Effetti hover per i bottoni dei mesi
+    $(document).on("mouseenter", ".btn-month", function() {
+        if (!$(this).hasClass("btn-primary")) {
+            $(this).addClass("shadow-sm");
+        }
+    });
+
+    $(document).on("mouseleave", ".btn-month", function() {
+        if (!$(this).hasClass("btn-primary")) {
+            $(this).removeClass("shadow-sm");
+        }
+    });
+
+    // Inizializzazione
+    $(".select-year").change();
+    updateSelectedCount();
 });
+
+// Funzione per aggiornare il contatore degli elementi selezionati
+function updateSelectedCount() {
+    var selectedCount = $("#tbl-rate tbody tr:visible input[type=checkbox]:checked").length;
+    $("#selected-count").text(selectedCount);
+
+    // Abilita/disabilita pulsante fatturazione multipla
+    $("#btn-fattura-multipla").prop("disabled", selectedCount === 0);
+
+    if (selectedCount > 0) {
+        $("#btn-fattura-multipla").removeClass("btn-secondary").addClass("btn-primary");
+    } else {
+        $("#btn-fattura-multipla").removeClass("btn-primary").addClass("btn-secondary");
+    }
+}
 function month_click($this) {
+    // Rimuovi selezione precedente
     var oldSelected = $(".div-month .btn-primary");
     oldSelected.removeClass("btn-primary");
-    oldSelected.addClass("btn-light");
-    $this.removeClass("btn-light");
+    oldSelected.addClass("btn-outline-secondary");
+
+    // Aggiungi selezione al nuovo bottone
+    $this.removeClass("btn-outline-secondary");
     $this.addClass("btn-primary");
+
+    // Aggiorna tabella
     var currentMonth = $this.data("month");
     var currentYear = $(".select-year").val();
     update_table(currentMonth, currentYear);
@@ -242,22 +419,32 @@ function update_month(currentMonth, currentYear) {
             var $template = $(".template-month");
             var $div = $(".div-month");
             $div.html("");
+
             for (var i=1; i<=12; i++) {
-                $template.find("a").attr("data-month", i);
-                $template.find(".text").html(mesi[i]);
-                if (typeof data[i] === "undefined") {
-                    $template.find(".text-count").html("(0)");
-                } else {
-                    $template.find(".text-count").html("(" + data[i] + ")");
-                }
+                var count = (typeof data[i] === "undefined") ? 0 : data[i];
+                var badgeClass = count > 0 ? "badge-danger" : "badge-light";
+                var badgeTextClass = count > 0 ? "text-white" : "text-muted";
+                var meseAbbr = mesi[i].substring(0, 3);
+
+                // Clona il template
+                var $newButton = $template.clone();
+
+                // Imposta attributi e contenuto
+                $newButton.find("button").attr("data-month", i);
+                $newButton.find(".text").html(meseAbbr);
+                $newButton.find(".text-count")
+                    .html(count)
+                    .removeClass("badge-danger badge-light text-white text-muted")
+                    .addClass(badgeClass + " " + badgeTextClass);
+
+                // Imposta stato attivo/inattivo
                 if (i == parseInt(currentMonth)) {
-                    $template.find("a").addClass("btn-primary");
+                    $newButton.find("button").removeClass("btn-outline-secondary").addClass("btn-primary");
                 } else {
-                    $template.find("a").addClass("btn-light");
+                    $newButton.find("button").removeClass("btn-primary").addClass("btn-outline-secondary");
                 }
-                $div.append($template.html());
-                $template.find("a").removeClass("btn-primary");
-                $template.find("a").removeClass("btn-light");
+
+                $div.append($newButton.html());
             }
         },
     });
@@ -276,17 +463,61 @@ function update_table(currentMonth, currentYear) {
             var $template = $(".table-rate tfoot");
             var $tbody = $(".table-rate tbody");
             $tbody.html("");
+
             $.each(data, function(key, value) {
-                $template.find(".seleziona input").attr("data-contrattoId", value.idContratto);
-                $template.find(".seleziona input").attr("data-pianificazioneId", value.idPianificazione);
-                $template.find(".data-scadenza .text").html(value.dataScadenza);
-                $template.find(".data-scadenza small").html(value.contratto);
-                $template.find(".ragione-sociale").html(value.ragioneSociale);
-                $template.find(".importo .text").html(value.totale);
-                $template.find(".importo small").html(value.importo);
-                $template.find(".azione button").attr("onclick","crea_fattura(" + value.idContratto + ", " + value.idPianificazione + ")");
-                $tbody.append($template.html());
+                // Calcolo indicatori visivi per scadenza
+                var oggi = new Date();
+                var scadenza = new Date(value.dataScadenzaRaw);
+                var giorni = Math.ceil((scadenza - oggi) / (1000 * 60 * 60 * 24));
+                var scaduto = scadenza < oggi;
+
+                var rowClass = "";
+                var statusIcon = "";
+                var statusClass = "";
+                var statusText = "";
+
+                if (scaduto) {
+                    rowClass = "table-danger";
+                    statusIcon = "fa-exclamation-triangle";
+                    statusClass = "text-danger";
+                    statusText = \'<br><small class="text-danger"><i class="fa fa-exclamation-triangle"></i> '.tr('Scaduta').'</small>\';
+                } else if (giorni <= 7) {
+                    rowClass = "table-warning";
+                    statusIcon = "fa-clock-o";
+                    statusClass = "text-warning";
+                    statusText = \'<br><small class="text-warning"><i class="fa fa-clock-o"></i> '.tr('Scade tra').' \' + giorni + \' '.tr('giorni').'</small>\';
+                } else {
+                    statusIcon = "fa-calendar-check-o";
+                    statusClass = "text-success";
+                }
+
+                // Aggiorna template
+                var $row = $template.find("tr").clone();
+                $row.addClass(rowClass);
+                $row.find(".seleziona input").attr("data-contrattoId", value.idContratto);
+                $row.find(".seleziona input").attr("data-pianificazioneId", value.idPianificazione);
+
+                // Icona di stato e data
+                $row.find(".data-scadenza i").removeClass().addClass("fa " + statusIcon + " " + statusClass + " mr-2");
+                $row.find(".data-scadenza .text").html(value.dataScadenza + statusText);
+                $row.find(".data-scadenza small").html(value.contratto);
+
+                // Ragione sociale
+                $row.find(".ragione-sociale div div").html(value.ragioneSociale);
+
+                // Importo
+                $row.find(".importo .text").html(value.totale);
+                $row.find(".importo small").html(value.importo);
+
+                // Pulsante azione
+                $row.find(".azione button").attr("onclick","crea_fattura(" + value.idContratto + ", " + value.idPianificazione + ")");
+
+                $tbody.append($row);
             });
+
+            // Reset contatori e selezioni
+            $("#select-all-header").prop("checked", false);
+            updateSelectedCount();
         },
     });
 }
@@ -313,7 +544,6 @@ function crea_fattura_multipla($this) {
         );
     }
     records = JSON.stringify(records);
-    console.log(records);
     if (records.length > 0) {
         openModal(
             "Crea fattura multipla",
@@ -322,6 +552,7 @@ function crea_fattura_multipla($this) {
         );
     }
 }
+// Array mesi per JavaScript
 var mesi = {
     1: "Gennaio",
     2: "Febbraio",

@@ -421,8 +421,16 @@ elseif (post('op') == 'send-email') {
 
     // Allegati originali
     $files = post('uploads');
+
+    // Assicuriamoci che $files sia un array
+    if (!is_array($files)) {
+        $files = $files ? [$files] : [];
+    }
+
     foreach ($files as $file) {
-        $mail->addUpload($file);
+        if (!empty($file)) {
+            $mail->addUpload($file);
+        }
     }
 
     // Salvataggio email nella coda di invio

@@ -363,12 +363,12 @@ switch (post('op')) {
             ]), date('Y-m-d'));
         }
 
-        flash()->info(tr('Aggiunti _NUM_ seriali!', [
-            '_NUM_' => $count,
-        ]));
-
-        if ($count != $totale) {
-            flash()->warning(tr('Alcuni seriali erano già presenti').'...');
+        if ($count > 0) {
+            flash()->info(tr('Aggiunti _NUM_ seriali!', [
+                '_NUM_' => $count,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun seriale è stato aggiunto. Verifica che i seriali inseriti non esistano già.'));
         }
 
         break;

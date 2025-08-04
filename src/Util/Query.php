@@ -246,8 +246,6 @@ class Query
             }
 
             if (isset($total['order_by'][$column_index])) {
-                // Rimozione ORDER BY esistente in modo più efficiente
-                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', $query);
                 $order_clause = $total['order_by'][$column_index];
 
                 // Determina la clausola di ordinamento da usare
@@ -267,7 +265,8 @@ class Query
 
                 // Applica l'ordinamento solo se abbiamo una clausola valida
                 if (!empty($final_order_clause)) {
-                    $query = preg_replace('/\s+ORDER\s+BY\s+.*$/is', '', $query);
+                    // Rimozione ORDER BY esistente con regex più robusta
+                    $query = preg_replace('/\s+ORDER\s+BY\s+[^)]*$/is', '', $query);
                     $query .= ' ORDER BY '.$final_order_clause.' '.$direction;
                 }
             }

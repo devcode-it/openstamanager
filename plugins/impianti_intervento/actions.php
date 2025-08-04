@@ -107,7 +107,7 @@ switch ($operazione) {
         $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', post('id_impianto'))->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
         $response = '';
-        $has_images = $checks->where('id_immagine','!=', null)->count();
+        $has_images = $checks->where('id_immagine', '!=', null)->count();
         foreach ($checks as $check) {
             $response .= renderChecklist($check, 1, 0, $has_images);
         }

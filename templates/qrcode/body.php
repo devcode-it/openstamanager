@@ -22,11 +22,11 @@ include_once __DIR__.'/../../core.php';
 
 $token_url = base_url().'/?token='.$token['token'];
 
-//Generazione qrcode con endroid/qr-code v6
+// Generazione qrcode con endroid/qr-code v6
 use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Writer\PngWriter;
 
 $builder = new Builder(
     new PngWriter(),

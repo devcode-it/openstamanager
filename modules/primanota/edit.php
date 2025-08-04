@@ -126,7 +126,7 @@ if (!empty($ammortamento)) {
         <i class="fa fa-warning"></i> '.tr('Non è possibile eliminare questo movimento perché generato da un ammortamento.').
         ' '.Modules::link('Ammortamenti / Cespiti', $ammortamento['id_riga']).'
     </div>';
-    
+
     // Disabilito il pulsante elimina
     echo '
     <a class="btn btn-danger disabled">

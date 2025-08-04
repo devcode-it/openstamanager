@@ -199,8 +199,6 @@ switch (filter('op')) {
         $files = Interaction::getFileList();
         $file = $files[$id_record - 1];
 
-
-
         if (get('sequence') == null) {
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {

@@ -28,8 +28,8 @@ use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
-use Util\Zip;
 use Permissions;
+use Util\Zip;
 
 if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));

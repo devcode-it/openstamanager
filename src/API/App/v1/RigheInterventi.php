@@ -241,8 +241,8 @@ class RigheInterventi extends AppResource
             $record->setSconto($sconto, $data['tipo_sconto']);
         }
 
-        if($data['is_articolo']){
-            $record->serials = explode(',', $data['serials']);
+        if ($data['is_articolo']) {
+            $record->serials = explode(',', (string) $data['serials']);
         }
     }
 }

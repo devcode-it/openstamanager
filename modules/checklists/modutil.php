@@ -45,13 +45,13 @@ if (!function_exists('renderChecklist')) {
                             <input type="checkbox" class="checkbox unblockable" data-id="'.$check->id.'" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').' '.(!$enabled ? 'disabled' : '').'>
                         </td>';
 
-            if( !empty($has_images) ){
-                if( !empty($check->image) ){
+            if (!empty($has_images)) {
+                if (!empty($check->image)) {
                     $result .= '
                             <td class="text-center" style="width:100px;border-top:0px;vertical-align:middle;">
                                 <img src="'.$check->image.'" class="img-fluid" >
                             </td>';
-                }else{
+                } else {
                     $result .= '
                             <td class="text-center" style="width:100px;border-top:0px;vertical-align:middle;">
                                 <i class="fa fa-camera fa-2x text-muted"></i>
@@ -217,26 +217,26 @@ if (!function_exists('renderChecklistHtml')) {
             </td>
             <td style="padding-left:'.$width.'px;">';
 
-            if( !empty($has_images) ){
-                $result .= '
+        if (!empty($has_images)) {
+            $result .= '
                 <table class="table">
                     <tr>
                         <td width="10%" style="border:none;">';
-                        if( !empty($check->image) ){
-                            $result .= '
-                            <img src="'.$check->image.'" style="max-width: 10%;height: auto;vertical-align: middle;" >';
-                        }
+            if (!empty($check->image)) {
                 $result .= '
+                            <img src="'.$check->image.'" style="max-width: 10%;height: auto;vertical-align: middle;" >';
+            }
+            $result .= '
                         </td>
                         <td style="border:none;vertical-align:middle;">
                             <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>
                         </td>
                     </tr>
                 </table>';
-            }else{
-                $result .= '
+        } else {
+            $result .= '
                 <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>';
-            }
+        }
 
         $result .= '
             </td>

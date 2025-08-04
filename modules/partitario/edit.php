@@ -82,30 +82,30 @@ foreach ($primo_livello as $conto_primo) {
                     <tr>
                         <th>'.tr('Descrizione').'</th>
                         <th width="10%" class="text-center">'.tr('Importo').'</th>';
-                    if ($conto_primo['descrizione'] == 'Economico') {
-                        echo '
+    if ($conto_primo['descrizione'] == 'Economico') {
+        echo '
                         <th width="10%" class="text-center">'.tr('Importo reddito').'</th>';
-                    } else {
-                        echo '
+    } else {
+        echo '
                         <th width="10%"></th>';
-                    }
-                    echo '
+    }
+    echo '
                         <th width="5%" class="text-center"></th>
                     </tr>
                 </thead>
                 <tbody>';
 
-                // Livello 2
-                $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
-                $secondo_livello = $dbo->fetchArray($query2);
+    // Livello 2
+    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
+    $secondo_livello = $dbo->fetchArray($query2);
 
-                foreach ($secondo_livello as $conto_secondo) {
-                    // Livello 2
-                    if ($conto_primo['descrizione'] == 'Economico') {
-                        $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
-                        
-                        // Calcolo del totale_reddito con gestione dei risconti
-                        $totale_reddito2 = $dbo->fetchOne('
+    foreach ($secondo_livello as $conto_secondo) {
+        // Livello 2
+        if ($conto_primo['descrizione'] == 'Economico') {
+            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+
+            // Calcolo del totale_reddito con gestione dei risconti
+            $totale_reddito2 = $dbo->fetchOne('
                             SELECT SUM(
                                 CASE
                                     WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
@@ -147,12 +147,12 @@ foreach ($primo_livello as $conto_primo) {
                                  data_fine_competenza <= '.prepare($_SESSION['period_end']).')
                             )
                         ')['totale_reddito'];
-                    } else {
-                        $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
-                        $totale_reddito2 = 0;
-                    }
+        } else {
+            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $totale_reddito2 = 0;
+        }
 
-                    echo '
+        echo '
                     <tr class="conto2" id="conto2-'.$conto_secondo['id'].'">
                         <td>
                             <h5>
@@ -168,17 +168,17 @@ foreach ($primo_livello as $conto_primo) {
                             <b>'.moneyFormat($totale_conto2, 2).'</b>
                         </td>';
 
-                    if ($conto_primo['descrizione'] == 'Economico') {
-                        echo '
+        if ($conto_primo['descrizione'] == 'Economico') {
+            echo '
                         <td class="text-right">
                             <b>'.moneyFormat($totale_reddito2, 2).'</b>
                         </td>';
-                    } else {
-                        echo '
+        } else {
+            echo '
                         <td></td>';
-                    }
+        }
 
-                    echo '
+        echo '
                         <td class="text-right">
                             '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
@@ -191,35 +191,35 @@ foreach ($primo_livello as $conto_primo) {
                             </button>
                         </td>
                     </tr>';
-                    // Somma dei totali
-                    if ($totale_conto2) {
-                        if ($conto_primo['descrizione'] == 'Patrimoniale') {
-                            if ($totale_conto2 > 0) {
-                                $totale_attivita[] = abs($totale_conto2);
-                            } else {
-                                $totale_passivita[] = abs($totale_conto2);
-                            }
-                        } else {
-                            if ($totale_conto2 > 0) {
-                                $totale_ricavi[] = abs($totale_conto2);
-                            } else {
-                                $totale_costi[] = abs($totale_conto2);
-                            }
-                        }
-                    }
-                    if ($totale_reddito2) {
-                        if ($conto_primo['descrizione'] == 'Economico') {
-                            if ($totale_reddito2 > 0) {
-                                $totale_ricavi_reddito[] = abs($totale_reddito2);
-                            } else {
-                                $totale_costi_reddito[] = abs($totale_reddito2);
-                            }
-                        }
-                    }
-
-                    $totale_conto2 = 0;
-                    $totale_reddito2 = 0;
+        // Somma dei totali
+        if ($totale_conto2) {
+            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+                if ($totale_conto2 > 0) {
+                    $totale_attivita[] = abs($totale_conto2);
+                } else {
+                    $totale_passivita[] = abs($totale_conto2);
                 }
+            } else {
+                if ($totale_conto2 > 0) {
+                    $totale_ricavi[] = abs($totale_conto2);
+                } else {
+                    $totale_costi[] = abs($totale_conto2);
+                }
+            }
+        }
+        if ($totale_reddito2) {
+            if ($conto_primo['descrizione'] == 'Economico') {
+                if ($totale_reddito2 > 0) {
+                    $totale_ricavi_reddito[] = abs($totale_reddito2);
+                } else {
+                    $totale_costi_reddito[] = abs($totale_reddito2);
+                }
+            }
+        }
+
+        $totale_conto2 = 0;
+        $totale_reddito2 = 0;
+    }
 
     echo '
             </tbody>

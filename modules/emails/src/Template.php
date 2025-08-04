@@ -95,10 +95,10 @@ class Template extends Model
     public function uploads($id_record = null)
     {
         $uploads = [];
-        
+
         // Recupera le categorie associate al template
         $categories = $this->categories;
-        
+
         // Per ogni categoria, recupera i file associati
         foreach ($categories as $category) {
             // Recupera i file del modulo corrente
@@ -107,29 +107,29 @@ class Template extends Model
                     ->where('id_module', $this->id_module)
                     ->where('id_record', $id_record)
                     ->get();
-                
+
                 $uploads = array_merge($uploads, $files->all());
             }
-            
+
             // Recupera anche i file dell'azienda predefinita
-            $id_module_anagrafiche = \Models\Module::where('name', 'Anagrafiche')->first()->id;
+            $id_module_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
             $id_record_azienda = setting('Azienda predefinita');
             if ($id_record_azienda) {
                 $files = \Models\Upload::where('id_category', $category->id)
                     ->where('id_module', $id_module_anagrafiche)
                     ->where('id_record', $id_record_azienda)
                     ->get();
-                    
+
                 $uploads = array_merge($uploads, $files->all());
             }
         }
-        
+
         // Rimuovi eventuali duplicati
         $unique_uploads = [];
         foreach ($uploads as $upload) {
             $unique_uploads[$upload->id] = $upload;
         }
-        
+
         return collect(array_values($unique_uploads));
     }
 

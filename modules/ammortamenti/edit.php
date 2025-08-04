@@ -27,7 +27,7 @@ $righe_ammortamento = $dbo->fetchArray('SELECT * FROM `co_righe_ammortamenti` WH
 $numero_righe = count($righe_ammortamento);
 
 // Calcola anno di inizio (anno del documento)
-$anno_inizio = date('Y', strtotime($documento['data_competenza']));
+$anno_inizio = date('Y', strtotime((string) $documento['data_competenza']));
 
 $readonly = $anno_inizio == date('Y') ? 0 : 1;
 
@@ -74,7 +74,7 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 				</div>
 
 				<div class="col-md-6" style="margin-top: 25px">
-					<button type="button" class="btn btn-info pull-right <?php echo ($readonly > 0 ? 'disabled' : ''); ?>" id="add-riga">
+					<button type="button" class="btn btn-info pull-right <?php echo $readonly > 0 ? 'disabled' : ''; ?>" id="add-riga">
 						<i class="fa fa-plus"></i> <?php echo tr('Aggiungi riga'); ?>
 					</button>
 				</div>
@@ -92,9 +92,9 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 					</thead>
 					<tbody id="righe-ammortamento">
 						<?php
-						// Righe esistenti
-						foreach ($righe_ammortamento as $index => $riga) {
-							echo '
+                        // Righe esistenti
+                        foreach ($righe_ammortamento as $index => $riga) {
+                            echo '
 						<tr>
 							<td>
 								{[ "type": "text", "name": "anno['.$riga['id'].']", "value": "'.$riga['anno'].'", "disabled": "1", "class": "text-center" ]}
@@ -109,8 +109,8 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 								'.($riga['id_mastrino'] ? Modules::link('Prima nota', $riga['id_mastrino'], 'Visualizza prima nota', null, 'class="btn btn-sm btn-primary"') : '').'
 							</td>
 						</tr>';
-						}
-						?>
+                        }
+?>
 					</tbody>
 				</table>
 			</div>
@@ -123,13 +123,13 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 
 			<div class="alert alert-info text-center">
 				<i class="fa fa-info-circle"></i> <?php echo tr('Ammortamento modificabile fino al 31/12/_ANNO_', [
-					'_ANNO_' => $anno_inizio,
+				    '_ANNO_' => $anno_inizio,
 				]); ?>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12 text-center">
-					<button type="button" class="btn btn-lg btn-primary <?php echo ($readonly ? 'disabled' : ''); ?>" id="btn-salva" onclick="applicaAmmortamento()">
+					<button type="button" class="btn btn-lg btn-primary <?php echo $readonly ? 'disabled' : ''; ?>" id="btn-salva" onclick="applicaAmmortamento()">
 						<?php echo tr('Applica ammortamento'); ?>
 					</button>
 				</div>

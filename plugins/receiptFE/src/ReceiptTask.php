@@ -41,12 +41,13 @@ class ReceiptTask extends Manager
                 'response' => 2,
                 'message' => tr('Importazione automatica disattivata'),
             ];
-            return $result; 
+
+            return $result;
         }
 
         $list = Interaction::getReceiptList();
 
-        if( empty($list) ){
+        if (empty($list)) {
             $result = [
                 'response' => 1,
                 'message' => tr('Nessuna ricevuta da importare'),

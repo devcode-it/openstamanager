@@ -55,7 +55,7 @@ switch (filter('op')) {
                 echo json_encode([
                     'success' => false,
                     'total' => 0,
-                    'message' => tr('Nessuna fattura da importare')
+                    'message' => tr('Nessuna fattura da importare'),
                 ]);
                 break;
             }
@@ -68,10 +68,10 @@ switch (filter('op')) {
                 try {
                     $file = Interaction::getInvoiceFile($invoice['name']);
                     if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
-                        $valid_count++;
+                        ++$valid_count;
                     }
                 } catch (Exception $e) {
-                    $errors[] = $invoice['name'] . ': ' . $e->getMessage();
+                    $errors[] = $invoice['name'].': '.$e->getMessage();
                 }
             }
 
@@ -80,14 +80,13 @@ switch (filter('op')) {
                 'total' => $total,
                 'valid_count' => $valid_count,
                 'errors' => $errors,
-                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata')
+                'message' => $valid_count > 0 ? tr('Fatture preparate per l\'importazione') : tr('Nessuna fattura valida trovata'),
             ]);
-
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
                 'total' => 0,
-                'message' => tr('Errore durante la preparazione').': ' . $e->getMessage()
+                'message' => tr('Errore durante la preparazione').': '.$e->getMessage(),
             ]);
         }
 
@@ -243,23 +242,23 @@ switch (filter('op')) {
         $name = filter('name');
 
         try {
-            $file = Interaction::getInvoiceFile($name, 'Fatture di vendita', 'Importazione FE');
+            $file = Interaction::getInvoiceFile($name);
 
             if (!FatturaElettronica::isValid($file, 'Fatture di vendita', 'Importazione FE')) {
                 echo json_encode([
                     'already' => 0,
                     'id' => 1,
-                    'message' => tr('Fattura pronta per l\'importazione')
+                    'message' => tr('Fattura pronta per l\'importazione'),
                 ]);
             } else {
                 echo json_encode([
                     'already' => 1,
-                    'message' => tr('Fattura già importata')
+                    'message' => tr('Fattura già importata'),
                 ]);
             }
         } catch (Exception $e) {
             echo json_encode([
-                'error' => tr('Errore durante la preparazione della fattura').': '.$e->getMessage()
+                'error' => tr('Errore durante la preparazione della fattura').': '.$e->getMessage(),
             ]);
         }
 
@@ -275,11 +274,11 @@ switch (filter('op')) {
             if (!isset($files[$file_id])) {
                 echo json_encode([
                     'success' => false,
-                    'message' => tr('File non trovato con ID: ') . $file_id,
+                    'message' => tr('File non trovato con ID: ').$file_id,
                     'debug' => [
                         'file_id' => $file_id,
-                        'available_files' => array_keys($files)
-                    ]
+                        'available_files' => array_keys($files),
+                    ],
                 ]);
                 break;
             }
@@ -294,12 +293,12 @@ switch (filter('op')) {
                     echo json_encode(['success' => false, 'message' => tr('Impossibile eliminare il file')]);
                 }
             } else {
-                echo json_encode(['success' => false, 'message' => tr('File fisico non trovato: ') . $file['name']]);
+                echo json_encode(['success' => false, 'message' => tr('File fisico non trovato: ').$file['name']]);
             }
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
-                'message' => tr('Errore durante l\'eliminazione: ') . $e->getMessage()
+                'message' => tr('Errore durante l\'eliminazione: ').$e->getMessage(),
             ]);
         }
 
@@ -315,7 +314,7 @@ switch (filter('op')) {
 
         if (!empty($file)) {
             download($directory.'/'.$file['name']);
-            // Note: download() function handles the response and exits
+        // Note: download() function handles the response and exits
         } else {
             echo json_encode(['success' => false, 'message' => tr('File non trovato')]);
         }
@@ -866,7 +865,7 @@ switch (filter('op')) {
     default:
         echo json_encode([
             'error' => tr('Operazione non riconosciuta'),
-            'operation' => filter('op')
+            'operation' => filter('op'),
         ]);
         break;
 }

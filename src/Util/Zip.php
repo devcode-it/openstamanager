@@ -105,7 +105,7 @@ class Zip
                     }
                 } catch (\Exception $e) {
                     // Log dell'errore ma continua con gli altri file
-                    error_log('Errore durante l\'aggiunta del file ' . $file->getPathname() . ' al backup: ' . $e->getMessage());
+                    error_log('Errore durante l\'aggiunta del file '.$file->getPathname().' al backup: '.$e->getMessage());
                 }
             }
             $zip->close();

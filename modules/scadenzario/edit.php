@@ -108,7 +108,6 @@ if (!empty($documento)) {
                     </table>
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
-
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
     echo '
@@ -121,13 +120,13 @@ if (!empty($documento)) {
                             <table class="table table-striped table-hover table-sm table-bordered">
                                 <tr>
                                     <td>';
-echo input([
-    'type' => 'ckeditor',
-    'name' => 'descrizione',
-    'extra' => 'rows="2"',
-    'value' => $record['descrizione'],
-]);
-echo '
+    echo input([
+        'type' => 'ckeditor',
+        'name' => 'descrizione',
+        'extra' => 'rows="2"',
+        'value' => $record['descrizione'],
+    ]);
+    echo '
                                     </td>
                                 </tr>
                             </table>

@@ -25,10 +25,10 @@ use Illuminate\Database\Eloquent\Model;
 use Models\Group;
 use Models\Module;
 use Models\Plugin;
+use Models\Upload;
 use Models\User;
 use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\HierarchyTrait;
-use Models\Upload;
 
 class Check extends Model
 {
@@ -146,9 +146,9 @@ class Check extends Model
             ->where('id_record_from', $data['id_record_from'])
             ->get();
 
-        foreach($record as $r){
+        foreach ($record as $r) {
             $r->delete();
-        };
+        }
     }
 
     /* Relazioni Eloquent */
@@ -186,7 +186,7 @@ class Check extends Model
 
         $file = Upload::find($this->id_immagine);
 
-        $module = Module::where('id',$file->id_module)->first();
+        $module = Module::where('id', $file->id_module)->first();
         $fileinfo = \Uploads::fileInfo($file->filename);
 
         $directory = '/'.$module->upload_directory.'/';
@@ -200,11 +200,11 @@ class Check extends Model
 
     public function delete()
     {
-        if( !empty($this->id_immagine) ){
-            //Se sono valorizzati id_module_from e id_record_from verifico l'id_immagine. Se non presente allora è stato inserito per la check e posso eliminare il file
-            if( !empty($this->id_module_from) && !empty($this->id_record_from) ){
-                $check = Check::where('id_module_from', $this->id_module_from)->where('id_record_from', $this->id_record_from)->where('id_immagine', $this->id_immagine)->where('id','!=', $this->id)->first();
-                if( !empty($check) ){
+        if (!empty($this->id_immagine)) {
+            // Se sono valorizzati id_module_from e id_record_from verifico l'id_immagine. Se non presente allora è stato inserito per la check e posso eliminare il file
+            if (!empty($this->id_module_from) && !empty($this->id_record_from)) {
+                $check = Check::where('id_module_from', $this->id_module_from)->where('id_record_from', $this->id_record_from)->where('id_immagine', $this->id_immagine)->where('id', '!=', $this->id)->first();
+                if (!empty($check)) {
                     return parent::delete();
                 }
             }
@@ -216,7 +216,7 @@ class Check extends Model
                 'id_record' => $this->id_record,
             ]);
         }
-            
+
         return parent::delete();
     }
 }

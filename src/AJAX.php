@@ -133,7 +133,7 @@ class AJAX
         return [
             'results' => $results,
             'recordsFiltered' => $data['count'],
-            'link' => $custom['link'] ?? null
+            'link' => $custom['link'] ?? null,
         ];
     }
 
@@ -310,16 +310,16 @@ class AJAX
     {
         if ($link == 'stampa') {
             $element['title'] = ' ';
-            $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
         } elseif ($link == 'allegato') {
             $element['title'] = ' ';
             $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
         } elseif (string_contains($link, 'module:')) {
             $element['title'] = ' ';
-            $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+            $element['text'] = Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
         } elseif (string_contains($link, 'plugin:')) {
             $element['title'] = ' ';
-            $element['text'] = \Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+            $element['text'] = Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
         }
 
         return $element;

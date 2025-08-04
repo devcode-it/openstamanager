@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Module;
-
 // Generazione URL per i token
 $base_url = base_url();
 $url = '';
@@ -138,7 +136,7 @@ $status_class = !$is_enabled ? 'danger' : (isset($is_not_active) && $is_not_acti
                                             </div>
 
                                             <div class="col-md-12">
-                                                {[ "type": "select", "label": "<?php echo tr('ID record'); ?>", "name": "id_record_target", "ajax-source": "record_token", "select-options": <?=json_encode(['id_module_target' => $record['id_module_target']])?>, "value": "$id_record_target$"]}
+                                                {[ "type": "select", "label": "<?php echo tr('ID record'); ?>", "name": "id_record_target", "ajax-source": "record_token", "select-options": <?php echo json_encode(['id_module_target' => $record['id_module_target']]); ?>, "value": "$id_record_target$"]}
                                             </div>
 
                                             <div class="col-md-12">
@@ -158,7 +156,7 @@ $status_class = !$is_enabled ? 'danger' : (isset($is_not_active) && $is_not_acti
 </form>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?=tr('Elimina')?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 
 <script>

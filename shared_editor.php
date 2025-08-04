@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -146,7 +147,7 @@ $permission_titles = [
     'r' => tr('Visualizzazione'),
     'rw' => tr('Modifica'),
     'ra' => tr('Caricamento Allegati'),
-    'rwa' => tr('Gestione Allegati')
+    'rwa' => tr('Gestione Allegati'),
 ];
 
 $pageTitle = tr($structure->getTranslation('title')).' - '.$permission_titles[$current_permission];
@@ -274,13 +275,11 @@ if ($current_permission == 'rw' || $current_permission == 'r') {
 if (in_array($current_permission, ['ra', 'rwa'])) {
     // Per permesso 'ra': solo caricamento
     if ($current_permission == 'ra') {
-
         // Usa la sintassi standard con upload_only=true
-        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "upload_only": "true", "category": "'.tr("Allegati caricati tramite accesso condiviso").'" )}';
-
-    } else if ($current_permission == 'rwa') {
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "upload_only": "true", "category": "'.tr('Allegati caricati tramite accesso condiviso').'" )}';
+    } elseif ($current_permission == 'rwa') {
         // Per permesso 'rwa': visualizzazione e modifica completa
-        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "disable_edit": "true", "category": "'.tr("Allegati caricati tramite accesso condiviso").'" )}';
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "disable_edit": "true", "category": "'.tr('Allegati caricati tramite accesso condiviso').'" )}';
     }
 }
 
@@ -354,7 +353,7 @@ if ($current_permission == 'rw') {
     </script>';
 }
 
-//Disabilito la barra dei plugin
+// Disabilito la barra dei plugin
 echo '
 <script>
 $(document).ready(function() {
@@ -364,7 +363,7 @@ $(document).ready(function() {
 });
 </script>';
 
-//Disabilito il pulsante elimina
+// Disabilito il pulsante elimina
 echo '
 <script>
 $(document).ready(function() {

@@ -59,7 +59,7 @@ $width = round(100 / ($show_sconto ? 5 : 3), 2);
 $has_rivalsa = !empty($rivalsa);
 $has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi);
 $has_split_payment = !empty($record['split_payment']);
-$sconto_finale = $documento->sconto_finale_percentuale ? $documento->totale*$documento->sconto_finale_percentuale/100 : $documento->sconto_finale;
+$sconto_finale = $documento->sconto_finale_percentuale ? $documento->totale * $documento->sconto_finale_percentuale / 100 : $documento->sconto_finale;
 $has_sconto_finale = !empty($sconto_finale);
 
 // Determina quale è l'ultima riga dei totali da visualizzare
@@ -475,12 +475,12 @@ if ($has_sconto_finale) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">';
-            if ($documento->sconto_finale_percentuale) {
-                echo tr('Sconto in fattura', [], ['upper' => true]).' ('.numberFormat($documento->sconto_finale_percentuale, 2).'%)';
-            } else {
-                echo tr('Sconto in fattura', [], ['upper' => true]).' ('.moneyFormat($documento->sconto_finale, 2).')';
-            }
-            echo'
+    if ($documento->sconto_finale_percentuale) {
+        echo tr('Sconto in fattura', [], ['upper' => true]).' ('.numberFormat($documento->sconto_finale_percentuale, 2).'%)';
+    } else {
+        echo tr('Sconto in fattura', [], ['upper' => true]).' ('.moneyFormat($documento->sconto_finale, 2).')';
+    }
+    echo '
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'" style="background-color:#C0C0C0;">

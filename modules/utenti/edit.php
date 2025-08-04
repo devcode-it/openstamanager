@@ -169,21 +169,21 @@ if (!empty($utenti)) {
         }
 
         $token_otp_data = $dbo->fetchOne('SELECT `enabled`, `valido_dal`, `valido_al` FROM `zz_otp_tokens` WHERE `id_utente` = '.prepare($utente['id']));
-        
+
         $is_not_active = false;
         if (!empty($token_otp_data['valido_dal']) && !empty($token_otp_data['valido_al'])) {
-            $is_not_active = strtotime($token_otp_data['valido_dal']) > time() || strtotime($token_otp_data['valido_al']) < time();
+            $is_not_active = strtotime((string) $token_otp_data['valido_dal']) > time() || strtotime((string) $token_otp_data['valido_al']) < time();
         }
         if (!empty($token_otp_data['valido_dal']) && empty($token_otp_data['valido_al'])) {
-            $is_not_active = strtotime($token_otp_data['valido_dal']) > time();
+            $is_not_active = strtotime((string) $token_otp_data['valido_dal']) > time();
         }
         if (empty($token_otp_data['valido_dal']) && !empty($token_otp_data['valido_al'])) {
-            $is_not_active = strtotime($token_otp_data['valido_al']) < time();
+            $is_not_active = strtotime((string) $token_otp_data['valido_al']) < time();
         }
 
         $is_otp_enabled = !empty($token_otp_data['enabled']) && !$is_not_active;
 
-        if($is_otp_enabled){
+        if ($is_otp_enabled) {
             echo '
                 <a title="'.tr('Gestione login tramite OTP').'" class="btn btn-xs btn-success tip" onclick="launch_modal(\''.tr('Gestione login tramite OTP').'\', \''.base_path().'/modules/utenti/components/gestione_otp.php?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'\')">
                     <i class="fa fa-link"></i>

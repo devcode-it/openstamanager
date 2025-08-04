@@ -96,7 +96,7 @@ switch ($operazione) {
         $sede->codice_fiscale = post('codice_fiscale');
         $sede->is_automezzo = post('is_automezzo');
         $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;
-        $sede->km = post('km');    
+        $sede->km = post('km');
         $sede->note = post('note');
         $sede->gaddress = post('gaddress');
         $sede->lat = post('lat');

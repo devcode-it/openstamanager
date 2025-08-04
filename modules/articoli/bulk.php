@@ -172,7 +172,7 @@ switch (post('op')) {
 
     case 'print_labels':
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
-        $qta = (post('qta')>0 ? post('qta') : 1);
+        $qta = (post('qta') > 0 ? post('qta') : 1);
 
         if (post('tipologia') == 'singola') {
             $id_print = Prints::getPrints()['Barcode'];
@@ -474,11 +474,10 @@ switch (post('op')) {
                 // per evitare conflitti tra barcode e codici articolo
                 $coincide_codice = Articolo::where([
                     ['codice', $barcode],
-                    ['barcode', '=', '']
+                    ['barcode', '=', ''],
                 ])->count() > 0;
 
-                $tentativi++;
-
+                ++$tentativi;
             } while (($esistente_articoli || $esistente_barcode || $coincide_codice) && $tentativi < $max_tentativi);
 
             // Se è stato trovato un barcode unico, lo assegna all'articolo come barcode principale
@@ -487,10 +486,10 @@ switch (post('op')) {
                     'idarticolo' => $id,
                     'barcode' => $barcode,
                 ]);
-                $barcode_generati++;
+                ++$barcode_generati;
             } else {
                 // Se non è stato possibile generare un barcode unico, incrementa il contatore dei fallimenti
-                $barcode_falliti++;
+                ++$barcode_falliti;
             }
         }
 

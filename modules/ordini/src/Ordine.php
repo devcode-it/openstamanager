@@ -177,7 +177,7 @@ class Ordine extends Document
             foreach ($righe_fatturate as $riga) {
                 $fatture_collegate = database()->table('co_righe_documenti')
                     ->where('original_id', $riga->id)
-                    ->where('original_type', get_class($riga))
+                    ->where('original_type', $riga::class)
                     ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
                     ->count();
 
@@ -195,7 +195,7 @@ class Ordine extends Document
                 $descrizione = 'Accettato';
             } elseif ($trigger->getDocument() instanceof \Modules\Fatture\Fattura) {
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-            } elseif ($trigger->getDocument() instanceof \Modules\DDT\DDT) {
+            } elseif ($trigger->getDocument() instanceof DDT) {
                 $ddt = $trigger->getDocument();
                 $fatture_ddt = database()->table('co_righe_documenti')
                     ->where('idddt', $ddt->id)

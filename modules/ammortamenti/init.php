@@ -18,8 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Models\OAuth2;
-
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {

@@ -72,11 +72,27 @@ if (!$is_anagrafica_deleted) {
         $stati_importabili[] = $stato['descrizione'];
     }
 
-    $causali = $database->fetchArray('SELECT `title` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` 
-    AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
+    $causali = $database->fetchArray('SELECT `name` FROM `dt_causalet` 
+   WHERE `is_importabile` = 1');
 
     foreach ($causali as $causale) {
         $causali_importabili[] = $causale['title'];
+    }
+
+    // Determina il tipo di documento che verrà creato applicando la stessa logica di crea_documento.php
+    $tipo_documento_da_creare = '';
+    if ($ddt->reversed) {
+        // Se il DDT ha una causale di tipo "reso", manteniamo la stessa direzione ma creiamo una nota di credito
+        if ($dir == 'entrata') {
+            // DDT in uscita con causale reso → nota di credito di vendita
+            $tipo_documento_da_creare = 'nota di credito';
+        } else {
+            // DDT in entrata con causale reso → nota di credito di acquisto
+            $tipo_documento_da_creare = 'nota di credito';
+        }
+    } else {
+        // Logica standard
+        $tipo_documento_da_creare = ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto');
     }
 
     echo '
@@ -84,7 +100,7 @@ if (!$is_anagrafica_deleted) {
         '_STATE_LIST_' => implode(', ', $stati_importabili),
         '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
     ]).'">
-        <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
+        <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-widget="modal" data-title="'.tr('Crea ').$tipo_documento_da_creare.'"><i class="fa fa-magic"></i> '.tr('Crea ').$tipo_documento_da_creare.'
         </button>
     </div>';
 }

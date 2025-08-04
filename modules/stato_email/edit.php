@@ -121,7 +121,6 @@ foreach ($prints_old as $print) {
                 </tr>';
 }
 
-
 foreach ($prints as $print) {
     echo '
                 <tr>

@@ -35,7 +35,7 @@ try {
         // Pulisci l'output buffer prima di inviare JSON
         ob_clean();
         header('Content-Type: application/json');
-        echo json_encode(['count' => 0, 'error' => 'Errore database: ' . $e->getMessage()]);
+        echo json_encode(['count' => 0, 'error' => 'Errore database: '.$e->getMessage()]);
     } else {
         echo '<div class="alert alert-danger">'.tr('Errore nel caricamento dei documenti collegati').': '.$e->getMessage().'</div>';
     }

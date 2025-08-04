@@ -51,7 +51,6 @@ if ($destinazione) {
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, 35 - $c);
 
-
 // Intestazione tabella per righe
 echo "
 <table class='table table-striped' id='contents'>

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -24,7 +25,7 @@ $id_parent = get('id_parent');
 $id_plugin = get('id_plugin');
 $id_module = get('id_module');
 
-$barcode = $dbo->table('mg_articoli_barcode')->where('id',$id_record)->first();
+$barcode = $dbo->table('mg_articoli_barcode')->where('id', $id_record)->first();
 
 echo '
 <form action="" method="post" role="form" id="form_sedi">

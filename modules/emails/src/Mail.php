@@ -110,7 +110,7 @@ class Mail extends Model
         $print = \Prints::render($print_id, $this->id_record, null, true);
 
         // Ottieni il modulo "Coda d'invio"
-        $id_module = \Models\Module::where("name", "Stato email")->first()->id;
+        $id_module = \Models\Module::where('name', 'Stato email')->first()->id;
 
         $name = $name ?: $print['name'];
 
@@ -279,7 +279,6 @@ class Mail extends Model
     {
         return $this->belongsToMany(PrintTemplate::class, 'em_email_print', 'id_email', 'id_print')->withPivot('name');
     }
-
 
     public function attachments()
     {

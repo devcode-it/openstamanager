@@ -20,8 +20,6 @@
 include_once __DIR__.'/../../../core.php';
 use Modules\Checklists\Check;
 use Modules\Checklists\ChecklistItem;
-use Models\Upload;
-use Models\Module;
 
 $id_record = get('id_record');
 $main_check = get('main_check');
@@ -49,7 +47,7 @@ if ($main_check) {
                 'required' => 1,
                 'value' => htmlentities((string) $record->content),
             ]);
-        ?>
+?>
         </div>
     </div>
 
@@ -58,7 +56,7 @@ if ($main_check) {
             {[ "type": "checkbox", "label": "<?php echo tr('Utilizza come titolo'); ?>", "name": "is_titolo", "value": "<?php echo $record->is_titolo; ?>" ]}
         </div>
         <div class="col-md-4">
-            {[ "type": "image", "label": "<?php echo tr('Immagine');?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $record->image;?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
+            {[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $record->image; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
         </div>
     </div>
     <div class="row">

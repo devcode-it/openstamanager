@@ -129,7 +129,7 @@ $riferimento_gia_selezionato = !empty($id_riferimento);
 foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - (float) $righe_utilizzate[$riga->id];
     if ($qta_rimanente >= $qta || !empty(setting('Permetti il superamento della soglia quantità dei documenti di origine'))) {
-        $righe_selezionabili++;
+        ++$righe_selezionabili;
     }
 }
 

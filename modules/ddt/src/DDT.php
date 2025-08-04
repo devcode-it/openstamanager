@@ -238,7 +238,7 @@ class DDT extends Document
 
             $collegato_a_ordine = false;
             foreach ($righe as $riga) {
-                if (!empty($riga->original_id) && !empty($riga->original_type) && strpos($riga->original_type, 'Ordini') !== false) {
+                if (!empty($riga->original_id) && !empty($riga->original_type) && str_contains((string) $riga->original_type, 'Ordini')) {
                     $collegato_a_ordine = true;
                     break;
                 }
@@ -273,7 +273,7 @@ class DDT extends Document
         $righe_ddt = $this->getRighe();
 
         foreach ($righe_ddt as $riga_ddt) {
-            if (!empty($riga_ddt->original_id) && !empty($riga_ddt->original_type) && strpos($riga_ddt->original_type, 'Ordini') !== false) {
+            if (!empty($riga_ddt->original_id) && !empty($riga_ddt->original_type) && str_contains((string) $riga_ddt->original_type, 'Ordini')) {
                 $riga_ordine = $riga_ddt->getOriginalComponent();
 
                 if (!empty($riga_ordine)) {

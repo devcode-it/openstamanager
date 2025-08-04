@@ -27,6 +27,9 @@ namespace Util;
  */
 class Autofill
 {
+    // Costanti per i fattori di scala ottimizzati
+    private const MULTILINE_FACTOR = 0.8;
+    private const SMALL_TEXT_FACTOR = 0.65;
     protected $space = 0;
     protected $current = 0;
 
@@ -45,10 +48,6 @@ class Autofill
         $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
     }
 
-    // Costanti per i fattori di scala ottimizzati
-    private const MULTILINE_FACTOR = 0.8;
-    private const SMALL_TEXT_FACTOR = 0.65;
-
     public function count($text, $small = null)
     {
         $count = 0;
@@ -57,6 +56,7 @@ class Autofill
         // Usa mb_strlen per supporto multibyte corretto
         if (empty($text)) {
             $this->set(0);
+
             return;
         }
 

@@ -115,28 +115,27 @@ switch (post('op')) {
                 // per evitare conflitti tra barcode e codici articolo
                 $coincide_codice = Articolo::where([
                     ['codice', $barcode],
-                    ['barcode', '=', '']
+                    ['barcode', '=', ''],
                 ])->count() > 0;
 
-                $tentativi++;
-
+                ++$tentativi;
             } while (($esistente_articoli || $esistente_barcode || $coincide_codice) && $tentativi < $max_tentativi);
 
             // Se dopo tutti i tentativi non è stato trovato un barcode unico, non genera il barcode
             if ($tentativi >= $max_tentativi) {
                 $barcode = null;
                 flash()->warning(tr('Impossibile generare un barcode unico dopo _NUM_ tentativi', [
-                    '_NUM_' => $max_tentativi
+                    '_NUM_' => $max_tentativi,
                 ]));
             }
         }
 
-        $barcode = ($barcode ? $barcode : post('barcode'));
+        $barcode = ($barcode ?: post('barcode'));
         if (!empty($barcode)) {
             $dbo->insert('mg_articoli_barcode', [
-               'idarticolo' => $id_record,
-               'barcode' => $barcode,
-           ]);
+                'idarticolo' => $id_record,
+                'barcode' => $barcode,
+            ]);
         }
 
         if (isAjaxRequest()) {
@@ -528,19 +527,18 @@ switch (post('op')) {
             // per evitare conflitti tra barcode e codici articolo
             $coincide_codice = Articolo::where([
                 ['codice', $barcode],
-                ['barcode', '=', '']
+                ['barcode', '=', ''],
             ])->count() > 0;
 
-            $tentativi++;
-
+            ++$tentativi;
         } while (($esistente_articoli || $esistente_barcode || $coincide_codice) && $tentativi < $max_tentativi);
 
         // Se dopo tutti i tentativi non è stato trovato un barcode unico, restituisce un errore
         if ($tentativi >= $max_tentativi) {
             echo json_encode([
                 'error' => tr('Impossibile generare un barcode unico dopo _NUM_ tentativi', [
-                    '_NUM_' => $max_tentativi
-                ])
+                    '_NUM_' => $max_tentativi,
+                ]),
             ]);
         } else {
             // Restituisce il barcode generato con successo

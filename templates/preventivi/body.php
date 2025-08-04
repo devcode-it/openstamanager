@@ -360,8 +360,8 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
             <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
-    $autofill->set(2);
-    $autofill->next();
+        $autofill->set(2);
+        $autofill->next();
     }
 
     // IVA

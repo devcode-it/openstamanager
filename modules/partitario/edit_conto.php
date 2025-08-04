@@ -96,7 +96,7 @@ if (!$conto_bloccato && $lvl == 3) {
                 <i class="fa fa-info-circle"></i> '.tr('Per ricalcolare l\'importo deducibile dei movimenti già registrati, salva le modifiche e poi premi il pulsante <span class="btn btn-xs btn-primary"><i class="fa fa-refresh"></i></span> a fianco del conto').'
             </div>';
     }
-    ?>
+?>
     <br>
 
     <div class="float-right d-none d-sm-inline">

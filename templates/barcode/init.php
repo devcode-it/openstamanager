@@ -24,13 +24,13 @@ use Modules\Articoli\Articolo;
 
 if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo', $_SESSION['superselect']['id_articolo_barcode'])->get();
     unset($_SESSION['superselect']['id_articolo_barcode']);
-} elseif( !empty(get('idbarcode')) ){
-    $barcodes = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
+} elseif (!empty(get('idbarcode'))) {
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('id', get('idbarcode'))->get();
 } else {
     $articoli = Articolo::where('id', '=', $id_record)->get();
-    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo', $id_record)->get();
 }
 
 // Inizializza $records come array vuoto
@@ -38,13 +38,13 @@ $records = [];
 
 // Verifica che $barcodes non sia null o vuoto
 if (!empty($barcodes) && is_array($barcodes)) {
-    if( !empty(get('qta')) ){
-        foreach($barcodes as $barcode) {
-            for( $i=0; $i<get('qta'); $i++ ){
+    if (!empty(get('qta'))) {
+        foreach ($barcodes as $barcode) {
+            for ($i = 0; $i < get('qta'); ++$i) {
                 $records[] = $barcode;
             }
         }
-    }else{
+    } else {
         $records = $barcodes;
     }
 }

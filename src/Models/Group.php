@@ -104,7 +104,7 @@ class Group extends Model
                 if ($has_view_access == 0) {
                     $database->insert('zz_group_view', [
                         'id_gruppo' => $this->id,
-                        'id_vista' => $view['id']
+                        'id_vista' => $view['id'],
                     ]);
                 }
             }
@@ -119,7 +119,7 @@ class Group extends Model
                 if ($has_segment_access == 0) {
                     $database->insert('zz_group_segment', [
                         'id_gruppo' => $this->id,
-                        'id_segment' => $segment['id']
+                        'id_segment' => $segment['id'],
                     ]);
                 }
             }

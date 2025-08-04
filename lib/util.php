@@ -600,12 +600,14 @@ if (!function_exists('adjustBrightness')) {
 
 if (!function_exists('blurEmail')) {
     /**
-     * Funzione per offuscare parzialmente un indirizzo email
+     * Funzione per offuscare parzialmente un indirizzo email.
      *
      * @param string $email Indirizzo email da offuscare
+     *
      * @return string Email offuscata con asterischi
      */
-    function blurEmail($email) {
+    function blurEmail($email)
+    {
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $email;
         }
@@ -618,21 +620,21 @@ if (!function_exists('blurEmail')) {
 
         if ($username_length <= 2) {
             // Se il nome utente è molto corto, mostra solo il primo carattere
-            $blurred_username = substr($username, 0, 1) . str_repeat('*', max(1, $username_length - 1));
+            $blurred_username = substr($username, 0, 1).str_repeat('*', max(1, $username_length - 1));
         } elseif ($username_length <= 4) {
             // Per nomi utente corti, mostra primi 2 caratteri
-            $blurred_username = substr($username, 0, 2) . str_repeat('*', $username_length - 2);
+            $blurred_username = substr($username, 0, 2).str_repeat('*', $username_length - 2);
         } else {
             // Per nomi utente lunghi, mostra primi 2 e ultimi 1 carattere
             $visible_start = 2;
             $visible_end = 1;
             $stars_count = max(3, $username_length - $visible_start - $visible_end);
 
-            $blurred_username = substr($username, 0, $visible_start) .
-                            str_repeat('*', $stars_count) .
+            $blurred_username = substr($username, 0, $visible_start).
+                            str_repeat('*', $stars_count).
                             substr($username, -$visible_end);
         }
 
-        return $blurred_username . '@' . $domain;
+        return $blurred_username.'@'.$domain;
     }
 }

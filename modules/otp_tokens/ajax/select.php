@@ -23,7 +23,7 @@ use Models\Module;
 
 switch ($resource) {
     case 'moduli_token':
-        $query = "SELECT zz_modules.id AS id, title AS descrizione FROM zz_modules INNER JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = ".prepare(Models\Locale::getDefault()->id)." |where| ORDER BY title";
+        $query = 'SELECT zz_modules.id AS id, title AS descrizione FROM zz_modules INNER JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).' |where| ORDER BY title';
 
         $where[] = 'enabled = 1';
         $where[] = "name IN('Anagrafiche', 'Gestione documentale')";
@@ -40,13 +40,12 @@ switch ($resource) {
         break;
 
     case 'record_token':
-
         $superselect['id_module_target'] = $superselect['id_module_target2'] ?? $superselect['id_module_target'];
 
         if (isset($superselect['id_module_target'])) {
             $module = Module::find($superselect['id_module_target']);
 
-            if($module->name == 'Anagrafiche') {
+            if ($module->name == 'Anagrafiche') {
                 $query = 'SELECT idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche |where| ORDER BY ragione_sociale';
 
                 $where[] = 'deleted_at IS NULL';
@@ -62,7 +61,7 @@ switch ($resource) {
                 }
             }
 
-            if($module->name == 'Gestione documentale') {
+            if ($module->name == 'Gestione documentale') {
                 $query = 'SELECT id, nome AS descrizione FROM do_documenti |where| ORDER BY nome';
 
                 foreach ($elements as $element) {
@@ -75,5 +74,4 @@ switch ($resource) {
             }
         }
         break;
-
 }

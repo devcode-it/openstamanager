@@ -627,7 +627,7 @@ if ($options['checklist']) {
 
         $structure = Module::where('name', 'Interventi')->first();
         $checks = $structure->mainChecks($id_record);
-        $has_images = $checks->where('id_immagine','!=', null)->count();
+        $has_images = $checks->where('id_immagine', '!=', null)->count();
 
         foreach ($checks as $check) {
             echo renderChecklistHtml($check, 0, $has_images);
@@ -636,7 +636,7 @@ if ($options['checklist']) {
         $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
         foreach ($impianti_collegati as $impianto) {
             $checks = Check::where('id_module_from', Module::where('name', 'Impianti')->first()->id)->where('id_record_from', $impianto['id'])->where('id_module', Module::where('name', 'Interventi')->first()->id)->where('id_record', $id_record)->where('id_parent', null)->get();
-            $has_images = $checks->where('id_immagine','!=', null)->count();
+            $has_images = $checks->where('id_immagine', '!=', null)->count();
 
             if (sizeof($checks)) {
                 echo '

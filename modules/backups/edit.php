@@ -237,7 +237,7 @@ if (setting('Permetti il ripristino di backup da file esterni')) {
                         </div>
                     </div>';
 }
-echo'
+echo '
                 </div>
             </div>
         </div>

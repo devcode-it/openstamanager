@@ -47,7 +47,7 @@ class Task extends Model
     public function log($level, $message, $context = [], $log = null)
     {
         if (!empty($context)) {
-            if( empty($log) ){
+            if (empty($log)) {
                 $log = new Log();
             }
 
@@ -83,7 +83,7 @@ class Task extends Model
         $this->save();
 
         // Registrazione del completamento nei log
-        $level = ($result['response']==1 ? 'info' : ($result['response']==2 ? 'warning' : 'error'));
+        $level = ($result['response'] == 1 ? 'info' : ($result['response'] == 2 ? 'warning' : 'error'));
         $this->log($level, 'Fine esecuzione', $result['message'], $log);
 
         return $result;

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -43,15 +44,15 @@ $query = "SELECT
 FROM zz_operations
 LEFT JOIN zz_users ON zz_operations.id_utente = zz_users.id
 LEFT JOIN an_anagrafiche ON zz_users.idanagrafica = an_anagrafiche.idanagrafica
-LEFT JOIN zz_modules_lang ON zz_operations.id_module = zz_modules_lang.id_record AND zz_modules_lang.id_lang = ".prepare(Models\Locale::getDefault()->id)."
-LEFT JOIN zz_plugins_lang ON zz_operations.id_plugin = zz_plugins_lang.id_record AND zz_plugins_lang.id_lang = ".prepare(Models\Locale::getDefault()->id)."
+LEFT JOIN zz_modules_lang ON zz_operations.id_module = zz_modules_lang.id_record AND zz_modules_lang.id_lang = ".prepare(Models\Locale::getDefault()->id).'
+LEFT JOIN zz_plugins_lang ON zz_operations.id_plugin = zz_plugins_lang.id_record AND zz_plugins_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).'
 ORDER BY zz_operations.created_at DESC
-LIMIT ".$limit." OFFSET ".$offset;
+LIMIT '.$limit.' OFFSET '.$offset;
 
 $operazioni = $dbo->fetchArray($query);
 
 // Query per contare il totale delle operazioni
-$count_query = "SELECT COUNT(*) as total FROM zz_operations";
+$count_query = 'SELECT COUNT(*) as total FROM zz_operations';
 $total_count = $dbo->fetchOne($count_query)['total'];
 
 if (!empty($operazioni)) {
@@ -80,13 +81,13 @@ if (!empty($operazioni)) {
 
         // Determina il colore in base al tipo di operazione
         $color_class = 'text-primary'; // Default blu
-        $op_lower = strtolower($operazione['op']);
+        $op_lower = strtolower((string) $operazione['op']);
 
-        if (strpos($op_lower, 'delete') !== false || strpos($op_lower, 'elimina') !== false || strpos($op_lower, 'rimuovi') !== false) {
+        if (str_contains($op_lower, 'delete') || str_contains($op_lower, 'elimina') || str_contains($op_lower, 'rimuovi')) {
             $color_class = 'text-danger'; // Rosso per eliminazioni
-        } elseif (strpos($op_lower, 'add') !== false || strpos($op_lower, 'aggiungi') !== false || strpos($op_lower, 'crea') !== false || strpos($op_lower, 'nuovo') !== false) {
+        } elseif (str_contains($op_lower, 'add') || str_contains($op_lower, 'aggiungi') || str_contains($op_lower, 'crea') || str_contains($op_lower, 'nuovo')) {
             $color_class = 'text-success'; // Verde per aggiunte
-        } elseif (strpos($op_lower, 'update') !== false || strpos($op_lower, 'modifica') !== false || strpos($op_lower, 'salva') !== false || strpos($op_lower, 'edit') !== false) {
+        } elseif (str_contains($op_lower, 'update') || str_contains($op_lower, 'modifica') || str_contains($op_lower, 'salva') || str_contains($op_lower, 'edit')) {
             $color_class = 'text-warning'; // Arancione per modifiche
         }
 

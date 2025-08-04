@@ -42,12 +42,12 @@ class BackupTask extends Manager
 
         if (setting('Backup automatico') && !\Backup::isDailyComplete()) {
             \Backup::daily();
-        }elseif(!setting('Backup automatico')){
+        } elseif (!setting('Backup automatico')) {
             $result = [
                 'response' => 2,
                 'message' => tr('Backup automatico disattivato'),
             ];
-        }else{
+        } else {
             $result = [
                 'response' => 2,
                 'message' => tr('Backup già eseguito'),

@@ -338,12 +338,11 @@ switch (filter('op')) {
 
         break;
 
-    // Abilita OTP per l'utente
+        // Abilita OTP per l'utente
     case 'enable_otp':
         $utente = User::find($id_utente);
 
         if ($utente) {
-
             $id_token = filter('id_token');
 
             // Aggiorna il token esistente per abilitare OTP
@@ -358,12 +357,11 @@ switch (filter('op')) {
 
         break;
 
-    // Disabilita OTP per l'utente
+        // Disabilita OTP per l'utente
     case 'disable_otp':
         $utente = User::find($id_utente);
 
         if ($utente) {
-
             $id_token = filter('id_token');
 
             // Disabilita OTP nel token dell'utente e resetta last_otp
@@ -378,7 +376,7 @@ switch (filter('op')) {
 
         break;
 
-    // Aggiorna configurazione OTP completa
+        // Aggiorna configurazione OTP completa
     case 'update_otp':
         $utente = User::find($id_utente);
         $id_token = filter('id_token');
@@ -386,7 +384,6 @@ switch (filter('op')) {
         $valido_al = filter('valido_al');
 
         if ($utente && !empty($id_token)) {
-            
             if (!empty($valido_dal)) {
                 // Valida che la data sia futura
                 if (strtotime($valido_dal) <= time()) {

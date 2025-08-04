@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9 (2025-08-08)](#29-2025-08-08)
 - [2.8.3 (2025-07-30)](#283-2025-07-30)
 - [2.8.2 (2025-07-09)](#282-2025-07-09)
 - [2.8.1 (2025-06-10)](#281-2025-06-10)
@@ -57,6 +58,46 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.9 (2025-08-08)
+### Aggiunto (Added)
+- Aggiunto footer predefinito ai template email
+- Aggiunta gestione log richieste API
+- Aggiunta gestione attivazione task
+- Aggiunto salvataggio allegati originali in fase d'invio mail
+- Aggiunto log gestione SMS
+- Aggiunta gestione cespiti e ammortamenti
+- Aggiunto miglioramento gestione log task con modulo di consultazione eventi
+- Aggiunta possibilità di allegare immagini alle checklist
+- Aggiunta scelta quantità di etichette da stampare
+- Aggiunta gestione login tramite OTP/Token
+- Aggiunta gestione risconti
+- Aggiunta gestione link nei menù a tendina
+- Aggiunta impostazione per raggruppare le righe con stesso articolo e barcode nei DDT
+- Aggiunta gestione barcode multipli articolo sui documenti
+- Aggiunta implementazione plugin Barcode per articoli e miglioramento gestione codici a barre
+- Aggiunto publiccode.yml per software PA
+- Aggiunta sezione ultime operazioni in stato dei servizi
+- Aggiunta colonna Rif. fattura in Contratti
+- Aggiunta visualizzazione anagrafica ultime vendite/acquisti
+- Aggiunto riferimento prima nota nelle scadenze
+
+### Modificato (Changed)
+- Miglioria grafica widget Rate contrattuali
+- Caricamento documenti collegati a tipo di attività via ajax
+
+### Fixed
+- Corretto ordinamento tabelle
+- Corretta eliminazione periodo temporale in statistiche
+- Corretto calcolo bollo da widget rate contrattuali
+- Corretto invio sollecito scadenza
+- Corretto invio mail con allegati
+- Corretto invio pec
+- Corretta aggiunta prima nota da edit prima nota
+- Corretta stampa ddt con sede di partenza e destinazione diverse
+- Corretta inizializzazione barcode in template di stampa
+- Corretta gestione note di credito nell'esportazione bonifici XML, venivano sommate
+- Corretta anteprima importi su evasione documenti
 
 ## 2.8.3 (2025-07-30)
 ### Modificato (Changed)

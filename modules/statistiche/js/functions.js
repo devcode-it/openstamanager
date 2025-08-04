@@ -19,7 +19,7 @@
 var manager = manager ? manager : undefined;
 
 function remove_calendar(button) {
-    var name = $(button).parent().find("input").attr("id");
+    var name = $(button).closest(".input-group").find("input").attr("id");
 
     if (manager.remove(name)) {
         $("#group-" + name).remove();

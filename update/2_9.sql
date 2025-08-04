@@ -309,3 +309,6 @@ SET `body` = CONCAT(`body`, '<div style="margin-top: 30px; padding-top: 20px; bo
 </div>')
 WHERE `id_lang` = 1;
 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Sede destinazione', 'Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in entrata'; 
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in uscita'; 

@@ -45,11 +45,11 @@ if (isset($id_original)) {
 
 	<div class="row">
         <div class="col-md-5">
-            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$title$" ]}
+            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome_add", "required": 1, "value": "$title$" ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "class": "colorpicker text-center", "value": "<?php echo $categoria->colore; ?>", "extra": "maxlength=\"7\"", "icon-after": "<div class='img-circle square'></div>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore_add", "id": "colore_", "class": "colorpicker text-center", "value": "<?php echo $categoria->colore; ?>", "extra": "maxlength=\"7\"", "icon-after": "<div class='img-circle square'></div>" ]}
         </div>
 
         <div class="col-md-2">
@@ -63,7 +63,7 @@ if (isset($id_original)) {
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "<?php echo $categoria ? $categoria->getTranslation('note') : ''; ?>", "rows": "3" ]}
+            {[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota_add", "value": "<?php echo $categoria ? $categoria->getTranslation('note') : ''; ?>", "rows": "3" ]}
         </div>
     </div>
 

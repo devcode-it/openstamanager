@@ -25,17 +25,17 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module_id", "values": "query=SELECT `zz_modules`.`id`, `title` as text FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module_id_add", "values": "query=SELECT `zz_modules`.`id`, `title` as text FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT `zz_plugins`.`id`, `title` as text FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id_add", "values": "query=SELECT `zz_plugins`.`id`, `title` as text FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1" ]}
 		</div>
     </div>
 
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name_add", "required": 1 ]}
 		</div>
 	</div>
 
@@ -45,7 +45,7 @@ include_once __DIR__.'/../../core.php';
             echo input([
                 'type' => 'textarea',
                 'label' => tr('Codice'),
-                'name' => 'content',
+                'name' => 'content_add',
                 'required' => 1,
                 'value' => '{[ "type": "text", "label": "|label|", "name": "|name|", "value": "|value|" ]}',
             ]);

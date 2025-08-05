@@ -40,14 +40,14 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $plugin = post('plugin_id') ?: null;
-        $module = $plugin ? null : post('module_id');
+        $plugin = post('plugin_id_add') ?: null;
+        $module = $plugin ? null : post('module_id_add');
 
         $dbo->insert('zz_fields', [
             'id_module' => $module,
             'id_plugin' => $plugin,
-            'name' => post('name'),
-            'content' => $_POST['content'],
+            'name' => post('name_add'),
+            'content' => $_POST['content_add'],
             'html_name' => secure_random_string(8),
         ]);
         $id_record = $dbo->lastInsertedID();

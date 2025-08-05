@@ -19,35 +19,35 @@
  */
 
 /**
- * Utility functions for displaying Prima Nota movements
+ * Utility functions for displaying Prima Nota movements.
  */
 
 /**
- * Renderizza una tabella con i movimenti di prima nota collegati a un documento o scadenza
+ * Renderizza una tabella con i movimenti di prima nota collegati a un documento o scadenza.
  *
  * @param int|null $id_documento ID del documento (fattura)
- * @param int|null $id_scadenza ID della scadenza
- * @param string|null $titolo Titolo personalizzato per la tabella
+ * @param int|null $id_scadenza  ID della scadenza
+ *
  * @return string HTML della tabella
-*/
-
-function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = null) {
+ */
+function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = null)
+{
     global $dbo;
 
-    $where_conditions = ["co_movimenti.primanota = 1"];
+    $where_conditions = ['co_movimenti.primanota = 1'];
     $params = [];
 
     if (!empty($id_documento)) {
-        $where_conditions[] = "co_movimenti.iddocumento = ?";
+        $where_conditions[] = 'co_movimenti.iddocumento = ?';
         $params[] = $id_documento;
     } elseif (!empty($id_scadenza)) {
-        $where_conditions[] = "co_movimenti.id_scadenza = ?";
+        $where_conditions[] = 'co_movimenti.id_scadenza = ?';
         $params[] = $id_scadenza;
     } else {
-        return "";
+        return '';
     }
 
-    $where_clause = implode(" AND ", $where_conditions);
+    $where_clause = implode(' AND ', $where_conditions);
 
     $query = "SELECT
         co_movimenti.idmastrino,

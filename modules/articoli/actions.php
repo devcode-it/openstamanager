@@ -97,6 +97,52 @@ switch (post('op')) {
         $id_record = $articolo->id;
         $iva = post('idiva_vendita') ? Aliquota::find(post('idiva_vendita')) : null;
 
+        if (post('genera_barcode')) {
+            // Genera un barcode unico controllando sia la tabella mg_articoli che mg_articoli_barcode
+            // per evitare conflitti con barcode esistenti sia principali che aggiuntivi
+            $tentativi = 0;
+            $max_tentativi = 1000; // Limite massimo di tentativi per evitare loop infiniti
+
+            do {
+                // Genera il codice EAN-13 basato sull'ID dell'articolo più il numero di tentativi
+                $codice = '200'.str_pad((string) ($articolo->id + $tentativi), 9, '0', STR_PAD_LEFT);
+                $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+
+                // Controlla se il barcode è già presente nella tabella mg_articoli (barcode principali)
+                $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;
+
+                // Controlla se il barcode è già presente nella tabella mg_articoli_barcode (barcode aggiuntivi)
+                $esistente_barcode = $dbo->table('mg_articoli_barcode')
+                    ->where('barcode', $barcode)
+                    ->count() > 0;
+
+                // Controlla se il barcode coincide con un codice articolo esistente
+                // per evitare conflitti tra barcode e codici articolo
+                $coincide_codice = Articolo::where([
+                    ['codice', $barcode],
+                    ['barcode', '=', ''],
+                ])->count() > 0;
+
+                ++$tentativi;
+            } while (($esistente_articoli || $esistente_barcode || $coincide_codice) && $tentativi < $max_tentativi);
+
+            // Se dopo tutti i tentativi non è stato trovato un barcode unico, non genera il barcode
+            if ($tentativi >= $max_tentativi) {
+                $barcode = null;
+                flash()->warning(tr('Impossibile generare un barcode unico dopo _NUM_ tentativi', [
+                    '_NUM_' => $max_tentativi,
+                ]));
+            }
+        }
+
+        $barcode = ($barcode ?: post('barcode'));
+        if (!empty($barcode)) {
+            $dbo->insert('mg_articoli_barcode', [
+                'idarticolo' => $id_record,
+                'barcode' => $barcode,
+            ]);
+        }
+
         if (isAjaxRequest()) {
             echo json_encode([
                 'id' => $id_record,
@@ -322,12 +368,12 @@ switch (post('op')) {
             ]), date('Y-m-d'));
         }
 
-        flash()->info(tr('Aggiunti _NUM_ seriali!', [
-            '_NUM_' => $count,
-        ]));
-
-        if ($count != $totale) {
-            flash()->warning(tr('Alcuni seriali erano già presenti').'...');
+        if ($count > 0) {
+            flash()->info(tr('Aggiunti _NUM_ seriali!', [
+                '_NUM_' => $count,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun seriale è stato aggiunto. Verifica che i seriali inseriti non esistano già.'));
         }
 
         break;
@@ -471,6 +517,47 @@ switch (post('op')) {
         echo json_encode([
             'barcode' => $barcode,
         ]);
+        // Genera un barcode unico controllando sia la tabella mg_articoli che mg_articoli_barcode
+        // per garantire l'unicità anche considerando i barcode aggiuntivi degli articoli
+        $tentativi = 0;
+        $max_tentativi = 1000; // Limite massimo di tentativi per evitare loop infiniti
+
+        do {
+            // Genera il codice EAN-13 basato sull'ID dell'articolo più il numero di tentativi
+            $codice = '200'.str_pad((string) ($id_record + $tentativi), 9, '0', STR_PAD_LEFT);
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+
+            // Controlla se il barcode è già presente nella tabella mg_articoli (barcode principali)
+            $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;
+
+            // Controlla se il barcode è già presente nella tabella mg_articoli_barcode (barcode aggiuntivi)
+            $esistente_barcode = $dbo->table('mg_articoli_barcode')
+                ->where('barcode', $barcode)
+                ->count() > 0;
+
+            // Controlla se il barcode coincide con un codice articolo esistente
+            // per evitare conflitti tra barcode e codici articolo
+            $coincide_codice = Articolo::where([
+                ['codice', $barcode],
+                ['barcode', '=', ''],
+            ])->count() > 0;
+
+            ++$tentativi;
+        } while (($esistente_articoli || $esistente_barcode || $coincide_codice) && $tentativi < $max_tentativi);
+
+        // Se dopo tutti i tentativi non è stato trovato un barcode unico, restituisce un errore
+        if ($tentativi >= $max_tentativi) {
+            echo json_encode([
+                'error' => tr('Impossibile generare un barcode unico dopo _NUM_ tentativi', [
+                    '_NUM_' => $max_tentativi,
+                ]),
+            ]);
+        } else {
+            // Restituisce il barcode generato con successo
+            echo json_encode([
+                'barcode' => $barcode,
+            ]);
+        }
 
         break;
 }

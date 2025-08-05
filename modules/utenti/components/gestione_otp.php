@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -26,6 +27,7 @@ $utente = User::find($id_utente);
 
 if (empty($utente)) {
     echo '<div class="alert alert-danger">'.tr('Utente non trovato').'</div>';
+
     return;
 }
 
@@ -57,13 +59,13 @@ $otp_url = base_url().'/?token='.$token_record['token'];
 
 // Verifica se il token è scaduto
 if (!empty($token_record['valido_dal']) && !empty($token_record['valido_al'])) {
-    $is_not_active = strtotime($token_record['valido_dal']) > time() || strtotime($token_record['valido_al']) < time();
+    $is_not_active = strtotime((string) $token_record['valido_dal']) > time() || strtotime((string) $token_record['valido_al']) < time();
 }
 if (!empty($token_record['valido_dal']) && empty($token_record['valido_al'])) {
-    $is_not_active = strtotime($token_record['valido_dal']) > time();
+    $is_not_active = strtotime((string) $token_record['valido_dal']) > time();
 }
 if (empty($token_record['valido_dal']) && !empty($token_record['valido_al'])) {
-    $is_not_active = strtotime($token_record['valido_al']) < time();
+    $is_not_active = strtotime((string) $token_record['valido_al']) < time();
 }
 
 $is_otp_enabled = $token_record['enabled'];
@@ -113,7 +115,7 @@ echo '
                         <div class="form-group">
                             <label>'.tr('Stato OTP').':</label>
                             <div class="d-block">
-                                <span style="padding:9px;font-size:9pt;" class="badge badge-'.($is_otp_enabled ? ($is_not_active ? 'warning' : 'success') : 'danger' ).'">
+                                <span style="padding:9px;font-size:9pt;" class="badge badge-'.($is_otp_enabled ? ($is_not_active ? 'warning' : 'success') : 'danger').'">
                                     '.($is_otp_enabled ? ($is_not_active ? tr('Non attivo') : tr('Abilitato')) : tr('Disabilitato')).'
                                 </span>
                             </div>
@@ -134,7 +136,7 @@ echo '
                     '<button type="button" class="btn btn-success ml-2" id="enable_otp_btn">
                         <i class="fa fa-check"></i> '.tr('Attiva OTP').'
                     </button>'
-                ).'
+).'
             </div>
             ' : '
             <div class="card-footer">

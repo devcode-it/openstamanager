@@ -198,6 +198,14 @@ switch ($operazione) {
             $copia->save();
         }
 
+        // Per fatture di vendita, forza il calcolo automatico del bollo
+        if ($fattura->direzione == 'entrata') {
+            $fattura->addebita_bollo = 1;
+            unset($fattura->attributes['bollo']);
+        }
+
+        $fattura->save();
+
         // Salvataggio fattura nella pianificazione
         $pianificazione->fattura()->associate($fattura);
         $pianificazione->save();
@@ -250,6 +258,14 @@ switch ($operazione) {
                 $copia->id_conto = $id_conto;
                 $copia->save();
             }
+
+            // Per fatture di vendita, forza il calcolo automatico del bollo
+            if ($fattura->direzione == 'entrata') {
+                $fattura->addebita_bollo = 1;
+                unset($fattura->attributes['bollo']);
+            }
+
+            $fattura->save();
 
             // Salvataggio fattura nella pianificazione
             $pianificazione->fattura()->associate($fattura);

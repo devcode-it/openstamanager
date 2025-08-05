@@ -84,7 +84,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
             exit;
         }
     }
-        
+
     $module = Auth::firstModule();
 
     if (!empty($module)) {

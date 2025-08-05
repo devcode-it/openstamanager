@@ -132,70 +132,125 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
-<?php
-// Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte nel gestionale
-// UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
-// UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
-$elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`, id, codice AS numero, data_richiesta AS data, "Attività" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
-UNION
-SELECT `in_interventi_tecnici`.`idtipointervento`, idintervento AS id, codice AS numero, orario_inizio AS data, "Sessione intervento" AS tipo_documento FROM `in_interventi_tecnici` LEFT JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE `in_interventi_tecnici`.`idtipointervento` = '.prepare($id_record).'
-UNION
-SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento`, idanagrafica AS id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'
-UNION
-SELECT `co_preventivi`.`idtipointervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`idtipointervento` = '.prepare($id_record).'
-UNION
-SELECT `co_promemoria`.`idtipointervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
-ORDER BY `idtipointervento`');
-
-if (!empty($elementi)) {
-    echo '
-<div class="card card-warning collapsable collapsed-card">
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-        '_NUM_' => count($elementi),
-    ]).'</h3>
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati'); ?></span></h3>
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="card-body">
-        <ul>';
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso'); ?>...
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
+    </div>
+</div>
 
-    foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-            '_DOC_' => $elemento['tipo_documento'],
-            '_NUM_' => $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
-        ]);
+<script type="text/javascript">
+$(document).ready(function() {
+    var documentiCaricati = false;
 
-        if (in_array($elemento['tipo_documento'], ['Attività'])) {
-            $modulo = 'Interventi';
-        }
-        if (in_array($elemento['tipo_documento'], ['Sessione intervento'])) {
-            $modulo = 'Interventi';
-        }
-        if (in_array($elemento['tipo_documento'], ['Anagrafica'])) {
-            $modulo = 'Anagrafiche';
-        }
-        if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
-            $modulo = 'Preventivi';
-        }
-        if (in_array($elemento['tipo_documento'], ['Promemoria contratto'])) {
-            $modulo = 'Contratti';
-        }
-        $id = $elemento['id'];
+    // Mostra la card inizialmente e carica il conteggio
+    $('#documenti-collegati-card').show();
+    caricaConteggio();
 
-        echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    // Carica i documenti quando il card viene espanso
+    // Utilizziamo l'evento specifico di AdminLTE per il collapse/expand
+    $('#documenti-collegati-card').on('expanded.lte.cardwidget', function() {
+        console.log('Card espansa (evento AdminLTE), documentiCaricati:', documentiCaricati);
+        if (!documentiCaricati) {
+            console.log('Carico documenti collegati...');
+            caricaDocumentiCollegati();
+        }
+    });
+
+    // Fallback: se l'evento AdminLTE non funziona, usa il click diretto
+    $('#documenti-collegati-toggle').on('click', function() {
+        console.log('Click sul toggle (fallback), documentiCaricati:', documentiCaricati);
+        console.log('Card ha classe collapsed-card:', $('#documenti-collegati-card').hasClass('collapsed-card'));
+
+        if (!documentiCaricati && $('#documenti-collegati-card').hasClass('collapsed-card')) {
+            console.log('Fallback: carico documenti tra 500ms');
+            setTimeout(function() {
+                console.log('Fallback timeout: verifico stato card');
+                console.log('Card collapsed dopo timeout:', $('#documenti-collegati-card').hasClass('collapsed-card'));
+                if (!$('#documenti-collegati-card').hasClass('collapsed-card')) {
+                    console.log('Card espansa, carico documenti');
+                    caricaDocumentiCollegati();
+                } else {
+                    console.log('Card ancora collassata, forzo il caricamento comunque');
+                    // Se la card non si espande correttamente, carica comunque i documenti
+                    caricaDocumentiCollegati();
+                }
+            }, 500);
+        }
+    });
+
+    function caricaConteggio() {
+        $.get('<?php echo $module->fileurl('ajax_documenti_collegati.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&count_only=1')
+        .done(function(data) {
+            var response;
+
+            // Se la risposta è già un oggetto (jQuery ha fatto il parsing automatico)
+            if (typeof data === 'object') {
+                response = data;
+            } else {
+                // Prova a fare il parsing manuale
+                try {
+                    var cleanData = data.trim();
+                    response = JSON.parse(cleanData);
+                } catch (e) {
+
+                    // In caso di errore, mantieni la card visibile
+                    $('#documenti-collegati-title').text('<?php echo tr('Documenti collegati'); ?>');
+                    $('#documenti-collegati-card').show();
+                    return;
+                }
+            }
+
+            if (response.count > 0) {
+                $('#documenti-collegati-title').text('<?php echo tr('Documenti collegati'); ?>: ' + response.count);
+                $('#documenti-collegati-card').show();
+            } else {
+                $('#documenti-collegati-card').hide();
+            }
+        })
+        .fail(function(xhr, status, error) {
+            // In caso di errore di rete, mantieni la card visibile
+            $('#documenti-collegati-title').text('<?php echo tr('Documenti collegati'); ?>');
+            $('#documenti-collegati-card').show();
+        });
     }
 
-    echo '
-        </ul>
-    </div>
-</div>';
-}
+    function caricaDocumentiCollegati() {
+        if (documentiCaricati) return;
 
+        $('#documenti-collegati-loading').show();
+        $('#documenti-collegati-content').hide();
+
+        var url = '<?php echo $module->fileurl('ajax_documenti_collegati.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>';
+        $.get(url)
+        .done(function(data) {
+            $('#documenti-collegati-loading').hide();
+            $('#documenti-collegati-content').html(data).show();
+            documentiCaricati = true;
+        })
+        .fail(function(xhr, status, error) {
+            $('#documenti-collegati-loading').hide();
+            var errorMsg = '<?php echo tr('Errore nel caricamento dei documenti collegati'); ?>';
+            if (xhr.responseText) {
+                errorMsg += ': ' + xhr.responseText;
+            }
+            $('#documenti-collegati-content').html('<div class="alert alert-danger">' + errorMsg + '</div>').show();
+        });
+    }
+});
+</script>
+
+<?php
 echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
+?>

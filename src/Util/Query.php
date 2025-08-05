@@ -104,7 +104,7 @@ class Query
                 }
             } else {
                 // Per filtri custom, salta il primo elemento e processa il resto
-                for ($k = 1; $k < count($dates); $k++) {
+                for ($k = 1; $k < count($dates); ++$k) {
                     if (!empty($dates[$k])) {
                         $filters[] = trim($dates[$k]);
                     }
@@ -126,10 +126,10 @@ class Query
         $period_end = $_SESSION['period_end'] ?? date('Y-12-31');
 
         // Validazione formato date
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $period_start)) {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $period_start)) {
             $period_start = date('Y-01-01');
         }
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $period_end)) {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $period_end)) {
             $period_end = date('Y-12-31');
         }
 
@@ -161,9 +161,9 @@ class Query
         try {
             $patterns = formatter()->getSQLPatterns();
             foreach ($patterns as $key => $value) {
-                $replace['|'.$key.'_format|'] = "'".addslashes($value)."'";
+                $replace['|'.$key.'_format|'] = "'".addslashes((string) $value)."'";
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
 
         // Sostituzione effettiva
@@ -246,8 +246,6 @@ class Query
             }
 
             if (isset($total['order_by'][$column_index])) {
-                // Rimozione ORDER BY esistente in modo più efficiente
-                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', $query);
                 $order_clause = $total['order_by'][$column_index];
 
                 // Determina la clausola di ordinamento da usare
@@ -267,7 +265,8 @@ class Query
 
                 // Applica l'ordinamento solo se abbiamo una clausola valida
                 if (!empty($final_order_clause)) {
-                    $query = preg_replace('/\s+ORDER\s+BY\s+.*$/is', '', $query);
+                    // Rimozione ORDER BY esistente con regex più robusta
+                    $query = preg_replace('/\s+ORDER\s+BY\s+[^)]*$/is', '', (string) $query);
                     $query .= ' ORDER BY '.$final_order_clause.' '.$direction;
                 }
             }
@@ -310,7 +309,7 @@ class Query
             ];
         } catch (\Exception $e) {
             // Log dell'errore e fallback
-            error_log('Query execution error: ' . $e->getMessage());
+            error_log('Query execution error: '.$e->getMessage());
 
             return [
                 'results' => [],
@@ -400,10 +399,17 @@ class Query
     }
 
     /**
+     * Pulisce la cache delle query per liberare memoria.
+     */
+    public static function clearCache()
+    {
+        self::$query_cache = [];
+    }
+
+    /**
      * Costruisce un filtro di ricerca ottimizzato per un campo specifico.
      *
      * @param string $field
-     * @param mixed $value
      * @param string $search_query
      *
      * @return string|null
@@ -460,17 +466,19 @@ class Query
         // Gestione pattern matching
         elseif ($start_with) {
             $clean_value = trim(str_replace(['^'], '', $value));
+
             return $search_query.' LIKE '.prepare($clean_value.'%');
-        }
-        elseif ($end_with) {
+        } elseif ($end_with) {
             $clean_value = trim(str_replace(['$'], '', $value));
+
             return $search_query.' LIKE '.prepare('%'.$clean_value);
         }
         // Gestione lista valori
-        elseif (str_contains($value, ',')) {
-            $values = array_filter(array_map('trim', explode(',', $value)));
+        elseif (str_contains((string) $value, ',')) {
+            $values = array_filter(array_map('trim', explode(',', (string) $value)));
             if (!empty($values)) {
                 $escaped_values = array_map('prepare', $values);
+
                 return $search_query.' IN ('.implode(', ', $escaped_values).')';
             }
         }
@@ -498,6 +506,7 @@ class Query
         // Gestione date in formato DD/MM/YYYY
         if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $clean_value, $m)) {
             $date = "'{$m[3]}-{$m[2]}-{$m[1]}'";
+
             return $search_query.' '.$operator.' '.$date;
         }
         // Gestione valori numerici
@@ -537,7 +546,7 @@ class Query
         }
 
         if (!$clean_value) {
-            return ('('.$search_query.' IS NULL OR '.$search_query.' = \'\')');
+            return '('.$search_query.' IS NULL OR '.$search_query.' = \'\')';
         }
 
         return $search_query.' = '.prepare($clean_value);
@@ -563,7 +572,6 @@ class Query
      * Costruisce un filtro per il campo ID.
      *
      * @param string $field
-     * @param mixed $original_value
      *
      * @return string|null
      */
@@ -607,14 +615,6 @@ class Query
     }
 
     /**
-     * Pulisce la cache delle query per liberare memoria.
-     */
-    public static function clearCache()
-    {
-        self::$query_cache = [];
-    }
-
-    /**
      * Ottimizza una query rimuovendo spazi extra e migliorando la struttura.
      *
      * @param string $query
@@ -627,10 +627,10 @@ class Query
         $query = preg_replace('/\s+/', ' ', $query);
 
         // Rimozione spazi attorno agli operatori
-        $query = preg_replace('/\s*(=|!=|<|>|<=|>=)\s*/', '$1', $query);
+        $query = preg_replace('/\s*(=|!=|<|>|<=|>=)\s*/', '$1', (string) $query);
 
         // Trim generale
-        return trim($query);
+        return trim((string) $query);
     }
 
     /**
@@ -645,7 +645,7 @@ class Query
         // Lista di parole chiave pericolose
         $dangerous_keywords = [
             'DROP', 'DELETE', 'TRUNCATE', 'ALTER', 'CREATE', 'INSERT', 'UPDATE',
-            'GRANT', 'REVOKE', 'EXEC', 'EXECUTE', 'UNION', 'LOAD_FILE', 'INTO OUTFILE'
+            'GRANT', 'REVOKE', 'EXEC', 'EXECUTE', 'UNION', 'LOAD_FILE', 'INTO OUTFILE',
         ];
 
         $upper_query = strtoupper($query);

@@ -327,7 +327,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Per gli articoli collegati a ordini, mantieni la descrizione dell'articolo e aggiungi solo il riferimento
                 if ($obj->isArticolo()) {
                     // Mantieni la descrizione dell'articolo e aggiungi solo il riferimento al documento
-                    $obj->descrizione = $obj->articolo->getTranslation('title') . $nuovo_riferimento;
+                    $obj->descrizione = $obj->articolo->getTranslation('title').$nuovo_riferimento;
                 } else {
                     // Per righe e descrizioni, gestisci normalmente
                     $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';
@@ -368,7 +368,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 }
 
                 // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
-                if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && strtolower($riga['UnitaMisura']) == strtolower($articolo->um_secondaria)) {
+                if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && strtolower((string) $riga['UnitaMisura']) == strtolower((string) $articolo->um_secondaria)) {
                     $qta = (($riga['Quantita'] ?: 1) / ($articolo->fattore_um_secondaria ?: 1));
                     $prezzo = $totale_righe_riepilogo > 0 ? $totale_righe_riepilogo / ($qta ?: 1) : -($totale_righe_riepilogo / ($qta ?: 1));
                 } else {

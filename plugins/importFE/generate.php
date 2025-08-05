@@ -232,8 +232,8 @@ if (!empty($pagamenti)) {
             </div>
             <div class="card-body">
                 <p>'.tr('La fattura presenta _NUM_ rat_E_ di pagamento', [
-    '_NUM_' => count($metodi),
-    '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+        '_NUM_' => count($metodi),
+        '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
     ]).':</p>
                 <ul class="list-unstyled">';
 

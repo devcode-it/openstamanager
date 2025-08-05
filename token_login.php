@@ -180,7 +180,7 @@ if (empty($token_record)) {
         'ip' => get_client_ip(),
         'stato' => Auth::getStatus()['failed']['code'],
         'id_utente' => null,
-        'user_agent' => \Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
+        'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
 
     flash()->warning(tr('Token non valido o non abilitato'));
@@ -206,7 +206,7 @@ if ($is_not_active) {
         'ip' => get_client_ip(),
         'stato' => Auth::getStatus()['failed']['code'],
         'id_utente' => $token_record['id_utente'] ?: null,
-        'user_agent' => \Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
+        'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
 
     flash()->warning(tr('Token non attivo'));
@@ -214,7 +214,7 @@ if ($is_not_active) {
     exit;
 }
 
-if(!empty($token_record['id_utente'])){
+if (!empty($token_record['id_utente'])) {
     $utente = User::find($token_record['id_utente']);
 
     if (!$utente || !$utente->enabled) {
@@ -224,7 +224,7 @@ if(!empty($token_record['id_utente'])){
             'ip' => get_client_ip(),
             'stato' => Auth::getStatus()['failed']['code'],
             'id_utente' => $token_record['id_utente'] ?: null,
-            'user_agent' => \Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
+            'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
         ]);
 
         flash()->warning(tr('Utente non abilitato'));
@@ -312,7 +312,7 @@ if ($tipo_accesso == 'otp') {
                 $template = Template::find($template_id);
 
                 if ($template) {
-                    $mail = Mail::build((!empty($utente)?$utente:null), $template, (!empty($utente)?$utente->id:null));
+                    $mail = Mail::build(!empty($utente) ? $utente : null, $template, !empty($utente) ? $utente->id : null);
                     $mail->addReceiver($token_record['email']);
 
                     // Sostituisci la variabile {codice_otp} nel subject e body
@@ -324,18 +324,17 @@ if ($tipo_accesso == 'otp') {
                     $mail->save();
 
                     $email = EmailNotification::build($mail);
-                    if($email->send()){
+                    if ($email->send()) {
                         $_SESSION['otp_last_sent_'.$token_record['id']] = time();
                     }
                 }
             } catch (Exception $e) {
                 flash()->error(tr('Errore durante l\'invio dell\'email OTP: _MSG_', [
-                    '_MSG_' => $e->getMessage()
+                    '_MSG_' => $e->getMessage(),
                 ]));
                 redirect(base_path().'/token_login.php?token='.urlencode($token));
                 exit;
             }
-
         } else {
             // Non inviare email, mostra tempo rimanente
             $remaining_time = $cooldown_period - $time_since_last_sent;
@@ -356,7 +355,7 @@ if ($tipo_accesso == 'otp') {
 // Controllo se l'utente è già autenticato
 if (Auth::check()) {
     $module = Auth::firstModule();
-    
+
     if (!empty($module)) {
         redirect(base_path().'/controller.php?id_module='.$module);
     } else {
@@ -429,8 +428,8 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 <p class="login-box-msg text-secondary"><i class="fa fa-shield mr-2"></i>'.tr('Accesso con codice OTP').'</p>
                 <div class="alert alert-info">
                     <i class="fa fa-info-circle mr-2"></i>'.tr('Per accedere al gestionale è necessario un codice di verifica che verrà inviato all\'indirizzo email: <strong>_EMAIL_</strong>', [
-                        '_EMAIL_' => blurEmail($token_record['email'])
-                    ]).'
+        '_EMAIL_' => blurEmail($token_record['email']),
+    ]).'
                 </div>';
 
     // Mostra informazioni sul token se disponibili
@@ -505,7 +504,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 <form action="?op=request_otp" method="post" autocomplete="off">
                     <input type="hidden" name="token" value="'.htmlspecialchars($token).'">
 
-                    <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm" id="request-otp-button" '.($should_send_email && $time_since_last_sent > 0 ?:'disabled').'>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm" id="request-otp-button" '.($should_send_email && $time_since_last_sent > 0 ?: 'disabled').'>
                         <i class="fa fa-envelope mr-2"></i>'.tr('Richiedi codice OTP').'
                     </button>
                 </form>
@@ -564,8 +563,8 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                     <p class="login-box-msg text-secondary"><i class="fa fa-shield mr-2"></i>'.tr('Inserisci il codice OTP').'</p>
                     <div class="alert alert-info">
                         <i class="fa fa-info-circle mr-2"></i>'.tr('È stato inviato un codice di verifica all\'indirizzo email <strong>_EMAIL_</strong>, inseriscilo qui sotto.', [
-                            '_EMAIL_' => blurEmail($token_record['email'])
-                        ]).'
+        '_EMAIL_' => blurEmail($token_record['email']),
+    ]).'
                     </div>';
 
     // Mostra informazioni sul token se disponibili

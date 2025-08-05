@@ -35,12 +35,12 @@ echo '<style>
 </style>';
 
 if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
-    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo',$_SESSION['superselect']['id_articolo_barcode'])->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo', $_SESSION['superselect']['id_articolo_barcode'])->get();
     unset($_SESSION['superselect']['id_articolo_barcode']);
-} elseif( !empty(get('idbarcode')) ){
-    $barcodes = $dbo->table('mg_articoli_barcode')->where('id',get('idbarcode'))->get();
+} elseif (!empty(get('idbarcode'))) {
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('id', get('idbarcode'))->get();
 } else {
-    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo',$id_record)->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo', $id_record)->get();
 }
 
 // Inizializza $records come array vuoto
@@ -48,13 +48,13 @@ $records = [];
 
 // Verifica che $barcodes non sia null o vuoto
 if (!empty($barcodes) && is_array($barcodes)) {
-    if( !empty(get('qta')) ){
-        foreach($barcodes as $barcode) {
-            for( $i=0; $i<get('qta'); $i++ ){
+    if (!empty(get('qta'))) {
+        foreach ($barcodes as $barcode) {
+            for ($i = 0; $i < get('qta'); ++$i) {
                 $records[] = $barcode;
             }
         }
-    }else{
+    } else {
         $records = $barcodes;
     }
 }
@@ -69,13 +69,13 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 // Verifica che ci siano records da elaborare
 if (!empty($records)) {
     foreach ($records as $record) {
-    $articolo = Articolo::find($record->idarticolo);
-    $barcode = $record->barcode;
+        $articolo = Articolo::find($record->idarticolo);
+        $barcode = $record->barcode;
 
-    if ($i % 5 == 0) {
-        echo '</tr><tr>';
-    }
-    echo '
+        if ($i % 5 == 0) {
+            echo '</tr><tr>';
+        }
+        echo '
     <td class="barcode-cell">
         <p style="font-size:11pt;"><b>'.$articolo->codice.'</b></p>
         <p style="font-size:10pt;">'.$articolo->getTranslation('title').'</p><br>
@@ -84,7 +84,7 @@ if (!empty($records)) {
         <p><b>'.$barcode.'</b></p>
     </td><br><br>';
 
-    ++$i;
+        ++$i;
     }
 }
 

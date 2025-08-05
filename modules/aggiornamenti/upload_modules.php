@@ -42,7 +42,7 @@ $extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 if (file_exists($extraction_dir.'/VERSION')) {
     // Salva il file di configurazione
     $config = file_get_contents(base_dir().'/config.inc.php');
-    
+
     // Rinomina la cartella vendor per evitare conflitti
     if (is_dir(base_dir().'/vendor')) {
         copyr(base_dir().'/vendor', base_dir().'/vendor.old');
@@ -153,7 +153,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         }
 
         // Modules
-        else{
+        else {
             $insert['default'] = 0;
         }
 

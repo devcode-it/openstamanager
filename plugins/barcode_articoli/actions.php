@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -25,40 +26,40 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addbarcode':
-         if (!empty(post('barcode'))) {
-             // Controllo aggiuntivo per verificare l'unicità del barcode prima dell'inserimento
-             // anche se la validazione dovrebbe già averlo controllato
-             $barcode_value = post('barcode');
+        if (!empty(post('barcode'))) {
+            // Controllo aggiuntivo per verificare l'unicità del barcode prima dell'inserimento
+            // anche se la validazione dovrebbe già averlo controllato
+            $barcode_value = post('barcode');
 
-             // Verifica che il barcode non sia già presente nella tabella mg_articoli
-             $esistente_articoli = Articolo::where('barcode', $barcode_value)->count() > 0;
+            // Verifica che il barcode non sia già presente nella tabella mg_articoli
+            $esistente_articoli = Articolo::where('barcode', $barcode_value)->count() > 0;
 
-             // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode
-             $esistente_barcode = $dbo->table('mg_articoli_barcode')
-                 ->where('barcode', $barcode_value)
-                 ->count() > 0;
+            // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode
+            $esistente_barcode = $dbo->table('mg_articoli_barcode')
+                ->where('barcode', $barcode_value)
+                ->count() > 0;
 
-             // Verifica che il barcode non coincida con un codice articolo esistente
-             $coincide_codice = Articolo::where([
-                 ['codice', $barcode_value],
-                 ['barcode', '=', '']
-             ])->count() > 0;
+            // Verifica che il barcode non coincida con un codice articolo esistente
+            $coincide_codice = Articolo::where([
+                ['codice', $barcode_value],
+                ['barcode', '=', ''],
+            ])->count() > 0;
 
-             // Se il barcode è unico, procede con l'inserimento
-             if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
-                 $dbo->insert('mg_articoli_barcode', [
+            // Se il barcode è unico, procede con l'inserimento
+            if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
+                $dbo->insert('mg_articoli_barcode', [
                     'idarticolo' => $id_parent,
                     'barcode' => $barcode_value,
                 ]);
                 $id_record = $dbo->lastInsertedID();
 
                 flash()->info(tr('Aggiunto un nuovo barcode!'));
-             } else {
-                 flash()->error(tr('Il barcode è già utilizzato in un altro articolo o nei suoi barcode aggiuntivi'));
-             }
-         } else {
-             flash()->warning(tr('Errore durante aggiunta del barcode'));
-         }
+            } else {
+                flash()->error(tr('Il barcode è già utilizzato in un altro articolo o nei suoi barcode aggiuntivi'));
+            }
+        } else {
+            flash()->warning(tr('Errore durante aggiunta del barcode'));
+        }
 
         break;
 
@@ -80,7 +81,7 @@ switch ($operazione) {
         // Verifica che il barcode non coincida con un codice articolo esistente
         $coincide_codice = Articolo::where([
             ['codice', $barcode_value],
-            ['barcode', '=', '']
+            ['barcode', '=', ''],
         ])->count() > 0;
 
         // Se il barcode è unico, procede con l'aggiornamento
@@ -105,10 +106,9 @@ switch ($operazione) {
         break;
 
     case 'manage-btn':
-
         $btnid = post('btnid');
 
-        if( empty($btnid) ){
+        if (empty($btnid)) {
             $dbo->insert('mg_btn_articoli', [
                 'colore' => post('colore'),
                 'descrizione' => post('descrizione_pulsante'),
@@ -118,11 +118,11 @@ switch ($operazione) {
 
             $btnid = $dbo->lastInsertedID();
             flash()->info(tr('Pulsante aggiornato!'));
-        }else{
-            if( empty(post('colore')) && empty(post('descrizione_pulsante')) && empty(post('usa_immagine')) ){
-                $dbo->query("DELETE FROM mg_btn_articoli WHERE id=".prepare($btnid));
+        } else {
+            if (empty(post('colore')) && empty(post('descrizione_pulsante')) && empty(post('usa_immagine'))) {
+                $dbo->query('DELETE FROM mg_btn_articoli WHERE id='.prepare($btnid));
                 flash()->info(tr('Pulsante rimosso!'));
-            }else{
+            } else {
                 $dbo->update('mg_btn_articoli', [
                     'colore' => post('colore'),
                     'descrizione' => post('descrizione_pulsante'),
@@ -132,8 +132,8 @@ switch ($operazione) {
             }
         }
 
-        $dbo->query("DELETE FROM mg_btn_magazzini WHERE btn_id=".prepare($btnid));
-        foreach(post('idmagazzini') as $idmagazzino){
+        $dbo->query('DELETE FROM mg_btn_magazzini WHERE btn_id='.prepare($btnid));
+        foreach (post('idmagazzini') as $idmagazzino) {
             $dbo->insert('mg_btn_magazzini', [
                 'btn_id' => $btnid,
                 'idmagazzino' => $idmagazzino,

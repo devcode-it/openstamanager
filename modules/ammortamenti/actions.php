@@ -20,11 +20,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\PrimaNota\Mastrino;
-use Modules\PrimaNota\Movimento;
+use Carbon\Carbon;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
-use Carbon\Carbon;
+use Modules\PrimaNota\Mastrino;
+use Modules\PrimaNota\Movimento;
 
 switch (filter('op')) {
     case 'add_ammortamento':
@@ -47,37 +47,37 @@ switch (filter('op')) {
                 }
             }
         }
-        
+
         // Elimino le righe di ammortamento precedenti
         $dbo->query('DELETE FROM `co_righe_ammortamenti` WHERE `id_riga` = '.prepare($id_record));
         foreach ($anni as $i => $anno) {
             $perc = $percentuale[$i];
-            
+
             if ($perc) {
                 // Calcolo importo in base alla percentuale
                 $importo = $riga->subtotale * $perc / 100;
-                
+
                 // Creazione mastrino
                 $data = Carbon::createFromDate($anno, 12, 31);
                 $descrizione = 'Ammortamento del '.$data->format('d/m/Y').' - '.$perc.'%';
                 $mastrino = Mastrino::build($descrizione, $data, false, true);
-                
+
                 // Movimento in dare (conto della riga)
                 $movimento_dare = Movimento::build($mastrino, $id_conto_dare);
                 $movimento_dare->setTotale($importo, 0);
                 $movimento_dare->save();
-                
+
                 // Movimento in avere (conto selezionato)
                 $movimento_avere = Movimento::build($mastrino, $id_conto_avere);
                 $movimento_avere->setTotale(0, $importo);
                 $movimento_avere->save();
-                
+
                 // Salvataggio record ammortamento
                 $dbo->query('INSERT INTO `co_righe_ammortamenti` (`id_riga`, `anno`, `id_conto`, `percentuale`, `id_mastrino`) VALUES ('.prepare($id_record).', '.prepare($anno).', '.prepare($id_conto).', '.prepare($perc).', '.prepare($movimento_dare->idmastrino).')');
             }
         }
-        
+
         flash()->info(tr('Ammortamenti registrati con successo!'));
-        
+
         break;
 }

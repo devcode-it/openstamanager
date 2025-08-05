@@ -87,7 +87,6 @@ class Permissions
         if (!self::getSkip()) {
             // Gestione accesso tramite token
             if (self::isTokenAccess()) {
-
                 $permissions = ['r', 'rw', 'ra', 'rwa'];
 
                 // Verifica permessi del token
@@ -171,6 +170,7 @@ class Permissions
             // Se il token ha permessi 'r' (sola lettura), forza sempre sola lettura
             if ($token_info['permessi'] == 'r') {
                 $_SESSION['token_forced_readonly'] = true;
+
                 return true; // Permette l'accesso ma in sola lettura
             }
 
@@ -187,6 +187,7 @@ class Permissions
      * Verifica se l'utente può accedere a un record specifico tramite token.
      *
      * @param int $record_id ID del record
+     *
      * @return bool
      */
     public static function checkTokenRecordAccess($record_id)
@@ -225,10 +226,10 @@ class Permissions
 
             // Se ha anche un record target specifico, redirect a editor.php
             if (!empty($token_info['id_record_target']) && $token_info['id_record_target'] > 0) {
-                return $base_url . '/editor.php?id_module=' . $token_info['id_module_target'] . '&id_record=' . $token_info['id_record_target'];
+                return $base_url.'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target'];
             } else {
                 // Se non ha un record target, redirect a controller.php
-                return $base_url . '/controller.php?id_module=' . $token_info['id_module_target'];
+                return $base_url.'/controller.php?id_module='.$token_info['id_module_target'];
             }
         }
 

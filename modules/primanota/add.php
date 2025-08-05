@@ -21,10 +21,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
-use Modules\Fatture\Stato;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
 
 /**
  * Questo file gestisce la lettura delle informazioni di Scadenze e Fatture indicate per la generazione della Prima Nota. Per maggiori informazioni sulla grafica inerente alla visualizzazione delle diverse righe, consulare il file `movimenti.php`.

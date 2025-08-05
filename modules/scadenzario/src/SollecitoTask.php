@@ -269,7 +269,7 @@ class SollecitoTask extends Manager
                     }
                 }
             }
-        }else{
+        } else {
             $result = [
                 'response' => 2,
                 'message' => tr('Invio solleciti disattivato'),

@@ -36,11 +36,11 @@ echo '
 // Inserimento seriali
 echo '
 <div class="nav-tabs-custom">
-    <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a class="nav-link" href="#generazione" data-widget="tab">'.tr('Generazione multipla').'</a></li>
-        <li><a class="nav-link" href="#inserimento" data-widget="tab">'.tr('Inserimento singolo').'</a></li>
+    <ul class="nav nav-tabs" style="width: 100%; display: table; table-layout: fixed;">
+        <li class="active" style="display: table-cell; width: 50%;"><a class="nav-link" href="#generazione" data-toggle="tab" style="display: block; text-align: center;">'.tr('Generazione multipla').'</a></li>
+        <li style="display: table-cell; width: 50%;"><a class="nav-link" href="#inserimento" data-toggle="tab" style="display: block; text-align: center;">'.tr('Inserimento singolo').'</a></li>
     </ul>
-
+    <br>
     <div class="tab-content">
         <form action="" method="post" role="form" class="tab-pane active" id="generazione">
             <input type="hidden" name="backto" value="record-edit">
@@ -49,8 +49,15 @@ echo '
             <input type="hidden" name="id_record" value="'.$id_record.'">
 
             <div class="row">
+                <div class="col-md-12">
+                    <h4><i class="fa fa-magic"></i> '.tr('Generazione automatica seriali').'</h4>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-5">
-                    {[ "type": "text", "label": "'.tr('Inizio').'", "name": "serial_start", "extra": "onkeyup=\"$(\'#serial_end\').val( $(this).val()); ricalcola_generazione();\"" ]}
+                    {[ "type": "text", "label": "'.tr('Seriale iniziale').'", "name": "serial_start", "extra": "onkeyup=\"$(\'#serial_end\').val( $(this).val()); ricalcola_generazione();\"", "placeholder": "'.tr('Es: ABC001').'" ]}
                 </div>
 
                 <div class="col-md-2 text-center" style="padding-top: 20px;">
@@ -58,17 +65,28 @@ echo '
                 </div>
 
                 <div class="col-md-5">
-                    {[ "type": "text", "label": "'.tr('Fine').'", "name": "serial_end", "extra": "onkeyup=\"ricalcola_generazione();\"" ]}
+                    {[ "type": "text", "label": "'.tr('Seriale finale').'", "name": "serial_end", "extra": "onkeyup=\"ricalcola_generazione();\"", "placeholder": "'.tr('Es: ABC010').'" ]}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-9">
-                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_generazione">0</span></p>
+                <div class="col-md-12">
+                    <small class="help-block">'.tr('Inserisci il range di seriali da generare automaticamente. Il sistema creerà tutti i seriali compresi tra quello iniziale e finale.').'</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>'.tr('Totale seriali da generare').': <span id="totale_generazione" class="badge badge-primary">0</span></strong>
+                    </div>
                 </div>
 
-                <div class="col-md-3 text-right">
-                    <button type="button" class="btn btn-primary" onclick="addSerial(\'#generazione\', $(\'#totale_generazione\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-success btn-lg" onclick="addSerial(\'#generazione\', $(\'#totale_generazione\').text())">
+                        <i class="fa fa-magic"></i> '.tr('Genera seriali').'
+                    </button>
                 </div>
             </div>
         </form>
@@ -81,17 +99,32 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Nuovi seriali').'", "name": "serials[]", "extra": "onchange=\"ricalcola_inserimento();\"", "multiple": 1, "values": [] ]}
+                    <h4><i class="fa fa-barcode"></i> '.tr('Inserimento seriali').'</h4>
+                    <hr>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-9">
-                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_inserimento">0</span></p>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>'.tr('Nuovi seriali').'</label>
+                        <small class="help-block">'.tr('Digita i seriali e premi Invio o virgola per aggiungerli alla lista. Puoi inserire più seriali separandoli con virgole.').'</small>
+                        {[ "type": "select", "name": "serials[]", "extra": "onchange=\"ricalcola_inserimento();\"", "multiple": 1, "values": [] ]}
+                    </div>
                 </div>
+            </div>
 
-                <div class="col-md-3 text-right">
-                    <button type="button" class="btn btn-primary" onclick="addSerial(\'#inserimento\', $(\'#totale_inserimento\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>'.tr('Totale seriali da inserire').': <span id="totale_inserimento" class="badge badge-primary">0</span></strong>
+                    </div>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-success btn-lg" onclick="addSerial(\'#inserimento\', $(\'#totale_inserimento\').text())">
+                        <i class="fa fa-plus"></i> '.tr('Inserisci seriali').'
+                    </button>
                 </div>
             </div>
         </form>
@@ -165,19 +198,19 @@ if (empty(get('modal'))) {
                 elseif (!empty($acquisto['id_riga_ddt'])) {
                     $module = 'Ddt in entrata';
 
-                    $query = 'SELECT 
-                            *, 
+                    $query = 'SELECT
+                            *,
                             `dt_tipiddt_lang`.`title` AS tipo_documento,
                             `dt_tipiddt`.`dir` AS `dir`,
                             `dt_ddt`.`numero` AS numero,
                             `dt_ddt`.`data` AS data,
                             `dt_ddt`.`numero_esterno` AS numero_esterno
-                        FROM 
+                        FROM
                             `dt_righe_ddt`
-                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id` 
+                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        WHERE 
+                        WHERE
                             `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
@@ -189,19 +222,19 @@ if (empty(get('modal'))) {
                     $module = 'Ordini cliente';
 
                     // Ricerca inserimenti su ordini
-                    $query = 'SELECT 
-                            *, 
-                            `or_tipiordine_lang`.`title` AS tipo_documento, 
+                    $query = 'SELECT
+                            *,
+                            `or_tipiordine_lang`.`title` AS tipo_documento,
                             `or_tipiordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
                             `or_ordini`.`data`
-                        FROM 
-                            `or_righe_ordini` 
+                        FROM
+                            `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
                             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
                             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        WHERE  
+                        WHERE
                             `or_righe_ordini`.`id`='.prepare($acquisto['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
 
@@ -275,19 +308,19 @@ if (empty(get('modal'))) {
                 elseif (!empty($vendita['id_riga_ddt'])) {
                     $module = 'Ddt in uscita';
 
-                    $query = 'SELECT 
-                            *, 
+                    $query = 'SELECT
+                            *,
                             `dt_tipiddt_lang`.`title` AS tipo_documento,
                             `dt_tipiddt`.`dir`,
                             `dt_ddt`.`numero`,
                             `dt_ddt`.`numero_esterno`,
                             `dt_ddt`.`data`
-                        FROM 
+                        FROM
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt`=`dt_ddt`.`id`
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-                        WHERE 
+                        WHERE
                             `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
@@ -299,19 +332,19 @@ if (empty(get('modal'))) {
                     $module = 'Ordini cliente';
 
                     // Ricerca inserimenti su ordini
-                    $query = 'SELECT 
-                            *, 
+                    $query = 'SELECT
+                            *,
                             `or_tipiordine_lang`.`title` AS tipo_ordine,
                             `or_tipiordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
                             `or_ordini`.`data`
-                        FROM 
+                        FROM
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine`=`or_ordini`.`id`
                             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
                             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-                        WHERE  
+                        WHERE
                             `or_righe_ordini`.`id`='.prepare($vendita['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
 
@@ -428,6 +461,27 @@ $(document).ready(function() {
         tags: true,
         tokenSeparators: [\',\']
     });
+
+    // Gestione cambio tab per far funzionare il tab "Inserimento singolo"
+    $(\'a[data-toggle="tab"]\').on(\'shown.bs.tab\', function (e) {
+        var target = $(e.target).attr("href");
+        if (target === "#inserimento") {
+            // Reinizializza il campo serials quando si apre il tab inserimento
+            setTimeout(function() {
+                if (!$("#serials").hasClass("select2-hidden-accessible")) {
+                    $("#serials").select2({
+                        theme: "bootstrap4",
+                        language: "it",
+                        allowClear: true,
+                        tags: true,
+                        tokenSeparators: [\',\']
+                    });
+                }
+                ricalcola_inserimento();
+            }, 100);
+        }
+    });
+
 });
 
 function addSerial(form_id, numero) {
@@ -441,7 +495,7 @@ function addSerial(form_id, numero) {
             showCancelButton: true,
             confirmButtonText: "'.tr('Continua').'"
         }).then(function (result) {
-            if ($("div[id^=bs-popup").is(":visible")) { 
+            if ($("div[id^=bs-popup").is(":visible")) {
                 salvaForm($(form_id), {
                 }).then(function(response) {
                     $(form_id).closest("div[id^=bs-popup").modal("hide");

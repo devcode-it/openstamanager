@@ -538,7 +538,6 @@ class Articolo extends Model
         return $barcode;
     }
 
-
     /**
      * @version distinta_base
      */

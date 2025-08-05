@@ -66,7 +66,7 @@ if (!empty($movimenti)) {
         if (!empty($movimento['primanota'])) {
             echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
         } else {
-            if (strpos($movimento['descrizione'], 'Vendita al banco') === 0) {
+            if (str_starts_with((string) $movimento['descrizione'], 'Vendita al banco')) {
                 echo Modules::link('Vendita al banco', $movimento['iddocumento'], $movimento['descrizione']);
             } else {
                 echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['iddocumento'], $movimento['descrizione']);

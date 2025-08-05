@@ -88,9 +88,9 @@ switch (filter('op')) {
         break;
 
     case 'add':
-        $nome = filter('nome');
-        $nota = filter('nota');
-        $colore = filter('colore');
+        $nome = filter('nome_add');
+        $nota = filter('nota_add');
+        $colore = filter('colore_add');
         $id_original = filter('id_original') ?: null;
         $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
         $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;

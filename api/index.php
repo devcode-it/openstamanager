@@ -44,7 +44,7 @@ header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
 $dbo->insert('zz_api_log', [
     'level' => 'warning',
     'message' => 'Richiesta API ricevuta',
-    'name' => "API ".get('resource'),
+    'name' => 'API '.get('resource'),
     'context' => json_encode([
         'token' => get('token'),
         'resource' => get('resource'),
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $result = json_decode((string) $response, true);
-$level = ($result['status']=='200' ? 'info' : 'error');
+$level = ($result['status'] == '200' ? 'info' : 'error');
 $dbo->update('zz_api_log', [
     'level' => $level,
     'message' => $result['message'],
@@ -77,7 +77,7 @@ $dbo->update('zz_api_log', [
         'resource' => get('resource'),
         'total-count' => $result['total-count'],
     ]),
-],['id' => $id_log]);
+], ['id' => $id_log]);
 
 json_decode((string) $response);
 

@@ -62,7 +62,7 @@ $checks = $structure->mainChecks($id_record);
 echo "      <table class='table table-sm'>
                 <tbody class='sort' data-sonof='0'>";
 
-$has_images = $checks->where('id_immagine','!=', null)->count();
+$has_images = $checks->where('id_immagine', '!=', null)->count();
 foreach ($checks as $check) {
     echo renderChecklist($check, 1, 0, $has_images);
 }

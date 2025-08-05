@@ -27,11 +27,11 @@ $is_enabled = !empty($record['enabled']);
 // Verifica se il token è scaduto
 $is_not_active = false;
 if (!empty($record['valido_dal']) && !empty($record['valido_al'])) {
-    $is_not_active = strtotime($record['valido_dal']) > time() || strtotime($record['valido_al']) < time();
+    $is_not_active = strtotime((string) $record['valido_dal']) > time() || strtotime((string) $record['valido_al']) < time();
 } elseif (!empty($record['valido_dal']) && empty($record['valido_al'])) {
-    $is_not_active = strtotime($record['valido_dal']) > time();
+    $is_not_active = strtotime((string) $record['valido_dal']) > time();
 } elseif (empty($record['valido_dal']) && !empty($record['valido_al'])) {
-    $is_not_active = strtotime($record['valido_al']) < time();
+    $is_not_active = strtotime((string) $record['valido_al']) < time();
 }
 
 // Pulsante per abilitare/disabilitare

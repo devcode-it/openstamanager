@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Group;
 use Models\Module;
 use Models\Upload;
 use Models\User;
@@ -40,6 +41,13 @@ if (!empty($id_record)) {
         'Agenti' => 'Agente',
     ];
     $gruppo = $gruppi[$gruppo_utente];
+}
+
+// Preseleziona il gruppo quando si aggiunge un nuovo utente dal contesto di un gruppo
+if (!empty(filter('idanagrafica'))) {
+    $utente['id_anagrafica'] = filter('idanagrafica');
+} else {
+    $current_idgruppo = !empty($id_record) ? Group::find($id_record)->id : null;
 }
 
 // Lettura sedi dell'utente già impostate
@@ -73,7 +81,7 @@ echo '
 		<div class="col-md-9">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.Module::where('name', 'Utenti e permessi')->first()->id.'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "readonly": "'.(($utente['id'] == '1') || (!empty($id_record) && empty($utente['id'])) ? 1 : 0).'" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -178,7 +186,7 @@ if (!empty($user)) {
             no_check_pwd();
         }
     });
-    
+
     no_check_pwd();';
 }
 

@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Group;
 
 $group = Group::find($id_record);
-$record = $group->toArray();
+$record = $group ? $group->toArray() : null;
 
 // Lettura gruppi
 $gruppi = $dbo->fetchArray('SELECT `id`, `nome` FROM `zz_groups`');

@@ -21,15 +21,15 @@ if (empty($search)) {
 
 foreach ($articoli as $articolo) {
     $riga = [
-        '<input class="check" type="checkbox" id="'.$articolo['id'].'"/>',
-        Modules::link('Articoli', $articolo['id_articolo'], $articolo['codice'], null, ''),
-        $articolo['descrizione'],
-        $articolo['data_scadenza'] ? '<p class="text-center">'.dateFormat($articolo['data_scadenza']).'</p>' : '<p class="text-muted text-center">'.dateFormat($listino['data_scadenza_predefinita']).'</p>',
-        '<p class="text-right">'.($articolo['minimo_vendita'] != 0 ? moneyFormat($articolo['minimo_vendita']) : '-').'</p>',
-        '<p class="text-right">'.moneyFormat($articolo['prezzo_unitario']).'</p>',
-        '<p class="text-right">'.moneyFormat($articolo['prezzo_unitario_ivato']).'</p>',
-        '<p class="text-right">'.($articolo['sconto_percentuale'] != 0 ? numberFormat($articolo['sconto_percentuale']).' %' : '-').'</p>',
-        '<div class="text-center">
+        '<div class="text-center align-middle"><input class="check" type="checkbox" id="'.$articolo['id'].'"/></div>',
+        '<div class="align-middle">'.Modules::link('Articoli', $articolo['id_articolo'], $articolo['codice'], null, '').'</div>',
+        '<div class="align-middle">'.$articolo['descrizione'].'</div>',
+        '<div class="text-center align-middle">'.($articolo['data_scadenza'] ? dateFormat($articolo['data_scadenza']) : '<span class="text-muted">'.dateFormat($listino['data_scadenza_predefinita']).'</span>').'</div>',
+        '<div class="text-right align-middle">'.($articolo['minimo_vendita'] != 0 ? moneyFormat($articolo['minimo_vendita']) : '-').'</div>',
+        '<div class="text-right align-middle">'.moneyFormat($articolo['prezzo_unitario']).'</div>',
+        '<div class="text-right align-middle">'.moneyFormat($articolo['prezzo_unitario_ivato']).'</div>',
+        '<div class="text-right align-middle">'.($articolo['sconto_percentuale'] != 0 ? numberFormat($articolo['sconto_percentuale']).' %' : '-').'</div>',
+        '<div class="text-center align-middle">
             <a class="btn btn-xs btn-warning" title="'.tr('Modifica articolo').'" onclick="modificaArticolo($(this), '.$articolo['id'].')">
                 <i class="fa fa-edit"></i>
             </a>

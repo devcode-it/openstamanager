@@ -73,7 +73,7 @@ switch (post('op')) {
     case 'add':
         $pattern = string_contains(post('pattern'), '#') ? post('pattern') : '####';
         $predefined = post('predefined');
-        $module = post('module');
+        $module = post('module_add');
 
         if (empty(Modules::getSegments($module))) {
             $predefined = 1;

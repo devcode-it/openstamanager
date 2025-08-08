@@ -188,7 +188,7 @@ if (string_starts_with($backup_dir, base_dir())) {
     echo '
                         <div class="alert alert-warning mt-3">
                             <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna.').'
-                            <p class="mt-2">'.tr('Puoi modificare il percorso di backup da:').' <a href="'.base_path().'/controller.php?id_module='.Models\Module::where('name', 'Impostazioni')->first()->id.'&search=Adattatore archiviazione backup#" class="btn btn-sm btn-info"><i class="fa fa-cog"></i> '.tr('Menu <b>Strumenti</b> &rarr; <b>Impostazioni</b> &rarr; sezione <b>Backup</b> &rarr; impostazione <b>Adattatore archiviazione backup</b>').'</a>
+                            <p class="mt-2">'.tr('Puoi modificare il percorso di backup da:').' <a href="'.base_path().'/controller.php?id_module='.Models\Module::where('name', 'Impostazioni')->first()->id.'&search=Adattatore archiviazione backup#" class="btn btn-sm btn-primary text-white"><i class="fa fa-cog"></i> '.tr('Menu <b>Strumenti</b> &rarr; <b>Impostazioni</b> &rarr; sezione <b>Backup</b> &rarr; impostazione <b>Adattatore archiviazione backup</b>').'</a>
                             </p>
                         </div>';
 }
@@ -446,7 +446,7 @@ if (file_exists($backup_dir)) {
     }
 } else {
     echo '
-    
+
 <div class="alert alert-danger">'.tr('La cartella di backup non esiste!').' '.tr('Non è possibile eseguire i backup!').'</div>';
 }
 

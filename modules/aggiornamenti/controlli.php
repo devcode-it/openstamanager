@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti px-3">';
+echo '<div class="module-aggiornamenti">';
 
 // Schermata di caricamento delle informazioni
 echo '

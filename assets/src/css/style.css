@@ -2564,9 +2564,20 @@ section.content, .main-footer {
     }
 }
 
+.modal-body {
+    padding: 15px 20px;
+}
+
+.modal-header {
+    padding: 15px 20px;
+}
+
 .modal-footer{
-    margin: 15px -12px -10px -12px;
-    padding: 10px 0px 5px 0px;
+    padding: 15px 20px;
+}
+
+.modal-footer .btn {
+    margin-right: -30px;
 }
 
 /** Grigio chiaro per voci plugin non disponibili **/

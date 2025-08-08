@@ -22,7 +22,7 @@ use Models\OperationLog;
 include_once __DIR__.'/../../core.php';
 
 // Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti pl-3">';
+echo '<div class="module-aggiornamenti">';
 
 $file = basename(__FILE__);
 $effettua_controllo = filter('effettua_controllo');

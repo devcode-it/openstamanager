@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti px-3">';
+echo '<div class="module-aggiornamenti">';
 
 // Personalizzazioni di codice
 if (function_exists('customComponents')) {
@@ -264,7 +264,7 @@ echo '
 echo '
 <hr>
 <div>
-    <h3 class="font-weight-normal mb-4 px-3"><i class="fa fa-shield"></i> '.tr('Verifica integrità').'</h3>
+    <h3 class="font-weight-normal mb-4"><i class="fa fa-shield"></i> '.tr('Verifica integrità').'</h3>
 
     <div class="row">
         <!-- Card Requisiti di sistema -->

@@ -24,5 +24,15 @@ use Models\Group;
 if (!empty($id_record)) {
     $group = Group::find($id_record);
 
-    $record = $group->toArray();
+    if ($group) {
+        $record = $group->toArray();
+    } else {
+        // Fallback: prova a ottenere i dati direttamente dal database
+        $record = $dbo->fetchOne('SELECT * FROM `zz_groups` WHERE `id`='.prepare($id_record));
+        if (!$record) {
+            // Se il record non esiste, reindirizza alla lista
+            flash()->error(tr('Gruppo non trovato'));
+            redirect(base_path().'/controller.php?id_module='.$id_module);
+        }
+    }
 }

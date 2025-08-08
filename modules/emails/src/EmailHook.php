@@ -20,10 +20,7 @@
 
 namespace Modules\Emails;
 
-use Carbon\Carbon;
 use Hooks\Manager;
-use Notifications\EmailNotification;
-use PHPMailer\PHPMailer\Exception;
 
 class EmailHook extends Manager
 {
@@ -54,57 +51,7 @@ class EmailHook extends Manager
 
     public function execute()
     {
-        // Email fallite nelle ultime 4 ore
-        $diff = date('Y-m-d H:i:s', strtotime('-4 hours'));
-        $failed = function ($query) use ($diff) {
-            $query->where('failed_at', '<', $diff)
-                ->orWhereNull('failed_at');
-        };
-
-        // Parametri per l'invio
-        $numero_tentativi = setting('Numero massimo di tentativi');
-        $numero_email = setting('Numero email da inviare in contemporanea per account');
-        $numero_email = $numero_email < 1 ? 1 : $numero_email;
-
-        // Selezione email per account
-        $accounts = Account::all();
-        $lista = collect();
-        foreach ($accounts as $account) {
-            // Ultima email inviata per l'account
-            $last_mail = $account->emails()
-                ->whereNotNull('sent_at')
-                ->orderBy('sent_at')
-                ->first();
-
-            // Controllo sul timeout dell'account
-            $date = new Carbon($last_mail->sent_at);
-            $now = new Carbon();
-            $diff_milliseconds = $date->diffInMilliseconds($now);
-
-            // Timeout per l'uso dell'account email
-            if (empty($last_mail) || $diff_milliseconds > $account->timeout) {
-                $lista_account = Mail::whereNull('sent_at')
-                    ->where('id_account', $account->id)
-                    ->where($failed)
-                    ->where('attempt', '<', $numero_tentativi)
-                    ->orderBy('created_at')
-                    ->take($numero_email)
-                    ->get();
-
-                $lista = $lista->concat($lista_account);
-            }
-        }
-
-        // Invio effettivo
-        foreach ($lista as $mail) {
-            try {
-                $email = EmailNotification::build($mail);
-                $email->send();
-            } catch (Exception) {
-            }
-        }
-
-        return $lista;
+        return false;
     }
 
     public function response()

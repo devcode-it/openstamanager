@@ -52,7 +52,7 @@ class NotificheRicevuteHook extends Manager
             ->count();
 
         // Messaggio di importazione
-        if (!empty($in_attesa) && !empty($con_errore)) {
+        if ($in_attesa>0 && $con_errore>0) {
             $message = tr('_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di trasmissione, _WAIT_ fattur_D_ elettronic_C_ in attesa di ricevut_D_ da più di 7 giorni', [
                 '_ERR_' => (($con_errore > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
                 '_A_' => (($con_errore > 1) ? 'he' : 'a'),
@@ -61,14 +61,14 @@ class NotificheRicevuteHook extends Manager
                 '_C_' => (($in_attesa > 1) ? 'he' : 'a'),
                 '_D_' => (($in_attesa > 1) ? 'e' : 'a'),
             ]);
-        } elseif (empty($in_attesa) && !empty($con_errore)) {
+        } elseif ($in_attesa==0 && $con_errore>0) {
             $message = tr('_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di trasmissione', [
                 '_ERR_' => (($con_errore > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$con_errore,
                 '_A_' => (($con_errore > 1) ? 'he' : 'a'),
                 '_B_' => (($con_errore > 1) ? 'e' : 'a'),
             ]);
         }
-        if (!empty($in_attesa) && empty($con_errore)) {
+        if ($in_attesa>0 && $con_errore==0) {
             $message = tr('_WAIT_ fattur_B_ elettronic_A_ in attesa di ricevut_B_ da più di 7 giorni', [
                 '_WAIT_' => (($in_attesa > 1) ? tr('Sono presenti') : tr('C\'è')).' '.$in_attesa,
                 '_A_' => (($in_attesa > 1) ? 'he' : 'a'),
@@ -76,7 +76,7 @@ class NotificheRicevuteHook extends Manager
             ]);
         }
 
-        $id_module = Module::where('name', 'Interventi')->first()->id;
+        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
         $id_plugin = Plugin::where('name', 'Ricevute FE')->first()->id;
 
         return [

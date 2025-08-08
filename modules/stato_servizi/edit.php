@@ -41,7 +41,7 @@ if (Services::isEnabled()) {
 
             <div class="card-body p-0">';
 
-    $servizi = Services::getServiziAttivi()->flatten(1);
+    $servizi = Services::getServiziAttivi(true)->flatten(1);
     if (!$servizi->isEmpty()) {
         echo '
                 <table class="table table-hover table-striped table-sm mb-0">
@@ -110,7 +110,7 @@ if (Services::isEnabled()) {
             <div class="card-body p-0">';
 
     // Elaborazione delle risorse API in scadenza
-    $risorse_attive = Services::getRisorseAttive();
+    $risorse_attive = Services::getRisorseAttive(true);
     if (!$risorse_attive->isEmpty()) {
         $risorse_in_scadenza = Services::getRisorseInScadenza($limite_scadenze);
         $risorse_scadute = Services::getRisorseScadute();

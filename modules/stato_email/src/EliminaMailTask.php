@@ -65,7 +65,7 @@ class EliminaMailTask extends Manager
         } else {
             $result = [
                 'response' => 2,
-                'message' => tr('Eliminazione automatica disattivata'),
+                'message' => tr('Eliminazione automatica disattivata da impostazioni'),
             ];
         }
 

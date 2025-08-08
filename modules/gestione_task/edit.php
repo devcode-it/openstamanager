@@ -79,10 +79,10 @@ echo '
                     {[ "type": "checkbox", "label": "'.tr('Stato task').'", "name": "enabled", "value": "$enabled$" ]}
                 </div>
                 <div class="col-md-4">
-                    {[ "type": "date", "label": "'.tr('Data prossima esecuzione').'", "name": "next_execution_at", "value": "$next_execution_at$", "readonly": 1, "icon-before": "<i class=\"fa fa-calendar-plus-o\"></i>" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data prossima esecuzione').'", "name": "next_execution_at", "value": "$next_execution_at$", "readonly": 1, "icon-before": "<i class=\"fa fa-calendar-plus-o\"></i>" ]}
                 </div>
                 <div class="col-md-4">
-                    {[ "type": "date", "label": "'.tr('Data precedente esecuzione').'", "name": "last_executed_at", "value": "$last_executed_at$", "readonly": 1, "icon-before": "<i class=\"fa fa-calendar-check-o\"></i>" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data precedente esecuzione').'", "name": "last_executed_at", "value": "$last_executed_at$", "readonly": 1, "icon-before": "<i class=\"fa fa-calendar-check-o\"></i>" ]}
                 </div>
             </div>
         </div>

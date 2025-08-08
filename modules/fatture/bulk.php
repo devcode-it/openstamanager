@@ -768,7 +768,7 @@ $operations['change_segment'] = [
 
 if (Interaction::isEnabled()) {
     $operations['hook_send'] = [
-        'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Coda di invio FE').'</span>',
+        'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Invia FE').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero aggiungere queste fatture alla coda di invio per le fatture elettroniche?'),

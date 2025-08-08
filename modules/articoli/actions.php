@@ -62,6 +62,11 @@ switch (post('op')) {
             $articolo->name = post('descrizione');
         }
 
+        if (post('genera_barcode')) {
+            $codice = '200'.str_pad((string) $articolo->id, 9, '0', STR_PAD_LEFT);
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+        }
+        $articolo->barcode = $barcode ?: post('barcode');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -71,7 +76,7 @@ switch (post('op')) {
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->abilita_serial = post('abilita_serial_add');
-
+        $articolo->ubicazione = post('ubicazione');
         $articolo->um = post('um');
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
@@ -180,9 +185,10 @@ switch (post('op')) {
         }
 
         $articolo->codice = post('codice', true);
+        $articolo->barcode = post('barcode');
         $articolo->um = post('um');
-        $articolo->id_categoria = post('categoria_edit') ?: post('categoria');
-        $articolo->id_sottocategoria = post('subcategoria_edit') ?: post('subcategoria');
+        $articolo->id_categoria = post('categoria');
+        $articolo->id_sottocategoria = post('subcategoria');
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
         $articolo->coefficiente = post('coefficiente');
@@ -195,8 +201,8 @@ switch (post('op')) {
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
-        $articolo->id_marca = post('id_marca_edit') ?: post('id_marca');
-        $articolo->id_modello = post('id_modello_edit') ?: post('id_modello');
+        $articolo->id_marca = post('id_marca');
+        $articolo->id_modello = post('id_modello');
 
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
@@ -505,6 +511,12 @@ switch (post('op')) {
         break;
 
     case 'generate-barcode':
+        $codice = '200'.str_pad((string) $id_record, 9, '0', STR_PAD_LEFT);
+        $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+
+        echo json_encode([
+            'barcode' => $barcode,
+        ]);
         // Genera un barcode unico controllando sia la tabella mg_articoli che mg_articoli_barcode
         // per garantire l'unicità anche considerando i barcode aggiuntivi degli articoli
         $tentativi = 0;

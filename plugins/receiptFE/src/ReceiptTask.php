@@ -19,7 +19,7 @@
  */
 
 namespace Plugins\ReceiptFE;
-
+use Models\Cache;
 use Tasks\Manager;
 
 /**
@@ -42,12 +42,53 @@ class ReceiptTask extends Manager
                 'message' => tr('Importazione automatica disattivata'),
             ];
 
+            return $result; 
+        }
+
+        $todo_cache = Cache::where('name', 'Ricevute Elettroniche')->first();
+        $completed_cache = Cache::where('name', 'Ricevute Elettroniche importate')->first();
+
+        // Refresh cache
+        $list = Interaction::getRemoteList();
+
+        $todo_cache->set($list);
+        $completed_cache->set([]);
+
+        // Caricamento elenco di importazione
+        $todo = $todo_cache->content;
+        if (empty($todo)) {
+            $result = [
+                'response' => 1,
+                'message' => tr('Nessuna ricevuta da importare!'),
+            ];
             return $result;
         }
 
-        $list = Interaction::getReceiptList();
+        // Caricamento elenco di ricevute imporate
+        $completed = $completed_cache->content;
+        $count = (is_array($todo) ? count($todo) : 0);
 
-        if (empty($list)) {
+        // Esecuzione di 10 imporazioni
+        for ($i = 0; $i < 25 && $i < $count; ++$i) {
+            $element = $todo[$i];
+
+            if ($element !== null) {
+                // Importazione ricevuta
+                $name = $element['name'];
+                $fattura = Ricevuta::process($name);
+
+                if ($fattura !== null) {
+                    $completed[] = $element;
+                    unset($todo[$i]);
+                }
+            }
+        }
+
+        // Aggiornamento cache
+        $todo_cache->set($todo);
+        $completed_cache->set($completed);
+
+        if( empty($list) ){
             $result = [
                 'response' => 1,
                 'message' => tr('Nessuna ricevuta da importare'),

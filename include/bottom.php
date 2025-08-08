@@ -75,11 +75,6 @@ if (Auth::check()) {
                     startHooks();';
     }
 
-    // Abilitazione del cron autonoma
-    if (!$config['disable_cron']) {
-        echo '
-                    $.get(globals.rootdir + "/cron.php");';
-    }
     echo '
             });
         </script>';

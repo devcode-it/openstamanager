@@ -20,27 +20,31 @@
 
 namespace Plugins\ImportFE;
 
-use Hooks\CachedManager;
+use Hooks\Manager;
 use Models\Module;
+use Models\Cache;
 
 /**
  * Hook dedicato all'importazione automatica delle Fatture Elettroniche di acquisto rilevate dal sistema automatico di gestione.
  */
-class InvoiceHook extends CachedManager
+class InvoiceHook extends Manager
+
 {
-    public function getCacheName()
+    public $cache_name = 'Fatture Elettroniche';
+
+    public function needsExecution()
     {
-        return 'Fatture Elettroniche';
+        return true;
     }
 
-    public function cacheData()
+    public function execute()
     {
-        return Interaction::getInvoiceList();
+        return false;
     }
 
     public function response()
     {
-        $results = (array) $this->getCache()->content;
+        $results = Cache::where('name', $this->cache_name)->first()->content;
 
         $count = count($results);
         $notify = false;

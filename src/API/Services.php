@@ -50,19 +50,19 @@ class Services
      */
     public static function getInformazioni($force = false)
     {
-        $cache = Cache::where('name', 'Informazioni su Services')->first();
+        //$cache = Cache::where('name', 'Informazioni su Services')->first();
 
         // Aggiornamento dei contenuti della cache
-        if (!$cache->isValid() || $force) {
+        //if (!$cache->isValid() || $force) {
             $response = self::request('GET', 'info');
             $content = self::responseBody($response);
 
-            $cache->set($content);
+            //$cache->set($content);
 
             return $content;
-        }
+        //}
 
-        return $cache->content;
+        //return $cache->content;
     }
 
     /**
@@ -70,9 +70,9 @@ class Services
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function getServiziAttivi()
+    public static function getServiziAttivi($force = false)
     {
-        return collect(self::getInformazioni()['servizi']);
+        return collect(self::getInformazioni($force)['risorse-api']);
     }
 
     /**
@@ -106,9 +106,9 @@ class Services
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function getRisorseAttive()
+    public static function getRisorseAttive($force = false)
     {
-        return collect(self::getInformazioni()['risorse-api']);
+        return collect(self::getInformazioni($force)['risorse-api']);
     }
 
     /**

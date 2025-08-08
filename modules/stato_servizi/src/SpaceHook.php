@@ -32,10 +32,6 @@ class SpaceHook extends CachedManager
 
     public function cacheData()
     {
-        if (!empty(setting('Soft quota'))) {
-            return FileSystem::folderSize(base_dir(), ['htaccess']);
-        }
-
         return false;
     }
 

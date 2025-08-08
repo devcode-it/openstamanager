@@ -73,7 +73,7 @@ abstract class Manager
 
         $results = $this->execute();
 
-        return [];
+        return (array)$results;
     }
 
     /**

@@ -1045,12 +1045,17 @@ input.small-width {
     text-decoration: none;
 }
 
+.img-circle.square {
+    box-shadow: 0px 0px 1px 1px lightgray;
+}
+
 .dropdown-menu {
     min-width: 130px;
 }
 
-.img-circle.square {
-    box-shadow: 0px 0px 1px 1px lightgray;
+#hooks .dropdown-item {
+    white-space: normal;
+    min-width: max-content;
 }
 
 .select2-dropdown {

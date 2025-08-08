@@ -23,7 +23,17 @@ include_once __DIR__.'/../../core.php';
 use Models\Group;
 
 $group = Group::find($id_record);
-$record = $group ? $group->toArray() : null;
+
+// Se il gruppo non è trovato, mostra un errore e termina
+if (!$group || !$record) {
+    echo '
+    <div class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle"></i> '.tr('Gruppo non trovato o non valido').'.
+    </div>';
+    return;
+} else {
+$record = $group->toArray();
+}
 
 // Lettura gruppi
 $gruppi = $dbo->fetchArray('SELECT `id`, `nome` FROM `zz_groups`');

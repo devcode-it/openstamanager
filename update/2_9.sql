@@ -312,3 +312,5 @@ WHERE `id_lang` = 1;
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Sede destinazione', 'Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in entrata'; 
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in uscita'; 
+
+UPDATE `zz_views` SET `search` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Marche"); 

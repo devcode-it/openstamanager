@@ -46,7 +46,7 @@ echo '
 					{[ "type":"date", "label":"'.tr('Data scadenza predefinita').'", "name":"data_scadenza_predefinita", "value":"$data_scadenza_predefinita$", "required":"1" ]}
 				</div>
 			</div>
-	
+
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "value":"$is_sempre_visibile$", "help": "'.tr('Se impostato il valore sarà sempre visibile sull\'articolo se il listino è attivo e la data di scadenza è ancora valida').'" ]}
@@ -63,37 +63,64 @@ echo '
 				</div>
 			</div>
 			<hr>
-			<div class="row">
-				<div class="col-md-5">
-					{[ "type":"select", "label":"'.tr('Articolo').'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "id_listino": '.$id_record.'}  ]}
+			<div class="card card-info">
+				<div class="card-header">
+					<h3 class="card-title">
+						<i class="fa fa-list-alt"></i> '.tr('Gestione Articoli').'
+					</h3>
 				</div>
-
-				<div class="col-md-1">
-					<div class="btn-group btn-group-flex">
-						<button type="button" class="btn btn-primary" style="margin-top:25px;" onclick="aggiungiArticolo(this, true)">
-							<i class="fa fa-plus"></i> '.tr('Aggiungi').'
-						</button>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-8">
+							{[ "type":"select", "label":"'.tr('Seleziona Articolo').'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "id_listino": '.$id_record.'}  ]}
+						</div>
+						<div class="col-md-4">
+							<label>&nbsp;</label>
+							<div class="form-group">
+								<button type="button" class="btn btn-success btn-block" onclick="aggiungiArticolo(this, true)">
+									<i class="fa fa-plus"></i> '.tr('Aggiungi Articolo').'
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<table class="table table-hover table-sm table-bordered" id="tablelistini" width="100%">
-				<thead>
-					<tr>
-						<th class="text-center">
-							<br><input id="check_all" type="checkbox"/>
-						</th>
-						<th class="text-center">'.tr('Codice').'</th>
-						<th class="text-center">'.tr('Descrizione').'</th>
-						<th class="text-center">'.tr('Data scadenza').'</th>
-						<th class="text-center">'.tr('Minimo').'</th>
-						<th class="text-center">'.tr('Prezzo di listino').'</th>
-						<th class="text-center">'.tr('Prezzo ivato').'</th>
-						<th class="text-center">'.tr('Sconto').'</th>
-						<th class="text-center"></th>
-					</tr>
-				</thead>
-			</table>
+			<div class="table-responsive">
+				<table class="table table-hover table-sm table-bordered" id="tablelistini" width="100%">
+					<thead>
+						<tr>
+							<th class="text-center align-middle" width="50">
+								<input id="check_all" type="checkbox"/>
+							</th>
+							<th class="text-center">
+								<i class="fa fa-barcode text-muted"></i> '.tr('Codice').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-file-text-o text-muted"></i> '.tr('Descrizione').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-calendar text-muted"></i> '.tr('Data scadenza').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-sort-numeric-asc text-muted"></i> '.tr('Minimo').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-euro text-muted"></i> '.tr('Prezzo di listino').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-euro text-muted"></i> '.tr('Prezzo ivato').'
+							</th>
+							<th class="text-center">
+								<i class="fa fa-percent text-muted"></i> '.tr('Sconto').'
+							</th>
+							<th class="text-center" width="100">
+								<i class="fa fa-cogs text-muted"></i> '.tr('Azioni').'
+							</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 
 			<div class="btn-group">
 				<button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviArticolo(getSelectData());">
@@ -122,15 +149,15 @@ echo '
 
 	async function modificaArticolo(button, id) {
 		let riga = $(button).closest("tr");
-	
+
 		// Chiusura tooltip
 		if ($(button).hasClass("tooltipstered"))
 			$(button).tooltipster("close");
-	
+
 		// Apertura modal
 		openModal("'.tr('Listino articolo').'", "'.$structure->fileurl('modals/manage_articolo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id=" + id);
 	}
-	
+
 	function rimuoviArticolo(id) {
 		swal({
 			title: "'.tr('Rimuovere questo articolo?').'",
@@ -178,7 +205,7 @@ echo '
 			searchDelay: 500,
 			pageLength: 15,
 		});
-	
+
 		table.on("processing.dt", function (e, settings, processing) {
 			if (processing) {
 				$("#mini-loader").show();
@@ -191,7 +218,7 @@ echo '
 	// Estraggo le righe spuntate
 	function getSelectData() {
 		let data=new Array();
-		$(\'#tablelistini\').find(\'.check:checked\').each(function (){ 
+		$(\'#tablelistini\').find(\'.check:checked\').each(function (){
 			data.push($(this).attr(\'id\'));
 		});
 
@@ -206,7 +233,7 @@ echo '
 					checked = 1;
 				}
 			});
-		
+
 			if (checked) {
 				$("#elimina_righe").removeClass("disabled");
 			} else {
@@ -214,8 +241,8 @@ echo '
 			}
 		});
 	}, 1000);
-	
-	$("#check_all").click(function(){    
+
+	$("#check_all").click(function(){
 		if( $(this).is(":checked") ){
 			$(".check").each(function(){
 				if( !$(this).is(":checked") ){

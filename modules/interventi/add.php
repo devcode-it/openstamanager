@@ -401,7 +401,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="modal-footer">
 		<div class="col-md-12 text-right">
-			<button type="button" class="btn btn-lg btn-success" onclick="salva(this)">
+			<button type="button" class="btn btn-success" onclick="salva(this)">
                 <i class="fa fa-check"></i> '.tr('Aggiungi attività').'
             </button>
 		</div>

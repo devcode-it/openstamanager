@@ -125,7 +125,7 @@ class MessageHandler extends AbstractProcessingHandler
             $forum_url = 'https://forum.openstamanager.com/';
 
             // Informazioni di assistenza
-            $message .= '<div class="alert alert-warning mt-2 mb-0 py-2 px-3">
+            $message .= '<div class="alert alert-warning mt-2 mb-0 py-2">
                 <div class="d-flex align-items-center">
                     <i class="fa fa-question-circle text-warning mr-2"></i>
                     <div>
@@ -181,7 +181,7 @@ class MessageHandler extends AbstractProcessingHandler
                         </div>
                     </div>
 
-                    <div class="alert alert-warning mt-2 mb-0 py-2 px-3">
+                    <div class="alert alert-warning mt-2 mb-0 py-2">
                         <div class="d-flex align-items-center">
                             <i class="fa fa-question-circle text-warning mr-2"></i>
                             <div class="small">

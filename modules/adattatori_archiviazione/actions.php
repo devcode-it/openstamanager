@@ -27,7 +27,7 @@ switch (filter('op')) {
         $adapter = new FileAdapter();
 
         $adapter->name = post('name');
-        $adapter->class = '\\Modules\\FileAdapters\\Adapters\\'.post('class');
+        $adapter->class = '\\Modules\\FileAdapters\\Adapters\\'.post('class_add');
 
         $adapter->save();
 

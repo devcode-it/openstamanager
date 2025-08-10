@@ -118,42 +118,12 @@ switch (filter('op')) {
                 $results[] = [
                     'id' => $hook->id,
                     'name' => $hook->name,
+                    'content' => $hook->response(),
                 ];
             }
         }
 
         echo json_encode($results);
-
-        break;
-
-    case 'hook-lock':
-        $hook_id = filter('id');
-        $hook = Hook::find($hook_id);
-
-        $token = $hook->lock();
-
-        echo json_encode($token);
-
-        break;
-
-    case 'hook-execute':
-        $hook_id = filter('id');
-        $token = filter('token');
-        $hook = Hook::find($hook_id);
-
-        $response = $hook->execute($token);
-
-        echo json_encode($response);
-
-        break;
-
-    case 'hook-response':
-        $hook_id = filter('id');
-        $hook = Hook::find($hook_id);
-
-        $response = $hook->response();
-
-        echo json_encode($response);
 
         break;
 

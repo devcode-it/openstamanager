@@ -18,21 +18,32 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
-use Models\Group;
+namespace Plugins\ImportFE;
 
-if (!empty($id_record)) {
-    $group = Group::find($id_record);
+use Modules\Fatture\Fattura;
+use Tasks\Manager;
 
-    if ($group) {
-        $record = $group->toArray();
-    } else {
-        // Fallback: prova a ottenere i dati direttamente dal database
-        $record = $dbo->fetchOne('SELECT * FROM `zz_groups` WHERE `id`='.prepare($id_record));
-        if (!$record) {
-            // Se il record non esiste, reindirizza alla lista
-            flash()->error(tr('Gruppo non trovato'));
-            redirect(base_path().'/controller.php?id_module='.$id_module);
+class InvoiceHookTask extends Manager
+{
+    public function execute()
+    {
+        $result = [
+            'response' => 1,
+            'message' => tr('FE passive aggiornate correttamente!'),
+        ];
+        
+        try {
+            $list = Interaction::getInvoiceList();
+            if( empty($list) ){
+                $result['message'] = tr('Nessuna FE passiva da importare');
+            }
+        } catch (\Exception $e) {
+            $result['response'] = 2;
+            $result['message'] = tr('Errore durante l\'importazione delle FE passive: _ERR_', [
+                '_ERR_' => $e->getMessage(),
+            ])."<br>";
         }
+
+        return $result;
     }
 }

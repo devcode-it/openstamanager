@@ -1045,12 +1045,17 @@ input.small-width {
     text-decoration: none;
 }
 
+.img-circle.square {
+    box-shadow: 0px 0px 1px 1px lightgray;
+}
+
 .dropdown-menu {
     min-width: 130px;
 }
 
-.img-circle.square {
-    box-shadow: 0px 0px 1px 1px lightgray;
+#hooks .dropdown-item {
+    white-space: normal;
+    min-width: max-content;
 }
 
 .select2-dropdown {
@@ -2564,9 +2569,20 @@ section.content, .main-footer {
     }
 }
 
+.modal-body {
+    padding: 15px 20px;
+}
+
+.modal-header {
+    padding: 15px 20px;
+}
+
 .modal-footer{
-    margin: 15px -12px -10px -12px;
-    padding: 10px 0px 5px 0px;
+    padding: 15px 20px;
+}
+
+.modal-footer .btn {
+    margin-right: -30px;
 }
 
 /** Grigio chiaro per voci plugin non disponibili **/
@@ -3220,4 +3236,11 @@ section.content, .main-footer {
     margin-left: 5px;
     background-color: rgba(255,255,255,0.3);
     transition: all 0.2s ease;
+}
+
+#tablelistini_wrapper .dataTables_paginate .paginate_button {
+    margin: 0 3px;
+    padding: 8px 12px;
+    vertical-align: top;
+    line-height: 1.2;
 }

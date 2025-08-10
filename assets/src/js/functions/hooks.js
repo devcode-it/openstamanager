@@ -35,14 +35,37 @@ function handleHooksSuccess(hooks) {
     }
 
     hooks.forEach(function (item, index) {
-        renderHook(item, {
-            show: true,
-            message: globals.translations.hookExecuting.replace('_NAME_', item.name)
-        });
+        renderHook(item);
 
-        startHook(item, true);
+        //startHooks(item, true);
         completedRequests++;
     });
+
+    // Rimozione eventuale della rotella di caricamento
+    var number = $("#hooks > div").length;
+
+    if (number == 0) {
+        $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
+        $("#hooks-badge").removeClass();
+        $("#hooks-badge").addClass('badge').addClass('badge-success');
+    } else {
+        $("#hooks-notified").text(number);
+        $("#hooks-badge").removeClass();
+        $("#hooks-badge").addClass('badge').addClass('badge-danger');
+    }
+
+    $("#hooks-loading").hide();
+
+    var hookMessage;
+    if (number > 1) {
+        hookMessage = globals.translations.hookMultiple.replace('_NUM_', number);
+    } else if (number == 1) {
+        hookMessage = globals.translations.hookSingle;
+    } else {
+        hookMessage = globals.translations.hookNone;
+    }
+
+    $("#hooks-header").text(hookMessage);
 
     totalRequests = hooks.length; 
     if (completedRequests === totalRequests) {
@@ -51,7 +74,6 @@ function handleHooksSuccess(hooks) {
     }else{
         console.log("Alcune richieste AJAX non sono state eseguite.");
     }
-
 }
 
 function startHooks() {
@@ -71,148 +93,11 @@ function startHooks() {
     });
 }
 
-/**
- * Richiama l'hook per l'esecuzione.
- *
- * @param hook
- */
-function startHook(hook, init) {
-    if (document.hasFocus()) {
-        $.ajax({
-            url: globals.rootdir + "/ajax.php",
-            type: "get",
-            data: {
-                op: "hook-lock",
-                id: hook.id,
-            },
-            success: function (data) {
-                var token = JSON.parse(data);
+var timeout = 60;
 
-                if (init) {
-                    hookCount("#hooks-counter");
-
-                    updateHook(hook);
-                }
-
-                if (token) {
-                    executeHook(hook, token);
-                } else {
-                    //Rallentamento esecuzione hooks
-                    var timeout = 30;
-
-                    setTimeout(function () {
-                        startHook(hook);
-                    }, timeout * 1000);
-                }
-            },
-        });
-    } else {
-        var timeout = 30;
-
-        setTimeout(function () {
-            startHook(hook);
-        }, timeout * 1000);
-    }
-}
-
-/**
- * Richiama l'hook per l'esecuzione.
- *
- * @param hook
- * @param token
- */
-function executeHook(hook, token) {
-    $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hook-execute",
-            id: hook.id,
-            token: token,
-        },
-        success: function (data) {
-            var result = JSON.parse(data);
-            updateHook(hook);
-
-            var timeout;
-            if (result.execute) {
-                startHook(hook);
-            } else {
-                timeout = 60;
-
-                setTimeout(function () {
-                    startHook(hook);
-                }, timeout * 1000);
-            }
-        },
-    });
-}
-
-/**
- * Aggiorna le informazioni dell'hook.
- *
- * @param hook
- * @param init
- */
-function updateHook(hook) {
-    $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hook-response",
-            id: hook.id,
-        },
-        success: function (data) {
-            var result = JSON.parse(data);
-            renderHook(hook, result);
-
-            // Rimozione eventuale della rotella di caricamento
-            var counter = $("#hooks-counter").text();
-            var number = $("#hooks > div").length;
-
-            if (number == 0) {
-                $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
-                $("#hooks-badge").removeClass();
-                $("#hooks-badge").addClass('badge').addClass('badge-success');
-            } else {
-                $("#hooks-notified").text(number);
-                $("#hooks-badge").removeClass();
-                $("#hooks-badge").addClass('badge').addClass('badge-danger');
-            }
-
-            if (counter == $("#hooks-number").text()) {
-                $("#hooks-loading").hide();
-
-                var hookMessage;
-                if (number > 1) {
-                    hookMessage = globals.translations.hookMultiple.replace('_NUM_', number);
-                } else if (number == 1) {
-                    hookMessage = globals.translations.hookSingle;
-                } else {
-                    hookMessage = globals.translations.hookNone;
-                }
-
-                $("#hooks-header").text(hookMessage);
-            }
-        },
-    });
-}
-
-/**
- * Aggiunta dell'hook al numero totale.
- */
-function hookCount(id, value) {
-    value = value ? value : 1;
-
-    var element = $(id);
-    var number = parseInt(element.text());
-    number = isNaN(number) ? 0 : number;
-
-    number += value;
-    element.text(number);
-
-    return number;
-}
+setInterval(function () {
+    startHooks();
+}, timeout * 1000);
 
 /**
  * Genera l'HTML per la visualizzazione degli hook.
@@ -220,7 +105,8 @@ function hookCount(id, value) {
  * @param element_id
  * @param result
  */
-function renderHook(hook, result) {
+function renderHook(hook) {
+    var result = hook.content;
     if (result.length == 0) return;
 
     var element_id = "hook-" + hook.id;

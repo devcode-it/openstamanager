@@ -183,7 +183,7 @@ switch (post('op')) {
         break;
 }
 
-$operations['change-bank'] = [
+$operations['change_bank'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna banca').'</span>',
     'data' => [
         'title' => tr('Aggiornare la banca?'),

@@ -20,79 +20,30 @@
 
 namespace Plugins\ReceiptFE;
 
-use Hooks\Manager;
 use Models\Cache;
 use Models\Module;
+use Hooks\CachedManager;
 
 /**
  * Hook per l'importazione e il conteggio delle ricevute rilevate come da importare.
  *
  * @see MissingReceiptTask,ReceiptTask Per procedura più strutturata di importazione
  */
-class ReceiptHook extends Manager
+class ReceiptHook extends CachedManager
 {
-    public function isSingleton()
+    public function getCacheName()
     {
-        return true;
+        return 'Ricevute Elettroniche';
     }
 
-    public function needsExecution()
+    public function cacheData()
     {
-        if (!Interaction::isEnabled()) {
-            return false;
-        }
-
-        // Lettura cache
-        $todo_cache = Cache::where('name', 'Ricevute Elettroniche')->first();
-
-        return !$todo_cache->isValid() || !empty($todo_cache->content);
+        return false;
     }
 
     public function execute()
     {
-        // Lettura cache
-        $todo_cache = Cache::where('name', 'Ricevute Elettroniche')->first();
-        $completed_cache = Cache::where('name', 'Ricevute Elettroniche importate')->first();
-
-        // Refresh cache
-        if (!$todo_cache->isValid()) {
-            $list = Interaction::getRemoteList();
-
-            $todo_cache->set($list);
-            $completed_cache->set([]);
-
-            return;
-        }
-
-        // Caricamento elenco di importazione
-        $todo = $todo_cache->content;
-        if (empty($todo)) {
-            return;
-        }
-
-        // Caricamento elenco di ricevute imporate
-        $completed = $completed_cache->content;
-        $count = (is_array($todo) ? count($todo) : 0);
-
-        // Esecuzione di 10 imporazioni
-        for ($i = 0; $i < 10 && $i < $count; ++$i) {
-            $element = $todo[$i];
-
-            if ($element !== null) {
-                // Importazione ricevuta
-                $name = $element['name'];
-                $fattura = Ricevuta::process($name);
-
-                if ($fattura !== null) {
-                    $completed[] = $element;
-                    unset($todo[$i]);
-                }
-            }
-        }
-
-        // Aggiornamento cache
-        $todo_cache->set($todo);
-        $completed_cache->set($completed);
+        return false;
     }
 
     public function response()

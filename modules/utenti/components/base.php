@@ -25,14 +25,14 @@ use Models\Module;
 if (!empty(filter('idanagrafica'))) {
     $utente['id_anagrafica'] = filter('idanagrafica');
 } else {
-    $current_idgruppo = Group::find($id_record)->id;
+    $current_idgruppo = !empty($id_record) ? Group::find($id_record)->id : null;
 }
 
 echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.Module::where('name', 'Utenti e permessi')->first()->id.'", "readonly": "'.(($utente['id'] == '1') ? 1 : 0).'" ]}
+		{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "icon-after": "add|'.Module::where('name', 'Utenti e permessi')->first()->id.'", "readonly": "'.(($utente['id'] == '1') || (!empty($id_record) && empty($utente['id'])) ? 1 : 0).'" ]}
 		</div>
 	</div>';
 

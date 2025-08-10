@@ -77,13 +77,6 @@ if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0
 // Impostazioni sugli slot di esecuzione
 $slot_duration = 5;
 
-// Controllo sull'ultima esecuzione
-$data = $data ? new Carbon($data) : null;
-$minimo_esecuzione = (new Carbon())->subMinutes($slot_duration * 5);
-if (!empty($data) && $minimo_esecuzione->lessThan($data)) {
-    return;
-}
-
 // Generazione e registrazione del cron
 $current_id = random_string();
 $cron_id->set($current_id);
@@ -101,92 +94,88 @@ $database->query('DELETE FROM `zz_tasks_logs` WHERE DATE_ADD(`created_at`, INTER
 ]);
 
 // Esecuzione ricorrente
-$number = 1;
-while (true) {
-    $disattiva->refresh();
-    $cron_id->refresh();
-    $in_esecuzione->refresh();
+$disattiva->refresh();
+$cron_id->refresh();
+$in_esecuzione->refresh();
 
-    // Controllo su possibili aggiornamenti per bloccare il sistema
-    $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
-    if (!$database_online || !empty($disattiva->content) || $cron_id->content != $current_id) {
-        return;
-    }
-
-    // Risveglio programmato tramite slot
-    $timestamp = $slot_minimo->getTimestamp();
-    time_sleep_until($timestamp);
-    $in_esecuzione->set(true);
-
-    // Registrazione dell'iterazione nei log
-    $logger->info('Cron #'.$number.' iniziato', [
-        'slot' => $slot_minimo->toDateTimeString(),
-        'slot-unix' => $timestamp,
-    ]);
-
-    // Calcolo del primo slot disponibile per l'esecuzione successiva
-    $inizio_iterazione = $slot_minimo->copy();
-    $slot_minimo = $inizio_iterazione->copy()->startOfHour();
-    while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
-        $slot_minimo->addMinutes($slot_duration);
-    }
-
-    // Aggiornamento dei cron disponibili
-    $tasks = Task::all()->where('enabled', 1);
-    foreach ($tasks as $task) {
-        $adesso = new Carbon();
-
-        // Registrazione della data per l'esecuzione se non indicata
-        if (empty($task->next_execution_at)) {
-            $task->registerNextExecution($inizio_iterazione);
-            $task->save();
-
-            $logger->info($task->getTranslation('title').': data mancante', [
-                'timestamp' => $task->next_execution_at->toDateTimeString(),
-            ]);
-        }
-
-        // Esecuzione diretta solo nel caso in cui sia prevista
-        if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
-            // Registrazione dell'esecuzione nei log
-            $logger->info($task->getTranslation('title').': '.$task->expression);
-            try {
-                $task->execute();
-            } catch (Exception $e) {
-                // Registrazione del completamento nei log
-                $task->log('error', 'Errore di esecuzione', [
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                $logger->error($task->getTranslation('title').': errore');
-            }
-        }
-        // Esecuzione mancata
-        elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
-            $logger->warning($task->getTranslation('title').': mancata', [
-                'timestamp' => $task->next_execution_at->toDateTimeString(),
-            ]);
-
-            $task->registerMissedExecution($inizio_iterazione);
-        }
-
-        // Calcolo dello successivo slot
-        if ($task->next_execution_at->lessThan($slot_minimo)) {
-            $slot_minimo = $task->next_execution_at;
-        }
-    }
-
-    // Registrazione dello slot successivo nei log
-    $logger->info('Cron #'.$number.' concluso', [
-        'next-slot' => $slot_minimo->toDateTimeString(),
-        'next-slot-unix' => $timestamp,
-    ]);
-    $in_esecuzione->set(false);
-
-    // Registrazione dell'esecuzione
-    $adesso = new Carbon();
-    $ultima_esecuzione->set($adesso->__toString());
-    ++$number;
+// Controllo su possibili aggiornamenti per bloccare il sistema
+$database_online = $database->isInstalled() && !Update::isUpdateAvailable();
+if (!$database_online || !empty($disattiva->content) || $cron_id->content != $current_id) {
+    return;
 }
+
+// Risveglio programmato tramite slot
+$timestamp = $slot_minimo->getTimestamp();
+time_sleep_until($timestamp);
+$in_esecuzione->set(true);
+
+// Registrazione dell'iterazione nei log
+$logger->info('Cron #'.$number.' iniziato', [
+    'slot' => $slot_minimo->toDateTimeString(),
+    'slot-unix' => $timestamp,
+]);
+
+// Calcolo del primo slot disponibile per l'esecuzione successiva
+$inizio_iterazione = $slot_minimo->copy();
+$slot_minimo = $inizio_iterazione->copy()->startOfHour();
+while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
+    $slot_minimo->addMinutes($slot_duration);
+}
+
+// Aggiornamento dei cron disponibili
+$tasks = Task::all()->where('enabled', 1);
+foreach ($tasks as $task) {
+    $adesso = new Carbon();
+
+    // Registrazione della data per l'esecuzione se non indicata
+    if (empty($task->next_execution_at)) {
+        $task->registerNextExecution($inizio_iterazione);
+        $task->save();
+
+        $logger->info($task->getTranslation('title').': data mancante', [
+            'timestamp' => $task->next_execution_at->toDateTimeString(),
+        ]);
+    }
+
+    // Esecuzione diretta solo nel caso in cui sia prevista
+    if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
+        // Registrazione dell'esecuzione nei log
+        $logger->info($task->getTranslation('title').': '.$task->expression);
+        try {
+            $task->execute();
+        } catch (Exception $e) {
+            // Registrazione del completamento nei log
+            $task->log('error', 'Errore di esecuzione', [
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $logger->error($task->getTranslation('title').': errore');
+        }
+    }
+    // Esecuzione mancata
+    elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
+        $logger->warning($task->getTranslation('title').': mancata', [
+            'timestamp' => $task->next_execution_at->toDateTimeString(),
+        ]);
+
+        $task->registerMissedExecution($inizio_iterazione);
+    }
+
+    // Calcolo dello successivo slot
+    if ($task->next_execution_at->lessThan($slot_minimo)) {
+        $slot_minimo = $task->next_execution_at;
+    }
+}
+
+// Registrazione dello slot successivo nei log
+$logger->info('Cron #'.$number.' concluso', [
+    'next-slot' => $slot_minimo->toDateTimeString(),
+    'next-slot-unix' => $timestamp,
+]);
+$in_esecuzione->set(false);
+
+// Registrazione dell'esecuzione
+$adesso = new Carbon();
+$ultima_esecuzione->set($adesso->__toString());

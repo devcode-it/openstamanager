@@ -68,8 +68,9 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.53",
-        "phpunit/phpunit": "^11.5",
-        "rector/rector": "^2.0"
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^10|^11",
+        "rector/rector": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -151,5 +152,9 @@
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }
+    },
+    "scripts": {
+        "unit-tests": "phpunit --configuration phpunit.xml",
+        "format": "php-cs-fixer fix"
     }
 }

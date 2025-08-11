@@ -96,9 +96,11 @@
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
         "windows-fix": "yarn global add windows-build-tools",
-        "php-cs-fix": "vendor/bin/php-cs-fixer fix",
+        "php-cs-fix": "php composer.phar run format",
         "rector": "vendor/bin/rector process",
-        "setup-corepack": "npm install -g corepack && corepack enable"
+        "setup-corepack": "npm install -g corepack && corepack enable",
+        "unit-tests": "php composer.phar run unit-tests"
     },
     "packageManager": "yarn@4.6.0"
 }
+

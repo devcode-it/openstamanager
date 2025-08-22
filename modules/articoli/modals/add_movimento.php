@@ -121,6 +121,10 @@ echo '
             }
         });
 
+        setTimeout(function() {
+            $("#causale").trigger("change");
+        }, 100);
+
         // Reload pagina appena chiudo il modal
         $("#modals > div").on("hidden.bs.modal", function () {
             location.reload();

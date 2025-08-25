@@ -21,6 +21,7 @@
 namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
+use Modules\Pagamenti\Pagamento;
 use Modules\Scadenzario\Scadenza;
 use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 use Plugins\ImportFE\FatturaElettronica as FatturaElettronicaImport;
@@ -33,8 +34,9 @@ use Util\XML;
  */
 class Scadenze
 {
-    public function __construct(private readonly Fattura $fattura)
+    public function __construct(private readonly Fattura $fattura, $database = null)
     {
+        $this->database = $database ?: database(); // Allow mocking
     }
 
     /**
@@ -49,11 +51,11 @@ class Scadenze
         $this->rimuovi();
 
         if (!$ignora_fe && $this->fattura->module == 'Fatture di acquisto' && $this->fattura->isFE()) {
-            $scadenze_fe = $this->registraScadenzeFE($is_pagato);
+            $scadenze = $this->registraScadenzeFE($is_pagato);
         }
 
-        if (empty($scadenze_fe)) {
-            $this->registraScadenzeTradizionali($is_pagato);
+        if (empty($scadenze)) {
+            $scadenze = $this->registraScadenzeTradizionali($is_pagato);
         }
 
         // Registrazione scadenza per Ritenuta d'Acconto
@@ -78,8 +80,10 @@ class Scadenze
             $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenutaacconto');
+            $scadenze[] = self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenutaacconto');
         }
+
+        return $scadenze;
     }
 
     /**
@@ -88,14 +92,15 @@ class Scadenze
     public function rimuovi()
     {
         $scadenze = $this->fattura->scadenze;
+        $assicurazioni = [];
         foreach ($scadenze as $scadenza) {
-            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+            $assicurazione_crediti = this->trovaAssicurazioneCrediti($scadenza->idanagrafica, $scadenza->scadenza);
             if (!empty($assicurazione_crediti)) {
                 $assicurazioni[] = $assicurazione_crediti;
             }
         }
 
-        database()->delete('co_scadenziario', ['iddocumento' => $this->fattura->id]);
+        $this->database->delete('co_scadenziario', ['iddocumento' => $this->fattura->id]);
 
         foreach ($assicurazioni as $assicurazione) {
             $assicurazione->fixTotale();
@@ -117,18 +122,35 @@ class Scadenze
         $descrizione = $fattura->tipo->getTranslation('title').' numero '.$numero;
         $idanagrafica = $fattura->idanagrafica;
 
-        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
+        $scadenza = $this->generaScadenza($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
 
         $scadenza->documento()->associate($fattura);
         $scadenza->data_emissione = $fattura->data;
 
         $scadenza->save();
 
-        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        $assicurazione_crediti = $this->trovaAssicurazioneCrediti($scadenza->idanagrafica, $scadenza->scadenza);
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
             $assicurazione_crediti->save();
         }
+
+        return $scadenza;
+    }
+
+    protected function trovaPagamento($idpagamento): ?Pagamento
+    {
+        return Pagamento::where('id', $idpagamento)->first();
+    }
+
+    protected function trovaAssicurazioneCrediti($idanagrafica, $data_scadenza): ?AssicurazioneCrediti
+    {
+        return AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $data_scadenza)->where('data_fine', '>=', $data_scadenza)->first();
+    }
+
+    protected function generaScadenza($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato): Scadenza
+    {
+        return Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
     }
 
     /**
@@ -151,6 +173,7 @@ class Scadenze
             $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
         }
 
+        $results = [];
         foreach ($pagamenti as $pagamento) {
             $rate = $pagamento['DettaglioPagamento'];
             $rate = isset($rate[0]) ? $rate : [$rate];
@@ -162,11 +185,11 @@ class Scadenze
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
-                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
+                $results[] = self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
             }
         }
 
-        return !empty($pagamenti);
+        return $results;
     }
 
     /**
@@ -181,9 +204,10 @@ class Scadenze
         $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
-        $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->idpagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->idanagrafica);
+        $rate = ($this->fattura->pagamento ?: $this->trovaPagamento($this->fattura->idpagamento))->calcola($netto, $this->fattura->data, $this->fattura->idanagrafica, $this->database);
         $direzione = $this->fattura->tipo->dir;
 
+        $results = [];
         foreach ($rate as $rata) {
             $scadenza = $rata['scadenza'];
             $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
@@ -191,7 +215,9 @@ class Scadenze
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
+            $results[] = self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
         }
+
+        return $results;
     }
 }

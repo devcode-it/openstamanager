@@ -27,14 +27,20 @@ $r = $dbo->fetchOne('SELECT
         `an_anagrafiche`.`ragione_sociale`,
         `an_referenti`.`nome`,
         `co_tipidocumento_lang`.`title` AS tipo_documento,
+        `righe`.`totale`,
         (SELECT `pec` FROM `em_accounts` WHERE `em_accounts`.`id`='.prepare($template['id_account']).') AS is_pec
     FROM `co_documenti`
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `an_referenti` ON `an_referenti`.`id` = `co_documenti`.`idreferente`
+        LEFT JOIN (SELECT iddocumento, SUM(subtotale - sconto + iva) AS totale FROM `co_righe_documenti` GROUP BY iddocumento) righe ON `co_documenti`.`id` = `righe`.`iddocumento`
     WHERE 
         `co_documenti`.`id`='.prepare($id_record));
+
+$banca = Modules\Banche\Banca::where('id_anagrafica', setting('Azienda predefinita'))
+    ->where('predefined', 1)
+    ->first();
 
 if (!empty(setting('Logo stampe'))) {
     $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
@@ -53,6 +59,8 @@ return [
     'ragione_sociale' => $r['ragione_sociale'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'tipo_documento' => $r['tipo_documento'],
+    'iban' => $banca->iban,
+    'totale' => moneyFormat($r['totale']),
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',

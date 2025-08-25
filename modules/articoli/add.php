@@ -59,7 +59,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=0|hide" ]}
+            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>||hide" ]}
         </div>
 	</div>
 
@@ -97,7 +97,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta", "value": "<?php echo htmlentities(filter('qta')) ?: ''; ?>" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -111,7 +111,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "<?php echo htmlentities(filter('um')) ?: ''; ?>", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
@@ -135,6 +135,13 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
                     {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "valore_predefinito": "Iva predefinita", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                     <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
                     <input type="hidden" name="aliquota_predefinita" value="<?php echo $aliquota_predefinita; ?>">
+                </div>
+            </div>
+
+            <!--Aggiungo form inserimento ubicazione-->
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "", "ajax-source": "ubicaz" ]}
                 </div>
             </div>
         </div>
@@ -190,11 +197,6 @@ $(document).ready(function () {
             modello.parent().find(".input-group-append button").addClass("hide");
         }
     });
-
-    // Nascondi il pulsante modello se non c'è una marca selezionata all'inizio
-    if(!$('#add-form').find('#id_marca').val()) {
-        modello.parent().find(".input-group-append button").addClass("hide");
-    }
 
     input("coefficiente").on('keyup', function(){
         if (iva_vendita.val()) {
@@ -260,12 +262,5 @@ function scorpora_iva_add() {
 
 $("#genera_barcode").click(function(){
     $(".modal #barcode").attr("disabled", $(this).is(":checked")).val("");
-});
-
-// Espandi automaticamente la sezione "Informazioni aggiuntive" se sono precompilati dati dall'ImportFE
-$(document).ready(function() {
-    if (input("prezzo_acquisto").get() > 0 || input("qta").get() > 0 || input("um").get()) {
-        $(".card.collapsed-card .card-tools button[data-card-widget='collapse']").click();
-    }
 });
 </script>

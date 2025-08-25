@@ -45,14 +45,19 @@ use Modules\Iva\Aliquota;
 
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             {[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$", "validation": "codice" ]}
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-default btn-xs tip pull-right" id="generaBarcode"><i class="fa fa-refresh"></i> <?php echo tr('Genera'); ?></button>
+                            {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "validation": "barcode", "class": "text-center", "value": "$barcode$" ]}
+                        </div>
+
+                        <div class="col-md-3">
                             {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate.'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                         </div>
                     </div>
@@ -61,20 +66,20 @@ use Modules\Iva\Aliquota;
                         <div class="col-md-3">
                             <?php echo (!empty($record['id_categoria'])) ?
                                 Modules::link('Categorie', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria_edit", "id": "categoria_edit", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
                         </div>
 
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria_edit", "id": "subcategoria_edit", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                         </div>
 
                         <div class="col-md-3">
                             <?php echo !empty($record['id_marca']) ? Modules::link('Marche', $record['id_marca'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca_edit", "id": "id_marca_edit", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
                         </div>
                         <div class="col-md-3">
                             <?php echo !empty($record['id_modello']) ? Modules::link('Marche', $record['id_modello'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello_edit", "id": "id_modello_edit", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
                         </div>
                     </div>
                     <div class="row">
@@ -97,8 +102,11 @@ use Modules\Iva\Aliquota;
                         <div class="col-md-4">
                             {[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                         </div>
-                        <div class="col-md-4">
+                        <!--<div class="col-md-4">
                             {[ "type": "text", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$" ]}
+                        </div>-->
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$", "ajax-source": "ubicaz", "icon-after": "add|<?php echo Module::where('name', 'ubicazioni')->first()->id; ?>" ]}
                         </div>
 
                         <div class="col-md-4">
@@ -338,37 +346,22 @@ $(document).ready(function() {
     });
 });
 
-$("#categoria_edit").change(function() {
+$("#categoria").change(function() {
     updateSelectOption("id_categoria", $(this).val());
 
-	$("#subcategoria_edit").val(null).trigger("change");
-
-	// Gestione del pulsante "aggiungi" per sottocategoria
-	var sub = $("#subcategoria_edit");
-	var button = sub.parent().find(".input-group-append button");
-
-	if($(this).val()) {
-		button.removeClass("hide");
-		var original = button.attr("onclick");
-		if(original && original.indexOf("id_original=") !== -1) {
-			var newOnclick = original.replace(/id_original=\d+/, "id_original=" + $(this).val());
-			button.attr("onclick", newOnclick);
-		}
-	} else {
-		button.addClass("hide");
-	}
+	$("#subcategoria").val(null).trigger("change");
 });
 
 // Gestione del cambio marca per aggiornare i modelli
-$("#id_marca_edit").change(function() {
+$("#id_marca").change(function() {
     updateSelectOption("id_marca", $(this).val());
 
     // Reset del modello
-    $("#id_modello_edit").val(null).trigger("change");
+    $("#id_modello").val(null).trigger("change");
 
     // Aggiornamento dell'icona "aggiungi" per il modello
     if($(this).val()) {
-        var button = $("#id_modello_edit").parent().find(".input-group-append button");
+        var button = $("#id_modello").parent().find(".input-group-append button");
         var original = button.attr("onclick");
         if(original) {
             var newOnclick = original.replace(/id_original=\d+/, "id_original=" + $(this).val());
@@ -376,7 +369,7 @@ $("#id_marca_edit").change(function() {
             button.removeClass("hide");
         }
     } else {
-        $("#id_modello_edit").parent().find(".input-group-append button").addClass("hide");
+        $("#id_modello").parent().find(".input-group-append button").addClass("hide");
     }
 });
 
@@ -393,6 +386,28 @@ $("#scorporaIva").click( function() {
 	scorporaIva();
 });
 
+function generaBarcode() {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "generate-barcode"
+        },
+        success: function(response) {
+            response = JSON.parse(response);
+            let input = $("#barcode");
+            input.val(response.barcode);
+        },
+        error: function(xhr, status, error) {
+        }
+    });
+}
+
+$("#generaBarcode").click( function() {
+	generaBarcode();
+});
 </script>
 
 

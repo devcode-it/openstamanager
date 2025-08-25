@@ -42,7 +42,7 @@ switch ($resource) {
         $query = "SELECT
             DISTINCT `mg_articoli`.`id`,
             IF(`categoria_lang`.`title` IS NOT NULL, CONCAT(`categoria_lang`.`title`, IF(`sottocategoria_lang`.`title` IS NOT NULL, CONCAT(' (', `sottocategoria_lang`.`title`, ')'), '-')), '<i>".tr('Nessuna categoria')."</i>') AS optgroup,
-            `mg_articoli_barcode`.`barcode` AS barcode,
+            `mg_articoli`.`barcode`,
             `mg_articoli`.".($prezzi_ivati ? '`prezzo_vendita_ivato`' : '`prezzo_vendita`').' AS prezzo_vendita,
             `mg_articoli`.`prezzo_vendita_ivato` AS prezzo_vendita_ivato,
             `mg_articoli`.'.($prezzi_ivati ? '`minimo_vendita_ivato`' : '`minimo_vendita`').' AS minimo_vendita,';
@@ -114,8 +114,7 @@ switch ($resource) {
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
             LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = '.$iva_predefinita.'
-            LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-            LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.idarticolo = mg_articoli.id';
+            LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')';
 
         if ($usare_iva_anagrafica) {
             $query .= '
@@ -180,8 +179,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`mg_articoli_lang`.`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`mg_articoli`.`barcode` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`categoria_lang`.`title` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`mg_articoli_barcode`.`barcode` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`sottocategoria_lang`.`title` LIKE '.prepare('%'.$search.'%');
 
             if ($usare_dettaglio_fornitore) {
@@ -217,7 +216,6 @@ switch ($resource) {
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],
-            'link' => 'module:Articoli',
         ];
 
         break;
@@ -235,8 +233,6 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
-
-        $custom['link'] = 'module:Categorie';
 
         break;
 
@@ -258,8 +254,6 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
             }
-
-            $custom['link'] = 'module:Categorie';
         }
         break;
 
@@ -271,6 +265,20 @@ switch ($resource) {
         }
         if (!empty($search)) {
             $search_fields[] = '`valore` LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
+    case 'ubicaz':
+        $query = 'SELECT `mg_ubicazioni`.`u_label` AS id, `mg_ubicazioni_lang`.`title` AS descrizione FROM `mg_ubicazioni` LEFT JOIN `mg_ubicazioni_lang` ON (`mg_ubicazioni_lang`.`id_record` = `mg_ubicazioni`.`id` AND `mg_ubicazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title`';
+        //$query = 'SELECT `u_label` AS id, `u_label` AS descrizione FROM `mg_ubicazioni` LEFT JOIN `mg_ubicazioni_lang` ON (`mg_ubicazioni_lang`.`id_record` = `mg_ubicazioni`.`id` AND `mg_ubicazioni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY TRIM(`mg_ubicazioni`.`u_label`)';
+
+        foreach ($elements as $element) {
+            $filter[] = '`u_label`='.prepare($element);
+        }
+        if (!empty($search)) {
+            //$search_fields[] = '`u_label` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -298,7 +306,6 @@ switch ($resource) {
             `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore
         FROM `mg_articoli`
             LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`deleted_at` IS NULL AND `mg_fornitore_articolo`.`id_fornitore` = '.prepare($id_anagrafica).'
-            LEFT JOIN `mg_articoli_barcode` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo`
         |where|';
 
         $where[] = '`mg_articoli`.`attivo` = 1';
@@ -306,7 +313,7 @@ switch ($resource) {
 
         if (!empty($search)) {
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`mg_articoli_barcode`.`barcode` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`mg_articoli`.`barcode` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

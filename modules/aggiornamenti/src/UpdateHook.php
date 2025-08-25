@@ -44,8 +44,10 @@ class UpdateHook extends CachedManager
     public function response()
     {
         $update = $this->getCache()->content[0];
-        if (version_compare($update,\Update::getVersion()) < 0 || empty(setting('Attiva aggiornamenti'))) {
-            $update = null;
+        if (!empty($update)) {
+            if (version_compare($update,\Update::getVersion()) < 0 || empty(setting('Attiva aggiornamenti'))) {
+                $update = null;
+            }
         }
 
         $module = Module::where('name', 'Aggiornamenti')->first();

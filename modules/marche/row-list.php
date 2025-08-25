@@ -55,7 +55,7 @@ foreach ($modelli as $modello) {
 if (count($modelli) == 0) {
     echo '
 <tr>
-    <td colspan="6" class="text-center">
+    <td colspan="5" class="text-center">
         <em>'.tr('Nessun modello presente').'</em>
     </td>
 </tr>';

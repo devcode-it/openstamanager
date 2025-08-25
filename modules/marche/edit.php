@@ -80,7 +80,6 @@ if (!empty($record['immagine'])) {
 					<table class="table table-striped table-hover table-bordered">
 						<thead>
 							<tr>
-								<th width="10%" class="text-center"><?php echo tr('Immagine'); ?></th>
 								<th width="25%" class="text-left"><?php echo tr('Nome'); ?></th>
 								<th width="25%" class="text-left"><?php echo tr('Link produttore'); ?></th>
 								<th width="10%" class="text-center"><?php echo tr('Articolo'); ?></th>

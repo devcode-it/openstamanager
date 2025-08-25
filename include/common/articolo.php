@@ -44,7 +44,9 @@ echo '
     <script>
         $(document).ready(function (){
             // Preimpostazione del prezzo di acquisto per articolo già selezionato
-            $("#costo_unitario").val("'.$articolo['prezzo_acquisto'].'");
+            var costo_riga = "'.($result['costo_unitario'] ?? '').'";
+            var costo_articolo = "'.$articolo['prezzo_acquisto'].'";
+            $("#costo_unitario").val(costo_riga || costo_articolo);
 
             ottieniDettagliArticolo("'.$articolo['id'].'").then(function (){
                 verificaPrezzoArticolo();

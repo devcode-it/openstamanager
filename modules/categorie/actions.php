@@ -23,9 +23,9 @@ use Modules\Articoli\Categoria;
 
 switch (filter('op')) {
     case 'update':
-        $nome = filter('nome');
-        $nota = filter('nota');
-        $colore = filter('colore');
+        $nome = filter('nome_add') ?: filter('nome');
+        $nota = filter('nota_add') ?: filter('nota');
+        $colore = filter('colore_add') ?: filter('colore');
         $id_original = filter('id_original') ?: null;
         $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
         $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;

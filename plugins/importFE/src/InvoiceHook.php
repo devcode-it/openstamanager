@@ -46,7 +46,7 @@ class InvoiceHook extends Manager
     {
         $results = Cache::where('name', $this->cache_name)->first()->content;
 
-        $count = count($results);
+        $count = $results ? count($results) : 0;
         $notify = false;
 
         $module = Module::where('name', 'Fatture di acquisto')->first();

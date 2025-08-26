@@ -95,12 +95,12 @@ class FileManager implements ManagerInterface
         }
 
         // Categorie
-        $categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `id_category`) AS `id_category` FROM `zz_files` LEFT JOIN `zz_files_categories` ON `zz_files`.`id_category` = `zz_files_categories`.`id` WHERE '.$where.' ORDER BY `zz_files_categories`.`name`');
+        $categories = $dbo->fetchArray('SELECT DISTINCT(COALESCE(`id_category`, 0)) AS `id_category` FROM `zz_files` LEFT JOIN `zz_files_categories` ON `zz_files`.`id_category` = `zz_files_categories`.`id` WHERE '.$where.' ORDER BY `zz_files_categories`.`name`');
         $categories = array_column($categories, 'id_category');
         foreach ($categories as $category) {
             $categoria = $category ? Categoria::find($category)->name : 'Generale';
 
-            $rs = $dbo->fetchArray('SELECT `zz_files`.* FROM `zz_files` WHERE BINARY `id_category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
+            $rs = $dbo->fetchArray('SELECT `zz_files`.* FROM `zz_files` WHERE (COALESCE(`id_category`, 0))'.(!empty($category) ? '= '.prepare($category) : '= 0').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
 
             if (!empty($rs)) {
                 $result .= '

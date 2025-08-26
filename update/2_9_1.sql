@@ -66,3 +66,5 @@ INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', @idtask, 'Electronic Invoices Import Hook');
 
 UPDATE `zz_modules` m1 JOIN `zz_modules` m2 ON m2.name = 'Tabelle' SET m1.parent = m2.id WHERE m1.name = 'Categorie contratti';
+
+UPDATE `zz_modules` m1 JOIN `zz_modules` m2 ON m1.parent = m2.id AND m2.name = 'Tabelle' SET m1.icon = 'fa fa-circle-o';

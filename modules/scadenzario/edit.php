@@ -134,9 +134,6 @@ if (!empty($documento)) {
                     </div>';
 }
 
-// Visualizzazione movimenti di prima nota con primanota = 1
-include_once __DIR__.'/../primanota/movimenti_utils.php';
-
 if (!empty($documento)) {
     echo renderTabellaMovimentiPrimaNota($documento->id, null);
 } else {

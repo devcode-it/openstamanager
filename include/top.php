@@ -555,7 +555,7 @@ if (Auth::check()) {
 
     $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
     $in_controller = string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php');
-    if (($in_editor || $in_controller) && !$isInstallation) {
+    if (($in_editor || $in_controller) && !$isInstallation && $has_plugins > 0) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <div class="control-sidebar-button" title="'.tr('Plugin').'">

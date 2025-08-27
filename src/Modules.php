@@ -349,19 +349,34 @@ class Modules
 
         $result = '';
         if ($show) {
-            $result .= '<li class="nav-item'.($active && !empty($submenus) ? ' menu-open' : '').'" id="'.$element['id'].'" data-id="'.$element['id'].'" '.($link != 'javascript:;' ? 'onclick="location.href=\''.$link.'\';"' : '').'>
-                <a href="'.$link.'" class="nav-link'.($active ? ' active' : '').'" target="'.$target.'">
-                    <i class="'.$element['icon'].'">&nbsp;</i>
-                    <p>'.$title.'</p>';
-            if (!empty($submenus) && !empty($temp)) {
+            $hasSubmenus = !empty($submenus) && !empty($temp);
+            $onclickAttr = (!$hasSubmenus && $link != 'javascript:;') ? 'onclick="location.href=\''.$link.'\';"' : '';
+
+            $result .= '<li class="nav-item'.($active && $hasSubmenus ? ' menu-open' : '').'" id="'.$element['id'].'" data-id="'.$element['id'].'" '.$onclickAttr.'>';
+
+            if ($hasSubmenus) {
+                // Per i menu con sottomenu, distinguiamo tra menu con modulo e menu contenitori
+                $hasModule = ($link != 'javascript:;');
+                $menuTextClass = $hasModule ? 'menu-text' : '';
+                $dataAttribute = $hasModule ? ' data-has-submenu="true"' : '';
+
                 $result .= '
-                    <i class="right fa fa-angle-left"></i>
+                <a href="'.$link.'" class="nav-link'.($active ? ' active' : '').'" data-widget="treeview" role="button" aria-expanded="'.($active ? 'true' : 'false').'"'.$dataAttribute.'>
+                    <i class="'.$element['icon'].'">&nbsp;</i>
+                    <p><span class="'.$menuTextClass.'">'.$title.'</span>
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
                 </a>
                 <ul class="nav nav-treeview">
                     '.$temp.'
                 </ul>';
             } else {
-                $result .= '</a>';
+                // Per i menu senza sottomenu, comportamento normale
+                $result .= '
+                <a href="'.$link.'" class="nav-link'.($active ? ' active' : '').'" target="'.$target.'">
+                    <i class="'.$element['icon'].'">&nbsp;</i>
+                    <p>'.$title.'</p>
+                </a>';
             }
             $result .= '</li>';
         }

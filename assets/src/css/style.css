@@ -2445,6 +2445,20 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     text-align: left;
 }
 
+/* Stili per il menu con sottomenu */
+.nav-sidebar .menu-text {
+    cursor: pointer;
+    display: inline;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-sidebar .menu-text:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
 .hide, .hidden{
     display: none;
 }

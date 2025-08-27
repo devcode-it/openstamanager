@@ -50,19 +50,25 @@ class Services
      */
     public static function getInformazioni($force = false)
     {
-        //$cache = Cache::where('name', 'Informazioni su Services')->first();
-
-        // Aggiornamento dei contenuti della cache
-        //if (!$cache->isValid() || $force) {
+        try {
             $response = self::request('GET', 'info');
             $content = self::responseBody($response);
 
-            //$cache->set($content);
+            // Verifica che la risposta contenga i dati attesi
+            if (!is_array($content) || !isset($content['risorse-api'])) {
+                return ['risorse-api' => []];
+            }
 
             return $content;
-        //}
+        } catch (\Exception $e) {
+            // Log dell'errore per debug
+            if (function_exists('logger')) {
+                logger()->error('Errore nel recupero informazioni Services: ' . $e->getMessage());
+            }
 
-        //return $cache->content;
+            // Restituisce un array vuoto in caso di errore
+            return ['risorse-api' => []];
+        }
     }
 
     /**
@@ -85,8 +91,7 @@ class Services
     public static function getServiziInScadenza($limite_scadenze)
     {
         return self::getServiziAttivi()
-            ->flatten(1)
-            ->filter(fn ($item) => isset($item['data_conclusione']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
+            ->filter(fn ($item) => is_array($item) && isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze));
     }
 
     /**
@@ -97,8 +102,7 @@ class Services
     public static function getServiziScaduti()
     {
         return self::getServiziAttivi()
-            ->flatten(1)
-            ->filter(fn ($item) => isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan(Carbon::now()));
+            ->filter(fn ($item) => is_array($item) && isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()));
     }
 
     /**
@@ -118,7 +122,7 @@ class Services
      */
     public static function verificaRisorsaAttiva($servizio)
     {
-        return self::isEnabled() && self::getRisorseAttive()->search(fn ($item) => $item['name'] == $servizio) !== false;
+        return self::isEnabled() && self::getRisorseAttive()->search(fn ($item) => is_array($item) && isset($item['name']) && $item['name'] == $servizio) !== false;
     }
 
     /**
@@ -131,8 +135,8 @@ class Services
     public static function getRisorseInScadenza($limite_scadenze)
     {
         return self::getRisorseAttive()
-            ->filter(fn ($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
-                || (isset($item['credits']) && $item['credits'] < 100));
+            ->filter(fn ($item) => is_array($item) && ((isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze))
+                || (isset($item['credits']) && $item['credits'] < 100)));
     }
 
     /**
@@ -143,8 +147,8 @@ class Services
     public static function getRisorseScadute()
     {
         return self::getRisorseAttive()
-            ->filter(fn ($item) => (isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()))
-                || (isset($item['credits']) && $item['credits'] < 0));
+            ->filter(fn ($item) => is_array($item) && ((isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()))
+                || (isset($item['credits']) && $item['credits'] < 0)));
     }
 
     /**
@@ -163,7 +167,7 @@ class Services
 
         $json = array_merge($data, [
             'token' => setting('OSMCloud Services API Token'),
-            'version' => setting('OSMCloud Services API Version'),
+            'version' => setting('OSMCloud Services API Version') ?: 'v3',
             'resource' => $resource,
         ]);
 
@@ -195,7 +199,7 @@ class Services
     protected static function getClient()
     {
         if (!isset(self::$client)) {
-            $url = setting('OSMCloud Services API URL');
+            $url = setting('OSMCloud Services API URL') ?: 'https://services.osmcloud.it/api/';
 
             self::$client = new Client([
                 'base_uri' => $url,

@@ -28,26 +28,34 @@ echo '
 <div class="row">';
 $days = 60;
 $limite_scadenze = (new Carbon())->addDays($days);
+
+// Colonna sinistra: Servizi e Risorse
+echo '
+    <div class="col-md-12 col-lg-6">
+        <div class="row">';
+
 if (Services::isEnabled()) {
     echo '
-    <!-- Informazioni sui Servizi attivi -->
-    <div class="col-md-12 col-lg-6">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fa fa-cogs mr-2"></i>'.tr('Servizi').'
-                </div>
-            </div>
+            <!-- Informazioni sui Servizi attivi -->
+            <div class="col-12 mb-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa fa-cogs mr-2"></i>'.tr('Servizi').'
+                        </div>
+                    </div>
 
-            <div class="card-body p-0">';
+                    <div class="card-body p-0">';
 
-    $servizi = Services::getServiziAttivi(true)->flatten(1);
+    $servizi = Services::getServiziAttivi(true);
+
     if (!$servizi->isEmpty()) {
         echo '
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th width="45%">'.tr('Nome').'</th>
+                            <th width="5%" class="text-center">'.tr('Stato').'</th>
+                            <th width="40%">'.tr('Nome').'</th>
                             <th width="20%">'.tr('Tipo').'</th>
                             <th width="25%">'.tr('Scadenza').'</th>
                             <th width="10%" class="text-center">'.tr('#').'</th>
@@ -56,33 +64,47 @@ if (Services::isEnabled()) {
 
                     <tbody>';
         foreach ($servizi as $servizio) {
-            $scadenza = Carbon::parse($servizio['data_conclusione']);
+            // Verifica che $servizio sia un array e contenga i campi necessari
+            if (!is_array($servizio) || !isset($servizio['expiration_at'])) {
+                continue;
+            }
+            $scadenza = Carbon::parse($servizio['expiration_at']);
             $status_class = $scadenza->lessThan(Carbon::now()) ? 'table-danger' : ($scadenza->lessThan($limite_scadenze) ? 'table-warning' : '');
-            $status_icon = $scadenza->lessThan(Carbon::now()) ? '<i class="fa fa-exclamation-circle text-danger mr-1"></i>' : ($scadenza->lessThan($limite_scadenze) ? '<i class="fa fa-clock-o text-warning mr-1"></i>' : '');
+            $status_icon = $scadenza->lessThan(Carbon::now()) ? '<i class="fa fa-times-circle text-danger" title="'.tr('Scaduto').'"></i>' : ($scadenza->lessThan($limite_scadenze) ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('In scadenza').'"></i>' : '<i class="fa fa-check-circle text-success" title="'.tr('Attivo').'"></i>');
+
+            // Usa i campi corretti dalla risposta API
+            $codice = $servizio['code'] ?? $servizio['name'] ?? 'N/A';
+            $nome = $servizio['name'] ?? 'N/A';
+            $tipo = $servizio['type'] ?? $servizio['category'] ?? 'N/A';
 
             echo '
                         <tr class="'.$status_class.'">
-                            <td><strong>'.$servizio['codice'].'</strong> - '.$servizio['nome'].'</td>
-                            <td>'.$servizio['sottocategoria'].'</td>
-                            <td>'.$status_icon.dateFormat($scadenza).' <small class="text-muted">('.$scadenza->diffForHumans().')</small></td>
+                            <td class="text-center">'.$status_icon.'</td>
+                            <td><strong>'.$codice.'</strong><br><small class="text-muted">'.$nome.'</small></td>
+                            <td><span class="badge badge-secondary">'.$tipo.'</span></td>
+                            <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? '' : 'hide').'" name="rinnova[]" value="'.$servizio['codice'].'">
+                                <input type="checkbox" class="check_rinnova '.($scadenza->lessThan($limite_scadenze) ? '' : 'hide').'" name="rinnova[]" value="'.$codice.'">
                             </td>
                         </tr>';
         }
 
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
         $servizi_scaduti = Services::getServiziScaduti();
+
+        echo '  </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="3"><strong>'.tr('Totale servizi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong></td>
+                        <td colspan="2" class="text-right">';
+
         if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-            echo '  </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" class="text-right">
-                                <a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-primary disabled"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>
-                            </td>
-                        </tr>
-                    </tfoot>';
+            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-primary"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
         }
+
+        echo '      </td>
+                    </tr>
+                </tfoot>';
 
         echo '
                 </table>';
@@ -94,20 +116,20 @@ if (Services::isEnabled()) {
     }
 
     echo '
-            </div>
-        </div>
-    </div>
-
-    <!-- Informazioni sulle Risorse API -->
-    <div class="col-md-12 col-lg-6">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fa fa-cubes mr-2"></i>'.tr('Risorse').'
+                    </div>
                 </div>
             </div>
 
-            <div class="card-body p-0">';
+            <!-- Informazioni sulle Risorse API -->
+            <div class="col-12 mb-3">
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa fa-cubes mr-2"></i>'.tr('Risorse').'
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">';
 
     // Elaborazione delle risorse API in scadenza
     $risorse_attive = Services::getRisorseAttive(true);
@@ -146,7 +168,8 @@ if (Services::isEnabled()) {
                 <table class="table table-hover table-striped table-sm mb-0">
                     <thead>
                         <tr>
-                            <th width="45%">'.tr('Nome').'</th>
+                            <th width="5%" class="text-center">'.tr('Stato').'</th>
+                            <th width="40%">'.tr('Nome').'</th>
                             <th width="20%">'.tr('Crediti').'</th>
                             <th width="35%">'.tr('Scadenza').'</th>
                         </tr>
@@ -155,32 +178,66 @@ if (Services::isEnabled()) {
                     <tbody>';
 
         foreach ($risorse_attive as $servizio) {
+            // Verifica che $servizio sia un array e contenga i campi necessari
+            if (!is_array($servizio) || !isset($servizio['expiration_at'])) {
+                continue;
+            }
             $scadenza = Carbon::parse($servizio['expiration_at']);
-            $status_class = $scadenza->lessThan(Carbon::now()) ? 'table-danger' : ($scadenza->lessThan($limite_scadenze) ? 'table-warning' : '');
-            $status_icon = $scadenza->lessThan(Carbon::now()) ? '<i class="fa fa-exclamation-circle text-danger mr-1"></i>' : ($scadenza->lessThan($limite_scadenze) ? '<i class="fa fa-clock-o text-warning mr-1"></i>' : '');
-            $credits_warning = ($servizio['credits'] < 100 && $servizio['credits'] !== null);
+            $credits_warning = $servizio['credits'] < 100 && $servizio['credits'] !== null;
+            $is_expired = $scadenza->lessThan(Carbon::now());
+            $is_expiring = $scadenza->lessThan($limite_scadenze);
+
+            $status_class = $is_expired ? 'table-danger' : ($is_expiring || $credits_warning ? 'table-warning' : '');
+            $status_icon = $is_expired ? '<i class="fa fa-times-circle text-danger" title="'.tr('Scaduto').'"></i>' : ($is_expiring || $credits_warning ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Attenzione').'"></i>' : '<i class="fa fa-check-circle text-success" title="'.tr('Attivo').'"></i>');
 
             echo '
                         <tr class="'.$status_class.'">
+                            <td class="text-center">'.$status_icon.'</td>
                             <td><strong>'.$servizio['name'].'</strong></td>
                             <td>'.($credits_warning ? '<i class="fa fa-exclamation-triangle text-warning mr-1"></i>' : '').($servizio['credits'] ?? '-').'</td>
-                            <td>'.$status_icon.dateFormat($scadenza).' <small class="text-muted">('.$scadenza->diffForHumans().')</small></td>
+                            <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                         </tr>';
         }
 
         echo '
                     </tbody>
-                </table>
-            </div>';
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="4"><strong>'.tr('Totale risorse: _NUM_', ['_NUM_' => $risorse_attive->count()]).'</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>';
 
-        // Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
-        if (Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
-            echo '
+    } else {
+        echo '
+                <div class="alert alert-info m-3">
+                    <i class="fa fa-info-circle mr-2"></i>'.tr('Nessuna risorsa Services abilitata').'.
+                </div>';
+    }
 
-            <div class="card card-primary card-outline mt-3">
+    echo '
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonna destra: Statistiche su Fatture Elettroniche -->
+    <div class="col-md-12 col-lg-6">';
+
+    // Il servizio Fatturazione Elettronica deve essere presente per visualizzare le Statistiche su Fatture Elettroniche
+    if (Services::isEnabled() && Services::getRisorseAttive()->where('name', 'Fatturazione Elettronica')->count()) {
+        echo '
+            <!-- Statistiche su Fatture Elettroniche -->
+            <div class="card card-info card-outline h-100">
                 <div class="card-header">
                     <div class="card-title">
-                        <i class="fa fa-bar-chart mr-2"></i>'.tr('Statistiche su Fatture Elettroniche').'
+                        <i class="fa fa-file-text-o mr-2"></i>'.tr('Statistiche FE').'
+                    </div>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -193,7 +250,6 @@ if (Services::isEnabled()) {
             ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                     </div>
 
-
                     <div class="alert hidden" role="alert" id="numero-fe">
                         <i id="numero-fe-icon" class=""></i> <span>'.tr('Attenzione, numero di fatture elettroniche per l\'annualità _TEXT_: _NUM_ documenti transitati su _TOT_ disponibili', [
                 '_TEXT_' => '<span id="numero-fe-text"></span>',
@@ -202,35 +258,32 @@ if (Services::isEnabled()) {
             ]).'.<br>'.tr("Contattare l'assistenza per risolvere il problema").'</span>.
                     </div>
 
-
-                    <table class="card-body table table-striped table-hover table-sm">
-                        <thead>
-                            <tr>
-                                <th>'.tr('Anno').'</th>
-                                <th>
-                                    '.tr('N. documenti archiviati').'
-                                    <span class="tip" title="'.tr('Fatture attive e relative ricevute, fatture passive').'.">
-                                        <i class="fa fa-question-circle-o"></i>
-                                    </span>
-                                </th>
-
-                                <th>
-                                    '.tr('Spazio utilizzato').'
-                                    <span class="tip" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'.">
-                                        <i class="fa fa-question-circle-o"></i>
-                                    </span>
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tfoot id="elenco-fe">
-                            <tr style="background-color:#CCCCCC;" >
-                                <td>'.tr('Totale').'</td>
-                                <td id="fe_numero"></td>
-                                <td id="fe_spazio"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>'.tr('Anno').'</th>
+                                    <th class="text-center">
+                                        '.tr('Doc.').'
+                                        <i class="fa fa-question-circle-o text-muted" title="'.tr('Fatture attive e relative ricevute, fatture passive').'"></i>
+                                    </th>
+                                    <th class="text-center">
+                                        '.tr('Spazio').'
+                                        <i class="fa fa-question-circle-o text-muted" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="elenco-fe">
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-secondary">
+                                    <td><strong>'.tr('Totale').'</strong></td>
+                                    <td class="text-center"><strong id="fe_numero">-</strong></td>
+                                    <td class="text-center"><strong id="fe_spazio">-</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
             <script>
@@ -238,11 +291,17 @@ if (Services::isEnabled()) {
                 aggiornaStatisticheFE();
             });
             </script>';
-        }
     } else {
         echo '
-                <div class="alert alert-info m-3">
-                    <i class="fa fa-info-circle mr-2"></i>'.tr('Nessuna risorsa Services abilitata').'.
+            <div class="card card-secondary card-outline h-100">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa fa-file-text-o mr-2"></i>'.tr('Statistiche FE').'
+                    </div>
+                </div>
+                <div class="card-body text-center p-3">
+                    <i class="fa fa-info-circle fa-2x text-muted mb-2"></i>
+                    <p class="text-muted mb-0">'.tr('Non disponibili').'<br><small>'.tr('Servizio FE non attivo').'</small></p>
                 </div>
             </div>';
     }
@@ -316,10 +375,7 @@ echo '
         </div>
 
     </div>
-</div>';
-
-echo '
-
+</div>
 <script>
 
 $(".check_rinnova").each(function() {

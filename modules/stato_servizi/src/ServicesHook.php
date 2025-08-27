@@ -35,12 +35,12 @@ class ServicesHook extends Manager
             $limite_scadenze = (new Carbon())->addDays(60);
             $message = "";
 
-            $cache = Cache::where('name', 'Informazioni su Services')->first();        
+            $cache = Cache::where('name', 'Informazioni su Services')->first();
             $services = $cache->content;
 
             //Filtra i risultati che hanno expiration_at fra oggi e $limite_scadenze
             $servizi_in_scadenza = array_filter($services, function ($service) use ($limite_scadenze) {
-                return Carbon::parse($service['expiration_at'])->between(Carbon::now(), $limite_scadenze);
+                return is_array($service) && isset($service['expiration_at']) && Carbon::parse($service['expiration_at'])->between(Carbon::now(), $limite_scadenze);
             });
 
             if( !empty($servizi_in_scadenza) ){
@@ -48,7 +48,7 @@ class ServicesHook extends Manager
                 $message .= tr('I seguenti servizi sono in scadenza:<ul><li> _LIST_', [
                     '_LIST_' => implode('</li><li>', array_column($servizi_in_scadenza, 'name')),
                 ]).'</ul>';
-            } 
+            }
         }
 
         return [

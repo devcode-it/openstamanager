@@ -39,6 +39,36 @@ $(document).ready(function () {
         }
     }
 
+    // Gestione click specifico sul testo del menu per navigare al modulo
+    $(document).on('click', '.nav-sidebar .menu-text', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $link = $(this).closest('.nav-link[data-has-submenu="true"]');
+        const href = $link.attr('href');
+
+        if (href && href !== 'javascript:;' && href !== '#') {
+            window.location.href = href;
+        }
+    });
+
+    // Gestione click sull'icona freccia per compattare quando il menu è espanso
+    $(document).on('click', '.nav-sidebar .nav-item.menu-open > .nav-link[data-widget="treeview"] .fa-angle-left', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $navItem = $(this).closest('.nav-item');
+
+        // Compatta il menu solo se è attualmente espanso
+        if ($navItem.hasClass('menu-open')) {
+            $navItem.removeClass('menu-open');
+            $(this).closest('.nav-link').attr('aria-expanded', 'false');
+            $navItem.find('.nav-treeview').slideUp(300);
+        }
+    });
+
+
+
     // Mostra/nasconde sidebar del menu principale
     $(".sidebar-toggle").on("click", function () {
         if ($("body").hasClass("sidebar-collapse")) {

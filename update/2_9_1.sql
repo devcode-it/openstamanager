@@ -10,60 +10,60 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Nuova gestione Hooks con Task
 -- Invio emails
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Email', 'Modules\\Emails\\EmailHookTask', '*/5 * * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Email', 'Modules\\Emails\\EmailHookTask', '*/5 * * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Email'),
-(NULL, '2', @idtask, 'Email Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Email'),
+('2', @idtask, 'Email Hook');
 
 -- Verifica aggiornamenti
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Aggiornamenti', 'Modules\\Aggiornamenti\\UpdateHookTask', '0 */24 * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Aggiornamenti', 'Modules\\Aggiornamenti\\UpdateHookTask', '0 */24 * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Aggiornamenti'),
-(NULL, '2', @idtask, 'Updates Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Aggiornamenti'),
+('2', @idtask, 'Updates Hook');
 
 -- Calcolo spazio disponibile
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Spazio disponibile', 'Modules\\StatoServizi\\SpaceHookTask', '0 */24 * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Spazio disponibile', 'Modules\\StatoServizi\\SpaceHookTask', '0 */24 * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Spazio disponibile'),
-(NULL, '2', @idtask, 'Space Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Spazio disponibile'),
+('2', @idtask, 'Space Hook');
 
 -- Informazioni su services
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Informazioni su Services', 'Modules\\StatoServizi\\ServicesHookTask', '0 */24 * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Informazioni su Services', 'Modules\\StatoServizi\\ServicesHookTask', '0 */24 * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Informazioni su Services'),
-(NULL, '2', @idtask, 'Services Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Informazioni su Services'),
+('2', @idtask, 'Services Hook');
 
 -- Invio fatture elettroniche
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Invio Fatture Elettroniche', 'Plugins\\ExportFE\\InvoiceHookTask', '*/30 * * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Invio Fatture Elettroniche', 'Plugins\\ExportFE\\InvoiceHookTask', '*/30 * * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Invio Fatture Elettroniche'),
-(NULL, '2', @idtask, 'Electronic Invoices Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Invio Fatture Elettroniche'),
+('2', @idtask, 'Electronic Invoices Hook');
 
 -- Importazione automatica ricevute FE
 UPDATE `zz_tasks` SET `expression` = '0 */4 * * *' WHERE `name` = 'Importazione automatica Ricevute FE';
 
-INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`) VALUES
-(NULL, 'Hook Importazione Fatture Elettroniche', 'Plugins\\ImportFE\\InvoiceHookTask', '0 */24 * * *', NULL, NULL);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Hook Importazione Fatture Elettroniche', 'Plugins\\ImportFE\\InvoiceHookTask', '0 */24 * * *', 1);
 
 SELECT @idtask := MAX(id) FROM zz_tasks;
-INSERT INTO `zz_tasks_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', @idtask, 'Hook Importazione Fatture Elettroniche'),
-(NULL, '2', @idtask, 'Electronic Invoices Import Hook');
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', @idtask, 'Hook Importazione Fatture Elettroniche'),
+('2', @idtask, 'Electronic Invoices Import Hook');
 
 UPDATE `zz_modules` m1 JOIN `zz_modules` m2 ON m2.name = 'Tabelle' SET m1.parent = m2.id WHERE m1.name = 'Categorie contratti';
 

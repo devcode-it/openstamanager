@@ -370,10 +370,31 @@ a:active, a:hover, a:focus {
 /* Stile per il pulsante toggle filtri */
 #toggle-filters-btn {
     margin-right: 5px;
+    transition: all 0.3s ease;
 }
 
 #toggle-filters-btn i.text-primary {
     color: #3c8dbc !important;
+}
+
+/* Stile per il pulsante toggle quando i filtri sono nascosti */
+#toggle-filters-btn.filters-hidden {
+    background-color: #3c8dbc !important;
+    color: white !important;
+    transform: scale(1.2);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(60, 141, 188, 0.3);
+    border: 2px solid #3c8dbc;
+}
+
+#toggle-filters-btn.filters-hidden:hover {
+    background-color: #367fa9 !important;
+    transform: scale(1.25);
+    box-shadow: 0 3px 12px rgba(60, 141, 188, 0.4);
+}
+
+#toggle-filters-btn.filters-hidden i {
+    color: white !important;
 }
 
 /* Stile per le icone dell'indirizzo */

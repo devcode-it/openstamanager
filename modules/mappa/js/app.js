@@ -13,6 +13,7 @@ $(document).ready(function() {
 
         // Inizializza lo stato del pulsante toggle
         $('#toggle-filters-btn i').addClass('text-primary');
+        $('#toggle-filters-btn').removeClass('filters-hidden');
 
         // Assicurati che i pulsanti di toggle funzionino correttamente
         $('#toggle-filters-btn, #menu-filtri-toggle').off('click').on('click', function() {
@@ -75,6 +76,7 @@ function toggleFiltersPanel(show) {
             'right': '10px'
         }, 300);
         $('#toggle-filters-btn i').addClass('text-primary');
+        $('#toggle-filters-btn').removeClass('filters-hidden');
     } else {
         // Nascondi pannello filtri con animazione
         $filtersContainer.animate({
@@ -84,6 +86,7 @@ function toggleFiltersPanel(show) {
             $(this).hide();
         });
         $('#toggle-filters-btn i').removeClass('text-primary');
+        $('#toggle-filters-btn').addClass('filters-hidden');
     }
 
     // Ridimensiona la mappa per adattarla al nuovo contenitore

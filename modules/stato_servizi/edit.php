@@ -542,28 +542,16 @@ function caricaElencoOperazioni() {
 
 function caricaAltreOperazioni(offset, limit) {
     let container = $("#operazioni");
-    let currentContent = container.find("table tbody");
-    let loadMoreButton = container.find(".text-center");
 
-    // Mostra loading sul pulsante
-    loadMoreButton.html("<i class=\"fa fa-refresh fa-spin\"></i> '.tr('Caricamento...').'");
+    // Mostra loading
+    localLoading(container, true);
 
     $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'&offset=" + offset + "&limit=" + limit, function(data) {
-        let newData = $(data);
-        let newRows = newData.find("tbody tr");
-        let newLoadMore = newData.find(".text-center");
+        // Sostituisci completamente il contenuto del container
+        container.html(data);
+        localLoading(container, false);
 
-        // Aggiungi le nuove righe alla tabella esistente
-        if (newRows.length > 0) {
-            currentContent.append(newRows);
-        }
-
-        // Sostituisci il pulsante "Carica di più" o rimuovilo se non ci sono più dati
-        if (newLoadMore.length > 0) {
-            loadMoreButton.replaceWith(newLoadMore);
-        } else {
-            loadMoreButton.remove();
-        }
+        console.log("Caricate nuove operazioni dall\'offset:", offset);
 
         init();
     });

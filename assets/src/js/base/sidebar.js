@@ -86,8 +86,9 @@ $(document).ready(function () {
     const pluginToggle = $(".control-sidebar-button");
     const largeScreen = screen.width > 1280;
 
-    // Gestione click sul pulsante per il toggle
-    pluginToggle.on("click", function () {
+    // Gestione click sul pulsante per il toggle (solo se il pulsante esiste)
+    if (pluginToggle.length > 0) {
+        pluginToggle.on("click", function () {
         // Add a subtle animation to the button
         $(this).css({
             "transform": "scale(0.95)",
@@ -112,9 +113,10 @@ $(document).ready(function () {
         }, 300);
     });
 
-    // Barra plugin laterale disabilitata per schermi piccoli
-    if (largeScreen && !globals.collapse_plugin_sidebar) {
-        pluginToggle.click();
+        // Barra plugin laterale disabilitata per schermi piccoli
+        if (largeScreen && !globals.collapse_plugin_sidebar) {
+            pluginToggle.click();
+        }
     }
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

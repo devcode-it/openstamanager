@@ -35,11 +35,11 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->is_bloccato = post('completato');
+            $stato->is_bloccato = post('is_bloccato');
             $stato->is_fatturabile = post('is_fatturabile');
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
+            $stato->setTranslation('title', $descrizione);
             flash()->info(tr('Informazioni salvate correttamente.'));
         }
 
@@ -49,7 +49,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $is_bloccato = post('completato_add');
+        $is_bloccato = post('is_bloccato_add');
         $is_fatturabile = post('is_fatturabile_add');
 
         $stato_new = Stato::where('name', $descrizione)->first();
@@ -57,21 +57,18 @@ switch (post('op')) {
         if ($stato_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato DDT.'));
         } else {
-            $stato = Stato::build();
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $stato->name = $descrizione;
-            }
+            $stato = Stato::build($descrizione, $icona, $colore, $is_bloccato, $is_fatturabile);
             $id_record = $dbo->lastInsertedID();
             $stato->setTranslation('title', $descrizione);
-            $stato->save();
+
             flash()->info(tr('Nuovo stato DDT aggiunto.'));
         }
 
         break;
 
     case 'delete':
-        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
-        if (count($dbo->fetchArray('SELECT `id` FROM `dt_statiddt` WHERE `id`='.prepare($id_record))) > 0) {
+        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei DDT
+        if (count($dbo->fetchArray('SELECT `id` FROM `dt_ddt` WHERE `idstatoddt`='.prepare($id_record))) > 0) {
             $query = 'UPDATE `dt_statiddt` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
         } else {
             $query = 'DELETE FROM `dt_statiddt` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);

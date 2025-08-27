@@ -52,9 +52,8 @@ if ($record['can_delete']) {
 				</div>
 
 				<div class="card-body">
-		            {[ "type": "checkbox", "label": "<?php echo tr('Bloccato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "" ]}
-		            {[ "type": "checkbox", "label": "<?php echo tr('Impegnato?'); ?>", "name": "impegnato", "value": "$impegnato$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come impegnati'); ?>", "placeholder": "<?php echo tr('Impegnato'); ?>", "extra": "" ]}
-		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Gli ordini che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Bloccato?'); ?>", "name": "is_bloccato", "value": "$is_bloccato$", "help": "<?php echo tr('I DDT che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Bloccato'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I DDT che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 				</div>
 			</div>
 		</div>
@@ -63,13 +62,13 @@ if ($record['can_delete']) {
 
 
 <?php
-$ordini = $dbo->fetchNum('SELECT `id` FROM `or_ordini` WHERE `idstatoordine`='.prepare($id_record));
+$ddt = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idstatoddt`='.prepare($id_record));
 
-if (!empty($ordini)) {
+if (!empty($ddt)) {
     echo '
 <div class="alert alert-danger">
-    '.tr('Ci sono _NUM_ ordini collegati', [
-        '_NUM_' => $ordini,
+    '.tr('Ci sono _NUM_ ddt collegati', [
+        '_NUM_' => $ddt,
     ]).'.
 </div>';
 }

@@ -108,11 +108,8 @@ if (setting('Cambia automaticamente stato ddt fatturati')) {
         echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
     } else {
-        $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
-        $id_stato_evaso = Stato::where('name', 'Evaso')->first()->id;
-        $id_stato_parz_evaso = Stato::where('name', 'Parzialmente evaso')->first()->id;
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id` IN ('.implode(',', [$id_stato_bozza, $id_stato_evaso, $id_stato_parz_evaso]).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
 } else {
     echo '

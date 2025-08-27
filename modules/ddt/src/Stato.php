@@ -34,6 +34,19 @@ class Stato extends Model
         'title',
     ];
 
+    public static function build($descrizione = null,$icona = null, $colore = null, $is_bloccato = null, $is_fatturabile = null)
+    {
+        $model = new static();
+        $model->name = $descrizione;
+        $model->icona = $icona;
+        $model->colore = $colore;
+        $model->is_bloccato = $is_bloccato;
+        $model->is_fatturabile = $is_fatturabile;
+        $model->save();
+
+        return $model;
+    }
+
     public function ddt()
     {
         return $this->hasMany(DDT::class, 'idstatoddt');

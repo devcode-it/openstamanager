@@ -153,6 +153,30 @@ foreach ($rs_stati as $stato) {
         L.control.layers(baseLayers).addTo(map);
     }
 
+    function calculateZoomForRadius(radius) {
+        if (radius >= 50000) return 4;
+        if (radius >= 25000) return 5;
+        if (radius >= 10000) return 6;
+        if (radius >= 5000) return 7;
+        if (radius >= 2500) return 8;
+        if (radius >= 1000) return 9;
+        if (radius >= 500) return 10;
+        if (radius >= 250) return 11;
+        if (radius >= 100) return 12;
+        return 13;
+    }
+
+    function updateMapViewWithCircle(latlng, radius) {
+        setTimeout(function() {
+            if (circle) {
+                map.fitBounds(circle.getBounds(), {
+                    padding: [-10, -10],
+                    maxZoom: 18
+                });
+            }
+        }, 100);
+    }
+
     function initGeocomplete() {
         $.ajax({
             url: "https://nominatim.openstreetmap.org/search.php?q=" + encodeURI(input("gaddress").get()) + "&format=jsonv2",
@@ -164,32 +188,65 @@ foreach ($rs_stati as $stato) {
                 input("gaddress").set(data[0].display_name);
 
                 var latlng = L.latLng(data[0].lat, data[0].lon);
-                map.setView(latlng, 16);
+                var radius = $("#range").val().toEnglish();
 
                 L.marker(latlng).addTo(map)
                     .bindPopup("You are here").openPopup();
 
-                // Aggiungi cerchio per indicare l'accuratezza
+
                 if (circle) {
                     map.removeLayer(circle);
                 }
 
                 circle = L.circle(latlng, {
-                    radius: $("#range").val().toEnglish()
+                    radius: radius
                 }).addTo(map);
+
+                updateMapViewWithCircle(latlng, radius);
 
                 reload_pointers();
             }
         });
     }
 
-    // Avvio ricerca indirizzo premendo Invio
+
     $("#gaddress, #range").on("keypress", function(e){
         if(e.which == 13){
             e.preventDefault();
             initGeocomplete();
         }
     });
+
+    $("#gaddress").on("blur", function(){
+        if($("#gaddress").val().trim() !== ""){
+            initGeocomplete();
+        }
+    });
+
+    $("#range").on("blur input", function(){
+        updateCircleRadius();
+    });
+
+    function updateCircleRadius() {
+        if (circle && $("#lat").val() && $("#lng").val()) {
+            var lat = $("#lat").val();
+            var lng = $("#lng").val();
+            var radius = $("#range").val().toEnglish();
+            var latlng = L.latLng(lat, lng);
+
+            map.removeLayer(circle);
+
+            circle = L.circle(latlng, {
+                radius: radius
+            }).addTo(map);
+
+            updateMapViewWithCircle(latlng, radius);
+
+            if (typeof reload_pointers === 'function') {
+                reload_pointers();
+            }
+        }
+    }
 
     // Funzione per ottenere e visualizzare la geolocalizzazione
     function getLocation() {
@@ -205,7 +262,7 @@ foreach ($rs_stati as $stato) {
         var lng = position.coords.longitude;
 
         var latlng = L.latLng(lat, lng);
-        map.setView(latlng, 16);
+        var radius = $("#range").val().toEnglish();
 
         if (circle) {
             map.removeLayer(circle);
@@ -214,11 +271,11 @@ foreach ($rs_stati as $stato) {
         L.marker(latlng).addTo(map)
             .bindPopup("You are here").openPopup();
 
-        // Aggiungi cerchio per indicare l'accuratezza
         circle = L.circle(latlng, {
-            //radius: position.coords.accuracy
-            radius: $("#range").val().toEnglish()
+            radius: radius
         }).addTo(map);
+
+        updateMapViewWithCircle(latlng, radius);
 
         // Invia richiesta per ottenere l'indirizzo
         $.getJSON('https://nominatim.openstreetmap.org/reverse', {

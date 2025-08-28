@@ -583,4 +583,73 @@ switch ($resource) {
         }
 
         break;
+
+    case 'clienti_mappa':
+        $id_azienda = setting('Azienda predefinita');
+        $tipologia = Tipo::where('name', 'Cliente')->first()->id;
+        $query = "SELECT
+                `an_anagrafiche`.`idanagrafica` AS id,
+                `an_anagrafiche`.`lat`,
+                `an_anagrafiche`.`lng`,
+                `is_bloccata`,
+                CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione
+            FROM
+                `an_anagrafiche`
+                INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
+                INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
+                LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+
+                LEFT JOIN an_relazioni ON an_anagrafiche.idrelazione=an_relazioni.id
+                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).')
+                |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
+            ORDER BY
+                `ragione_sociale`';
+
+        foreach ($elements as $element) {
+            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
+        }
+
+        $where[] = '`an_tipianagrafiche`.`id`= '.prepare($tipologia);
+        if (empty($filter)) {
+            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
+        }
+
+        $custom['link'] = 'module:Anagrafiche';
+
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
+
+        foreach ($rs as $k => $r) {
+            // Controllo se le coordinate geografiche sono definite
+            $coordinate_vuote = empty($r['lat']) || empty($r['lng']) || $r['lat'] == '0.000000' || $r['lng'] == '0.000000' || $r['lat'] == 0 || $r['lng'] == 0;
+
+            // Modifica la descrizione se le coordinate non sono definite
+            $descrizione = $r['descrizione'];
+            if ($coordinate_vuote) {
+                $descrizione .= ' (Indirizzo non definito)';
+            }
+
+            $rs[$k] = array_merge($r, [
+                'text' => $descrizione,
+                'disabled' => !empty($elements) ? 0 : ($r['is_bloccata'] || $coordinate_vuote),
+                '_bgcolor_' => $coordinate_vuote ? '#ffcccc' : null,
+            ]);
+        }
+
+        $results = [
+            'results' => $rs,
+            'recordsFiltered' => $data['recordsFiltered'],
+            'link' => 'module:Anagrafiche',
+        ];
+
+        break;
 }

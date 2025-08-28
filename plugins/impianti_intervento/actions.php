@@ -26,6 +26,8 @@ use Modules\Checklists\Check;
 $operazione = filter('op');
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 
+
+
 switch ($operazione) {
     case 'add_impianto':
         if (post('id_impianto')) {
@@ -84,24 +86,59 @@ switch ($operazione) {
         break;
 
     case 'delete_impianto':
-        $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare(post('id')));
-        Check::deleteLinked([
-            'id_module' => $id_module,
-            'id_record' => $id_record,
-            'id_module_from' => $id_modulo_impianti,
-            'id_record_from' => post('id'),
-        ]);
+        try {
+            $id_impianto = post('id');
 
-        $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($matricola));
-        if (!empty($components)) {
-            foreach ($components as $component) {
-                $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($component['id']).' AND id_intervento = '.prepare($id_record));
+            if (empty($id_impianto)) {
+                throw new Exception(tr('ID impianto non specificato'));
             }
+
+            // Verifica che l'impianto esista prima di rimuoverlo
+            $exists = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+
+            if ($exists['count'] == 0) {
+                throw new Exception(tr('Impianto non trovato nell\'intervento'));
+            }
+
+            $result = $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+
+            // Verifica che l'eliminazione sia avvenuta
+            $remaining = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+            if ($remaining['count'] > 0) {
+                throw new Exception(tr('Errore durante l\'eliminazione dell\'impianto dal database'));
+            }
+            Check::deleteLinked([
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+                'id_module_from' => $id_modulo_impianti,
+                'id_record_from' => $id_impianto,
+            ]);
+
+            $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($id_impianto));
+            if (!empty($components)) {
+                foreach ($components as $component) {
+                    $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($component['id']).' AND id_intervento = '.prepare($id_record));
+                }
+            }
+
+            flash()->info(tr('Impianto rimosso correttamente!'));
+
+            // Risposta JSON per il client
+            $response = ['status' => 'success', 'message' => tr('Impianto rimosso correttamente!')];
+        } catch (Exception $e) {
+            flash()->error(tr('Errore durante la rimozione dell\'impianto: _MSG_', [
+                '_MSG_' => $e->getMessage(),
+            ]));
+
+            // Risposta JSON di errore per il client
+            $response = ['status' => 'error', 'message' => $e->getMessage()];
         }
 
-        flash()->info(tr('Impianto rimosso correttamente!'));
-
-        break;
+        // Invia la risposta JSON se è stata impostata
+        if (isset($response)) {
+            header('Content-Type: application/json');
+            echo json_encode($response);
+        }
 
     case 'load_checklist':
         $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', post('id_impianto'))->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();

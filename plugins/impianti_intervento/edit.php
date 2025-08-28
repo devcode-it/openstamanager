@@ -46,29 +46,44 @@ $impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
 
 echo '
-    <div class="row">
-        <div class="offset-md-4 col-md-4">
-                <input type="text" class="form-control form-control-lg text-center unblockable" id="input-cerca" placeholder="'.tr('Cerca').'...">
-        </div>
+<div class="card card-outline card-primary shadow mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fa fa-cogs text-primary mr-2"></i>
+            '.tr('Gestione Impianti').'
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <label class="control-label">'.tr('Seleziona Impianto').'</label>
+                <div style="margin-top: 5px;">
+                    {[ "type": "select", "name": "id_impianto_add", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "idcontratto": "'.$record['idcontratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
+                </div>
+            </div>
 
-        <div class="col-md-1">
-            <button type="button" class="btn btn-lg btn-primary" onclick="caricaImpianti()">
-                <i class="fa fa-search"></i> '.tr('Cerca').'
-            </button>
+            <div class="col-md-2">
+                <button title="'.tr('Aggiungi impianto all\'attività').'" class="btn btn-success btn-block tip" type="button" onclick="addImpianto()" '.$disabled.' style="margin-top: 25px;">
+                    <i class="fa fa-plus mr-1"></i> '.tr('Aggiungi').'
+                </button>
+            </div>
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-4">
+                <label class="control-label">'.tr('Cerca negli impianti collegati').'</label>
+                <div class="input-group">
+                    <input type="text" class="form-control unblockable" id="input-cerca" placeholder="'.tr('Matricola o nome').'...">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" onclick="caricaImpianti()">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            {[ "type": "select", "name": "id_impianto_add", "label": "'.tr('Impianto').'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "idcontratto": "'.$record['idcontratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['idanagrafica'].'" ]}
-        </div>
-
-        <div class="col-md-3" style="margin-top: 25px">
-            <button title="'.tr('Aggiungi impianto all\'attività').'" class="btn btn-default tip" type="button" onclick="addImpianto()" '.$disabled.'>
-                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
-            </button>
-        </div>
-    </div>';
+</div>';
 
 // IMPIANTI
 echo '
@@ -84,11 +99,11 @@ echo '
 
         if (dettagli.css("display") === "none"){
             dettagli.show(500);
-            $(trigger).children().removeClass("fa-plus"); 
+            $(trigger).children().removeClass("fa-plus");
             $(trigger).children().addClass("fa-minus");
         } else {
             dettagli.hide(500);
-            $(trigger).children().removeClass("fa-minus"); 
+            $(trigger).children().removeClass("fa-minus");
             $(trigger).children().addClass("fa-plus");
         }
     }

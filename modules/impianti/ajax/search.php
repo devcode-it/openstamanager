@@ -23,6 +23,8 @@ use Models\Module;
 
 $link_id = Module::where('name', 'Impianti')->first()->id;
 
+$results = [];
+
 $fields = [
     'Matricola' => 'matricola',
     'Nome' => 'nome',

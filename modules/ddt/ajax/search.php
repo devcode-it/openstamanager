@@ -21,6 +21,8 @@
 include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
+$results = [];
+
 $fields = [
     'Numero' => 'numero',
     'Numero secondario' => 'numero_esterno',

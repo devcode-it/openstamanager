@@ -5,13 +5,15 @@ use Models\Module;
 
 $link_id = Module::where('name', 'Automezzi')->first()->id;
 
+$results = [];
+
 $fields = [
     'Nome' => 'nome',
     'Descrizione' => 'descrizione',
     'Targa' => 'targa',
 ];
 
-$query = 'SELECT * FROM an_sedi WHERE 1=0 ';
+$query = 'SELECT * FROM dt_automezzi WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -24,14 +26,14 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
+    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['nome'];
     $result['category'] = tr('Automezzi');
 
     // Campi da evidenziare
     $result['labels'] = [];
     foreach ($fields as $name => $value) {
-        if (str_contains((string) $r[$name], (string) $term)) {
+        if (string_contains($r[$name], $term)) {
             $text = str_replace($term, "<span class='highlight'>".$term.'</span>', $r[$name]);
 
             $result['labels'][] = $name.': '.$text.'<br/>';

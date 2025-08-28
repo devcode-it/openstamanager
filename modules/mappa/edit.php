@@ -80,7 +80,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti", "placeholder": "<?php echo tr('Seleziona un\'opzione'); ?>" ]}
+                        {[ "type": "select", "name": "idanagrafica", "id": "idanagrafica", "required": 1, "ajax-source": "clienti_mappa", "placeholder": "<?php echo tr('Seleziona un\'opzione'); ?>" ]}
                     </div>
                 </div>
 

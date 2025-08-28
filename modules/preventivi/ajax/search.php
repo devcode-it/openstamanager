@@ -23,6 +23,8 @@ use Models\Module;
 
 $link_id = Module::where('name', 'Preventivi')->first()->id;
 
+$results = [];
+
 $fields = [
     'Codice preventivo' => 'numero',
     'Nome' => 'nome',
@@ -41,7 +43,7 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-$query .= Modules::getAdditionalsQuery('Preventivi');
+$query .= Modules::getAdditionalsQuery(Module::where('name', 'Preventivi')->first()->id);
 
 $rs = $dbo->fetchArray($query);
 

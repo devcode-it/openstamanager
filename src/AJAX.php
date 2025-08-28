@@ -147,7 +147,7 @@ class AJAX
     public static function search($term)
     {
         if (strlen($term) < 2) {
-            return;
+            return [];
         }
 
         $files = self::find('ajax/search.php');
@@ -157,9 +157,15 @@ class AJAX
 
         $results = [];
         foreach ($files as $file) {
-            $module_results = self::getSearchResults($file, $term);
+            try {
+                $module_results = self::getSearchResults($file, $term);
 
-            $results = array_merge($results, $module_results);
+                if (is_array($module_results)) {
+                    $results = array_merge($results, $module_results);
+                }
+            } catch (Exception $e) {
+                // Continua con gli altri moduli
+            }
         }
 
         return $results;
@@ -335,6 +341,11 @@ class AJAX
      */
     protected static function getSearchResults($file, $term)
     {
+        // Verifica che il file esista
+        if (!file_exists($file)) {
+            return [];
+        }
+
         // Database
         $dbo = $database = database();
 
@@ -342,20 +353,31 @@ class AJAX
         // ordini, ecc della persona ricercata
         $idanagrafiche = ['-1'];
         $ragioni_sociali = ['-1'];
-        $rs = $dbo->fetchArray('SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE ragione_sociale LIKE "%'.$term.'%"');
 
-        for ($a = 0; $a < sizeof($rs); ++$a) {
-            $idanagrafiche[] = $rs[$a]['idanagrafica'];
-            $ragioni_sociali[$rs[$a]['idanagrafica']] = $rs[$a]['ragione_sociale'];
+        try {
+            $rs = $dbo->fetchArray('SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%'));
+
+            for ($a = 0; $a < sizeof($rs); ++$a) {
+                $idanagrafiche[] = $rs[$a]['idanagrafica'];
+                $ragioni_sociali[$rs[$a]['idanagrafica']] = $rs[$a]['ragione_sociale'];
+            }
+        } catch (Exception $e) {
+            // Continua senza anagrafiche
         }
 
         $results = [];
 
-        require $file;
+        try {
+            require $file;
+        } catch (Exception $e) {
+            return [];
+        }
 
         $results = (array) $results;
         foreach ($results as $key => $value) {
-            $results[$key]['value'] = $key;
+            if (is_array($value)) {
+                $results[$key]['value'] = $key;
+            }
         }
 
         return $results;

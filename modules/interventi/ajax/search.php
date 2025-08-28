@@ -23,6 +23,8 @@ use Models\Module;
 
 $link_id = Module::where('name', 'Interventi')->first()->id;
 
+$results = [];
+
 $fields = [
     'Codice intervento' => 'codice',
     'Data intervento' => '(SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id)',

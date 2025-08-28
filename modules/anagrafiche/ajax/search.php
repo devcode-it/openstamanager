@@ -27,6 +27,8 @@ use Models\Module;
 
 $link_id = Module::where('name', 'Anagrafiche')->first()->id;
 
+$results = [];
+
 $fields = [
     'Codice' => 'codice',
     'Ragione sociale' => 'ragione_sociale',

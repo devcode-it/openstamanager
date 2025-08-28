@@ -26,6 +26,8 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
+$results = [];
+
 $fields = [
     'idarticolo' => '`mg_articoli`.`id`',
     'codice' => '`mg_articoli`.`codice`',

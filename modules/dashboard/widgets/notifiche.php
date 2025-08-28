@@ -55,72 +55,77 @@ foreach ($moduli as $module_id => $note) {
     $modulo = Module::find($module_id);
 
     echo '
-<h4>'.($modulo->getTranslation('title') == 'Anagrafiche' ? 'Note' : $modulo->getTranslation('title')).'</h4>
-<table class="table table-hover">
-    <tr>
-        <th width="15%" >'.(($modulo->getTranslation('title') == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
-        <th width="20%" >'.($modulo->getTranslation('title') == 'Anagrafiche' ? 'Tecnico' : (($modulo->getTranslation('title') == 'Fatture di acquisto' || $modulo->getTranslation('title') == 'Ordini fornitore' || $modulo->getTranslation('title') == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
-        <th>'.tr('Contenuto').'</th>
-        <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
-        <th class="text-center">#</th>
-    </tr>';
+<h4>'.($modulo->name == 'Anagrafiche' ? 'Note' : $modulo->getTranslation('title')).'</h4>
+<div class="table-responsive">
+<table class="table table-hover notification-table">
+    <thead>
+        <tr>
+            <th width="15%" >'.(($modulo->name == 'Anagrafiche') ? '' : tr('Riferimento')).'</th>
+            <th width="20%" >'.($modulo->name == 'Anagrafiche' ? 'Tecnico' : (($modulo->name == 'Fatture di acquisto' || $modulo->name == 'Ordini fornitore' || $modulo->name == 'Ddt in entrata') ? tr('Fornitore') : tr('Cliente'))).'</th>
+            <th>'.tr('Contenuto').'</th>
+            <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
+            <th class="text-center">#</th>
+        </tr>
+    </thead>
+    <tbody>';
 
     foreach ($note as $nota) {
         $class = (strtotime((string) $nota->notification_date) < strtotime(date('Y-m-d')) && !empty($nota->notification_date)) ? 'danger' : '';
 
-        $documento = '';
-        if ($modulo->getTranslation('title') == 'Attività') {
+        $documento = [];
+        if ($modulo->name == 'Interventi') {
             $documento = $dbo->fetchOne("SELECT `in_interventi`.`codice` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `in_interventi` ON (`in_interventi`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Attività' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `in_interventi`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Fatture di vendita') {
+        } elseif ($modulo->name == 'Fatture di vendita') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_documenti` ON (`co_documenti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Fatture di vendita' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Fatture di acquisto') {
+        } elseif ($modulo->name == 'Fatture di acquisto') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_documenti` ON (`co_documenti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Fatture di acquisto' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Preventivi') {
+        } elseif ($modulo->name == 'Preventivi') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_preventivi` ON (`co_preventivi`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Preventivi' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_preventivi`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Contratti') {
+        } elseif ($modulo->name == 'Contratti') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `co_contratti` ON (`co_contratti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Contratti' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Ordini cliente') {
+        } elseif ($modulo->name == 'Ordini cliente') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` as numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `or_ordini` ON (`or_ordini`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ordini cliente' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `or_ordini`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Ordini fornitore') {
+        } elseif ($modulo->name == 'Ordini fornitore') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `or_ordini` ON (`or_ordini`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ordini fornitore' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `or_ordini`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Ddt in uscita') {
+        } elseif ($modulo->name == 'Ddt in uscita') {
             $documento = $dbo->fetchOne("SELECT `numero_esterno` as numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `dt_ddt` ON (`dt_ddt`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_lang` FROM `zz_modules_lang` WHERE `title` = 'Ddt in uscita' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `dt_ddt`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Ddt in entrata') {
+        } elseif ($modulo->name  == 'Ddt in entrata') {
             $documento = $dbo->fetchOne("SELECT `numero`, `ragione_sociale` FROM `zz_notes` INNER JOIN `dt_ddt` ON (`dt_ddt`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Ddt in uscita' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `dt_ddt`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Articoli') {
+        } elseif ($modulo->name == 'Articoli') {
             $documento = $dbo->fetchOne("SELECT `codice` AS numero FROM `zz_notes` INNER JOIN `mg_articoli` ON (`mg_articoli`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Articoli' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Impianti') {
+        } elseif ($modulo->name == 'Impianti') {
             $documento = $dbo->fetchOne("SELECT `matricola` AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `my_impianti` ON (`my_impianti`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Impianti' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `my_impianti`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Anagrafiche') {
+        } elseif ($modulo->name == 'Anagrafiche') {
             $documento = $dbo->fetchOne("SELECT ' ' AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `an_anagrafiche` ON (`an_anagrafiche`.`idanagrafica` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Anagrafiche' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) WHERE `zz_notes`.`id` = '.$nota->id);
-        } elseif ($modulo->getTranslation('title') == 'Scadenzario') {
+        } elseif ($modulo->name == 'Scadenzario') {
             $documento = $dbo->fetchOne("SELECT `co_scadenziario`.`tipo` AS numero , `ragione_sociale` FROM `zz_notes` INNER JOIN `co_scadenziario` ON (`co_scadenziario`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = 'Scadenzario' AND `id_lang` = ".prepare(Models\Locale::getDefault()->id).')) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_scadenziario`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
         } else {
             $documento['numero'] = ' ';
         }
 
         echo '
-    <tr class="'.$class.'">
-        <td>'.($documento['numero'] == null ? ' - ' : $documento['numero']).'</td>
-        <td>'.$documento['ragione_sociale'].'</td>
-        <td>
-            <span class="pull-right"></span>
-
-            '.$nota->content.'
-
-            <small>'.$nota->user->nome_completo.'</small>
-        </td>
-
-        <td class="text-center">
-            '.dateFormat($nota->notification_date).' ('.Carbon::parse($nota->notification_date)->diffForHumans().')
-        </td>
-
-        <td class="text-center">
-            '.Modules::link($module_id, $nota->id_record, '', null, 'class="btn btn-primary btn-xs"', true, 'tab_note').'
-        </td>
-    </tr>';
+        <tr class="'.$class.'">
+            <td class="notification-reference">'.($documento['numero'] == null ? ' - ' : $documento['numero']).'</td>
+            <td class="notification-client">'.$documento['ragione_sociale'].'</td>
+            <td class="notification-content">
+                <div class="notification-text">
+                    '.$nota->content.'
+                </div>
+                <div class="notification-author">
+                    <small>'.$nota->user->nome_completo.'</small>
+                </div>
+            </td>
+            <td class="text-center notification-date">
+                '.dateFormat($nota->notification_date).' ('.Carbon::parse($nota->notification_date)->diffForHumans().')
+            </td>
+            <td class="text-center notification-action">
+                '.Modules::link($module_id, $nota->id_record, '', null, 'class="btn btn-primary btn-xs"', true, 'tab_note').'
+            </td>
+        </tr>';
     }
 
     echo '
-</table>';
+    </tbody>
+</table>
+</div>';
 }

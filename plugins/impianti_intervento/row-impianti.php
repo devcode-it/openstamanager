@@ -38,64 +38,44 @@ if ($is_bloccato) {
 }
 
 $where = get('search') ? 'AND (my_impianti.matricola LIKE '.prepare('%'.get('search').'%').' OR my_impianti.nome LIKE '.prepare('%'.get('search').'%').')' : '';
-$impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record).' '.$where);
+$impianti_collegati = $dbo->fetchArray('SELECT my_impianti.id, my_impianti.matricola, my_impianti.nome, my_impianti.descrizione, my_impianti.data, my_impianti_interventi.note FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record).' '.$where);
 $n_impianti = count($impianti_collegati);
 
-$impianti_non_completati = 0;
-$impianti_completati = 0;
-$impianti_non_previsti = 0;
-foreach ($impianti_collegati as $impianto) {
-    $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
-    if (sizeof($checks)) {
-        $has_checks_not_verified = $checks->where('checked_at', null)->count();
-        if ($has_checks_not_verified) {
-            ++$impianti_non_completati;
-        } else {
-            ++$impianti_completati;
-        }
-    } else {
-        ++$impianti_non_previsti;
-    }
-}
+// Calcolo percentuali rimosso - non più necessario
 
-$percentuale_completati = $n_impianti ? round(($impianti_completati * 100) / ($n_impianti ?: 1)) : 0;
-$percentuale_non_completati = $n_impianti ? round(($impianti_non_completati * 100) / ($n_impianti ?: 1)) : 0;
-$percentuale_non_previsti = $n_impianti ? round(($impianti_non_previsti * 100) / ($n_impianti ?: 1)) : 0;
-
-echo '
-<div class="row">
-    <div class="offset-md-4 col-md-4 text-center">
-        <h4>'.strtoupper(tr('Impianti')).': '.$n_impianti.'</h4>
-        <div class="progress" style="height:2rem;">
-            <div class="progress-bar progress-bar-striped progress-bar-success" role="progressbar" style="width:'.$percentuale_completati.'%"><i class="fa fa-check"></i> <b>'.$impianti_completati.'</b></div>
-
-            <div class="progress-bar progress-bar-striped progress-bar-danger" role="progressbar" style="width:'.$percentuale_non_completati.'%"><i class="fa fa-clock-o"></i> <b>'.$impianti_non_completati.'</b></div>
-
-            <div class="progress-bar progress-bar-striped progress-bar-warning" role="progressbar" style="width:'.$percentuale_non_previsti.'%"><i class="fa fa-times"></i> <b>'.$impianti_non_previsti.'</b></div>
+// Sezione impianti collegati
+if ($n_impianti > 0) {
+    echo '
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fa fa-list"></i>
+                '.tr('Impianti Collegati').' ('.$n_impianti.')
+            </h3>
         </div>
-    </div>
-
-    <div class="col-md-1">
-        <button type="button" class="btn btn-default" onclick="caricaImpianti()" style="margin-top: 25px;">
-            <i class="fa fa-refresh"></i> '.tr('Aggiorna').'
-        </button>
-    </div>
-</div>
-<hr>
-<div class="row">
-<div class="col-md-12">
-<div class="card ">
-    <table class="table table-hover table-sm table-striped">
-    <tr>
-        <th class="text-center" width="1%"></th>
-        <th class="text-center" width="10%">'.tr('Matricola').'</th>
-        <th class="text-center" width="20%">'.tr('Nome').'</th>
-        <th class="text-center" width="7%">'.tr('Data').'</th>
-        <th class="text-center">'.tr('Note').'</th>
-        <th class="text-center" width="25%">'.tr("Componenti soggetti all'intervento").'</th>
-        <th class="text-center" width="5%">Checklist</th>
-        <th class="text-center" width="2%"></th>
-    </tr>';
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="120px">'.tr('Matricola').'</th>
+                            <th>'.tr('Nome Impianto').'</th>
+                            <th class="text-center" width="100px">'.tr('Data').'</th>
+                            <th width="300px">'.tr('Note').'</th>
+                            <th width="250px">'.tr('Componenti').'</th>
+                            <th class="text-center" width="60px">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+} else {
+    echo '
+    <div class="alert alert-info text-center">
+        <i class="fa fa-info-circle fa-2x mb-2"></i>
+        <h5>'.tr('Nessun impianto collegato').'</h5>
+        <p class="mb-0">'.tr('Utilizza il modulo sopra per aggiungere impianti a questa attività').'</p>
+    </div>';
+    return;
+}
 foreach ($impianti_collegati as $impianto) {
     $checks = Check::where('id_module_from', $id_modulo_impianti)->where('id_record_from', $impianto['id'])->where('id_module', $id_module)->where('id_record', $id_record)->where('id_parent', null)->get();
 
@@ -111,78 +91,133 @@ foreach ($impianti_collegati as $impianto) {
         $icon2 = $checks_not_verified ? 'clock-o' : 'check';
     }
     echo '
-    <tr data-id="'.$impianto['id'].'">
-        <td class="text-left">
-            <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="loadChecklist('.$impianto['id'].'); toggleDettagli(this);">
-                <i class="fa fa-'.$icon.'"></i>
-            </button>
-            
-        </td>
-        <td>'.$impianto['matricola'].'</td>
-        <td>'.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'</td>
-        <td class="text-center">'.Translator::dateToLocale($impianto['data']).'</td>
-        <td>
-            {[ "type": "textarea", "name": "note", "id": "note_imp_'.$impianto['id'].'", "value": "'.$impianto['note'].'", "onchange": "updateImpianto($(this).closest(\'tr\').data(\'id\'))", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
-        </td>
-        <td>';
+                        <tr data-id="'.$impianto['id'].'">
+                            <td class="text-center">
+                                <span class="badge badge-secondary">'.$impianto['matricola'].'</span>
+                            </td>
+                            <td>
+                                '.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'
+                                '.(!empty($impianto['descrizione']) ? '<br><small class="text-muted">'.$impianto['descrizione'].'</small>' : '').'
+                            </td>
+                            <td class="text-center">
+                                <small>'.Translator::dateToLocale($impianto['data']).'</small>
+                            </td>
+                            <td>
+                                {[ "type": "textarea", "name": "note", "id": "note_imp_'.$impianto['id'].'", "value": "'.$impianto['note'].'", "placeholder": "'.tr('Aggiungi note').'...", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'", "rows": 2 ]}
+                            </td>
+                            <td>';
     $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
     $ids = array_column($inseriti, 'id_componente');
 
     echo '
-                {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_imp_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "onchange": "updateImpianto($(this).closest(\'tr\').data(\'id\'))", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
-            </form>
-        </td>
-        <td class="text-center"><i class="fa fa-'.$icon2.' fa-2x text-'.$type.'"></i></td>
-        <td class="text-center"><button class="btn btn-sm btn-danger '.$disabled.'" onclick="rimuoviImpianto($(this).closest(\'tr\').data(\'id\'))"><i class="fa fa-trash"></i></button></td>
-    </tr>
+                                {[ "type": "select", "multiple": 1, "name": "componenti[]", "id": "componenti_imp_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "onchange": "updateImpianto($(this).closest(\'tr\').data(\'id\'))", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-danger '.$disabled.'" onclick="rimuoviImpianto($(this).closest(\'tr\').data(\'id\'))" title="'.tr('Rimuovi impianto').'">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>';
 
-    <tr style="display: none">
-        <td colspan="7">
-            <table class="table">
-                <tbody class="sort check-impianto" data-sonof="0" id="checklist_'.$impianto['id'].'">
-                    <span class="text-muted" id="loading-checks_'.$impianto['id'].'"><i class="fa fa-spin fa-spinner"></i> '.tr('Caricamento checklist').'...</span>
-                </tbody>
-            </table>
-        </td>
-    </tr>';
+    // Checklist rimossa come richiesto
 }
 echo '
-    </table>
-</div>
-</div>
-</div>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>';
+
+// CSS rimosso come richiesto
+
+echo '
 <script>
-$(document).ready(init);
+$(document).ready(function() {
+    init();
+    initNoteAutoSave();
+});
+
+// Inizializza il salvataggio automatico delle note
+function initNoteAutoSave() {
+    let saveTimeout;
+
+    // Gestione eventi per le note
+    $(document).on("input blur", "textarea[id^=\'note_imp_\']", function() {
+        const $textarea = $(this);
+        const impiantoId = $textarea.closest("tr").data("id");
+
+        if (!impiantoId) {
+            console.error("ID impianto non trovato");
+            return;
+        }
+
+        // Cancella il timeout precedente
+        clearTimeout(saveTimeout);
+
+        // Imposta nuovo timeout per il salvataggio usando la funzione esistente
+        saveTimeout = setTimeout(function() {
+            console.log("Auto-salvataggio nota per impianto:", impiantoId);
+            updateImpianto(impiantoId);
+        }, 1000); // Salva dopo 1 secondo di inattività
+    });
+
+    // Salvataggio immediato con Enter
+    $(document).on("keydown", "textarea[id^=\'note_imp_\']", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const $textarea = $(this);
+            const impiantoId = $textarea.closest("tr").data("id");
+
+            if (!impiantoId) {
+                console.error("ID impianto non trovato");
+                return;
+            }
+
+            clearTimeout(saveTimeout);
+            console.log("Salvataggio immediato nota per impianto:", impiantoId);
+            updateImpianto(impiantoId);
+        }
+    });
+}
+
+// Funzione refreshChecklist rimossa - non più necessaria
 
 function rimuoviImpianto(id) {
-    swal({
-        title: "'.tr('Rimuovere questo impianto?').'",
-        html: "'.tr('Sei sicuro di volere rimuovere questo impianto dal documento?').' '.tr("L'operazione è irreversibile").'.",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "'.tr('Sì').'"
-    }).then(function () {
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                id_plugin: '.$id_plugin.',
-                op: "delete_impianto",
-                id: id,
-            },
-            success: function (response) {
-                renderMessages();
-                caricaImpianti();
-            },
-            error: function() {
+    // Mostra loading sulla riga
+    var row = $("tr[data-id=\"" + id + "\"]");
+    row.addClass("table-warning").find("td").append("<i class=\"fa fa-spinner fa-spin ml-2\"></i>");
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            id_plugin: '.$id_plugin.',
+            op: "delete_impianto",
+            id: id,
+        },
+        success: function (response) {
+            if (response.status === "success") {
+                // Animazione di rimozione - rimuovi solo la riga senza ricaricare
+                row.fadeOut(300, function() {
+                    row.remove();
+                    renderMessages();
+                });
+            } else {
+                // Errore dal server
+                row.removeClass("table-warning").find(".fa-spinner").remove();
                 renderMessages();
                 caricaImpianti();
             }
-        });
-    }).catch(swal.noop);
+        },
+        error: function(xhr, status, error) {
+            row.removeClass("table-warning").find(".fa-spinner").remove();
+            renderMessages();
+            caricaImpianti();
+        }
+    });
 }
 
 function updateImpianto(id) {
@@ -239,6 +274,13 @@ function saveNota(id) {
 }
 
 function loadChecklist(id){
+    const $loading = $("#loading-checks_" + id);
+    const $checklist = $("#checklist_" + id);
+
+    // Mostra loading e nasconde checklist esistente
+    $loading.show();
+    $checklist.empty();
+
     $.ajax({
         url: globals.rootdir + "/actions.php",
         type: "POST",
@@ -250,9 +292,24 @@ function loadChecklist(id){
             id_impianto: id,
         },
         success: function (response) {
-            $("#loading-checks_" + id).hide();
-            $("#checklist_" + id).html(response);
-            init();
+            $loading.hide();
+
+            if (response && response.trim() !== "") {
+                $checklist.html(response);
+                init();
+
+                // Mostra messaggio di successo temporaneo
+                setTimeout(function() {
+                    $checklist.prepend(\'<div class="alert alert-success alert-dismissible fade show mb-3" style="animation: fadeIn 0.5s;"><i class="fa fa-check mr-2"></i>\' + "'.tr('Checklist caricata con successo').'" + \'<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>\');
+
+                    // Rimuovi automaticamente dopo 3 secondi
+                    setTimeout(function() {
+                        $checklist.find(".alert-success").fadeOut();
+                    }, 3000);
+                }, 100);
+            } else {
+                $checklist.html(\'<div class="alert alert-info text-center border-0"><i class="fa fa-info-circle fa-2x mb-2 text-info"></i><h6 class="text-info">\' + "'.tr('Nessuna checklist disponibile').'" + \'</h6><p class="mb-0 text-muted">\' + "'.tr('Non sono presenti checklist per questo impianto').'" + \'</p></div>\');
+            }
 
             sortable("#tab_checks .sort", {
                 axis: "y",
@@ -270,7 +327,7 @@ function loadChecklist(id){
                     var sonof = $(this).data("sonof");
 
                     let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
-                
+
                     $.post("'.$checklist_module->fileurl('ajax.php').'", {
                         op: "update_position",
                         order: order.join(","),
@@ -324,9 +381,40 @@ function loadChecklist(id){
                 }
             })
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            $loading.hide();
+            $checklist.html(\'<div class="alert alert-danger text-center border-0"><i class="fa fa-exclamation-triangle fa-2x mb-2 text-danger"></i><h6 class="text-danger">\' + "'.tr('Errore nel caricamento').'" + \'</h6><p class="mb-2 text-muted">\' + "'.tr('Impossibile caricare la checklist per questo impianto').'" + \'</p><button class="btn btn-outline-primary btn-sm" onclick="refreshChecklist(\' + id + \')"><i class="fa fa-refresh mr-1"></i>\' + "'.tr('Riprova').'" + \'</button></div>\');
+
+            console.error("Errore caricamento checklist:", error);
             renderMessages();
         }
     });
 }
+
+// Funzione per migliorare la ricerca
+function filtroImpianti() {
+    var filtro = $("#input-cerca").val().toLowerCase();
+
+    if (filtro === "") {
+        $(".impianto-row").show();
+        return;
+    }
+
+    $(".impianto-row").each(function() {
+        var $row = $(this);
+        var matricola = $row.find("td:nth-child(1)").text().toLowerCase();
+        var nome = $row.find("td:nth-child(2)").text().toLowerCase();
+
+        if (matricola.includes(filtro) || nome.includes(filtro)) {
+            $row.show();
+        } else {
+            $row.hide();
+        }
+    });
+}
+
+// Aggiungi evento di ricerca in tempo reale
+$(document).ready(function() {
+    $("#input-cerca").on("input", filtroImpianti);
+});
 </script>';

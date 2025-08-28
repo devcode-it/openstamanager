@@ -22,74 +22,310 @@ $(document).ready(function () {
         return;
     }
 
+    // Disabilita il widget sidebar-search di AdminLTE
+    const sidebarSearchWidget = searchInput.closest('[data-widget="sidebar-search"]');
+    if (sidebarSearchWidget.length > 0) {
+        sidebarSearchWidget.removeAttr('data-widget');
+        sidebarSearchWidget.removeClass('sidebar-search');
+
+        // Previeni la reinizializzazione da parte di AdminLTE
+        sidebarSearchWidget.attr('data-widget-disabled', 'true');
+    }
+
+    // Disabilita anche eventuali event listener di AdminLTE già attaccati
+    searchInput.off('.adminlte.sidebar-search');
+    searchInput.parent().off('.adminlte.sidebar-search');
+
+    // Forza la rimozione di qualsiasi classe AdminLTE correlata alla ricerca
+    setTimeout(function() {
+        $('.sidebar-search-open').removeClass('sidebar-search-open');
+        $('.sidebar-search-results').remove();
+    }, 100);
+
     const searchButton = searchInput.parent().find('i');
     const searches = [];
+    let searchResultsContainer = null;
 
-    autocomplete({
-        minLength: 1,
-        input: searchInput[0],
-        emptyMsg: globals.translations.noResults,
-        debounceWaitMs: 500,
-        fetch: function(text, update) {
-            text = text.toLowerCase();
+    // Inizializza il container per i risultati di ricerca nella sidebar
+    function initSearchResultsContainer() {
+        if (!searchResultsContainer) {
+            searchResultsContainer = $('<div id="search-results-container" class="mt-2" style="display: none;"></div>');
+            $('.nav-sidebar').after(searchResultsContainer);
+        }
+        return searchResultsContainer;
+    }
 
-            // Registrazione ricerca
-            searches.push(text);
-            searchButton
-                .removeClass('fa-search')
-                .addClass('fa-spinner fa-spin');
+    // Funzione per evidenziare il termine di ricerca nel testo
+    function highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm || !text) return text;
 
-            $.ajax({
-                url: globals.rootdir + '/ajax_search.php',
-                dataType: "JSON",
-                data: {
-                    term: text,
-                },
-                success: function (data) {
-                    // Fix per gestione risultati null
-                    data = data ? data : [];
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
 
-                    // Trasformazione risultati in formato leggibile
-                    const results = data.map(result => {
-                        const title = result.title;
-                        const labels = result.labels.join('').split('<br/>,').join('<br/>');
-                        const label = result.label ? result.label : `<h5>${title}</h5><small>${labels}</small>`;
-                        const group = result.category;
-                        const link = result.link;
-                        const value = result.title;
-                    return { label, group, link, value };
-                    });
+    // Funzione per filtrare i moduli (funzionalità AdminLTE)
+    function filterModules(searchTerm) {
+        const navItems = $('.nav-sidebar .nav-item');
 
-                    // Rimozione ricerca in corso
-                    searches.pop();
-                    if (searches.length === 0) {
-                        searchButton
-                            .removeClass('fa-spinner fa-spin')
-                            .addClass('fa-search');
-                    }
+        if (!searchTerm) {
+            navItems.show();
+            return;
+        }
 
-                    update(results);
-                },
-                error: function (){
+        navItems.each(function() {
+            const $item = $(this);
+            const text = $item.find('.nav-link').text().toLowerCase();
+
+            if (text.includes(searchTerm.toLowerCase())) {
+                $item.show();
+            } else {
+                $item.hide();
+            }
+        });
+    }
+
+    // Funzione per gestire la ricerca unificata
+    function performUnifiedSearch(searchTerm) {
+        const container = initSearchResultsContainer();
+
+        if (!searchTerm || searchTerm.length < 1) {
+            container.hide().empty();
+            $('.nav-sidebar').show().removeClass('search-hidden');
+            // Ripristina tutti i moduli quando non c'è ricerca
+            filterModules('');
+            return;
+        }
+
+        // Se il termine è molto corto (1-2 caratteri), mostra solo filtro moduli
+        if (searchTerm.length <= 2) {
+            container.hide().empty();
+            $('.nav-sidebar').show().removeClass('search-hidden');
+            filterModules(searchTerm);
+            return;
+        }
+
+        // Mostra indicatore di caricamento
+        searchButton
+            .removeClass('fa-search')
+            .addClass('fa-spinner fa-spin');
+
+        // Mostra loading nel container
+        container.show().html(`
+            <div class="search-loading">
+                <i class="fa fa-spinner fa-spin"></i>
+                Ricerca in corso...
+            </div>
+        `);
+        $('.nav-sidebar').hide();
+
+        // Registrazione ricerca
+        searches.push(searchTerm);
+
+        // Esegui ricerca AJAX per i record
+        $.ajax({
+            url: globals.rootdir + '/ajax_search.php',
+            dataType: "JSON",
+            data: {
+                term: searchTerm,
+            },
+            success: function (data) {
+                // Fix per gestione risultati null
+                data = data ? data : [];
+
+                // Rimozione ricerca in corso
+                searches.pop();
+                if (searches.length === 0) {
+                    searchButton
+                        .removeClass('fa-spinner fa-spin')
+                        .addClass('fa-search');
+                }
+
+                // Mostra risultati nella sidebar
+                displayUnifiedResults(searchTerm, data);
+            },
+            error: function (){
+                searches.pop();
+                if (searches.length === 0) {
                     searchButton
                         .removeClass('fa-spinner fa-spin')
                         .addClass('fa-exclamation-triangle');
                 }
+            }
+        });
+    }
+
+    // Funzione per ottenere i moduli che corrispondono alla ricerca
+    function getMatchingModules(searchTerm) {
+        const matchingModules = [];
+        $('.nav-sidebar .nav-item').each(function() {
+            const $item = $(this);
+            const $link = $item.find('.nav-link').first();
+            const text = $link.text().toLowerCase();
+            const href = $link.attr('href');
+
+            if (text.includes(searchTerm.toLowerCase()) && href && href !== '#' && href !== 'javascript:;') {
+                matchingModules.push({
+                    title: $link.text().trim(),
+                    link: href,
+                    icon: $link.find('i').attr('class') || 'fa fa-folder'
+                });
+            }
+        });
+        return matchingModules;
+    }
+
+    // Funzione per visualizzare i risultati unificati nella sidebar
+    function displayUnifiedResults(searchTerm, recordResults) {
+        const container = initSearchResultsContainer();
+        container.empty();
+
+        // Nascondi il menu normale e mostra i risultati
+        $('.nav-sidebar').hide().addClass('search-hidden');
+        container.show();
+
+        // Aggiungi header per i risultati
+        container.append(`
+            <div class="search-results-header">
+                <h6>
+                    <span>
+                        <i class="fa fa-search"></i> Risultati per:
+                        <span class="search-term">${searchTerm}</span>
+                    </span>
+                    <button class="btn btn-sm" id="clear-search" title="Cancella ricerca">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </h6>
+            </div>
+        `);
+
+        // Ottieni moduli corrispondenti
+        const matchingModules = getMatchingModules(searchTerm);
+
+        // Mostra moduli corrispondenti per primi
+        if (matchingModules.length > 0) {
+            container.append(`
+                <div class="search-category">
+                    <h6 class="text-success">
+                        <i class="fa fa-th-large"></i> Moduli
+                        <span class="badge">${matchingModules.length}</span>
+                    </h6>
+                    <ul class="nav nav-pills nav-sidebar flex-column search-results-list">
+                    </ul>
+                </div>
+            `);
+
+            const modulesList = container.find('.search-results-list').last();
+
+            matchingModules.forEach(module => {
+                const highlightedTitle = highlightSearchTerm(module.title, searchTerm);
+                modulesList.append(`
+                    <li class="nav-item">
+                        <a href="${module.link}" class="nav-link search-result-item">
+                            <i class="nav-icon ${module.icon}"></i>
+                            <div class="search-result-text">
+                                <div>${highlightedTitle}</div>
+                            </div>
+                        </a>
+                    </li>
+                `);
             });
-        },
-        preventSubmit: true,
-        disableAutoSelect: true,
-        onSelect: function(item) {
-            window.location.href = item.link;
-        },
-        customize: function(input, inputRect, container, maxHeight) {
-            container.style.width = '600px';
-        },
-        render: function(item, currentValue){
-            const itemElement = document.createElement("div");
-            itemElement.innerHTML = item.label;
-            // <a href='" + item.link + "' title='Clicca per aprire'><b>" + item.value + "</b><br/>" + item.label + "</a>
-            return itemElement;
         }
+
+        // Raggruppa i risultati dei record per categoria
+        const groupedResults = {};
+        recordResults.forEach(result => {
+            const category = result.category || 'Altri';
+            if (!groupedResults[category]) {
+                groupedResults[category] = [];
+            }
+            groupedResults[category].push(result);
+        });
+
+        // Mostra i risultati dei record raggruppati
+        Object.keys(groupedResults).forEach(category => {
+            const results = groupedResults[category];
+
+            container.append(`
+                <div class="search-category">
+                    <h6 class="text-primary">
+                        <i class="fa fa-folder-o"></i> ${category}
+                        <span class="badge">${results.length}</span>
+                    </h6>
+                    <ul class="nav nav-pills nav-sidebar flex-column search-results-list">
+                    </ul>
+                </div>
+            `);
+
+            const categoryList = container.find('.search-results-list').last();
+
+            results.forEach(result => {
+                const title = result.title;
+                const labels = result.labels ? result.labels.join('').split('<br/>,').join(' • ') : '';
+                const cleanLabels = labels.replace(/<[^>]*>/g, ''); // Rimuovi HTML per il tooltip
+
+                // Evidenzia il termine di ricerca nel titolo
+                const highlightedTitle = highlightSearchTerm(title, searchTerm);
+                // Mantieni le labels complete per permettere il wrap
+                const simplifiedLabels = cleanLabels.replace(/:/g, '');
+
+                categoryList.append(`
+                    <li class="nav-item">
+                        <a href="${result.link}" class="nav-link search-result-item" title="${cleanLabels}">
+                            <i class="nav-icon fa fa-file-o"></i>
+                            <div class="search-result-text">
+                                <div>${highlightedTitle}</div>
+                                ${simplifiedLabels ? `<small>${simplifiedLabels}</small>` : ''}
+                            </div>
+                        </a>
+                    </li>
+                `);
+            });
+        });
+
+        // Se non ci sono risultati né di moduli né di record
+        if (matchingModules.length === 0 && recordResults.length === 0) {
+            container.append(`
+                <div class="search-no-results">
+                    <i class="fa fa-search-minus"></i>
+                    <p>Nessun risultato trovato per "<strong>${searchTerm}</strong>"</p>
+                </div>
+            `);
+        }
+
+        // Gestisci click per cancellare la ricerca
+        container.find('#clear-search').on('click', function() {
+            searchInput.val('');
+            container.hide().empty();
+            $('.nav-sidebar').show().removeClass('search-hidden');
+            filterModules(''); // Ripristina tutti i moduli
+        });
+    }
+
+    // Event listener per l'input di ricerca con debounce
+    let searchTimeout;
+    searchInput.on('input', function() {
+        const searchTerm = $(this).val().toLowerCase();
+
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            performUnifiedSearch(searchTerm);
+        }, 500);
+    });
+
+    // Gestisci il tasto Esc per cancellare la ricerca
+    searchInput.on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            $(this).val('');
+            const container = initSearchResultsContainer();
+            container.hide().empty();
+            $('.nav-sidebar').show().removeClass('search-hidden');
+            filterModules(''); // Ripristina tutti i moduli
+        }
+    });
+
+    // Gestisci il focus out per mantenere la ricerca attiva
+    searchInput.on('blur', function() {
+        // Non nascondere i risultati quando si perde il focus
+        // L'utente può cliccare sui risultati
     });
 });

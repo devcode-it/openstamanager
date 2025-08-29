@@ -217,7 +217,7 @@ switch ($resource) {
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],
-            'link' => 'module:Articoli',
+            'link' => '',
         ];
 
         break;

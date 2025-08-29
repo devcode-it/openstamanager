@@ -98,6 +98,11 @@ class UpdateHook extends CachedManager
             self::$client = new Client([
                 'base_uri' => 'https://api.github.com/repos/devcode-it/openstamanager/',
                 'verify' => false,
+                'timeout' => 30,
+                'headers' => [
+                    'User-Agent' => 'OpenSTAManager-UpdateChecker',
+                    'Accept' => 'application/vnd.github.v3+json',
+                ],
             ]);
         }
 
@@ -111,9 +116,36 @@ class UpdateHook extends CachedManager
      */
     protected static function getAPI()
     {
+        // Se è abilitato il canale pre-release, usa l'endpoint latest per l'ultima versione assoluta
+        if (setting('Abilita canale pre-release per aggiornamenti')) {
+            $response = self::getClient()->request('GET', 'releases/latest');
+            $body = $response->getBody();
+
+            $result = json_decode($body, true);
+            if (!is_array($result) || empty($result)) {
+                throw new \Exception('Invalid API response: empty or malformed data');
+            }
+
+            return $result;
+        }
+
+        // Altrimenti cerca l'ultima versione stabile (non pre-release)
         $response = self::getClient()->request('GET', 'releases');
         $body = $response->getBody();
 
-        return json_decode($body, true)[0];
+        $releases = json_decode($body, true);
+        if (!is_array($releases) || empty($releases)) {
+            throw new \Exception('Invalid API response: empty or malformed data');
+        }
+
+        // Cerca la prima release stabile
+        foreach ($releases as $release) {
+            if (!$release['prerelease']) {
+                return $release;
+            }
+        }
+
+        // Se non trova release stabili, restituisce la prima disponibile come fallback
+        return $releases[0];
     }
 }

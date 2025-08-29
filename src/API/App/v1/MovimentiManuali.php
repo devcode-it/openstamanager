@@ -46,8 +46,10 @@ class MovimentiManuali extends AppResource
         $articolo = Articolo::find($data['id_articolo']);
         $data_movimento = new Carbon($data['created_at']);
 
+        $id_sede = isset($data['id_sede_azienda']) && $data['id_sede_azienda'] !== null ? $data['id_sede_azienda'] : 0;
+
         $id_movimento = $articolo->movimenta($data['qta'], $data['descrizione'], $data_movimento, true, [
-            'idsede' => $data['id_sede_azienda'],
+            'idsede' => $id_sede,
         ]);
 
         return [

@@ -207,8 +207,13 @@ input[type=file] {
     padding: 5px;
 }
 
-.highlight {
-    background: #FFFF66;
+.highlight, .search-highlight {
+    background: #ffc107;
+    color: #212529;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(255, 193, 7, 0.3);
 }
 
 /* Disabilita il widget sidebar-search di AdminLTE */

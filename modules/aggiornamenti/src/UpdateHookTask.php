@@ -34,8 +34,8 @@ class UpdateHookTask extends Manager
         $result = [
             'response' => 1,
             'message' => tr('Ricerca nuovo aggiornamento completata! Nessun nuovo aggiornamento disponibile.'),
-        ];      
-        
+        ];
+
         try {
             $api = self::getLastRelease();
             $update = null;
@@ -43,30 +43,33 @@ class UpdateHookTask extends Manager
                 $version[0] = ltrim((string) $api['tag_name'], 'v');
                 $version[1] = !empty($api['prerelease']) ? 'beta' : 'stabile';
                 $current = \Update::getVersion();
-    
+
                 if (version_compare($current, $version[0]) < 0) {
                     $update = $version[0];
                 }
             }
-    
+
             database()->update('zz_cache', [
                 'content' => json_encode($version),
                 'expire_at' => Carbon::now(),
             ], [
                 'name' => 'Ultima versione di OpenSTAManager disponibile',
             ]);
-    
+
             if (empty($update) || empty(setting('Attiva aggiornamenti'))) {
                 return $result;
             }else{
                 $module = Module::where('name', 'Aggiornamenti')->first();
                 $link = !empty($module) ? base_path().'/controller.php?id_module='.$module->id : '#';
-        
+
                 $result = [
                     'response' => 2,
                     'message' => tr("E' disponibile la versione _VERSION_ del gestionale", [
                         '_VERSION_' => $update,
                     ]),
+                    'link' => $link,
+                    'icon' => 'fa fa-download text-info',
+                    'show' => true,
                 ];
             }
         } catch (\Exception $e) {
@@ -76,7 +79,7 @@ class UpdateHookTask extends Manager
                     '_error_' => $e->getMessage(),
                 ]),
             ];
-        }        
+        }
 
         return $result;
     }
@@ -87,17 +90,44 @@ class UpdateHookTask extends Manager
             self::$client = new Client([
                 'base_uri' => 'https://api.github.com/repos/devcode-it/openstamanager/',
                 'verify' => false,
+                'timeout' => 30,
+                'headers' => [
+                    'User-Agent' => 'OpenSTAManager-UpdateChecker',
+                    'Accept' => 'application/vnd.github.v3+json',
+                ],
             ]);
         }
 
+        // Se è abilitato il canale pre-release, usa l'endpoint latest per l'ultima versione assoluta
+        if (setting('Abilita canale pre-release per aggiornamenti')) {
+            $response = self::$client->request('GET', 'releases/latest');
+            $body = $response->getBody();
+
+            $result = json_decode($body, true);
+            if (!is_array($result) || empty($result)) {
+                throw new \Exception('Invalid API response: empty or malformed data');
+            }
+
+            return $result;
+        }
+
+        // Altrimenti cerca l'ultima versione stabile (non pre-release)
         $response = self::$client->request('GET', 'releases');
         $body = $response->getBody();
 
-        $result = json_decode($body, true);
-        if( $result[0] ){
-            return $result[0];
-        }else{
-            return [];
+        $releases = json_decode($body, true);
+        if (!is_array($releases) || empty($releases)) {
+            throw new \Exception('Invalid API response: empty or malformed data');
         }
+
+        // Cerca la prima release stabile
+        foreach ($releases as $release) {
+            if (!$release['prerelease']) {
+                return $release;
+            }
+        }
+
+        // Se non trova release stabili, restituisce la prima disponibile come fallback
+        return $releases[0];
     }
 }

@@ -1,0 +1,99 @@
+<?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+namespace Modules\StatoServizi;
+
+use Carbon\Carbon;
+use Hooks\Manager;
+use Models\Cache;
+
+/**
+ * Hook specializzato per il controllo dello stato del cron.
+ * Segnala quando il cron non è stato eseguito da più di un giorno.
+ */
+class CronStatusHook extends Manager
+{
+    public function response()
+    {
+        // Recupera l'ultima esecuzione del cron dalla cache
+        $ultima_esecuzione = Cache::where('name', 'Ultima esecuzione del cron')->first();
+
+        if (!$ultima_esecuzione || !$ultima_esecuzione->content) {
+            $message = tr('Il cron non è stato configurato correttamente');
+            $show = true;
+        } else {
+            // Converte la data dell'ultima esecuzione
+            $data_ultima_esecuzione = Carbon::parse($ultima_esecuzione->content);
+            $ora_attuale = Carbon::now();
+
+            // Calcola la differenza in ore
+            $ore_trascorse = $data_ultima_esecuzione->diffInHours($ora_attuale);
+
+            if ($ore_trascorse > 1) {
+                $giorni = floor($ore_trascorse / 24);
+                $ore_rimanenti = $ore_trascorse % 24;
+
+                if ($giorni > 0) {
+                    $tempo_trascorso = $giorni . ' ' . ($giorni == 1 ? tr('giorno') : tr('giorni'));
+                    if ($ore_rimanenti > 0) {
+                        $tempo_trascorso .= ' e ' . $ore_rimanenti . ' ' . ($ore_rimanenti == 1 ? tr('ora') : tr('ore'));
+                    }
+                } else {
+                    $tempo_trascorso = $ore_trascorse . ' ' . ($ore_trascorse == 1 ? tr('ora') : tr('ore'));
+                }
+
+                $message = tr('Attenzione: il cron non viene eseguito da _TIME_', [
+                    '_TIME_' => $tempo_trascorso,
+                ]);
+                $show = true;
+            } else {
+                $message = tr('Il cron è stato eseguito di recente');
+                $show = false;
+            }
+        }
+
+        return [
+            'icon' => 'fa fa-clock-o text-danger',
+            'message' => $message,
+            'show' => $show,
+            'link' => base_path().'/controller.php?id_module=' . $this->getModuleId(),
+        ];
+    }
+
+    public function execute()
+    {
+        // Non è necessaria alcuna esecuzione per questo hook
+        return false;
+    }
+
+    public function needsExecution()
+    {
+        // Questo hook non ha bisogno di esecuzione, serve solo per la notifica
+        return false;
+    }
+
+    /**
+     * Ottiene l'ID del modulo "Stato servizi"
+     */
+    private function getModuleId()
+    {
+        $module = \Models\Module::where('name', 'Stato servizi')->first();
+        return $module?->id;
+    }
+}

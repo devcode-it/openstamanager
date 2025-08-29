@@ -431,6 +431,216 @@ echo '
     </div>
 </div>';
 
+// Fornitori top
+$fornitori = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale,
+        (SELECT
+            COUNT(*)
+        FROM
+            `co_documenti`
+            INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+            INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+        WHERE
+            `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
+        `an_anagrafiche`.`idanagrafica`,
+        `an_anagrafiche`.`ragione_sociale`
+    FROM
+        `co_documenti`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='uscita'
+        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0
+    GROUP BY
+        `an_anagrafiche`.`idanagrafica`
+    ORDER BY
+        `totale` DESC LIMIT 20');
+
+$totale_fornitori = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
+    FROM
+        `co_documenti`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_tipidocumento`.`dir`='uscita'
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0');
+
+echo '
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('I 20 fornitori TOP').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">';
+if (!empty($fornitori)) {
+    echo '
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Ragione sociale').'</th>
+                                <th class="text-right" width="100">'.tr('N. fatture').'</th>
+                                <th class="text-right" width="120">'.tr('Totale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Valori iva esclusa').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Percentuale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Incidenza sugli acquisti').'"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+    foreach ($fornitori as $fornitore) {
+        echo '
+                            <tr>
+                                <td>'.Modules::link('Anagrafiche', $fornitore['idanagrafica'], $fornitore['ragione_sociale']).'</td>
+                                <td class="text-right">'.intval($fornitore['qta']).'</td>
+                                <td class="text-right">'.moneyFormat($fornitore['totale'], 2).'</td>
+                                <td class="text-right">
+                                    <span class="badge badge-'.($fornitore['totale'] * 100 / ($totale_fornitori[0]['totale'] != 0 ? $totale_fornitori[0]['totale'] : 1) > 10 ? 'info' : 'secondary').'">
+                                        '.Translator::numberToLocale($fornitore['totale'] * 100 / ($totale_fornitori[0]['totale'] != 0 ? $totale_fornitori[0]['totale'] : 1), 2).' %
+                                    </span>
+                                </td>
+                            </tr>';
+    }
+    echo '
+                        </tbody>
+                    </table>';
+} else {
+    echo '
+                    <div class="alert alert-info m-3">
+                        <i class="fa fa-info-circle"></i> '.tr('Nessun acquisto').'...
+                    </div>';
+}
+echo '
+                </div>
+            </div>
+        </div>
+    </div>';
+
+// Articoli più acquistati
+$articoli_acquistati = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS qta,
+        SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale,
+        `mg_articoli`.`id`,
+        `mg_articoli`.`codice`,
+        `mg_articoli_lang`.`title` as descrizione,
+        `mg_articoli`.`um`
+    FROM
+        `co_documenti`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='uscita'
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0
+    GROUP BY
+        `co_righe_documenti`.`idarticolo`
+    ORDER BY
+        `qta` DESC LIMIT 20');
+
+$totale_acquistati = $dbo->fetchArray('SELECT
+        SUM(IF(`reversed`=1, - `co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS totale_qta,
+        SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
+    FROM
+        `co_documenti`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
+    WHERE
+        `co_tipidocumento`.`dir`='uscita'
+        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
+        AND `zz_segments`.`autofatture`=0');
+
+echo '
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">'.tr('I 20 articoli più acquistati').'</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">';
+if (!empty($articoli_acquistati)) {
+    echo '
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Articolo').'</th>
+                                <th class="text-right" width="100">'.tr('N. articoli').' <i class="fa fa-info-circle text-info tip" title="'.tr('Numero di articoli acquistati').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Percentuale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Incidenza sul numero di articoli').'"></i></th>
+                                <th class="text-right" width="120">'.tr('Totale').' <i class="fa fa-info-circle text-info tip" title="'.tr('Valori iva esclusa').'"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+    foreach ($articoli_acquistati as $articolo) {
+        echo '
+                            <tr>
+                                <td><div class="text-truncate" style="max-width: 250px;"> '.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</div></td>
+                                <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
+                                <td class="text-right">
+                                    <span class="badge badge-'.($articolo['qta'] * 100 / ($totale_acquistati[0]['totale_qta'] != 0 ? $totale_acquistati[0]['totale_qta'] : 1) > 10 ? 'info' : 'secondary').'">
+                                        '.Translator::numberToLocale($articolo['qta'] * 100 / ($totale_acquistati[0]['totale_qta'] != 0 ? $totale_acquistati[0]['totale_qta'] : 1), 2).' %
+                                    </span>
+                                </td>
+                                <td class="text-right font-weight-bold">'.moneyFormat($articolo['totale'], 2).'</td>
+                            </tr>';
+    }
+    echo '
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-light border-top">
+                        <div>
+                            <span class="text-muted"><small>'.tr('Periodo').': '.Translator::dateToLocale($start).' - '.Translator::dateToLocale($end).'</small></span>
+                        </div>
+                        <div>
+                            '.Modules::link('Articoli', null, '<i class="fa fa-chart-bar"></i> '.tr('Statistiche complete'), 'btn btn-info btn-sm', null, false, 'tab_'.Plugin::where('name', 'Statistiche vendita')->first()->id).'
+                        </div>
+                    </div>';
+} else {
+    echo '
+                    <div class="alert alert-info m-3">
+                        <i class="fa fa-info-circle"></i> '.tr('Nessun articolo acquistato').'...
+                    </div>';
+}
+echo '
+                </div>
+            </div>
+        </div>
+    </div>
+</div>';
+
 // Numero interventi per tipologia
 $tipi = $dbo->fetchArray('SELECT *, in_tipiintervento.id AS idtipointervento FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
 

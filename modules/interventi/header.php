@@ -425,64 +425,90 @@ echo '
         return [lat, lng, indirizzo_default];
     }
 
-    var map = null;
+    var maps = {};
     function caricaMappa() {
-        const $map_container = $(".module-header:visible .card").eq(2);
+        // Trova tutti i contenitori di header del modulo (inclusi quelli nei plugin)
+        $(".module-header").each(function(index) {
+            const $module_header = $(this);
+            const $map_container = $module_header.find(".card").eq(2);
 
-        // Ingrandimento area mappa
-        $map_container.css("height", "320px");
-        alignMaxHeight(".module-header .card");
-        $("#map-edit").css("height", "85%");
-        $("#map-edit").css("border", "none");
+            // Genera un ID univoco per ogni mappa basato sul tab container
+            const $tab_pane = $module_header.closest(\'.tab-pane\');
+            const tab_id = $tab_pane.length ? $tab_pane.attr(\'id\') : \'main\';
+            const map_id = "map-edit-" + tab_id;
 
-        $map_container.find(".load").addClass("hidden");
-        $map_container.find(".go-to").removeClass("hidden");
+            // Aggiorna l\'ID del contenitore mappa se necessario
+            let $map_element = $map_container.find("#map-edit");
+            if ($map_element.length === 0) {
+                $map_element = $map_container.find("[id^=\'map-edit\']");
+            }
 
-        const lat = parseFloat("'.$sede_cliente->lat.'");
-        const lng = parseFloat("'.$sede_cliente->lng.'");
+            if ($map_element.length > 0) {
+                $map_element.attr("id", map_id);
+            } else {
+                // Se non trova il contenitore mappa, salta questo header
+                return;
+            }
 
-        var container = L.DomUtil.get("map-edit");
-        if(container._leaflet_id != null){
-            map.eachLayer(function (layer) {
-                if(layer instanceof L.Marker) {
-                    map.removeLayer(layer);
-                }
+            // Ingrandimento area mappa
+            $map_container.css("height", "320px");
+            alignMaxHeight(".module-header .card");
+            $("#" + map_id).css("height", "85%");
+            $("#" + map_id).css("border", "none");
+
+            $map_container.find(".load").addClass("hidden");
+            $map_container.find(".go-to").removeClass("hidden");
+
+            const lat = parseFloat("'.$sede_cliente->lat.'");
+            const lng = parseFloat("'.$sede_cliente->lng.'");
+
+            var container = L.DomUtil.get(map_id);
+            if (!container) {
+                return; // Salta se il contenitore non esiste
+            }
+
+            if(container._leaflet_id != null && maps[map_id]){
+                maps[map_id].eachLayer(function (layer) {
+                    if(layer instanceof L.Marker) {
+                        maps[map_id].removeLayer(layer);
+                    }
+                });
+            } else {
+                maps[map_id] = L.map(map_id, {
+                    gestureHandling: true
+                });
+
+                L.control
+                    .fullscreen({
+                        position: "topright",
+                        title: "'.tr('Vai a schermo intero').'",
+                        titleCancel: "'.tr('Esci dalla modalità schermo intero').'",
+                        content: null,
+                        forceSeparateButton: true,
+                        forcePseudoFullscreen: true,
+                        fullscreenElement: false
+                    }).addTo(maps[map_id]);
+
+                L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
+                    maxZoom: 17,
+                    attribution: "© OpenStreetMap"
+                }).addTo(maps[map_id]);
+            }
+
+            var icon = new L.Icon({
+                iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
             });
-        } else {
-            map = L.map("map-edit", {
-                gestureHandling: true
-            });
 
-            L.control
-                .fullscreen({
-                    position: "topright",
-                    title: "'.tr('Vai a schermo intero').'",
-                    titleCancel: "'.tr('Esci dalla modalità schermo intero').'",
-                    content: null,
-                    forceSeparateButton: true,
-                    forcePseudoFullscreen: true,
-                    fullscreenElement: false
-                }).addTo(map);
+            var marker = L.marker([lat, lng], {
+                icon: icon
+            }).addTo(maps[map_id]);
 
-            L.tileLayer("'.setting('Tile server OpenStreetMap').'", {
-                maxZoom: 17,
-                attribution: "© OpenStreetMap"
-            }).addTo(map);
-        }
-
-        var icon = new L.Icon({
-            iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-            shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+            maps[map_id].setView([lat, lng], 10);
         });
-
-        var marker = L.marker([lat, lng], {
-            icon: icon
-        }).addTo(map);
-
-        map.setView([lat, lng], 10);
     }
 </script>';

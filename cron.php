@@ -148,7 +148,7 @@ foreach ($tasks as $task) {
     }
 
     // Esecuzione diretta solo nel caso in cui sia prevista
-    if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
+    if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20)) || $task->next_execution_at->lessThan($inizio_iterazione)) {
         echo '[CRON] Esecuzione task: '.$task->getTranslation('title')."\n";
         // Registrazione dell'esecuzione nei log
         $logger->info($task->getTranslation('title').': '.$task->expression);
@@ -166,15 +166,6 @@ foreach ($tasks as $task) {
 
             $logger->error($task->getTranslation('title').': errore');
         }
-    }
-    // Esecuzione mancata
-    elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
-        echo '[CRON] Task mancato: '.$task->getTranslation('title').' (previsto: '.$task->next_execution_at->toDateTimeString().")\n";
-        $logger->warning($task->getTranslation('title').': mancata', [
-            'timestamp' => $task->next_execution_at->toDateTimeString(),
-        ]);
-
-        $task->registerMissedExecution($inizio_iterazione);
     }
 
     // Calcolo dello successivo slot

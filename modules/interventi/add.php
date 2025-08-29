@@ -359,37 +359,33 @@ echo '
                             <div class="col-md-4">
                                 {[ "type": "checkbox", "label": "'.tr('Attività ricorrente').'", "name": "ricorsiva_add", "value": "" ]}
                             </div>
-
-                            <div class="col-md-4 ricorrenza">
-                                {[ "type": "timestamp", "label": "'.tr('Data/ora inizio').'", "name": "data_inizio_ricorrenza", "value": "'.($data_richiesta ?: '-now-').'" ]}
-                            </div>
-
-                            <div class="col-md-4 ricorrenza">
-                                {[ "type": "number", "label": "'.tr('Periodicità').'", "name": "periodicita", "decimals": "0", "icon-after": "choice|period|months", "value": "1" ]}
-                            </div>
                         </div>
 
-                        <div class="row ricorrenza mt-3">
-                            <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
+                        <div class="ricorrenza-config" style="display: none;">
+                            <input type="hidden" name="data_inizio_ricorrenza" id="data_inizio_ricorrenza_hidden" value="">
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {[ "type": "number", "label": "'.tr('Periodicità').'", "name": "periodicita", "decimals": "0", "icon-after": "choice|period|months", "value": "1" ]}
+                                </div>
+                                <div class="col-md-3">
+                                    {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
+                                </div>
+                                <div class="col-md-3 metodo-data">
+                                    {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
+                                </div>
+                                <div class="col-md-3 metodo-numero">
+                                    {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}
+                                </div>
                             </div>
 
-                            <div class="col-md-4">
-                                {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
-                            </div>
-
-                            <div class="col-md-4">
-                                {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}
-                            </div>
-                        </div>
-
-                        <div class="row ricorrenza mt-3">
-                            <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
-                            </div>
-
-                            <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
+                                </div>
+                                <div class="col-md-6">
+                                    {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -718,6 +714,43 @@ echo '
 	var ref = "'.get('ref').'";
 
 	async function salva(button) {
+	    // Validazione ricorrenza prima del salvataggio
+	    if ($("#ricorsiva_add").is(":checked")) {
+	        calculateDataInizioRicorrenza();
+	        var dataInizio = $("#data_inizio_ricorrenza_hidden").val();
+	        if (!dataInizio) {
+	            swal("Errore", "Impossibile calcolare la data di inizio ricorrenza", "error");
+	            return false;
+	        }
+
+	        var periodicita = $("#periodicita").val();
+	        if (!periodicita || periodicita <= 0) {
+	            swal("Errore", "La periodicità deve essere un numero positivo", "error");
+	            return false;
+	        }
+
+	        var metodo = $("#metodo_ricorrenza").val();
+	        if (!metodo) {
+	            swal("Errore", "Seleziona un metodo per terminare la ricorrenza", "error");
+	            return false;
+	        }
+
+	        if (metodo === "data" && !$("#data_fine_ricorrenza").val()) {
+	            swal("Errore", "La data di fine ricorrenza è obbligatoria", "error");
+	            return false;
+	        }
+
+	        if (metodo === "numero" && (!$("#numero_ricorrenze").val() || $("#numero_ricorrenze").val() <= 0)) {
+	            swal("Errore", "Il numero di ricorrenze deve essere maggiore di zero", "error");
+	            return false;
+	        }
+
+	        if (!$("#idstatoricorrenze").val()) {
+	            swal("Errore", "Seleziona uno stato per le ricorrenze", "error");
+	            return false;
+	        }
+	    }
+
 	    // Submit attraverso ricaricamento della pagina
 	    if (!ref) {
             $("#add-form").submit();
@@ -777,33 +810,80 @@ echo '
         input("tecnici_assegnati").getElement().selectReset();
     }
 
+    // Gestione ricorrenza
     $("#ricorsiva_add").on("change", function(){
         if ($(this).is(":checked")) {
-            $(".ricorrenza").removeClass("hidden");
-            $("#data_inizio_ricorrenza").attr("required", true);
+            $(".ricorrenza-config").slideDown(300);
             $("#metodo_ricorrenza").attr("required", true);
             $("#idstatoricorrenze").attr("required", true);
+            $("#periodicita").attr("required", true);
+            calculateDataInizioRicorrenza();
         } else {
-            $(".ricorrenza").addClass("hidden");
-            $("#data_inizio_ricorrenza").attr("required", false);
+            $(".ricorrenza-config").slideUp(300);
             $("#metodo_ricorrenza").attr("required", false);
             $("#idstatoricorrenze").attr("required", false);
+            $("#periodicita").attr("required", false);
+            $("#data_fine_ricorrenza").attr("required", false);
+            $("#numero_ricorrenze").attr("required", false);
         }
     });
 
     $("#metodo_ricorrenza").on("change", function(){
-        if ($(this).val()=="data") {
+        if ($(this).val() === "data") {
+            $(".metodo-data").fadeIn(200);
+            $(".metodo-numero").fadeOut(200);
             input("data_fine_ricorrenza").enable();
             $("#data_fine_ricorrenza").attr("required", true);
             input("numero_ricorrenze").disable();
             input("numero_ricorrenze").set("");
-        } else {
+            $("#numero_ricorrenze").attr("required", false);
+        } else if ($(this).val() === "numero") {
+            $(".metodo-numero").fadeIn(200);
+            $(".metodo-data").fadeOut(200);
             input("numero_ricorrenze").enable();
+            $("#numero_ricorrenze").attr("required", true);
             input("data_fine_ricorrenza").disable();
             input("data_fine_ricorrenza").set("");
             $("#data_fine_ricorrenza").attr("required", false);
+        } else {
+            $(".metodo-data, .metodo-numero").fadeOut(200);
+            input("data_fine_ricorrenza").disable();
+            input("numero_ricorrenze").disable();
+            $("#data_fine_ricorrenza").attr("required", false);
+            $("#numero_ricorrenze").attr("required", false);
         }
     });
+
+    function calculateDataInizioRicorrenza() {
+        var dataInizio = "";
+        var orarioInizio = $("#orario_inizio").val();
+
+        if (orarioInizio && orarioInizio.length >= 16) {
+            dataInizio = orarioInizio;
+        } else {
+            var dataRichiesta = $("#data_richiesta").val();
+            if (dataRichiesta) {
+                dataInizio = dataRichiesta + " 09:00:00";
+            } else {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = String(now.getMonth() + 1).padStart(2, "0");
+                var day = String(now.getDate()).padStart(2, "0");
+                dataInizio = year + "-" + month + "-" + day + " 09:00:00";
+            }
+        }
+        $("#data_inizio_ricorrenza_hidden").val(dataInizio);
+    }
+
+    $("#orario_inizio, #data_richiesta").on("change", function() {
+        setTimeout(calculateDataInizioRicorrenza, 100);
+    });
+
+    // Inizializzazione
+    if (!$("#metodo_ricorrenza").val()) {
+        $(".metodo-data, .metodo-numero").hide();
+    }
+    calculateDataInizioRicorrenza();
 
     var map = null;
     function caricaMappa(lat, lng) {

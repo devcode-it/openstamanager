@@ -3662,3 +3662,40 @@ section.content, .main-footer {
     vertical-align: top;
     line-height: 1.2;
 }
+
+/* ===== RICORRENZA INTERVENTI ===== */
+
+/* Configurazione ricorrenza */
+.ricorrenza-config {
+    transition: all 0.3s ease;
+    background: #f8f9fc;
+    border-radius: 6px;
+    padding: 1rem;
+    border: 1px solid #e3e6f0;
+}
+
+/* Responsive per 4 colonne */
+.ricorrenza-config .col-md-3 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+@media (max-width: 1200px) {
+    .ricorrenza-config .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ricorrenza-config .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .ricorrenza-config {
+        padding: 0.75rem;
+    }
+}

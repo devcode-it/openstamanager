@@ -359,12 +359,29 @@ switch (post('op')) {
         if (!empty(post('ricorsiva_add'))) {
             // Validazione dei campi obbligatori per la ricorrenza
             $periodicita = post('periodicita');
-            $data_inizio = post('data_inizio_ricorrenza');
             $metodo_ricorrenza = post('metodo_ricorrenza');
             $idstatoricorrenze = post('idstatoricorrenze');
 
+            // Calcolo automatico della data di inizio ricorrenza
+            $data_inizio = post('data_inizio_ricorrenza'); // Campo nascosto calcolato dal JavaScript
+
+            // Se il campo nascosto è vuoto, calcola la data dal backend
+            if (empty($data_inizio)) {
+                // Prima priorità: orario inizio della prima sessione
+                $orario_inizio_sessione = post('orario_inizio');
+
+                if (!empty($orario_inizio_sessione) && strlen($orario_inizio_sessione) >= 16) {
+                    // Se abbiamo l'orario completo della sessione, usalo
+                    $data_inizio = $orario_inizio_sessione;
+                } else {
+                    // Seconda priorità: data richiesta con orario di default
+                    $data_richiesta = post('data_richiesta') ?: date('Y-m-d');
+                    $data_inizio = $data_richiesta . ' 09:00:00';
+                }
+            }
+
             // Controllo campi obbligatori
-            if (empty($periodicita) || empty($data_inizio) || empty($metodo_ricorrenza) || empty($idstatoricorrenze)) {
+            if (empty($periodicita) || empty($metodo_ricorrenza) || empty($idstatoricorrenze)) {
                 flash()->error(tr('Tutti i campi della ricorrenza sono obbligatori quando si crea un\'attività ricorrente.'));
                 break;
             }
@@ -519,8 +536,6 @@ switch (post('op')) {
                         'id_tecnico' => $tecnici_assegnati,
                     ]);
                 }
-
-                ++$ricorrenze_create;
             }
 
             // Messaggio di successo per le ricorrenze create

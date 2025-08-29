@@ -372,7 +372,7 @@ echo '
                                     {[ "type": "select", "label": "'.tr('Metodo fine ricorrenza').'", "name": "metodo_ricorrenza", "values": "list=\"data\":\"Data fine\",\"numero\":\"Numero ricorrenze\"" ]}
                                 </div>
                                 <div class="col-md-3 metodo-data">
-                                    {[ "type": "timestamp", "label": "'.tr('Data/ora fine').'", "name": "data_fine_ricorrenza" ]}
+                                    {[ "type": "date", "label": "'.tr('Data fine').'", "name": "data_fine_ricorrenza" ]}
                                 </div>
                                 <div class="col-md-3 metodo-numero">
                                     {[ "type": "number", "label": "'.tr('Numero ricorrenze').'", "name": "numero_ricorrenze", "decimals": "0" ]}

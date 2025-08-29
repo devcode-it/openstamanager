@@ -1203,9 +1203,264 @@ input.small-width {
     min-width: 130px;
 }
 
+/* Stili per il dropdown delle notifiche */
 #hooks .dropdown-item {
     white-space: normal;
-    min-width: max-content;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 350px;
+    min-width: 280px;
+    padding: 12px 16px;
+    line-height: 1.4;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+    color: #333;
+}
+
+#hooks .dropdown-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 8px 8px;
+}
+
+#hooks .dropdown-item:hover {
+    background-color: #f6f6f6;
+    text-decoration: none;
+}
+
+#hooks .dropdown-item a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+}
+
+#hooks .dropdown-item a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Stili per il contenuto delle notifiche */
+#hooks .dropdown-item .small {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#hooks .dropdown-item i {
+    font-size: 14px;
+    margin-right: 2px;
+    vertical-align: top;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Miglioramenti per il dropdown menu delle notifiche */
+.navbar-nav .dropdown-menu {
+    max-width: 380px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+    padding: 0;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+/* Assicura che l'header si estenda per tutta la larghezza */
+.navbar-nav .dropdown-menu .btn.dropdown-item {
+    border-radius: 0;
+    border: none;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Stili per l'header del dropdown */
+#hooks-header {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    margin: 0;
+    text-align: left;
+    position: relative;
+    border-radius: 8px 8px 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+
+
+#hooks-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #ddd;
+}
+
+/* Stili per quando non ci sono notifiche */
+#hooks-header.no-notifications {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+
+
+#hooks-header.no-notifications::after {
+    background: #c3e6cb;
+}
+
+/* Stili per le icone nell'header */
+#hooks-header i {
+    font-size: 13px;
+    margin-right: 8px;
+    opacity: 0.8;
+    color: #495057;
+    vertical-align: middle;
+}
+
+#hooks-header.no-notifications i {
+    color: #155724;
+    opacity: 1;
+}
+
+/* Miglioramenti per il contenitore delle notifiche */
+#hooks {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#hooks::-webkit-scrollbar {
+    width: 6px;
+}
+
+#hooks::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#hooks::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#hooks::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Stili per il badge delle notifiche */
+#hooks-badge {
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 9px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stili per il contenuto delle notifiche migliorato */
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.notification-content i {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.notification-content .small {
+    flex: 1;
+    margin-left: 0;
+}
+
+.notification-link {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.notification-link:hover {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Stili per la barra di progresso nelle notifiche */
+#hooks .progress {
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+#hooks .progress-bar {
+    background-color: #007bff;
+    transition: width 0.3s ease;
+}
+
+#hooks .progress-text {
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Stili responsive per le notifiche */
+@media (max-width: 768px) {
+    .navbar-nav .dropdown-menu {
+        max-width: 320px;
+        left: -280px !important;
+        right: 10px !important;
+    }
+
+    #hooks-header {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    #hooks .dropdown-item {
+        max-width: 300px;
+        min-width: 250px;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    #hooks .dropdown-item .small {
+        font-size: 12px;
+    }
+
+    #hooks .dropdown-item i {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-nav .dropdown-menu {
+        max-width: 280px;
+        left: -240px !important;
+    }
+
+    #hooks-header {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    #hooks .dropdown-item {
+        max-width: 260px;
+        min-width: 220px;
+        padding: 8px 10px;
+    }
 }
 
 .select2-dropdown {

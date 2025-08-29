@@ -360,6 +360,21 @@ input[type=file] {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* Stili per l'indicatore di caricamento della ricerca */
+.search-loading {
+    text-align: center;
+    padding: 20px 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.search-loading i {
+    font-size: 14px;
+    margin-right: 8px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
 
 .autocomplete>div:hover:not(.group),
 .autocomplete>div.selected {

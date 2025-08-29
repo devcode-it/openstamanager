@@ -48,26 +48,32 @@ function handleHooksSuccess(hooks) {
         $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
         $("#hooks-badge").removeClass();
         $("#hooks-badge").addClass('badge').addClass('badge-success');
+        $("#hooks-header").addClass('no-notifications');
     } else {
         $("#hooks-notified").text(number);
         $("#hooks-badge").removeClass();
         $("#hooks-badge").addClass('badge').addClass('badge-danger');
+        $("#hooks-header").removeClass('no-notifications');
     }
 
     $("#hooks-loading").hide();
 
     var hookMessage;
+    var iconHtml = '';
     if (number > 1) {
         hookMessage = globals.translations.hookMultiple.replace('_NUM_', number);
+        iconHtml = '<i class="fa fa-bell mr-2"></i>';
     } else if (number == 1) {
         hookMessage = globals.translations.hookSingle;
+        iconHtml = '<i class="fa fa-bell mr-2"></i>';
     } else {
         hookMessage = globals.translations.hookNone;
+        iconHtml = '<i class="fa fa-check-circle mr-2"></i>';
     }
 
-    $("#hooks-header").text(hookMessage);
+    $("#hooks-header").html(iconHtml + hookMessage);
 
-    totalRequests = hooks.length; 
+    totalRequests = hooks.length;
     if (completedRequests === totalRequests) {
         // Verifica se tutte le richieste sono state completate con successo
         //console.log("Tutte le richieste AJAX sono state eseguite con successo.");
@@ -86,7 +92,7 @@ function startHooks() {
         success: function (data) {
             hooks = JSON.parse(data);
             handleHooksSuccess(hooks);
-        }, 
+        },
         error: function (xhr, status, error) {
             console.error("Errore durante la richiesta AJAX relativa agli Hooks");
         }
@@ -130,13 +136,12 @@ function renderHook(hook) {
     var content = '';
 
     if (result.link) {
-        content += '<a href="' + result.link + '">';
-    } else {
-        content += '<div class="hooks-header">';
+        content += '<a href="' + result.link + '" class="notification-link">';
     }
 
-
-    content += '<i class="' + result.icon + '"></i> <span class="small"> ' + result.message + '</span>';
+    content += '<div class="notification-content">';
+    content += '<i class="' + result.icon + '"></i>';
+    content += '<span class="small">' + result.message + '</span>';
 
     if (result.progress) {
         var current = result.progress.current;
@@ -146,13 +151,14 @@ function renderHook(hook) {
 
         percentage = Math.round(percentage * 100) / 100;
 
-        content += '<div class="progress" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width:' + percentage + '%">' + percentage + '% (' + current + '/' + total + ')</div></div>';
+        content += '<div class="progress mt-2" style="margin-bottom: 0px; height: 4px;"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width:' + percentage + '%"></div></div>';
+        content += '<div class="progress-text mt-1" style="font-size: 11px; color: #666;">' + percentage + '% (' + current + '/' + total + ')</div>';
     }
+
+    content += '</div>';
 
     if (result.link) {
         content += '</a>';
-    } else {
-        content += '</div>';
     }
 
     element.html(content);

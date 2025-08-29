@@ -94,3 +94,5 @@ HAVING
     2=2
 ORDER BY
     `mg_articoli_lang`.`title`' WHERE `zz_modules`.`name` = 'Articoli';
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`format` = 1 WHERE `zz_modules`.`name` = 'Gestione task' AND `zz_views`.`name` IN ('Prossima esecuzione', 'Precedente esecuzione');

@@ -250,7 +250,7 @@ if (Services::isEnabled()) {
                         <thead>
                             <tr>
                                 <th>'.tr('Anno').'</th>
-                                <th class="text-center">
+                                <th class="text-right pr-3">
                                     '.tr('Doc.').'
                                     <i class="fa fa-question-circle-o text-muted" title="'.tr('Fatture attive e relative ricevute, fatture passive').'"></i>
                                 </th>
@@ -265,7 +265,7 @@ if (Services::isEnabled()) {
                         <tfoot>
                             <tr class="table-secondary">
                                 <td><strong>'.tr('Totale').'</strong></td>
-                                <td class="text-center"><strong id="fe_numero">-</strong></td>
+                                <td class="text-right pr-3"><strong id="fe_numero">-</strong></td>
                                 <td class="text-center"><strong id="fe_spazio">-</strong></td>
                             </tr>
                         </tfoot>
@@ -470,8 +470,8 @@ function aggiornaStatisticheFE(){
 
                     $("#elenco-fe").prepend(highlight + `
                         <td>` + data["year"] + `</td>
-                        <td>` + data["number"] + `</td>
-                        <td>` + data["size"] + `</td>
+                        <td class="text-right pr-3">` + data["number"] + `</td>
+                        <td class="text-center">` + data["size"] + `</td>
                     </tr>`);
 
                 }

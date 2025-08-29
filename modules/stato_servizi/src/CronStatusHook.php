@@ -22,6 +22,7 @@ namespace Modules\StatoServizi;
 use Carbon\Carbon;
 use Hooks\Manager;
 use Models\Cache;
+use Models\Module;
 
 /**
  * Hook specializzato per il controllo dello stato del cron.
@@ -35,7 +36,10 @@ class CronStatusHook extends Manager
         $ultima_esecuzione = Cache::where('name', 'Ultima esecuzione del cron')->first();
 
         if (!$ultima_esecuzione || !$ultima_esecuzione->content) {
-            $message = tr('Il cron non è stato configurato correttamente');
+            $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
+            $message = tr('Il cron di OpenSTAManager non è stato configurato.<br><br>È necessario configurare il cron di sistema per eseguire periodicamente il file cron.php con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>Frequenza consigliata: ogni 10 minuti (adattabile in base alle esigenze).', [
+                '_DOCUMENT_ROOT_' => $document_root,
+            ]);
             $show = true;
         } else {
             // Converte la data dell'ultima esecuzione
@@ -46,33 +50,29 @@ class CronStatusHook extends Manager
             $ore_trascorse = $data_ultima_esecuzione->diffInHours($ora_attuale);
 
             if ($ore_trascorse > 1) {
-                $giorni = floor($ore_trascorse / 24);
-                $ore_rimanenti = $ore_trascorse % 24;
+                $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
+                $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
 
-                if ($giorni > 0) {
-                    $tempo_trascorso = $giorni . ' ' . ($giorni == 1 ? tr('giorno') : tr('giorni'));
-                    if ($ore_rimanenti > 0) {
-                        $tempo_trascorso .= ' e ' . $ore_rimanenti . ' ' . ($ore_rimanenti == 1 ? tr('ora') : tr('ore'));
-                    }
-                } else {
-                    $tempo_trascorso = $ore_trascorse . ' ' . ($ore_trascorse == 1 ? tr('ora') : tr('ore'));
-                }
-
-                $message = tr('Attenzione: il cron non viene eseguito da _TIME_', [
-                    '_TIME_' => $tempo_trascorso,
+                $message = tr('Il cron di OpenSTAManager non è in esecuzione (ultima esecuzione: _DATA_).<br><br>Verificare la configurazione del cron di sistema. Il comando da eseguire è:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>Frequenza consigliata: ogni 10 minuti. Per invii frequenti di newsletter, impostare 1 minuto.', [
+                    '_DATA_' => $data_formattata,
+                    '_DOCUMENT_ROOT_' => $document_root,
                 ]);
                 $show = true;
             } else {
-                $message = tr('Il cron è stato eseguito di recente');
+                $message = tr('Il cron è attivo e funzionante');
                 $show = false;
             }
         }
+
+        // Ottiene il link al modulo aggiornamenti
+        $aggiornamenti_module = Module::where('name', 'Aggiornamenti')->first();
+        $link = $aggiornamenti_module ? base_path().'/controller.php?id_module=' . $aggiornamenti_module->id : base_path().'/controller.php?id_module=' . $this->getModuleId();
 
         return [
             'icon' => 'fa fa-clock-o text-danger',
             'message' => $message,
             'show' => $show,
-            'link' => base_path().'/controller.php?id_module=' . $this->getModuleId(),
+            'link' => $link,
         ];
     }
 

@@ -412,6 +412,47 @@ foreach ($config_to_check as $name => $values) {
     ];
 }
 
+// Controllo stato cron
+$cron_check = [];
+if ($database->isInstalled()) {
+    try {
+        $ultima_esecuzione = $database->fetchOne('SELECT content FROM zz_cache WHERE name = "Ultima esecuzione del cron"');
+
+        if (!$ultima_esecuzione || !$ultima_esecuzione['content']) {
+            $cron_status = 0;
+            $cron_description = tr('Il cron non è stato configurato correttamente. Sembra che il cron di OpenSTAManager non sia in esecuzione.<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
+                '_DOCUMENT_ROOT_' => $_SERVER['DOCUMENT_ROOT'] ?? base_dir(),
+            ]);
+        } else {
+            $data_ultima_esecuzione = new DateTime($ultima_esecuzione['content']);
+            $ora_attuale = new DateTime();
+            $ore_trascorse = $ora_attuale->diff($data_ultima_esecuzione)->h + $ora_attuale->diff($data_ultima_esecuzione)->days * 24;
+
+            if ($ore_trascorse > 1) {
+                $cron_status = 0;
+                $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
+                $cron_description = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
+                    '_DATA_' => $data_formattata,
+                    '_DOCUMENT_ROOT_' => $_SERVER['DOCUMENT_ROOT'] ?? base_dir(),
+                ]);
+            } else {
+                $cron_status = 1;
+                $cron_description = tr('Il cron è stato eseguito di recente');
+            }
+        }
+    } catch (Exception $e) {
+        $cron_status = 0;
+        $cron_description = tr('Errore nel controllo dello stato del cron');
+    }
+
+    $cron_check[] = [
+        'name' => 'cron_status',
+        'description' => $cron_description,
+        'status' => $cron_status,
+        'type' => tr('Servizio'),
+    ];
+}
+
 $requirements = [
     tr('Apache (_INTERFACE_)', [
         '_INTERFACE_' => $php_interface,
@@ -427,6 +468,11 @@ $requirements = [
     tr('File di servizio') => $files,
     tr('Configurazioni') => $config,
 ];
+
+// Aggiunta controllo cron se disponibile
+if (!empty($cron_check)) {
+    $requirements[tr('Servizi di sistema')] = $cron_check;
+}
 
 if (!$database->isInstalled() || empty($mysql)) {
     unset($requirements[tr('DBMS (_TYPE_)', [

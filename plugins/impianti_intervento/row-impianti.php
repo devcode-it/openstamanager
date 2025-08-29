@@ -74,6 +74,7 @@ if ($n_impianti > 0) {
         <h5>'.tr('Nessun impianto collegato').'</h5>
         <p class="mb-0">'.tr('Utilizza il modulo sopra per aggiungere impianti a questa attività').'</p>
     </div>';
+
     return;
 }
 foreach ($impianti_collegati as $impianto) {

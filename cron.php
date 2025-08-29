@@ -44,12 +44,13 @@ flush();
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
-echo "[CRON] Avvio - ".date('Y-m-d H:i:s')."\n";
+echo '[CRON] Avvio - '.date('Y-m-d H:i:s')."\n";
 
 // Controllo su possibili aggiornamenti per bloccare il sistema
 $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
 if (!$database_online) {
     echo "[CRON] STOP - Database offline o aggiornamento disponibile\n";
+
     return;
 }
 
@@ -75,6 +76,7 @@ $cron_id = Cache::where('name', 'ID del cron')->first();
 $disattiva = Cache::where('name', 'Disabilita cron')->first();
 if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
     echo "[CRON] STOP - Cron disabilitato o localhost\n";
+
     return;
 }
 
@@ -106,7 +108,8 @@ $in_esecuzione->refresh();
 // Controllo su possibili aggiornamenti per bloccare il sistema
 $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
 if (!$database_online || !empty($disattiva->content) || $cron_id->content != $current_id) {
-    echo "[CRON] STOP - Controlli falliti (DB: ".($database_online ? 'OK' : 'KO').", Disattivato: ".($disattiva->content ? 'SI' : 'NO').", ID: ".($cron_id->content == $current_id ? 'OK' : 'KO').")\n";
+    echo '[CRON] STOP - Controlli falliti (DB: '.($database_online ? 'OK' : 'KO').', Disattivato: '.($disattiva->content ? 'SI' : 'NO').', ID: '.($cron_id->content == $current_id ? 'OK' : 'KO').")\n";
+
     return;
 }
 
@@ -130,7 +133,7 @@ while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
 
 // Aggiornamento dei cron disponibili
 $tasks = Task::all()->where('enabled', 1);
-echo "[CRON] Task trovati: ".count($tasks)."\n";
+echo '[CRON] Task trovati: '.count($tasks)."\n";
 foreach ($tasks as $task) {
     $adesso = new Carbon();
 
@@ -146,14 +149,14 @@ foreach ($tasks as $task) {
 
     // Esecuzione diretta solo nel caso in cui sia prevista
     if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
-        echo "[CRON] Esecuzione task: ".$task->getTranslation('title')."\n";
+        echo '[CRON] Esecuzione task: '.$task->getTranslation('title')."\n";
         // Registrazione dell'esecuzione nei log
         $logger->info($task->getTranslation('title').': '.$task->expression);
         try {
             $task->execute();
-            echo "[CRON] Task completato: ".$task->getTranslation('title')."\n";
+            echo '[CRON] Task completato: '.$task->getTranslation('title')."\n";
         } catch (Exception $e) {
-            echo "[CRON] ERRORE task: ".$task->getTranslation('title')." - ".$e->getMessage()."\n";
+            echo '[CRON] ERRORE task: '.$task->getTranslation('title').' - '.$e->getMessage()."\n";
             // Registrazione del completamento nei log
             $task->log('error', 'Errore di esecuzione', [
                 'code' => $e->getCode(),
@@ -166,7 +169,7 @@ foreach ($tasks as $task) {
     }
     // Esecuzione mancata
     elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
-        echo "[CRON] Task mancato: ".$task->getTranslation('title')." (previsto: ".$task->next_execution_at->toDateTimeString().")\n";
+        echo '[CRON] Task mancato: '.$task->getTranslation('title').' (previsto: '.$task->next_execution_at->toDateTimeString().")\n";
         $logger->warning($task->getTranslation('title').': mancata', [
             'timestamp' => $task->next_execution_at->toDateTimeString(),
         ]);
@@ -186,7 +189,7 @@ $logger->info('Cron #'.$number.' concluso', [
     'next-slot-unix' => $timestamp,
 ]);
 $in_esecuzione->set(false);
-echo "[CRON] Concluso - Prossimo slot: ".$slot_minimo->toDateTimeString()."\n";
+echo '[CRON] Concluso - Prossimo slot: '.$slot_minimo->toDateTimeString()."\n";
 
 // Registrazione dell'esecuzione
 $adesso = new Carbon();

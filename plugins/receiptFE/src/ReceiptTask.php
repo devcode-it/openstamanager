@@ -19,6 +19,7 @@
  */
 
 namespace Plugins\ReceiptFE;
+
 use Models\Cache;
 use Tasks\Manager;
 
@@ -42,7 +43,7 @@ class ReceiptTask extends Manager
                 'message' => tr('Importazione automatica disattivata'),
             ];
 
-            return $result; 
+            return $result;
         }
 
         $todo_cache = Cache::where('name', 'Ricevute Elettroniche')->first();
@@ -61,6 +62,7 @@ class ReceiptTask extends Manager
                 'response' => 1,
                 'message' => tr('Nessuna ricevuta da importare!'),
             ];
+
             return $result;
         }
 
@@ -88,7 +90,7 @@ class ReceiptTask extends Manager
         $todo_cache->set($todo);
         $completed_cache->set($completed);
 
-        if( empty($list) ){
+        if (empty($list)) {
             $result = [
                 'response' => 1,
                 'message' => tr('Nessuna ricevuta da importare'),

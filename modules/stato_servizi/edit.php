@@ -86,7 +86,7 @@ if (Services::isEnabled()) {
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);
         $servizi_scaduti = Services::getServiziScaduti();
 
-                    echo '  </tbody>
+        echo '  </tbody>
                             <tfoot>
                                 <tr class="table-light">
                                     <td colspan="3"><strong>'.tr('Totale servizi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong></td>
@@ -136,8 +136,8 @@ if (Services::isEnabled()) {
                 echo '
                         <div class="alert alert-danger m-3 mb-0">
                             <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:', [
-                            '_NUM_' => $risorse_scadute->count(),
-                        ]).'
+                    '_NUM_' => $risorse_scadute->count(),
+                ]).'
                         </div>';
             }
 
@@ -145,8 +145,8 @@ if (Services::isEnabled()) {
                 echo '
                         <div class="alert alert-warning m-3 mb-0">
                             <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:', [
-                            '_NUM_' => $risorse_in_scadenza->count(),
-                        ]).'
+                    '_NUM_' => $risorse_in_scadenza->count(),
+                ]).'
                         </div>';
             }
         }
@@ -194,7 +194,6 @@ if (Services::isEnabled()) {
                                 </tr>
                             </tfoot>
                         </table>';
-
     } else {
         echo '
                         <div class="alert alert-info m-3">

@@ -20,11 +20,9 @@
 
 namespace Modules\StatoServizi;
 
-use Tasks\Manager;
 use API\Services;
-use Carbon\Carbon;
-use Models\Module;
 use Models\Cache;
+use Tasks\Manager;
 
 class ServicesHookTask extends Manager
 {
@@ -35,8 +33,8 @@ class ServicesHookTask extends Manager
         $result = [
             'response' => 1,
             'message' => tr('Controllo servizi attivi completato!'),
-        ];      
-        
+        ];
+
         try {
             if (Services::isEnabled()) {
                 $servizi = Services::getServiziAttivi();
@@ -46,12 +44,12 @@ class ServicesHookTask extends Manager
         } catch (\Exception $e) {
             $result = [
                 'response' => 0,
-                'message' => tr('Errore nel controllo dei servizi attivi! _error_',[
+                'message' => tr('Errore nel controllo dei servizi attivi! _error_', [
                     '_error_' => $e->getMessage(),
                 ]),
             ];
             $cache->set($result);
-        }     
+        }
 
         return $result;
     }

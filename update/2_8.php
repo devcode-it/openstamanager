@@ -163,6 +163,6 @@ try {
 }
 try {
     $dbo->query('DROP TABLE `my_impianti_marche`');
-} catch (Exception $e) {
+} catch (Exception) {
     // Errore durante la rimozione della tabella, continua l'esecuzione
 }

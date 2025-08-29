@@ -618,10 +618,10 @@ class Query
         ];
 
         foreach ($patterns as $pattern) {
-            $query = preg_replace($pattern, '', $query);
+            $query = preg_replace($pattern, '', (string) $query);
         }
 
-        return trim($query);
+        return trim((string) $query);
     }
 
     /**

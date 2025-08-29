@@ -22,7 +22,6 @@ namespace API;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use Models\Cache;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -63,7 +62,7 @@ class Services
         } catch (\Exception $e) {
             // Log dell'errore per debug
             if (function_exists('logger')) {
-                logger()->error('Errore nel recupero informazioni Services: ' . $e->getMessage());
+                logger()->error('Errore nel recupero informazioni Services: '.$e->getMessage());
             }
 
             // Restituisce un array vuoto in caso di errore

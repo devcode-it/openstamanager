@@ -21,10 +21,11 @@
 namespace Modules\StatoServizi;
 
 use API\Services;
-use Hooks\Manager;
-use Models\Module;
-use Models\Cache;
 use Carbon\Carbon;
+use Hooks\Manager;
+use Models\Cache;
+use Models\Module;
+
 class ServicesHook extends Manager
 {
     public function response()
@@ -33,17 +34,15 @@ class ServicesHook extends Manager
 
         if (Services::isEnabled()) {
             $limite_scadenze = (new Carbon())->addDays(60);
-            $message = "";
+            $message = '';
 
             $cache = Cache::where('name', 'Informazioni su Services')->first();
             $services = $cache->content;
 
-            //Filtra i risultati che hanno expiration_at fra oggi e $limite_scadenze
-            $servizi_in_scadenza = array_filter($services, function ($service) use ($limite_scadenze) {
-                return is_array($service) && isset($service['expiration_at']) && Carbon::parse($service['expiration_at'])->between(Carbon::now(), $limite_scadenze);
-            });
+            // Filtra i risultati che hanno expiration_at fra oggi e $limite_scadenze
+            $servizi_in_scadenza = array_filter($services, fn ($service) => is_array($service) && isset($service['expiration_at']) && Carbon::parse($service['expiration_at'])->between(Carbon::now(), $limite_scadenze));
 
-            if( !empty($servizi_in_scadenza) ){
+            if (!empty($servizi_in_scadenza)) {
                 $message .= '<i class="fa fa-clock-o text-warning"> </i> ';
                 $message .= tr('I seguenti servizi sono in scadenza:<ul><li> _LIST_', [
                     '_LIST_' => implode('</li><li>', array_column($servizi_in_scadenza, 'name')),
@@ -54,7 +53,7 @@ class ServicesHook extends Manager
         return [
             'icon' => null,
             'message' => $message,
-            'link' => base_path().'/controller.php?id_module='.Module::where('name','Stato dei servizi')->first()->id,
+            'link' => base_path().'/controller.php?id_module='.Module::where('name', 'Stato dei servizi')->first()->id,
             'show' => Services::isEnabled() && !empty($message),
         ];
     }

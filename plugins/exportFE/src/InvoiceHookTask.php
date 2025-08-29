@@ -18,10 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- namespace Plugins\ExportFE;
+namespace Plugins\ExportFE;
 
- use Modules\Fatture\Fattura;
- use Tasks\Manager;
+use Modules\Fatture\Fattura;
+use Tasks\Manager;
 
 class InvoiceHookTask extends Manager
 {
@@ -31,18 +31,18 @@ class InvoiceHookTask extends Manager
             'response' => 1,
             'message' => tr('Fatture elettroniche inviate correttamente!'),
         ];
-        
+
         try {
             $fatture = Fattura::where('hook_send', 1)
                 ->where('codice_stato_fe', 'QUEUE')
                 ->limit(25)
                 ->get();
 
-            if( $fatture->isEmpty() ){
+            if ($fatture->isEmpty()) {
                 $result['message'] = tr('Nessuna fattura da inviare');
             }
 
-            foreach($fatture as $fattura){
+            foreach ($fatture as $fattura) {
                 $response_invio = Interaction::sendInvoice($fattura->id);
 
                 if ($response_invio['code'] == 200 || $response_invio['code'] == 301) {
@@ -50,12 +50,11 @@ class InvoiceHookTask extends Manager
                     $fattura->save();
                 }
             }
-           
         } catch (\Exception $e) {
             $result['response'] = 2;
             $result['message'] = tr('Errore durante l\'invio delle fatture elettroniche: _ERR_', [
                 '_ERR_' => $e->getMessage(),
-            ])."<br>";
+            ]).'<br>';
         }
 
         return $result;

@@ -163,7 +163,7 @@ class AJAX
                 if (is_array($module_results)) {
                     $results = array_merge($results, $module_results);
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Continua con gli altri moduli
             }
         }
@@ -369,7 +369,7 @@ class AJAX
 
         try {
             require $file;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return [];
         }
 

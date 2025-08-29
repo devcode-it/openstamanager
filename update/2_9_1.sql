@@ -96,3 +96,12 @@ ORDER BY
     `mg_articoli_lang`.`title`' WHERE `zz_modules`.`name` = 'Articoli';
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`format` = 1 WHERE `zz_modules`.`name` = 'Gestione task' AND `zz_views`.`name` IN ('Prossima esecuzione', 'Precedente esecuzione');
+
+-- Aggiunta hook per il controllo dello stato del cron
+INSERT INTO `zz_hooks` (`name`, `class`, `enabled`, `id_module`) VALUES
+('Stato Cron', 'Modules\\StatoServizi\\CronStatusHook', 1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato servizi'));
+
+-- Aggiunta traduzione per l'hook
+INSERT INTO `zz_hooks_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_hooks`), 'Stato Cron'),
+(2, (SELECT MAX(`id`) FROM `zz_hooks`), 'Cron Status');

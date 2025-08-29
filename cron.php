@@ -145,8 +145,8 @@ foreach ($tasks as $task) {
     }
 
     // Esecuzione diretta solo nel caso in cui sia prevista
-    if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20))) {
-        echo "[CRON] Esecuzione task: ".$task->getTranslation('title')."\n";
+    if ($task->next_execution_at->copy()->addSeconds(20)->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addseconds(20)) || $task->next_execution_at->lessThan($inizio_iterazione)) {
+        echo '[CRON] Esecuzione task: '.$task->getTranslation('title')."\n";
         // Registrazione dell'esecuzione nei log
         $logger->info($task->getTranslation('title').': '.$task->expression);
         try {

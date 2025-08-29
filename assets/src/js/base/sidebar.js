@@ -39,31 +39,42 @@ $(document).ready(function () {
         }
     }
 
-    // Gestione click specifico sul testo del menu per navigare al modulo
-    $(document).on('click', '.nav-sidebar .menu-text', function(e) {
+    // Gestione click sull'intero link del menu per navigare al modulo
+    $(document).on('click', '.nav-sidebar .nav-link[data-has-submenu="true"]', function(e) {
+        // Se il click è sulla freccia, non fare nulla (lascia che gestisca il toggle)
+        if ($(e.target).hasClass('fa-angle-left')) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
-        const $link = $(this).closest('.nav-link[data-has-submenu="true"]');
-        const href = $link.attr('href');
+        const href = $(this).attr('href');
 
         if (href && href !== 'javascript:;' && href !== '#') {
             window.location.href = href;
         }
     });
 
-    // Gestione click sull'icona freccia per compattare quando il menu è espanso
-    $(document).on('click', '.nav-sidebar .nav-item.menu-open > .nav-link[data-widget="treeview"] .fa-angle-left', function(e) {
+    // Gestione click sull'icona freccia per toggle del menu
+    $(document).on('click', '.nav-sidebar .nav-link[data-widget="treeview"] .fa-angle-left', function(e) {
         e.preventDefault();
         e.stopPropagation();
 
         const $navItem = $(this).closest('.nav-item');
+        const $navLink = $(this).closest('.nav-link');
 
-        // Compatta il menu solo se è attualmente espanso
+        // Toggle del menu
         if ($navItem.hasClass('menu-open')) {
+            // Compatta il menu
             $navItem.removeClass('menu-open');
-            $(this).closest('.nav-link').attr('aria-expanded', 'false');
+            $navLink.attr('aria-expanded', 'false');
             $navItem.find('.nav-treeview').slideUp(300);
+        } else {
+            // Espande il menu
+            $navItem.addClass('menu-open');
+            $navLink.attr('aria-expanded', 'true');
+            $navItem.find('.nav-treeview').slideDown(300);
         }
     });
 

@@ -261,12 +261,20 @@ $(document).ready(function () {
             results.forEach(result => {
                 const title = result.title;
                 const labels = result.labels ? result.labels.join('').split('<br/>,').join(' • ') : '';
+
+                // Preserva l'evidenziazione esistente e applica quella per search-highlight
+                let processedLabels = labels;
+                // Sostituisci la classe highlight con search-highlight per coerenza
+                processedLabels = processedLabels.replace(/class=['"]highlight['"]/g, 'class="search-highlight"');
+
                 const cleanLabels = labels.replace(/<[^>]*>/g, ''); // Rimuovi HTML per il tooltip
 
                 // Evidenzia il termine di ricerca nel titolo
                 const highlightedTitle = highlightSearchTerm(title, searchTerm);
-                // Mantieni le labels complete per permettere il wrap
-                const simplifiedLabels = cleanLabels.replace(/:/g, '');
+
+                // Applica evidenziazione anche alle labels processate
+                const highlightedLabels = highlightSearchTerm(processedLabels, searchTerm);
+                const simplifiedLabels = highlightedLabels.replace(/:/g, '');
 
                 categoryList.append(`
                     <li class="nav-item">

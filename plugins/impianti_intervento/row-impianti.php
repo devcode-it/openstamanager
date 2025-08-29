@@ -68,11 +68,23 @@ if ($n_impianti > 0) {
                     </thead>
                     <tbody>';
 } else {
+    // Determina il messaggio in base alla presenza di una ricerca
+    $search_term = get('search');
+    if (!empty($search_term)) {
+        // Se c'è una ricerca attiva, mostra "Nessun risultato"
+        $title = tr('Nessun risultato');
+        $message = tr('La ricerca non ha prodotto risultati. Prova con termini diversi.');
+    } else {
+        // Se non c'è ricerca, mostra il messaggio originale
+        $title = tr('Nessun impianto collegato');
+        $message = tr('Utilizza il modulo sopra per aggiungere impianti a questa attività');
+    }
+
     echo '
     <div class="alert alert-info text-center">
         <i class="fa fa-info-circle fa-2x mb-2"></i>
-        <h5>'.tr('Nessun impianto collegato').'</h5>
-        <p class="mb-0">'.tr('Utilizza il modulo sopra per aggiungere impianti a questa attività').'</p>
+        <h5>'.$title.'</h5>
+        <p class="mb-0">'.$message.'</p>
     </div>';
     return;
 }

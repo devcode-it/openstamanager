@@ -63,8 +63,8 @@ echo '
             </div>
 
             <div class="col-md-2">
-                <button title="'.tr('Aggiungi impianto all\'attività').'" class="btn btn-success btn-block tip" type="button" onclick="addImpianto()" '.$disabled.' style="margin-top: 25px;">
-                    <i class="fa fa-plus mr-1"></i> '.tr('Aggiungi').'
+                <button title="'.tr('Aggiungi impianto all\'attività').'" class="btn btn-primary tip" type="button" onclick="addImpianto()" '.$disabled.' style="margin-top: 20px;">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                 </button>
             </div>
             <div class="col-md-2">
@@ -118,6 +118,14 @@ $(document).ready(function(){
     $("[data-toggle=\'tooltip\']").tooltip();
 
     caricaImpianti();
+
+    // Aggiungi evento per ricerca con tasto Invio
+    $("#input-cerca").on("keypress", function(e) {
+        if (e.which === 13) { // Tasto Invio
+            e.preventDefault();
+            caricaImpianti();
+        }
+    });
 });
 
 function caricaImpianti() {

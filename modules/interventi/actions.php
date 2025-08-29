@@ -322,12 +322,20 @@ switch (post('op')) {
         // Assegnazione dei tecnici all'intervento
         $tecnici_assegnati = post('tecnici_assegnati');
         if (!empty($tecnici_assegnati)) {
+            // Converte in array se necessario e filtra i valori vuoti
+            $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
+            $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) {
+                return !empty($value) && is_numeric($value);
+            });
             $tecnici_assegnati = array_unique($tecnici_assegnati);
-            $dbo->sync('in_interventi_tecnici_assegnati', [
-                'id_intervento' => $id_record,
-            ], [
-                'id_tecnico' => $tecnici_assegnati,
-            ]);
+
+            if (!empty($tecnici_assegnati)) {
+                $dbo->sync('in_interventi_tecnici_assegnati', [
+                    'id_intervento' => $id_record,
+                ], [
+                    'id_tecnico' => $tecnici_assegnati,
+                ]);
+            }
         }
 
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
@@ -349,52 +357,126 @@ switch (post('op')) {
         }
 
         if (!empty(post('ricorsiva_add'))) {
+            // Validazione dei campi obbligatori per la ricorrenza
             $periodicita = post('periodicita');
-            $data = post('data_inizio_ricorrenza');
-            $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
-            $stato = Stato::find(post('idstatoricorrenze'));
+            $data_inizio = post('data_inizio_ricorrenza');
+            $metodo_ricorrenza = post('metodo_ricorrenza');
+            $idstatoricorrenze = post('idstatoricorrenze');
 
-            // Estraggo le date delle ricorrenze
-            if (post('metodo_ricorrenza') == 'data') {
-                $data_fine = post('data_fine_ricorrenza');
-                while (strtotime($data) <= strtotime($data_fine)) {
-                    $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
-                    $w = date('w', strtotime($data));
-                    // Escludo sabato e domenica
-                    if ($w == '6') {
-                        $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
-                    } elseif ($w == '0') {
-                        $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
+            // Controllo campi obbligatori
+            if (empty($periodicita) || empty($data_inizio) || empty($metodo_ricorrenza) || empty($idstatoricorrenze)) {
+                flash()->error(tr('Tutti i campi della ricorrenza sono obbligatori quando si crea un\'attività ricorrente.'));
+                break;
+            }
+
+            // Validazione periodicità
+            if (!is_numeric($periodicita) || $periodicita <= 0) {
+                flash()->error(tr('La periodicità deve essere un numero positivo.'));
+                break;
+            }
+
+            $data = $data_inizio;
+            $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
+            $stato = Stato::find($idstatoricorrenze);
+
+            if (empty($stato)) {
+                flash()->error(tr('Stato delle ricorrenze non valido.'));
+                break;
+            }
+
+            // Inizializzazione array date ricorrenze
+            $date_ricorrenze = [];
+
+            try {
+                // Estraggo le date delle ricorrenze
+                if ($metodo_ricorrenza == 'data') {
+                    $data_fine = post('data_fine_ricorrenza');
+
+                    if (empty($data_fine)) {
+                        flash()->error(tr('La data fine ricorrenza è obbligatoria quando si seleziona il metodo "Data fine".'));
+                        break;
                     }
-                    if ($data <= $data_fine) {
+
+                    if (strtotime($data_fine) <= strtotime($data_inizio)) {
+                        flash()->error(tr('La data fine ricorrenza deve essere successiva alla data inizio.'));
+                        break;
+                    }
+
+                    while (strtotime($data) <= strtotime($data_fine)) {
+                        $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
+                        $w = date('w', strtotime($data));
+                        // Escludo sabato e domenica
+                        if ($w == '6') {
+                            $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
+                        } elseif ($w == '0') {
+                            $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
+                        }
+                        if ($data <= $data_fine) {
+                            $date_ricorrenze[] = $data;
+                        }
+                    }
+                } else {
+                    $numero_ricorrenze = post('numero_ricorrenze');
+
+                    if (empty($numero_ricorrenze) || !is_numeric($numero_ricorrenze) || $numero_ricorrenze <= 0) {
+                        flash()->error(tr('Il numero di ricorrenze deve essere un numero positivo.'));
+                        break;
+                    }
+
+                    if ($numero_ricorrenze > 100) {
+                        flash()->error(tr('Il numero massimo di ricorrenze consentite è 100.'));
+                        break;
+                    }
+
+                    for ($i = 0; $i < $numero_ricorrenze; ++$i) {
+                        $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
+                        $w = date('w', strtotime($data));
+                        // Escludo sabato e domenica
+                        if ($w == '6') {
+                            $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
+                        } elseif ($w == '0') {
+                            $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
+                        }
+
                         $date_ricorrenze[] = $data;
                     }
                 }
-            } else {
-                $ricorrenze = post('numero_ricorrenze');
-                for ($i = 0; $i < $ricorrenze; ++$i) {
-                    $data = date('Y-m-d', strtotime('+'.$periodicita.' '.$interval.'', strtotime($data)));
-                    $w = date('w', strtotime($data));
-                    // Escludo sabato e domenica
-                    if ($w == '6') {
-                        $data = date('Y-m-d', strtotime('+2 day', strtotime($data)));
-                    } elseif ($w == '0') {
-                        $data = date('Y-m-d', strtotime('+1 day', strtotime($data)));
-                    }
 
-                    $date_ricorrenze[] = $data;
+                if (empty($date_ricorrenze)) {
+                    flash()->error(tr('Nessuna data di ricorrenza valida è stata generata. Verificare i parametri inseriti.'));
+                    break;
                 }
+
+            } catch (Exception $e) {
+                flash()->error(tr('Errore durante il calcolo delle date di ricorrenza: _ERROR_', ['_ERROR_' => $e->getMessage()]));
+                break;
             }
 
+            // Creazione delle ricorrenze
+            $ricorrenze_create = 0;
             foreach ($date_ricorrenze as $data_ricorrenza) {
-                $intervento = Intervento::find($id_record);
-                $new = $intervento->replicate();
-                // Calcolo il nuovo codice
-                $new->codice = Intervento::getNextCodice($data_ricorrenza, $new->id_segment);
-                $new->data_richiesta = $data_ricorrenza;
-                $new->idstatointervento = $stato->id;
-                $new->save();
-                $idintervento = $new->id;
+                try {
+                    $intervento = Intervento::find($id_record);
+                    if (empty($intervento)) {
+                        flash()->error(tr('Intervento originale non trovato per la creazione delle ricorrenze.'));
+                        break;
+                    }
+
+                    $new = $intervento->replicate();
+                    // Calcolo il nuovo codice
+                    $new->codice = Intervento::getNextCodice($data_ricorrenza, $new->id_segment);
+                    $new->data_richiesta = $data_ricorrenza;
+                    $new->idstatointervento = $stato->id;
+                    $new->save();
+                    $idintervento = $new->id;
+                    $ricorrenze_create++;
+                } catch (Exception $e) {
+                    flash()->error(tr('Errore durante la creazione della ricorrenza per la data _DATE_: _ERROR_', [
+                        '_DATE_' => date('d/m/Y', strtotime($data_ricorrenza)),
+                        '_ERROR_' => $e->getMessage()
+                    ]));
+                    continue;
+                }
 
                 // Inserimento sessioni
                 if (!empty(post('riporta_sessioni_add'))) {
@@ -425,18 +507,29 @@ switch (post('op')) {
 
                 // Assegnazione dei tecnici all'intervento
                 $tecnici_assegnati = (array) post('tecnici_assegnati');
-                $dbo->sync('in_interventi_tecnici_assegnati', [
-                    'id_intervento' => $new->id,
-                ], [
-                    'id_tecnico' => $tecnici_assegnati,
-                ]);
+                // Filtra i valori vuoti per evitare errori di foreign key
+                $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) {
+                    return !empty($value) && is_numeric($value);
+                });
 
-                ++$n_ricorrenze;
+                if (!empty($tecnici_assegnati)) {
+                    $dbo->sync('in_interventi_tecnici_assegnati', [
+                        'id_intervento' => $new->id,
+                    ], [
+                        'id_tecnico' => $tecnici_assegnati,
+                    ]);
+                }
+
+                ++$ricorrenze_create;
             }
 
-            flash()->info(tr('Aggiunte _NUM_ nuove ricorrenze!', [
-                '_NUM_' => $n_ricorrenze,
-            ]));
+            // Messaggio di successo per le ricorrenze create
+            if ($ricorrenze_create > 0) {
+                flash()->info(tr('Sono state create _NUM_ ricorrenze dell\'attività.', ['_NUM_' => $ricorrenze_create]));
+            } else {
+                flash()->warning(tr('Nessuna ricorrenza è stata creata. Verificare i parametri inseriti.'));
+            }
+
         }
 
         if (post('ref') == 'dashboard') {

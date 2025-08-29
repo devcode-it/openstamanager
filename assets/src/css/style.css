@@ -2858,9 +2858,30 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     transition: background-color 0.2s ease;
 }
 
-.nav-sidebar .menu-text:hover {
+
+
+/* Estende l'area cliccabile del link fino alla freccia */
+.nav-sidebar .nav-link[data-has-submenu="true"] {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Menu che sono solo contenitori (senza link) - cursore normale */
+.nav-sidebar .nav-link[data-widget="treeview"]:not([data-has-submenu="true"]) {
+    cursor: default;
+}
+
+/* Aumenta l'area cliccabile della freccia */
+.nav-sidebar .nav-link[data-widget="treeview"] .fa-angle-left {
+    padding: 8px;
+    margin: -8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-sidebar .nav-link[data-widget="treeview"] .fa-angle-left:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    text-decoration: none;
 }
 
 .hide, .hidden{

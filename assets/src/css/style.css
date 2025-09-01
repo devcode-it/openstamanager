@@ -3040,7 +3040,7 @@ section.content, .main-footer {
     padding: 15px 20px;
 }
 
-.modal-footer .btn {
+.modal-footer .btn:last-child {
     margin-right: -30px;
 }
 

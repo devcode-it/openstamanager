@@ -520,7 +520,7 @@ if (!empty($righe)) {
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
-        $is_descrizione = empty((float) $riga['Quantita']) && empty((float) $prezzo_unitario);
+        $is_descrizione = empty((float) $riga['Quantita']);
 
         $sconto_unitario = 0;
         $sconti = $riga['ScontoMaggiorazione'] ?: 0;

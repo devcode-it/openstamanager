@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.1 (2025-09-02)](#291-2025-09-02)
 - [2.9 (2025-08-08)](#29-2025-08-08)
 - [2.8.3 (2025-07-30)](#283-2025-07-30)
 - [2.8.2 (2025-07-09)](#282-2025-07-09)
@@ -58,6 +59,45 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.9.1 (2025-09-01)
+### Modificato (Changed)
+- Migliorata la gestione di hook e tasks
+- Migliorate le prestazioni
+- Migliorato l'avviso per cron non configurato correttamente
+- Migliorata la barra di ricerca globale
+- Migliorata la gestione del select articoli nei documenti
+- Migliorata la visualizzazione delle notifiche
+
+### Fixed
+- Corretto testo caricamento ricerca
+- Corretta ricerca impianti in plugin da attività
+- Corretta la visualizzazione della barra dei plugin
+- Corretta correzione sede per movimenti da app
+- Corretta query vista Articoli
+- Corretto ordinamento tabelle
+- Corretta impostazione ricorrenze in creazione nuova attività
+- Corretta impostazione tecnici assegnati in add intervento
+- Corretta la ricerca di aggiornamenti
+- Corretto caricamento mappa nell'header degli interventi
+- Corrette le note interne
+- Corretta la selezione anagrafiche, ricerca raggio e filtri nel modulo mappa
+- Corretta l'espansione dei sottomenu
+- Corretto caricamento di altre operazioni in stato dei servizi
+- Corretta gestione stati dei ddt
+- Corrette le icone dei moduli in Tabelle
+- Corretto spostamento modulo Categorie contratti
+- Corretta visualizzazione categorie allegati
+- Corretta ricerca cache hooks
+- Corretto modulo Marche
+- Corretto aggiornamento sottocategoria
+- Corretta impostazione prezzo di acquisto fatture
+- Corretta impostazione causale movimento
+- Corretto select in aggiunta adattatore
+- Corretta navigazione pagine datatables
+- Corretti tasti in modal footer
+- Corretta aggiunta segmenti
+- Corretta impostazione gruppo utenti
 
 ## 2.9 (2025-08-08)
 ### Aggiunto (Added)

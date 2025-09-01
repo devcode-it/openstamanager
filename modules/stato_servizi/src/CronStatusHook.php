@@ -37,7 +37,7 @@ class CronStatusHook extends Manager
 
         if (!$ultima_esecuzione || !$ultima_esecuzione->content) {
             $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
-            $message = tr('Il cron di OpenSTAManager non è stato configurato.<br><br>È necessario configurare il cron di sistema per eseguire periodicamente il file cron.php con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>Frequenza consigliata: ogni 10 minuti (adattabile in base alle esigenze).', [
+            $message = tr('Il cron non è stato configurato correttamente.', [
                 '_DOCUMENT_ROOT_' => $document_root,
             ]);
             $show = true;
@@ -53,7 +53,7 @@ class CronStatusHook extends Manager
                 $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
                 $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
 
-                $message = tr('Il cron di OpenSTAManager non è in esecuzione (ultima esecuzione: _DATA_).<br><br>Verificare la configurazione del cron di sistema. Il comando da eseguire è:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>Frequenza consigliata: ogni 10 minuti. Per invii frequenti di newsletter, impostare 1 minuto.', [
+                $message = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).', [
                     '_DATA_' => $data_formattata,
                     '_DOCUMENT_ROOT_' => $document_root,
                 ]);

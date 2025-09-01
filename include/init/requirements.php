@@ -416,7 +416,7 @@ foreach ($config_to_check as $name => $values) {
 $cron_check = [];
 if ($database->isInstalled()) {
     try {
-        $ultima_esecuzione = \Models\Cache::where('name', 'Ultima esecuzione del cron')->first()->content;
+        $ultima_esecuzione = Models\Cache::where('name', 'Ultima esecuzione del cron')->first()->content;
 
         if (!$ultima_esecuzione) {
             $cron_status = 0;

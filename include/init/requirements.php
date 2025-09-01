@@ -416,15 +416,15 @@ foreach ($config_to_check as $name => $values) {
 $cron_check = [];
 if ($database->isInstalled()) {
     try {
-        $ultima_esecuzione = $database->fetchOne('SELECT content FROM zz_cache WHERE name = "Ultima esecuzione del cron"');
+        $ultima_esecuzione = \Models\Cache::where('name', 'Ultima esecuzione del cron')->first()->content;
 
-        if (!$ultima_esecuzione || !$ultima_esecuzione['content']) {
+        if (!$ultima_esecuzione) {
             $cron_status = 0;
             $cron_description = tr('Il cron non è stato configurato correttamente. Sembra che il cron di OpenSTAManager non sia in esecuzione.<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
                 '_DOCUMENT_ROOT_' => $_SERVER['DOCUMENT_ROOT'] ?? base_dir(),
             ]);
         } else {
-            $data_ultima_esecuzione = new DateTime($ultima_esecuzione['content']);
+            $data_ultima_esecuzione = new DateTime($ultima_esecuzione);
             $ora_attuale = new DateTime();
             $ore_trascorse = $ora_attuale->diff($data_ultima_esecuzione)->h + $ora_attuale->diff($data_ultima_esecuzione)->days * 24;
 
@@ -442,7 +442,7 @@ if ($database->isInstalled()) {
         }
     } catch (Exception $e) {
         $cron_status = 0;
-        $cron_description = tr('Errore nel controllo dello stato del cron');
+        $cron_description = tr('Errore nel controllo dello stato del cron ').$e->getMessage();
     }
 
     $cron_check[] = [

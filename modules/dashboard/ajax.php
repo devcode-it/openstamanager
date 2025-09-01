@@ -554,7 +554,7 @@ switch (filter('op')) {
         HAVING
             COUNT(`in_interventi_tecnici`.`id`) = 0)
         ORDER BY
-            IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) ASC';
+            `data_richiesta` ASC';
 
         $promemoria = $dbo->fetchArray($query);
 

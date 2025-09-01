@@ -24,7 +24,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Articoli\Articolo;
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`title` as descrizione, `codice`, `um`, mg_scorte_sedi.threshold_qta, mg_scorte_sedi.id_sede FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `mg_scorte_sedi` ON `mg_articoli`.`id` = `mg_scorte_sedi`.`id_articolo` WHERE `attivo` = 1 AND `deleted_at` IS NULL ORDER BY `codice` ASC');
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli_lang`.`title` as descrizione, `mg_articoli`.`codice`, `mg_articoli`.`um`, mg_scorte_sedi.threshold_qta, mg_scorte_sedi.id_sede FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `mg_scorte_sedi` ON `mg_articoli`.`id` = `mg_scorte_sedi`.`id_articolo` WHERE `mg_articoli`.`attivo` = 1 AND `mg_articoli`.`deleted_at` IS NULL ORDER BY `mg_articoli`.`codice` ASC');
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 if (!empty($rs)) {

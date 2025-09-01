@@ -262,7 +262,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
             $riga['Quantita'] = floatval($riga['Quantita']);
 
-            $is_descrizione = empty($riga['Quantita']) && empty($riga['PrezzoUnitario']);
+            $is_descrizione = empty($riga['Quantita']);
 
             $codici = $riga['CodiceArticolo'] ?: [];
             $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;

@@ -103,13 +103,13 @@ echo '
 if (setting('Cambia automaticamente stato ddt fatturati')) {
     $id_stato_fatt = Stato::where('name', 'Fatturato')->first()->id;
     $id_stato_parz_fatt = Stato::where('name', 'Parzialmente fatturato')->first()->id;
-
+    $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
     if ($ddt->stato->id == $id_stato_fatt || $ddt->stato->id == $id_stato_parz_fatt) {
         echo '
             {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
     } else {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 OR `dt_statiddt`.`id` = '.prepare($id_stato_bozza).' ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
     }
 } else {
     echo '

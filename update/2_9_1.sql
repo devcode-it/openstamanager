@@ -105,3 +105,6 @@ INSERT INTO `zz_hooks` (`name`, `class`, `enabled`, `id_module`) VALUES
 INSERT INTO `zz_hooks_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_hooks`), 'Stato Cron'),
 (2, (SELECT MAX(`id`) FROM `zz_hooks`), 'Cron Status');
+
+-- Gestione sottoscorta per sede
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(DISTINCT mg_articoli.id) AS dato FROM `mg_articoli`INNER JOIN `mg_scorte_sedi` ON `mg_scorte_sedi`.`id_articolo` = `mg_articoli`.`id`LEFT JOIN (SELECT IFNULL(SUM(qta), 0) AS tot, idarticolo, idsede FROM mg_movimenti GROUP BY idarticolo, idsede) movimenti ON movimenti.idsede = mg_scorte_sedi.id_sede AND movimenti.idarticolo = mg_articoli.id WHERE `mg_articoli`.`attivo` = 1 AND `mg_articoli`.`deleted_at` IS NULL AND `mg_scorte_sedi`.`threshold_qta` > 0 AND IFNULL(movimenti.tot, 0) < `mg_scorte_sedi`.`threshold_qta`' WHERE `zz_widgets`.`name` = 'Articoli in esaurimento';

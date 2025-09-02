@@ -2871,6 +2871,11 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     text-align: left;
 }
 
+/* Aggiunge spazio sotto l'ultimo elemento del menu principale (esclude i risultati della ricerca) */
+nav .nav-sidebar:not(.search-results-list) > .nav-item:last-child {
+    margin-bottom: 200px;
+}
+
 /* Stili per il menu con sottomenu */
 .nav-sidebar .menu-text {
     cursor: pointer;

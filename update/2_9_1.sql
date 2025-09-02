@@ -108,3 +108,6 @@ INSERT INTO `zz_hooks_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Gestione sottoscorta per sede
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(DISTINCT mg_articoli.id) AS dato FROM `mg_articoli`INNER JOIN `mg_scorte_sedi` ON `mg_scorte_sedi`.`id_articolo` = `mg_articoli`.`id`LEFT JOIN (SELECT IFNULL(SUM(qta), 0) AS tot, idarticolo, idsede FROM mg_movimenti GROUP BY idarticolo, idsede) movimenti ON movimenti.idsede = mg_scorte_sedi.id_sede AND movimenti.idarticolo = mg_articoli.id WHERE `mg_articoli`.`attivo` = 1 AND `mg_articoli`.`deleted_at` IS NULL AND `mg_scorte_sedi`.`threshold_qta` > 0 AND IFNULL(movimenti.tot, 0) < `mg_scorte_sedi`.`threshold_qta`' WHERE `zz_widgets`.`name` = 'Articoli in esaurimento';
+
+-- fix permessi otp token
+ALTER TABLE `zz_otp_tokens` CHANGE `permessi` `permessi` ENUM('r','rw','ra','rwa') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;

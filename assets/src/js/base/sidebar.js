@@ -69,12 +69,12 @@ $(document).ready(function () {
             // Compatta il menu
             $navItem.removeClass('menu-open');
             $navLink.attr('aria-expanded', 'false');
-            $navItem.find('.nav-treeview').slideUp(300);
+            $navItem.children('.nav-treeview').slideUp(300);
         } else {
             // Espande il menu
             $navItem.addClass('menu-open');
             $navLink.attr('aria-expanded', 'true');
-            $navItem.find('.nav-treeview').slideDown(300);
+            $navItem.children('.nav-treeview').slideDown(300);
         }
     });
 

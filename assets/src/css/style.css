@@ -2904,6 +2904,17 @@ body:not(.sidebar-collapse) .sidebar .nav-treeview .nav-treeview .nav-link {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Rotazione dell'icona freccia quando il menu è aperto */
+.nav-sidebar .nav-item.menu-open > .nav-link[data-widget="treeview"] .fa-angle-left {
+    transform: rotate(-90deg);
+    transition: transform 0.3s ease;
+}
+
+/* Transizione per l'icona freccia quando il menu è chiuso */
+.nav-sidebar .nav-link[data-widget="treeview"] .fa-angle-left {
+    transition: transform 0.3s ease;
+}
+
 .hide, .hidden{
     display: none;
 }

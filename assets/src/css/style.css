@@ -1284,6 +1284,7 @@ input.small-width {
     padding: 0;
     margin-top: 8px;
     overflow: hidden;
+    z-index: 99999 !important;
 }
 
 /* Assicura che l'header si estenda per tutta la larghezza */
@@ -2007,6 +2008,7 @@ div.tip {
     padding-top: 50px;
     transition: all 0.3s ease;
     right: -200px;
+    z-index: 1020; /* Z-index sotto la navbar (1030) per evitare sovrapposizioni con il menu superiore */
 }
 
 .control-sidebar-open {
@@ -2944,7 +2946,7 @@ section.content, .main-footer {
     position: fixed;
     right: 0px;
     padding: 10px 12px;
-    z-index: 1050;
+    z-index: 1000; /* Z-index ridotto per essere sotto le notifiche */
     cursor: pointer;
     background: #fff;
     border-top-left-radius: 5px;
@@ -3641,14 +3643,14 @@ section.content, .main-footer {
     position: fixed;
     right: 0px;
     padding: 12px 14px;
-    top: 120px; /* Posizionato sotto la barra dei pulsanti */
-    z-index: 1050; /* Aumentato il z-index per assicurarsi che sia sopra i pulsanti */
+    top: 80px; /* Spostato più in alto per essere sopra i pulsanti di azione */
+    z-index: 1000; /* Z-index ridotto per essere sotto le notifiche (z-index 99999) e evitare sovrapposizioni */
     cursor: pointer;
     background: #fff;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease; /* Usa transform invece di right per una transizione più fluida */
     border-left: 1px solid #e9ecef;
     display: flex;
     align-items: center;
@@ -3658,6 +3660,11 @@ section.content, .main-footer {
 .control-sidebar-button i {
     font-size: 16px;
     color: #3c8dbc;
+}
+
+/* Stato quando la barra è aperta - il pulsante si sposta insieme alla barra */
+.control-sidebar-button.with-control-sidebar {
+    transform: translateX(-200px); /* Sposta il pulsante di 200px a sinistra insieme alla barra */
 }
 
 .control-sidebar-enhanced {

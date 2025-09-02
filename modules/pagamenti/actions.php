@@ -76,7 +76,7 @@ switch (filter('op')) {
 
     case 'add':
         $descrizione = filter('descrizione');
-        $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
+        $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe_add');
 
         if (isset($descrizione)) {
             $id_pagamento = (new Pagamento())->getByField('title', $descrizione);

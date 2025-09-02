@@ -60,7 +60,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
-## 2.9.1 (2025-09-01)
+## 2.9.1 (2025-09-02)
 ### Modificato (Changed)
 - Migliorata la gestione di hook e tasks
 - Migliorate le prestazioni
@@ -73,7 +73,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretto testo caricamento ricerca
 - Corretta ricerca impianti in plugin da attività
 - Corretta la visualizzazione della barra dei plugin
-- Corretta correzione sede per movimenti da app
+- Corretta impostazione sede per movimenti da app
 - Corretta query vista Articoli
 - Corretto ordinamento tabelle
 - Corretta impostazione ricorrenze in creazione nuova attività

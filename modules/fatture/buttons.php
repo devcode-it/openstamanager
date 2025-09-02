@@ -44,7 +44,7 @@ if (!$is_anagrafica_deleted) {
             <a class="btn dropdown-item" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
                 '.tr('Nota di debito').'
             </a>
-            
+
             <a class="btn dropdown-item" data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
                 '.tr('Nota di credito').'
             </a>
@@ -89,11 +89,6 @@ if (!empty($record['is_fiscale'])) {
         $registrazione_insoluto = 0;
     }
 
-    echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
-            <i class="fa fa-ban fa-inverse"></i> '.tr('Registra insoluto').'
-        </a>';
-
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
 
@@ -106,17 +101,36 @@ if (!empty($record['is_fiscale'])) {
         $registrazione_contabile = 0;
     }
 
+    // Menu dropdown "Registra" che raggruppa le funzioni di registrazione - sempre visibile
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
-            <i class="fa fa-euro"></i> '.tr('Registra contabile').'
-        </a>';
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-calculator"></i> '.tr('Registra').'
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-left">';
 
-    if ($record['stato'] == 'Pagato') {
+        // Registra insoluto - sempre visibile ma disabilitato se non utilizzabile
         echo '
-        <button type="button" class="btn btn-primary ask tip" data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr("Riporta il documento nello stato di 'Emessa' e ne elimina i movimenti contabili").'">
-            <i class="fa fa-folder-open"></i> '.tr('Riapri documento').'...
-        </button>';
-    }
+            <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? 'data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'"' : '').'>
+                <i class="fa fa-ban"></i> '.tr('Registra insoluto').'
+            </a>';
+
+        // Registra contabile - sempre visibile ma disabilitato se non utilizzabile
+        echo '
+            <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? 'data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'"' : '').'>
+                <i class="fa fa-euro"></i> '.tr('Registra contabile').'
+            </a>';
+
+        // Riapri documento - sempre visibile ma disabilitato se non utilizzabile
+        echo '
+            <a class="btn dropdown-item '.($record['stato'] == 'Pagato' ? 'ask tip' : 'disabled').'" '.($record['stato'] == 'Pagato' ? 'data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr("Riporta il documento nello stato di 'Emessa' e ne elimina i movimenti contabili").'"' : '').'>
+                <i class="fa fa-folder-open"></i> '.tr('Riapri documento').'...
+            </a>';
+
+        echo '
+        </ul>
+    </div>';
 }
 
 // Duplica fattura

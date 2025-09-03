@@ -447,6 +447,10 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
             <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
         </button>
+
+        <button type="button" class="btn btn-xs btn-default disabled" id="stampa_barcode_righe" onclick="stampaBarcodeDDT(getSelectData());">
+            <i class="fa fa-barcode"></i> '.tr('Stampa barcode').'
+        </button>
     </div>';
 }
 echo '
@@ -589,6 +593,48 @@ function duplicaRiga(id) {
     }).catch(swal.noop);
 }
 
+function stampaBarcodeDDT(id) {
+    if (id.length === 0) {
+        swal({
+            title: "'.tr('Nessuna riga selezionata').'",
+            text: "'.tr('Seleziona almeno una riga articolo per stampare i barcode').'",
+            type: "warning"
+        });
+        return;
+    }
+
+    swal({
+        title: "'.tr('Stampare i barcode delle righe selezionate?').'",
+        html: "'.tr('Verranno stampate le etichette barcode per ogni articolo selezionato, nella quantità presente nel DDT').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Stampa').'"
+    }).then(function () {
+        // Salva le righe selezionate in sessione e reindirizza alla stampa
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "print_barcode_righe",
+                righe: id,
+            },
+            success: function (response) {
+                // Apri la stampa in una nuova finestra
+                window.open(response, "_blank");
+            },
+            error: function() {
+                swal({
+                    title: "'.tr('Errore').'",
+                    text: "'.tr('Errore durante la preparazione della stampa').'",
+                    type: "error"
+                });
+            }
+        });
+    }).catch(swal.noop);
+}
+
 function modificaSeriali(button) {
     let riga = $(button).closest("tr");
     let id = riga.data("id");
@@ -652,6 +698,7 @@ $(".check").on("change", function() {
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
         $("#modifica_iva_righe").removeClass("disabled");
+        $("#stampa_barcode_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
@@ -659,6 +706,7 @@ $(".check").on("change", function() {
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
         $("#modifica_iva_righe").addClass("disabled");
+        $("#stampa_barcode_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");
     }
 });

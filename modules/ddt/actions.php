@@ -562,6 +562,49 @@ switch (filter('op')) {
 
         break;
 
+    case 'print_barcode_righe':
+        $id_righe = (array) post('righe');
+
+        // Array per memorizzare gli articoli con le loro quantità
+        $articoli_barcode = [];
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga);
+
+            // Verifica che sia una riga articolo e che abbia una quantità > 0
+            if ($riga && $riga->isArticolo() && $riga->qta > 0) {
+                $articolo_originale = ArticoloOriginale::find($riga->idarticolo);
+
+                if ($articolo_originale) {
+                    // Cerca i barcode dell'articolo
+                    $barcodes = $dbo->table('mg_articoli_barcode')
+                        ->where('idarticolo', $riga->idarticolo)
+                        ->get();
+
+                    // Aggiungi ogni barcode per il numero di volte pari alla quantità
+                    foreach ($barcodes as $barcode_record) {
+                        for ($i = 0; $i < $riga->qta; $i++) {
+                            $articoli_barcode[] = $barcode_record;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($articoli_barcode)) {
+            echo json_encode(['error' => tr('Nessun articolo con barcode trovato nelle righe selezionate')]);
+            break;
+        }
+
+        // Salva gli articoli in sessione per la stampa
+        $_SESSION['superselect']['barcode_ddt_righe'] = $articoli_barcode;
+
+        // Restituisce l'URL per la stampa
+        $id_print = Prints::getPrints()['Barcode'];
+        $url = base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.ArticoloOriginale::where('codice', '!=', '')->first()->id.'&from_ddt=1';
+
+        echo $url;
+        break;
+
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');

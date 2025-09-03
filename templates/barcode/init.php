@@ -22,7 +22,11 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Articolo;
 
-if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
+if (!empty($_SESSION['superselect']['barcode_ddt_righe'])) {
+    // Stampa barcode da righe DDT
+    $barcodes = $_SESSION['superselect']['barcode_ddt_righe'];
+    unset($_SESSION['superselect']['barcode_ddt_righe']);
+} elseif (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
     $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo', $_SESSION['superselect']['id_articolo_barcode'])->get();
     unset($_SESSION['superselect']['id_articolo_barcode']);

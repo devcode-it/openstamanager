@@ -85,7 +85,13 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
 
 $table = $data[$modulo]['table'];
 $id = $data[$modulo]['id'];
-$riga = str_replace('id', 'id_riga_', $id);
+
+// Fix per vendita banco: il nome della colonna è diverso
+if ($modulo == 'veb') {
+    $riga = 'id_riga_venditabanco';
+} else {
+    $riga = str_replace('id', 'id_riga_', $id);
+}
 
 $idriga = get('idriga') ?: get('riga_id');
 
@@ -170,7 +176,13 @@ if ($dir == 'entrata') {
                 $pos = 'veb';
             }
 
-            $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], [], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);
+            // Fix per vendita banco: il nome della colonna è diverso
+            if ($pos == 'veb') {
+                $column_name = 'id_riga_venditabanco';
+            } else {
+                $column_name = str_replace('id', 'id_riga_', $data[$pos]['id']);
+            }
+            $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], [], ['id' => $res[0][$column_name]]);
 
             echo '
         '.Modules::link($modulo, $r[0][$data[$pos]['id']], tr('Visualizza vendita'), null);
@@ -296,7 +308,12 @@ echo '
             id_record: "'.$id_record.'",
         }).then(function(response) {
             form.getElement().closest("div[id^=bs-popup").modal("hide");
-            caricaRighe(null);
+            // Fix per vendita banco: usa reloadRows() invece di caricaRighe()
+            if (typeof reloadRows === "function") {
+                reloadRows();
+            } else if (typeof caricaRighe === "function") {
+                caricaRighe(null);
+            }
         });
 
         return false;

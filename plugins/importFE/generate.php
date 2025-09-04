@@ -517,10 +517,16 @@ if (!empty($righe)) {
         }
 
         $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;
+
+        if (empty($idconto_acquisto)) {
+            $idconto_acquisto = setting('Conto predefinito fatture di acquisto');
+        }
+
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
-        $is_descrizione = empty((float) $riga['Quantita']);
+
+        $is_descrizione = empty((float) $riga['Quantita']) && empty((float) $prezzo_unitario);
 
         $sconto_unitario = 0;
         $sconti = $riga['ScontoMaggiorazione'] ?: 0;

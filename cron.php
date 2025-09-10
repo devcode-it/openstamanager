@@ -74,8 +74,8 @@ $in_esecuzione = Cache::where('name', 'Cron in esecuzione')->first();
 $cron_id = Cache::where('name', 'ID del cron')->first();
 
 $disattiva = Cache::where('name', 'Disabilita cron')->first();
-if ($disattiva->content || (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1']) && !$forza_cron_localhost)) {
-    echo "[CRON] STOP - Cron disabilitato o localhost\n";
+if ($disattiva->content) {
+    echo "[CRON] STOP - Cron disabilitato\n";
 
     return;
 }

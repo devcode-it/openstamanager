@@ -152,7 +152,11 @@ class App
             $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
 
             // Individuazione di $baseurl
-            $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
+            if (php_sapi_name() == 'cli') {
+                $baseurl = '';
+            } else {
+                $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
+            }
 
             // Impostazione delle variabili globali
             define('DOCROOT', $docroot);

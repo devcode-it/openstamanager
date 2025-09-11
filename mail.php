@@ -152,7 +152,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT `zz_prints`.`id`, `title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare($id_module).' AND `enabled`=1 AND `is_record`=1", "link": "module:Stampe" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT `zz_prints`.`id`, `title` AS text FROM `zz_prints` LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare($id_module).' AND `enabled`=1 AND `is_record`=1", "link": "stampa" ]}
         </div>';
 
 $uploads = [];

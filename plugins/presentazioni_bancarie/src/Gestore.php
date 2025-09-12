@@ -165,12 +165,16 @@ class Gestore
         $pagamento = $scadenza->pagamento;
         $direzione = $documento->direzione;
         $importo = $scadenza->da_pagare - $scadenza->pagato;
-        $totale = -($scadenza->da_pagare - $scadenza->pagato);
+        $totale = ($scadenza->da_pagare - $scadenza->pagato);
 
         $is_credito_diretto = (($direzione == 'uscita') || (empty($documento) && $importo < 0 && $ctgypurp != 'SALA')) && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']);
         $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->creditor_id); // Mandato SEPA disponibile
         $is_riba = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP12']) && !empty($this->banca_azienda->codice_sia);
         $is_bonifico = (in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia)) || (empty($documento));
+
+        if ($is_bonifico) {
+            $totale = -$totale;
+        }
 
         if (in_array($pagamento->codice_modalita_pagamento_fe, ['MP19', 'MP21'])) {
             $method = 'B2B';

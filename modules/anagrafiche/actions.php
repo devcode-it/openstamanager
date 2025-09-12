@@ -45,9 +45,7 @@ switch (post('op')) {
         $sede->fax = post('fax');
         $sede->idzona = post('idzona');
         $sede->email = post('email');
-
-        $opt_out_newsletter = post('disable_newsletter');
-        $sede->enable_newsletter = empty($opt_out_newsletter);
+        $sede->enable_newsletter = post('enable_newsletter');
 
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');

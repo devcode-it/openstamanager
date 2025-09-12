@@ -28,7 +28,6 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addsede':
         if (!empty(post('nomesede'))) {
-            $opt_out_newsletter = post('disable_newsletter_add');
             $sede = Sede::build(Anagrafica::find($id_parent));
 
             $sede->nomesede = post('nomesede');
@@ -42,7 +41,7 @@ switch ($operazione) {
             $sede->cellulare = post('cellulare');
             $sede->telefono = post('telefono');
             $sede->email = post('email');
-            $sede->enable_newsletter = empty($opt_out_newsletter);
+            $sede->enable_newsletter = post('enable_newsletter_add');
             $sede->codice_destinatario = post('codice_destinatario');
             $sede->is_automezzo = post('is_automezzo');
             $sede->is_rappresentante_fiscale = post('is_rappresentante_fiscale');
@@ -77,7 +76,6 @@ switch ($operazione) {
         break;
 
     case 'updatesede':
-        $opt_out_newsletter = post('disable_newsletter');
         $sede = Sede::find($id_record);
 
         $sede->nomesede = post('nomesede');
@@ -89,7 +87,7 @@ switch ($operazione) {
         $sede->telefono = post('telefono');
         $sede->cellulare = post('cellulare');
         $sede->email = post('email');
-        $sede->enable_newsletter = empty($opt_out_newsletter);
+        $sede->enable_newsletter = post('enable_newsletter');
         $sede->codice_destinatario = post('codice_destinatario');
         $sede->is_rappresentante_fiscale = post('is_rappresentante_fiscale');
         $sede->piva = post('piva');

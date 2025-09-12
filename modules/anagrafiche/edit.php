@@ -238,7 +238,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
 
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>", "help": "<?php echo tr('Blocco per l\'invio delle email.'); ?>" ]}
+                                {[ "type": "checkbox", "label": "<?php echo tr('Opt-in per newsletter'); ?>", "name": "enable_newsletter", "value": "<?php echo $record['enable_newsletter']; ?>", "help": "<?php echo tr('Blocco per l\'invio delle email.'); ?>" ]}
                             </div>
                         </div>
 

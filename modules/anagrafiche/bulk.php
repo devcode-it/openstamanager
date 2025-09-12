@@ -95,6 +95,97 @@ switch (post('op')) {
         flash()->info(tr('Listino aggiornato correttamente!'));
 
         break;
+
+    case 'export_newsletter_csv':
+        $tipo_esportazione = post('tipo_esportazione');
+        $id_records_list = implode(',', array_map('intval', $id_records));
+
+        if ($tipo_esportazione == 'anagrafiche') {
+            // Esportazione email e ragione sociale dalle anagrafiche selezionate
+            $query = "SELECT DISTINCT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
+                WHERE idanagrafica IN ($id_records_list)
+                AND email != ''
+                AND email IS NOT NULL
+                AND enable_newsletter = 1
+                AND deleted_at IS NULL";
+        } elseif ($tipo_esportazione == 'sedi') {
+            // Esportazione email, ragione sociale e nome sede dalle sedi delle anagrafiche selezionate
+            $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
+                FROM an_sedi s
+                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
+                WHERE s.idanagrafica IN ($id_records_list)
+                AND s.email != ''
+                AND s.email IS NOT NULL
+                AND s.enable_newsletter = 1";
+        } elseif ($tipo_esportazione == 'referenti') {
+            // Esportazione email, ragione sociale e nome referente dai referenti delle anagrafiche selezionate
+            $query = "SELECT DISTINCT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
+                FROM an_referenti r
+                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
+                WHERE r.idanagrafica IN ($id_records_list)
+                AND r.email != ''
+                AND r.email IS NOT NULL
+                AND r.enable_newsletter = 1";
+        } else {
+            // Esportazione email, ragione sociale e nomi da tutte e tre le fonti delle anagrafiche selezionate
+            $query = "SELECT DISTINCT email, ragione_sociale, fonte, sede_referente FROM (
+                SELECT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
+                WHERE idanagrafica IN ($id_records_list)
+                AND email != ''
+                AND email IS NOT NULL
+                AND enable_newsletter = 1
+                AND deleted_at IS NULL
+                UNION
+                SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
+                FROM an_sedi s
+                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
+                WHERE s.idanagrafica IN ($id_records_list)
+                AND s.email != ''
+                AND s.email IS NOT NULL
+                AND s.enable_newsletter = 1
+                UNION
+                SELECT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
+                FROM an_referenti r
+                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
+                WHERE r.idanagrafica IN ($id_records_list)
+                AND r.email != ''
+                AND r.email IS NOT NULL
+                AND r.enable_newsletter = 1
+            ) AS all_emails";
+        }
+        $results = $dbo->fetchArray($query);
+
+        // Creazione del file CSV
+        $file = temp_file();
+        $handle = fopen($file, 'w');
+
+        // Scrittura dell'intestazione
+        fputcsv($handle, ['email', 'ragione_sociale', 'fonte', 'sede_referente'], ';');
+
+        // Scrittura dei dati
+        foreach ($results as $row) {
+            fputcsv($handle, [
+                $row['email'],
+                $row['ragione_sociale'],
+                $row['fonte'],
+                $row['sede_referente']
+            ], ';');
+        }
+        fclose($handle);
+
+        // Nome del file basato sul tipo di esportazione
+        $filename_map = [
+            'anagrafiche' => 'newsletter_anagrafiche.csv',
+            'sedi' => 'newsletter_sedi.csv',
+            'referenti' => 'newsletter_referenti.csv',
+            'tutti' => 'newsletter_tutti.csv'
+        ];
+        $filename = $filename_map[$tipo_esportazione] ?? 'newsletter_export.csv';
+
+        // Download del file
+        download($file, $filename);
+
+        break;
 }
 
 $operations = [];
@@ -142,6 +233,16 @@ $operations['search_coordinates'] = [
         'msg' => tr('Ricercare le coordinate per le anagrafiche selezionate senza latitudine e longitudine?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['export_newsletter_csv'] = [
+    'text' => '<span><i class="fa fa-envelope"></i> '.tr('Esporta email newsletter').'</span>',
+    'data' => [
+        'msg' => tr('Seleziona il tipo di email da esportare per la newsletter:').'<br><br>{[ "type": "select", "label": "'.tr('Tipo esportazione').'", "name": "tipo_esportazione", "required": 1, "values": "list=\"anagrafiche\":\"Anagrafiche\",\"sedi\":\"Sedi\",\"referenti\":\"Referenti\",\"tutti\":\"Tutti (Anagrafiche, Sedi, Referenti)\"", "value": "tutti" ]}',
+        'button' => tr('Esporta CSV'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
     ],
 ];
 

@@ -40,8 +40,6 @@ switch ($operazione) {
         break;
 
     case 'updatepagamento':
-        $opt_out_newsletter = post('disable_newsletter');
-
         $dbo->update('an_pagamenti_anagrafiche', [
             'mese' => post('mese'),
             'giorno_fisso' => post('giorno_fisso'),

@@ -30,15 +30,13 @@ switch ($operazione) {
             $nome = post('nome');
             $idmansione = post('idmansione');
             $idsede = post('idsede');
-            $opt_out_newsletter = post('disable_newsletter_add');
 
             $referente = Referente::build($id_parent, $nome, $idmansione, $idsede);
             $id_record = $referente->id;
 
             $referente->telefono = post('telefono');
             $referente->email = post('email');
-            $referente->enable_newsletter = empty($opt_out_newsletter);
-
+            $referente->enable_newsletter = post('enable_newsletter_add');
             $referente->save();
 
             if (isAjaxRequest() && !empty($id_record)) {
@@ -53,8 +51,6 @@ switch ($operazione) {
         break;
 
     case 'updatereferente':
-        $opt_out_newsletter = post('disable_newsletter');
-
         $dbo->update('an_referenti', [
             'idanagrafica' => $id_parent,
             'nome' => post('nome'),
@@ -62,7 +58,7 @@ switch ($operazione) {
             'telefono' => post('telefono'),
             'email' => post('email'),
             'idsede' => post('idsede'),
-            'enable_newsletter' => empty($opt_out_newsletter),
+            'enable_newsletter' => post('enable_newsletter'),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Salvataggio completato!'));

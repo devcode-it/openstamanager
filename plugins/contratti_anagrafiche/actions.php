@@ -24,8 +24,6 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'updatecontratto':
-        $opt_out_newsletter = post('disable_newsletter');
-
         if (!empty(post('predefined'))) {
             $dbo->update('co_contratti', [
                 'predefined' => 0,

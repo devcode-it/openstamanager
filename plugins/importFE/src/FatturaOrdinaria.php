@@ -502,18 +502,22 @@ class FatturaOrdinaria extends FatturaElettronica
             // se ImportoTotaleDocumento non è valorizzato recupero l'importo dal nodo ImportoPagamento
             $totale_documento = $this->getBody()['DatiPagamento']['DettaglioPagamento']['ImportoPagamento'];
         }
+
         $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);
-        $diff = round(abs($fattura->totale_imponibile + abs($imposta_riepilogo) + $fattura->rivalsa_inps) - ($totale_documento ? abs($totale_documento) : 0), 2);
+        // Calcolo corretto mantenendo i segni originali per gestire correttamente i totali negativi
+        $totale_calcolato = $fattura->totale_imponibile + $fattura->iva + $fattura->rivalsa_inps;
+        $diff = round($totale_calcolato - ($totale_documento ?: 0), 2);
 
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
         if ($diff || $differenza_iva) {
             if ($diff && $differenza_iva) {
-                $diff = ($diff + $differenza_iva) * '-1';
+                $diff = ($diff + $differenza_iva);
             } elseif ($diff == 0 && $differenza_iva) {
-                $diff = $differenza_iva * '-1';
-            } else {
-                $diff = -$diff;
+                $diff = $differenza_iva;
             }
+
+            // L'arrotondamento deve avere segno opposto alla differenza per correggere il totale
+            $diff = -$diff;
 
             $obj = Riga::build($fattura);
 

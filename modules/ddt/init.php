@@ -104,6 +104,28 @@ if (!empty($id_record)) {
     GROUP BY
         id
 
+    UNION
+
+    SELECT
+        `dt_ddt`.`id`,
+        `dt_ddt`.`data`,
+        `dt_ddt`.`numero`,
+        `dt_ddt`.`numero_esterno`,
+        `dt_tipiddt_lang`.`title` AS tipo_documento,
+        IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+        GROUP_CONCAT(CONCAT(`original_id`, " - ", `qta`) SEPARATOR ", ") AS righe,
+        `dt_statiddt_lang`.`title` AS stato_documento
+    FROM
+        `dt_ddt`
+        JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+        LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE
+        (`dt_righe_ddt`.`original_document_id` = '.prepare($id_record).' AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\')
+    GROUP BY
+        id
+
     ORDER BY `modulo`');
 
     $is_anagrafica_deleted = !$ddt->anagrafica;

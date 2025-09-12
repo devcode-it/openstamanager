@@ -858,4 +858,71 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'add_ddt_rientrato':
+        $class = post('class');
+        $id_documento = post('id_documento');
+
+        // Individuazione del documento originale
+        if (!is_subclass_of($class, Common\Document::class)) {
+            return;
+        }
+        $documento = $class::find($id_documento);
+
+        $tipo = Tipo::where('dir', '!=', $documento->direzione)->first();
+        $stato = Stato::where('name', 'Evaso')->first()->id;
+
+        // Duplicazione documento
+        $id_segment = post('id_segment');
+        if (get('id_segment')) {
+            $id_segment = get('id_segment');
+        }
+
+        if (post('create_document') == 'on') {
+            $ddt = DDT::build($documento->anagrafica, $tipo, $documento->data, $id_segment);
+            $ddt->stato()->associate($stato);
+            $ddt->idcausalet = post('id_causale_trasporto');
+            $ddt->idpagamento = $documento->idpagamento;
+            $ddt->idsede_partenza = $documento->idsede_destinazione;
+            $ddt->idsede_destinazione = $documento->idsede_partenza;
+            $ddt->save();
+
+            $id_record = $ddt->id;
+        }
+
+        $evadi_qta_parent = true;
+        $righe = $documento->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->copiaIn($ddt, $qta, $evadi_qta_parent);
+                $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                $copia->setPrezzoUnitario(0, $id_iva);
+
+                // Aggiornamento seriali dalla riga dell'ordine
+                if ($copia->isArticolo()) {
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+                    $copia->serials = $serials;
+                }
+
+                $copia->save();
+            }
+        }
+
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $ddt->idstatoddt = post('id_stato');
+            $ddt->save();
+        }
+
+        ricalcola_costiagg_ddt($id_record);
+
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $ddt->getReference(),
+        ]);
+        flash()->info($message);
+
+        break;
 }

@@ -19,10 +19,21 @@
  */
 
 use Models\Module;
+use Modules\DDT\Causale;
 
 include_once __DIR__.'/../../core.php';
 
 $id_module_collegamento = $ddt->direzione == 'entrata' ? Module::where('name', 'Ddt in entrata')->first()->id : Module::where('name', 'Ddt in uscita')->first()->id;
+
+$causale = Causale::find($ddt->idcausalet);
+if ($causale->is_rientrabile && $ddt->direzione == 'entrata') {
+    echo '
+<div class="tip" data-widget="tooltip" title="'.tr("Questo è un DDT rientrabile: per completare la movimentazione, è necessario generare un DDT in entrata tramite questo pulsante").'.">
+    <button class="btn btn-warning '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ddt in entrata').'">
+        <i class="fa fa-truck"></i> '.tr('Crea ddt di rientro').'
+    </button>
+</div>';
+}
 
 // Informazioni sui movimenti interni
 if (!empty($ddt->id_ddt_trasporto_interno)) {

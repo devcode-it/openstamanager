@@ -30,6 +30,8 @@ $colspan = $dir == 'entrata' ? '8' : '7';
 $evasione_bar = [
     'Fatture di vendita' => 'success',
     'Interventi' => 'warning',
+    'Ddt in entrata' => 'info',
+    'Ddt in uscita' => 'info',
 ];
 
 echo '
@@ -468,6 +470,10 @@ echo '
         <div class="col-md-2">
             <span class="pull-left icon" style="background-color:#ffc107;"></span>
             <span class="text">&nbsp;'.tr('Attività').'</span>
+        </div>
+        <div class="col-md-2">
+            <span class="pull-left icon" style="background-color:#17a2b8;"></span>
+            <span class="text">&nbsp;'.tr('DDT').'</span>
         </div>
     </div>
 </div>

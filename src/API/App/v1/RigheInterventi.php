@@ -135,7 +135,7 @@ class RigheInterventi extends AppResource
             'totale_imponibile' => $riga->totale_imponibile,
             'iva' => $riga->iva,
             'totale' => $riga->totale,
-            'serials' => implode(',', $riga->serials),
+            'serials' => (!empty($riga->serials)) ? implode(',', $riga->serials) : '',
         ];
 
         return $record;

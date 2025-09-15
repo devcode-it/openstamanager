@@ -17,6 +17,13 @@
  */
 
 $(document).ready(function () {
+    // Disabilita completamente il comportamento predefinito di AdminLTE per i treeview
+    // Rimuove tutti gli event listener di AdminLTE sui menu treeview
+    $(document).off('click.lte.treeview', '[data-widget="treeview"]');
+
+    // Disabilita anche eventuali gestori già attaccati
+    $('.nav-sidebar [data-widget="treeview"]').off('click.lte.treeview');
+
     // Menu ordinabile
     if (!globals.is_mobile) {
         const menu = sortable(".nav-sidebar", {
@@ -39,22 +46,33 @@ $(document).ready(function () {
         }
     }
 
-    // Gestione click sull'intero link del menu per navigare al modulo
-    $(document).on('click', '.nav-sidebar .nav-link[data-has-submenu="true"]', function(e) {
-        // Se il click è sulla freccia, non fare nulla (lascia che gestisca il toggle)
-        if ($(e.target).hasClass('fa-angle-left')) {
+    // Gestione generale per tutti i menu con sottomenu - previene l'espansione automatica
+    // Usa event capturing per intercettare prima di AdminLTE
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        const navLink = target.closest('.nav-sidebar .nav-link[data-widget="treeview"]');
+
+        if (!navLink) return;
+
+        // Se il click è sulla freccia, lascia che il gestore specifico gestisca il toggle
+        if (target.classList.contains('fa-angle-left') || target.closest('.fa-angle-left')) {
             return;
         }
 
+        // Previeni sempre l'espansione automatica del menu
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
 
-        const href = $(this).attr('href');
-
-        if (href && href !== 'javascript:;' && href !== '#') {
-            window.location.href = href;
+        // Se il menu ha un modulo associato (data-has-submenu="true"), naviga al modulo
+        if (navLink.getAttribute('data-has-submenu') === 'true') {
+            const href = navLink.getAttribute('href');
+            if (href && href !== 'javascript:;' && href !== '#') {
+                window.location.href = href;
+            }
         }
-    });
+        // Per i menu contenitori (senza modulo), non fare nulla - solo la freccia può espanderli
+    }, true); // true = usa event capturing
 
     // Gestione click sull'icona freccia per toggle del menu
     $(document).on('click', '.nav-sidebar .nav-link[data-widget="treeview"] .fa-angle-left', function(e) {
@@ -140,6 +158,18 @@ $(document).ready(function () {
             }, 100);
         }
     });
+
+    // Disabilita definitivamente AdminLTE treeview dopo il caricamento
+    setTimeout(function() {
+        // Rimuove tutti i gestori di AdminLTE sui treeview
+        $(document).off('click', '[data-widget="treeview"]');
+        $('.nav-sidebar [data-widget="treeview"]').off('click');
+
+        // Disabilita anche il widget treeview di AdminLTE se presente
+        if (typeof $.fn.Treeview !== 'undefined') {
+            $('.nav-sidebar').off('click.lte.treeview');
+        }
+    }, 100);
 });
 
 /**

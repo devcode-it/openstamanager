@@ -2898,6 +2898,12 @@ nav .nav-sidebar:not(.search-results-list) > .nav-item:last-child {
 /* Menu che sono solo contenitori (senza link) - cursore normale */
 .nav-sidebar .nav-link[data-widget="treeview"]:not([data-has-submenu="true"]) {
     cursor: default;
+    pointer-events: none; /* Disabilita completamente i click sui menu contenitori */
+}
+
+/* Riabilita i click solo sulla freccia per i menu contenitori */
+.nav-sidebar .nav-link[data-widget="treeview"]:not([data-has-submenu="true"]) .fa-angle-left {
+    pointer-events: auto;
 }
 
 /* Aumenta l'area cliccabile della freccia */

@@ -81,6 +81,9 @@ switch (post('op')) {
         $id_records_inviati = [];
         $anagrafiche = [];
         $id_anagrafica = 0;
+        
+        // Salvo le scadenze selezionate in sessione
+        $_SESSION['scadenzario_selected_ids'] = $id_records;
 
         $scadenze = $database->FetchArray('SELECT * FROM co_scadenziario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenziario.iddocumento = nota.ref_documento WHERE co_scadenziario.id IN ('.implode(',', $id_records).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
         foreach ($scadenze as $key => $scadenza) {
@@ -166,6 +169,9 @@ switch (post('op')) {
                 }
             }
         }
+
+        // Rimuovo la sessione
+        unset($_SESSION['scadenzario_selected_ids']);
 
         if ($list) {
             flash()->info(tr('Mail inviata per le Fatture _LIST_ !', [

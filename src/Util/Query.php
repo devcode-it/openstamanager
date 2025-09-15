@@ -246,29 +246,13 @@ class Query
             }
 
             if (isset($total['order_by'][$column_index])) {
+                // Rimozione ORDER BY esistente in modo più efficiente
+                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', $query);
                 $order_clause = $total['order_by'][$column_index];
 
-                // Determina la clausola di ordinamento da usare
-                $final_order_clause = '';
+                // Sanitizzazione della clausola ORDER BY
                 if (!empty($order_clause)) {
-                    $final_order_clause = $order_clause;
-                } else {
-                    // Se order_by è vuoto, usa il nome del campo come fallback
-                    if (isset($total['fields'][$column_index])) {
-                        $field_name = $total['fields'][$column_index];
-                        $field_name = preg_replace('/[^a-zA-Z0-9_.]/', '', $field_name);
-                        if (!empty($field_name)) {
-                            $final_order_clause = '`'.$field_name.'`';
-                        }
-                    }
-                }
-
-                // Applica l'ordinamento solo se abbiamo una clausola valida
-                if (!empty($final_order_clause)) {
-                    // Rimozione completa dell'ORDER BY esistente dalla query
-                    // Se è impostato un ordinamento manuale, rimuove completamente l'ORDER BY definito dalla query
-                    $query = self::removeExistingOrderBy($query);
-                    $query .= ' ORDER BY '.$final_order_clause.' '.$direction;
+                    $query .= ' ORDER BY '.$order_clause.' '.$direction;
                 }
             }
         }
@@ -593,35 +577,6 @@ class Query
         }
 
         return null;
-    }
-
-    /**
-     * Rimuove completamente la clausola ORDER BY esistente dalla query.
-     * Quando viene impostato un ordinamento manuale, questo metodo rimuove
-     * l'ORDER BY definito dalla query originale per applicare quello manuale.
-     *
-     * @param string $query
-     *
-     * @return string
-     */
-    protected static function removeExistingOrderBy($query)
-    {
-        // Rimozione più robusta dell'ORDER BY esistente
-        // Gestisce diversi casi: ORDER BY alla fine, ORDER BY seguito da LIMIT, etc.
-
-        // Pattern per trovare ORDER BY e tutto quello che segue fino alla fine o fino a LIMIT
-        $patterns = [
-            // ORDER BY seguito da LIMIT
-            '/\s+ORDER\s+BY\s+[^L]*?(?=\s+LIMIT\s+)/is',
-            // ORDER BY alla fine della query
-            '/\s+ORDER\s+BY\s+.*$/is',
-        ];
-
-        foreach ($patterns as $pattern) {
-            $query = preg_replace($pattern, '', (string) $query);
-        }
-
-        return trim((string) $query);
     }
 
     /**

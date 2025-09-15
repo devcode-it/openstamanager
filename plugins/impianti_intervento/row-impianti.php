@@ -58,6 +58,7 @@ if ($n_impianti > 0) {
                 <table class="table table-hover table-sm mb-0">
                     <thead>
                         <tr>
+                            <th class="text-center" width="1%"></th>
                             <th class="text-center" width="120px">'.tr('Matricola').'</th>
                             <th>'.tr('Nome Impianto').'</th>
                             <th class="text-center" width="100px">'.tr('Data').'</th>
@@ -104,6 +105,12 @@ foreach ($impianti_collegati as $impianto) {
     }
     echo '
                         <tr data-id="'.$impianto['id'].'">
+                            <td class="text-left">
+                                <button type="button" class="btn btn-xs btn-default '.$class.'" onclick="toggleDettagli(this)">
+                                    <i class="fa fa-'.$icon.'"></i>
+                                </button>
+                                
+                            </td>
                             <td class="text-center">
                                 <span class="badge badge-secondary">'.$impianto['matricola'].'</span>
                             </td>
@@ -129,9 +136,20 @@ foreach ($impianti_collegati as $impianto) {
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
-                        </tr>';
+                        </tr>
+                        <tr style="display: none">
+                        <td colspan="7">
+                            <table class="table">
+                                <tbody class="sort check-impianto" data-sonof="0">';
+            foreach ($checks as $check) {
+                echo renderChecklist($check);
+            }
+        echo '
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>';
 
-    // Checklist rimossa come richiesto
 }
 echo '
                     </tbody>
@@ -148,6 +166,21 @@ $(document).ready(function() {
     init();
     initNoteAutoSave();
 });
+
+function toggleDettagli(trigger) {
+    const tr = $(trigger).closest("tr");
+    const dettagli = tr.next();
+
+    if (dettagli.css("display") === "none"){
+        dettagli.show(500);
+        $(trigger).children().removeClass("fa-plus"); 
+        $(trigger).children().addClass("fa-minus");
+    } else {
+        dettagli.hide(500);
+        $(trigger).children().removeClass("fa-minus"); 
+        $(trigger).children().addClass("fa-plus");
+    }
+}
 
 // Inizializza il salvataggio automatico delle note
 function initNoteAutoSave() {
@@ -285,123 +318,41 @@ function saveNota(id) {
     });
 }
 
-function loadChecklist(id){
-    const $loading = $("#loading-checks_" + id);
-    const $checklist = $("#checklist_" + id);
+$(".checkbox").click(function(){
+    if( $(this).is(":checked") ){
+        var op = "save_checkbox";
+    } else {
+        var op = "remove_checkbox";
+    }
 
-    // Mostra loading e nasconde checklist esistente
-    $loading.show();
-    $checklist.empty();
+    // Ricava l\'ID dell\'impianto: la checkbox è dentro la tabella dei dettagli
+    // Risali fino alla riga principale che contiene la tabella dei dettagli
+    var rigaDettagli = $(this).closest("tbody.check-impianto").closest("tr");
+    var rigaImpianto = rigaDettagli.prev("tr[data-id]");
+    var idImpianto = rigaImpianto.data("id");
 
-    $.ajax({
-        url: globals.rootdir + "/actions.php",
-        type: "POST",
-        data: {
-            id_module: globals.id_module,
-            id_plugin: '.$id_plugin.',
-            id_record: globals.id_record,
-            op: "load_checklist",
-            id_impianto: id,
-        },
-        success: function (response) {
-            $loading.hide();
-
-            if (response && response.trim() !== "") {
-                $checklist.html(response);
-                init();
-
-                // Mostra messaggio di successo temporaneo
-                setTimeout(function() {
-                    $checklist.prepend(\'<div class="alert alert-success alert-dismissible fade show mb-3" style="animation: fadeIn 0.5s;"><i class="fa fa-check mr-2"></i>\' + "'.tr('Checklist caricata con successo').'" + \'<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>\');
-
-                    // Rimuovi automaticamente dopo 3 secondi
-                    setTimeout(function() {
-                        $checklist.find(".alert-success").fadeOut();
-                    }, 3000);
-                }, 100);
-            } else {
-                $checklist.html(\'<div class="alert alert-info text-center border-0"><i class="fa fa-info-circle fa-2x mb-2 text-info"></i><h6 class="text-info">\' + "'.tr('Nessuna checklist disponibile').'" + \'</h6><p class="mb-0 text-muted">\' + "'.tr('Non sono presenti checklist per questo impianto').'" + \'</p></div>\');
-            }
-
-            sortable("#tab_checks .sort", {
-                axis: "y",
-                handle: ".handle",
-                cursor: "move",
-                dropOnEmpty: true,
-                scroll: true,
-            });
-
-            sortable_table = sortable("#tab_checks .sort").length;
-
-            for(i=0; i<sortable_table; i++){
-                sortable("#tab_checks .sort")[i].addEventListener("sortupdate", function(e) {
-
-                    var sonof = $(this).data("sonof");
-
-                    let order = $(this).find(".sonof_"+sonof+"[data-id]").toArray().map(a => $(a).data("id"))
-
-                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
-                        op: "update_position",
-                        order: order.join(","),
-                    });
-                });
-            }
-
-            $("textarea[name=\'note_checklist\']").keyup(function() {
-                $(this).parent().parent().parent().find(".save-nota").removeClass("btn-default");
-                $(this).parent().parent().parent().find(".save-nota").addClass("btn-success");
-            });
-
-            $(".check-impianto .checkbox").click(function(){
-                if($(this).is(":checked")){
-                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
-                        op: "save_checkbox",
-                        id: $(this).attr("data-id"),
-                    },function(result){
-                    });
-
-                    $(this).parent().parent().find(".text").css("text-decoration", "line-through");
-
-                    parent = $(this).attr("data-id");
-                    $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
-                        if(!$(this).is(":checked")){
-                            $(this).click();
-                        }
-                    });
-                    $(this).parent().parent().find(".verificato").removeClass("hidden");
-                    $(this).parent().parent().find(".verificato").text("'.tr('Verificato da _USER_ il _DATE_', [
-    '_USER_' => $user->username,
-    '_DATE_' => dateFormat(date('Y-m-d')).' '.date('H:i'),
-]).'");
-                }else{
-                    $.post("'.$checklist_module->fileurl('ajax.php').'", {
-                        op: "remove_checkbox",
-                        id: $(this).attr("data-id"),
-                    },function(result){
-                    });
-
-                    $(this).parent().parent().find(".text").css("text-decoration", "none");
-
-                    parent = $(this).attr("data-id");
-                    $("tr.sonof_"+parent).find("input[type=checkbox]").each(function(){
-                        if($(this).is(":checked")){
-                            $(this).click();
-                        }
-                    });
-
-                    $(this).parent().parent().find(".verificato").addClass("hidden");
+    $.post("'.$checklist_module->fileurl('ajax.php').'", {
+        op: op,
+        id: $(this).attr("data-id"),
+    }, function() {
+        renderMessages();
+        caricaImpianti().done(function() {
+            // Dopo aver ricaricato gli impianti, aspetta un momento per il rendering e poi riapri i dettagli
+            setTimeout(function() {
+                if (idImpianto) {
+                    var rigaRicaricata = $("tr[data-id=\'" + idImpianto + "\']");
+                    var pulsanteToggle = rigaRicaricata.find("button[onclick*=\'toggleDettagli\']");
+                    if (pulsanteToggle.length > 0) {
+                        console.log("Riaprendo dettagli per impianto:", idImpianto);
+                        toggleDettagli(pulsanteToggle[0]);
+                    } else {
+                        console.log("Pulsante toggle non trovato per impianto:", idImpianto);
+                    }
                 }
-            })
-        },
-        error: function(xhr, status, error) {
-            $loading.hide();
-            $checklist.html(\'<div class="alert alert-danger text-center border-0"><i class="fa fa-exclamation-triangle fa-2x mb-2 text-danger"></i><h6 class="text-danger">\' + "'.tr('Errore nel caricamento').'" + \'</h6><p class="mb-2 text-muted">\' + "'.tr('Impossibile caricare la checklist per questo impianto').'" + \'</p><button class="btn btn-outline-primary btn-sm" onclick="refreshChecklist(\' + id + \')"><i class="fa fa-refresh mr-1"></i>\' + "'.tr('Riprova').'" + \'</button></div>\');
-
-            console.error("Errore caricamento checklist:", error);
-            renderMessages();
-        }
+            }, 100); // Aspetta 100ms per il rendering completo
+        });
     });
-}
+});
 
 // Funzione per migliorare la ricerca
 function filtroImpianti() {

@@ -2889,43 +2889,6 @@ nav .nav-sidebar:not(.search-results-list) > .nav-item:last-child {
     position: static;
 }
 
-.nav-sidebar .nav-treeview {
-    position: static;
-    display: none; /* Nascosto di default */
-}
-
-.nav-sidebar .nav-item.menu-open > .nav-treeview {
-    display: block;
-}
-
-.nav-sidebar .nav-treeview .nav-treeview {
-    position: static;
-    display: none;
-}
-
-.nav-sidebar .nav-treeview .nav-item.menu-open > .nav-treeview {
-    display: block;
-}
-
-.nav-sidebar .nav-treeview {
-    overflow: hidden;
-}
-
-.nav-sidebar .nav-item.menu-open > .nav-treeview {
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        max-height: 0;
-        opacity: 0;
-    }
-    to {
-        max-height: 1000px;
-        opacity: 1;
-    }
-}
-
 /* Estende l'area cliccabile del link fino alla freccia */
 .nav-sidebar .nav-link[data-has-submenu="true"] {
     cursor: pointer;

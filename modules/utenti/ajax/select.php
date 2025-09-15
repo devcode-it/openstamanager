@@ -149,7 +149,7 @@ switch ($resource) {
             $search_fields[] = '`zz_modules_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
-        $custom['link'] = 'module:Moduli';
+        $custom['link'] = '';
 
         break;
 }

@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Plugins\ImportFE\Interaction;
 
-$list = Interaction::getInvoiceList('Fatture di vendita', 'Importazione FE');
+$list = Interaction::getFileList($list = [] , 'Fatture di vendita', 'Importazione FE');
 
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory('Fatture di vendita', 'Importazione FE');
 if (!empty($list)) {
@@ -219,11 +219,11 @@ function process_fe_vendita(button, file) {
                         swal("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
                     }
 
-                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                         buttonRestore(button, restore);
                     });
                 } catch (e) {
-                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                         buttonRestore(button, restore);
                     });
                 }
@@ -267,7 +267,7 @@ function delete_fe_vendita(button, file_id) {
 
                     if (response.success) {
                         swal("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
-                        $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                             buttonRestore(button, restore);
                         });
                     } else {

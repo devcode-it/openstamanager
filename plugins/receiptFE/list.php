@@ -107,7 +107,7 @@ function import_fe(button, file) {
             importMessage(data);
 
             buttonRestore(button, restore);
-            $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'");
+            $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'");
         },
         error: function(xhr) {
             $("#main_loading").fadeOut();
@@ -143,7 +143,7 @@ function delete_fe(button, file_id) {
                 },
                 success: function(data) {
                     $("#main_loading").fadeOut();
-                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                         buttonRestore(button, restore);
                     });
                 },
@@ -182,7 +182,7 @@ function process_fe(button, file) {
                 },
                 success: function(data) {
                     $("#main_loading").fadeOut();
-                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                         buttonRestore(button, restore);
                     });
                 },

@@ -223,7 +223,7 @@ echo '
         </div>
     </div>
     <br>
-    <div class="card-body" id="list">';
+    <div class="card-body" id="list-importfe-zip">';
 
 if (Interaction::isEnabled()) {
     echo '
@@ -359,10 +359,10 @@ function searchInvoicesZip(btn) {
     var restore = buttonLoading(btn);
 
     // Mostra un\'animazione di caricamento nella lista
-    $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
+    $("#list-importfe-zip").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
 
     // Carica la lista delle fatture
-    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+    $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
         buttonRestore(btn, restore);
 
         // Applica il filtro di ricerca se presente
@@ -378,12 +378,12 @@ function applySearchFilter() {
 
     // Mostra tutte le righe se il campo di ricerca è vuoto
     if(searchValue.length === 0) {
-        $("table tbody tr").show();
+        $("#list-importfe-zip table tbody tr").show();
         return;
     }
 
     // Aggiungi un effetto di evidenziazione durante la ricerca
-    $("table tbody tr").each(function() {
+    $("#list-importfe-zip table tbody tr").each(function() {
         var rowText = $(this).text().toLowerCase();
         var match = rowText.indexOf(searchValue) > -1;
 
@@ -395,14 +395,14 @@ function applySearchFilter() {
     });
 
     // Mostra un messaggio se non ci sono risultati
-    if($("table tbody tr:visible").length === 0) {
-        if($("#no-results-message").length === 0) {
-            $("table tbody").append("<tr id=\"no-results-message\"><td colspan=\"5\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
+    if($("#list-importfe-zip table tbody tr:visible").length === 0) {
+        if($("#list-importfe-zip #no-results-message").length === 0) {
+            $("#list-importfe-zip table tbody").append("<tr id=\"no-results-message\"><td colspan=\"5\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
         } else {
-            $("#no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
+            $("#list-importfe-zip #no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
         }
     } else {
-        $("#no-results-message").remove();
+        $("#list-importfe-zip #no-results-message").remove();
     }
 }
 

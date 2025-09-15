@@ -170,7 +170,7 @@ if (Interaction::isEnabled()) {
 
 echo '
     </div>
-    <div class="card-body" id="list">';
+    <div class="card-body" id="list-receiptfe">';
 
 if (Interaction::isEnabled()) {
     echo '
@@ -210,12 +210,12 @@ function applySearchFilter() {
 
     // Mostra tutte le righe se il campo di ricerca è vuoto
     if(searchValue.length === 0) {
-        $("table tbody tr").show();
+        $("#list-receiptfe table tbody tr").show();
         return;
     }
 
     // Aggiungi un effetto di evidenziazione durante la ricerca
-    $("table tbody tr").each(function() {
+    $("#list-receiptfe table tbody tr").each(function() {
         var rowText = $(this).text().toLowerCase();
         var match = rowText.indexOf(searchValue) > -1;
 
@@ -227,14 +227,14 @@ function applySearchFilter() {
     });
 
     // Mostra un messaggio se non ci sono risultati
-    if($("table tbody tr:visible").length === 0) {
-        if($("#no-results-message").length === 0) {
-            $("table tbody").append("<tr id=\"no-results-message\"><td colspan=\"3\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
+    if($("#list-receiptfe table tbody tr:visible").length === 0) {
+        if($("#list-receiptfe #no-results-message").length === 0) {
+            $("#list-receiptfe table tbody").append("<tr id=\"no-results-message\"><td colspan=\"3\" class=\"text-center text-muted py-3\"><i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"</td></tr>");
         } else {
-            $("#no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
+            $("#list-receiptfe #no-results-message td").html("<i class=\"fa fa-search mr-2\"></i>"+globals.translations.no_results_found+" \"" + searchValue + "\"");
         }
     } else {
-        $("#no-results-message").remove();
+        $("#list-receiptfe #no-results-message").remove();
     }
 }
 
@@ -242,10 +242,10 @@ function searchReceipts(button) {
     var restore = buttonLoading(button);
 
     // Mostra un\'animazione di caricamento nella lista
-    $("#list").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
+    $("#list-receiptfe").html("<div class=\"text-center py-5\"><i class=\"fa fa-refresh fa-spin fa-3x fa-fw text-primary\"></i><div class=\"mt-3\">"+globals.translations.searching+"</div></div>");
 
     // Carica la lista delle ricevute con parametro per forzare refresh cache
-    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&refresh_cache=" + Date.now(), function() {
+    $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&refresh_cache=" + Date.now(), function() {
         buttonRestore(button, restore);
 
         // Applica il filtro di ricerca se presente
@@ -361,7 +361,7 @@ function importAllReceipt(btn) {
                         html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
                     }
 
-                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                         swal({
                             title: "'.tr('Operazione completata!').'",
                             html: html,

@@ -264,15 +264,13 @@ class FatturaElettronica
 
         if (!empty($info['codice_fiscale'])) {
             $anagrafica->codice_fiscale = $info['codice_fiscale'];
-            $anagrafica->tipo = 'Privato';
         }
-
 
         if (!empty($info['partita_iva'])) {
             $anagrafica->partita_iva = $info['partita_iva'];
-            $anagrafica->tipo = 'Azienda';
         }
 
+        $anagrafica->tipo = $this->getHeader()['DatiTrasmissione']['FormatoTrasmissione'] == 'FPR12' ? 'Azienda' : 'Ente pubblico';
 
         // Informazioni sull'anagrafica
         if (!empty($info['rea'])) {

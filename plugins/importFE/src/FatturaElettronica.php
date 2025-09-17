@@ -262,13 +262,17 @@ class FatturaElettronica
             TipoAnagrafica::where('name', $type)->first()->id,
         ]);
 
-        if (!empty($info['partita_iva'])) {
-            $anagrafica->partita_iva = $info['partita_iva'];
-        }
-
         if (!empty($info['codice_fiscale'])) {
             $anagrafica->codice_fiscale = $info['codice_fiscale'];
+            $anagrafica->tipo = 'Privato';
         }
+
+
+        if (!empty($info['partita_iva'])) {
+            $anagrafica->partita_iva = $info['partita_iva'];
+            $anagrafica->tipo = 'Azienda';
+        }
+
 
         // Informazioni sull'anagrafica
         if (!empty($info['rea'])) {

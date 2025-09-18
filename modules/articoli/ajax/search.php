@@ -50,7 +50,7 @@ $query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`i
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
-$query .= ')';
+$query .= ') GROUP BY `mg_articoli`.`id`';
 
 $query .= Modules::getAdditionalsQuery(Module::where('name', 'Articoli')->first()->id);
 

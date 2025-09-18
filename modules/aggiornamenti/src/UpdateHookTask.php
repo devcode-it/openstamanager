@@ -44,7 +44,7 @@ class UpdateHookTask extends Manager
                 $version[1] = !empty($api['prerelease']) ? 'beta' : 'stabile';
                 $current = \Update::getVersion();
 
-                if (version_compare($current, $version[0]) < 0) {
+                if (version_compare($current, $version[0]) <= 0) {
                     $update = $version[0];
                 }
             }

@@ -186,10 +186,18 @@
     padding: 10px !important;
 }
 
-/* Riduzione altezza textarea */
-.card-body textarea.form-control {
+/* Riduzione altezza textarea (escluse le query) */
+.card-body textarea.form-control:not([name="options"]):not([name="options2"]) {
     height: 80px !important;
     min-height: 80px;
+}
+
+/* Stile specifico per le textarea delle query */
+.card-body textarea.form-control[name="options"],
+.card-body textarea.form-control[name="options2"] {
+    min-height: 120px;
+    height: auto;
+    resize: vertical;
 }
 
 /* Stile per i tooltip */

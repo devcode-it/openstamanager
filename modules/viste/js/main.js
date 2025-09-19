@@ -181,6 +181,15 @@ $(document).ready(function() {
         formatQuery();
     });
 
+    // Forza l'aggiornamento dell'autosize per le textarea delle query
+    setTimeout(function() {
+        $('textarea[name="options"], textarea[name="options2"]').each(function() {
+            if (typeof autosize !== 'undefined') {
+                autosize.update(this);
+            }
+        });
+    }, 100);
+
     // Aggiungi il pulsante "Seleziona tutti" accanto alle label dei gruppi
     addSelectAllButtons();
 

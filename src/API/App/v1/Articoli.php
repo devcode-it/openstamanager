@@ -49,7 +49,7 @@ class Articoli extends AppResource
         $query = 'SELECT
             `mg_articoli`.`id` AS id,
             `mg_articoli`.`codice`,
-            `mg_articoli`.`barcode`,
+            (SELECT GROUP_CONCAT(`mg_articoli_barcode`.`barcode`) FROM `mg_articoli_barcode` WHERE `mg_articoli_barcode`.`idarticolo` = `mg_articoli`.`id`) AS `barcode`,
             `mg_articoli_lang`.`title` AS descrizione,
             `mg_articoli`.`prezzo_vendita`,
             `mg_articoli`.`prezzo_acquisto`,

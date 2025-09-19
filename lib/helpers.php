@@ -24,7 +24,6 @@
  * @since 2.4.2
  */
 use HTMLBuilder\HTMLBuilder;
-use Models\Setting;
 
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
@@ -98,23 +97,27 @@ function get($param, $raw = false)
 /**
  * Legge il valore di un'impostazione dalla tabella zz_settings.
  *
- * @param string $name
- * @param bool   $again
+ * @param string $name Nome dell'impostazione
  *
  * @since 2.4.2
  *
  * @return string
  */
-function setting($name, $again = false)
+function setting($name)
 {
-    $setting = Setting::where('nome', '=', $name)->first();
+    // Utilizza la classe Settings che implementa il caching per ridurre le query
+    /** @var \Models\Setting $setting */
+    $setting = Settings::get($name);
 
     $user = Auth::user();
+    $user_options = [];
+
     if ($user) {
         $user_options = json_decode((string) $user->options ?: '', true) ?: [];
     }
 
-    if ($user_options['settings'][$setting->id] !== null) {
+    // Controlla se l'utente ha una personalizzazione per questa impostazione
+    if (isset($user_options['settings'][$setting->id]) && $user_options['settings'][$setting->id] !== null) {
         $value = $user_options['settings'][$setting->id];
         $value = is_array($value) ? implode(',', $value) : $value;
     } else {

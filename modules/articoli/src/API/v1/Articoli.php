@@ -111,12 +111,12 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
     {
         $data = $request['data'];
 
-        $articolo = Articolo::find($request['id']);
+        $articolo = Articolo::find($data['id']);
         [$categoria, $sottocategoria] = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
 
         // Gestione categoria
         if (!empty($categoria)) {
-            $articolo->categoria()->associate($categoria);
+            $articolo->id_categoria = post('categoria_edit') ?: post('categoria');
         }
         if (!empty($sottocategoria)) {
             $articolo->sottocategoria()->associate($sottocategoria);
@@ -126,6 +126,10 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
 
         $articolo->save();
+
+        return [
+            'id' => $articolo->id,
+        ];
     }
 
     protected function gestioneCategorie($nome_categoria, $nome_sottocategoria)
@@ -133,8 +137,8 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $sottocategoria = null;
 
         // Gestione categoria
-        $categoria = Categoria::where('title', '=', $nome_categoria)
-            ->first();
+        $categoria = (new Categoria())->getByField('title', $nome_categoria);
+        $categoria = Categoria::find($categoria);
         if (empty($categoria) && !empty($nome_categoria)) {
             $categoria = Categoria::build();
             $categoria->setTranslation('title', $nome_categoria);
@@ -147,10 +151,9 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         }
 
         // Gestione sotto-categoria
-        $sottocategoria = Categoria::where('title', '=', $nome_sottocategoria)
-            ->where('parent', '=', $categoria->id)
-            ->first();
-        if (empty($sottocategoria) && !empty($nome_sottocategoria)) {
+        $sottocategoria = (new Categoria())->getByField('title', $nome_sottocategoria);
+        $sottocategoria = Categoria::find($sottocategoria);
+        if ( (empty($sottocategoria) && !empty($nome_sottocategoria)) || (!empty($nome_sottocategoria) && $sottocategoria->parent != $categoria->id) ){
             $sottocategoria = Categoria::build();
             $sottocategoria->setTranslation('title', $nome_sottocategoria);
             $sottocategoria->parent = $categoria->id;

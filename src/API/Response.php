@@ -24,6 +24,7 @@ use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
 use API\Exceptions\ServiceError;
 use Models\ApiResource as Resource;
+use Models\Module;
 
 /**
  * Classe per la gestione delle API del progetto.
@@ -266,5 +267,47 @@ class Response
         $resources = Resource::where('version', $version)->where('type', $type)->get();
 
         return $resources;
+    }
+
+    /**
+     * Restituisce le informazioni della richiesta.
+     *
+     * @param bool $raw
+     *
+     * @return array
+     */
+    public static function getInfo()
+    {
+        $request = self::getRequest();
+
+        $modules = [
+            'anagrafica' => 'Anagrafiche',
+            'anagrafiche' => 'Anagrafiche',
+            'clienti' => 'Anagrafiche',
+            'cliente' => 'Anagrafiche',
+            'sedi' => 'Anagrafiche',
+            'movimenti_articolo' => 'Articoli',
+            'articoli' => 'Articoli',
+            'login' => 'Utenti',
+            'logout' => 'Utenti',
+            'folder_size' => 'StatoServizi',
+            'tipi_intervento' => 'Tipi di intervento',
+            'stati_intervento' => 'Stati di intervento',
+            'stati_preventivo' => 'Stati dei preventivi',
+            'stati_contratto' => 'Stati dei contratti',
+            'interventi' => 'Interventi',
+            'intervento' => 'Interventi',
+            'sessioni_intervento' => 'Interventi',
+            'sessione' => 'Interventi',
+            'righe_intervento' => 'Interventi',
+            'riga_intervento' => 'Interventi',
+            'impianti' => 'Impianti',
+            'impianti_intervento' => 'Interventi',
+            'pagamento' => 'Pagamenti',
+        ];
+
+        $request['id_module'] = Module::where('name', $modules[$request['resource']])->first()->id;
+
+        return $request;
     }
 }

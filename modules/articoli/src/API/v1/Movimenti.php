@@ -32,5 +32,10 @@ class Movimenti extends Resource implements CreateInterface
 
         $articolo = Articolo::find($data['id_articolo']);
         $articolo->movimenta($data['qta'], $data['descrizione'], $data['data'], true);
+
+        return [
+            'id' => $articolo->id,
+            'op' => 'add-movimento',
+        ];
     }
 }

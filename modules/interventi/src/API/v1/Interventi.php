@@ -124,9 +124,13 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $intervento = Intervento::find($data['id']);
 
-        $intervento->id = $data['id_stato_intervento'];
         $intervento->descrizione = $data['descrizione'];
+        $intervento->idstatointervento = $data['id_stato_intervento'];
         $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
         $intervento->save();
+
+        return [
+            'id' => $data['id'],
+        ];
     }
 }

@@ -156,4 +156,24 @@ switch ($operazione) {
         echo $response;
 
         break;
+
+    case 'check_impianto':
+
+        try {
+            $checked = (post('checked') ? 1 : 0);
+            $idcheck = post('id');
+
+            $dbo->update('zz_checks', [
+                'checked' => $checked,
+            ], [
+                'id' => $idcheck,
+            ]);
+            $response = ['status' => 'success', 'message' => tr('Checklist aggiornata correttamente!')];
+        } catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => $e->getMessage()];
+        }
+
+        echo $response;
+
+        break;
 }

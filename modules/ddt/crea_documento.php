@@ -25,27 +25,20 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 
 $documento = DDT::find($id_record);
+$tipo_documento_finale = Fattura::class;
+
 $module = Module::find($id_module);
 
-if (get('documento') == 'ddt') {
-    $final_module = 'Ddt in entrata';
-    $dir = 'uscita';
-    $op = 'add_ddt_rientrato';
-    $tipo_documento_finale = DDT::class;
-} elseif ($module->name == 'Ddt in uscita') {
+if ($module->name == 'Ddt in uscita') {
     $final_module = 'Fatture di vendita';
     $dir = 'entrata';
-    $op = 'add_documento';
-    $tipo_documento_finale = Fattura::class;
 } else {
     $final_module = 'Fatture di acquisto';
     $dir = 'uscita';
-    $op = 'add_documento';
-    $tipo_documento_finale = Fattura::class;
 }
 
 $options = [
-    'op' => $op,
+    'op' => 'add_documento',
     'type' => 'ddt',
     'module' => $final_module,
     'serials' => true,

@@ -101,6 +101,8 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         return [
             'id' => $id_record,
+            'module' => 'Anagrafiche',
+            'op' => 'create',
         ];
     }
 
@@ -109,6 +111,10 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         $anagrafica = Anagrafica::find($request['id']);
 
         $anagrafica->delete();
+
+        return [
+            'id' => $request['id'],
+        ];
     }
 
     public function update($request)
@@ -155,5 +161,9 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         }
 
         $anagrafica->save();
+
+        return [
+            'id' => $anagrafica->id,
+        ];
     }
 }

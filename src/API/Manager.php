@@ -145,6 +145,7 @@ class Manager
         $table = $response['table'];
         $joins = $response['joins'];
         $group = $response['group'];
+        $module = $response['module'];
 
         if (!empty($response['where'])) {
             $where = array_merge($where, $response['where']);
@@ -234,7 +235,8 @@ class Manager
 
             throw new InternalError();
         }
-
+        $response['module'] = $module;
+        //$response['op'] = "retrieve";
         return $response;
     }
 
@@ -296,6 +298,7 @@ class Manager
 
         // Operazioni della risorsa
         $response = $object->{$method}($request);
+        $response['resource'] = $request['resource'];
 
         try {
             $database->commitTransaction();

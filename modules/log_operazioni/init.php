@@ -17,29 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
 
-namespace Modules\Pagamenti\API\v1;
+include_once __DIR__.'/../../core.php';
 
-use API\Interfaces\RetrieveInterface;
-use API\Resource;
+use Ergebnis\Json\Printer;
 
-class Pagamenti extends Resource implements RetrieveInterface
-{
-    public function retrieve($request)
-    {
-        $table = 'co_pagamenti';
+if (!empty($id_record)) {
+    $record = $dbo->fetchOne("SELECT * FROM zz_operations WHERE id=".prepare($id_record));
 
-        $select = [
-            'co_pagamenti.*',
-        ];
+    $printer = new Printer\Printer();
+    if( !empty($record['context']) ){
+        $record['context'] = str_replace('"','\"',$printer->print( $record['context'], ' ' ));
+    }
 
-        $group = 'co_pagamenti.id';
-
-        return [
-            'table' => $table,
-            'select' => $select,
-            'where' => $where,
-            'group' => $group,
-        ];
+    if( !empty($record['message']) ){
+        $record['message'] = str_replace('"','\"',$printer->print( $record['message'], ' ' ));
     }
 }

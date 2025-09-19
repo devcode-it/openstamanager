@@ -84,6 +84,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $ddt->idsede_destinazione = $data['idsede_destinazione'];
         $ddt->save();
 
+        $module = ($data['tipo']==1 ? 'Ddt di vendita' : 'Ddt di acquisto');
         return [
             'id' => $ddt->id,
             'numero_esterno' => $ddt->numero_esterno,
@@ -104,11 +105,22 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $ddt->idsede_partenza = $data['idsede_partenza'];
         $ddt->idsede_destinazione = $data['idsede_destinazione'];
         $ddt->save();
+
+        $module = ($ddt->idtipoddt==1 ? 'Ddt di vendita' : 'Ddt di acquisto');
+        return [
+            'id' => $ddt->id,
+            'module' => $module,
+        ];
     }
 
     public function delete($request)
     {
         $ddt = DDT::find($request['id']);
+        $module = ($ddt->idtipoddt==1 ? 'Ddt di vendita' : 'Ddt di acquisto');
         $ddt->delete();
+
+        return [
+            'id' => $request['id'],
+        ];
     }
 }

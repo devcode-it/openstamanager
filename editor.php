@@ -449,7 +449,7 @@ if (empty($record) || !$has_access) {
                             <div class="timeline-body py-2">
                                 <div class="d-flex align-items-center">
                                     <div class="mr-3 small">
-                                        <i class="fa fa-user mr-1 text-'.$color.'"></i>
+                                        <i class="'.($operation['id_api'] ? 'fa fa-plug' : 'fa fa-user').' mr-1 text-'.$color.'"></i>
                                         <span>'.$operation['username'].'</span>
                                     </div>';
 

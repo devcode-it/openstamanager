@@ -19,6 +19,7 @@
  */
 
 use API\Response;
+use Models\OperationLog;
 
 function serverError()
 {
@@ -41,19 +42,9 @@ include_once __DIR__.'/../core.php';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
 
-$dbo->insert('zz_api_log', [
-    'level' => 'warning',
-    'message' => 'Richiesta API ricevuta',
-    'name' => 'API '.get('resource'),
-    'context' => json_encode([
-        'token' => get('token'),
-        'resource' => get('resource'),
-    ]),
-]);
-$id_log = $dbo->lastInsertedID();
-
 try {
     $response = Response::manage();
+    $info = Response::getInfo();
 } catch (Exception $e) {
     // Log dell'errore
     $logger = logger();
@@ -69,15 +60,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 $result = json_decode((string) $response, true);
 $level = ($result['status'] == '200' ? 'info' : 'error');
-$dbo->update('zz_api_log', [
-    'level' => $level,
-    'message' => $result['message'],
-    'context' => json_encode([
-        'token' => get('token'),
-        'resource' => get('resource'),
-        'total-count' => $result['total-count'],
-    ]),
-], ['id' => $id_log]);
+$type = [ 'GET' => 'retrieve', 'POST' => 'create', 'PUT' => 'update', 'DELETE' => 'delete', ];
+
+//Ricavo l'id della richiesta API
+$api = $dbo->table('zz_api_resources')
+    ->where('resource', $info['resource'])
+    ->where('type', $type[$_SERVER['REQUEST_METHOD']])
+    ->first();
+
+//Salvataggio del log dell'operazione
+OperationLog::setInfo('id_module', $info['id_module']);
+OperationLog::setInfo('id_api', $api->id);
+OperationLog::setInfo('level', $level);
+
+//Aggiungo il contenuto della richiesta
+$context = [
+    'token' => get('token'),
+    'resource' => get('resource'),
+    'filter' => get('filter'),
+    'total-count' => $result['total-count'],
+];
+OperationLog::setInfo('context', json_encode($context));
+
+//Aggiungo al log il messaggio completo di risposta
+if( ($result['status']=='200' && setting('Log risposte API')=='debug') || $result['status']!='200' ){
+    $message = json_encode($result);
+    OperationLog::setInfo('message', $message);
+}
+
+//Salvo l'id_record se presente nella risposta
+if( !empty($result['id']) ){
+    OperationLog::setInfo('id_record', $result['id']);
+}
+
+$op = ($result['op'] ?: $type[$_SERVER['REQUEST_METHOD']]);
+$result['op'] = ($op=='create' ? 'add' : ($op=='retrieve' ? 'read' : $op));
+OperationLog::build($result['op']);
 
 json_decode((string) $response);
 

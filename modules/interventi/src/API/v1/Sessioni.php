@@ -57,16 +57,27 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
             add_tecnico($data['id_intervento'], $user['idanagrafica'], $data['orario_inizio'], $data['orario_fine']);
         } catch (\InvalidArgumentException) {
         }
+
+        return [
+            'id' => $data['id_intervento'],
+            'op' => 'add_sessione',
+        ];
     }
 
     public function delete($request)
     {
         $database = database();
         $user = $this->getUser();
+        $data = $request['data'];
 
         $database->query('DELETE FROM `in_interventi_tecnici` WHERE `idintervento` = :id_intervento AND `idtecnico` = :id_tecnico', [
-            ':id_intervento' => $request['id_intervento'],
+            ':id_intervento' => $data['id_intervento'],
             ':id_tecnico' => $user['idanagrafica'],
         ]);
+
+        return [
+            'id' => $data['id_intervento'],
+            'op' => 'delete_sessione',
+        ];
     }
 }

@@ -60,5 +60,10 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
                 'idimpianto' => $impianto,
             ]);
         }
+
+        return [
+            'id' => $id_record,
+            'op' => 'add_impianto',
+        ];
     }
 }

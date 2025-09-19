@@ -35,6 +35,7 @@
         "doctrine/sql-formatter": "^1.5",
         "dragonmantank/cron-expression": "^1.0",
         "endroid/qr-code": "^6.0",
+        "ergebnis/json-printer": "^3.8",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.15.0",
         "greenlion/php-sql-parser": "^4.5",

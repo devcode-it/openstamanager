@@ -89,13 +89,25 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         }
 
         $riga->save();
+
+        return [
+            'id' => $intervento->id,
+            'op' => ($riga->isArticolo() ? 'manage_articolo' : 'manage_riga'),
+        ];
     }
 
     public function delete($request)
     {
-        $riga = Articolo::find($request['id']) ?: Riga::find($request['id']);
-        $riga = $riga ?: Descrizione::find($request['id']);
+        $data = $request['data'];
+        $riga = Articolo::find($data['id_riga']) ?: Riga::find($data['id_riga']);
+        $riga = $riga ?: Descrizione::find($requdataest['id_riga']);
+        $idintervento = $riga->idintervento;
         $riga->delete();
+
+        return [
+            'id' => $idintervento,
+            'op' => 'delete_riga',
+        ];
     }
 
     public function update($request)
@@ -124,5 +136,11 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
 
         $riga->um = $data['um'] ?: null;
         $riga->save();
+
+        return [
+            'id' => $riga->idintervento,
+            'module' => 'Interventi',
+            'op' => ($riga->isArticolo() ? 'manage_articolo' : 'manage_riga'),
+        ];
     }
 }

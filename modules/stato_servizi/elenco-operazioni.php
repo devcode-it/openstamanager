@@ -37,6 +37,8 @@ $query = "SELECT
     zz_operations.op,
     zz_operations.created_at,
     zz_operations.id_utente,
+    zz_operations.id_api,
+    zz_operations.level,
     zz_users.username,
     an_anagrafiche.ragione_sociale,
     COALESCE(zz_modules_lang.title, 'Sistema') as module_name,
@@ -107,7 +109,7 @@ if (!empty($operazioni)) {
         }
 
         echo '
-        <tr>
+        <tr '.($operazione['level']!='error' ?: 'class="bg-danger"').'>
             <td>
                 <strong>'.$nome_modulo.'</strong>
             </td>
@@ -118,7 +120,7 @@ if (!empty($operazioni)) {
                 <small class="'.$color_class.' font-weight-bold">'.$operazione_formattata.'</small>
             </td>
             <td>
-                '.($user_photo ? '<img class="attachment-img tip mr-2" src="'.$user_photo.'" title="'.$nome_completo.'" style="width: 20px; height: 20px;">' : '<i class="fa fa-user-circle-o mr-2 tip" title="'.$nome_completo.'"></i>').'
+                '.($user_photo ? '<img class="attachment-img tip mr-2" src="'.$user_photo.'" title="'.$nome_completo.'" style="width: 20px; height: 20px;">' : '<i class="'.($operazione['id_api'] ? 'fa fa-plug' : 'fa fa-user-circle-o').' mr-2 tip" title="'.$nome_completo.'"></i>').'
                 <strong>'.$username.'</strong>
             </td>
             <td>

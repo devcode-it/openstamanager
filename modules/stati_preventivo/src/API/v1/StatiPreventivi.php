@@ -46,6 +46,7 @@ class StatiPreventivi extends Resource implements RetrieveInterface
             'select' => $select,
             'table' => $table,
             'joins' => $joins,
+            'where' => $where,
         ];
     }
 }

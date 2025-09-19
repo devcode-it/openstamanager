@@ -478,12 +478,12 @@ echo '
                     $(".conto3").hide();
                     $(".totali").hide();
                     results.conti2.forEach(function(item) {
-                        $("#conto2-"+ item).parent().parent().show();
+                        $("#conto2-"+ item).parent().parent().parent().parent().parent().show();
                         $("#conto2-"+ item).show();
                     });
 
                     results.conti2_3.forEach(function(item) {
-                        $("#conto2-"+ item).parent().parent().show();
+                        $("#conto2-"+ item).parent().parent().parent().parent().parent().show();
                         $("#conto2-"+ item).show();
                         if ($("#conto2-"+ item).find(".search > i").hasClass("fa-plus")) {
                             $("#conto2-"+ item).find(".search").click();

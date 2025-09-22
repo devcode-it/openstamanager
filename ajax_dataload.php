@@ -59,7 +59,7 @@ $results = [
     'draw' => $draw_numer,
 ];
 
-$query = Query::getQuery($structure);
+$query = Query::getQuery($structure, [], [], [], $total);
 if (!empty($query)) {
     // CONTEGGIO TOTALE
     $results['recordsTotal'] = $dbo->fetchNum($query);

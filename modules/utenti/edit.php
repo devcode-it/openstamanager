@@ -268,7 +268,7 @@ if ($record['nome'] != 'Amministratori') {
 						</thead>
 						<tbody>';
 
-    $moduli = Modules::getHierarchy();
+    $moduli = Modules::getHierarchy(true);
 
     $permessi_disponibili = [
         '-' => tr('Nessun permesso'),

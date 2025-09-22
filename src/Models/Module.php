@@ -121,16 +121,20 @@ class Module extends Model
     {
         $user = \Auth::user();
 
-        $views = database()->fetchArray('SELECT * FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') WHERE `id_module` = :module_id AND
-        `zz_views`.`id` IN (
-            SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo` = (
-                SELECT `idgruppo` FROM `zz_users` WHERE `id` = :user_id
-            ))
-        ORDER BY `order` ASC', [
-            'module_id' => $this->id,
-            'user_id' => $user->id,
-        ]);
-
+        $views = database()->fetchArray('SELECT 
+            `zz_views`.*, 
+            `zz_views_lang`.*
+        FROM 
+            `zz_views` 
+            LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            LEFT JOIN `zz_group_view` ON `zz_views`.`id` = `zz_group_view`.`id_vista`
+            LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_view`.`id_gruppo`
+        WHERE 
+            `id_module`='.$this->id.' AND
+            `zz_users`.`id` = '.$user->id.'
+        ORDER BY 
+            `order` ASC');
+            
         return $views;
     }
 

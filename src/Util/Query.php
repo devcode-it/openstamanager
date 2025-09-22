@@ -664,7 +664,7 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery(\Models\Module::where('name', $element['attributes']['name'])->first()->id, null, self::$segments), $query);
+        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery($element->id, null, self::$segments), $query);
         $views = self::getViews($element);
         $select = [];
 
@@ -777,12 +777,17 @@ class Query
 
         $user = \Auth::user();
 
-        $views = $database->fetchArray('SELECT *, `zz_views`.`id` FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `id_module`='.prepare($element['id']).' AND
-        `zz_views`.`id` IN (
-            SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(
-                SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($user['id']).'
-            ))
-        ORDER BY `order` ASC');
+        $views = $database->fetchArray('SELECT `zz_views`.*, `zz_views_lang`.*
+        FROM 
+            `zz_views` 
+            LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            LEFT JOIN `zz_group_view` ON `zz_views`.`id` = `zz_group_view`.`id_vista`
+            LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_view`.`id_gruppo`
+        WHERE 
+            `id_module`='.prepare($element['id']).' AND
+            `zz_users`.`id` = '.prepare($user['id']).'
+        ORDER BY 
+            `order` ASC');
 
         return $views;
     }

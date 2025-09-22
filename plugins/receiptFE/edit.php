@@ -248,6 +248,9 @@ function searchReceipts(button) {
     $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&refresh_cache=" + Date.now(), function() {
         buttonRestore(button, restore);
 
+        // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+        start_local_datatables();
+
         // Applica il filtro di ricerca se presente
         applySearchFilter();
 

@@ -35,7 +35,14 @@ function start_local_datatables() {
 
 // Datatable
 function start_datatables( $elements ) {
-    start_local_datatables();
+    // Inizializza le tabelle locali solo se ce ne sono di non inizializzate
+    let uninitializedLocalTables = $('.datatables').filter(function() {
+        return !$.fn.DataTable.isDataTable($(this));
+    });
+
+    if (uninitializedLocalTables.length > 0) {
+        start_local_datatables();
+    }
 
     $elements.each(function () {
         const $this = $(this);
@@ -104,6 +111,7 @@ function start_datatables( $elements ) {
                     url: "ajax_dataload.php?id_module=" + id_module + "&id_plugin=" + id_plugin + "&id_parent=" + id_parent,
                     type: 'GET',
                     dataSrc: "data",
+
                 },
                 initComplete: initComplete,
                 drawCallback: drawCallback,
@@ -317,7 +325,6 @@ function initComplete(settings) {
                     var table = wrapper.datatable;
                     var row_ids = wrapper.getSelectedRows();
                     wrapper.removeSelectedRows(row_ids);
-                    table.clear().draw();
 
                     setTableSearch(module_id, field, search_value);
                     column.search(search_value).draw();
@@ -460,7 +467,10 @@ function getTable(selector) {
 
         initDatatable: function () {
             if (table.hasClass('datatables')) {
-                start_local_datatables();
+                // Inizializza solo se non è già stata inizializzata
+                if (!$.fn.DataTable.isDataTable(table)) {
+                    start_local_datatables();
+                }
             } else {
                 start_datatables( $('.main-records') );
             }

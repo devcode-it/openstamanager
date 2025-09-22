@@ -69,7 +69,11 @@ $(document).ready(function () {
     // Avvio datatables dei plugin solo al primo click
     $('.nav-tabs li').not('.clicked').on('click', function(){
         $(this).addClass('clicked');
-        start_datatables( $(".tab-pane.active .main-records-plugins") );
+        // Inizializza solo le tabelle dei plugin che non sono già state inizializzate
+        // Usa un timeout per assicurarsi che il tab sia completamente attivo
+        setTimeout(function() {
+            start_datatables( $(".tab-pane.active .main-records-plugins") );
+        }, 100);
     });
 
     // Calendario principale

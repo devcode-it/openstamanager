@@ -187,6 +187,8 @@ function process_fe(button, file) {
             },
             success: function(data) {
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                    start_local_datatables();
                     buttonRestore(button, restore);
                 });
             }
@@ -215,6 +217,8 @@ function delete_fe(button, file_id) {
             },
             success: function(data) {
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                    start_local_datatables();
                     buttonRestore(button, restore);
                 });
             }
@@ -231,6 +235,5 @@ function download_fe(button, file_id) {
     }, "get", true);
 }
 
-start_local_datatables();
 init();
 </script>';

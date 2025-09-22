@@ -226,15 +226,72 @@ class Modules
     /**
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
      *
+     * @param bool $filter_permissions Se true, filtra solo i moduli con permessi di accesso
      * @return array
      */
-    public static function getHierarchy()
+    public static function getHierarchy($filter_permissions = false)
     {
         if (!isset(self::$hierarchy)) {
             self::$hierarchy = Module::getHierarchy()->toArray();
         }
 
+        if ($filter_permissions) {
+            return self::filterHierarchyByPermissions(self::$hierarchy);
+        }
+
         return self::$hierarchy;
+    }
+
+    /**
+     * Restituisce la gerarchia dei moduli filtrata per i permessi di accesso.
+     *
+     * @return array
+     */
+    public static function getAvailableHierarchy()
+    {
+        return self::getHierarchy(true);
+    }
+
+    /**
+     * Filtra ricorsivamente la gerarchia dei moduli in base ai permessi di accesso.
+     *
+     * @param array $hierarchy
+     * @param array|null $availableModulesIds Cache degli ID dei moduli disponibili per ottimizzare le performance
+     * @return array
+     */
+    protected static function filterHierarchyByPermissions($hierarchy, $availableModulesIds = null)
+    {
+        // Ottimizzazione: carica una sola volta i moduli disponibili
+        if ($availableModulesIds === null) {
+            $availableModules = self::getAvailableModules();
+            // Crea un array associativo per lookup veloce
+            $availableModulesIds = [];
+            foreach ($availableModules as $module) {
+                $availableModulesIds[$module->id] = true;
+            }
+        }
+
+        $filtered = [];
+
+        foreach ($hierarchy as $element) {
+            // Verifica se l'elemento ha permessi di accesso usando il cache
+            $hasPermission = isset($availableModulesIds[$element['id']]) && !empty($element['enabled']);
+
+            // Filtra ricorsivamente i figli
+            $filteredChildren = [];
+            if (!empty($element['all_children'])) {
+                $filteredChildren = self::filterHierarchyByPermissions($element['all_children'], $availableModulesIds);
+            }
+
+            // Include l'elemento se ha permessi o se ha figli con permessi
+            if ($hasPermission || !empty($filteredChildren)) {
+                $element['all_children'] = $filteredChildren;
+                $element['has_permission'] = $hasPermission;
+                $filtered[] = $element;
+            }
+        }
+
+        return $filtered;
     }
 
     /**
@@ -246,7 +303,8 @@ class Modules
      */
     public static function getMainMenu($depth = 3)
     {
-        $menus = self::getHierarchy();
+        // Utilizza la gerarchia filtrata per i permessi per ottimizzare le performance
+        $menus = self::getAvailableHierarchy();
 
         $module = Modules::getCurrent();
         $module_name = isset($module) ? $module->getTranslation('title') : '';
@@ -319,25 +377,30 @@ class Modules
      * @param int   $max_depth
      * @param int   $actual_depth
      *
-     * @return string
+     * @return array Array contenente [html_string, is_active, should_show]
      */
     protected static function sidebarMenu($element, $actual = null, $max_depth = 3, $actual_depth = 0)
     {
         if ($actual_depth >= $max_depth) {
-            return '';
+            return ['', false, false];
         }
 
         $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self';
         $active = ($actual == $title);
-        $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
+
+        // Utilizza le informazioni sui permessi già filtrate se disponibili
+        // Altrimenti fallback alla verifica tradizionale per compatibilità
+        $show = isset($element['has_permission']) ?
+            $element['has_permission'] :
+            (self::getPermission($element['id']) != '-' && !empty($element['enabled']));
 
         $submenus = $element['all_children'];
         if (!empty($submenus)) {
             $temp = '';
             foreach ($submenus as $submenu) {
-                $r = self::sidebarMenu($submenu, $actual, $actual_depth + 1);
+                $r = self::sidebarMenu($submenu, $actual, $max_depth, $actual_depth + 1);
                 $active = $active || $r[1];
                 if (!$show && $r[2]) {
                     $link = 'javascript:;';

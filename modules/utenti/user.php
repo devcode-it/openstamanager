@@ -101,7 +101,7 @@ if (!empty($user)) {
 					<div class="row">
 						<div class="col-md-12 text-right">
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="change_password" name="change_password" value="0">
+								<input type="checkbox" class="form-check-input" id="change_password" name="change_password" value="1">
 								<label class="form-check-label" for="change_password">'.tr('Cambia password').'</label>
 							</div>
 						</div>

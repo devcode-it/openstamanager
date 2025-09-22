@@ -20,6 +20,7 @@
 
 use Models\Module;
 use Util\Query;
+use Illuminate\Support\Collection;
 
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
@@ -36,6 +37,9 @@ class Modules
     /** @var array Elenco gerarchico dei moduli */
     protected static $hierarchy;
 
+    /** @var Collection Elenco dei moduli disponibili */
+    protected static $all_modules;
+
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
      *
@@ -43,14 +47,16 @@ class Modules
      */
     public static function getModules()
     {
-        $results = Module::getAll();
-
+        if (!isset(self::$all_modules)) {
+            self::$all_modules = Module::getAll();
+        }
+        
         // Caricamento dei plugin
-        if (!$results->first()->relationLoaded('plugins')) {
-            $results->load('plugins');
+        if (!self::$all_modules->first()->relationLoaded('plugins')) {
+            self::$all_modules->load('plugins');
         }
 
-        return $results;
+        return self::$all_modules;
     }
 
     /**
@@ -136,7 +142,18 @@ class Modules
             $additionals['WHR'] = [];
             $additionals['HVN'] = [];
 
-            $results = $database->fetchArray('SELECT * FROM `zz_group_module` LEFT JOIN `zz_group_module_lang` ON (`zz_group_module`.`id` = `zz_group_module_lang`.`id_record` AND `zz_group_module_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
+            $results = $database->fetchArray('SELECT 
+                `zz_group_module`.`clause`, 
+                `zz_group_module`.`position`
+            FROM 
+                `zz_group_module` 
+                LEFT JOIN `zz_group_module_lang` ON (`zz_group_module`.`id` = `zz_group_module_lang`.`id_record` AND `zz_group_module_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+                LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_module`.`idgruppo`
+            WHERE 
+                `zz_users`.`id` = '.prepare($user['id']).' 
+                AND 
+                `zz_group_module`.`idmodule` = '.prepare($module['id']));
+
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
                     $result['clause'] = Query::replacePlaceholder($result['clause']);

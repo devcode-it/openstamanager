@@ -65,7 +65,7 @@ if (!empty($query)) {
     $results['recordsTotal'] = $dbo->fetchNum($query);
 
     // RISULTATI VISIBILI
-    $query = Query::getQuery($structure, $search, $order, $limit);
+    $query = Query::getQuery($structure, $search, $order, $limit, $total);
 
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {

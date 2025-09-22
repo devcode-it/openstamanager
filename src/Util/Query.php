@@ -284,15 +284,14 @@ class Query
 
         try {
             // Esecuzione della query
-            $query = self::str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
             $results = $database->fetchArray($query);
 
             // Conteggio dei record filtrati
-            $count = $database->fetchOne('SELECT FOUND_ROWS() AS count');
+            $count = sizeof($results);
 
             return [
                 'results' => $results,
-                'count' => intval($count['count'] ?? 0),
+                'count' => $count,
             ];
         } catch (\Exception $e) {
             // Log dell'errore e fallback

@@ -296,6 +296,5 @@ function download_fe_vendita(button, file_id) {
     }, "get", true);
 }
 
-start_local_datatables();
 init();
 </script>';

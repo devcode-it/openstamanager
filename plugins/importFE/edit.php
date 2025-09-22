@@ -262,6 +262,9 @@ function searchInvoices(btn) {
     $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
         buttonRestore(btn, restore);
 
+        // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+        start_local_datatables();
+
         // Applica il filtro di ricerca se presente
         applySearchFilter();
 

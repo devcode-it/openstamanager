@@ -107,7 +107,10 @@ function import_fe(button, file) {
             importMessage(data);
 
             buttonRestore(button, restore);
-            $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'");
+            $("#list-receiptfe").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                start_local_datatables();
+            });
         },
         error: function(xhr) {
             $("#main_loading").fadeOut();
@@ -196,5 +199,4 @@ function process_fe(button, file) {
     });
 }
 
-start_local_datatables();
 </script>';

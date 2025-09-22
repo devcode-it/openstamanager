@@ -183,9 +183,11 @@ class Query
      *
      * @return mixed|string
      */
-    public static function getQuery($structure, $search = [], $order = [], $limit = [])
+    public static function getQuery($structure, $search = [], $order = [], $limit = [], $total = [])
     {
-        $total = self::readQuery($structure);
+        if (empty($total)) {
+            $total = self::readQuery($structure);
+        }
 
         // Lettura parametri modulo
         $query = $total['query'];

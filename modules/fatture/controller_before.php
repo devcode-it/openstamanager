@@ -56,7 +56,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                 $ricevuta_principale = $documento->getRicevutaPrincipale();
 
                 if (!empty($ricevuta_principale)) {
-                    $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/'.$ricevuta_principale->filename);
+                    $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename);
                     $lista_errori = $contenuto_ricevuta['ListaErrori'];
                     if ($lista_errori) {
                         $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];

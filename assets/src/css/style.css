@@ -295,6 +295,8 @@ input[type=file] {
     align-items: flex-start;
     color: var(--text-light) !important;
     transition: all 0.2s ease;
+    min-height: auto;
+    white-space: normal;
 }
 
 .search-result-item:hover {
@@ -313,7 +315,9 @@ input[type=file] {
 
 .search-result-text {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 .search-result-text > div {
@@ -327,6 +331,9 @@ input[type=file] {
     color: rgba(255, 255, 255, 0.6);
     display: block;
     word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.3;
+    overflow-wrap: break-word;
 }
 
 #clear-search {

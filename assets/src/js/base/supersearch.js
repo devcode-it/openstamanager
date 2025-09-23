@@ -260,7 +260,8 @@ $(document).ready(function () {
 
             results.forEach(result => {
                 const title = result.title;
-                const labels = result.labels ? result.labels.join('').split('<br/>,').join(' • ') : '';
+                // Preserva i <br/> per permettere il wrapping del testo
+                const labels = result.labels ? result.labels.join('') : '';
 
                 // Preserva l'evidenziazione esistente e applica quella per search-highlight
                 let processedLabels = labels;

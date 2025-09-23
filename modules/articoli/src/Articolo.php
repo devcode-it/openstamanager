@@ -410,6 +410,11 @@ class Articolo extends Model
             ->first();
     }
 
+    public function barcodes()
+    {
+        return $this->hasMany(Barcode::class, 'idarticolo');
+    }
+
     public static function getTranslatedFields()
     {
         return self::$translated_fields;

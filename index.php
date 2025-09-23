@@ -72,12 +72,15 @@ switch ($op) {
 
     case 'logout':
         Auth::logout();
+        // Pulisce anche l'intended URL al logout
+        Auth::clearIntended();
 
         redirect(base_path().'/index.php');
         exit;
 }
 
 if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
+    // Priorità 1: Token access (sistema esistente)
     if (Permissions::isTokenAccess()) {
         if (!empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
             redirect(base_path().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
@@ -85,6 +88,23 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
         }
     }
 
+    // Priorità 2: Intended URL (nuovo sistema di redirect post-login)
+    if (Auth::hasIntended()) {
+        $intended_url = Auth::getIntended();
+
+        // Verifica i permessi per l'URL intended
+        if (Auth::canAccessIntended()) {
+            Auth::clearIntended();
+            redirect($intended_url);
+            exit;
+        } else {
+            // L'utente non ha i permessi per accedere alla pagina richiesta
+            Auth::clearIntended();
+            flash()->warning(tr('Non hai i permessi necessari per accedere alla pagina richiesta.'));
+        }
+    }
+
+    // Priorità 3: Primo modulo (sistema esistente come fallback)
     $module = Auth::firstModule();
 
     if (!empty($module)) {

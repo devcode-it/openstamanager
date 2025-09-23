@@ -996,4 +996,130 @@ class Auth extends Util\Singleton
 
         return $is_not_active;
     }
+
+    /**
+     * Memorizza l'URL di destinazione nella sessione per il redirect post-login.
+     *
+     * @param string $url URL di destinazione
+     */
+    public function setIntendedUrl($url)
+    {
+        if ($this->isValidInternalUrl($url)) {
+            $_SESSION['intended_url'] = $url;
+        }
+    }
+
+    /**
+     * Recupera l'URL di destinazione dalla sessione.
+     *
+     * @return string|null
+     */
+    public function getIntendedUrl()
+    {
+        return $_SESSION['intended_url'] ?? null;
+    }
+
+    /**
+     * Verifica se esiste un URL di destinazione memorizzato.
+     *
+     * @return bool
+     */
+    public function hasIntendedUrl()
+    {
+        return !empty($_SESSION['intended_url']);
+    }
+
+    /**
+     * Pulisce l'URL di destinazione dalla sessione.
+     */
+    public function clearIntendedUrl()
+    {
+        unset($_SESSION['intended_url']);
+    }
+
+    /**
+     * Verifica se l'utente ha i permessi per accedere all'URL intended.
+     *
+     * @return bool
+     */
+    public function canAccessIntendedUrl()
+    {
+        if (!$this->hasIntendedUrl()) {
+            return false;
+        }
+
+        $url = $this->getIntendedUrl();
+
+        // Estrae l'id_module dall'URL
+        if (preg_match('/[?&]id_module=(\d+)/', $url, $matches)) {
+            $id_module = $matches[1];
+
+            // Verifica i permessi per il modulo
+            $permission = \Modules::getPermission($id_module);
+            return in_array($permission, ['r', 'rw']);
+        }
+
+        return true; // Per URL senza modulo specifico
+    }
+
+    /**
+     * Valida che l'URL sia interno al sistema e sicuro.
+     *
+     * @param string $url URL da validare
+     *
+     * @return bool
+     */
+    private function isValidInternalUrl($url)
+    {
+        if (empty($url)) {
+            return false;
+        }
+
+        // Verifica che non contenga protocolli pericolosi
+        if (strpos($url, 'javascript:') !== false || strpos($url, 'data:') !== false) {
+            return false;
+        }
+
+        // Verifica che non sia un URL esterno (con protocollo http/https)
+        if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) {
+            return false;
+        }
+
+        $base_path = base_path();
+
+        // L'URL deve iniziare con il base_path del sistema o essere relativo
+        if (strpos($url, $base_path) === 0 || strpos($url, '/') === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Metodi statici per l'accesso ai metodi di intended URL.
+     */
+    public static function setIntended($url)
+    {
+        return self::getInstance()->setIntendedUrl($url);
+    }
+
+    public static function getIntended()
+    {
+        return self::getInstance()->getIntendedUrl();
+    }
+
+    public static function hasIntended()
+    {
+        return self::getInstance()->hasIntendedUrl();
+    }
+
+    public static function clearIntended()
+    {
+        return self::getInstance()->clearIntendedUrl();
+    }
+
+    public static function canAccessIntended()
+    {
+        return self::getInstance()->canAccessIntendedUrl();
+    }
 }

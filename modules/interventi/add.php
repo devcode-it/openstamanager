@@ -43,7 +43,7 @@ if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
 }
 
 // Un utente del gruppo Tecnici può aprire attività solo a proprio nome
-$id_tecnico = filter('id_tecnico');
+$id_tecnico = filter('id_tecnico') ?: filter('idtecnico');
 $id_cliente = null;
 
 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {

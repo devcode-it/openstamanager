@@ -62,3 +62,5 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`)-2 FROM `zz_views`), 'Messaggio'),
 (1, (SELECT MAX(`id`)-1 FROM `zz_views`), 'Context'),
 (1, (SELECT MAX(`id`) FROM `zz_views`), '_bg_');
+
+CREATE TABLE `in_tipiintervento_tipologie` (`id` INT NOT NULL AUTO_INCREMENT , `idtipointervento` INT NOT NULL , `tipo` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));

@@ -60,6 +60,17 @@ switch (post('op')) {
             ]);
         }
 
+        $dbo->delete('in_tipiintervento_tipologie', [
+            'idtipointervento' => $id_record
+        ]);
+        $tipi = (array) post('tipi');
+        foreach ($tipi as $tipo) {
+            $dbo->insert('in_tipiintervento_tipologie', [
+                'idtipointervento' => $id_record,
+                'tipo' => $tipo
+            ]);
+        }
+
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
         break;

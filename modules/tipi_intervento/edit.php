@@ -19,30 +19,39 @@
 
 include_once __DIR__.'/../../core.php';
 
+$id_tipi = $dbo->select('in_tipiintervento_tipologie', '*', [], ['idtipointervento' => $id_record]);
+$id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
+
 ?><form action="" method="post">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-2">
+		<div class="col-md-3">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-3">
 			{[ "type": "checkbox", "label": "<?php echo tr('Non conteggiare'); ?>", "name": "non_conteggiare", "help": "<?php echo tr('Specifica se scalare dal consuntivo collegato'); ?>.", "value": "$non_conteggiare$"  ]}
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-3">
 			{[ "type": "checkbox", "label": "<?php echo tr('Calcola km'); ?>", "name": "calcola_km", "help": "<?php echo tr('Specifica se inserire automaticamente i km percorsi tra sede azienda e sede cliente'); ?>.", "value": "$calcola_km$"  ]}
 		</div>
+    </div>
 
-		<div class="col-md-2">
+	<div class="row">
+		<div class="col-md-3">
 			{[ "type": "number", "label": "<?php echo tr('Tempo standard'); ?>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0,25 - 24 ore. <br><small>Esempi: <em><ul><li>60 minuti = 1 ora</li><li>30 minuti = 0,5 ore</li><li>15 minuti = 0,25 ore</li></ul></em></small> Suggerisce il tempo solitamente impiegato per questa tipologia di attivita'); ?>.", "min-value": "0", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore"  ]}
+		</div>
+
+        <div class="col-md-3">
+			{[ "type": "select", "label": "<?php echo tr('Tipi anagrafiche'); ?>", "multiple": "1", "name": "tipi[]", "values": "list=\"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\", \"Privato\":\"<?php echo tr('Privato'); ?>\"", "value": "<?php echo $id_tipi; ?>", "help": "<?php echo tr('Seleziona le tipologie di anagrafica a cui questo tipo di attività si applica, se non viene selezionata alcuna tipologia, il tipo di attività si applica a tutte le anagrafiche'); ?>." ]}
 		</div>
 	</div>
 

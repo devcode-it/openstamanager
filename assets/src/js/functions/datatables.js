@@ -83,7 +83,7 @@ function start_datatables( $elements ) {
                 scrollY: "60vh",
                 scrollX: '100%',
                 retrieve: true,
-                stateSave: true,
+                stateSave: false,
                 rowId: 'id',
                 stateSaveCallback: function (settings, data) {
                     sessionStorage.setItem('DataTables_' + id_module + '-' + id_plugin + '-' + id_parent, JSON.stringify(data));

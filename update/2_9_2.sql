@@ -89,12 +89,12 @@ ALTER TABLE `an_assicurazione_crediti` ADD CONSTRAINT `an_assicurazione_crediti_
 DELETE FROM `an_referenti` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
 ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
 
-ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_2` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE SET NULL;
-ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_3` FOREIGN KEY (`idmansione`) REFERENCES `an_mansioni`(`id`) ON DELETE SET NULL;
+ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_2` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
+ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_3` FOREIGN KEY (`idmansione`) REFERENCES `an_mansioni`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `an_sedi` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
 ALTER TABLE `an_sedi` ADD CONSTRAINT `an_sedi_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
-ALTER TABLE `an_sedi` ADD CONSTRAINT `an_sedi_ibfk_3` FOREIGN KEY (`idzona`) REFERENCES `an_zone`(`id`) ON DELETE SET NULL;
+ALTER TABLE `an_sedi` ADD CONSTRAINT `an_sedi_ibfk_3` FOREIGN KEY (`idzona`) REFERENCES `an_zone`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `an_pagamenti_anagrafiche` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
 ALTER TABLE `an_pagamenti_anagrafiche` ADD CONSTRAINT `an_pagamenti_anagrafiche_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;

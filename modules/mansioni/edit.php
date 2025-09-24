@@ -77,8 +77,8 @@ if (!empty($elementi)) {
     </div>
 </div>';
 }
-?>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+echo'
+<a class="btn btn-danger ask '.($elementi ? "disabled" : "").' data-backto="record-list'.($elementi ? 'disabled' : '').' >
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';

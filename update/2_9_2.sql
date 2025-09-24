@@ -219,7 +219,7 @@ ALTER TABLE `my_impianti_contratti` CHANGE `idcontratto` `idcontratto` INT NOT N
 DELETE FROM `my_impianti_contratti` WHERE `idcontratto` NOT IN (SELECT `id` FROM `co_contratti`);
 ALTER TABLE `my_impianti_contratti` ADD CONSTRAINT `my_impianti_contratti_ibfk_2` FOREIGN KEY (`idcontratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
 
-DELETE FROM `my_impianti_componenti` WHERE `idimpianto` NOT IN (SELECT `id` FROM `my_impianti`);
+DELETE FROM `zz_otp_tokens` WHERE `id_utente` NOT IN (SELECT `id` FROM `zz_users`);
 ALTER TABLE `zz_otp_tokens` ADD CONSTRAINT `zz_otp_tokens_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 DELETE FROM `zz_otp_tokens` WHERE `id_module_target` NOT IN (SELECT `id` FROM `zz_modules`);

@@ -43,8 +43,6 @@ if ($backup_dir) {
             $filesystem->rename($file, $newFilePath);
         }
     }
-} else {
-    echo "Impossibile completare l'aggiornamento. Variabile <b>$backup_dir</b> non impostata.\n";
 }
 
 // Aggiunta record per lingua inglese

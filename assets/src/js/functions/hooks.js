@@ -99,7 +99,7 @@ function startHooks() {
     });
 }
 
-var timeout = 60;
+var timeout = 600;
 
 setInterval(function () {
     startHooks();

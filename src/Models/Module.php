@@ -126,7 +126,7 @@ class Module extends Model
             `zz_views_lang`.*
         FROM 
             `zz_views` 
-            LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+            LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') 
             LEFT JOIN `zz_group_view` ON `zz_views`.`id` = `zz_group_view`.`id_vista`
             LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_view`.`id_gruppo`
         WHERE 
@@ -134,7 +134,7 @@ class Module extends Model
             `zz_users`.`id` = '.$user->id.'
         ORDER BY 
             `order` ASC');
-            
+
         return $views;
     }
 

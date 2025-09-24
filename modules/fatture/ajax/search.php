@@ -48,7 +48,6 @@ foreach ($fields as $name => $value) {
 // Aggiunta ricerca diretta negli articoli
 $query .= ' OR `co_documenti`.`id` IN (SELECT DISTINCT `co_righe_documenti`.`iddocumento` FROM `co_righe_documenti` LEFT JOIN `mg_articoli` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE "%'.$term.'%" OR `mg_articoli_lang`.`title` LIKE "%'.$term.'%")';
 
-
 $rs = $dbo->fetchArray($query);
 
 foreach ($rs as $r) {
@@ -91,7 +90,7 @@ foreach ($rs as $r) {
     $valore_totale = 0;
 
     foreach ($articoli_rs as $articolo) {
-        if (!empty(trim($articolo['articolo']))) {
+        if (!empty(trim((string) $articolo['articolo']))) {
             $articoli[] = $articolo['articolo'];
             $quantita_totale += $articolo['qta'];
 

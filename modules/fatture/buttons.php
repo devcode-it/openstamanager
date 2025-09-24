@@ -110,25 +110,25 @@ if (!empty($record['is_fiscale'])) {
         </button>
         <ul class="dropdown-menu dropdown-menu-left">';
 
-        // Registra insoluto - sempre visibile ma disabilitato se non utilizzabile
-        echo '
+    // Registra insoluto - sempre visibile ma disabilitato se non utilizzabile
+    echo '
             <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? 'data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'"' : '').'>
                 <i class="fa fa-ban"></i> '.tr('Registra insoluto').'
             </a>';
 
-        // Registra contabile - sempre visibile ma disabilitato se non utilizzabile
-        echo '
+    // Registra contabile - sempre visibile ma disabilitato se non utilizzabile
+    echo '
             <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? 'data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'"' : '').'>
                 <i class="fa fa-euro"></i> '.tr('Registra contabile').'
             </a>';
 
-        // Riapri documento - sempre visibile ma disabilitato se non utilizzabile
-        echo '
+    // Riapri documento - sempre visibile ma disabilitato se non utilizzabile
+    echo '
             <a class="btn dropdown-item '.($record['stato'] == 'Pagato' ? 'ask tip' : 'disabled').'" '.($record['stato'] == 'Pagato' ? 'data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr("Riporta il documento nello stato di 'Emessa' e ne elimina i movimenti contabili").'"' : '').'>
                 <i class="fa fa-folder-open"></i> '.tr('Riapri documento').'...
             </a>';
 
-        echo '
+    echo '
         </ul>
     </div>';
 }

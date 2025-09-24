@@ -229,7 +229,7 @@ switch (post('op')) {
             $campi_componente = [];
             foreach ($contenuto_componente as $key => $value) {
                 // Fix per nomi con spazi che vengono tradotti con "_" (es. Data_di_installazione)
-                $key = preg_replace('/\s+/', '_', $key);
+                $key = preg_replace('/\s+/', '_', (string) $key);
 
                 $valore = $contenuto_precedente_esistente ? filter($key) : $value['valore'];
 

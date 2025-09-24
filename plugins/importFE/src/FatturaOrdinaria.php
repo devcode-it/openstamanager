@@ -260,7 +260,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
             $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
-            $riga['Quantita'] = floatval((empty($riga['Quantita']) && (!empty($riga['PrezzoUnitario']) || !empty($riga['Importo'])) ? 1 : $riga['Quantita']));
+            $riga['Quantita'] = floatval(empty($riga['Quantita']) && (!empty($riga['PrezzoUnitario']) || !empty($riga['Importo'])) ? 1 : $riga['Quantita']);
 
             $is_descrizione = empty($riga['Quantita']);
 

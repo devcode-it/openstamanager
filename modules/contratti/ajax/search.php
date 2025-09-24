@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -105,7 +106,7 @@ foreach ($rs as $r) {
     $valore_totale = 0;
 
     foreach ($articoli_rs as $articolo) {
-        if (!empty(trim($articolo['articolo']))) {
+        if (!empty(trim((string) $articolo['articolo']))) {
             $articoli[] = $articolo['articolo'];
             $quantita_totale += $articolo['qta'];
 

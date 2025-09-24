@@ -156,7 +156,7 @@ class Generator
             }
 
             if (!isset($replaces[$key]['regex'])) {
-                $replaces[$key]['regex'] = '(?<'.preg_quote($key).'>.{'.strlen((string) $replaces[$key]['value']).'})';
+                $replaces[$key]['regex'] = '(?<'.preg_quote((string) $key).'>.{'.strlen((string) $replaces[$key]['value']).'})';
             }
         }
 

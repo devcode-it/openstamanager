@@ -429,7 +429,7 @@ class HTMLBuilder
 
             // Attributi normali
             foreach ($json as $key => $value) {
-                $values[trim($key)] = is_string($value) ? trim($value) : $value;
+                $values[trim((string) $key)] = is_string($value) ? trim($value) : $value;
             }
 
             // Valori particolari

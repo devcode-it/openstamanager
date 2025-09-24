@@ -151,7 +151,7 @@ try {
 }
 try {
     $dbo->query('ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_2`');
-} catch (Exception $e) {
+} catch (Exception) {
     // Errore durante la rimozione della foreign key, continua l'esecuzione
 }
 

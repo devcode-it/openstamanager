@@ -106,7 +106,7 @@ function get($param, $raw = false)
 function setting($name)
 {
     // Utilizza la classe Settings che implementa il caching per ridurre le query
-    /** @var \Models\Setting $setting */
+    /** @var Models\Setting $setting */
     $setting = Settings::get($name);
 
     $user = Auth::user();

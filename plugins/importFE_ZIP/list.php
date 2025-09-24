@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Plugins\ImportFE\Interaction;
 
-$list = Interaction::getFileList($list = [] , 'Fatture di vendita', 'Importazione FE');
+$list = Interaction::getFileList($list = [], 'Fatture di vendita', 'Importazione FE');
 
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory('Fatture di vendita', 'Importazione FE');
 if (!empty($list)) {

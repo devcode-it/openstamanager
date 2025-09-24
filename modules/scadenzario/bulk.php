@@ -81,7 +81,7 @@ switch (post('op')) {
         $id_records_inviati = [];
         $anagrafiche = [];
         $id_anagrafica = 0;
-        
+
         // Salvo le scadenze selezionate in sessione
         $_SESSION['scadenzario_selected_ids'] = $id_records;
 

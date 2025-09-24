@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.2 (2025-09-25)](#292-2025-09-25)
 - [2.9.1 (2025-09-02)](#291-2025-09-02)
 - [2.9 (2025-08-08)](#29-2025-08-08)
 - [2.8.3 (2025-07-30)](#283-2025-07-30)
@@ -59,6 +60,40 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.9.2 (2025-09-25)
+### Modificato (Changed)
+- Ottimizzate le chiavi esterne per migliorare le prestazioni del database
+- Ottimizzato il modulo Statistiche vendita per prestazioni migliorate
+- Ottimizzate le tabelle per caricamento più veloce
+- Ottimizzato il caricamento moduli per migliorare i tempi di risposta
+- Aumento minuti di attesa per ricaricamento hooks per maggiore stabilità
+- Rimossa esecuzione hooks se finestra senza focus per ottimizzare le prestazioni
+- Ottimizzata la lettura delle impostazioni
+- Rimozione warning da riga di comando per output più pulito
+- Rimozione impostazione non più utilizzata per pulizia configurazione
+- Rimozione record orfani tabelle per pulizia database
+- Ottimizzata la ricerca di articoli nei documenti
+
+### Fixed
+- Corretta la query del modulo Articoli per lista barcode
+- Corretta l'importazione delle fatture con split payment
+- Corretta l'impostazioen di filtri fantasma nelle tabelle
+- Corretto l'avviso di fatture con ricevuta di scarto
+- Corretta la visualizzazione del pannello dei servizi
+- Corretto il cambio password dall'interfaccia di modifica utente
+- Corretta la sincronizzazione barcode su app
+- Corretta la ricera sul piano dei conti
+- Corretta la notifica di aggiornamenti disponibili
+- Corretta l'impostazione del tipo anagrafica in importazione delle fatture
+- Corretto l'invio del sollecito delle scadenze selezionate
+- Corretta l'espansione del menu
+- Corretta la ricerca e visualizzazione fatture da importare
+- Corretta l'esportazione delle Ri.Ba.
+- Corretta l'esecuzione cron da riga di comando con redirectHTTPS attivo
+- Corretta l'importazione di fatture di acquisto con righe con qta non definita ma prezzo unitario definito
+- Corretta la gestione dei permessi per modulo Accesso con Token/OTP
+
 
 ## 2.9.1 (2025-09-02)
 ### Modificato (Changed)

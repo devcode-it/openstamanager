@@ -71,6 +71,9 @@ class Intervento extends Document
         $model->idagente = $anagrafica->idagente;
         $model->idpagamento = setting('Tipo di pagamento predefinito');
 
+        // Set idclientefinale to the same as idanagrafica by default to avoid foreign key constraint violation
+        $model->idclientefinale = $anagrafica->idanagrafica;
+
         $user = \Auth::user();
         $id_sede = null;
         foreach ($user->sedi as $sede) {

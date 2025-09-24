@@ -89,7 +89,6 @@ ALTER TABLE `an_assicurazione_crediti` ADD CONSTRAINT `an_assicurazione_crediti_
 DELETE FROM `an_referenti` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
 ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
 
-ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_2` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `an_referenti` ADD CONSTRAINT `an_referenti_ibfk_3` FOREIGN KEY (`idmansione`) REFERENCES `an_mansioni`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `an_sedi` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
@@ -103,8 +102,6 @@ ALTER TABLE `an_pagamenti_anagrafiche` ADD CONSTRAINT `an_pagamenti_anagrafiche_
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_2` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_3` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_4` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_5` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_6` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_7` FOREIGN KEY (`id_banca_azienda`) REFERENCES `co_banche`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_8` FOREIGN KEY (`id_banca_controparte`) REFERENCES `co_banche`(`id`) ON DELETE SET NULL;
@@ -117,8 +114,6 @@ ALTER TABLE `co_contratti_tipiintervento` ADD CONSTRAINT `co_contratti_tipiinter
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_7` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_8` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_9` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
-ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_10` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_11` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_12` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_13` FOREIGN KEY (`id_banca_azienda`) REFERENCES `co_banche`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_14` FOREIGN KEY (`id_banca_controparte`) REFERENCES `co_banche`(`id`) ON DELETE SET NULL;
@@ -136,7 +131,6 @@ ALTER TABLE `co_movimenti` ADD CONSTRAINT `co_movimenti_ibfk_2` FOREIGN KEY (`id
 ALTER TABLE `co_movimenti` ADD CONSTRAINT `co_movimenti_ibfk_3` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE SET NULL;
 
 -- FOREIGN KEYS aggiuntive per mg_movimenti
-ALTER TABLE `mg_movimenti` ADD CONSTRAINT `mg_movimenti_ibfk_4` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `mg_movimenti` ADD CONSTRAINT `mg_movimenti_ibfk_5` FOREIGN KEY (`idddt`) REFERENCES `dt_ddt`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle scadenziario
@@ -151,15 +145,11 @@ ALTER TABLE `co_scadenziario` ADD CONSTRAINT `co_scadenziario_ibfk_6` FOREIGN KE
 ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_3` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_4` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE SET NULL;
-ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_5` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_6` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_3` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle interventi
-ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_8` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_9` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_10` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_11` FOREIGN KEY (`idclientefinale`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 
@@ -189,8 +179,6 @@ ALTER TABLE `mg_movimenti` ADD CONSTRAINT `mg_movimenti_ibfk_2` FOREIGN KEY (`id
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_3` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_4` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE SET NULL;
-ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_5` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_6` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_7` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `or_righe_ordini` WHERE `idordine` NOT IN (SELECT `id` FROM `or_ordini`);
@@ -202,8 +190,6 @@ ALTER TABLE `or_righe_ordini` ADD CONSTRAINT `or_righe_ordini_ibfk_4` FOREIGN KE
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_3` FOREIGN KEY (`idagente`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_4` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_5` FOREIGN KEY (`idsede_destinazione`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_6` FOREIGN KEY (`idsede_partenza`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `co_righe_preventivi` ADD CONSTRAINT `co_righe_preventivi_ibfk_3` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_righe_preventivi` ADD CONSTRAINT `co_righe_preventivi_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
@@ -211,7 +197,6 @@ ALTER TABLE `co_righe_preventivi` ADD CONSTRAINT `co_righe_preventivi_ibfk_4` FO
 -- FOREIGN KEYS per tabelle impianti
 DELETE FROM `my_impianti` WHERE `idanagrafica` NOT IN (SELECT `idanagrafica` FROM `an_anagrafiche`);
 ALTER TABLE `my_impianti` ADD CONSTRAINT `my_impianti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
-ALTER TABLE `my_impianti` ADD CONSTRAINT `my_impianti_ibfk_2` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `my_impianti_contratti` CHANGE `idcontratto` `idcontratto` INT NOT NULL; 
 
@@ -226,9 +211,6 @@ ALTER TABLE `zz_otp_tokens` ADD CONSTRAINT `zz_otp_tokens_ibfk_2` FOREIGN KEY (`
 
 DELETE FROM `zz_user_sedi` WHERE `id_user` NOT IN (SELECT `id` FROM `zz_users`);
 ALTER TABLE `zz_user_sedi` ADD CONSTRAINT `zz_user_sedi_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
-
-DELETE FROM `zz_user_sedi` WHERE `idsede` NOT IN (SELECT `id` FROM `an_sedi`);
-ALTER TABLE `zz_user_sedi` ADD CONSTRAINT `zz_user_sedi_ibfk_2` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE;
 
 DELETE FROM `zz_files` WHERE `id_module` NOT IN (SELECT `id` FROM `zz_modules`);
 ALTER TABLE `zz_files` ADD CONSTRAINT `zz_files_ibfk_2` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;

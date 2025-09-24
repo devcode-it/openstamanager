@@ -283,6 +283,11 @@ class FatturaElettronica
             }
         }
 
+        // Se è un fornitore e la fattura ha EsigibilitaIVA = 'S', abilita lo split payment sull'anagrafica
+        if ($type === 'Fornitore' && $this->hasSplitPaymentEsigibilita()) {
+            $anagrafica->split_payment = true;
+        }
+
         $anagrafica->save();
 
         // Informazioni sulla sede
@@ -342,6 +347,11 @@ class FatturaElettronica
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
+
+        // Verifica se è presente EsigibilitaIVA = 'S' nei riepiloghi IVA per abilitare lo split payment
+        if ($this->hasSplitPaymentEsigibilita()) {
+            $fattura->split_payment = true;
+        }
 
         // Salvataggio banca fornitore se specificata nel file XML
         $info_pagamento = $this->getBody()['DatiPagamento']['DettaglioPagamento'];
@@ -440,5 +450,32 @@ class FatturaElettronica
         $result = isset($result[0]) ? $result : [$result];
 
         return $result;
+    }
+
+    /**
+     * Verifica se almeno un riepilogo IVA ha EsigibilitaIVA = 'S' (split payment).
+     *
+     * @return bool
+     */
+    protected function hasSplitPaymentEsigibilita()
+    {
+        // Estraggo i riepiloghi IVA dal body della fattura
+        $body = $this->getBody();
+
+        if (!isset($body['DatiBeniServizi']['DatiRiepilogo'])) {
+            return false;
+        }
+
+        $riepiloghi = $body['DatiBeniServizi']['DatiRiepilogo'];
+        $riepiloghi = $this->forceArray($riepiloghi);
+
+        // Verifico se almeno un riepilogo ha EsigibilitaIVA = 'S'
+        foreach ($riepiloghi as $riepilogo) {
+            if (isset($riepilogo['EsigibilitaIVA']) && $riepilogo['EsigibilitaIVA'] === 'S') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

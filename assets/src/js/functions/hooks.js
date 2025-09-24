@@ -83,20 +83,22 @@ function handleHooksSuccess(hooks) {
 }
 
 function startHooks() {
-    $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hooks",
-        },
-        success: function (data) {
-            hooks = JSON.parse(data);
-            handleHooksSuccess(hooks);
-        },
-        error: function (xhr, status, error) {
-            console.error("Errore durante la richiesta AJAX relativa agli Hooks");
-        }
-    });
+    if (document.hasFocus()) {
+        $.ajax({
+            url: globals.rootdir + "/ajax.php",
+            type: "get",
+            data: {
+                op: "hooks",
+            },
+            success: function (data) {
+                hooks = JSON.parse(data);
+                handleHooksSuccess(hooks);
+            },
+            error: function (xhr, status, error) {
+                console.error("Errore durante la richiesta AJAX relativa agli Hooks");
+            }
+        });
+    }
 }
 
 var timeout = 600;

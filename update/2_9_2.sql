@@ -150,7 +150,10 @@ ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_3` FOREIGN KEY (`id
 ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle interventi
-ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_10` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE RESTRICT;
+-- Prima modifichiamo il campo idreferente per permettere valori NULL
+ALTER TABLE `in_interventi` MODIFY `idreferente` int(11) NULL;
+-- Poi aggiungiamo il vincolo foreign key che permette valori NULL
+ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_10` FOREIGN KEY (`idreferente`) REFERENCES `an_referenti`(`id`) ON DELETE SET NULL;
 ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_11` FOREIGN KEY (`idclientefinale`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 
 ALTER TABLE `in_righe_interventi` ADD CONSTRAINT `in_righe_interventi_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;

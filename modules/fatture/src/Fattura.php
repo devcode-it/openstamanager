@@ -150,15 +150,11 @@ class Fattura extends Document
         // Tipo di pagamento dall'anagrafica controparte
         $id_pagamento = $anagrafica['idpagamento_'.$conto];
 
-        // Per Fatture di Vendita senza pagamento predefinito per il Cliente, si utilizza il pagamento predefinito dalle Impostazioni
-        if ($direzione == 'entrata' && empty($id_pagamento)) {
+        if (empty($id_pagamento)) {
             $id_pagamento = setting('Tipo di pagamento predefinito');
         }
 
-        // Salvataggio del pagamento
-        if (!empty($id_pagamento)) {
-            $model->idpagamento = $id_pagamento;
-        }
+        $model->idpagamento = $id_pagamento;
 
         // Banca predefinita per l'azienda, con ricerca della banca impostata per il pagamento
         $id_banca_azienda = $anagrafica->{'idbanca_'.$conto};

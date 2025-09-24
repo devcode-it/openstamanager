@@ -651,11 +651,13 @@ switch (post('op')) {
     case 'add_articolo':
         $id_articolo = post('id_articolo');
         $barcode = post('barcode');
+        $save_inline_barcode = true;
 
         if (!empty($barcode)) {
             $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
             if (empty($id_articolo)) {
                 $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+                $save_inline_barcode = false;
             }
         }
 
@@ -669,7 +671,11 @@ switch (post('op')) {
             $qta = 1;
 
             $articolo->um = $originale->um;
-            $articolo->barcode = $barcode;
+
+            if ($save_inline_barcode) {
+                $articolo->barcode = $barcode;
+            }
+
             $articolo->qta = 1;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->confermato = ($dir == 'entrata' ? setting('Conferma automaticamente le quantità negli ordini cliente') : setting('Conferma automaticamente le quantità negli ordini fornitore'));

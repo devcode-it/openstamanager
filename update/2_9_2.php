@@ -45,7 +45,7 @@ foreach ($foreign_keys as $fk) {
 
     try {
         $dbo->query($delete_query);
-    } catch (Exception $e) {
+    } catch (Exception) {
         // Continua con la prossima foreign key in caso di errore
         continue;
     }

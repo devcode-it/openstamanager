@@ -47,7 +47,7 @@ function get_next_code($str, $qty = 1, $mask = '')
  */
 function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 {
-    return setting($nome, $again);
+    return setting($nome);
 }
 
 /**

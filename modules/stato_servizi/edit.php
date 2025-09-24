@@ -144,7 +144,7 @@ if (Services::isEnabled()) {
         }
 
         // Conteggio servizi e risorse
-        $count_servizi = $servizi->filter(fn($item) => !isset($item['credits']))->count();
+        $count_servizi = $servizi->filter(fn ($item) => !isset($item['credits']))->count();
 
         echo '
                             </tbody>

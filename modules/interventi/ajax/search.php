@@ -102,7 +102,7 @@ foreach ($rs as $r) {
     if (!empty($r['articoli_inclusi'])) {
         // Verifica se il termine di ricerca è presente negli articoli di questo intervento
         $articoli_match = false;
-        if (stripos($r['articoli_inclusi'], $term) !== false) {
+        if (stripos((string) $r['articoli_inclusi'], (string) $term) !== false) {
             $articoli_match = true;
         }
 
@@ -117,7 +117,7 @@ foreach ($rs as $r) {
     }
 
     // Mostra quantità e valori solo se il termine di ricerca corrisponde agli articoli di questo intervento
-    if (!empty($r['articoli_inclusi']) && stripos($r['articoli_inclusi'], $term) !== false) {
+    if (!empty($r['articoli_inclusi']) && stripos((string) $r['articoli_inclusi'], (string) $term) !== false) {
         // Aggiunta quantità totale
         if (!empty($r['totale_quantita']) && $r['totale_quantita'] > 0) {
             $result['labels'][] = 'Quantità totale: '.numberFormat($r['totale_quantita'], setting('Cifre decimali per quantità')).'<br/>';

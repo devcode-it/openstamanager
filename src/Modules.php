@@ -18,9 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Illuminate\Support\Collection;
 use Models\Module;
 use Util\Query;
-use Illuminate\Support\Collection;
 
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
@@ -50,7 +50,7 @@ class Modules
         if (!isset(self::$all_modules)) {
             self::$all_modules = Module::getAll();
         }
-        
+
         // Caricamento dei plugin
         if (!self::$all_modules->first()->relationLoaded('plugins')) {
             self::$all_modules->load('plugins');
@@ -244,6 +244,7 @@ class Modules
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
      *
      * @param bool $filter_permissions Se true, filtra solo i moduli con permessi di accesso
+     *
      * @return array
      */
     public static function getHierarchy($filter_permissions = false)
@@ -267,48 +268,6 @@ class Modules
     public static function getAvailableHierarchy()
     {
         return self::getHierarchy(true);
-    }
-
-    /**
-     * Filtra ricorsivamente la gerarchia dei moduli in base ai permessi di accesso.
-     *
-     * @param array $hierarchy
-     * @param array|null $availableModulesIds Cache degli ID dei moduli disponibili per ottimizzare le performance
-     * @return array
-     */
-    protected static function filterHierarchyByPermissions($hierarchy, $availableModulesIds = null)
-    {
-        // Ottimizzazione: carica una sola volta i moduli disponibili
-        if ($availableModulesIds === null) {
-            $availableModules = self::getAvailableModules();
-            // Crea un array associativo per lookup veloce
-            $availableModulesIds = [];
-            foreach ($availableModules as $module) {
-                $availableModulesIds[$module->id] = true;
-            }
-        }
-
-        $filtered = [];
-
-        foreach ($hierarchy as $element) {
-            // Verifica se l'elemento ha permessi di accesso usando il cache
-            $hasPermission = isset($availableModulesIds[$element['id']]) && !empty($element['enabled']);
-
-            // Filtra ricorsivamente i figli
-            $filteredChildren = [];
-            if (!empty($element['all_children'])) {
-                $filteredChildren = self::filterHierarchyByPermissions($element['all_children'], $availableModulesIds);
-            }
-
-            // Include l'elemento se ha permessi o se ha figli con permessi
-            if ($hasPermission || !empty($filteredChildren)) {
-                $element['all_children'] = $filteredChildren;
-                $element['has_permission'] = $hasPermission;
-                $filtered[] = $element;
-            }
-        }
-
-        return $filtered;
     }
 
     /**
@@ -387,6 +346,49 @@ class Modules
     }
 
     /**
+     * Filtra ricorsivamente la gerarchia dei moduli in base ai permessi di accesso.
+     *
+     * @param array      $hierarchy
+     * @param array|null $availableModulesIds Cache degli ID dei moduli disponibili per ottimizzare le performance
+     *
+     * @return array
+     */
+    protected static function filterHierarchyByPermissions($hierarchy, $availableModulesIds = null)
+    {
+        // Ottimizzazione: carica una sola volta i moduli disponibili
+        if ($availableModulesIds === null) {
+            $availableModules = self::getAvailableModules();
+            // Crea un array associativo per lookup veloce
+            $availableModulesIds = [];
+            foreach ($availableModules as $module) {
+                $availableModulesIds[$module->id] = true;
+            }
+        }
+
+        $filtered = [];
+
+        foreach ($hierarchy as $element) {
+            // Verifica se l'elemento ha permessi di accesso usando il cache
+            $hasPermission = isset($availableModulesIds[$element['id']]) && !empty($element['enabled']);
+
+            // Filtra ricorsivamente i figli
+            $filteredChildren = [];
+            if (!empty($element['all_children'])) {
+                $filteredChildren = self::filterHierarchyByPermissions($element['all_children'], $availableModulesIds);
+            }
+
+            // Include l'elemento se ha permessi o se ha figli con permessi
+            if ($hasPermission || !empty($filteredChildren)) {
+                $element['all_children'] = $filteredChildren;
+                $element['has_permission'] = $hasPermission;
+                $filtered[] = $element;
+            }
+        }
+
+        return $filtered;
+    }
+
+    /**
      * Restituisce l'insieme dei menu derivato da un'array strutturato ad albero.
      *
      * @param array $element
@@ -409,9 +411,7 @@ class Modules
 
         // Utilizza le informazioni sui permessi già filtrate se disponibili
         // Altrimenti fallback alla verifica tradizionale per compatibilità
-        $show = isset($element['has_permission']) ?
-            $element['has_permission'] :
-            (self::getPermission($element['id']) != '-' && !empty($element['enabled']));
+        $show = $element['has_permission'] ?? self::getPermission($element['id']) != '-' && !empty($element['enabled']);
 
         $submenus = $element['all_children'];
         if (!empty($submenus)) {

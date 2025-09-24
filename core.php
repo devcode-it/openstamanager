@@ -70,7 +70,7 @@ if (!headers_sent()) {
 $config = App::getConfig();
 
 // Redirect al percorso HTTPS se impostato nella configurazione e la richiesta è da browser
-if ($config['redirectHTTPS'] == true && !isHTTPS(true) && php_sapi_name() != "cli") {
+if ($config['redirectHTTPS'] == true && !isHTTPS(true) && php_sapi_name() != 'cli') {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
     exit;

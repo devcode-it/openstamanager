@@ -100,7 +100,6 @@ ALTER TABLE `an_pagamenti_anagrafiche` ADD CONSTRAINT `an_pagamenti_anagrafiche_
 -- FOREIGN KEYS per tabelle contratti
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_6` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
-ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_9` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `co_contratti_tipiintervento` WHERE `idcontratto` NOT IN (SELECT `id` FROM `co_contratti`);
 ALTER TABLE `co_contratti_tipiintervento` ADD CONSTRAINT `co_contratti_tipiintervento_ibfk_2` FOREIGN KEY (`idcontratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;

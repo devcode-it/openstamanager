@@ -119,9 +119,6 @@ DELETE FROM `co_movimenti` WHERE `iddocumento` NOT IN (SELECT `id` FROM `co_docu
 ALTER TABLE `co_movimenti` ADD CONSTRAINT `co_movimenti_ibfk_2` FOREIGN KEY (`iddocumento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_movimenti` ADD CONSTRAINT `co_movimenti_ibfk_3` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE SET NULL;
 
--- FOREIGN KEYS aggiuntive per mg_movimenti
-ALTER TABLE `mg_movimenti` ADD CONSTRAINT `mg_movimenti_ibfk_5` FOREIGN KEY (`idddt`) REFERENCES `dt_ddt`(`id`) ON DELETE RESTRICT;
-
 -- FOREIGN KEYS per tabelle scadenziario
 DELETE FROM `co_scadenziario` WHERE `iddocumento` NOT IN (SELECT `id` FROM `co_documenti`);
 ALTER TABLE `co_scadenziario` ADD CONSTRAINT `co_scadenziario_ibfk_2` FOREIGN KEY (`iddocumento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;

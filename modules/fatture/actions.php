@@ -393,7 +393,7 @@ switch ($op) {
             // Rimozione riferimenti (deprecati)
             $new_riga->idpreventivo = 0;
             $new_riga->idcontratto = 0;
-            $new_riga->idintervento = 0;
+            $new_riga->idintervento = null;
             $new_riga->idddt = 0;
             $new_riga->idordine = 0;
 

@@ -114,9 +114,6 @@ ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_3` FORE
 ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_5` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_6` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE SET NULL;
 
--- FOREIGN KEYS per tabelle movimenti
-ALTER TABLE `co_movimenti` ADD CONSTRAINT `co_movimenti_ibfk_3` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE SET NULL;
-
 -- FOREIGN KEYS per tabelle scadenziario
 DELETE FROM `co_scadenziario` WHERE `iddocumento` NOT IN (SELECT `id` FROM `co_documenti`);
 ALTER TABLE `co_scadenziario` ADD CONSTRAINT `co_scadenziario_ibfk_2` FOREIGN KEY (`iddocumento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;

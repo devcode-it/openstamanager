@@ -37,6 +37,10 @@ abstract class Description extends Component
 
         $model->setDocument($document);
 
+        if (empty($model->idiva)) {
+            $model->idiva = setting('Iva predefinita');
+        }
+
         return $model;
     }
 

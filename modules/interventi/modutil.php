@@ -202,7 +202,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             $copia = $riga->copiaIn($fattura, $qta);
 
             $copia->id_conto = $id_conto;
-
+            $copia->id_iva = $id_iva;
             $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
             $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
             $copia->id_rivalsa_inps = $id_rivalsa_inps;

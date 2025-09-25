@@ -117,11 +117,9 @@ class Scadenze
         $descrizione = $fattura->tipo->getTranslation('title').' numero '.$numero;
         $idanagrafica = $fattura->idanagrafica;
 
-        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
+        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato, $fattura->id);
 
-        $scadenza->documento()->associate($fattura);
         $scadenza->data_emissione = $fattura->data;
-
         $scadenza->save();
 
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();

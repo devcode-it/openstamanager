@@ -36,8 +36,6 @@ function handleHooksSuccess(hooks) {
 
     hooks.forEach(function (item, index) {
         renderHook(item);
-
-        //startHooks(item, true);
         completedRequests++;
     });
 

@@ -72,7 +72,10 @@ if (Auth::check()) {
     // Hooks
     if (!$config['disable_hooks']) {
         echo '
-                    startHooks();';
+                    // Avvio hooks dopo 10 secondi
+                    setTimeout(function() {
+                        startHooks();
+                    }, 10*1000);';
     }
 
     echo '

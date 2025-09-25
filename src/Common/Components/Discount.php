@@ -36,6 +36,10 @@ abstract class Discount extends Accounting
         $model->is_sconto = 1;
         $model->qta = 1;
 
+        if (empty($model->idiva)) {
+            $model->idiva = setting('Iva predefinita');
+        }
+
         return $model;
     }
 

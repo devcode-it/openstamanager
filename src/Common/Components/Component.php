@@ -251,6 +251,14 @@ abstract class Component extends Model
 
         // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
+        
+        if (empty($model->idiva)) {
+            if (!empty($this->idiva)) {
+                $model->idiva = $this->idiva;
+            } else {
+                $model->idiva = setting('Iva predefinita');
+            }
+        }
 
         $model->save();
 
@@ -423,6 +431,9 @@ abstract class Component extends Model
     {
         if (!empty($original->idiva)) {
             $this->idiva = $original->idiva;
+        } else {
+            // Set default IVA to prevent foreign key constraint violations
+            $this->idiva = setting('Iva predefinita');
         }
     }
 

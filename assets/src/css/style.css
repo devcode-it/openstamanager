@@ -1390,12 +1390,13 @@ input.small-width {
     font-size: 10px;
     min-width: 18px;
     height: 18px;
-    line-height: 18px;
     border-radius: 9px;
     padding: 0 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
+    margin-top: -3px;
 }
 
 /* Stili per il contenuto delle notifiche migliorato */

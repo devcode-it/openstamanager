@@ -71,8 +71,8 @@ class Ordine extends Document
         // Tipo di pagamento e banca predefinite dall'anagrafica
         $id_pagamento = $anagrafica['idpagamento_'.$conto];
 
-        // Se il ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-        if ($direzione == 'entrata' && empty($id_pagamento)) {
+        // Se non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
+        if (empty($id_pagamento)) {
             $id_pagamento = setting('Tipo di pagamento predefinito');
         }
 
@@ -84,10 +84,7 @@ class Ordine extends Document
 
         // Salvataggio delle informazioni
         $model->data = $data;
-
-        if (!empty($id_pagamento)) {
-            $model->idpagamento = $id_pagamento;
-        }
+        $model->idpagamento = $id_pagamento;
 
         $model->numero = static::getNextNumero($data, $direzione, $id_segment);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);

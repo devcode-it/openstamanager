@@ -449,7 +449,7 @@ if (Auth::check()) {
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-bell-o"></i>
                             <span id="hooks-badge" class="badge badge-warning">
-                                <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                <span id="hooks-loading"><i class="fa fa-clock-o"></i></span>
                                 <span id="hooks-notified"></span>
                                 <span id="hooks-counter" class="d-none">0</span>
                                 <span id="hooks-number" class="d-none">0</span>

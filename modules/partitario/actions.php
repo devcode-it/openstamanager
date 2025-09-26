@@ -110,19 +110,55 @@ switch (post('op')) {
         // Eliminazione conto dal partitario
     case 'del':
         $idconto = post('idconto');
+        $lvl = post('lvl') ?: 3;
+        if ($lvl == 2) {
+            // Eliminazione conto di livello 2 (co_pianodeiconti2)
+            // Controllo che non esistano movimenti associati ai conti di livello 3 collegati
+            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto = co_pianodeiconti3.id WHERE co_pianodeiconti3.idpianodeiconti2 = '.prepare($idconto));
 
-        // Controllo che non esistano movimenti associati al conto
-        $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
+            if ($idconto != '' and empty($movimenti)) {
+                // Prima elimino tutti i conti di livello 3 collegati
+                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                
+                foreach ($conti_livello3 as $conto3) {
+                    // Scollego il conto dalle anagrafiche
+                    $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($conto3['id']));
+                    $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($conto3['id']));
+                }
+                
+                // Elimino tutti i conti di livello 3 collegati
+                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                
+                // Infine elimino il conto di livello 2
+                $query = 'DELETE FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
 
-        if ($idconto != '' and empty($movimenti)) {
-            // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
-            $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
-            $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
+                if ($dbo->query($query)) {
+                    flash()->info(tr('Conto e tutti i suoi sottoconti eliminati!'));
+                } else {
+                    flash()->error(tr('Errore durante l\'eliminazione del conto!'));
+                }
+            } else {
+                flash()->error(tr('Impossibile eliminare il conto: esistono movimenti collegati ai suoi sottoconti!'));
+            }
+        } else {
+            // Eliminazione conto di livello 3 (co_pianodeiconti3) - logica esistente
+            // Controllo che non esistano movimenti associati al conto
+            $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
 
-            $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+            if ($idconto != '' and empty($movimenti)) {
+                // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
+                $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
+                $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
 
-            if ($dbo->query($query)) {
-                flash()->info(tr('Conto eliminato!'));
+                $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+
+                if ($dbo->query($query)) {
+                    flash()->info(tr('Conto eliminato!'));
+                } else {
+                    flash()->error(tr('Errore durante l\'eliminazione del conto!'));
+                }
+            } else {
+                flash()->error(tr('Impossibile eliminare il conto: esistono movimenti collegati!'));
             }
         }
         break;

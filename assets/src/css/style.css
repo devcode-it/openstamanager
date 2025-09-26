@@ -548,7 +548,6 @@ span.form-control {
 #pulsanti {
     position: sticky;
     top: 0;
-    padding: 10px;
     z-index: 999;
     background: #f6f6f6;
     line-height: 3;
@@ -3247,10 +3246,10 @@ section.content, .main-footer {
 
 /* Stile migliorato per i titoli dei plugin */
 .plugin-title {
-    padding: 10px 0;
     border-bottom: 1px solid #eee;
     margin-bottom: 20px !important;
     width: 100%;
+    min-height: 40px;
 }
 
 .plugin-title .badge {
@@ -3268,8 +3267,8 @@ section.content, .main-footer {
 }
 
 /* Padding per il contenuto dei plugin */
-.tab-pane[id^="tab_"]:not(#tab_0) {
-    padding: 0 20px 20px 20px;
+.tab-pane[id^="tab_"] {
+    padding: 0px 0px 20px 0px;
 }
 
 /* Stili per la pagina di aggiornamento */

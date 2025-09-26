@@ -125,9 +125,6 @@ ALTER TABLE `in_righe_interventi` ADD CONSTRAINT `in_righe_interventi_ibfk_4` FO
 DELETE FROM `mg_scorte_sedi` WHERE `id_articolo` NOT IN (SELECT `id` FROM `mg_articoli`);
 ALTER TABLE `mg_scorte_sedi` ADD CONSTRAINT `mg_scorte_sedi_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE;
 
-DELETE FROM `mg_scorte_sedi` WHERE `id_sede` NOT IN (SELECT `id` FROM `an_sedi`);
-ALTER TABLE `mg_scorte_sedi` ADD CONSTRAINT `mg_scorte_sedi_ibfk_2` FOREIGN KEY (`id_sede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE;
-
 DELETE FROM `mg_listini_articoli` WHERE `id_listino` NOT IN (SELECT `id` FROM `mg_listini`);
 ALTER TABLE `mg_listini_articoli` ADD CONSTRAINT `mg_listini_articoli_ibfk_1` FOREIGN KEY (`id_listino`) REFERENCES `mg_listini`(`id`) ON DELETE CASCADE;
 

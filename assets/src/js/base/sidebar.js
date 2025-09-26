@@ -1,3 +1,4 @@
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -131,7 +132,10 @@ $(document).ready(function () {
             });
         }, 150);
 
-        $("aside.content-sidebar, section.content, .main-footer, .control-sidebar-button").toggleClass("with-control-sidebar");
+        if (!isMobilePortrait()) {
+            $("aside.content-sidebar, section.content, .main-footer, .control-sidebar-button")
+                .toggleClass("with-control-sidebar");
+        }
         $(".control-sidebar-button i").toggleClass("fa-chevron-right").toggleClass("fa-chevron-left");
 
         toggleControlSidebar();
@@ -158,7 +162,30 @@ $(document).ready(function () {
             }, 100);
         }
     });
+    // Mobile portrait: aggiorna comportamento quando cambia risoluzione/orientamento
+    $(window).on('resize orientationchange', function() {
+        const sidebar = $(".control-sidebar");
+        if (!sidebar.hasClass('control-sidebar-open')) return;
 
+        const elements = $("aside.content-sidebar, section.content, .main-footer, .control-sidebar-button");
+
+        if (isMobilePortrait()) {
+            // Mobile portrait: rimuovi shift, overlay
+            elements.removeClass('with-control-sidebar');
+        } else {
+            // Desktop/tablet: applica shift
+            elements.addClass('with-control-sidebar');
+        }
+    });
+
+    // Mobile portrait: chiudi al tap fuori dalla barra
+    $(document).on('touchstart', function(e) {
+        if (!isMobilePortrait()) return;
+        const $t = $(e.target);
+        if ($t.closest('.control-sidebar').length || $t.closest('.control-sidebar-button').length) return;
+        $(".control-sidebar").removeClass("control-sidebar-open");
+        $(".control-sidebar-button i").removeClass('fa-chevron-left').addClass('fa-chevron-right');
+    });
     // Disabilita definitivamente AdminLTE treeview dopo il caricamento
     setTimeout(function() {
         // Rimuove tutti i gestori di AdminLTE sui treeview
@@ -188,4 +215,8 @@ function toggleControlSidebar() {
     } else {
         button.css("background-color", "#fff");
     }
+}
+
+function isMobilePortrait() {
+    return window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
 }

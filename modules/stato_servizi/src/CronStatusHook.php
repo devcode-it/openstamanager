@@ -43,25 +43,32 @@ class CronStatusHook extends Manager
             ]);
             $show = true;
         } else {
-            // Converte la data dell'ultima esecuzione
-            $data_ultima_esecuzione = Carbon::parse($ultima_esecuzione->content);
-            $ora_attuale = Carbon::now();
+            // Verifica che il contenuto sia una data valida
+            try {
+                // Converte la data dell'ultima esecuzione
+                $data_ultima_esecuzione = Carbon::parse($ultima_esecuzione->content);
+                $ora_attuale = Carbon::now();
 
-            // Calcola la differenza in ore
-            $ore_trascorse = $data_ultima_esecuzione->diffInHours($ora_attuale);
+                // Calcola la differenza in ore
+                $ore_trascorse = $data_ultima_esecuzione->diffInHours($ora_attuale);
 
-            if ($ore_trascorse > 1) {
-                $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
-                $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
+                if ($ore_trascorse > 1) {
+                    $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
+                    $document_root = $_SERVER['DOCUMENT_ROOT'] ?? base_dir();
 
-                $message = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).', [
-                    '_DATA_' => $data_formattata,
-                    '_DOCUMENT_ROOT_' => $document_root,
-                ]);
+                    $message = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).', [
+                        '_DATA_' => $data_formattata,
+                        '_DOCUMENT_ROOT_' => $document_root,
+                    ]);
+                    $show = true;
+                } else {
+                    $message = tr('Il cron è attivo e funzionante');
+                    $show = false;
+                }
+            } catch (\Exception $e) {
+                // Se il contenuto non è una data valida
+                $message = tr('Il formato della data dell\'ultima esecuzione del cron non è valido.', []);
                 $show = true;
-            } else {
-                $message = tr('Il cron è attivo e funzionante');
-                $show = false;
             }
         }
 

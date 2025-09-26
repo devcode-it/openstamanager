@@ -25,8 +25,6 @@ use Util\Query;
 include_once __DIR__.'/../../core.php';
 
 $structure = Module::where('name', 'Articoli')->first();
-// Valori di ricerca
-$where['servizio'] = '0';
 
 foreach (getSearchValues($structure->id) as $key => $value) {
     $where[$key] = $value;
@@ -59,8 +57,10 @@ if (post('acquisto') == 'standard') {
 }
 
 if (post('tipo') == 'nozero') {
-    $query = str_replace('1=1 AND 1=1', '1=1 AND `qta_totale` > 0', $query);
+    $query = str_replace('1=1', '1=1 AND `qta_totale` > 0', $query);
 }
+
+$query = str_replace('1=1', '1=1 AND servizio = 0', $query);
 
 $data = Query::executeAndCount($query);
 

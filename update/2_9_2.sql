@@ -119,9 +119,6 @@ ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_2` FOREIGN KEY (`idanagrafica`)
 
 ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
--- FOREIGN KEYS per tabelle interventi
-ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_11` FOREIGN KEY (`idclientefinale`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
-
 ALTER TABLE `in_righe_interventi` ADD CONSTRAINT `in_righe_interventi_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle articoli

@@ -90,7 +90,7 @@ foreach ($primo_livello as $conto_primo) {
                         <th width="10%"></th>';
     }
     echo '
-                        <th width="5%" class="text-center"></th>
+                        <th width="8%" class="text-center"></th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -187,7 +187,11 @@ foreach ($primo_livello as $conto_primo) {
                             </button>
 
                             <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
-                            <i class="fa fa-plus-circle"></i>
+                                <i class="fa fa-plus-circle"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-xs" onclick="eliminaConto('.$conto_secondo['id'].', 2)">
+                                <i class="fa fa-trash"></i>
                             </button>
                         </td>
                     </tr>';
@@ -447,6 +451,36 @@ echo '
 
     function aggiornaReddito(id_conto){
         openModal("'.tr('Ricalcola importo deducibile').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
+    }
+
+    function eliminaConto(id_conto, level) {
+        swal({
+            title: "'.tr('Sei sicuro?').'",
+            html: "'.tr('Eliminare questo elemento?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Elimina').'",
+            confirmButtonClass: "btn btn-lg btn-danger",
+            cancelButtonText: "'.tr('Annulla').'",
+            cancelButtonClass: "btn btn-lg"
+        }).then(function () {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                data: {
+                    id_module: globals.id_module,
+                    idconto: id_conto,
+                    lvl: level,
+                    op: "del",
+                },
+                success: function (response) {
+                    location.reload();
+                },
+                error: function() {
+                    swal("'.tr('Errore').'.", "'.tr('Errore durante l\'eliminazione del conto.').'.", "error");
+                }
+            });
+        });
     }
 
     $("#button-search").on("click", function(){

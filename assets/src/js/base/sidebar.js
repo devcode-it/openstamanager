@@ -178,8 +178,8 @@ $(document).ready(function () {
         }
     });
 
-    // Mobile portrait: chiudi al tap fuori dalla barra
-    $(document).on('touchstart', function(e) {
+    // Mobile portrait: chiudi al tap/click fuori dalla barra
+    $(document).on('touchstart click', function(e) {
         if (!isMobilePortrait()) return;
         const $t = $(e.target);
         if ($t.closest('.control-sidebar').length || $t.closest('.control-sidebar-button').length) return;

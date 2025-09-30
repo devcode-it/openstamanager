@@ -29,7 +29,7 @@ switch ($resource) {
      * - stato
      */
     case 'contratti':
-        $query = 'SELECT
+$query = 'SELECT
                 `co_contratti`.`id` AS id,
                 CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `idstato`) , "]") AS descrizione,
                 (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS totale,
@@ -69,14 +69,15 @@ switch ($resource) {
             $contratto = Contratto::find($r['id']);
             $ore_erogate = $contratto->interventi->sum('ore_totali');
             $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
-            $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste ?: 1) : 0;
-
+            $perc_ore = $ore_previste > 0 ? ($ore_erogate * 100) / $ore_previste : 0;
             if ($ore_previste) {
                 if ($perc_ore < 75) {
                     $color = '#81f794';
-                } elseif ($perc_ore <= 100) {
+                } elseif ($perc_ore > 75) {
                     $color = '#f5cb78';
                 }
+            } else {
+                $color = '';
             }
 
             $descrizione = ($ore_previste > 0 ? $r['descrizione'].' - '.tr('_EROGATE_/_PREVISTE_ ore', [

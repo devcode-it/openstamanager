@@ -152,6 +152,8 @@ class Modules
             WHERE 
                 `zz_users`.`id` = '.prepare($user['id']).' 
                 AND 
+                `zz_group_module`.`enabled` = 1
+                AND
                 `zz_group_module`.`idmodule` = '.prepare($module['id']));
 
             foreach ($results as $result) {
@@ -169,7 +171,6 @@ class Modules
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
                         $result['clause'] = Query::replacePlaceholder($result['clause']);
-
                         $additionals[$result['position']][] = $result['clause'];
                     }
                 }

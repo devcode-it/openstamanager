@@ -351,7 +351,9 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             if (!$is_descrizione) {
-                $obj->id_iva = $iva[$key];
+                $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
+                
+                $obj->id_iva = $iva_value;
                 $obj->idconto = $conto[$key];
 
                 if (empty($conto_arrotondamenti) && !empty($conto[$key])) {

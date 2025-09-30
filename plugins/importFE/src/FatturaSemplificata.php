@@ -125,7 +125,10 @@ class FatturaSemplificata extends FatturaElettronica
             }
 
             $obj->descrizione = $riga['Descrizione'];
-            $obj->id_iva = $iva[$key];
+
+            $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
+
+            $obj->id_iva = $iva_value;
             $obj->idconto = $conto[$key];
 
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)

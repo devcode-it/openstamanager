@@ -58,6 +58,7 @@ if (!empty($id_records)) {
 // ID predefiniti
 $singola_scadenza = get('single') != null;
 $is_insoluto = get('is_insoluto') != null;
+$singola = get('singola') != null;
 
 $id_documenti = $id_documenti ?: get('id_documenti');
 $id_documenti = $id_documenti ? explode(',', (string) $id_documenti) : [];
@@ -277,7 +278,8 @@ echo '
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
 	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
     <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">
-    <input type="hidden" name="id_anagrafica" id="id_anagrafica" value="'.$id_anagrafica.'">';
+    <input type="hidden" name="id_anagrafica" id="id_anagrafica" value="'.$id_anagrafica.'">
+    <input type="hidden" name="singola" id="singola" value="'.$singola.'">';
 
 if ($permetti_modelli) {
     echo '

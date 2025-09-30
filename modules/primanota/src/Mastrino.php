@@ -112,7 +112,7 @@ class Mastrino extends Model
 
     // Metodi generali
 
-    public function aggiornaScadenzario($movimenti = null)
+    public function aggiornaScadenzario($movimenti = null, $scadenza = null, $singola = false)
     {
         // Aggiornamento dello scadenzario disponibile solo da Mastrino di PrimaNota
         if (empty($this->primanota)) {
@@ -123,6 +123,10 @@ class Mastrino extends Model
         // Aggiornamento delle scadenze per i singoli documenti
         $documenti = $this->getUniqueDocumenti($movimenti);
         $scadenze = $this->getScadenzePerDocumenti($documenti);
+
+        if (!empty($scadenza) && $singola) {
+            $scadenze = [$scadenza->iddocumento => [$scadenza->id]];
+        }
 
         foreach ($movimenti as $movimento) {
             $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento);
@@ -197,49 +201,73 @@ class Mastrino extends Model
                 $dir = $documento->direzione;
             }
 
-            foreach ($scadenze as $scadenza) {
-                $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
-                ->where('totale', '>', 0)
-                ->sum('totale');
-            }
+            // Se il movimento ha una scadenza specifica, aggiorna solo quella
+            if (count($scadenze) == 1) {
+                $scadenza = Scadenza::find($movimento->id_scadenza);
+                if (!empty($scadenza)) {
+                    // Calcola il totale dei movimenti per questa specifica scadenza
+                    $totale_movimenti_scadenza = $movimento->totale;
 
-            $totale_da_distribuire = abs($totale_movimenti);
+                    $scadenza_da_pagare = abs($scadenza->da_pagare);
+                    $pagato_assoluto = abs($totale_movimenti_scadenza);
 
-            // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
-            // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-            foreach ($scadenze as $scadenza) {
-                $scadenza = Scadenza::find($scadenza);
+                    // Limita il pagato all'importo da pagare della scadenza
+                    $pagato_assoluto = min($pagato_assoluto, $scadenza_da_pagare);
 
-                if (empty($scadenza)) {
-                    continue;
+                    // Applica il segno corretto in base alla direzione
+                    $pagato = ($dir == 'uscita' ? -$pagato_assoluto : $pagato_assoluto);
+                    $pagato = $is_nota ? -$pagato : $pagato;
+
+                    // Salvataggio delle informazioni
+                    $scadenza->pagato = $pagato;
+                    $scadenza->data_pagamento = $pagato ? $this->data : null;
+                    $scadenza->save();
                 }
-                $scadenza_da_pagare = abs($scadenza->da_pagare);
-
-                // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
-                if ($totale_da_distribuire <= 0) {
-                    $pagato = 0;
-                }
-
-                // Se il totale da distribuire è superiore al valore da pagare della scadenza, completa il pagamento
-                elseif ($totale_da_distribuire >= $scadenza_da_pagare) {
-                    $pagato = $scadenza_da_pagare;
-                    $totale_da_distribuire -= $scadenza_da_pagare;
-                }
-
-                // In caso alternativo, assegno il rimanente da distribuire interamente alla scadenza
-                else {
-                    $pagato = $totale_da_distribuire;
-                    $totale_da_distribuire = 0;
+            } else {
+                foreach ($scadenze as $scadenza) {
+                    $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
+                    ->where('totale', '>', 0)
+                    ->sum('totale');
                 }
 
-                // Inversione di segno per la direzione del movimento contabile
-                $pagato = ($dir == 'uscita' ? -$pagato : $pagato);
-                $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
+                $totale_da_distribuire = abs($totale_movimenti);
 
-                // Salvataggio delle informazioni
-                $scadenza->pagato = $pagato;
-                $scadenza->data_pagamento = $pagato ? $this->data : null;
-                $scadenza->save();
+                // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
+                // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+                foreach ($scadenze as $scadenza) {
+                    $scadenza = Scadenza::find($scadenza);
+
+                    if (empty($scadenza)) {
+                        continue;
+                    }
+                    $scadenza_da_pagare = abs($scadenza->da_pagare);
+
+                    // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
+                    if ($totale_da_distribuire <= 0) {
+                        $pagato = 0;
+                    }
+
+                    // Se il totale da distribuire è superiore al valore da pagare della scadenza, completa il pagamento
+                    elseif ($totale_da_distribuire >= $scadenza_da_pagare) {
+                        $pagato = $scadenza_da_pagare;
+                        $totale_da_distribuire -= $scadenza_da_pagare;
+                    }
+
+                    // In caso alternativo, assegno il rimanente da distribuire interamente alla scadenza
+                    else {
+                        $pagato = $totale_da_distribuire;
+                        $totale_da_distribuire = 0;
+                    }
+
+                    // Inversione di segno per la direzione del movimento contabile
+                    $pagato = ($dir == 'uscita' ? -$pagato : $pagato);
+                    $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
+
+                    // Salvataggio delle informazioni
+                    $scadenza->pagato = $pagato;
+                    $scadenza->data_pagamento = $pagato ? $this->data : null;
+                    $scadenza->save();
+                }
             }
         }
     }

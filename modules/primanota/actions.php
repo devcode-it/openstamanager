@@ -33,6 +33,7 @@ switch (post('op')) {
         $id_anagrafica = post('id_anagrafica');
         $chiudi_scadenza = post('chiudi_scadenza_add');
         $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
+        $singola = post('singola');
 
         $conti = post('idconto_add');
         $scadenze = [];
@@ -60,7 +61,7 @@ switch (post('op')) {
             }
         }
 
-        $mastrino->aggiornaScadenzario();
+        $mastrino->aggiornaScadenzario(null, $scadenza, $singola);
 
         if ($chiudi_scadenza) {
             foreach ($scadenze as $id_scadenza) {

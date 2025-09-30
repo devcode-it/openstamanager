@@ -25,6 +25,7 @@ $r = $dbo->fetchOne('SELECT *,
         `an_referenti`.`nome`,
         `in_interventi`.`codice` AS codice,
         (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `idintervento`=`in_interventi`.`id`) AS data_fine,
+        `in_tipiintervento_lang`.`title` AS tipo,
         `in_statiintervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
         `in_interventi`.`descrizione` AS descrizione,
@@ -34,6 +35,8 @@ $r = $dbo->fetchOne('SELECT *,
         LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`idsede_destinazione`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
+        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
         LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`in_interventi`.`idreferente`
         LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != "", CONCAT(" - ", `nome`), "")) SEPARATOR "<br>") AS descrizione, `my_impianti_interventi`.`idintervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`idimpianto` GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti ON `impianti`.`idintervento` = `in_interventi`.`id`
@@ -50,6 +53,7 @@ return [
     'data richiesta' => Translator::dateToLocale($r['data_richiesta']),
     'data fine intervento' => empty($r['data_fine']) ? Translator::dateToLocale($r['data_richiesta']) : Translator::dateToLocale($r['data_fine']),
     'id_anagrafica' => $r['id_anagrafica'],
+    'tipo' => $r['tipo'],
     'stato' => $r['stato'],
     'impianti' => $r['impianti'],
     'nome_referente' => $r['nome'],

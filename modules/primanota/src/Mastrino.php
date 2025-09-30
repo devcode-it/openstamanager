@@ -224,6 +224,9 @@ class Mastrino extends Model
                     $scadenza->save();
                 }
             } else {
+                // Ordina le scadenze per data scadenza
+                $scadenze = Scadenza::whereIn('id', $scadenze)->orderBy('scadenza', 'asc')->get()->pluck('id')->toArray();
+
                 foreach ($scadenze as $scadenza) {
                     $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
                     ->where('totale', '>', 0)

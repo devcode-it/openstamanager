@@ -113,10 +113,10 @@ if (!empty($fattura)) {
 
                     <td>
                         <div id="select-conto-standard-'.$riga['id'].'" '.($riga->is_cespite ? 'style="display:none;"' : '').'>
-                            {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
+                            {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": "'.($riga->is_cespite ? 0 : 1).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
                         </div>
                         <div id="select-conto-cespite-'.$riga['id'].'" '.(!$riga->is_cespite ? 'style="display:none;"' : '').'>
-                            {[ "type": "select", "name": "idconto_cespiti['.$riga['id'].']", "required": 1, "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
+                            {[ "type": "select", "name": "idconto_cespiti['.$riga['id'].']", "required": "'.($riga->is_cespite ? 1 : 0).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
                         </div>
                     </td>
 
@@ -172,10 +172,14 @@ $(document).ready(function() {
         // Mostra/nascondi i selettori appropriati
         if (is_cespite) {
             $("#select-conto-standard-" + id).hide();
+            $("#select-conto-standard-" + id).find("select").attr("required", false);
             $("#select-conto-cespite-" + id).show();
+            $("#select-conto-cespite-" + id).find("select").attr("required", true);
         } else {
             $("#select-conto-standard-" + id).show();
+            $("#select-conto-standard-" + id).find("select").attr("required", true);
             $("#select-conto-cespite-" + id).hide();
+            $("#select-conto-cespite-" + id).find("select").attr("required", false);
         }
     });
 });

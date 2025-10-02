@@ -147,3 +147,5 @@ HAVING
     2=2
 ORDER BY
     `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Fatture di vendita';
+
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF(giacenze.stato_giacenza>0, '#CCFFCC', '#ec5353')" WHERE `zz_views`.`name` = '_bg_' AND `zz_modules`.`name` = 'Articoli';

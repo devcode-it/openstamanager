@@ -38,3 +38,20 @@ echo '
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo impianto?\') ){ $(\'#copia-impianto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica impianto').'</button>
 
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Confermando, tutte le checklist della categoria verranno importate in questo impianto. Continuare?\') ){ $(\'#check-impianto\').submit(); }"> <i class="fa fa-refresh"></i> '.tr('Importa checklist categoria').'</button>';
+
+// Verifica se esiste già un token OTP per questo impianto
+$existing_token = $dbo->fetchOne('SELECT id FROM zz_otp_tokens WHERE id_record_target = ? AND id_module_target = ?', [$id_record, $id_module]);
+
+if ($existing_token) {
+    // Pulsante per visualizzare l'etichetta già creata
+    echo '
+    <button type="button" class="btn btn-success" onclick="openModal(\''.tr('Visualizza etichetta').'\', \''.$structure->fileurl('modals/configurazione_otp.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
+        <i class="fa fa-eye"></i> '.tr('Visualizza etichetta').'
+    </button>';
+} else {
+    // Pulsante per configurazione guidata token OTP
+    echo '
+    <button type="button" class="btn btn-info" onclick="openModal(\''.tr('Genera etichetta').'\', \''.$structure->fileurl('modals/configurazione_otp.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
+        <i class="fa fa-qrcode"></i> '.tr('Genera etichetta').'
+    </button>';
+}

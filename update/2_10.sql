@@ -64,3 +64,11 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), '_bg_');
 
 CREATE TABLE `in_tipiintervento_tipologie` (`id` INT NOT NULL AUTO_INCREMENT , `idtipointervento` INT NOT NULL , `tipo` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`));
+
+-- Impostazione per consentire l'inserimento di allegati in attività completate
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Permetti l\'inserimento di allegati in attività completate', '0', 'boolean', '1', 'Attività', NULL, '0');
+
+SELECT @id_setting := MAX(`id`) FROM `zz_settings`;
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+(1, @id_setting, 'Permetti l\'inserimento di allegati in attività completate', ''), 
+(2, @id_setting, 'Allow attachment insertion in completed activities', '');

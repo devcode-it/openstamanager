@@ -464,7 +464,7 @@ if (!$block_edit) {
     </div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato'] && !setting('Permetti l\'inserimento di allegati in attività completate')) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center row">

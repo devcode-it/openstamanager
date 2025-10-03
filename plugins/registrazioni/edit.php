@@ -163,11 +163,84 @@ function copy() {
     }
 }
 
+// Funzione per validare i conti prima del submit
+function validateConti() {
+    let valid = true;
+    let errors = [];
+
+    // Controlla ogni riga
+    $("input[name^=\'is_cespite\']").each(function() {
+        const id = $(this).attr("name").match(/\[(.*?)\]/)[1];
+        const is_cespite = $(this).val() == 1;
+
+        let conto_selezionato = null;
+
+        if (is_cespite) {
+            // Verifica conto cespite
+            const select_cespite = $("#select-conto-cespite-" + id).find("select");
+            conto_selezionato = select_cespite.val();
+
+            if (!conto_selezionato || conto_selezionato == \'\') {
+                valid = false;
+                errors.push(\'Riga \' + id + \': selezionare un conto cespite\');
+                select_cespite.addClass(\'parsley-error\');
+            } else {
+                select_cespite.removeClass(\'parsley-error\');
+            }
+        } else {
+            // Verifica conto standard
+            const select_standard = $("#select-conto-standard-" + id).find("select");
+            conto_selezionato = select_standard.val();
+
+            if (!conto_selezionato || conto_selezionato == \'\') {
+                valid = false;
+                errors.push(\'Riga \' + id + \': selezionare un conto\');
+                select_standard.addClass(\'parsley-error\');
+            } else {
+                select_standard.removeClass(\'parsley-error\');
+            }
+        }
+    });
+
+    if (!valid) {
+        swal({
+            type: "error",
+            title: "<?php echo tr(\'Errori di validazione\'); ?>",
+            html: "<?php echo tr(\'Correggere i seguenti errori:\'); ?><br><ul><li>" + errors.join("</li><li>") + "</li></ul>"
+        });
+    }
+
+    return valid;
+}
+
 // Gestione del reset del conto quando si cambia lo stato del cespite
 $(document).ready(function() {
+    // Override del submit del form per aggiungere validazione personalizzata
+    $(\'form\').off(\'submit\').on(\'submit\', function(e) {
+        e.preventDefault();
+
+        // Prima validazione Parsley standard
+        if (!$(this).parsley().validate()) {
+            return false;
+        }
+
+        // Poi validazione personalizzata per i conti
+        if (!validateConti()) {
+            return false;
+        }
+
+        // Se tutto è valido, procedi con il submit
+        this.submit();
+        return true;
+    });
+
     $("input[name^=\'is_cespite\']").change(function() {
         const id = $(this).attr("name").match(/\[(.*?)\]/)[1];
         const is_cespite = $(this).val() == 1;
+
+        // Rimuovi eventuali errori precedenti
+        $("#select-conto-standard-" + id).find("select").removeClass(\'parsley-error\');
+        $("#select-conto-cespite-" + id).find("select").removeClass(\'parsley-error\');
 
         // Mostra/nascondi i selettori appropriati
         if (is_cespite) {
@@ -175,12 +248,33 @@ $(document).ready(function() {
             $("#select-conto-standard-" + id).find("select").attr("required", false);
             $("#select-conto-cespite-" + id).show();
             $("#select-conto-cespite-" + id).find("select").attr("required", true);
+
+            // Verifica se ci sono conti cespiti disponibili
+            const conti_cespiti_disponibili = $("#select-conto-cespite-" + id).find("select option").length;
+            if (conti_cespiti_disponibili <= 1) { // Solo opzione vuota
+                swal({
+                    type: "warning",
+                    title: "<?php echo tr(\'Attenzione\'); ?>",
+                    text: "<?php echo tr(\'Non ci sono conti cespiti configurati nel sistema. Configurare prima i conti cespiti nelle impostazioni.\'); ?>"
+                });
+                // Ripristina lo stato precedente
+                $(this).val(0).trigger(\'change\');
+                return false;
+            }
         } else {
             $("#select-conto-standard-" + id).show();
             $("#select-conto-standard-" + id).find("select").attr("required", true);
             $("#select-conto-cespite-" + id).hide();
             $("#select-conto-cespite-" + id).find("select").attr("required", false);
         }
+
+        // Aggiorna la validazione Parsley
+        $(\'form\').parsley().refresh();
+    });
+
+    // Gestione del cambio di selezione nei conti per rimuovere errori
+    $("select[name^=\'idconto\']").change(function() {
+        $(this).removeClass(\'parsley-error\');
     });
 });
 </script>';

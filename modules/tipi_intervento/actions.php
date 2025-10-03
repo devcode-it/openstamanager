@@ -65,6 +65,9 @@ switch (post('op')) {
         ]);
         $tipi = (array) post('tipi');
         foreach ($tipi as $tipo) {
+            if (!$tipo) {
+                continue;
+            }
             $dbo->insert('in_tipiintervento_tipologie', [
                 'idtipointervento' => $id_record,
                 'tipo' => $tipo

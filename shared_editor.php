@@ -245,6 +245,9 @@ body {
 .token-readonly-buttons button.disabled:hover {
     opacity: 0.5;
 }
+.with-control-sidebar {
+    margin-right: 0 !important;
+}
 
 </style>
 
@@ -357,7 +360,6 @@ if ($current_permission == 'rw') {
 echo '
 <script>
 $(document).ready(function() {
-    $("section").removeClass("with-control-sidebar");
     $(".main-sidebar").hide();
     $(".control-sidebar-button").hide();
 });

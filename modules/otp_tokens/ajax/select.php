@@ -26,7 +26,7 @@ switch ($resource) {
         $query = 'SELECT zz_modules.id AS id, title AS descrizione FROM zz_modules INNER JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).' |where| ORDER BY title';
 
         $where[] = 'enabled = 1';
-        $where[] = "name IN('Anagrafiche', 'Gestione documentale')";
+        $where[] = "name IN('Anagrafiche', 'Gestione documentale', 'Impianti')";
         $where[] = "IF(options2 != '', options2!='menu', options!='menu')";
 
         foreach ($elements as $element) {
@@ -63,6 +63,18 @@ switch ($resource) {
 
             if ($module->name == 'Gestione documentale') {
                 $query = 'SELECT id, nome AS descrizione FROM do_documenti |where| ORDER BY nome';
+
+                foreach ($elements as $element) {
+                    $filter[] = 'id='.prepare($element);
+                }
+
+                if (!empty($search)) {
+                    $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+                }
+            }
+
+            if ($module->name == 'Impianti') {
+                $query = 'SELECT id, nome AS descrizione FROM my_impianti |where| ORDER BY nome';
 
                 foreach ($elements as $element) {
                     $filter[] = 'id='.prepare($element);

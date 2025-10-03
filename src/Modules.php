@@ -52,8 +52,10 @@ class Modules
         }
 
         // Caricamento dei plugin
-        if (!self::$all_modules->first()->relationLoaded('plugins')) {
-            self::$all_modules->load('plugins');
+        if(self::$all_modules->first()){
+            if (!self::$all_modules->first()->relationLoaded('plugins')) {
+                self::$all_modules->load('plugins');
+            }
         }
 
         return self::$all_modules;

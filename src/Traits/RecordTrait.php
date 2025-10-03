@@ -82,9 +82,9 @@ trait RecordTrait
 
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {
-                $value = $this->getTranslation($field);
-
-                foreach ($other_langs as $id_lang) {
+                $value = $this->name;
+                
+                foreach ($langs as $id_lang) {
                     $translation = database()->table($this->table.'_lang')
                         ->select($field)
                         ->where('id_record', '=', $this->id)

@@ -41,4 +41,7 @@ $builder = new Builder(
 
 $result = $builder->build();
 
-echo '<img src="data:image/png;base64,'.base64_encode($result->getString()).'" />';
+echo '
+<div class="text-center" style="width: 100%;">
+    <img src="data:image/png;base64,'.base64_encode($result->getString()).'" />
+</div>';

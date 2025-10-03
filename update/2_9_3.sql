@@ -158,3 +158,6 @@ UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules
 
 -- fix: invio via mail token otp
 ALTER TABLE `em_emails` CHANGE `created_by` `created_by` INT(11) NULL;
+
+-- fix: dimensioni QR Code
+UPDATE `zz_prints` SET `options` = '{\"width\": 40, \"height\": 30, \"format\": [40, 30], \"margins\": {\"top\": 1,\"bottom\": 0,\"left\": 0,\"right\": 0}}' WHERE `zz_prints`.`id` = 56;

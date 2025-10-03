@@ -64,7 +64,14 @@ if (!empty($query)) {
     // CONTEGGIO TOTALE
     $results['recordsTotal'] = $dbo->fetchNum($query);
 
-    // RISULTATI VISIBILI
+    // CONTEGGIO RECORD FILTRATI (senza LIMIT)
+    $query_filtered = Query::getQuery($structure, $search, $order, [], $total);
+    if (empty($id_plugin)) {
+        $query_filtered = Modules::replaceAdditionals($id_module, $query_filtered);
+    }
+    $results['recordsFiltered'] = $dbo->fetchNum($query_filtered);
+
+    // RISULTATI VISIBILI (con LIMIT)
     $query = Query::getQuery($structure, $search, $order, $limit, $total);
 
     // Filtri derivanti dai permessi (eventuali)
@@ -72,10 +79,9 @@ if (!empty($query)) {
         $query = Modules::replaceAdditionals($id_module, $query);
     }
 
-    // Conteggio dei record filtrati
+    // Esecuzione query per ottenere i risultati
     $data = Query::executeAndCount($query);
     $rows = $data['results'];
-    $results['recordsFiltered'] = $data['count'];
 
     // SOMME
     $results['summable'] = Query::getSums($structure, $search);

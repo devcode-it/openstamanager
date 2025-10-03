@@ -21,6 +21,8 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Export\CSV;
 use Modules\Anagrafiche\Tipo;
+use Modules\ListeNewsletter\Lista;
+use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
@@ -186,6 +188,54 @@ switch (post('op')) {
         download($file, $filename);
 
         break;
+
+    case 'crea-lista':
+        $lista = Lista::build(post('nome_lista'));
+        $lista->setTranslation('title', post('nome_lista'));
+        $modalita_dinamica = post('modalita_dinamica');
+        $includi_disiscritti = post('includi_disiscritti');
+
+        // Se modalità dinamica è attiva, salvo la query, altrimenti la lista sarà statica
+        if ($modalita_dinamica) {
+            // Aggiungo i filtri di ricerca applicati nel modulo
+            $where = [];
+            if (count(getSearchValues($id_module)) > 0) {
+                foreach (getSearchValues($id_module) as $key => $value) {
+                    $where[$key] = $value;
+                }
+            }
+            $query = Query::getQuery($structure, $where);
+            $pos = strpos($query, 'SELECT');
+            if ($pos !== false) {
+                $query = substr_replace($query, "SELECT 'Modules\\\\\\Anagrafiche\\\\\\Anagrafica' AS tipo_lista, ", $pos, 6);
+            }
+
+            // Se non includo i disiscritti, aggiungo il filtro per enable_newsletter = 1
+            if (!$includi_disiscritti) {
+                $query = str_replace('1=1', '1=1 AND an_anagrafiche.enable_newsletter = 1', $query);
+            }
+
+            if (check_query($query)) {
+                $lista->query = html_entity_decode($query);
+            }
+        } else {
+            foreach ($id_records as $id) {
+                $anagrafica = Anagrafica::find($id);
+                if (!$includi_disiscritti && !$anagrafica->enable_newsletter) {
+                    continue;
+                }
+                $dbo->insert("em_list_receiver", [
+                    'id_list' => $lista->id,
+                    'record_type' => Anagrafica::class,
+                    'record_id' => $id,
+                ]);
+            }
+        }
+        $lista->save();
+
+        flash()->info(tr('Lista creata correttamente!'));
+
+        break;
 }
 
 $operations = [];
@@ -243,6 +293,18 @@ $operations['export_newsletter_csv'] = [
         'button' => tr('Esporta CSV'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
+    ],
+];
+
+$operations['crea-lista'] = [
+    'text' => '<span><i class="fa fa-envelope"></i> '.tr('Crea lista').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi creare una nuova lista?').'<br><br>{[ "type": "text", "label": "'.tr('Nome lista').'", "name": "nome_lista", "required": 1 ]}
+        {[ "type": "checkbox", "label": "'.tr('Modalità').'", "name": "modalita_dinamica", "help": "'.tr('Se Dinamica prende in considerazione tutte le righe della tabella con i filtri applicati, mentre Statica esporta solo le righe selezionate.').'", "values": "Dinamica,Statica" ]}
+        {[ "type": "checkbox", "label": "'.tr('Includi disiscritti').'", "name": "includi_disiscritti", "value": 0 ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+        'blank' => false,
     ],
 ];
 

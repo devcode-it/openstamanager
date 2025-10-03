@@ -62,8 +62,9 @@ class Lista extends Model
                 'id_list' => $this->id,
             ]);
 
-            // Ricerca nuovi record
-            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.preg_replace('/'.preg_quote('SELECT', '/').'/', 'SELECT '.prepare($this->id).',', $query, 1));
+            // Ricerca nuovi record - usa subquery per limitare le colonne
+            $wrapped_query = 'SELECT '.prepare($this->id).', subq.id, subq.tipo_lista FROM (' . $query . ') AS subq';
+            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) ' . $wrapped_query);
         }
 
         return $result;

@@ -140,4 +140,34 @@ switch (filter('op')) {
         flash()->info(tr('Tutti i destinatari sono stati rimossi dalla lista newsletter!'));
 
         break;
+
+    case 'export_list':
+        $results = $lista->destinatari()->get();
+
+        // Creazione del file CSV
+        $file = temp_file();
+        $handle = fopen($file, 'w');
+
+        // Scrittura dell'intestazione
+        fputcsv($handle, ['Email', 'Ragione sociale'], ';');
+
+        // Scrittura dei dati
+        foreach ($results as $destinatario) {
+            $origine = $destinatario->getOrigine();
+            $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
+
+            fputcsv($handle, [
+                $origine->email,
+                $anagrafica->ragione_sociale,
+            ], ';');
+        }
+        fclose($handle);
+
+        $filename = 'export_lista_'.$lista->name.'.csv';
+
+        // Download del file
+        download($file, $filename);
+        exit;
+
+        break;
 }

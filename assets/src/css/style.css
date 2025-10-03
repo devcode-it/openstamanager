@@ -2141,6 +2141,14 @@ table.dataTable {
     font-size: 13px !important;
 }
 
+/* Stili per le opzioni disabilitate nei select */
+.select2-results__option[aria-disabled="true"] {
+    color: #777777 !important;
+    background-color: #f5f5f5 !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
 .select2-container--bootstrap4 .select2-results__option--highlighted > a {
     color: #fff;
 }

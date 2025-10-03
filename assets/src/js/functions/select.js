@@ -38,6 +38,12 @@ function optionRendering(data, container) {
     // Aggiunta degli attributi impostati staticamente
     selectOptionAttributes(data);
 
+    // Gestione delle opzioni disabilitate - solo attributi per CSS
+    if ((data.element && $(data.element).prop('disabled')) || data.disabled) {
+        $(container).attr('aria-disabled', 'true');
+        return data.text;
+    }
+
     // Impostazione del colore dell'opzione
     let bg;
     if (data._bgcolor_) {
@@ -250,6 +256,18 @@ function initStaticSelectInput(input) {
         templateResult: optionRendering,
         templateSelection: selectionRendering,
     });
+
+    // Previeni la selezione di opzioni disabilitate
+    $input.on('select2:selecting', function (e) {
+        if (e.params && e.params.data && e.params.data.element) {
+            if ($(e.params.data.element).prop('disabled')) {
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+
+
 }
 
 /**
@@ -318,6 +336,16 @@ function initDynamicSelectInput(input) {
         },
         width: '100%'
     });
+
+    // Previeni la selezione di opzioni disabilitate per select AJAX
+    $input.on('select2:selecting', function (e) {
+        if (e.params && e.params.data && e.params.data.disabled) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+
 
     // Rimozione delle option presenti nell'HTML per permettere l'aggiornamento dei dati via AJAX
     // Rimozione per select multipli

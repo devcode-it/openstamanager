@@ -168,46 +168,56 @@ function validateConti() {
     let valid = true;
     let errors = [];
 
-    // Controlla ogni riga
-    $("input[name^=\'is_cespite\']").each(function() {
-        const id = $(this).attr("name").match(/\[(.*?)\]/)[1];
-        const is_cespite = $(this).val() == 1;
+    try {
+        // Controlla ogni riga
+        $("input[name^=\'is_cespite\']").each(function() {
+            const id = $(this).attr("name").match(/\[(.*?)\]/)[1];
+            const is_cespite = $(this).val() == 1;
 
-        let conto_selezionato = null;
+            let conto_selezionato = null;
 
-        if (is_cespite) {
-            // Verifica conto cespite
-            const select_cespite = $("#select-conto-cespite-" + id).find("select");
-            conto_selezionato = select_cespite.val();
+            if (is_cespite) {
+                // Verifica conto cespite
+                const select_cespite = $("#select-conto-cespite-" + id).find("select");
+                if (select_cespite.length > 0) {
+                    conto_selezionato = select_cespite.val();
 
-            if (!conto_selezionato || conto_selezionato == \'\') {
-                valid = false;
-                errors.push(\'Riga \' + id + \': selezionare un conto cespite\');
-                select_cespite.addClass(\'parsley-error\');
+                    if (!conto_selezionato || conto_selezionato == \'\') {
+                        valid = false;
+                        errors.push(\'Riga \' + id + \': selezionare un conto cespite\');
+                        select_cespite.addClass(\'parsley-error\');
+                    } else {
+                        select_cespite.removeClass(\'parsley-error\');
+                    }
+                }
             } else {
-                select_cespite.removeClass(\'parsley-error\');
-            }
-        } else {
-            // Verifica conto standard
-            const select_standard = $("#select-conto-standard-" + id).find("select");
-            conto_selezionato = select_standard.val();
+                // Verifica conto standard
+                const select_standard = $("#select-conto-standard-" + id).find("select");
+                if (select_standard.length > 0) {
+                    conto_selezionato = select_standard.val();
 
-            if (!conto_selezionato || conto_selezionato == \'\') {
-                valid = false;
-                errors.push(\'Riga \' + id + \': selezionare un conto\');
-                select_standard.addClass(\'parsley-error\');
-            } else {
-                select_standard.removeClass(\'parsley-error\');
+                    if (!conto_selezionato || conto_selezionato == \'\') {
+                        valid = false;
+                        errors.push(\'Riga \' + id + \': selezionare un conto\');
+                        select_standard.addClass(\'parsley-error\');
+                    } else {
+                        select_standard.removeClass(\'parsley-error\');
+                    }
+                }
             }
-        }
-    });
-
-    if (!valid) {
-        swal({
-            type: "error",
-            title: "<?php echo tr(\'Errori di validazione\'); ?>",
-            html: "<?php echo tr(\'Correggere i seguenti errori:\'); ?><br><ul><li>" + errors.join("</li><li>") + "</li></ul>"
         });
+
+        if (!valid && errors.length > 0) {
+            swal({
+                type: "error",
+                title: "<?php echo tr(\'Errori di validazione\'); ?>",
+                html: "<?php echo tr(\'Correggere i seguenti errori:\'); ?><br><ul><li>" + errors.join("</li><li>") + "</li></ul>"
+            });
+        }
+    } catch (e) {
+        console.error(\'Errore nella validazione dei conti:\', e);
+        // In caso di errore, permetti il submit normale
+        valid = true;
     }
 
     return valid;
@@ -215,24 +225,44 @@ function validateConti() {
 
 // Gestione del reset del conto quando si cambia lo stato del cespite
 $(document).ready(function() {
-    // Override del submit del form per aggiungere validazione personalizzata
-    $(\'form\').off(\'submit\').on(\'submit\', function(e) {
-        e.preventDefault();
+    // Aggiungi validazione personalizzata solo se siamo nel plugin registrazioni
+    if (window.location.href.indexOf(\'id_plugin=<?php echo $id_plugin; ?>\') > -1 &&
+        $(\'input[name="op"][value="change-conto"]\').length > 0) {
 
-        // Prima validazione Parsley standard
-        if (!$(this).parsley().validate()) {
+        console.log(\'Plugin registrazioni: attivazione validazione personalizzata\');
+
+        // Override del submit del form SOLO per il plugin registrazioni
+        $(\'form[action=""]\').off(\'submit.registrazioni\').on(\'submit.registrazioni\', function(e) {
+            console.log(\'Plugin registrazioni: validazione submit\');
+
+            // Prima validazione Parsley standard
+            if (!$(this).parsley().validate()) {
+                console.log(\'Plugin registrazioni: validazione Parsley fallita\');
+                return false;
+            }
+
+            // Poi validazione personalizzata per i conti
+            if (!validateConti()) {
+                console.log(\'Plugin registrazioni: validazione conti fallita\');
+                return false;
+            }
+
+            console.log(\'Plugin registrazioni: validazione completata, submit in corso\');
+
+            // Se tutto è valido, rimuovi il listener e procedi con il submit
+            $(this).off(\'submit.registrazioni\');
+
+            // Previeni il loop infinito
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Submit manuale
+            this.submit();
             return false;
-        }
-
-        // Poi validazione personalizzata per i conti
-        if (!validateConti()) {
-            return false;
-        }
-
-        // Se tutto è valido, procedi con il submit
-        this.submit();
-        return true;
-    });
+        });
+    } else {
+        console.log(\'Plugin registrazioni: validazione personalizzata non attivata\');
+    }
 
     $("input[name^=\'is_cespite\']").change(function() {
         const id = $(this).attr("name").match(/\[(.*?)\]/)[1];

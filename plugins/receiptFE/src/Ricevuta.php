@@ -44,7 +44,7 @@ class Ricevuta
     /** @var array XML della ricevuta */
     protected $fattura;
 
-    public function __construct($name)
+    public function __construct($name, $id_fattura_forzata = null)
     {
         $file = static::getImportDirectory().'/'.$name;
 
@@ -74,9 +74,14 @@ class Ricevuta
 
             $progressivo_invio = $pieces[1];
 
-            $this->fattura = Fattura::where([
-                'progressivo_invio' => $progressivo_invio,
-            ])->first();
+            // Se è stata forzata un'associazione, usa quella fattura
+            if ($id_fattura_forzata) {
+                $this->fattura = Fattura::find($id_fattura_forzata);
+            } else {
+                $this->fattura = Fattura::where([
+                    'progressivo_invio' => $progressivo_invio,
+                ])->first();
+            }
         }
 
         if (empty($this->fattura)) {
@@ -89,16 +94,17 @@ class Ricevuta
      *
      * @param string $name
      * @param bool   $cambia_stato
+     * @param int    $id_fattura_forzata
      *
      * @return Fattura|null
      */
-    public static function process($name, $cambia_stato = true)
+    public static function process($name, $cambia_stato = true, $id_fattura_forzata = null)
     {
         Interaction::getReceipt($name);
 
         $fattura = null;
         try {
-            $receipt = new Ricevuta($name);
+            $receipt = new Ricevuta($name, $id_fattura_forzata);
             $receipt->save($cambia_stato);
 
             $fattura = $receipt->getFattura();
@@ -106,7 +112,10 @@ class Ricevuta
             $receipt->cleanup();
 
             Interaction::processReceipt($name);
-        } catch (\UnexpectedValueException) {
+        } catch (\UnexpectedValueException $e) {
+            // Ricevuta non trovata o fattura non trovata
+        } catch (\Exception $e) {
+            throw $e;
         }
 
         return $fattura;
@@ -129,6 +138,21 @@ class Ricevuta
         file_put_contents($file, $content);
 
         return $filename;
+    }
+
+    /**
+     * Estrae il progressivo invio da una ricevuta senza istanziare la classe.
+     *
+     * @param string $name
+     *
+     * @return string|null
+     */
+    public static function getProgressivoInvio($name)
+    {
+        $filename = explode('.', (string) $name)[0];
+        $pieces = explode('_', $filename);
+
+        return isset($pieces[1]) ? $pieces[1] : null;
     }
 
     /**

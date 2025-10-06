@@ -892,7 +892,7 @@ function impostaRiferimento(id_riga, documento, riga) {
 
     // Gestione della selezione
     if (documento.id && documento.opzione) {
-        input("selezione_riferimento[" + id_riga + "]").getElement().selectSetNew(documento.id, documento.opzione);
+        input("selezione_riferimento[" + id_riga + "]").getElement().addClass("already-loaded").selectSetNew(documento.id, documento.opzione).removeClass("already-loaded");
     }
     input("selezione_riferimento[" + id_riga + "]").disable();
     $("#rimuovi_riferimento_" + id_riga).removeClass("disabled");
@@ -973,7 +973,7 @@ function impostaRiferimentoVendita(id_riga, documento, riga) {
 
     // Gestione della selezione
     if (documento.id && documento.opzione) {
-        input("selezione_riferimento_vendita[" + id_riga + "]").getElement().selectSetNew(documento.id, documento.opzione);
+        input("selezione_riferimento_vendita[" + id_riga + "]").getElement().addClass("already-loaded").selectSetNew(documento.id, documento.opzione).removeClass("already-loaded");
     }
     input("selezione_riferimento_vendita[" + id_riga + "]").disable();
     $("#rimuovi_riferimento_vendita_" + id_riga).removeClass("disabled");

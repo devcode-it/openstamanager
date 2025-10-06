@@ -84,7 +84,7 @@ switch ($resource) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
 
-        $custom['link'] = 'module:Piano dei conti';
+        $custom['link'] = '';
 
         break;
 
@@ -101,7 +101,7 @@ switch ($resource) {
             $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
 
-        $custom['link'] = 'module:Piano dei conti';
+        $custom['link'] = '';
 
         break;
 

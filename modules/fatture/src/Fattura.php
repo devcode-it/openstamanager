@@ -144,8 +144,12 @@ class Fattura extends Document
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta previdenziale predefinita') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
-        // Banca predefinita per l'anagrafica controparte
-        // $model->id_banca_controparte = ;
+        // Banca predefinita per l'anagrafica controparte (cliente/fornitore)
+        $banca_controparte = Banca::where('id_anagrafica', $anagrafica->id)
+            ->where('predefined', 1)
+            ->first();
+
+        $model->id_banca_controparte = $banca_controparte?->id;
 
         // Tipo di pagamento dall'anagrafica controparte
         $id_pagamento = $anagrafica['idpagamento_'.$conto];
@@ -172,6 +176,13 @@ class Fattura extends Document
             }
             if (empty($id_banca_azienda)) {
                 $id_banca_azienda = $azienda->{'idbanca_'.$conto};
+            }
+            // Fallback finale: banca predefinita dell'azienda
+            if (empty($id_banca_azienda)) {
+                $banca_predefinita_azienda = Banca::where('id_anagrafica', $azienda->id)
+                    ->where('predefined', 1)
+                    ->first();
+                $id_banca_azienda = $banca_predefinita_azienda?->id;
             }
         }
 

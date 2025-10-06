@@ -804,7 +804,7 @@ class Fattura extends Document
     }
 
     /**
-     * Controlla se la fattura è una nota di credito.
+     * Controlla se la fattura è un'autofattura.
      *
      * @return bool
      */

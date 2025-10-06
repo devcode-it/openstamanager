@@ -131,10 +131,22 @@ class FatturaSemplificata extends FatturaElettronica
             $obj->id_iva = $iva_value;
             $obj->idconto = $conto[$key];
 
-            // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
-            $prezzo = $prezzo < 0 ? -$prezzo : $prezzo;
-            $qta = 1;
-            $qta = $riga['Importo'] < 0 ? -$qta : $qta;
+            // Gestione corretta dei segni in base al tipo di documento
+            $tipo_documento = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];
+            $is_nota_credito = ($tipo_documento == 'TD04');
+
+            // Solo per le note di credito (TD04) invertiamo i segni
+            if ($is_nota_credito) {
+                $prezzo = $prezzo < 0 ? -$prezzo : $prezzo;
+                $qta = 1;
+                $qta = $riga['Importo'] < 0 ? -$qta : $qta;
+            } else {
+                // Per fatture normali e note di debito, manteniamo i segni originali
+                $prezzo = abs($prezzo);
+                $qta = 1;
+                // Manteniamo il segno dell'importo nella quantità solo se è negativo
+                $qta = $riga['Importo'] < 0 ? -$qta : $qta;
+            }
 
             // Prezzo e quantità
             $obj->prezzo_unitario = $prezzo;

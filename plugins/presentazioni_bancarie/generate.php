@@ -57,7 +57,170 @@ if (!$esporta_processati) {
 
 // Lettura delle informazioni
 $scadenze = $scadenze->get();
+
+// Filtro per note di credito e gestione storno
+$scadenze_filtrate = collect();
+$scadenze_da_escludere = collect();
+$scadenze_modificate = collect(); // Mappa id_scadenza => scadenza_modificata
+$note_credito_escluse = collect();
+$fatture_stornate = collect();
+$storni_parziali = collect(); // Per tracciare gli storni parziali
+
+// Prima passata: identifichiamo note di credito e calcoliamo storni
+foreach ($scadenze as $scadenza) {
+    $documento = $scadenza->documento;
+
+    // Se è una nota di credito, gestiamo lo storno
+    if (!empty($documento) && $documento->isNota()) {
+        $note_credito_escluse->push($documento);
+
+        // Verifica se corrisponde all'importo della fattura originale
+        $fattura_originale = $documento->getFatturaOriginale();
+        if (!empty($fattura_originale)) {
+            $importo_nota = abs($documento->netto);
+            $importo_fattura_originale = abs($fattura_originale->netto);
+
+            // Se gli importi corrispondono (tolleranza di 1 centesimo), escludiamo anche la fattura originale
+            if (abs($importo_nota - $importo_fattura_originale) < 0.01) {
+                // Trova tutte le scadenze della fattura originale e le esclude
+                $scadenze_fattura_originale = $scadenze->where('iddocumento', $fattura_originale->id);
+                foreach ($scadenze_fattura_originale as $scad_orig) {
+                    $scadenze_da_escludere->push($scad_orig->id);
+                }
+                $fatture_stornate->push($fattura_originale);
+            } else {
+                // Importi diversi: storniamo il valore della nota di credito dalla fattura originale
+                $scadenze_fattura_originale = $scadenze->where('iddocumento', $fattura_originale->id);
+                $importo_da_stornare = $importo_nota;
+
+                // Distribuiamo lo storno proporzionalmente tra le scadenze della fattura originale
+                $totale_scadenze_originale = $scadenze_fattura_originale->sum(function($s) {
+                    return abs($s->da_pagare - $s->pagato);
+                });
+
+                if ($totale_scadenze_originale > 0) {
+                    foreach ($scadenze_fattura_originale as $scad_orig) {
+                        $importo_scadenza = abs($scad_orig->da_pagare - $scad_orig->pagato);
+                        $percentuale = $importo_scadenza / $totale_scadenze_originale;
+                        $storno_scadenza = $importo_da_stornare * $percentuale;
+
+                        // Creiamo una copia della scadenza con l'importo modificato
+                        $scadenza_modificata = clone $scad_orig;
+                        $nuovo_da_pagare = $scad_orig->da_pagare - ($scad_orig->da_pagare > 0 ? $storno_scadenza : -$storno_scadenza);
+                        $scadenza_modificata->da_pagare = $nuovo_da_pagare;
+
+                        // Se dopo lo storno l'importo diventa zero o negativo, escludiamo la scadenza
+                        if (abs($nuovo_da_pagare - $scad_orig->pagato) < 0.01) {
+                            $scadenze_da_escludere->push($scad_orig->id);
+                        } else {
+                            // Salviamo la scadenza modificata
+                            $scadenze_modificate->put($scad_orig->id, $scadenza_modificata);
+                        }
+                    }
+
+                    // Tracciamo lo storno parziale
+                    $storni_parziali->push([
+                        'nota_credito' => $documento,
+                        'fattura_originale' => $fattura_originale,
+                        'importo_stornato' => $importo_da_stornare
+                    ]);
+                }
+            }
+        }
+        continue; // Non includiamo mai le note di credito nell'esportazione
+    }
+}
+
+// Seconda passata: costruiamo la collezione finale
+foreach ($scadenze as $scadenza) {
+    $documento = $scadenza->documento;
+
+    // Se la scadenza non ha un documento associato, la includiamo
+    if (empty($documento)) {
+        $scadenze_filtrate->push($scadenza);
+        continue;
+    }
+
+    // Saltiamo le note di credito
+    if ($documento->isNota()) {
+        continue;
+    }
+
+    // Se non è da escludere, la includiamo (eventualmente modificata)
+    if (!$scadenze_da_escludere->contains($scadenza->id)) {
+        if ($scadenze_modificate->has($scadenza->id)) {
+            $scadenze_filtrate->push($scadenze_modificate->get($scadenza->id));
+        } else {
+            $scadenze_filtrate->push($scadenza);
+        }
+    }
+}
+
+// Rimuoviamo le scadenze da escludere dalla collezione filtrata
+$scadenze = $scadenze_filtrate->filter(function ($scadenza) use ($scadenze_da_escludere) {
+    return !$scadenze_da_escludere->contains($scadenza->id);
+});
+
 $id_scadenze = $scadenze->pluck('id');
+
+// Messaggi informativi per l'utente
+if ($note_credito_escluse->isNotEmpty()) {
+    echo '
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> <strong>'.tr('Gestione Note di Credito').'</strong><br>';
+
+    echo tr('Sono state escluse _NUM_ note di credito dall\'esportazione', [
+        '_NUM_' => $note_credito_escluse->count(),
+    ]).':';
+
+    echo '<ul>';
+    foreach ($note_credito_escluse as $nota) {
+        $numero_nota = $nota->numero_esterno ?: $nota->numero;
+        echo '<li>'.tr('Nota di credito n. _NUM_ del _DATE_ - Importo: _AMOUNT_', [
+            '_NUM_' => $numero_nota,
+            '_DATE_' => dateFormat($nota->data),
+            '_AMOUNT_' => moneyFormat(abs($nota->netto))
+        ]).'</li>';
+    }
+    echo '</ul>';
+
+    if ($fatture_stornate->isNotEmpty()) {
+        echo '<strong>'.tr('Fatture completamente stornate (escluse dall\'esportazione)').':</strong>';
+        echo '<ul>';
+        foreach ($fatture_stornate as $fattura) {
+            $numero_fattura = $fattura->numero_esterno ?: $fattura->numero;
+            echo '<li>'.tr('Fattura n. _NUM_ del _DATE_ - Importo: _AMOUNT_', [
+                '_NUM_' => $numero_fattura,
+                '_DATE_' => dateFormat($fattura->data),
+                '_AMOUNT_' => moneyFormat(abs($fattura->netto))
+            ]).'</li>';
+        }
+        echo '</ul>';
+    }
+
+    if ($storni_parziali->isNotEmpty()) {
+        echo '<strong>'.tr('Storni parziali applicati').':</strong>';
+        echo '<ul>';
+        foreach ($storni_parziali as $storno) {
+            $numero_nota = $storno['nota_credito']->numero_esterno ?: $storno['nota_credito']->numero;
+            $numero_fattura = $storno['fattura_originale']->numero_esterno ?: $storno['fattura_originale']->numero;
+            $importo_fattura_originale = abs($storno['fattura_originale']->netto);
+            $importo_residuo = $importo_fattura_originale - $storno['importo_stornato'];
+
+            echo '<li>'.tr('Fattura n. _FATTURA_ (€ _IMPORTO_FATTURA_): stornato € _IMPORTO_STORNO_ dalla nota di credito n. _NOTA_ - Residuo da esportare: € _RESIDUO_', [
+                '_FATTURA_' => $numero_fattura,
+                '_IMPORTO_FATTURA_' => moneyFormat($importo_fattura_originale),
+                '_IMPORTO_STORNO_' => moneyFormat($storno['importo_stornato']),
+                '_NOTA_' => $numero_nota,
+                '_RESIDUO_' => moneyFormat($importo_residuo)
+            ]).'</li>';
+        }
+        echo '</ul>';
+    }
+
+    echo '
+</div>';
+}
 
 $raggruppamento = $scadenze->groupBy('idanagrafica');
 if ($raggruppamento->isEmpty()) {

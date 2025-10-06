@@ -799,8 +799,11 @@ input("flag_crea_articoli").on("change", function (){
     }
 });
 
+// Flag globale per indicare se siamo in modalità ricerca automatica
+var isAutomaticReferenceSearch = false;
+
 $("select[name^=selezione_riferimento]").change(function() {
-    if (!$(this).hasClass("already-loaded")) {
+    if (!$(this).hasClass("already-loaded") && !isAutomaticReferenceSearch) {
         let $this = $(this);
         let data = $this.selectData();
 

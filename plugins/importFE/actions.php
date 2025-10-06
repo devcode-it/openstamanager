@@ -440,48 +440,50 @@ switch (filter('op')) {
                 }
             }
 
-            // Se nella fattura elettronica è indicato un DDT cerco quel documento specifico
-            $ddt = $dati_ddt[$numero_linea];
-            $query = "SELECT
-                `dt_righe_ddt`.`id`,
-                `dt_righe_ddt`.`idddt` AS id_documento,
-                `dt_righe_ddt`.`is_descrizione`,
-                `dt_righe_ddt`.`idarticolo`,
-                `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
-            FROM
-                `dt_righe_ddt`
-                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
-                INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-                LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
-            WHERE
-                `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
-                YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
-                `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id).' AND
-                `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
-                |where|';
+            // Se nella fattura elettronica è indicato un DDT cerco SOLO quel documento specifico
+            if (isset($dati_ddt[$numero_linea])) {
+                $ddt = $dati_ddt[$numero_linea];
+                $query = "SELECT
+                    `dt_righe_ddt`.`id`,
+                    `dt_righe_ddt`.`idddt` AS id_documento,
+                    `dt_righe_ddt`.`is_descrizione`,
+                    `dt_righe_ddt`.`idarticolo`,
+                    `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
+                    CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
+                FROM
+                    `dt_righe_ddt`
+                    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                    INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+                    LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
+                WHERE
+                    `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
+                    YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
+                    `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id).' AND
+                    `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
+                    |where|';
 
-            // Ricerca di righe DDT con stesso Articolo
-            if (!empty($id_articolo)) {
-                $query_articolo = replace($query, [
-                    '|where|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
-                ]);
+                // Ricerca di righe DDT con stesso Articolo
+                if (!empty($id_articolo)) {
+                    $query_articolo = replace($query, [
+                        '|where|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
+                    ]);
 
-                $collegamento = $database->fetchOne($query_articolo);
+                    $collegamento = $database->fetchOne($query_articolo);
+                }
+
+                // Ricerca di righe DDT per stessa descrizione
+                if (empty($collegamento)) {
+                    $query_descrizione = replace($query, [
+                        '|where|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
+                    ]);
+
+                    $collegamento = $database->fetchOne($query_descrizione);
+                }
             }
 
-            // Ricerca di righe DDT per stessa descrizione
-            if (empty($collegamento)) {
-                $query_descrizione = replace($query, [
-                    '|where|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
-                ]);
-
-                $collegamento = $database->fetchOne($query_descrizione);
-            }
-
-            // Se nella fattura elettronica NON è indicato un DDT ed è indicato anche un ordine
-            // cerco per quell'ordine
-            if (empty($collegamento)) {
+            // Se nella fattura elettronica NON è indicato un DDT ed è indicato un ordine
+            // cerco SOLO per quell'ordine specifico
+            if (empty($collegamento) && isset($dati_ordini[$numero_linea])) {
                 $ordine = $dati_ordini[$numero_linea];
                 $query = "SELECT
                     `or_righe_ordini`.`id`,
@@ -523,10 +525,10 @@ switch (filter('op')) {
 
             /*
              * TENTATIVO 2: ricerca solo per articolo o descrizione su documenti
-             * non referenziati nella fattura elettronica
+             * SOLO se nella fattura elettronica NON sono specificati riferimenti per questa riga
              */
-            // Se non ci sono Ordini o DDT cerco per contenuto
-            if (empty($collegamento)) {
+            // Se non ci sono riferimenti specifici nell'XML E non ho trovato collegamenti, cerco per contenuto
+            if (empty($collegamento) && !isset($dati_ddt[$numero_linea]) && !isset($dati_ordini[$numero_linea])) {
                 $match_documento_da_fe = false;
                 $query = "SELECT
                         `dt_righe_ddt`.`id`,

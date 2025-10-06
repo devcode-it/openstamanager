@@ -72,3 +72,8 @@ SELECT @id_setting := MAX(`id`) FROM `zz_settings`;
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
 (1, @id_setting, 'Permetti l\'inserimento di allegati in attività completate', ''), 
 (2, @id_setting, 'Allow attachment insertion in completed activities', '');
+
+-- Risorsa api per la verifica modifica record
+
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+VALUES (NULL, 'app-v1', 'retrieve', 'verifica-aggiornamenti', 'API\\App\\v1\\VerificaAggiornamenti', '1');

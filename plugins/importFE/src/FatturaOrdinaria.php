@@ -352,7 +352,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
             if (!$is_descrizione) {
                 $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
-                
+
                 $obj->id_iva = $iva_value;
                 $obj->idconto = $conto[$key];
 
@@ -369,13 +369,26 @@ class FatturaOrdinaria extends FatturaElettronica
                     $obj->id_rivalsa_inps = $id_rivalsa;
                 }
 
-                // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
+                // Gestione corretta dei segni in base al tipo di documento
+                $tipo_documento = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];
+                $is_nota_credito = ($tipo_documento == 'TD04');
+
                 if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && strtolower((string) $riga['UnitaMisura']) == strtolower((string) $articolo->um_secondaria)) {
                     $qta = (($riga['Quantita'] ?: 1) / ($articolo->fattore_um_secondaria ?: 1));
-                    $prezzo = $totale_righe_riepilogo > 0 ? $totale_righe_riepilogo / ($qta ?: 1) : -($totale_righe_riepilogo / ($qta ?: 1));
+                    // Solo per le note di credito (TD04) invertiamo i segni quando il totale è negativo
+                    if ($is_nota_credito && $totale_righe_riepilogo < 0) {
+                        $prezzo = -($totale_righe_riepilogo / ($qta ?: 1));
+                    } else {
+                        $prezzo = abs($totale_righe_riepilogo) / ($qta ?: 1);
+                    }
                 } else {
                     $qta = ($riga['Quantita'] ?: 1);
-                    $prezzo = $totale_righe_riepilogo > 0 ? $riga['PrezzoUnitario'] : -$riga['PrezzoUnitario'];
+                    // Solo per le note di credito (TD04) invertiamo i segni quando necessario
+                    if ($is_nota_credito && $riga['PrezzoUnitario'] > 0) {
+                        $prezzo = -$riga['PrezzoUnitario'];
+                    } else {
+                        $prezzo = $riga['PrezzoUnitario'];
+                    }
                 }
 
                 // Prezzo e quantità

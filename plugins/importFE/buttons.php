@@ -105,6 +105,11 @@ function compilaRiferimenti(btn) {
                 return;
             }
 
+            // Imposta il flag per indicare che siamo in modalità ricerca automatica
+            if (typeof isAutomaticReferenceSearch !== "undefined") {
+                isAutomaticReferenceSearch = true;
+            }
+
             for (id_riga in response) {
                 data = response[id_riga];
 
@@ -114,6 +119,13 @@ function compilaRiferimenti(btn) {
                 // Impostazione del riferimento
                 impostaRiferimento(id_riga, data.documento, data.riga);
             }
+
+            // Reimposta il flag dopo aver completato la ricerca automatica (con un piccolo delay per gestire operazioni asincrone)
+            setTimeout(function() {
+                if (typeof isAutomaticReferenceSearch !== "undefined") {
+                    isAutomaticReferenceSearch = false;
+                }
+            }, 100);
         },
         error: function(data) {
             swal("'.tr('Errore').'", "'.tr('La ricerca automatica dei riferimenti per le righe non è andata a buon fine').'.", "error");

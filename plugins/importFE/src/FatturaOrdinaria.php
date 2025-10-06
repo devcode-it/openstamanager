@@ -277,8 +277,9 @@ class FatturaOrdinaria extends FatturaElettronica
                     $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
                     if (empty($categoria)) {
                         $categoria = Categoria::build();
-                        $categoria->setTranslation('title', $nome_categoria);
+                        $categoria->name = $nome_categoria;
                         $categoria->save();
+                        $categoria->setTranslation('title', $nome_categoria);
                     }
 
                     $articolo = ArticoloOriginale::build($codice, $categoria);

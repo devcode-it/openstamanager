@@ -42,6 +42,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "ifsnop/mysqldump-php": "^2.3",
         "illuminate/database": "^10.0",
+        "illuminate/cache": "^10.0",
+        "illuminate/filesystem": "^10.0",
         "intervention/image": "^3.0",
         "jurosh/pdf-merge": "^2.1",
         "league/csv": "^9.7.0",

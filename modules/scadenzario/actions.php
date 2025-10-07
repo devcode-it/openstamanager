@@ -183,4 +183,26 @@ switch (post('op')) {
         flash()->info(tr('Stampa allegata correttamente!'));
 
         break;
+
+    case 'update_inline_scadenza':
+        $id_scadenza = post('id_scadenza');
+        $scadenza = Scadenza::find($id_scadenza);
+
+        if (!empty($scadenza)) {
+            // Aggiornamento dei campi modificabili inline
+            $scadenza->id_banca_azienda = post('id_banca_azienda') ?: null;
+            $scadenza->id_banca_controparte = post('id_banca_controparte') ?: null;
+            $scadenza->id_pagamento = post('id_pagamento') ?: null;
+            $scadenza->data_concordata = post('data_concordata') ?: null;
+            $scadenza->da_pagare = post('da_pagare') ?: 0;
+            $scadenza->pagato = post('pagato') ?: 0;
+
+            $scadenza->save();
+
+            flash()->info(tr('Scadenza aggiornata!'));
+        } else {
+            flash()->error(tr('Scadenza non trovata!'));
+        }
+
+        break;
 }

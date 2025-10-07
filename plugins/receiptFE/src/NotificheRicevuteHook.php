@@ -25,6 +25,8 @@ use Hooks\Manager;
 use Models\Module;
 use Models\Plugin;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
+use Util\XML;
 
 /**
  * Hook specializzato per il conteggio e la segnalazione di Fatture senza ricevute oppure con ricevuta in stato di errore.
@@ -36,11 +38,41 @@ class NotificheRicevuteHook extends Manager
     public function response()
     {
         // Messaggio informativo su fatture con stato di errore
-        $con_errore = Fattura::vendita()
-            ->whereIn('codice_stato_fe', ['NS', 'ERR', 'EC02'])
+        // Esclusione delle fatture duplicate (codice 00404) dal conteggio degli errori
+        // Logica coerente con modules/fatture/controller_before.php
+        $fatture_errore = Fattura::vendita()
+            ->whereIn('codice_stato_fe', ['NS', 'ERR', 'EC02', 'ERVAL'])
             ->where('data_stato_fe', '>=', $_SESSION['period_start'])
             ->orderBy('data_stato_fe')
-            ->count();
+            ->get();
+
+        $con_errore = 0;
+        foreach ($fatture_errore as $fattura) {
+            // Conteggio diretto per ERR, EC02, ERVAL
+            if (in_array($fattura->codice_stato_fe, ['ERR', 'EC02', 'ERVAL'])) {
+                ++$con_errore;
+                continue;
+            }
+
+            // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
+            if ($fattura->codice_stato_fe == 'NS' && ($fattura->stato != Stato::where('name', 'Bozza')->first()->id) && ($fattura->stato != Stato::where('name', 'Non valida')->first()->id)) {
+                $ricevuta_principale = $fattura->getRicevutaPrincipale();
+
+                // Se non esiste alcuna ricevuta, non conteggio come errore
+                if (!empty($ricevuta_principale)) {
+                    $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename);
+                    $lista_errori = $contenuto_ricevuta['ListaErrori'];
+                    if ($lista_errori) {
+                        $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+                        $errore = $lista_errori[0]['Errore'];
+                        // Escludo le fatture duplicate (codice 00404) dal conteggio
+                        if ($errore['Codice'] != '00404') {
+                            ++$con_errore;
+                        }
+                    }
+                }
+            }
+        }
 
         // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
         $data_limite = (new Carbon())->subDays(7);

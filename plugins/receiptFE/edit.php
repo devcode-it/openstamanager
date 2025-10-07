@@ -46,7 +46,7 @@ $fatture_generate_errore = Fattura::vendita()
     ->whereIn('codice_stato_fe', ['NS', 'ERR', 'EC02'])
     ->where('data_stato_fe', '>=', $_SESSION['period_start'])
     ->where('data', '>=', $data_setting)
-    ->orderBy('data_stato_fe')
+    ->orderBy('data', 'DESC')
     ->get();
 
 if (!empty($fatture_generate_errore->count())) {
@@ -54,32 +54,59 @@ if (!empty($fatture_generate_errore->count())) {
         <div class="alert alert-warning push alert-dismissible" role="alert">
             <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
             <h4><i class="fa fa-warning mr-2"></i>'.tr('Attenzione').'</h4>'.(($fatture_generate_errore->count() > 1) ? tr('Le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione') : tr('La seguente fattura ha ricevuto uno scarto o presenta errori in fase di trasmissione')).':
-            <ul>';
+            <ul class="fa-ul list-unstyled mb-2">';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
-        // Codice stato fe
-        $descrizione = $fattura_generata['codice_stato_fe'];
+        // Mostra nome stato FE con icona
+        $stato_fe = $fattura_generata->statoFE;
+        $descrizione = $stato_fe ? '<i class="'.$stato_fe->icon.'"></i> '.$stato_fe->name : $fattura_generata['codice_stato_fe'];
+        $tooltip = '';
+        $stato_fattura = $fattura_generata->stato; // stato documento (icona/nome)
 
         $ricevuta_principale = $fattura_generata->getRicevutaPrincipale();
         if (!empty($ricevuta_principale)) {
             $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename);
+            $data_ts = timestampFormat($fattura_generata['data_stato_fe']);
 
-            // Informazioni aggiuntive per EC02
+            // Informazioni aggiuntive per EC02 (per tooltip)
             if (!empty($contenuto_ricevuta['EsitoCommittente'])) {
-                $descrizione .= ': '.htmlentities((string) $contenuto_ricevuta['EsitoCommittente']['Descrizione']);
+                $ec02_desc = trim((string) $contenuto_ricevuta['EsitoCommittente']['Descrizione']);
+                if ($ec02_desc !== '') {
+                    $tipText = "Stato FE: ".$fattura_generata['codice_stato_fe']."\n".
+                               "Descrizione: ".$ec02_desc."\n".
+                               "Data: ".$data_ts;
+                    $tooltip = ' <span class="tip ml-1" title="'.htmlentities($tipText).'"><i class="fa fa-question-circle-o"></i></span>';
+                }
             }
 
-            // Informazioni aggiuntive per NS
+            // Informazioni aggiuntive per NS (per tooltip)
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
             if ($lista_errori) {
                 $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
 
                 $errore = $lista_errori[0]['Errore'];
-                $descrizione .= ': '.$errore['Codice'].' - '.htmlentities((string) $errore['Descrizione']);
+                $codice = (string) ($errore['Codice'] ?? '');
+                $desc = trim((string) ($errore['Descrizione'] ?? ''));
+                if ($codice !== '' || $desc !== '') {
+                    $tipText = "Stato FE: ".$fattura_generata['codice_stato_fe']."\n";
+                    if ($codice !== '') { $tipText .= "Codice errore: ".$codice."\n"; }
+                    if ($desc !== '')   { $tipText .= "Descrizione: ".$desc."\n"; }
+                    $tipText .= "Data: ".$data_ts;
+                    $tooltip = ' <span class="tip ml-1" title="'.htmlentities($tipText).'"><i class="fa fa-question-circle-o"></i></span>';
+                }
             }
         }
 
-        echo '<li>'.reference($fattura_generata, $fattura_generata->getReference()).' ['.$descrizione.'] ['.timestampFormat($fattura_generata['data_stato_fe']).']</li>';
+        // Testo descrittivo + link "Apri" + icona stato documento
+        $icon_title = '';
+        if ($stato_fattura) {
+            $icon_title = $stato_fattura->getTranslation('title') ?: ($stato_fattura->name ?? '');
+        }
+        $icon_li = $stato_fattura
+            ? '<span class="tip" title="'.htmlentities($icon_title).'"><span class="fa-li"><i class="'.$stato_fattura->icona.'"></i></span></span>'
+            : '<span class="fa-li"><i class="fa fa-file-text-o"></i></span>';
+
+        echo '<li class="mb-1">'.$icon_li.'<b>'.$fattura_generata->getReference().'</b> <span class="ml-2">'.Modules::link('Fatture di vendita', $fattura_generata->id, tr('Apri')).'</span> ['.$descrizione.']'.$tooltip.'</li>';
     }
 
     echo '

@@ -99,6 +99,8 @@ ALTER TABLE `an_pagamenti_anagrafiche` ADD CONSTRAINT `an_pagamenti_anagrafiche_
 
 -- FOREIGN KEYS per tabelle contratti
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_1` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
+
+UPDATE `co_contratti` SET `idpagamento` = (SELECT `id` FROM `co_pagamenti` where `name` = "Bonifico bancario") WHERE `idpagamento` NOT IN (SELECT `id` FROM `co_pagamenti`);
 ALTER TABLE `co_contratti` ADD CONSTRAINT `co_contratti_ibfk_6` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `co_contratti_tipiintervento` WHERE `idcontratto` NOT IN (SELECT `id` FROM `co_contratti`);
@@ -106,19 +108,27 @@ ALTER TABLE `co_contratti_tipiintervento` ADD CONSTRAINT `co_contratti_tipiinter
 
 -- FOREIGN KEYS per tabelle documenti
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_7` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
+
+UPDATE `co_documenti` SET `idpagamento` = (SELECT `id` FROM `co_pagamenti` where `name` = "Bonifico bancario") WHERE `idpagamento` NOT IN (SELECT `id` FROM `co_pagamenti`);
 ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_12` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle righe documenti
 DELETE FROM `co_righe_documenti` WHERE `iddocumento` NOT IN (SELECT `id` FROM `co_documenti`);
 ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_3` FOREIGN KEY (`iddocumento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
+
+UPDATE `co_righe_documenti` SET `idiva` = (SELECT `id` FROM `co_iva` where `name` = "Aliq. Iva 22%") WHERE `idiva` NOT IN (SELECT `id` FROM `co_iva`);
 ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_5` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
+
+UPDATE `co_righe_documenti` SET `idintervento` = null WHERE `idintervento` NOT IN (SELECT `id` FROM `in_interventi`);
 ALTER TABLE `co_righe_documenti` ADD CONSTRAINT `co_righe_documenti_ibfk_6` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE SET NULL;
 
 -- FOREIGN KEYS per tabelle DDT
 ALTER TABLE `dt_ddt` ADD CONSTRAINT `dt_ddt_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 
+UPDATE `dt_righe_ddt` SET `idiva` = (SELECT `id` FROM `co_iva` where `name` = "Aliq. Iva 22%") WHERE `idiva` NOT IN (SELECT `id` FROM `co_iva`);
 ALTER TABLE `dt_righe_ddt` ADD CONSTRAINT `dt_righe_ddt_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
+UPDATE `in_righe_interventi` SET `idiva` = (SELECT `id` FROM `co_iva` where `name` = "Aliq. Iva 22%") WHERE `idiva` NOT IN (SELECT `id` FROM `co_iva`);
 ALTER TABLE `in_righe_interventi` ADD CONSTRAINT `in_righe_interventi_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle articoli
@@ -136,15 +146,20 @@ ALTER TABLE `mg_movimenti` ADD CONSTRAINT `mg_movimenti_ibfk_2` FOREIGN KEY (`id
 
 -- FOREIGN KEYS per tabelle ordini
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
+
+UPDATE `or_ordini` SET `idpagamento` = (SELECT `id` FROM `co_pagamenti` where `name` = "Bonifico bancario") WHERE `idpagamento` NOT IN (SELECT `id` FROM `co_pagamenti`);
 ALTER TABLE `or_ordini` ADD CONSTRAINT `or_ordini_ibfk_7` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE RESTRICT;
 
 DELETE FROM `or_righe_ordini` WHERE `idordine` NOT IN (SELECT `id` FROM `or_ordini`);
 ALTER TABLE `or_righe_ordini` ADD CONSTRAINT `or_righe_ordini_ibfk_2` FOREIGN KEY (`idordine`) REFERENCES `or_ordini`(`id`) ON DELETE CASCADE;
+
+UPDATE `or_righe_ordini` SET `idiva` = (SELECT `id` FROM `co_iva` where `name` = "Aliq. Iva 22%") WHERE `idiva` NOT IN (SELECT `id` FROM `co_iva`);
 ALTER TABLE `or_righe_ordini` ADD CONSTRAINT `or_righe_ordini_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle preventivi
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_2` FOREIGN KEY (`idanagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE RESTRICT;
 
+UPDATE `co_righe_preventivi` SET `idiva` = (SELECT `id` FROM `co_iva` where `name` = "Aliq. Iva 22%") WHERE `idiva` NOT IN (SELECT `id` FROM `co_iva`);
 ALTER TABLE `co_righe_preventivi` ADD CONSTRAINT `co_righe_preventivi_ibfk_4` FOREIGN KEY (`idiva`) REFERENCES `co_iva`(`id`) ON DELETE RESTRICT;
 
 -- FOREIGN KEYS per tabelle impianti

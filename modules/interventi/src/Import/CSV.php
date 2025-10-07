@@ -24,9 +24,11 @@ use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Impianti\Impianto;
+use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
+use Modules\Iva\Aliquota;
 use Modules\TipiIntervento\Tipo as TipoIntervento;
 
 /**
@@ -54,12 +56,17 @@ class CSV extends CSVImporter
             [
                 'field' => 'partita_iva',
                 'label' => 'Partita IVA cliente',
-                'required' => false, // Almeno uno tra partita IVA e codice fiscale deve essere presente
+                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
             ],
             [
                 'field' => 'codice_fiscale',
                 'label' => 'Codice Fiscale cliente',
-                'required' => false, // Almeno uno tra partita IVA e codice fiscale deve essere presente
+                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
+            ],
+            [
+                'field' => 'ragione_sociale',
+                'label' => 'Ragione Sociale cliente',
+                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
             ],
             [
                 'field' => 'data',
@@ -69,12 +76,10 @@ class CSV extends CSVImporter
             [
                 'field' => 'data_richiesta',
                 'label' => 'Data richiesta',
-                'required' => true,
             ],
             [
                 'field' => 'ora_inizio',
                 'label' => 'Ora inizio',
-                'required' => true,
             ],
             [
                 'field' => 'ora_fine',
@@ -83,7 +88,6 @@ class CSV extends CSVImporter
             [
                 'field' => 'tecnico',
                 'label' => 'Tecnico',
-                'required' => true,
             ],
             [
                 'field' => 'tipo',
@@ -109,6 +113,21 @@ class CSV extends CSVImporter
             [
                 'field' => 'stato',
                 'label' => 'Stato',
+            ],
+            [
+                'field' => 'descrizione_riga',
+                'label' => 'Descrizione riga',
+                'required' => false,
+            ],
+            [
+                'field' => 'imponibile',
+                'label' => 'Imponibile riga',
+                'required' => false,
+            ],
+            [
+                'field' => 'aliquota_iva',
+                'label' => 'Aliquota IVA (%)',
+                'required' => false,
             ],
         ];
     }
@@ -136,19 +155,15 @@ class CSV extends CSVImporter
     public function import($record, $update_record = true, $add_record = true)
     {
         try {
-            $database = database();
             $primary_key = $this->getPrimaryKey();
 
             // Validazione dei campi obbligatori
-            if (empty($record['codice']) || empty($record['data']) || empty($record['data_richiesta'])
-                || empty($record['ora_inizio']) || empty($record['tecnico']) || empty($record['richiesta'])) {
+            if (empty($record['codice']) || empty($record['data']) || empty($record['richiesta'])) {
                 return false;
             }
 
-            // Verifica che almeno uno tra partita IVA e codice fiscale sia presente
-            if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
-                return false;
-            }
+            // Nota: Non è più necessario verificare la presenza di partita IVA, codice fiscale o ragione sociale
+            // perché se non vengono trovate corrispondenze, verrà creata automaticamente una nuova anagrafica
 
             // Ricerca dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
@@ -203,6 +218,9 @@ class CSV extends CSVImporter
             // Crea la sessione di lavoro
             $this->creaSessione($intervento, $record);
 
+            // Crea la riga dell'intervento se specificata
+            $this->creaRigaIntervento($intervento, $record);
+
             return true;
         } catch (\Exception $e) {
             // Registra l'errore in un log
@@ -220,29 +238,43 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato'],
-            ['00001/2024', '123456789', '123456789', '07/11/2024', '03/11/2025', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare'],
-            ['0002/2024', '123456789', '123456789', '08/11/2024', '04/11/2025', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', ''],
+            ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Ragione Sociale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato', 'Descrizione riga', 'Imponibile riga', 'Aliquota IVA (%)'],
+            ['00001/2024', '123456789', '123456789', 'Acme S.r.l.', '07/11/2024', '03/11/2025', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare', 'Servizio di manutenzione', '100.00', '22'],
+            ['0002/2024', '', '', 'Beta Company S.p.A.', '08/11/2024', '04/11/2025', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', '', 'Controllo impianto', '150.00', '22'],
+            ['0003/2024', '', '', '', '09/11/2024', '05/11/2025', '14:00', '15:00', 'Stefano Bianchi', '', '', '', 'Intervento urgente', 'riparazione guasto', 'Completato', 'Riparazione urgente', '200.00', '22'],
         ];
     }
 
     /**
-     * Trova l'anagrafica cliente in base alla partita IVA o al codice fiscale.
+     * Trova l'anagrafica cliente in base alla partita IVA, al codice fiscale o alla ragione sociale.
+     * Se non trova nessuna corrispondenza, crea una nuova anagrafica.
      *
      * @param array $record Record da processare
      *
-     * @return Anagrafica|null Anagrafica trovata o null se non trovata
+     * @return Anagrafica|null Anagrafica trovata o creata, null in caso di errore
      */
     protected function trovaAnagrafica($record)
     {
         $anagrafica = null;
 
+        // Ricerca per partita IVA
         if (!empty($record['partita_iva'])) {
             $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
         }
 
+        // Ricerca per codice fiscale se non trovata con partita IVA
         if (empty($anagrafica) && !empty($record['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
+        }
+
+        // Ricerca per ragione sociale se non trovata con partita IVA o codice fiscale
+        if (empty($anagrafica) && !empty($record['ragione_sociale'])) {
+            $anagrafica = Anagrafica::where('ragione_sociale', '=', $record['ragione_sociale'])->first();
+        }
+
+        // Se non trova nessuna anagrafica, ne crea una nuova
+        if (empty($anagrafica)) {
+            $anagrafica = $this->creaAnagrafica($record);
         }
 
         return $anagrafica;
@@ -388,6 +420,127 @@ class CSV extends CSVImporter
         } catch (\Exception $e) {
             // Registra l'errore ma continua con l'importazione
             error_log('Errore durante la creazione della sessione: '.$e->getMessage());
+
+            return null;
+        }
+    }
+
+    /**
+     * Crea una nuova anagrafica in base ai dati del record.
+     *
+     * @param array $record Record da processare
+     *
+     * @return Anagrafica|null Anagrafica creata o null in caso di errore
+     */
+    protected function creaAnagrafica($record)
+    {
+        try {
+            // Determina la ragione sociale da utilizzare
+            $ragione_sociale = '';
+            if (!empty($record['ragione_sociale'])) {
+                $ragione_sociale = $record['ragione_sociale'];
+            } elseif (!empty($record['partita_iva'])) {
+                $ragione_sociale = 'Cliente P.IVA '.$record['partita_iva'];
+            } elseif (!empty($record['codice_fiscale'])) {
+                $ragione_sociale = 'Cliente C.F. '.$record['codice_fiscale'];
+            } else {
+                $ragione_sociale = 'Cliente importato '.date('Y-m-d H:i:s');
+            }
+
+            // Crea la nuova anagrafica
+            $anagrafica = Anagrafica::build($ragione_sociale);
+
+            // Imposta partita IVA se presente
+            if (!empty($record['partita_iva'])) {
+                $anagrafica->piva = $record['partita_iva'];
+            }
+
+            // Imposta codice fiscale se presente
+            if (!empty($record['codice_fiscale'])) {
+                $anagrafica->codice_fiscale = $record['codice_fiscale'];
+            }
+
+            // Assegna il tipo "Cliente" all'anagrafica
+            $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
+            if (!empty($tipo_cliente)) {
+                $anagrafica->tipologie = [$tipo_cliente->id];
+            }
+
+            // Salva l'anagrafica
+            $anagrafica->save();
+
+            return $anagrafica;
+        } catch (\Exception $e) {
+            // Registra l'errore
+            error_log('Errore durante la creazione dell\'anagrafica: '.$e->getMessage());
+
+            return null;
+        }
+    }
+
+    /**
+     * Trova l'aliquota IVA in base alla percentuale.
+     *
+     * @param float $percentuale Percentuale dell'aliquota IVA
+     *
+     * @return Aliquota|null Aliquota trovata o null se non trovata
+     */
+    protected function trovaAliquotaIva($percentuale)
+    {
+        if (empty($percentuale)) {
+            return Aliquota::find(setting('Iva predefinita'));
+        }
+
+        // Cerca l'aliquota IVA per percentuale
+        $aliquota = Aliquota::where('percentuale', $percentuale)->first();
+
+        // Se non trova l'aliquota, usa quella predefinita
+        if (empty($aliquota)) {
+            $aliquota = Aliquota::find(setting('Iva predefinita'));
+        }
+
+        return $aliquota;
+    }
+
+    /**
+     * Crea una riga per l'intervento se specificata.
+     *
+     * @param Intervento $intervento Intervento associato
+     * @param array      $record     Record da processare
+     *
+     * @return Riga|null Riga creata o null se non creata
+     */
+    protected function creaRigaIntervento($intervento, $record)
+    {
+        // Verifica se sono presenti i dati per creare una riga
+        if (empty($record['descrizione_riga']) && empty($record['imponibile'])) {
+            return null;
+        }
+
+        try {
+            // Crea una nuova riga per l'intervento
+            $riga = Riga::build($intervento);
+
+            // Imposta la descrizione della riga
+            $riga->descrizione = $record['descrizione_riga'] ?: 'Riga importata';
+
+            // Imposta la quantità a 1
+            $riga->qta = 1;
+
+            // Trova l'aliquota IVA
+            $aliquota = $this->trovaAliquotaIva($record['aliquota_iva']);
+
+            // Imposta il prezzo unitario e l'IVA
+            $prezzo_unitario = !empty($record['imponibile']) ? floatval($record['imponibile']) : 0;
+            $riga->setPrezzoUnitario($prezzo_unitario, $aliquota->id);
+
+            // Salva la riga
+            $riga->save();
+
+            return $riga;
+        } catch (\Exception $e) {
+            // Registra l'errore ma continua con l'importazione
+            error_log('Errore durante la creazione della riga dell\'intervento: '.$e->getMessage());
 
             return null;
         }

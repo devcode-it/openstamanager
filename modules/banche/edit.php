@@ -60,7 +60,7 @@ $endpoint = setting('Endpoint ibanapi.com');
 
 			<div class="row">
                 <div class="col-md-8">
-                    {[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "required": "1", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$", "icon-after": "<?php echo !empty($ibanapi_key) && !empty($endpoint) ? '<a class=\'fa fa-search clickable\' id=\'check-iban\'></a>' : '<span class=\'tip\' title=\'Da impostazioni sezione API è possibile attivare la verifica iban tramite ibanapi.com\'><i class=\'fa fa-search text-danger clickable\'></i></span>'; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "required": "1", "class": "alphanumeric-mask",  "maxlength": 32, "value": "$iban$", "icon-after": "<?php echo !empty($ibanapi_key) && !empty($endpoint) ? '<a class=\'fa fa-search clickable\' id=\'check-iban\'></a>' : '<span class=\'tip\' title=\'Da impostazioni sezione API è possibile attivare la verifica iban tramite ibanapi.com\'><i class=\'fa fa-search text-danger clickable\'></i></span>'; ?>" ]}
                 </div>
 
                 <div class="col-md-4">

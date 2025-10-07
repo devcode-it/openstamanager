@@ -457,7 +457,7 @@ if (Auth::check()) {
                         </a>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                             <a href="#" class="btn dropdown-item">
-                                <span class="small" id="hooks-header"></span>
+                                <span class="small" id="hooks-header"><i class="fa fa-hourglass-o"></i> '.tr('Recupero informazioni...').'</span>
                             </a>
                             <div id="hooks"></div>
                         </div>

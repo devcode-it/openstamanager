@@ -44,7 +44,6 @@ class ServicesHook extends Manager
             });
 
             if( !empty($servizi_in_scadenza) ){
-                $message .= '<i class="fa fa-clock-o text-warning"> </i> ';
                 $message .= tr('I seguenti servizi sono in scadenza:<ul><li> _LIST_', [
                     '_LIST_' => implode('</li><li>', array_column($servizi_in_scadenza, 'name')),
                 ]).'</ul>';
@@ -52,7 +51,7 @@ class ServicesHook extends Manager
         }
 
         return [
-            'icon' => null,
+            'icon' => 'fa fa-clock-o text-warning',
             'message' => $message,
             'link' => base_path().'/controller.php?id_module='.Module::where('name','Stato dei servizi')->first()->id,
             'show' => Services::isEnabled() && !empty($message),

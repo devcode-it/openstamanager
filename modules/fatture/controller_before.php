@@ -62,12 +62,15 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                         $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
                         $errore = $lista_errori[0]['Errore'];
                         if ($errore['Codice'] != '00404') {
-                            $documenti_scarto[] = Modules::link('Fatture di vendita', $documento->id, tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
-                                '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
-                                '_NUM_' => $documento->numero_esterno,
-                                '_DATE_' => dateFormat($documento->data),
-                                '_STATO_' => $stato_fe->name,
-                            ]));
+                            $documenti_scarto[] = [
+                                'id' => $documento->id,
+                                'label' => tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
+                                    '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
+                                    '_NUM_' => $documento->numero_esterno,
+                                    '_DATE_' => dateFormat($documento->data),
+                                    '_STATO_' => $stato_fe->name,
+                                ]),
+                            ];
                         }
                     }
                 }
@@ -94,16 +97,18 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     // Controllo già presente sul plugin Ricevute FE
     if (sizeof($documenti_scarto) > 0) {
         echo '
-        <div class="alert alert-danger">
-            <i class="fa fa-warning"></i> '.tr('<b>ATTENZIONE:</b> le seguenti fatture riscontrano problemi').':<ul>';
+        <div class="alert alert-danger push alert-dismissible">
+            <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
+            <h4 class="alert-heading"><i class="fa fa-warning mr-2"></i>'.tr('<b>ATTENZIONE:</b> le seguenti fatture riscontrano problemi').':</h4>
+            <ul class="fa-ul list-unstyled mb-2">';
         foreach ($documenti_scarto as $documento) {
             echo '
-                <li><b>'.$documento.'</b></li>';
+                <li class="mb-1"><span class="fa-li"><i class="fa fa-file-text-o"></i></span><b class="text-white">'.$documento['label'].'</b> <span class="ml-2">'.Modules::link('Fatture di vendita', $documento['id'], tr('Apri')).'</span></li>';
         }
         echo '
             </ul>';
         if ($show_avviso) {
-            echo tr('Cosa fare in caso di fattura elettronica scartata? Dovrai correggere la fattura e inviarla di nuovo al SdI <b>entro 5 giorni dalla data di notifica dello scarto</b>, mantenendo lo stesso numero e data del documento.');
+            echo '<div class="mt-2 small"><i class="fa fa-info-circle mr-1"></i>'.tr('Cosa fare in caso di fattura elettronica scartata? Dovrai correggere la fattura e inviarla di nuovo al SdI <b>entro 5 giorni dalla data di notifica dello scarto</b>, mantenendo lo stesso numero e data del documento.').'</div>';
         }
         echo '
         </div>';
@@ -111,11 +116,14 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
 
     if (sizeof($documenti_invio) > 0) {
         echo '
-        <div class="alert push alert-warning">
-        <h4><i class="fa fa-clock-o"></i>'.tr('Attenzione').'</h4>'.tr('Le seguenti fatture sono in attesa di essere inviate').':<ul>';
+        <div class="alert push alert-warning alert-dismissible">
+            <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
+            <h4 class="alert-heading"><i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione').'</h4>
+            <p class="mb-2">'.tr('Le seguenti fatture sono in attesa di essere inviate').':</p>
+            <ul class="fa-ul list-unstyled mb-0">';
         foreach ($documenti_invio as $documento) {
             echo '
-                <li><b>'.$documento.'</b></li>';
+                <li class="mb-1"><span class="fa-li"><i class="fa fa-clock-o"></i></span><b>'.$documento.'</b></li>';
         }
         echo '
             </ul>

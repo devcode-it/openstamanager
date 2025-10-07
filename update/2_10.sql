@@ -74,6 +74,23 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (2, @id_setting, 'Allow attachment insertion in completed activities', '');
 
 -- Risorsa api per la verifica modifica record
-
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
 VALUES (NULL, 'app-v1', 'retrieve', 'verifica-aggiornamenti', 'API\\App\\v1\\VerificaAggiornamenti', '1');
+
+-- Tabella per la gestione dei token per l'invio di notifiche all'app
+CREATE TABLE `zz_app_tokens` (`id` INT NOT NULL AUTO_INCREMENT , `token` VARCHAR(500) NOT NULL , `id_user` INT NOT NULL , `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+-- Aggiunta colonne specifiche per FCM
+ALTER TABLE `zz_app_tokens` 
+ADD COLUMN `platform` VARCHAR(50) NULL AFTER `token`,
+ADD COLUMN `device_info` TEXT NULL AFTER `platform`;
+
+-- Aggiunta indice per migliorare le performance
+ALTER TABLE `zz_app_tokens` ADD INDEX `idx_user_fcm` (`id_user`, `token`);
+
+-- Registrazione della risorsa API per la gestione dei token FCM
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+VALUES (NULL, 'app-v1', 'create', 'fcm-tokens', 'API\\App\\v1\\FcmTokens', '1');
+
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+VALUES (NULL, 'app-v1', 'update', 'fcm-tokens', 'API\\App\\v1\\FcmTokens', '1');

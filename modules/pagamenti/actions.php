@@ -48,7 +48,7 @@ switch (filter('op')) {
                 }
 
                 if (empty($id)) {
-                    $pagamento = Pagamento::build(post('codice_modalita_pagamento_fe'));
+                    $pagamento = Pagamento::build($descrizione, post('codice_modalita_pagamento_fe'));
                 }
 
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
@@ -84,10 +84,7 @@ switch (filter('op')) {
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
-                $pagamento = Pagamento::build($codice_modalita_pagamento_fe);
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $pagamento->name = $descrizione;
-                }
+                $pagamento = Pagamento::build($descrizione,$codice_modalita_pagamento_fe);
                 $id_record = $dbo->lastInsertedID();
                 $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();

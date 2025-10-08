@@ -73,12 +73,9 @@ switch (filter('op')) {
 
         $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->first();
         if (!$aliquota) {
-            $iva = Aliquota::build($esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
+            $iva = Aliquota::build($descrizione, $esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
             $id_record = $dbo->lastInsertedID();
             $iva->setTranslation('title', $descrizione);
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $iva->name = $descrizione;
-            }
             $iva->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

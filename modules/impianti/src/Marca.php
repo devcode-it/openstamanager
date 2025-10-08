@@ -37,9 +37,10 @@ class Marca extends Model
         'title',
     ];
 
-    public static function build()
+    public static function build($nome = null)
     {
         $model = new static();
+        $model->name = $nome;
         $model->save();
 
         return $model;

@@ -28,11 +28,11 @@ $id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
 		</div>
 
@@ -46,12 +46,22 @@ $id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
     </div>
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "number", "label": "<?php echo tr('Tempo standard'); ?>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0,25 - 24 ore. <br><small>Esempi: <em><ul><li>60 minuti = 1 ora</li><li>30 minuti = 0,5 ore</li><li>15 minuti = 0,25 ore</li></ul></em></small> Suggerisce il tempo solitamente impiegato per questa tipologia di attivita'); ?>.", "min-value": "0", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore"  ]}
 		</div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Tipi anagrafiche'); ?>", "multiple": "1", "name": "tipi[]", "values": "list=\"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\", \"Privato\":\"<?php echo tr('Privato'); ?>\"", "value": "<?php echo $id_tipi; ?>", "help": "<?php echo tr('Seleziona le tipologie di anagrafica a cui questo tipo di attività si applica, se non viene selezionata alcuna tipologia, il tipo di attività si applica a tutte le anagrafiche'); ?>." ]}
+		</div>
+
+        <div class="col-md-6">
+        <?php
+        echo '
+            {[ "type": "select", "label": "'.tr('Gruppi utenti').'", "name": "gruppi[]", "multiple": "1", "icon-before": "<i class=\'fa fa-users\'></i>", "placeholder": "'.tr('Tutti').'", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
+            $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `in_tipiintervento_groups` WHERE `idtipointervento`='.prepare($id_record));
+            echo $results[0]['gruppi'].'"';
+            echo ', "help": "'.tr('Seleziona i gruppi utenti a cui questo tipo di attività si applica, se non viene selezionata alcun gruppo, il tipo di attività si applica a tutti i gruppi').'" ]}';
+        ?>
 		</div>
 	</div>
 

@@ -68,6 +68,19 @@ switch ($resource) {
                 }
             }
 
+            // Controllo se il tipo intervento è compatibile con il gruppo utente
+            $gruppi_tipo_intervento = $dbo->fetchArray('SELECT `id_gruppo`
+                FROM `in_tipiintervento_groups`
+                WHERE `idtipointervento` = '.prepare($r['id']));
+
+            $gruppi_tipo_intervento = array_column($gruppi_tipo_intervento, 'id_gruppo');
+            if (!empty($gruppi_tipo_intervento)) {
+                $compatibile = in_array($id_gruppo, $gruppi_tipo_intervento);
+                if (!$compatibile) {
+                    $disabled = true;
+                }
+            }
+
             $rs[$k] = array_merge($r, [
                 'text' => $r['descrizione'],
                 'disabled' => $disabled,

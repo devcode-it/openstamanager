@@ -74,6 +74,20 @@ switch (post('op')) {
             ]);
         }
 
+        $dbo->delete('in_tipiintervento_groups', [
+            'idtipointervento' => $id_record
+        ]);
+        $gruppi = (array) post('gruppi');
+        foreach ($gruppi as $id_gruppo) {
+            if (!$id_gruppo) {
+                continue;
+            }
+            $dbo->insert('in_tipiintervento_groups', [
+                'idtipointervento' => $id_record,
+                'id_gruppo' => $id_gruppo
+            ]);
+        }
+
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
         break;

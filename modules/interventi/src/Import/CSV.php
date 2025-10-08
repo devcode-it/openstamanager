@@ -159,6 +159,14 @@ class CSV extends CSVImporter
 
             // Validazione dei campi obbligatori
             if (empty($record['codice']) || empty($record['data']) || empty($record['richiesta'])) {
+                error_log('Campi obbligatori mancanti - Codice: '.($record['codice'] ?? 'vuoto').', Data: '.($record['data'] ?? 'vuoto').', Richiesta: '.($record['richiesta'] ?? 'vuoto'));
+                return false;
+            }
+
+            // Validazione formato data
+            $data_richiesta = $record['data_richiesta'] ?? $record['data'];
+            if (!$this->validaFormatoData($data_richiesta)) {
+                error_log('Formato data non valido: '.$data_richiesta);
                 return false;
             }
 
@@ -168,6 +176,7 @@ class CSV extends CSVImporter
             // Ricerca dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
+                error_log('Impossibile trovare o creare anagrafica per il record: '.json_encode($record));
                 return false; // Non è possibile procedere senza un'anagrafica cliente
             }
 
@@ -190,13 +199,26 @@ class CSV extends CSVImporter
 
             // Trova o crea il tipo di intervento
             $tipo = $this->trovaTipoIntervento($record);
+            if (empty($tipo)) {
+                error_log('Impossibile trovare tipo intervento per il record: '.json_encode($record));
+                return false;
+            }
 
             // Trova o crea lo stato dell'intervento
             $stato = $this->trovaStatoIntervento($record);
+            if (empty($stato)) {
+                error_log('Impossibile trovare stato intervento per il record: '.json_encode($record));
+                return false;
+            }
 
             // Crea o aggiorna l'intervento
             if (empty($intervento)) {
                 $intervento = Intervento::build($anagrafica, $tipo, $stato, $record['data_richiesta']);
+
+                // Imposta il codice personalizzato se diverso da quello generato automaticamente
+                if ($intervento->codice != $record['codice']) {
+                    $intervento->codice = $record['codice'];
+                }
             } else {
                 // Aggiorna i campi dell'intervento esistente
                 $intervento->idtipointervento = $tipo->id;
@@ -223,8 +245,8 @@ class CSV extends CSVImporter
 
             return true;
         } catch (\Exception $e) {
-            // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'intervento: '.$e->getMessage());
+            // Registra l'errore in un log con più dettagli
+            error_log('Errore durante l\'importazione dell\'intervento: '.$e->getMessage().' - Record: '.json_encode($record).' - Stack trace: '.$e->getTraceAsString());
 
             return false;
         }
@@ -305,11 +327,27 @@ class CSV extends CSVImporter
      */
     protected function trovaTipoIntervento($record)
     {
-        if (empty($record['tipo'])) {
-            return TipoIntervento::where('codice', 'GEN')->first();
+        $tipo = null;
+
+        if (!empty($record['tipo'])) {
+            $tipo = TipoIntervento::where('codice', $record['tipo'])->first();
         }
 
-        return TipoIntervento::where('codice', $record['tipo'])->first();
+        // Se non trovato, cerca il tipo "GEN" (Generico)
+        if (empty($tipo)) {
+            $tipo = TipoIntervento::where('codice', 'GEN')->first();
+        }
+
+        // Se ancora non trovato, prende il primo tipo disponibile
+        if (empty($tipo)) {
+            $tipo = TipoIntervento::first();
+        }
+
+        if (empty($tipo)) {
+            error_log('Nessun tipo intervento trovato nel database');
+        }
+
+        return $tipo;
     }
 
     /**
@@ -321,11 +359,32 @@ class CSV extends CSVImporter
      */
     protected function trovaStatoIntervento($record)
     {
-        if (empty($record['stato'])) {
-            return Stato::where('name', 'Completato')->first();
+        $stato = null;
+
+        if (!empty($record['stato'])) {
+            $stato = Stato::where('name', $record['stato'])->first();
         }
 
-        return Stato::where('name', $record['stato'])->first();
+        // Se non trovato, cerca lo stato "Completato"
+        if (empty($stato)) {
+            $stato = Stato::where('name', 'Completato')->first();
+        }
+
+        // Se ancora non trovato, cerca lo stato "Da programmare"
+        if (empty($stato)) {
+            $stato = Stato::where('name', 'Da programmare')->first();
+        }
+
+        // Se ancora non trovato, prende il primo stato disponibile
+        if (empty($stato)) {
+            $stato = Stato::first();
+        }
+
+        if (empty($stato)) {
+            error_log('Nessuno stato intervento trovato nel database');
+        }
+
+        return $stato;
     }
 
     /**
@@ -447,6 +506,12 @@ class CSV extends CSVImporter
                 $ragione_sociale = 'Cliente importato '.date('Y-m-d H:i:s');
             }
 
+            // Verifica che la ragione sociale non sia vuota
+            if (empty($ragione_sociale)) {
+                error_log('Impossibile determinare la ragione sociale per il record: '.json_encode($record));
+                return null;
+            }
+
             // Crea la nuova anagrafica
             $anagrafica = Anagrafica::build($ragione_sociale);
 
@@ -460,6 +525,11 @@ class CSV extends CSVImporter
                 $anagrafica->codice_fiscale = $record['codice_fiscale'];
             }
 
+            // Imposta un telefono fittizio se mancante (richiesto per le anagrafiche)
+            if (empty($anagrafica->telefono) && empty($anagrafica->piva)) {
+                $anagrafica->telefono = '000000000'; // Telefono fittizio per soddisfare i vincoli
+            }
+
             // Assegna il tipo "Cliente" all'anagrafica
             $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
             if (!empty($tipo_cliente)) {
@@ -469,10 +539,12 @@ class CSV extends CSVImporter
             // Salva l'anagrafica
             $anagrafica->save();
 
+            error_log('Anagrafica creata con successo: ID '.$anagrafica->id.', Ragione sociale: '.$ragione_sociale);
+
             return $anagrafica;
         } catch (\Exception $e) {
-            // Registra l'errore
-            error_log('Errore durante la creazione dell\'anagrafica: '.$e->getMessage());
+            // Registra l'errore con più dettagli
+            error_log('Errore durante la creazione dell\'anagrafica: '.$e->getMessage().' - Record: '.json_encode($record).' - Stack trace: '.$e->getTraceAsString());
 
             return null;
         }
@@ -544,5 +616,39 @@ class CSV extends CSVImporter
 
             return null;
         }
+    }
+
+    /**
+     * Valida il formato della data.
+     *
+     * @param string $data Data da validare
+     *
+     * @return bool True se il formato è valido, false altrimenti
+     */
+    protected function validaFormatoData($data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        // Prova diversi formati di data comuni
+        $formati = [
+            'Y-m-d',
+            'd/m/Y',
+            'd-m-Y',
+            'Y/m/d',
+            'Y-m-d H:i:s',
+            'd/m/Y H:i:s',
+        ];
+
+        foreach ($formati as $formato) {
+            $date = \DateTime::createFromFormat($formato, $data);
+            if ($date && $date->format($formato) === $data) {
+                return true;
+            }
+        }
+
+        // Prova anche con strtotime
+        return strtotime($data) !== false;
     }
 }

@@ -26,9 +26,11 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Preventivi\Components\Articolo;
+use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Modules\Iva\Aliquota;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) dei Preventivi.
@@ -66,6 +68,10 @@ class CSV extends CSVImporter
                 'required' => true,
             ],
             [
+                'field' => 'partita_iva',
+                'label' => 'Partita IVA Cliente',
+            ],
+            [
                 'field' => 'idtipointervento',
                 'label' => 'Tipo attività',
             ],
@@ -77,12 +83,18 @@ class CSV extends CSVImporter
             [
                 'field' => 'codice',
                 'label' => 'Codice articolo',
-                'required' => true,
+            ],
+            [
+                'field' => 'descrizione_riga',
+                'label' => 'Descrizione riga generica',
+            ],
+            [
+                'field' => 'aliquota_iva',
+                'label' => 'Aliquota IVA riga (%)',
             ],
             [
                 'field' => 'qta',
                 'label' => 'Quantità riga',
-                'required' => true,
             ],
             [
                 'field' => 'data_evasione',
@@ -112,8 +124,12 @@ class CSV extends CSVImporter
 
             // Validazione dei campi obbligatori
             if (empty($record['numero']) || empty($record['nome']) || empty($record['ragione_sociale'])
-                || empty($record['data_bozza']) || empty($record['codice']) || empty($record['qta'])
-                || empty($record['prezzo_unitario'])) {
+                || empty($record['data_bozza']) || empty($record['prezzo_unitario'])) {
+                return false;
+            }
+
+            // Validazione per righe: deve essere presente codice articolo O descrizione riga
+            if (empty($record['codice']) && empty($record['descrizione_riga'])) {
                 return false;
             }
 
@@ -133,8 +149,8 @@ class CSV extends CSVImporter
                 }
             }
 
-            // Aggiunta dell'articolo al preventivo
-            $this->aggiungiArticoloAlPreventivo($preventivo, $record);
+            // Aggiunta della riga al preventivo (articolo o riga generica)
+            $this->aggiungiRigaAlPreventivo($preventivo, $record);
 
             return true;
         } catch (\Exception $e) {
@@ -153,9 +169,10 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '001', '2', '30/04/2024', '50'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', 'Generico', '27/04/2024', '043', '1', '10/05/2024', '100'],
+            ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Partita IVA Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Descrizione riga generica', 'Aliquota IVA riga (%)', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', '12345678901', 'Generico', '27/04/2024', '001', '', '', '2', '30/04/2024', '50'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', '12345678901', 'Generico', '27/04/2024', '043', '', '', '1', '10/05/2024', '100'],
+            ['16', 'Preventivo Servizi', 'Preventivo servizi', 'Bianchi', '98765432109', 'Generico', '28/04/2024', '', 'Consulenza tecnica', '22', '1', '05/05/2024', '150'],
         ];
     }
 
@@ -225,10 +242,27 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $anagrafica = Anagrafica::where('ragione_sociale', $record['ragione_sociale'])->first();
+        $anagrafica = null;
 
+        // Prima ricerca per partita IVA se presente
+        if (!empty($record['partita_iva'])) {
+            $anagrafica = Anagrafica::where('piva', $record['partita_iva'])->first();
+        }
+
+        // Se non trovata per partita IVA, ricerca per ragione sociale
+        if (empty($anagrafica)) {
+            $anagrafica = Anagrafica::where('ragione_sociale', $record['ragione_sociale'])->first();
+        }
+
+        // Se non trovata, crea nuova anagrafica
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($record['ragione_sociale']);
+
+            // Imposta la partita IVA se fornita
+            if (!empty($record['partita_iva'])) {
+                $anagrafica->partita_iva = $record['partita_iva'];
+            }
+
             $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first()->id;
             $anagrafica->tipologie = [$tipo_cliente];
             $anagrafica->save();
@@ -250,22 +284,49 @@ class CSV extends CSVImporter
     }
 
     /**
-     * Aggiunge un articolo al preventivo.
+     * Aggiunge una riga al preventivo (articolo o riga generica).
      *
      * @param Preventivo $preventivo Preventivo
      * @param array      $record     Record da importare
      *
      * @return bool
      */
-    protected function aggiungiArticoloAlPreventivo($preventivo, $record)
+    protected function aggiungiRigaAlPreventivo($preventivo, $record)
     {
         try {
-            // Individuazione articolo
-            $articolo_orig = ArticoloOriginale::where('codice', $record['codice'])->first();
-            if (empty($articolo_orig)) {
-                return false;
+            // Se è presente il codice articolo, prova a creare una riga articolo
+            if (!empty($record['codice'])) {
+                $articolo_orig = ArticoloOriginale::where('codice', $record['codice'])->first();
+                if (!empty($articolo_orig)) {
+                    return $this->aggiungiArticoloAlPreventivo($preventivo, $record, $articolo_orig);
+                }
             }
 
+            // Se non è un articolo o l'articolo non è stato trovato, crea una riga generica
+            if (!empty($record['descrizione_riga'])) {
+                return $this->aggiungiRigaGenericaAlPreventivo($preventivo, $record);
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            error_log('Errore durante l\'aggiunta della riga al preventivo: '.$e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Aggiunge un articolo al preventivo.
+     *
+     * @param Preventivo $preventivo Preventivo
+     * @param array      $record     Record da importare
+     * @param ArticoloOriginale $articolo_orig Articolo originale
+     *
+     * @return bool
+     */
+    protected function aggiungiArticoloAlPreventivo($preventivo, $record, $articolo_orig)
+    {
+        try {
             $riga_articolo = Articolo::build($preventivo, $articolo_orig);
             $riga_articolo->um = $articolo_orig->um ?: null;
 
@@ -280,7 +341,7 @@ class CSV extends CSVImporter
 
             $riga_articolo->descrizione = $articolo_orig->getTranslation('title');
             $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
-            $riga_articolo->qta = $record['qta'];
+            $riga_articolo->qta = !empty($record['qta']) ? $record['qta'] : 1;
 
             $riga_articolo->save();
 
@@ -290,6 +351,64 @@ class CSV extends CSVImporter
 
             return false;
         }
+    }
+
+    /**
+     * Aggiunge una riga generica al preventivo.
+     *
+     * @param Preventivo $preventivo Preventivo
+     * @param array      $record     Record da importare
+     *
+     * @return bool
+     */
+    protected function aggiungiRigaGenericaAlPreventivo($preventivo, $record)
+    {
+        try {
+            $riga = Riga::build($preventivo);
+
+            // Gestione della data di evasione
+            if (!empty($record['data_evasione'])) {
+                $riga->data_evasione = $this->parseData($record['data_evasione']);
+            }
+
+            // Gestione dell'IVA
+            $idiva = $this->trovaAliquotaIva($record, $preventivo);
+
+            $riga->descrizione = $record['descrizione_riga'];
+            $riga->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
+            $riga->qta = !empty($record['qta']) ? $record['qta'] : 1;
+
+            $riga->save();
+
+            return true;
+        } catch (\Exception $e) {
+            error_log('Errore durante l\'aggiunta della riga generica al preventivo: '.$e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Trova l'aliquota IVA da utilizzare per la riga.
+     *
+     * @param array $record Record da importare
+     * @param Preventivo $preventivo Preventivo
+     *
+     * @return int ID dell'aliquota IVA
+     */
+    protected function trovaAliquotaIva($record, $preventivo)
+    {
+        // Se è specificata un'aliquota IVA nel record, cerca per percentuale
+        if (!empty($record['aliquota_iva'])) {
+            $aliquota = Aliquota::where('percentuale', $record['aliquota_iva'])->first();
+            if (!empty($aliquota)) {
+                return $aliquota->id;
+            }
+        }
+
+        // Fallback: usa l'IVA dell'anagrafica o quella predefinita
+        $anagrafica = $preventivo->anagrafica;
+        return $anagrafica->idiva_vendite ?: setting('Iva predefinita');
     }
 
     /**

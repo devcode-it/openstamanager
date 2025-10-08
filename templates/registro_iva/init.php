@@ -121,23 +121,25 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     ORDER BY CAST(`numero_esterno` AS UNSIGNED)';
 } else {
     $query = '
-SELECT
-    IF(
-        (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
-        DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
-        DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
-    ) AS data_competenza_iva,
-    `co_documenti`.`numero_esterno`,
-    `co_tipidocumento`.`codice_tipo_documento_fe`,
-    `co_iva`.`percentuale`,
-    `co_iva_lang`.`title` as descrizione,
-    `co_documenti`.`id` AS id,
-    IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
-    SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
-    SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`+`iva`+`co_righe_documenti`.`rivalsainps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
-    SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
-    `an_anagrafiche`.`ragione_sociale`,
-    `an_anagrafiche`.`codice` AS codice_anagrafica
+        SELECT
+        IF(
+            (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
+            DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
+            DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
+        ) AS data_competenza_iva,
+        `co_documenti`.`data_registrazione`,
+        `co_documenti`.`numero_esterno`,
+        `co_documenti`.`data`,
+        `co_tipidocumento`.`codice_tipo_documento_fe`,
+        `co_iva`.`percentuale`,
+        `co_iva_lang`.`title` as descrizione,
+        `co_documenti`.`id` AS id,
+        IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`+`iva`+`co_righe_documenti`.`rivalsainps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
+        `an_anagrafiche`.`ragione_sociale`,
+        `an_anagrafiche`.`codice` AS codice_anagrafica
 FROM
     `co_iva`
     LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

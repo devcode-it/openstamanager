@@ -205,8 +205,10 @@ class Mastrino extends Model
             if (count($scadenze) == 1) {
                 $scadenza = Scadenza::find($movimento->id_scadenza);
                 if (!empty($scadenza)) {
-                    // Calcola il totale dei movimenti per questa specifica scadenza
-                    $totale_movimenti_scadenza = $movimento->totale;
+                    // Calcola il totale di TUTTI i movimenti per questa specifica scadenza
+                    $totale_movimenti_scadenza = Movimento::where('id_scadenza', '=', $scadenza->id)
+                        ->where('totale', '>', 0)
+                        ->sum('totale');
 
                     $scadenza_da_pagare = abs($scadenza->da_pagare);
                     $pagato_assoluto = abs($totale_movimenti_scadenza);
@@ -227,6 +229,7 @@ class Mastrino extends Model
                 // Ordina le scadenze per data scadenza
                 $scadenze = Scadenza::whereIn('id', $scadenze)->orderBy('scadenza', 'asc')->get()->pluck('id')->toArray();
 
+                $totale_movimenti = 0;
                 foreach ($scadenze as $scadenza) {
                     $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
                     ->where('totale', '>', 0)

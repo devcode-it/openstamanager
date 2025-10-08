@@ -34,9 +34,10 @@ class Aliquota extends Model
         'title',
     ];
 
-    public static function build($esente = null, $percentuale = null, $indetraibile = null, $dicitura = null, $codice = null, $codice_natura_fe = null, $esigibilita = null)
+    public static function build($descrizione, $esente = null, $percentuale = null, $indetraibile = null, $dicitura = null, $codice = null, $codice_natura_fe = null, $esigibilita = null)
     {
         $model = new static();
+        $model->name = $descrizione;
         $model->esente = $esente;
         $model->percentuale = $percentuale;
         $model->indetraibile = $indetraibile;

@@ -36,9 +36,10 @@ class Pagamento extends Model
         'title',
     ];
 
-    public static function build($codice = null)
+    public static function build($descrizione, $codice = null)
     {
         $model = new static();
+        $model->name = $descrizione;
         $model->codice_modalita_pagamento_fe = $codice;
         $model->save();
 

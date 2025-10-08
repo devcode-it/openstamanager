@@ -16,7 +16,7 @@ switch (filter('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
         } else {
             if (empty($combinazione)) {
-                $combinazione = Combinazione::build();
+                $combinazione = Combinazione::build($nome);
                 $id_record = $dbo->lastInsertedID();
             }
             $combinazione->setTranslation('title', $nome);

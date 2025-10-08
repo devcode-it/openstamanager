@@ -375,12 +375,13 @@ class FatturaOrdinaria extends FatturaElettronica
                 $is_nota_credito = ($tipo_documento == 'TD04');
 
                 if (!empty($articolo->um) && !empty($articolo->um_secondaria) && !empty((float) $articolo->fattore_um_secondaria) && strtolower((string) $riga['UnitaMisura']) == strtolower((string) $articolo->um_secondaria)) {
+                    // Converti solo la quantità dall'unità secondaria all'unità primaria
                     $qta = (($riga['Quantita'] ?: 1) / ($articolo->fattore_um_secondaria ?: 1));
-                    // Solo per le note di credito (TD04) invertiamo i segni quando il totale è negativo
-                    if ($is_nota_credito && $totale_righe_riepilogo < 0) {
-                        $prezzo = -($totale_righe_riepilogo / ($qta ?: 1));
+                    // Mantieni il prezzo originale dall'XML
+                    if ($is_nota_credito && $riga['PrezzoUnitario'] > 0) {
+                        $prezzo = -$riga['PrezzoUnitario'];
                     } else {
-                        $prezzo = abs($totale_righe_riepilogo) / ($qta ?: 1);
+                        $prezzo = $riga['PrezzoUnitario'];
                     }
                 } else {
                     $qta = ($riga['Quantita'] ?: 1);

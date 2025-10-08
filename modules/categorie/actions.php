@@ -113,7 +113,7 @@ switch (filter('op')) {
             $link = Modules::link('Categorie', $categoria_new->id, $categoria_new->getTranslation('title'));
             flash()->error($message.': '.$link);
         } else {
-            $categoria = Categoria::build($colore);
+            $categoria = Categoria::build($colore, $nome);
             $id_record = $dbo->lastInsertedID();
             $categoria->parent = $id_original;
             $categoria->is_articolo = $is_articolo;

@@ -685,11 +685,24 @@ $(".tipo_icon_after").on("change", function() {
 
 function aggiornaInline(id) {
     content_was_modified = false;
-    var qta = input("qta_"+ id).get();
-    var sconto = input("sconto_"+ id).get();
-    var tipo_sconto = input("tipo_sconto_"+ id).get();
-    var prezzo = input("prezzo_"+ id).get();
-    var costo = input("costo_"+ id).get();
+
+    // Controllo che gli elementi esistano prima di accedervi
+    var qtaElement = $("input[name=\'qta_" + id + "\']");
+    var scontoElement = $("input[name=\'sconto_" + id + "\']");
+    var tipoScontoElement = $("select[name=\'tipo_sconto_" + id + "\']");
+    var prezzoElement = $("input[name=\'prezzo_" + id + "\']");
+    var costoElement = $("input[name=\'costo_" + id + "\']");
+
+    if (qtaElement.length === 0) {
+        console.error("Elemento qta_" + id + " non trovato");
+        return;
+    }
+
+    var qta = qtaElement.length > 0 ? input("qta_"+ id).get() : 0;
+    var sconto = scontoElement.length > 0 ? input("sconto_"+ id).get() : 0;
+    var tipo_sconto = tipoScontoElement.length > 0 ? input("tipo_sconto_"+ id).get() : \'\';
+    var prezzo = prezzoElement.length > 0 ? input("prezzo_"+ id).get() : 0;
+    var costo = costoElement.length > 0 ? input("costo_"+ id).get() : 0;
 
     $.ajax({
         url: globals.rootdir + "/actions.php",

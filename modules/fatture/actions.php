@@ -437,7 +437,21 @@ switch ($op) {
                 $riga->save();
             }
 
-            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
+            $id_iva_intervento = post('idiva');
+
+            // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
+            if (!empty($fattura->id_dichiarazione_intento)) {
+                $iva_dichiarazione = $database->table('co_iva')
+                    ->where('codice_natura_fe', 'N3.5')
+                    ->where('deleted_at', null)
+                    ->first();
+
+                if (!empty($iva_dichiarazione)) {
+                    $id_iva_intervento = $iva_dichiarazione->id;
+                }
+            }
+
+            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), $id_iva_intervento, post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
@@ -813,6 +827,19 @@ switch ($op) {
 
             if (post('importa_sessioni')) {
                 $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
+
+                // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
+                if (!empty($fattura->id_dichiarazione_intento)) {
+                    $iva_dichiarazione = $database->table('co_iva')
+                        ->where('codice_natura_fe', 'N3.5')
+                        ->where('deleted_at', null)
+                        ->first();
+
+                    if (!empty($iva_dichiarazione)) {
+                        $id_iva = $iva_dichiarazione->id;
+                    }
+                }
+
                 aggiungi_sessioni_in_fattura($documento->id, $fattura->id, $id_iva, $id_conto, $id_rivalsa_inps, $id_ritenuta_acconto, $calcolo_ritenuta_acconto);
             }
         }
@@ -830,6 +857,18 @@ switch ($op) {
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
                 $copia->ritenuta_contributi = $ritenuta_contributi;
+
+                // Se la fattura ha una dichiarazione d'intento, applica l'aliquota IVA N3.5
+                if (!empty($fattura->id_dichiarazione_intento)) {
+                    $iva_dichiarazione = $database->table('co_iva')
+                        ->where('codice_natura_fe', 'N3.5')
+                        ->where('deleted_at', null)
+                        ->first();
+
+                    if (!empty($iva_dichiarazione)) {
+                        $copia->idiva = $iva_dichiarazione->id;
+                    }
+                }
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

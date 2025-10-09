@@ -174,6 +174,21 @@ switch (post('op')) {
                 }
             }
 
+            // Recupera la fattura per verificare se ha una dichiarazione d'intento
+            $fattura = Fattura::find($id_documento);
+
+            // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
+            if (!empty($fattura->id_dichiarazione_intento)) {
+                $iva_dichiarazione = $dbo->table('co_iva')
+                    ->where('codice_natura_fe', 'N3.5')
+                    ->where('deleted_at', null)
+                    ->first();
+
+                if (!empty($iva_dichiarazione)) {
+                    $id_iva = $iva_dichiarazione->id;
+                }
+            }
+
             $descrizione = str_replace("'", ' ', strip_tags((string) $module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')))) ?: tr('Attività numero _NUM_ del _DATE_', [
                 '_NUM_' => $intervento['codice_intervento'],
                 '_DATE_' => Translator::dateToLocale($intervento['data']),

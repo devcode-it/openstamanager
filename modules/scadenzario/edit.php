@@ -189,17 +189,17 @@ echo '
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-hover table-sm table-bordered">
+                    <table class="table table-hover table-sm table-bordered" style="table-layout: fixed; width: 100%;">
                         <thead>
                             <tr>
-                                <th style="width:17%;">'.tr('Banca accredito').'</th>
-                                <th style="width:16%;">'.tr('Banca addebito').'</th>
-                                <th style="width:20%;">'.tr('Metodo di pagamento').'</th>
-                                <th style="width:10%;">'.tr('Data').'</th>
-                                <th style="width:10%;">'.tr('Data concordata').'</th>
-                                <th style="width:10%;">'.tr('Importo').'</th>
-                                <th style="width:10%;">'.tr('Pagato').'</th>
-                                <th style="width:7%;">'.tr('Rata').'</th>
+                                <th style="width:180px;">'.tr('Banca accredito').'</th>
+                                <th style="width:180px;">'.tr('Banca addebito').'</th>
+                                <th style="width:200px;">'.tr('Metodo di pagamento').'</th>
+                                <th style="width:110px;">'.tr('Data').'</th>
+                                <th style="width:110px;">'.tr('Data concordata').'</th>
+                                <th style="width:90px;">'.tr('Importo').'</th>
+                                <th style="width:90px;">'.tr('Pagato').'</th>
+                                <th style="width:70px;">'.tr('Rata').'</th>
                             </tr>
                         </thead>
 

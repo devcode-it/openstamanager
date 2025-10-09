@@ -20,65 +20,69 @@
 
 namespace API\App\v1;
 
-use API\Interfaces\CreateInterface;
-use API\Interfaces\UpdateInterface;
-use API\Resource;
-use API\Response;
+use API\App\AppResource;
 
 /**
  * Risorsa API per la gestione dei token FCM (Firebase Cloud Messaging) dei dispositivi.
  * Permette all'app di salvare e aggiornare i token FCM per l'invio di notifiche push.
  */
-class FcmTokens extends Resource implements CreateInterface, UpdateInterface
+class FcmTokens extends AppResource
 {
 
-    public function create($request)
+    public function getCleanupData($last_sync_at)
+    {
+        return [];
+    }
+
+    public function getModifiedRecords($last_sync_at)
+    {
+        return [];
+    }
+
+    public function retrieveRecord($id)
+    {
+        return [];
+    }
+
+    public function createRecord($data)
     {
         $database = database();
         $user = $this->getUser();
 
-        $fcm_token = $request['token'];
-        $platform = $request['platform'] ?? null;
-        $device_info = $request['device_info'] ?? null;
+        $fcm_token = $data['token'];
+        $platform = $data['platform'] ?? null;
+        $device_info = $data['device_info'] ?? null;
         $user_id = $user['id'];
 
-        try {
-            // Verifica se esiste già un token per questo utente
-            $existing_token = $database->fetchOne('SELECT * FROM `zz_app_tokens` WHERE `id_user` = :user_id', [
-                ':user_id' => $user_id,
+        // Verifica se esiste già un token per questo utente
+        $existing_token = $database->fetchOne('SELECT * FROM `zz_app_tokens` WHERE `id_user` = :user_id', [
+            ':user_id' => $user_id,
+        ]);
+
+        if ($existing_token) {
+            // Aggiorna il token esistente
+            $database->update('zz_app_tokens', [
+                'token' => $fcm_token,
+                'platform' => $platform,
+                'device_info' => $device_info ? json_encode($device_info) : null,
+            ], ['id' => $existing_token['id']]);
+
+            $token_id = $existing_token['id'];
+        } else {
+            // Crea un nuovo record
+            $database->insert('zz_app_tokens', [
+                'id_user' => $user_id,
+                'token' => $fcm_token,
+                'platform' => $platform,
+                'device_info' => $device_info ? json_encode($device_info) : null,
             ]);
 
-            if ($existing_token) {
-                // Aggiorna il token esistente
-                $database->update('zz_app_tokens', [
-                    'token' => $fcm_token,
-                    'platform' => $platform,
-                    'device_info' => $device_info ? json_encode($device_info) : null,
-                ], ['id' => $existing_token['id']]);
-
-                $token_id = $existing_token['id'];
-            } else {
-                // Crea un nuovo record
-                $database->insert('zz_app_tokens', [
-                    'id_user' => $user_id,
-                    'token' => $fcm_token,
-                    'platform' => $platform,
-                    'device_info' => $device_info ? json_encode($device_info) : null,
-                ]);
-
-                $token_id = $database->lastInsertedID();
-            }
-
-            return [
-                'id' => $token_id
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'status' => Response::getStatus()['internal_error']['code'],
-                'message' => 'Errore durante il salvataggio del token',
-            ];
+            $token_id = $database->lastInsertedID();
         }
+
+        return [
+            'id' => $token_id
+        ];
     }
 
     /**
@@ -88,10 +92,10 @@ class FcmTokens extends Resource implements CreateInterface, UpdateInterface
      *
      * @return array Risposta dell'operazione
      */
-    public function update($request)
+    public function updateRecord($data)
     {
         // Per i token FCM, l'operazione di update è identica a create
         // poiché gestiamo automaticamente la creazione o l'aggiornamento
-        return $this->create($request);
+        return $this->create($data);
     }
 }

@@ -19,7 +19,10 @@
  */
 
 include_once __DIR__.'/../../core.php';
+
 use Models\Module;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Components\Sessione;
 
 $modulo_interventi = Module::where('name', 'Interventi')->first();
 $modulo_preventivi = Module::where('name', 'Preventivi')->first();
@@ -233,40 +236,21 @@ switch (filter('op')) {
         break;
 
     case 'modifica_intervento':
-        $sessione = filter('id');
-        $idintervento = filter('idintervento');
+        $id_sessione = filter('id');
+        $intervento = Intervento::find(filter('idintervento'));
         $orario_inizio = filter('timeStart');
         $orario_fine = filter('timeEnd');
 
-        // Aggiornamento prezzo totale
-        $q = 'SELECT
-                `in_interventi_tecnici`.`prezzo_ore_unitario`,
-                `idtecnico`,
-                `in_statiintervento`.`is_bloccato`
-            FROM
-                `in_interventi_tecnici`
-                INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-                LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` =  `in_statiintervento`.`id`
-            WHERE
-                `in_interventi`.`id`='.prepare($idintervento).' AND
-                `in_statiintervento`.`is_bloccato` = 0 '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id);
-        $rs = $dbo->fetchArray($q);
-        $prezzo_ore = 0.00;
-
-        for ($i = 0; $i < count($rs); ++$i) {
-            $prezzo_ore_unitario = $rs[$i]['prezzo_ore_unitario'];
-            $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
-
-            $prezzo_ore += $ore * $prezzo_ore_unitario;
-        }
-
-        if (count($rs) > 0) {
-            // Aggiornamento orario tecnico
-            // FIXME: usare la classe e relativo metodo
-            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($orario_inizio).', orario_fine = '.prepare($orario_fine).', ore='.prepare($ore).' WHERE id='.prepare($sessione));
-            echo 'ok';
-        } else {
+        if ($intervento->stato->is_bloccato) {
             echo tr('Attività completata, non è possibile modificarla!');
+        } else {
+            // Aggiornamento orario tecnico
+            $sessione = Sessione::find($id_sessione);
+            $sessione->orario_inizio = $orario_inizio;
+            $sessione->orario_fine = $orario_fine;
+            $sessione->save();
+
+            echo 'ok';
         }
 
         break;

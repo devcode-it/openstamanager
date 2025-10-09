@@ -200,6 +200,17 @@ switch (post('op')) {
             }
         }
 
+        // Log del cambio stato dell'attività
+        if ($stato['id'] != $record['idstatointervento']) {
+            $stato_precedente = $dbo->selectOne('in_statiintervento', '*', ['id' => $record['idstatointervento']]);
+
+            OperationLog::setInfo('id_module', $id_module);
+            OperationLog::setInfo('id_plugin', $id_plugin);
+            OperationLog::setInfo('id_record', $id_record);
+            OperationLog::setInfo('level', 'info');
+            OperationLog::build('cambio_stato_intervento');
+        }
+
         aggiorna_sedi_movimenti('interventi', $id_record);
 
         flash()->info(tr('Attività modificata correttamente!'));
@@ -317,6 +328,13 @@ switch (post('op')) {
             foreach ($idtecnici as $idtecnico) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
             }
+
+            OperationLog::setInfo('id_module', $id_module);
+            OperationLog::setInfo('id_plugin', $id_plugin);
+            OperationLog::setInfo('id_record', $id_record);
+            OperationLog::setInfo('level', 'info');
+            OperationLog::build('add_sessione');
+            
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -1064,16 +1082,7 @@ switch (post('op')) {
     case 'delete_sessione':
         $id_sessione = post('id_sessione');
 
-        $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.email FROM an_anagrafiche INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare($id_sessione));
-
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
-
-        // Log specifico per la rimozione sessione
-        OperationLog::setInfo('id_module', $id_module);
-        OperationLog::setInfo('id_plugin', $id_plugin);
-        OperationLog::setInfo('id_record', $id_record);
-        OperationLog::setInfo('options', $id_sessione);
-        OperationLog::build(post('op'));
 
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {

@@ -155,3 +155,42 @@ ALTER TABLE `em_emails` CHANGE `created_by` `created_by` INT(11) NULL;
 
 -- fix: dimensioni QR Code
 UPDATE `zz_prints` SET `options` = '{\"width\": 40, \"height\": 30, \"format\": [40, 30], \"margins\": {\"top\": 1,\"bottom\": 0,\"left\": 0,\"right\": 0}}' WHERE `zz_prints`.`id` = 56;
+
+
+-- Anagrafiche: ottimizzazione query 
+UPDATE `zz_modules` SET `options` = 'SELECT
+    |select|
+FROM
+    `an_anagrafiche`
+    LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id`
+    LEFT JOIN `an_relazioni_lang` ON (`an_relazioni_lang`.`id_record` = `an_relazioni`.`id` AND `an_relazioni_lang`.|lang|)
+    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.|lang|)
+    LEFT JOIN (SELECT `idanagrafica`, GROUP_CONCAT(`nomesede` SEPARATOR \', \') AS nomi FROM `an_sedi` GROUP BY `idanagrafica`) AS sedi ON `an_anagrafiche`.`idanagrafica` = `sedi`.`idanagrafica`
+    LEFT JOIN (SELECT `idanagrafica`, GROUP_CONCAT(`nome` SEPARATOR \', \') AS nomi FROM `an_referenti` GROUP BY `idanagrafica`) AS referenti ON `an_anagrafiche`.`idanagrafica` = `referenti`.`idanagrafica`
+    LEFT JOIN (
+        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
+        FROM `co_pagamenti`
+        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
+    ) AS pagvendita ON `an_anagrafiche`.`idpagamento_vendite` = `pagvendita`.`id`
+    LEFT JOIN (
+        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
+        FROM `co_pagamenti`
+        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
+    ) AS pagacquisto ON `an_anagrafiche`.`idpagamento_acquisti` = `pagacquisto`.`id`
+    LEFT JOIN `an_zone` ON `an_anagrafiche`.`idzona` = `an_zone`.`id`
+WHERE
+    1=1
+    AND `an_anagrafiche`.`deleted_at` IS NULL
+GROUP BY
+    `an_anagrafiche`.`idanagrafica`, `pagvendita`.`nome`, `pagacquisto`.`nome`
+HAVING
+    2=2
+ORDER BY
+    `ragione_sociale`' WHERE `zz_modules`.`name` = 'Anagrafiche';
+
+-- Anagrafiche: colonna Zone con nome - descrizione
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id`
+SET `zz_views`.`query` = 'CONCAT_WS('' - '', an_zone.nome, an_zone.descrizione)'
+WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'Zone';

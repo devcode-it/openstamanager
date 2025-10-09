@@ -178,6 +178,19 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
         $intervento = Intervento::find($id_intervento);
         $codice = $intervento->codice;
 
+        // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
+        if (!empty($fattura->id_dichiarazione_intento)) {
+            $database = database();
+            $iva_dichiarazione = $database->table('co_iva')
+                ->where('codice_natura_fe', 'N3.5')
+                ->where('deleted_at', null)
+                ->first();
+
+            if (!empty($iva_dichiarazione)) {
+                $id_iva = $iva_dichiarazione->id;
+            }
+        }
+
         // Riga di descrizione
         $riga = Descrizione::build($fattura);
         $riga->descrizione = $descrizione;
@@ -233,6 +246,19 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
         $fattura = Fattura::find($id_fattura);
         $intervento = Intervento::find($id_intervento);
         $sessioni = $intervento->sessioni;
+
+        // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
+        if (!empty($fattura->id_dichiarazione_intento)) {
+            $database = database();
+            $iva_dichiarazione = $database->table('co_iva')
+                ->where('codice_natura_fe', 'N3.5')
+                ->where('deleted_at', null)
+                ->first();
+
+            if (!empty($iva_dichiarazione)) {
+                $id_iva = $iva_dichiarazione->id;
+            }
+        }
 
         $decimals = setting('Cifre decimali per quantità');
 

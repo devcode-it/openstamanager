@@ -78,9 +78,12 @@ $php_time_limit = '';
 $rate_limiting = [
     'enabled' => false,
     'store_path' => __DIR__.'/files/cache/ratelimiter',
-    'strategy' => 'user', // 'user' | 'ip' | 'ip_user'
+    // Limiti distinti per autenticati e non autenticati
     'limits' => [
-        'api' => ['max' => 60, 'decay' => 60],
+        'api' => [
+            'authenticated' => ['max' => 300, 'decay' => 60],
+            'unauthenticated' => ['max' => 60, 'decay' => 300],
+        ],
     ],
     'whitelist_ips' => [],
     'blacklist_ips' => [],

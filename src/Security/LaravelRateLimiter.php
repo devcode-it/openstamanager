@@ -77,17 +77,14 @@ class LaravelRateLimiter
     }
 
     /**
-     * Costruisce chiave, limiti e percorso store.
+     * Costruisce chiave, limiti e percorso store (schema authenticated/unauthenticated).
      */
     private static function buildKeyAndLimits(string $area, array $cfg, string $ip, array $opts): array
     {
-        $limits = (array)($cfg['limits'][$area] ?? []);
-        $max   = (int)($limits['max'] ?? 60);
-        $decay = (int)($limits['decay'] ?? 60);
 
-        // Strategia chiave: 'user' | 'ip' | 'ip_user'
-        $strategy = (string)($cfg['strategy'] ?? 'user');
+        $__unused = $opts; unset($__unused);
 
+        // Determina utente autenticato (se presente)
         $userId = null;
         if (class_exists('Auth')) {
             try {
@@ -100,24 +97,18 @@ class LaravelRateLimiter
             }
         }
 
-        $idParts = [$area, $strategy];
-        if ($strategy === 'user') {
-            $idParts[] = $userId ?: ('ip:'.$ip);
-        } elseif ($strategy === 'ip') {
-            $idParts[] = 'ip:'.$ip;
-        } else { // ip_user
-            $idParts[] = 'u:'.($userId ?? 0);
-            $idParts[] = 'ip:'.$ip;
-        }
+        $limitsArea = (array)($cfg['limits'][$area] ?? []);
 
-        // Ulteriori parti opzionali di chiave (per granularità)
-        foreach ((array)($opts['key_parts'] ?? []) as $k => $v) {
-            if (!empty($v)) {
-                $idParts[] = $k.':'.$v;
-            }
+        // Limiti distinti per authenticated/unauthenticated
+        if ($userId) {
+            $max   = (int)($limitsArea['authenticated']['max'] ?? 300);
+            $decay = (int)($limitsArea['authenticated']['decay'] ?? 60);
+            $key   = 'osm:rate:'.$area.':user:'.$userId;
+        } else {
+            $max   = (int)($limitsArea['unauthenticated']['max'] ?? 60);
+            $decay = (int)($limitsArea['unauthenticated']['decay'] ?? 300);
+            $key   = 'osm:rate:'.$area.':ip:'.$ip;
         }
-
-        $key = 'osm:rate:'.sha1(implode('|', $idParts));
 
         $storePath = (string)($cfg['store_path'] ?? (function_exists('base_dir') ? base_dir().'/files/cache/ratelimiter' : __DIR__.'/../../files/cache/ratelimiter'));
 

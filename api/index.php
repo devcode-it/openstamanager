@@ -40,12 +40,7 @@ include_once __DIR__.'/../core.php';
 
 // Rate limiting per API (se abilitato)
 if (($config['rate_limiting']['enabled'] ?? false)) {
-    [$ok, $retry] = \Security\LaravelRateLimiter::enforce('api', $config, [
-        'key_parts' => [
-            'resource' => get('resource'),
-            'token' => get('token'),
-        ],
-    ]);
+    [$ok] = \Security\LaravelRateLimiter::enforce('api', $config);
     if (!$ok) {
         http_response_code(429);
         exit('Too Many Requests');

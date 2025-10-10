@@ -79,10 +79,10 @@ if (!empty($record['immagine'])) {
 					</div>
 					<div class ="row">
 						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
+							{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marche", "select-options": <?php echo json_encode(['is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
 						</div>
 						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value": "$id_modello$","ajax-source": "modello", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
+							{[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value": "$id_modello$","ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca'], 'is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
 						</div>
 						<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}

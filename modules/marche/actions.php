@@ -137,16 +137,25 @@ switch (post('op')) {
         }
 
         // Verifica se esiste già una marca con lo stesso nome
-        $marca_new = Marca::where('name', $nome)->where('id', '!=', $id_record)->first();
+        $marca_new = Marca::where('name', $nome)->where('id', '!=', $id_record)->where('parent', '=', $id_original)->first();
 
         if (!empty($marca_new)) {
             // Mostra un messaggio di errore con link alla marca esistente
-            $message = tr('Esiste già una marca con il nome _NOME_', [
+            $message = tr('Esiste già _TYPE_ con il nome _NOME_', [
                 '_NOME_' => '"'.$nome.'"',
+                '_TYPE_' => $id_original ? tr('un modello') : tr('una marca'),
             ]);
 
             $link = Modules::link('Marche', $marca_new->id, $marca_new->name);
             flash()->error($message.': '.$link);
+
+            if (empty($id_original)) {
+                redirect(base_path().'/controller.php?id_module='.$id_module);
+                exit();
+            }
+
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit();
         } else {
             $marca = Marca::build($nome);
             $marca->parent = $id_original;
@@ -167,7 +176,7 @@ switch (post('op')) {
             // Redirect alla marca se si sta aggiungendo una modello
             $database->commitTransaction();
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
-            exit;
+            exit();
         }
 
         break;

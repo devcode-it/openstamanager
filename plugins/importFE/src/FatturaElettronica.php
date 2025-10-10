@@ -398,6 +398,12 @@ class FatturaElettronica
             $fattura->note = $note;
         }
 
+        // Valorizzazione dati aggiuntivi FE
+        $dati_aggiuntivi_fe = $this->extractDatiAggiuntiviFE();
+        if (!empty($dati_aggiuntivi_fe)) {
+            $fattura->dati_aggiuntivi_fe = $dati_aggiuntivi_fe;
+        }
+
         // Sconto finale da ScontoMaggiorazione: non importato
         $fattura->save();
 
@@ -450,6 +456,83 @@ class FatturaElettronica
         $result = isset($result[0]) ? $result : [$result];
 
         return $result;
+    }
+
+    /**
+     * Estrae i dati aggiuntivi per la fattura elettronica dal file XML.
+     *
+     * @return array
+     */
+    protected function extractDatiAggiuntiviFE()
+    {
+        $dati_aggiuntivi = [];
+
+        // Estrazione dati dall'header
+        $header = $this->getHeader();
+        $dati_trasmissione = $header['DatiTrasmissione'];
+
+        if (!empty($dati_trasmissione)) {
+            $dati_aggiuntivi['dati_trasmissione'] = [];
+
+            if (!empty($dati_trasmissione['FormatoTrasmissione'])) {
+                $dati_aggiuntivi['dati_trasmissione']['formato_trasmissione'] = $dati_trasmissione['FormatoTrasmissione'];
+            }
+
+            if (!empty($dati_trasmissione['CodiceDestinatario'])) {
+                $dati_aggiuntivi['dati_trasmissione']['codice_destinatario'] = $dati_trasmissione['CodiceDestinatario'];
+            }
+
+            if (!empty($dati_trasmissione['ContattiTrasmittente'])) {
+                $dati_aggiuntivi['dati_trasmissione']['contatti_trasmittente'] = $dati_trasmissione['ContattiTrasmittente'];
+            }
+        }
+
+        // Estrazione dati dal body
+        $body = $this->getBody();
+        $dati_generali = $body['DatiGenerali'];
+
+        // Verifica presenza Art73
+        if (!empty($dati_generali['DatiGeneraliDocumento']['Art73'])) {
+            $dati_aggiuntivi['art73'] = $dati_generali['DatiGeneraliDocumento']['Art73'];
+        }
+
+        // Estrazione dati ordine acquisto
+        if (!empty($dati_generali['DatiOrdineAcquisto'])) {
+            $dati_ordini = $this->forceArray($dati_generali['DatiOrdineAcquisto']);
+            $dati_aggiuntivi['dati_ordine_acquisto'] = $dati_ordini;
+        }
+
+        // Estrazione dati contratto
+        if (!empty($dati_generali['DatiContratto'])) {
+            $dati_contratti = $this->forceArray($dati_generali['DatiContratto']);
+            $dati_aggiuntivi['dati_contratto'] = $dati_contratti;
+        }
+
+        // Estrazione dati convenzione
+        if (!empty($dati_generali['DatiConvenzione'])) {
+            $dati_convenzioni = $this->forceArray($dati_generali['DatiConvenzione']);
+            $dati_aggiuntivi['dati_convenzione'] = $dati_convenzioni;
+        }
+
+        // Estrazione dati ricezione
+        if (!empty($dati_generali['DatiRicezione'])) {
+            $dati_ricezioni = $this->forceArray($dati_generali['DatiRicezione']);
+            $dati_aggiuntivi['dati_ricezione'] = $dati_ricezioni;
+        }
+
+        // Estrazione dati fatture collegate
+        if (!empty($dati_generali['DatiFattureCollegate'])) {
+            $dati_fatture = $this->forceArray($dati_generali['DatiFattureCollegate']);
+            $dati_aggiuntivi['dati_fatture'] = $dati_fatture;
+        }
+
+        // Estrazione dati DDT
+        if (!empty($dati_generali['DatiDDT'])) {
+            $dati_ddt = $this->forceArray($dati_generali['DatiDDT']);
+            $dati_aggiuntivi['dati_ddt'] = $dati_ddt;
+        }
+
+        return array_filter($dati_aggiuntivi);
     }
 
     /**

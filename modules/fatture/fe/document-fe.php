@@ -26,6 +26,10 @@ $space = str_repeat('&nbsp;', 6);
 
 $documento = Fattura::find($id_record);
 
+// Verifica se si tratta di una fattura di acquisto (modalità readonly)
+$is_readonly = filter('readonly') == '1';
+$readonly_attr = $is_readonly ? 'readonly' : '';
+
 $result = $documento->toArray();
 $result = array_merge($result, $documento->dati_aggiuntivi_fe);
 
@@ -44,10 +48,22 @@ echo '
     <tbody>
         <tr class="first-level">
             <th colspan="2">
-                2 FatturaElettronicaBody
+                2 FatturaElettronicaBody';
+
+// Mostra il pulsante "Salva" solo se non è in modalità readonly
+if (!$is_readonly) {
+    echo '
                 <button type="submit" class="btn btn-primary pull-right">
                     <i class="fa fa-edit"></i> '.tr('Salva').'
-                </button>
+                </button>';
+} else {
+    echo '
+                <span class="label label-info pull-right">
+                    <i class="fa fa-eye"></i> '.tr('Sola lettura').'
+                </span>';
+}
+
+echo '
 			</th>
         </tr>
         <tr class="second-level">
@@ -69,7 +85,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.1 Tipo</td>
             <td>
-                {[ "type": "select", "name": "sconto_maggiorazione_tipo", "values": "list=\"SC\":\"Sconto\",\"MG\":\"Maggiorazione\"", "value": "'.$result['sconto_maggiorazione_tipo'].'" ]}
+                {[ "type": "select", "name": "sconto_maggiorazione_tipo", "values": "list=\"SC\":\"Sconto\",\"MG\":\"Maggiorazione\"", "value": "'.$result['sconto_maggiorazione_tipo'].'", "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>
         </tr>
 ';
@@ -79,7 +95,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.2 Percentuale</td>
             <td>
-                {[ "type": "number", "name": "sconto_maggiorazione_percentuale", "value": "'.$result['sconto_maggiorazione_percentuale'].'" ]}
+                {[ "type": "number", "name": "sconto_maggiorazione_percentuale", "value": "'.$result['sconto_maggiorazione_percentuale'].'", "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>
         </tr>
 ';
@@ -89,7 +105,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.3 Importo</td>
             <td>
-                {[ "type": "number", "name": "sconto_maggiorazione_importo", "value": "'.$result['sconto_maggiorazione_importo'].'" ]}
+                {[ "type": "number", "name": "sconto_maggiorazione_importo", "value": "'.$result['sconto_maggiorazione_importo'].'", "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>
         </tr>
 ';
@@ -99,7 +115,7 @@ echo '
         <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.1.1.12 Art73</td>
             <td>
-                {[ "type": "checkbox", "name": "art73", "value": "'.$result['art73'].'", "placeholder": "'.tr("Emesso ai sensi dell'articolo 73 del DPR 633/72").'" ]}
+                {[ "type": "checkbox", "name": "art73", "value": "'.$result['art73'].'", "placeholder": "'.tr("Emesso ai sensi dell'articolo 73 del DPR 633/72").'", "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>
         </tr>
     </tbody>';
@@ -178,14 +194,16 @@ foreach ($documenti as $nome => $info) {
     ]).'
             </td>
             <td>
-                {[ "type": "number", "name": "'.$nome.'[-id-][riferimento_linea][]", "value": "", "maxlength": 4, "decimals": 0 ]}
+                {[ "type": "number", "name": "'.$nome.'[-id-][riferimento_linea][]", "value": "", "maxlength": 4, "decimals": 0, "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>
         </tr>
     </tbody>
 </table>';
 }
 
-echo '
+// Mostra i pulsanti solo se non è in modalità readonly
+if (!$is_readonly) {
+    echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
@@ -194,6 +212,7 @@ echo '
 			</button>
 		</div>
 	</div>';
+}
 
 echo '
 </form>';

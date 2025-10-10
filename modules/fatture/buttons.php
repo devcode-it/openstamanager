@@ -21,11 +21,21 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-if ($module->name == 'Fatture di vendita') {
-    $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
+// Pulsante "Attributi avanzati" per fatture di vendita e di acquisto
+if ($module->name == 'Fatture di vendita' || $module->name == 'Fatture di acquisto') {
+    // Condizioni di visibilità
+    if ($module->name == 'Fatture di vendita') {
+        // Per fatture di vendita: visibile se ci sono dati aggiuntivi FE o se è in bozza
+        $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
+        $readonly_param = '';
+    } else {
+        // Per fatture di acquisto: visibile solo se ci sono dati aggiuntivi FE importati
+        $attributi_visibili = $record['dati_aggiuntivi_fe'] != null;
+        $readonly_param = '&readonly=1';
+    }
 
     echo '
-<a class="btn btn-info '.($attributi_visibili ? '' : 'disabled').'" data-widget="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'" '.($attributi_visibili ? '' : 'disabled').'>
+<a class="btn btn-info '.($attributi_visibili ? '' : 'disabled').'" data-widget="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.$readonly_param.'" '.($attributi_visibili ? '' : 'disabled').'>
     <i class="fa fa-file-code-o"></i> '.tr('Attributi avanzati').'
 </a>';
 }

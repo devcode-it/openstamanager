@@ -194,3 +194,21 @@ ORDER BY
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id`
 SET `zz_views`.`query` = 'CONCAT_WS('' - '', an_zone.nome, an_zone.descrizione)'
 WHERE `zz_modules`.`name` = 'Anagrafiche' AND `zz_views`.`name` = 'Zone';
+
+-- Marche: parent = 0 diventa NULL
+ALTER TABLE `zz_marche` CHANGE `parent` `parent` INT NULL DEFAULT NULL;
+UPDATE `zz_marche` SET `parent` = NULL WHERE `parent` = 0;
+UPDATE `mg_articoli` SET `id_marca` = NULL WHERE `id_marca` = 0;
+
+UPDATE `zz_modules` SET `options` = 'SELECT
+    |select|
+FROM
+    `zz_marche`
+WHERE
+    1=1
+    AND
+    `parent` IS NULL
+HAVING
+    2=2
+ORDER BY
+    `name`' WHERE `zz_modules`.`name` = 'Marche';

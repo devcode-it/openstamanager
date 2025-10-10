@@ -70,11 +70,11 @@ use Modules\Iva\Aliquota;
 
                         <div class="col-md-3">
                             <?php echo !empty($record['id_marca']) ? Modules::link('Marche', $record['id_marca'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca_edit", "id": "id_marca_edit", "value":"$id_marca$", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca_edit", "id": "id_marca_edit", "value":"$id_marca$", "ajax-source": "marche", "select-options": <?php echo json_encode(['is_articolo' => true]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
                         </div>
                         <div class="col-md-3">
                             <?php echo !empty($record['id_modello']) ? Modules::link('Marche', $record['id_modello'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello_edit", "id": "id_modello_edit", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello_edit", "id": "id_modello_edit", "value":"$id_modello$", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca'], 'is_articolo' => true]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
                         </div>
                     </div>
                     <div class="row">

@@ -171,41 +171,4 @@ switch ($resource) {
             $custom['link'] = 'module:Categorie';
         }
         break;
-
-    case 'marca':
-        $query = 'SELECT `id`, `name` AS descrizione FROM `zz_marche` |where| ORDER BY `name` ASC';
-
-        foreach ($elements as $element) {
-            $filter[] = '`id`='.prepare($element);
-        }
-
-        $where[] = '`parent` = 0';
-        $where[] = '`is_impianto` = 1';
-
-        if (!empty($search)) {
-            $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['link'] = 'module:Marche';
-
-        break;
-
-    case 'modello':
-        if (isset($superselect['id_marca'])) {
-            $query = 'SELECT `id`, `name` AS descrizione FROM `zz_marche` |where| ORDER BY `name` ASC';
-
-            foreach ($elements as $element) {
-                $filter[] = '`id`='.prepare($element);
-            }
-
-            $where[] = '`parent`='.prepare($superselect['id_marca']);
-            $where[] = '`is_impianto` = 1';
-
-            if (!empty($search)) {
-                $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
-            }
-
-            $custom['link'] = 'module:Marche';
-        }
-        break;
 }

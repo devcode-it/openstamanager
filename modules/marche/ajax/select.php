@@ -10,8 +10,13 @@ switch ($resource) {
             $filter[] = '`id`='.prepare($element);
         }
 
-        $where[] = '`parent` = 0';
-        $where[] = '`is_articolo` = 1';
+        $where[] = '`parent` IS NULL';
+
+        if (isset($superselect['is_articolo'])) {
+            $where[] = '`is_articolo` = 1';
+        } elseif (isset($superselect['is_impianto'])) {
+            $where[] = '`is_impianto` = 1';
+        }
 
         if (!empty($search)) {
             $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');
@@ -34,7 +39,12 @@ switch ($resource) {
             }
 
             $where[] = '`parent`='.prepare($superselect['id_marca']);
-            $where[] = '`is_articolo` = 1';
+
+            if (isset($superselect['is_articolo'])) {
+                $where[] = '`is_articolo` = 1';
+            } elseif (isset($superselect['is_impianto'])) {
+                $where[] = '`is_impianto` = 1';
+            }
 
             if (!empty($search)) {
                 $search_fields[] = '`name` LIKE '.prepare('%'.$search.'%');

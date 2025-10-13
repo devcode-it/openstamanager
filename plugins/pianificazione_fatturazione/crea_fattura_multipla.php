@@ -31,8 +31,6 @@ if (empty($records)) {
     return;
 }
 
-// print_r($records);
-// echo '<script>console.log('.$records.')</script>';
 foreach ($records as $j => $record) {
     $id_rata[$j] = $record['rata'];
     $pianificazione[$j] = Pianificazione::find($id_rata);

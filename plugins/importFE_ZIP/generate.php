@@ -1013,9 +1013,6 @@ function updateProgressBar(current, total) {
 
     // Aggiorna anche il testo sotto la barra di progresso
     $("#progress-text").text("'.tr('Importazione in sequenza').': " + current + " '.tr('di').' " + total);
-
-    // Debug
-    console.log("UpdateProgressBar - Current:", current, "Total:", total, "Percentage:", percentage + "%");
 }
 
 // Inizializza la progress bar con i dati correnti solo se siamo in modalità importazione in sequenza
@@ -1047,8 +1044,6 @@ $(document).ready(function() {
 
         // Aggiorna la barra di progresso con i valori corretti
         updateProgressBar(currentIndex, totalDocuments);
-
-        console.log("Progress bar inizializzata con total dall\'URL:", totalDocuments);
     } else {
         // Fallback: verifica se ci sono altri documenti dopo questo
         let hasNext = '.($has_next ? 'true' : 'false').';
@@ -1060,8 +1055,6 @@ $(document).ready(function() {
         } else {
             updateProgressBar(currentIndex, currentIndex);
         }
-
-        console.log("Progress bar inizializzata con stima hasNext:", hasNext);
     }
 });
 

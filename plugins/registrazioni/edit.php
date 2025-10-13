@@ -229,25 +229,17 @@ $(document).ready(function() {
     if (window.location.href.indexOf(\'id_plugin=<?php echo $id_plugin; ?>\') > -1 &&
         $(\'input[name="op"][value="change-conto"]\').length > 0) {
 
-        console.log(\'Plugin registrazioni: attivazione validazione personalizzata\');
-
         // Override del submit del form SOLO per il plugin registrazioni
         $(\'form[action=""]\').off(\'submit.registrazioni\').on(\'submit.registrazioni\', function(e) {
-            console.log(\'Plugin registrazioni: validazione submit\');
-
             // Prima validazione Parsley standard
             if (!$(this).parsley().validate()) {
-                console.log(\'Plugin registrazioni: validazione Parsley fallita\');
                 return false;
             }
 
             // Poi validazione personalizzata per i conti
             if (!validateConti()) {
-                console.log(\'Plugin registrazioni: validazione conti fallita\');
                 return false;
             }
-
-            console.log(\'Plugin registrazioni: validazione completata, submit in corso\');
 
             // Se tutto è valido, rimuovi il listener e procedi con il submit
             $(this).off(\'submit.registrazioni\');
@@ -260,8 +252,6 @@ $(document).ready(function() {
             this.submit();
             return false;
         });
-    } else {
-        console.log(\'Plugin registrazioni: validazione personalizzata non attivata\');
     }
 
     $("input[name^=\'is_cespite\']").change(function() {

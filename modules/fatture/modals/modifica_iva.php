@@ -199,7 +199,6 @@ function initializeAjaxSelects() {
     // Forza l'inizializzazione dei select con ajax-source
     $('#modifica-iva-form .superselectajax').each(function() {
         if (!$(this).hasClass('select2-hidden-accessible')) {
-            console.log('Inizializzazione select AJAX:', $(this).attr('name'));
             input(this);
         }
     });
@@ -207,7 +206,6 @@ function initializeAjaxSelects() {
     // Se non ci sono select con classe superselectajax, proviamo a inizializzare tutti i select con data-source
     $('#modifica-iva-form select[data-source]').each(function() {
         if (!$(this).hasClass('select2-hidden-accessible')) {
-            console.log('Aggiunta classe superselectajax e inizializzazione:', $(this).attr('name'));
             $(this).addClass('superselectajax');
             input(this);
         }
@@ -217,7 +215,6 @@ function initializeAjaxSelects() {
     setTimeout(function() {
         $('#modifica-iva-form select[name="iva_id"]').each(function() {
             if (!$(this).hasClass('select2-hidden-accessible') && $(this).data('source')) {
-                console.log('Inizializzazione ritardata per select iva_id');
                 $(this).addClass('superselectajax');
                 input(this);
             }

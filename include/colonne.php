@@ -85,7 +85,6 @@ echo '
             scroll: true,
         })[0].addEventListener("sortupdate", function(e) {
             let order = $(".card[data-id]").toArray().map(a => $(a).data("id"))
-            console.log(order);
 
             $.post(globals.rootdir + "/actions.php", {
                 id_module: globals.id_module,

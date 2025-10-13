@@ -177,28 +177,19 @@ $(document).ready(function() {
     // Carica i documenti quando il card viene espanso
     // Utilizziamo l'evento specifico di AdminLTE per il collapse/expand
     $('#documenti-collegati-card').on('expanded.lte.cardwidget', function() {
-        console.log('Card espansa (evento AdminLTE), documentiCaricati:', documentiCaricati);
         if (!documentiCaricati) {
-            console.log('Carico documenti collegati...');
             caricaDocumentiCollegati();
         }
     });
 
     // Fallback: se l'evento AdminLTE non funziona, usa il click diretto
     $('#documenti-collegati-toggle').on('click', function() {
-        console.log('Click sul toggle (fallback), documentiCaricati:', documentiCaricati);
-        console.log('Card ha classe collapsed-card:', $('#documenti-collegati-card').hasClass('collapsed-card'));
 
         if (!documentiCaricati && $('#documenti-collegati-card').hasClass('collapsed-card')) {
-            console.log('Fallback: carico documenti tra 500ms');
             setTimeout(function() {
-                console.log('Fallback timeout: verifico stato card');
-                console.log('Card collapsed dopo timeout:', $('#documenti-collegati-card').hasClass('collapsed-card'));
                 if (!$('#documenti-collegati-card').hasClass('collapsed-card')) {
-                    console.log('Card espansa, carico documenti');
                     caricaDocumentiCollegati();
                 } else {
-                    console.log('Card ancora collassata, forzo il caricamento comunque');
                     // Se la card non si espande correttamente, carica comunque i documenti
                     caricaDocumentiCollegati();
                 }

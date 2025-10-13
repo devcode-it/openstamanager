@@ -522,8 +522,6 @@ function caricaAltreOperazioni(offset, limit) {
         container.html(data);
         localLoading(container, false);
 
-        console.log("Caricate nuove operazioni dall\'offset:", offset);
-
         init();
     });
 }

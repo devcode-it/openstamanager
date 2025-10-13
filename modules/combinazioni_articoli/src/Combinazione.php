@@ -46,10 +46,9 @@ class Combinazione extends Model
         'servizio',
     ];
 
-    public static function build($nome = null)
+    public static function build()
     {
         $model = new static();
-        $model->name = $nome;
         $model->save();
 
         return $model;

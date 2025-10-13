@@ -16,18 +16,16 @@ switch (filter('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altra combinazione.'));
         } else {
             if (empty($combinazione)) {
-                $combinazione = Combinazione::build($nome);
+                $combinazione = Combinazione::build();
                 $id_record = $dbo->lastInsertedID();
             }
-            $combinazione->setTranslation('title', $nome);
+            
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria') ?: null;
             $combinazione->id_sottocategoria = post('id_sottocategoria') ?: null;
             $combinazione->save();
 
-            $id_record = $combinazione->id;
-
-            $database->query('INSERT INTO `mg_combinazioni_lang` (`id_record`, `id_lang`, `title`) VALUES ('.$id_record.', '.prepare(Models\Locale::getDefault()->id).', \''.post('nome').'\')');
+            $combinazione->setTranslation('title', $nome);
 
             // Selezione attributi per la combinazione
             $combinazione->attributi()->sync((array) post('attributi'));

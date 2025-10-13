@@ -6,24 +6,20 @@ ALTER TABLE `in_tipiintervento` ADD `note` TEXT NOT NULL;
 ALTER TABLE `co_contratti` ADD `idtipointervento` INT NOT NULL;
 
 -- Aggiunta colonna Zone in Anagrafiche
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Zone', 'an_zone.nome', '18', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Zone', 'an_zone.nome', '18', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = @id_module), 'Zone'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = @id_module), 'Zone');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche')), 'Zone'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche')), 'Zone');
 
 -- Aggiunta colonna Zone in Attività
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Interventi';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Zone', 'an_zone.nome', '18', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Zone', 'an_zone.nome', '18', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Interventi';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = @id_module), 'Zone'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = @id_module), 'Zone');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi')), 'Zone'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Zone' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi')), 'Zone');
 
 -- Allineamento vista Attività
 UPDATE `zz_modules` SET `options` = "
@@ -51,52 +47,50 @@ FROM
     LEFT JOIN (SELECT GROUP_CONCAT(' ', `zz_files`.`name`) as name, `zz_files`.`id_record` FROM `zz_files` INNER JOIN `zz_modules` ON `zz_files`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules`.`name` = 'Interventi' GROUP BY id_record) AS files ON `files`.`id_record` = `in_interventi`.`id`
     LEFT JOIN (SELECT `in_interventi_tags`.`id_intervento`, GROUP_CONCAT( DISTINCT `name` SEPARATOR ', ') AS `nomi` FROM `in_tags` INNER JOIN `in_interventi_tags` ON `in_interventi_tags`.`id_tag` = `in_tags`.`id` GROUP BY `in_interventi_tags`.`id_intervento`) AS `tags` ON `in_interventi`.`id` = `tags`.`id_intervento`
     LEFT JOIN `an_zone` ON `an_anagrafiche`.`idzona`=`an_zone`.`id`
-WHERE 
+WHERE
     1=1 |segment(`in_interventi`.`id_segment`)| |date_period(`orario_inizio`,`data_richiesta`)|
-GROUP BY 
+GROUP BY
     `in_interventi`.`id`
-HAVING 
+HAVING
     2=2
-ORDER BY 
+ORDER BY
     IFNULL(`orario_fine`, `data_richiesta`) DESC" WHERE `zz_modules`.`name` = 'Interventi';
 
 -- Aggiunte impostazioni per raggruppamento fatturazione massiva
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva ddt', '', 'list[cliente,sede]', '1', 'Ddt', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ddt'), 'Raggruppamento fatturazione massiva ddt', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ddt'), 'Raggruppamento fatturazione massiva ddt', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ddt'), 'Massive ddt billing grouping', '');
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva attività', '', 'list[cliente,sede]', '1', 'Attività', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva attività'), 'Raggruppamento fatturazione massiva attività', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva attività'), 'Raggruppamento fatturazione massiva attività', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva attività'), 'Massive activities billing grouping', '');
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva contratti', '', 'list[cliente,sede]', '1', 'Contratti', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva contratti'), 'Raggruppamento fatturazione massiva contratti', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva contratti'), 'Raggruppamento fatturazione massiva contratti', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva contratti'), 'Massive contracts billing grouping', '');
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva ordini', '', 'list[cliente,sede]', '1', 'Ordini', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ordini'), 'Raggruppamento fatturazione massiva ordini', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ordini'), 'Raggruppamento fatturazione massiva ordini', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva ordini'), 'Massive orders billing grouping', '');
 
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Raggruppamento fatturazione massiva preventivi', '', 'list[cliente,sede]', '1', 'Preventivi', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Raggruppamento fatturazione massiva preventivi', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Raggruppamento fatturazione massiva preventivi', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Raggruppamento fatturazione massiva preventivi'), 'Massive quotes billing grouping', '');
 
 -- Aggiunta colonna Da rinnovare in Contratti
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Da rinnovare', "IF(rinnovabile,IF(DATEDIFF(data_conclusione,NOW()) BETWEEN 0 AND giorni_preavviso_rinnovo,'Sì',IF(DATEDIFF(data_conclusione,NOW()) <= 0,'Sì','No')),'No')", '19', '1', '0', '0', '0', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Da rinnovare', "IF(rinnovabile,IF(DATEDIFF(data_conclusione,NOW()) BETWEEN 0 AND giorni_preavviso_rinnovo,'Sì',IF(DATEDIFF(data_conclusione,NOW()) <= 0,'Sì','No')),'No')", '19', '1', '0', '0', '0', '', '', '1', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Contratti';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = @id_module), 'Da rinnovare'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = @id_module), 'Renewable');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti')), 'Da rinnovare'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Da rinnovare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti')), 'Renewable');
 
-UPDATE `zz_views` SET `query` = "IF(`co_contratti`.`rinnovabile`=1, 'Sì', 'No')" WHERE `zz_views`.`name` = "Rinnovabile" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Contratti");
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF(`co_contratti`.`rinnovabile`=1, 'Sì', 'No')" WHERE `zz_views`.`name` = "Rinnovabile" AND `zz_modules`.`name` = "Contratti";
 
 -- Gestione spese d'incasso
 ALTER TABLE `co_pagamenti` ADD `descrizione_incasso` TEXT NOT NULL, ADD `importo_fisso_incasso` DECIMAL(15,6) NOT NULL, ADD `importo_percentuale_incasso` DECIMAL(15,6) NOT NULL;
@@ -106,102 +100,90 @@ ALTER TABLE `co_documenti` ADD `id_riga_spese_incasso` INT NULL;
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
 ("Conto predefinito per le spese d'incasso", (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`='Ricavi vari'), "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')", "1", "Fatturazione", NULL, 0);
 
-SELECT @id_record := `id` FROM `zz_settings` WHERE `nome` = "Conto predefinito per le spese d'incasso";
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', @id_record, "Conto predefinito per le spese d'incasso", ''), 
-('2', @id_record, 'Default account for collection costs', '');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = "Conto predefinito per le spese d'incasso"), "Conto predefinito per le spese d'incasso", ''),
+('2', (SELECT `id` FROM `zz_settings` WHERE `nome` = "Conto predefinito per le spese d'incasso"), 'Default account for collection costs', '');
 
 -- Gestione meta title dei moduli
 ALTER TABLE `zz_modules_lang` ADD `meta_title` VARCHAR(255) NOT NULL AFTER `title`;
 
 -- Aggiunta colonna per gestione cartella allegati alternativa nei moduli
-ALTER TABLE `zz_modules` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`; 
+ALTER TABLE `zz_modules` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`;
 
 UPDATE `zz_modules` SET `attachments_directory` = `directory`;
-UPDATE `zz_modules` SET `attachments_directory` = 'fatture/vendite' WHERE `zz_modules`.`name` = 'Fatture di vendita'; 
+UPDATE `zz_modules` SET `attachments_directory` = 'fatture/vendite' WHERE `zz_modules`.`name` = 'Fatture di vendita';
 
 -- Aggiunta colonna per gestione cartella allegati alternativa nei plugin
-ALTER TABLE `zz_plugins` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`; 
+ALTER TABLE `zz_plugins` ADD `attachments_directory` VARCHAR(255) NOT NULL DEFAULT '' AFTER `directory`;
 
 UPDATE `zz_plugins` SET `attachments_directory` = `directory`;
 
 -- Aggiunta impostazione per generare nomi casuali agli allegati
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Rendi casuale il nome dei file allegati', '1', 'boolean', '1', 'Generali', NULL, '0');
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Rendi casuale il nome dei file allegati', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+('1', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Rendi casuale il nome dei file allegati', ''),
 ('2', (SELECT `zz_settings`.`id` FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Rendi casuale il nome dei file allegati'), 'Randomize attachments name', '');
 
 -- Firma in stampa preventivi solo totali
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Preventivi';
-UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"show-only-total\":true, \"images\": true, \"last-page-footer\": true }' WHERE `zz_prints`.`id_module` = @id_module AND `zz_prints`.`name` = 'Preventivo (solo totale)';
+UPDATE `zz_prints` LEFT JOIN `zz_modules` ON `zz_prints`.`id_module` = `zz_modules`.`id` SET `zz_modules`.`options` = '{\"pricing\":false, \"show-only-total\":true, \"images\": true, \"last-page-footer\": true }' WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_prints`.`name` = 'Preventivo (solo totale)';
 
 -- Rimozione campo deprecato
 ALTER TABLE `mg_articoli` DROP `threshold_qta`;
-DELETE FROM `zz_views` WHERE `zz_views`.`name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+DELETE `zz_views` FROM `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_views`.`name` = '_bg_' AND `zz_modules`.`name` = 'Articoli';
 
 -- Agginta sede partenza in preventivi
-ALTER TABLE `co_preventivi` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
-ALTER TABLE `co_preventivi` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`; 
+ALTER TABLE `co_preventivi` CHANGE `idsede` `idsede_destinazione` INT NOT NULL;
+ALTER TABLE `co_preventivi` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`;
 
 -- Agginta sede partenza in contratti
-ALTER TABLE `co_contratti` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
+ALTER TABLE `co_contratti` CHANGE `idsede` `idsede_destinazione` INT NOT NULL;
 ALTER TABLE `co_contratti` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`;
 
 -- Agginta sede partenza in ordini
-ALTER TABLE `or_ordini` CHANGE `idsede` `idsede_destinazione` INT NOT NULL; 
-ALTER TABLE `or_ordini` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`; 
+ALTER TABLE `or_ordini` CHANGE `idsede` `idsede_destinazione` INT NOT NULL;
+ALTER TABLE `or_ordini` ADD `idsede_partenza` INT NOT NULL AFTER `idsede_destinazione`;
 
 -- Aggiunta colonna Note interne in Fatture di vendita
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Note interne', "`co_documenti`.`note_aggiuntive`", '23', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Note interne', "`co_documenti`.`note_aggiuntive`", '23', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), 'Notes');
 
 -- Aggiunta colonna Note interne in DDT in entrata
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Note interne', "`dt_ddt`.`note_aggiuntive`", '17', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata'), 'Note interne', "`dt_ddt`.`note_aggiuntive`", '17', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata')), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata')), 'Notes');
 
 -- Aggiunta colonna Note interne in DDT in uscita
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Note interne', "`dt_ddt`.`note_aggiuntive`", '19', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita'), 'Note interne', "`dt_ddt`.`note_aggiuntive`", '19', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita')), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita')), 'Notes');
 
 -- Aggiunta colonna Note interne in Ordini fornitore
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Note interne', "`or_ordini`.`note_aggiuntive`", '15', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Note interne', "`or_ordini`.`note_aggiuntive`", '15', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore')), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore')), 'Notes');
 
 -- Aggiunta colonna Note interne in Ordini cliente
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente';
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES 
-(@id_module, 'Note interne', "`or_ordini`.`note_aggiuntive`", '17', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Note interne', "`or_ordini`.`note_aggiuntive`", '17', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Note interne'),
-(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = @id_module), 'Notes');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')), 'Note interne'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note interne' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')), 'Notes');
 
 -- Aggiunto sezionale in stampe definitive
 ALTER TABLE `co_stampecontabili` ADD `id_sezionale` INT NOT NULL;
 
-UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"last-page-footer\":true, \"show-only-total\":true, \"images\": true}' WHERE `zz_prints`.`name` = 'Preventivo (solo totale)'; 
+UPDATE `zz_prints` SET `options` = '{\"pricing\":false, \"last-page-footer\":true, \"show-only-total\":true, \"images\": true}' WHERE `zz_prints`.`name` = 'Preventivo (solo totale)';

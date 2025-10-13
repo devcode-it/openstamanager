@@ -30,10 +30,9 @@ INSERT INTO `co_pianodeiconti3` (`numero`, `descrizione`, `idpianodeiconti2`, `d
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
 ('Conto per Iva transitoria', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione` = 'Iva transitoria'), "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC", '1', 'Piano dei conti', NULL, '0');
 
-SELECT @id_record := `id` FROM `zz_settings` WHERE `nome` = 'Conto per Iva transitoria';
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
-('1', @id_record, 'Conto per Iva transitoria', ''),
-('2', @id_record, 'Conto per Iva transitoria', '');
+('1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Conto per Iva transitoria'), 'Conto per Iva transitoria', ''),
+('2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Conto per Iva transitoria'), 'Conto per Iva transitoria', '');
 
 -- Pulizia dei permessi sui segmenti per gruppi che non hanno accesso al modulo (esclusi gli Amministratori)
 DELETE `zz_group_segment` FROM `zz_group_segment`

@@ -234,3 +234,7 @@ ALTER TABLE `mg_articoli` ADD INDEX(`idiva_vendita`);
 
 -- Rimozione indice doppio
 ALTER TABLE `mg_articoli` DROP INDEX `id_combinazione`;
+
+-- Correzione in fase di creazione nuovo token
+ALTER TABLE `zz_otp_tokens` CHANGE `id_module_target` `id_module_target` INT(11) NULL;
+ALTER TABLE `zz_otp_tokens` CHANGE `id_record_target` `id_record_target` INT(11) NULL;

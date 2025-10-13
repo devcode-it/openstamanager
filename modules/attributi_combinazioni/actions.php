@@ -25,18 +25,15 @@ use Modules\AttributiCombinazioni\ValoreAttributo;
 
 switch (filter('op')) {
     case 'add':
-        $descrizione = post('nome');
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('title', $descrizione);
+        $attributo_new = (new Attributo())->getByField('title', $title);
 
-        if ($stato_new) {
+        if ($attributo_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
         } else {
             $attributo = Attributo::build();
             $id_record = $dbo->lastInsertedID();
-            $attributo->setTranslation('title', $descrizione);
             $attributo->setTranslation('title', $title);
-            $attributo->save();
 
             flash()->info(tr('Nuovo attributo creato correttamente!'));
         }

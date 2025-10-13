@@ -47,8 +47,6 @@ switch (filter('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
         } else {
             $attributo->setTranslation('title', $title);
-            $attributo->save();
-
             flash()->info(tr('Attributo aggiornato correttamente!'));
         }
         break;

@@ -36,13 +36,15 @@ switch (post('op')) {
                 if (!empty($is_predefined)) {
                     $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
                 }
-                $fascia_oraria->setTranslation('title', $descrizione);
+                $fascia_oraria->name = $descrizione;
                 $fascia_oraria->giorni = implode(',', $giorni);
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->include_bank_holidays = $include_bank_holidays;
                 $fascia_oraria->is_predefined = $is_predefined;
                 $fascia_oraria->save();
+
+                $fascia_oraria->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una fascia_oraria _NAME_.", [
@@ -63,14 +65,13 @@ switch (post('op')) {
         if (isset($descrizione)) {
             if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $fascia_oraria = FasciaOraria::build();
-
+                $fascia_oraria->name = $descrizione;
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->save();
 
                 $id_record = $dbo->lastInsertedID();
                 $fascia_oraria->setTranslation('title', $descrizione);
-                $fascia_oraria->save();
 
                 $tipi_intervento = $dbo->select('in_tipiintervento', '*');
                 foreach ($tipi_intervento as $tipo_intervento) {

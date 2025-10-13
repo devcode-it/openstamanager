@@ -212,3 +212,5 @@ HAVING
     2=2
 ORDER BY
     `name`' WHERE `zz_modules`.`name` = 'Marche';
+
+ALTER TABLE `in_fasceorarie` ADD `name` VARCHAR(255) NOT NULL AFTER `id`;

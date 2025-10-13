@@ -39,7 +39,6 @@ switch (filter('op')) {
             $group = Group::build($nome, $theme, $id_module_start);
             $id_record = $dbo->lastInsertedID();
             $group->editable = 1;
-            $group->setTranslation('title', $nome);
             $group->save();
 
             if ($id_module_start) {

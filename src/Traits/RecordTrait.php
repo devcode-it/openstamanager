@@ -77,13 +77,11 @@ trait RecordTrait
         if ($this->id && method_exists($this, 'getTranslatedFields')) {
             // Lingue aggiuntive disponibili
             $langs = Locale::All()->pluck('id')->toArray();
-            $default_lang = Locale::getDefault();
-            $other_langs = array_diff($langs, [$default_lang->id]);
 
             // Popolo inizialmente i campi traducibili o allineo quelli uguali
             foreach ($this->getTranslatedFields() as $field) {
-                $value = $this->name;
-                
+                $value = $this->name?:$this->nome;
+
                 foreach ($langs as $id_lang) {
                     $translation = database()->table($this->table.'_lang')
                         ->select($field)
@@ -94,17 +92,6 @@ trait RecordTrait
                     if ($translation->count() == 0) {
                         $this->setTranslation($field, $value, $id_lang);
                     }
-
-                    // ...altrimenti la aggiorno se è uguale (quindi probabilmente non ancora tradotta)
-                    /*
-                    else{
-                        if ($translation->first()->{$field} == $this->{$field}) {
-                            $translation->update([
-                                $field => $this->{$field},
-                            ]);
-                        }
-                    }
-                    */
                 }
             }
         }

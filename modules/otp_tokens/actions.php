@@ -22,13 +22,13 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $id_utente = post('id_utente');
+        $id_utente = post('id_utente') ?: null;
         $descrizione = post('descrizione');
         $tipo_accesso = post('tipo_accesso');
         $valido_dal = post('valido_dal') ?: null;
         $valido_al = post('valido_al') ?: null;
-        $id_module_target = post('id_module_target') ?: 0;
-        $id_record_target = post('id_record_target') ?: 0;
+        $id_module_target = post('id_module_target') ?: null;
+        $id_record_target = post('id_record_target') ?: null;
         $permessi = post('permessi') ?: null;
         $email = post('email');
 

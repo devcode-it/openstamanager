@@ -226,3 +226,7 @@ ALTER TABLE `mg_articoli` ADD INDEX `idx_id_modello` (`id_modello`);
 
 -- Indice per iva di vendita
 ALTER TABLE `mg_articoli` ADD INDEX(`idiva_vendita`);
+
+-- Correzione in fase di creazione nuovo token
+ALTER TABLE `zz_otp_tokens` CHANGE `id_module_target` `id_module_target` INT(11) NULL;
+ALTER TABLE `zz_otp_tokens` CHANGE `id_record_target` `id_record_target` INT(11) NULL;

@@ -1036,9 +1036,6 @@ function updateProgressBar(current, total) {
 
     // Aggiorna anche il testo sotto la barra di progresso
     $("#progress-text").text("'.tr('Importazione in sequenza').': " + current + " '.tr('di').' " + total);
-
-    // Debug
-    console.log("UpdateProgressBar - Current:", current, "Total:", total, "Percentage:", percentage + "%");
 }
 
 // Inizializza la progress bar con i dati correnti solo se siamo in modalità importazione in sequenza

@@ -169,7 +169,6 @@ function initNoteAutoSave() {
 
         // Imposta nuovo timeout per il salvataggio usando la funzione esistente
         saveTimeout = setTimeout(function() {
-            console.log("Auto-salvataggio nota per impianto:", impiantoId);
             updateImpianto(impiantoId);
         }, 1000); // Salva dopo 1 secondo di inattività
     });
@@ -187,7 +186,6 @@ function initNoteAutoSave() {
             }
 
             clearTimeout(saveTimeout);
-            console.log("Salvataggio immediato nota per impianto:", impiantoId);
             updateImpianto(impiantoId);
         }
     });

@@ -520,31 +520,40 @@ class FatturaOrdinaria extends FatturaElettronica
             $totale_documento = $this->getBody()['DatiPagamento']['DettaglioPagamento']['ImportoPagamento'];
         }
 
-        $differenza_iva = round(abs($fattura->iva) - abs($imposta_riepilogo), 2);
         // Calcolo corretto mantenendo i segni originali per gestire correttamente i totali negativi
         $totale_calcolato = $fattura->totale_imponibile + $fattura->iva + $fattura->rivalsa_inps;
         $diff = round($totale_calcolato - ($totale_documento ?: 0), 2);
 
+        // Verifica se esiste già un arrotondamento nel XML (campo Arrotondamento nei DatiGeneraliDocumento)
+        $arrotondamento_documento_xml = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Arrotondamento'] ?? 0;
+
         $iva_arrotondamento = database()->fetchOne('SELECT * FROM `co_iva` WHERE `percentuale`= 0 AND `deleted_at` IS NULL LIMIT 1');
-        if ($diff || $differenza_iva) {
-            if ($diff && $differenza_iva) {
-                $diff = ($diff + $differenza_iva);
-            } elseif ($diff == 0 && $differenza_iva) {
-                $diff = $differenza_iva;
+
+        // Creiamo l'arrotondamento solo se c'è una differenza significativa
+        // e non è già presente un arrotondamento nel XML
+        if (abs($diff) > 0.001) {
+            $arrotondamento_finale = 0;
+
+            if ($arrotondamento_documento_xml != 0) {
+                // Se c'è un arrotondamento esplicito nel XML, lo usiamo
+                $arrotondamento_finale = $arrotondamento_documento_xml;
+            } else {
+                // Altrimenti usiamo la differenza calcolata con segno opposto per correggere
+                $arrotondamento_finale = -$diff;
             }
 
-            // L'arrotondamento deve avere segno opposto alla differenza per correggere il totale
-            $diff = -$diff;
+            // Creiamo la riga di arrotondamento solo se significativo
+            if (abs($arrotondamento_finale) > 0.001) {
+                $obj = Riga::build($fattura);
 
-            $obj = Riga::build($fattura);
+                $obj->descrizione = tr('Arrotondamento calcolato in automatico');
+                $obj->id_iva = $iva_arrotondamento['id'];
+                $obj->idconto = $conto_arrotondamenti;
+                $obj->prezzo_unitario = round($arrotondamento_finale, 4);
+                $obj->qta = 1;
 
-            $obj->descrizione = tr('Arrotondamento calcolato in automatico');
-            $obj->id_iva = $iva_arrotondamento['id'];
-            $obj->idconto = $conto_arrotondamenti;
-            $obj->prezzo_unitario = round($diff, 4);
-            $obj->qta = 1;
-
-            $obj->save();
+                $obj->save();
+            }
         }
     }
 

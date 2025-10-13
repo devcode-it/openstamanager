@@ -78,12 +78,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Note', '`nota`', 3, 1, 0, 0, 0, '', '', 1, 0, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), '_bg_', '`colore`', 4, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
 
-SELECT @id:= MAX(`id`) FROM `zz_views`;
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, @id-1, 'Note'),
-(2, @id-1, 'Note'),
-(1, @id, '_bg_'),
-(2, @id, '_bg_');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti')), 'Note'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti')), 'Note'),
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti')), '_bg_'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = '_bg_' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti')), '_bg_');
 
 -- Miglioria plugin Assicurazione crediti
 UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", \"fields\": \"Fido assicurato, Data inizio, Data fine, Totale, Residuo\", \"query\": \"SELECT id, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(fido_assicurato, 2) AS \'Fido assicurato\', ROUND(totale, 2) AS Totale, ROUND(fido_assicurato - totale, 2) AS Residuo, IF((fido_assicurato - totale) < 0, \'#f4af1b\', \'#4dc347\') AS _bg_ FROM an_assicurazione_crediti WHERE 1=1 AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY an_assicurazione_crediti.id DESC\"} ]}' WHERE `zz_plugins`.`name` = 'Assicurazione crediti';
@@ -91,17 +90,15 @@ UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [ { \"type\": \"table\", 
 ALTER TABLE `my_impianti` ADD `note` VARCHAR(255) NULL AFTER `descrizione`;
 
 -- Aggiunta colonne marche e Modello nella vista Articoli (nascoste di default)
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Articoli';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'Marche', '(SELECT `name` FROM `zz_marche` WHERE `zz_marche`.`id` = `mg_articoli`.`id_marca`)', 15, 1, 0, 0, 0, '', '', 0, 0, 0, 0),
-(@id_module, 'Modello', '`mg_articoli`.`id_modello`', 16, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Marche', '(SELECT `name` FROM `zz_marche` WHERE `zz_marche`.`id` = `mg_articoli`.`id_marca`)', 15, 1, 0, 0, 0, '', '', 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Modello', '`mg_articoli`.`id_modello`', 16, 1, 0, 0, 0, '', '', 0, 0, 0, 0);
 
-SELECT @id:= MAX(`id`) FROM `zz_views`;
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, @id-1, 'Marche'),
-(2, @id-1, 'Brand'),
-(1, @id, 'Modello'),
-(2, @id, 'Model');
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Marche' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'Marche'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Marche' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'Brand'),
+(1, (SELECT `id` FROM `zz_views` WHERE `name` = 'Modello' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'Modello'),
+(2, (SELECT `id` FROM `zz_views` WHERE `name` = 'Modello' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'Model');
 
 INSERT INTO `zz_storage_adapters` (`name`, `class`, `options`, `can_delete`, `is_default`, `is_local`) VALUES
 ('Backup', '\\Modules\\FileAdapters\\Adapters\\LocalAdapter', '{ \"directory\":\"/files/backups\" }', 1, 0, 1);
@@ -150,7 +147,7 @@ UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT `in_statiintervento`.`id`, `name` AS text FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE is_bloccato = 1' WHERE `zz_settings`.`nome` = "Stato dell'attività dopo la firma";
 
 -- Aggiornamento viste per Stati dei preventivi e Stati dei contratti
-UPDATE `zz_views` SET `query` = 'IF(is_bloccato, ''Sì'', ''No'')' WHERE `name` = 'Completato' AND `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN ('Stati dei preventivi', 'Stati dei contratti'));
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = 'IF(is_bloccato, ''Sì'', ''No'')' WHERE `zz_views`.`name` = 'Completato' AND `zz_modules`.`name` IN ('Stati dei preventivi', 'Stati dei contratti');
 
 -- Tabella dt_statiddt
 ALTER TABLE `dt_statiddt` CHANGE `completato` `is_bloccato` BOOLEAN NOT NULL DEFAULT FALSE;
@@ -159,10 +156,10 @@ ALTER TABLE `dt_statiddt` CHANGE `completato` `is_bloccato` BOOLEAN NOT NULL DEF
 ALTER TABLE `or_statiordine` CHANGE `completato` `is_bloccato` BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Aggiornamento viste per Stati degli ordini e Stati DDT
-UPDATE `zz_views` SET `query` = 'IF(is_bloccato, ''Sì'', ''No'')' WHERE `name` = 'Completato' AND `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN ('Stati degli ordini', 'Stati DDT'));
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = 'IF(is_bloccato, ''Sì'', ''No'')' WHERE `zz_views`.`name` = 'Completato' AND `zz_modules`.`name` IN ('Stati degli ordini', 'Stati DDT');
 
 -- Rinomina le colonne "Completato" in "Bloccato" nelle viste
-UPDATE `zz_views` SET `name` = 'Bloccato' WHERE `name` = 'Completato' AND `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN ('Stati dei preventivi', 'Stati dei contratti', 'Stati degli ordini', 'Stati DDT'));
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`name` = 'Bloccato' WHERE `zz_views`.`name` = 'Completato' AND `zz_modules`.`name` IN ('Stati dei preventivi', 'Stati dei contratti', 'Stati degli ordini', 'Stati DDT');
 
 -- Aggiornamento delle traduzioni nelle viste
 UPDATE `zz_views_lang` SET `title` = 'Bloccato' WHERE `id_record` IN (SELECT `id` FROM `zz_views` WHERE `name` = 'Bloccato');

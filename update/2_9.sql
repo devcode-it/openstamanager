@@ -31,10 +31,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT id FROM zz_modules WHERE name = 'Contratti'), 'Rif. fattura', 'fattura.info', 18, 1, 1, 0, 0, '', '', 1, 0, 0, 0);
 
 -- Aggiunta traduzione per la colonna "Rif. fattura"
-SELECT @id_record := `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE name = 'Contratti') AND `name` = 'Rif. fattura';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', @id_record, 'Rif. fattura'),
-('2', @id_record, 'Invoice Ref.');
+('1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE name = 'Contratti') AND `name` = 'Rif. fattura'), 'Rif. fattura'),
+('2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE name = 'Contratti') AND `name` = 'Rif. fattura'), 'Invoice Ref.');
 
 
 -- Plugin barcode
@@ -50,8 +49,7 @@ CREATE TABLE IF NOT EXISTS `mg_articoli_barcode` (
 ALTER TABLE `mg_articoli_barcode` ADD CONSTRAINT `mg_articoli_barcode_ibfk_1` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- Creazione del plugin
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Articoli';
-INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Barcode', @id_module, @id_module, 'tab', '', '1', '0', '0', '2.*', '2.4.23', '{ "main_query": [{"type": "table", "fields": "Barcode", "query": "SELECT mg_articoli_barcode.id, mg_articoli_barcode.barcode AS Barcode FROM mg_articoli_barcode WHERE 1=1 AND mg_articoli_barcode.idarticolo=|id_parent| HAVING 2=2 ORDER BY barcode ASC"}]}', 'barcode_articoli', '');
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Barcode', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'tab', '', '1', '0', '0', '2.*', '2.4.23', '{ "main_query": [{"type": "table", "fields": "Barcode", "query": "SELECT mg_articoli_barcode.id, mg_articoli_barcode.barcode AS Barcode FROM mg_articoli_barcode WHERE 1=1 AND mg_articoli_barcode.idarticolo=|id_parent| HAVING 2=2 ORDER BY barcode ASC"}]}', 'barcode_articoli', '');
 
 INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
 VALUES
@@ -61,13 +59,13 @@ VALUES
 INSERT INTO `mg_articoli_barcode` (`idarticolo`, `barcode`) (SELECT `mg_articoli`.`id`, `mg_articoli`.`barcode` FROM `mg_articoli` WHERE `mg_articoli`.`barcode` IS NOT NULL AND `mg_articoli`.`barcode` != '');
 
 -- Aggiorno la vista barcode nella scheda articolo
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES (NULL, @id_module, 'barcode_lista', 'barcode.lista', '17', '1', '0', '0', '0', '', '', '0', '0', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'barcode_lista', 'barcode.lista', '17', '1', '0', '0', '0', '', '', '0', '0', '0', '0');
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'barcode_lista' AND `id_module` = @id_module), 'barcode_lista'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'barcode_lista' AND `id_module` = @id_module), 'barcode_lista');
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'barcode_lista' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'barcode_lista'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'barcode_lista' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli')), 'barcode_lista');
 
-UPDATE `zz_views` SET `query`='CONCAT(SUBSTRING_INDEX(SUBSTRING_INDEX(`barcode`.`lista`, \'<br />\', 2), \'<br />\', -2), \'<br />...\')', `html_format`=1, `search_inside` = 'barcode_lista' WHERE `name` = 'barcode' AND `id_module` = @id_module;
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query`='CONCAT(SUBSTRING_INDEX(SUBSTRING_INDEX(`barcode`.`lista`, \'<br />\', 2), \'<br />\', -2), \'<br />...\')', `html_format`=1, `search_inside` = 'barcode_lista' WHERE `zz_views`.`name` = 'barcode' AND `zz_modules`.`name` = 'Articoli';
 
 -- Gestione barcode nelle righe dei documenti
 ALTER TABLE `co_righe_contratti` ADD `barcode` VARCHAR(100) NULL DEFAULT NULL;
@@ -109,28 +107,26 @@ CREATE TABLE IF NOT EXISTS `zz_otp_tokens` (
 -- Aggiunta del modulo per la gestione dei token OTP
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Accesso con Token/OTP', 'otp_tokens', 'SELECT |select| FROM `zz_otp_tokens` WHERE 1=1 HAVING 2=2', '', 'fa fa-link', '2.9', '2.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-('1', @id_module, 'Accesso con Token/OTP', 'Accesso con Token/OTP'),
-('2', @id_module, 'OTP/Token login', 'OTP/Token login');
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP'), 'Accesso con Token/OTP', 'Accesso con Token/OTP'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP'), 'OTP/Token login', 'OTP/Token login');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
-(@id_module, 'id', '`zz_otp_tokens`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1'),
-(@id_module, 'Descrizione', '`zz_otp_tokens`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1');
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP'), 'id', '`zz_otp_tokens`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP'), 'Descrizione', '`zz_otp_tokens`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1');
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description');
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP')), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP')), 'id'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP')), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Accesso con Token/OTP')), 'Description');
 
 -- Aggiunta del template email per la richiesta del codice OTP
 INSERT INTO `em_templates` (`id`, `id_module`, `name`, `icon`, `tipo_reply_to`, `reply_to`, `cc`, `bcc`, `read_notify`, `predefined`, `note_aggiuntive`, `enabled`, `type`, `indirizzi_proposti`, `deleted_at`, `id_account`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Utenti e permessi'), 'Richiesta codice OTP', 'fa fa-envelope', '', '', '', '', 0, 0, '', 1, 'a', 0, NULL, 1);
 
 INSERT INTO `em_templates_lang` (`id`, `id_lang`, `id_record`, `title`, `subject`, `body`) VALUES
-(NULL, 1, (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'Richiesta codice OTP', 'Richiesta codice OTP', '<p>Gentile {username},</p>\n\n<p>di seguito il codice OTP per il login:</p>\n\n<p><strong>{codice_otp}</strong></p>\n\n<p> </p>\n\n<p> </p>\n\n<p>Se non sei il responsabile della richiesta in questione, contatta l\'amministratore il prima possibile.</p>\n\n<p> </p>\n\n<p>Distinti saluti</p>'),
+(NULL, 1, (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'Richiesta codice OTP', 'Richiesta codice OTP', "<p>Gentile {username},</p>\n\n<p>di seguito il codice OTP per il login:</p>\n\n<p><strong>{codice_otp}</strong></p>\n\n<p> </p>\n\n<p> </p>\n\n<p>Se non sei il responsabile della richiesta in questione, contatta l\'amministratore il prima possibile.</p>\n\n<p> </p>\n\n<p>Distinti saluti</p>"),
 (NULL, 2, (SELECT id FROM `em_templates` WHERE `name` = 'Richiesta codice OTP'), 'OTP code request', 'OTP code request', '<p>Dear {username},</p>\n\n<p>below is the OTP code for login:</p>\n\n<p><strong>{codice_otp}</strong></p>\n\n<p> </p>\n\n<p> </p>\n\n<p>If you are not responsible for the request in question, please contact the administrator as soon as possible.</p>\n\n<p> </p>\n\n<p>Best regards</p>');
 
 -- Aggiunta impostazione per il template email della richiesta del codice OTP
@@ -143,12 +139,11 @@ INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) V
 -- Sposto tutti i metodi di accesso sotto un'unica sezione
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Gestione accessi', '', 'menu', '', 'fa fa-key', '2.9', '2.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Gestione accessi';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-('1', @id_module, 'Gestione accessi', 'Gestione accessi'),
-('2', @id_module, 'Login management', 'Login management');
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione accessi'), 'Gestione accessi', 'Gestione accessi'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione accessi'), 'Login management', 'Login management');
 
-UPDATE `zz_modules` SET `parent` = @id_module WHERE `name` IN ('Accesso con Token/OTP', 'Utenti e permessi', 'Accesso con OAuth');
+UPDATE `zz_modules` LEFT JOIN `zz_modules` AS `parent_module` ON `parent_module`.`name` = 'Gestione accessi' SET `zz_modules`.`parent` = `parent_module`.`id` WHERE `zz_modules`.`name` IN ('Accesso con Token/OTP', 'Utenti e permessi', 'Accesso con OAuth');
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name = 'Accesso con Token/OTP'), '1', 'QR Code', 'qrcode', '', '{\"width\": 54, \"height\": 20, \"format\": [64, 55], \"margins\": {\"top\": 5,\"bottom\": 0,\"left\": 0,\"right\": 0}}', 'fa fa-print', '', '', '0', '1', '1', NULL);
 
@@ -173,58 +168,53 @@ ALTER TABLE `co_provvigioni` ADD CONSTRAINT `co_provvigioni_ibfk_2` FOREIGN KEY 
 -- Modulo per log esecuzione task
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES ('Log eventi', 'log_task', 'SELECT |select|FROM(SELECT zz_tasks_logs.id, name, zz_tasks_logs.level, zz_tasks_logs.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\', \'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_tasks_logs.created_at AS \'Data inizio\', zz_tasks_logs.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_tasks_logs.created_at, zz_tasks_logs.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_tasks_logs` INNER JOIN `zz_tasks` ON `zz_tasks`.`id`=`zz_tasks_logs`.`id_task` WHERE 1=1 HAVING 2=2 UNION ALL SELECT zz_api_log.id, NAME, zz_api_log.level, zz_api_log.message, IF( LEVEL = \'info\', \'#dff0d8\', IF(LEVEL = \'error\', \'#f2dede\', \'#fcf8e3\') ) AS \'_bg_\', IF( CHAR_LENGTH(CONTEXT) > 200, CONCAT( SUBSTRING(CONTEXT, 1, 200), \'<a title=\"\', REPLACE(CONTEXT, \'\">\',\'[...]\'), \'</a>\' ), CONTEXT ) AS \'Contesto\', CONTEXT AS \'contesto_esteso\', zz_api_log.created_at AS \'Data inizio\', zz_api_log.updated_at AS \'Data fine\', CONCAT( TIMESTAMPDIFF( SECOND, zz_api_log.created_at, zz_api_log.updated_at ), \' secondi\' ) AS \'Eseguito in\'FROM `zz_api_log`WHERE 1=1 HAVING 2=2 ) AS dati ORDER BY `Data inizio` DESC', '', 'fa fa-calendar', '2.5.7.1', '2.5.7.1', '5', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione task '), '1', '1');
 
-SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', @id_module, 'Log eventi'),
-('2', @id_module, 'Events log');
+('1', (SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Log eventi'),
+('2', (SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Events log');
 
-SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`, `html_format`) VALUES
-(@id_module, 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(@id_module, 'Nome task', 'name', '2', '1', '0', '0', NULL, 'name', '1', '0', '0', '0'),
-(@id_module, 'Livello', 'level', '3', '1', '0', '0', NULL, 'level', '1', '0', '0', '0'),
-(@id_module, 'Messaggio', 'message', '4', '1', '0', '0', NULL, 'message', '1', '0', '0', '0'),
-(@id_module, 'Contesto', '`Contesto`', '5', '1', '0', '0', NULL, 'contesto_esteso', '1', '0', '0', '1'),
-(@id_module, 'contesto_esteso', 'contesto_esteso', '5', '1', '0', '0', NULL, 'contesto_esteso', '0', '0', '0', '1'),
-(@id_module, 'Data inizio', '`Data inizio`', '6', '1', '0', '1', NULL, '`Data inizio`', '1', '0', '0', '0'),
-(@id_module, 'Data fine', '`Data fine`', '6', '1', '0', '1', NULL, '`Data fine`', '1', '0', '0', '0'),
-(@id_module, '_bg_', '_bg_', '0', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
-(@id_module, 'Eseguito in', '`Eseguito in`', '7', '1', '0', '1', NULL, '`Eseguito in`', '0', '0', '0', '0');
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'id', 'id', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Nome task', 'name', '2', '1', '0', '0', NULL, 'name', '1', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Livello', 'level', '3', '1', '0', '0', NULL, 'level', '1', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Messaggio', 'message', '4', '1', '0', '0', NULL, 'message', '1', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Contesto', '`Contesto`', '5', '1', '0', '0', NULL, 'contesto_esteso', '1', '0', '0', '1'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'contesto_esteso', 'contesto_esteso', '5', '1', '0', '0', NULL, 'contesto_esteso', '0', '0', '0', '1'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Data inizio', '`Data inizio`', '6', '1', '0', '1', NULL, '`Data inizio`', '1', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Data fine', '`Data fine`', '6', '1', '0', '1', NULL, '`Data fine`', '1', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), '_bg_', '_bg_', '0', '1', '0', '0', NULL, NULL, '0', '0', '0', '0'),
+((SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Eseguito in', '`Eseguito in`', '7', '1', '0', '1', NULL, '`Eseguito in`', '0', '0', '0', '0');
 
-SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_views_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'id'), 'id'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Nome task'), 'Nome task'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Nome task'), 'Task name'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Livello'), 'Livello'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Livello'), 'Level'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Messaggio'), 'Messaggio'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Messaggio'), 'Message'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Contesto'), 'Contesto'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Contesto'), 'Context'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data inizio'), 'Data inizio'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data inizio'), 'Start date'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data fine'), 'Data fine'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Data fine'), 'End date'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'contesto_esteso'), 'contesto_esteso'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'contesto_esteso'), 'contesto_esteso'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Eseguito in'), 'Eseguito in'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = 'Eseguito in'), 'Executed in'),
-(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_'),
-(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = @id_module AND `name` = '_bg_'), '_bg_');
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'id'), 'id'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'id'), 'id'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Nome task'), 'Nome task'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Nome task'), 'Task name'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Livello'), 'Livello'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Livello'), 'Level'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Messaggio'), 'Messaggio'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Messaggio'), 'Message'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Contesto'), 'Contesto'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Contesto'), 'Context'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Data inizio'), 'Data inizio'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Data inizio'), 'Start date'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Data fine'), 'Data fine'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Data fine'), 'End date'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'contesto_esteso'), 'contesto_esteso'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'contesto_esteso'), 'contesto_esteso'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Eseguito in'), 'Eseguito in'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Eseguito in'), 'Executed in'),
+(NULL, '1', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = '_bg_'), '_bg_'),
+(NULL, '2', (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = '_bg_'), '_bg_');
 
-SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES
-(NULL, @id_module, 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'),
-(NULL, @id_module, 'Errori', '1=1 AND Livello=error', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
+(NULL, (SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Tutti', '1=1', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '1'),
+(NULL, (SELECT id FROM zz_modules WHERE `name` = 'Log eventi'), 'Errori', '1=1 AND Livello=error', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
 
-SELECT @id_module := id FROM zz_modules WHERE `name` = 'Log eventi';
 INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
-(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'Tutti'),
-(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Tutti'), 'All'),
-(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errori'),
-(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = @id_module AND `name` = 'Errori'), 'Errors');
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Tutti'), 'Tutti'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Tutti'), 'All'),
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Errori'), 'Errori'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Log eventi') AND `name` = 'Errori'), 'Errors');
 
 -- Gestione log API
 -- Creazione tabella di appoggio
@@ -244,10 +234,9 @@ ALTER TABLE `co_righe_documenti` ADD `is_cespite` BOOLEAN NOT NULL;
 
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Ammortamenti / Cespiti', 'ammortamenti', 'SELECT |select| FROM `co_righe_documenti` LEFT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE 1=1 AND `is_cespite` = 1 HAVING 2=2', '', 'fa fa-circle-o', '2.9', '2.9', '8', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Contabilità'), '1', '1', '1', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
 INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-('1', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti'),
-('2', @id_module, 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti');
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Ammortamenti / Cespiti', 'Ammortamenti / Cespiti');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Descrizione', '`co_righe_documenti`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
@@ -256,18 +245,17 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'Anni', 'CONCAT(`co_righe_ammortamenti`.`anno`, " ")', '5', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti'), 'id', '`co_righe_documenti`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1');
 
-SELECT @id_module := `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti';
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Descrizione'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = @id_module), 'Description'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = @id_module), 'Importo'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = @id_module), 'Amount'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = @id_module), 'Fattura'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = @id_module), 'Invoice'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = @id_module), 'Anni'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = @id_module), 'Years'),
-('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id'),
-('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = @id_module), 'id');
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Importo'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Amount'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Fattura'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Invoice'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Anni'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anni' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'Years'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti / Cespiti')), 'id');
 
 CREATE TABLE `co_righe_ammortamenti` (`id` INT NOT NULL AUTO_INCREMENT , `id_riga` INT NOT NULL , `percentuale` INT NOT NULL , `anno` INT NOT NULL , `id_conto` INT NOT NULL , `id_mastrino` INT NOT NULL , PRIMARY KEY (`id`));
 
@@ -306,8 +294,8 @@ SET `body` = CONCAT(`body`, '<div style="margin-top: 30px; padding-top: 20px; bo
 </div>')
 WHERE `id_lang` = 1;
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Sede destinazione', 'Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in entrata'; 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Sede destinazione', 'Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in entrata';
 
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in uscita'; 
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `format` = '0' WHERE `zz_views`.`name` IN ('Vettore', 'Tipo spedizione') AND `zz_modules`.`name` = 'Ddt in uscita';
 
-UPDATE `zz_views` SET `search` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Marche"); 
+UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `search` = 1 WHERE `zz_modules`.`name` = "Marche";

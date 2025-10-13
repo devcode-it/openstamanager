@@ -36,7 +36,9 @@ switch (post('op')) {
                 if (!empty($is_predefined)) {
                     $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
                 }
-                $fascia_oraria->name = $descrizione;
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $fascia_oraria->name = $descrizione;
+                }
                 $fascia_oraria->giorni = implode(',', $giorni);
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;

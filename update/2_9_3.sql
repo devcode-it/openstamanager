@@ -214,3 +214,14 @@ ORDER BY
     `name`' WHERE `zz_modules`.`name` = 'Marche';
 
 ALTER TABLE `in_fasceorarie` ADD `name` VARCHAR(255) NOT NULL AFTER `id`;
+
+-- Indici per categoria e sottocategoria
+ALTER TABLE `mg_articoli` ADD INDEX `idx_id_categoria` (`id_categoria`);
+ALTER TABLE `mg_articoli` ADD INDEX `idx_id_sottocategoria` (`id_sottocategoria`);
+
+-- Indici per marca e modello
+ALTER TABLE `mg_articoli` ADD INDEX `idx_id_marca` (`id_marca`);
+ALTER TABLE `mg_articoli` ADD INDEX `idx_id_modello` (`id_modello`);
+
+-- Indice per iva di vendita
+ALTER TABLE `mg_articoli` ADD INDEX(`idiva_vendita`);

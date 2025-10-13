@@ -225,6 +225,11 @@ function validateConti() {
 
 // Gestione del reset del conto quando si cambia lo stato del cespite
 $(document).ready(function() {
+    // Verifica che Parsley sia disponibile
+    if (typeof window.Parsley === \'undefined\') {
+        return;
+    }
+
     // Aggiungi validazione personalizzata solo se siamo nel plugin registrazioni
     if (window.location.href.indexOf(\'id_plugin=<?php echo $id_plugin; ?>\') > -1 &&
         $(\'input[name="op"][value="change-conto"]\').length > 0) {
@@ -232,8 +237,13 @@ $(document).ready(function() {
         // Override del submit del form SOLO per il plugin registrazioni
         $(\'form[action=""]\').off(\'submit.registrazioni\').on(\'submit.registrazioni\', function(e) {
             // Prima validazione Parsley standard
-            if (!$(this).parsley().validate()) {
-                return false;
+            try {
+                const parsleyInstance = $(this).parsley();
+                if (parsleyInstance && typeof parsleyInstance.validate === \'function\') {
+                    if (!parsleyInstance.validate()) {
+                        return false;
+                    }
+                }
             }
 
             // Poi validazione personalizzata per i conti
@@ -289,7 +299,15 @@ $(document).ready(function() {
         }
 
         // Aggiorna la validazione Parsley
-        $(\'form\').parsley().refresh();
+        try {
+            const form = $(\'form[action=""]\');
+            if (form.length > 0 && form.parsley && typeof form.parsley === \'function\') {
+                const parsleyInstance = form.parsley();
+                if (parsleyInstance && typeof parsleyInstance.refresh === \'function\') {
+                    parsleyInstance.refresh();
+                }
+            }
+        }
     });
 
     // Gestione del cambio di selezione nei conti per rimuovere errori

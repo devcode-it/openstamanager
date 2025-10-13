@@ -244,6 +244,7 @@ $(document).ready(function() {
                         return false;
                     }
                 }
+            } catch (e) {
             }
 
             // Poi validazione personalizzata per i conti
@@ -307,7 +308,8 @@ $(document).ready(function() {
                     parsleyInstance.refresh();
                 }
             }
-        }
+        } catch (e) {
+        } 
     });
 
     // Gestione del cambio di selezione nei conti per rimuovere errori

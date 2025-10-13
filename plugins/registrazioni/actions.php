@@ -55,7 +55,7 @@ switch ($operazione) {
                     $tipo_conto = $is_cespite ? tr('conto cespite') : tr('conto');
                     $errori[] = tr('Riga _ID_: selezionare un _TIPO_', [
                         '_ID_' => $id_riga,
-                        '_TIPO_' => $tipo_conto
+                        '_TIPO_' => $tipo_conto,
                     ]);
                     continue;
                 }
@@ -72,7 +72,7 @@ switch ($operazione) {
                 $riga->is_cespite = $is_cespite ? 1 : 0;
                 $riga->save();
 
-                $righe_aggiornate++;
+                ++$righe_aggiornate;
             }
 
             if (!empty($errori)) {

@@ -72,9 +72,9 @@ if (!empty($fatture_generate_errore->count())) {
             if (!empty($contenuto_ricevuta['EsitoCommittente'])) {
                 $ec02_desc = trim((string) $contenuto_ricevuta['EsitoCommittente']['Descrizione']);
                 if ($ec02_desc !== '') {
-                    $tipText = "Stato FE: ".$fattura_generata['codice_stato_fe']."\n".
-                               "Descrizione: ".$ec02_desc."\n".
-                               "Data: ".$data_ts;
+                    $tipText = 'Stato FE: '.$fattura_generata['codice_stato_fe']."\n".
+                               'Descrizione: '.$ec02_desc."\n".
+                               'Data: '.$data_ts;
                     $tooltip = ' <span class="tip ml-1" title="'.htmlentities($tipText).'"><i class="fa fa-question-circle-o"></i></span>';
                 }
             }
@@ -88,10 +88,14 @@ if (!empty($fatture_generate_errore->count())) {
                 $codice = (string) ($errore['Codice'] ?? '');
                 $desc = trim((string) ($errore['Descrizione'] ?? ''));
                 if ($codice !== '' || $desc !== '') {
-                    $tipText = "Stato FE: ".$fattura_generata['codice_stato_fe']."\n";
-                    if ($codice !== '') { $tipText .= "Codice errore: ".$codice."\n"; }
-                    if ($desc !== '')   { $tipText .= "Descrizione: ".$desc."\n"; }
-                    $tipText .= "Data: ".$data_ts;
+                    $tipText = 'Stato FE: '.$fattura_generata['codice_stato_fe']."\n";
+                    if ($codice !== '') {
+                        $tipText .= 'Codice errore: '.$codice."\n";
+                    }
+                    if ($desc !== '') {
+                        $tipText .= 'Descrizione: '.$desc."\n";
+                    }
+                    $tipText .= 'Data: '.$data_ts;
                     $tooltip = ' <span class="tip ml-1" title="'.htmlentities($tipText).'"><i class="fa fa-question-circle-o"></i></span>';
                 }
             }

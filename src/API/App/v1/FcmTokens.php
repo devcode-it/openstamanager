@@ -28,7 +28,6 @@ use API\App\AppResource;
  */
 class FcmTokens extends AppResource
 {
-
     public function getCleanupData($last_sync_at)
     {
         return [];
@@ -81,14 +80,12 @@ class FcmTokens extends AppResource
         }
 
         return [
-            'id' => $token_id
+            'id' => $token_id,
         ];
     }
 
     /**
      * Aggiorna un token FCM esistente.
-     *
-     * @param array $request Dati della richiesta
      *
      * @return array Risposta dell'operazione
      */

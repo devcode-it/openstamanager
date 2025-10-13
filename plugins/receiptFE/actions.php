@@ -128,7 +128,7 @@ switch (filter('op')) {
             if (!$fattura_check) {
                 echo json_encode([
                     'success' => false,
-                    'message' => tr('Fattura non trovata con ID: ') . $id_fattura
+                    'message' => tr('Fattura non trovata con ID: ').$id_fattura,
                 ]);
                 break;
             }
@@ -140,18 +140,18 @@ switch (filter('op')) {
                     'success' => true,
                     'file' => $name,
                     'fattura' => $fattura,
-                    'message' => tr('Ricevuta associata correttamente alla fattura')
+                    'message' => tr('Ricevuta associata correttamente alla fattura'),
                 ]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'message' => tr('Errore durante l\'elaborazione della ricevuta')
+                    'message' => tr('Errore durante l\'elaborazione della ricevuta'),
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
-                'message' => tr('Errore durante l\'associazione: ') . $e->getMessage()
+                'message' => tr('Errore durante l\'associazione: ').$e->getMessage(),
             ]);
         }
         break;
@@ -162,7 +162,7 @@ switch (filter('op')) {
 
         echo json_encode([
             'name' => $name,
-            'progressivo_invio' => $progressivo_invio
+            'progressivo_invio' => $progressivo_invio,
         ]);
         break;
 }

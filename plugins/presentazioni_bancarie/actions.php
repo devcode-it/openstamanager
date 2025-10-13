@@ -73,9 +73,7 @@ switch (filter('op')) {
                         $importo_da_stornare = $importo_nota;
 
                         // Distribuiamo lo storno proporzionalmente tra le scadenze della fattura originale
-                        $totale_scadenze_originale = $scadenze_fattura_originale->sum(function($s) {
-                            return abs($s->da_pagare - $s->pagato);
-                        });
+                        $totale_scadenze_originale = $scadenze_fattura_originale->sum(fn ($s) => abs($s->da_pagare - $s->pagato));
 
                         if ($totale_scadenze_originale > 0) {
                             foreach ($scadenze_fattura_originale as $scad_orig) {
@@ -101,7 +99,7 @@ switch (filter('op')) {
                             $storni_parziali->push([
                                 'nota_credito' => $documento,
                                 'fattura_originale' => $fattura_originale,
-                                'importo_stornato' => $importo_da_stornare
+                                'importo_stornato' => $importo_da_stornare,
                             ]);
                         }
                     }

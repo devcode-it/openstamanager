@@ -65,7 +65,7 @@ class CronStatusHook extends Manager
                     $message = tr('Il cron è attivo e funzionante');
                     $show = false;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // Se il contenuto non è una data valida
                 $message = tr('Il formato della data dell\'ultima esecuzione del cron non è valido.', []);
                 $show = true;

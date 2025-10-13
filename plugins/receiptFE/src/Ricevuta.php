@@ -112,7 +112,7 @@ class Ricevuta
             $receipt->cleanup();
 
             Interaction::processReceipt($name);
-        } catch (\UnexpectedValueException $e) {
+        } catch (\UnexpectedValueException) {
             // Ricevuta non trovata o fattura non trovata
         } catch (\Exception $e) {
             throw $e;
@@ -152,7 +152,7 @@ class Ricevuta
         $filename = explode('.', (string) $name)[0];
         $pieces = explode('_', $filename);
 
-        return isset($pieces[1]) ? $pieces[1] : null;
+        return $pieces[1] ?? null;
     }
 
     /**

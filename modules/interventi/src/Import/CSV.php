@@ -160,6 +160,7 @@ class CSV extends CSVImporter
             // Validazione dei campi obbligatori
             if (empty($record['codice']) || empty($record['data']) || empty($record['richiesta'])) {
                 error_log('Campi obbligatori mancanti - Codice: '.($record['codice'] ?? 'vuoto').', Data: '.($record['data'] ?? 'vuoto').', Richiesta: '.($record['richiesta'] ?? 'vuoto'));
+
                 return false;
             }
 
@@ -167,6 +168,7 @@ class CSV extends CSVImporter
             $data_richiesta = $record['data_richiesta'] ?? $record['data'];
             if (!$this->validaFormatoData($data_richiesta)) {
                 error_log('Formato data non valido: '.$data_richiesta);
+
                 return false;
             }
 
@@ -177,6 +179,7 @@ class CSV extends CSVImporter
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
                 error_log('Impossibile trovare o creare anagrafica per il record: '.json_encode($record));
+
                 return false; // Non è possibile procedere senza un'anagrafica cliente
             }
 
@@ -201,6 +204,7 @@ class CSV extends CSVImporter
             $tipo = $this->trovaTipoIntervento($record);
             if (empty($tipo)) {
                 error_log('Impossibile trovare tipo intervento per il record: '.json_encode($record));
+
                 return false;
             }
 
@@ -208,6 +212,7 @@ class CSV extends CSVImporter
             $stato = $this->trovaStatoIntervento($record);
             if (empty($stato)) {
                 error_log('Impossibile trovare stato intervento per il record: '.json_encode($record));
+
                 return false;
             }
 
@@ -509,6 +514,7 @@ class CSV extends CSVImporter
             // Verifica che la ragione sociale non sia vuota
             if (empty($ragione_sociale)) {
                 error_log('Impossibile determinare la ragione sociale per il record: '.json_encode($record));
+
                 return null;
             }
 

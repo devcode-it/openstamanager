@@ -25,12 +25,12 @@ use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Iva\Aliquota;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Preventivo;
 use Modules\Preventivi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Modules\Iva\Aliquota;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) dei Preventivi.
@@ -318,8 +318,8 @@ class CSV extends CSVImporter
     /**
      * Aggiunge un articolo al preventivo.
      *
-     * @param Preventivo $preventivo Preventivo
-     * @param array      $record     Record da importare
+     * @param Preventivo        $preventivo    Preventivo
+     * @param array             $record        Record da importare
      * @param ArticoloOriginale $articolo_orig Articolo originale
      *
      * @return bool
@@ -391,7 +391,7 @@ class CSV extends CSVImporter
     /**
      * Trova l'aliquota IVA da utilizzare per la riga.
      *
-     * @param array $record Record da importare
+     * @param array      $record     Record da importare
      * @param Preventivo $preventivo Preventivo
      *
      * @return int ID dell'aliquota IVA
@@ -408,6 +408,7 @@ class CSV extends CSVImporter
 
         // Fallback: usa l'IVA dell'anagrafica o quella predefinita
         $anagrafica = $preventivo->anagrafica;
+
         return $anagrafica->idiva_vendite ?: setting('Iva predefinita');
     }
 

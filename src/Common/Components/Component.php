@@ -251,7 +251,7 @@ abstract class Component extends Model
 
         // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
-        
+
         if (empty($model->idiva)) {
             if (!empty($this->idiva)) {
                 $model->idiva = $this->idiva;

@@ -78,7 +78,7 @@ if (!empty($elementi)) {
 </div>';
 }
 
-echo'
-<a class="btn btn-danger ask '.($elementi ? "disabled" : "").'" data-backto="record-list">
+echo '
+<a class="btn btn-danger ask '.($elementi ? 'disabled' : '').'" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';

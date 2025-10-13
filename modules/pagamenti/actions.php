@@ -84,7 +84,7 @@ switch (filter('op')) {
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));
             } else {
-                $pagamento = Pagamento::build($descrizione,$codice_modalita_pagamento_fe);
+                $pagamento = Pagamento::build($descrizione, $codice_modalita_pagamento_fe);
                 $id_record = $dbo->lastInsertedID();
                 $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();

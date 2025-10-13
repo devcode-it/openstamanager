@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 $id_tipi = $dbo->select('in_tipiintervento_tipologie', '*', [], ['idtipointervento' => $id_record]);
-$id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
+$id_tipi = implode(',', array_column($id_tipi, 'tipo'));
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.3 (2025-10-14)](#293-2025-10-14)
 - [2.9.2 (2025-09-25)](#292-2025-09-25)
 - [2.9.1 (2025-09-02)](#291-2025-09-02)
 - [2.9 (2025-08-08)](#29-2025-08-08)
@@ -60,6 +61,46 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.9.3 (2025-10-14)
+### Modificato (Changed)
+- Ottimizzate le query dei moduli **Ordini cliente**, **Ordini fornitore**, **DDT in uscita**, **Utenti e permessi**, **Preventivi**, **Fatture di vendita**, **Anagrafiche**, **Zone**, **Marche**.
+- Migliorata la visualizzazione dello stato giacenze negli **Articoli** con colori più chiari
+- Semplificazione query modulo Articoli per lista barcode per migliorare le prestazioni
+- Ottimizzazione caricamento moduli per migliorare i tempi di risposta
+- Miglioramento grafico hooks per una visualizzazione più chiara
+- Ottimizzazione sincronizzazione barcode su app mobile
+
+### Fixed
+- Corretta la gestione dell'invio via mail per i token OTP
+- Corrette le dimensioni del QR Code nelle stampe
+- Corretti i riferimenti alle email inviate nei vari moduli per una visualizzazione accurata
+- Corretta verifica esigibilità IVA non funzionante correttamente
+- Corretta gestione barcode non corretta in alcuni moduli
+- Corretti filtri fantasma che apparivano nelle tabelle senza essere configurati
+- Corretto avviso fatture con ricevuta di scarto non visualizzato correttamente
+- Corretta ricerca articoli nei documenti che non restituiva risultati corretti
+- Corrette query installazione che causavano errori durante l'aggiornamento
+- Corretto pannello servizi che non caricava correttamente le informazioni
+- Corretto bug che impediva il cambio password tramite l'interfaccia di modifica utente
+- Corretto ridimensionamento viste non corretto su schermi diversi
+- Corretta ricerca piano dei conti non funzionante
+- Corretta notifica aggiornamento non visualizzata correttamente
+- Corretta impostazione tipo anagrafica in import FE non corretta
+- Corretta selezione modulo iniziale che non rispettava le impostazioni utente
+- Corretta ricerca articoli che restituiva risultati non pertinenti
+- Corretto invio sollecito scadenze selezionate non funzionante
+- Corretto ordinamento tabelle che non rispettava i criteri impostati
+- Corretta ricerca e visualizzazione fatture da importare non funzionante
+- Corretta esportazione RIBA con errori nei dati esportati
+- Corretto calcolo arrotondamento per fatture elettroniche non corretto
+- Corretto link stampa su menu a tendina in invio email non funzionante
+- Corretta esecuzione cron da riga di comando con redirectHTTPS attivo che causava errori
+- Corretto import righe fatture elettroniche con quantità non definita ma prezzo unitario definito
+- Corretto salvataggio seriali vendita al banco non funzionante
+- Corretti permessi per modulo Accesso con Token/OTP mancanti
+- Corretta gestione XML righe senza quantità che causava errori di importazione
+- Corretta aggiunta pagamenti che non funzionava correttamente
 
 ## 2.9.2 (2025-09-25)
 ### Modificato (Changed)

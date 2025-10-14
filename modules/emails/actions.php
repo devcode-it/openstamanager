@@ -31,16 +31,14 @@ switch (post('op')) {
 
         $template = Template::build($module, $id_account, $name);
         $id_record = $dbo->lastInsertedID();
-        $template->setTranslation('title', $name);
-        $template->setTranslation('subject', $subject);
         $template->save();
 
+        $template->setTranslation('subject', $subject);
         flash()->info(tr('Aggiunto nuovo template per le email!'));
 
         break;
 
     case 'update':
-        $template->setTranslation('title', post('name'));
         $template->id_account = post('smtp');
         $template->icon = post('icon');
         $template->tipo_reply_to = post('tipo_reply_to');
@@ -49,13 +47,14 @@ switch (post('op')) {
         $template->bcc = post('bcc');
         $template->read_notify = post('read_notify');
         $template->note_aggiuntive = post('note_aggiuntive');
-        $template->setTranslation('subject', post('subject'));
-        $template->setTranslation('body', post('body'));
         $template->type = post('type');
         $template->indirizzi_proposti = post('indirizzi_proposti');
         $template->enabled = post('enabled');
         $template->save();
 
+        $template->setTranslation('subject', post('subject'));
+        $template->setTranslation('body', post('body'));
+        $template->setTranslation('title', post('name'));
         $prints[] = post('prints');
 
         foreach ($prints as $print) {

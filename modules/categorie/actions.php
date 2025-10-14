@@ -55,10 +55,10 @@ switch (filter('op')) {
             $categoria->parent = $id_original ?: null;
             $categoria->is_articolo = $is_articolo;
             $categoria->is_impianto = $is_impianto;
-            $categoria->setTranslation('title', $nome);
-            $categoria->setTranslation('note', $nota);
             $categoria->save();
 
+            $categoria->setTranslation('title', $nome);
+            $categoria->setTranslation('note', $nota);
             // Aggiorna i flag delle sottocategorie se è un parent
             $subcategorie = Categoria::where('parent', '=', $id_record)->get();
             if (!empty($subcategorie)) {
@@ -118,10 +118,9 @@ switch (filter('op')) {
             $categoria->parent = $id_original;
             $categoria->is_articolo = $is_articolo;
             $categoria->is_impianto = $is_impianto;
-            $categoria->setTranslation('note', $nota);
-            $categoria->setTranslation('title', $nome);
             $categoria->save();
 
+            $categoria->setTranslation('note', $nota);
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
             ]));

@@ -57,11 +57,7 @@ switch (post('op')) {
         $categoria = Categoria::find(post('categoria'));
         $sottocategoria = Categoria::find(post('subcategoria'));
         $articolo = Articolo::build($codice, $categoria, $sottocategoria);
-
-        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-            $articolo->name = post('descrizione');
-        }
-
+        $articolo->name = post('descrizione');
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
@@ -77,8 +73,9 @@ switch (post('op')) {
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
         $articolo->id_marca = post('id_marca');
         $articolo->id_modello = post('id_modello');
-        $articolo->setTranslation('title', post('descrizione'));
         $articolo->save();
+
+        $articolo->setTranslation('title', post('descrizione'));
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
@@ -206,14 +203,13 @@ switch (post('op')) {
         if (empty(post('coefficiente'))) {
             $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
         }
-
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;
         $articolo->attivo = post('attivo');
-        $articolo->setTranslation('title', post('descrizione'));
         $articolo->note = post('note');
-
         $articolo->save();
+
+        $articolo->setTranslation('title', post('descrizione'));
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);

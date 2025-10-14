@@ -29,7 +29,6 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $porto_new = Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($porto_new)) {
-                $porto->setTranslation('title', $descrizione);
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
                 }
@@ -38,6 +37,8 @@ switch (filter('op')) {
                 }
                 $porto->predefined = $predefined;
                 $porto->save();
+
+                $porto->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente un porto con questo nome."));
@@ -54,14 +55,10 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             if (empty(Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $porto = Porto::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $porto->name = $descrizione;
-                }
+                $porto->name = $descrizione;
                 $porto->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $porto->setTranslation('title', $descrizione);
-                $porto->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

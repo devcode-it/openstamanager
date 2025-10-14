@@ -28,11 +28,12 @@ switch (post('op')) {
         if (isset($descrizione)) {
             $aspetto_new = AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($aspetto_new)) {
-                $aspetto->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $aspetto->name = $descrizione;
                 }
                 $aspetto->save();
+
+                $aspetto->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente un aspetto beni con questa descrizione."));
@@ -49,14 +50,9 @@ switch (post('op')) {
         if (isset($descrizione)) {
             if (empty(AspettoBeni::where('id', '=', (new AspettoBeni())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $aspetto = AspettoBeni::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $aspetto->name = $descrizione;
-                }
+                $aspetto->name = $descrizione;
                 $aspetto->save();
-
                 $id_record = $dbo->lastInsertedID();
-                $aspetto->setTranslation('title', $descrizione);
-                $aspetto->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

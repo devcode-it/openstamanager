@@ -31,10 +31,13 @@ switch (filter('op')) {
         if (isset($nome) && isset($nota) && isset($colore)) {
             $categoria->colore = $colore;
             $categoria->parent = $id_original ?: null;
-            $categoria->setTranslation('title', $nome);
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $categoria->name = $nome;
+            }
             $categoria->setTranslation('note', $nota);
             $categoria->save();
 
+            $categoria->setTranslation('title', $nome);
             flash()->info(tr('Salvataggio completato!'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
@@ -68,9 +71,9 @@ switch (filter('op')) {
         } else {
             $categoria = Categoria::build($colore);
             $id_record = $dbo->lastInsertedID();
+            $categoria->name = $nome;
             $categoria->parent = $id_original;
             $categoria->setTranslation('note', $nota);
-            $categoria->setTranslation('title', $nome);
             $categoria->save();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

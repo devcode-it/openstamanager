@@ -34,13 +34,10 @@ switch (filter('op')) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
         } else {
             $lista = Lista::build($name);
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $lista->name = $name;
-            }
-            $id_record = $lista->id;
-            $lista->setTranslation('title', $name);
             $lista->save();
 
+            $lista->setTranslation('title', $name);
+            $id_record = $lista->id;
             flash()->info(tr('Nuova lista aggiunta.'));
         }
 
@@ -63,11 +60,11 @@ switch (filter('op')) {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $lista->name = $name;
             }
-            $lista->setTranslation('title', $name);
-            $lista->setTranslation('description', $description);
             $lista->query = $query;
             $lista->save();
 
+            $lista->setTranslation('description', $description);
+            $lista->setTranslation('title', $name);
             flash()->info(tr('Informazioni salvate correttamente.'));
         }
 

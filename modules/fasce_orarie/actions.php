@@ -66,14 +66,11 @@ switch (post('op')) {
 
         if (isset($descrizione)) {
             if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-                $fascia_oraria = FasciaOraria::build();
-                $fascia_oraria->name = $descrizione;
+                $fascia_oraria = FasciaOraria::build($descrizione);
+                $id_record = $dbo->lastInsertedID();
                 $fascia_oraria->ora_inizio = $ora_inizio;
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->save();
-
-                $id_record = $dbo->lastInsertedID();
-                $fascia_oraria->setTranslation('title', $descrizione);
 
                 $tipi_intervento = $dbo->select('in_tipiintervento', '*');
                 foreach ($tipi_intervento as $tipo_intervento) {

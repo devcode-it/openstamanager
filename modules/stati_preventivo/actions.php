@@ -38,8 +38,8 @@ switch (post('op')) {
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->is_pianificabile = post('is_pianificabile');
             $stato->is_revisionabile = post('is_revisionabile');
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
+            $stato->setTranslation('title', $descrizione);
         }
         break;
 
@@ -57,11 +57,8 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato dei preventivi.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_bloccato, $is_fatturabile, $is_pianificabile);
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $stato->name = $descrizione;
-            }
+            $stato->name = $descrizione;
             $id_record = $dbo->lastInsertedID();
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
             flash()->info(tr('Nuovo stato preventivi aggiunto.'));

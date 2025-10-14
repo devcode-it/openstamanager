@@ -21,6 +21,7 @@
 namespace Modules\ListeNewsletter;
 
 use Common\SimpleModelTrait;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
@@ -44,6 +45,7 @@ class Lista extends Model
     public static function build($name = null)
     {
         $model = new static();
+        $model->name = $name;
         $model->save();
 
         return $model;
@@ -51,10 +53,24 @@ class Lista extends Model
 
     public function save(array $options = [])
     {
+        // Salva sempre i dati base (nome, descrizione, ecc.) indipendentemente dalla query
         $result = parent::save($options);
 
-        $query = $this->query;
+        $query = (string) $this->query;
         if (!empty($query)) {
+            // Validazione della query usando la funzione di sistema
+            if (!check_query($query)) {
+                // Ritorna il risultato del salvataggio base, senza processare la query
+                return $result;
+            }
+
+            // Validazione aggiuntiva: deve iniziare con SELECT
+            $query_trimmed = trim(strtoupper($query));
+            if (!str_starts_with($query_trimmed, 'SELECT')) {
+                // Ritorna il risultato del salvataggio base, senza processare la query
+                return $result;
+            }
+
             $database = database();
 
             // Rimozione record precedenti
@@ -63,7 +79,16 @@ class Lista extends Model
             ]);
 
             // Ricerca nuovi record
-            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.preg_replace('/'.preg_quote('SELECT', '/').'/', 'SELECT '.prepare($this->id).',', $query, 1));
+            $modified_query = preg_replace('/'.preg_quote('SELECT', '/').'/', 'SELECT '.prepare($this->id).',', $query, 1);
+
+            // Verifica che la sostituzione sia avvenuta correttamente
+            if ($modified_query !== $query) {
+                try {
+                    $database->query("INSERT INTO em_list_receiver (id_list, record_id, record_type) {$modified_query}");
+                } catch (Exception $e) {
+                    // Non interrompe il salvataggio, continua con il risultato base
+                }
+            }
         }
 
         return $result;

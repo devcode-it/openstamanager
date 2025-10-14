@@ -37,9 +37,9 @@ switch (post('op')) {
         $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
-        $tipo->setTranslation('title', post('descrizione'));
         $tipo->save();
 
+        $tipo->setTranslation('title', post('descrizione'));
         $fasce_ore = (array) post('fascia_ore');
         $fascia_km = (array) post('fascia_km');
         $fascia_diritto_chiamata = (array) post('fascia_diritto_chiamata');
@@ -76,9 +76,7 @@ switch (post('op')) {
         $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
 
         $tipo = Tipo::build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico);
-        if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-            $tipo->name = $descrizione;
-        }
+        $tipo->name = $descrizione;
         $tipo->setTranslation('title', post('descrizione'));
         $tipo->save();
 

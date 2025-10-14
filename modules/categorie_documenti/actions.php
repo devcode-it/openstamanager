@@ -32,12 +32,12 @@ switch (post('op')) {
                 '_NAME_' => $descrizione,
             ]));
         } else {
-            $categoria->setTranslation('title', $descrizione);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $categoria->name = $descrizione;
             }
             $categoria->save();
 
+            $categoria->setTranslation('title', $descrizione);
             $categoria->syncPermessi(post('permessi') ?: []);
 
             flash()->info(tr('Informazioni salvate correttamente!'));
@@ -55,11 +55,8 @@ switch (post('op')) {
             ]));
         } else {
             $categoria = Categoria::build();
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $categoria->name = $descrizione;
-            }
+            $categoria->name = $descrizione;
             $id_record = $dbo->lastInsertedID();
-            $categoria->setTranslation('title', $descrizione);
             $categoria->save();
 
             if (isAjaxRequest()) {

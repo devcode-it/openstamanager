@@ -35,6 +35,15 @@ class Settore extends Model
         'title',
     ];
 
+    public static function build($name = null)
+    {
+        $model = new static();
+        $model->name = $name;
+        $model->save();
+
+        return $model;
+    }
+
     public function anagrafiche()
     {
         return $this->hasMany(Anagrafica::class, 'id_settore');

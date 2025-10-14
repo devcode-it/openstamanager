@@ -38,8 +38,6 @@ $disableCSRF = true; // Protezione contro CSRF
 // Impostazioni di debug
 $debug = false;
 
-// Permette di disabilitare i cron e gli hooks
-$disable_cron = false;
 $disable_hooks = false;
 
 // Permette di accedere solo con un ip (da utilizzare per manutenzione)

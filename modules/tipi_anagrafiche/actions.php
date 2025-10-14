@@ -58,7 +58,7 @@ switch (post('op')) {
                 $tipo->name = $descrizione;
                 $id_record = $dbo->lastInsertedID();
                 $tipo->save();
-                
+
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }
         }

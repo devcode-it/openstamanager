@@ -21,7 +21,6 @@
 namespace Modules\ListeNewsletter;
 
 use Common\SimpleModelTrait;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
@@ -85,7 +84,7 @@ class Lista extends Model
             if ($modified_query !== $query) {
                 try {
                     $database->query("INSERT INTO em_list_receiver (id_list, record_id, record_type) {$modified_query}");
-                } catch (Exception $e) {
+                } catch (\Exception) {
                     // Non interrompe il salvataggio, continua con il risultato base
                 }
             }

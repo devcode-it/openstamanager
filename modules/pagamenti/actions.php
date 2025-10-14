@@ -59,12 +59,12 @@ switch (filter('op')) {
                 $pagamento->prc = post('percentuale')[$key];
                 $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
                 $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
-                $pagamento->setTranslation('title', $descrizione);
                 $pagamento->descrizione_incasso = post('descrizione_incasso');
                 $pagamento->importo_fisso_incasso = post('importo_fisso_incasso');
                 $pagamento->importo_percentuale_incasso = post('importo_percentuale_incasso');
                 $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
                 $pagamento->save();
+                $pagamento->setTranslation('title', $descrizione);
             }
 
             flash()->info(tr('Salvataggio completato!'));
@@ -86,7 +86,6 @@ switch (filter('op')) {
             } else {
                 $pagamento = Pagamento::build($descrizione, $codice_modalita_pagamento_fe);
                 $id_record = $dbo->lastInsertedID();
-                $pagamento->setTranslation('title', $descrizione);
                 $pagamento->save();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

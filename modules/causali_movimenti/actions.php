@@ -30,9 +30,14 @@ switch (filter('op')) {
             $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first();
             if (empty($causale_new)) {
                 $causale->tipo_movimento = post('tipo_movimento');
-                $causale->setTranslation('title', $nome);
+                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                    $causale->name = $nome;
+                }
                 $causale->setTranslation('description', $descrizione);
                 $causale->save();
+
+                $causale->setTranslation('title', $nome);
+
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una causale con nome _NAME_.", [
@@ -46,15 +51,15 @@ switch (filter('op')) {
         break;
 
     case 'add':
+        $nome = post('nome');
         $descrizione = post('descrizione');
-        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-            $causale = Causale::build();
+        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first())) {
+            $causale = Causale::build($nome);
             $causale->tipo_movimento = post('tipo_movimento');
             $causale->save();
             $id_record = $dbo->lastInsertedID();
-            $causale->setTranslation('title', post('nome'));
+
             $causale->setTranslation('description', $descrizione);
-            $causale->save();
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $descrizione]);

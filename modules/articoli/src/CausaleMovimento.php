@@ -34,6 +34,14 @@ class CausaleMovimento extends Model
     protected static $translated_fields = [
         'title',
     ];
+    public static function build($name = null)
+    {
+        $model = new static();
+        $model->name = $name;
+        $model->save();
+
+        return $model;
+    }
 
     public function getModuleAttribute()
     {

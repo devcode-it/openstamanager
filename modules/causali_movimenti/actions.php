@@ -37,7 +37,6 @@ switch (filter('op')) {
                 $causale->save();
 
                 $causale->setTranslation('title', $nome);
-
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una causale con nome _NAME_.", [

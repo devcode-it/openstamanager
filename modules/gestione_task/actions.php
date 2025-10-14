@@ -29,14 +29,14 @@ switch (post('op')) {
         if (!empty($task_new) && $task_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro task.'));
         } else {
-            $task->setTranslation('title', $name);
             $task->class = post('class');
             $task->expression = post('expression');
             $task->enabled = post('enabled');
             $task->save();
-        }
 
-        flash()->info(tr('Informazioni salvate correttamente.'));
+            $task->setTranslation('title', $name);
+            flash()->info(tr('Informazioni salvate correttamente.'));
+        }
 
         break;
 }

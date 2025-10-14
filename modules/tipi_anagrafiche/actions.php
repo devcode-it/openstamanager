@@ -30,11 +30,12 @@ switch (post('op')) {
         // Nome accettato
 
         if (!in_array($descrizione, $block)) {
-            $tipo->setTranslation('title', $descrizione);
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $tipo->name = $descrizione;
             }
             $tipo->save();
+
+            $tipo->setTranslation('title', $descrizione);
             flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
             // Nome non consentito
@@ -54,12 +55,10 @@ switch (post('op')) {
                 flash()->error(tr('Nome già esistente!'));
             } else {
                 $tipo = Tipo::build($descrizione);
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $tipo->name = $descrizione;
-                }
+                $tipo->name = $descrizione;
                 $id_record = $dbo->lastInsertedID();
-                $tipo->setTranslation('title', $descrizione);
                 $tipo->save();
+                
                 flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }
         }

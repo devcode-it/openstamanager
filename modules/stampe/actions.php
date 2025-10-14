@@ -25,13 +25,13 @@ switch (post('op')) {
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
             $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.post('module'));
         }
-
-        $print->setTranslation('title', post('title'));
-        $print->setTranslation('filename', post('filename'));
         $print->options = post('options');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
         $print->save();
+
+        $print->setTranslation('title', post('title'));
+        $print->setTranslation('filename', post('filename'));
 
         // Gestione file allegati
         $dbo->delete('zz_files_print', ['id_print' => $id_record]);

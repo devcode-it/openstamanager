@@ -28,7 +28,6 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($causale_new)) {
-                $causale->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $causale->name = $descrizione;
                 }
@@ -37,6 +36,7 @@ switch (filter('op')) {
                 $causale->reversed = filter('reversed');
                 $causale->is_rientrabile = filter('is_rientrabile');
                 $causale->save();
+                $causale->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato!'));
             } else {
                 flash()->error(tr("E' già presente una causale di trasporto con la stessa descrizione"));
@@ -53,14 +53,10 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $causale = Causale::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $causale->name = $descrizione;
-                }
+                $causale->name = $descrizione;
                 $causale->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $causale->setTranslation('title', $descrizione);
-                $causale->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

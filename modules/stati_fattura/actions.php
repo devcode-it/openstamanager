@@ -34,8 +34,9 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
+
+            $stato->setTranslation('title', $descrizione);
             break;
         }
 }

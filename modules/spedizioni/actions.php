@@ -31,7 +31,6 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $spedizione_new = Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($spedizione_new)) {
-                $spedizione->setTranslation('title', $descrizione);
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
                 }
@@ -41,6 +40,8 @@ switch (filter('op')) {
                 $spedizione->predefined = $predefined;
                 $spedizione->esterno = $vettore;
                 $spedizione->save();
+
+                $spedizione->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una spedizione con questo nome."));
@@ -56,14 +57,10 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             if (empty(Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $spedizione = Spedizione::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $spedizione->name = $descrizione;
-                }
+                $spedizione->name = $descrizione;
                 $spedizione->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $spedizione->setTranslation('title', $descrizione);
-                $spedizione->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

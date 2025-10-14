@@ -42,10 +42,9 @@ switch (post('op')) {
             $stato->notifica_tecnico_assegnato = post('notifica_tecnico_assegnato');
             $stato->id_email = post('email') ?: null;
             $stato->destinatari = post('destinatari');
-
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
+            $stato->setTranslation('title', $descrizione);
             flash()->info(tr('Informazioni salvate correttamente.'));
         }
 
@@ -62,11 +61,8 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato attività.'));
         } else {
             $stato = Stato::build($codice, $colore);
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $stato->name = $descrizione;
-            }
+            $stato->name = $descrizione;
             $id_record = $dbo->lastInsertedID();
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
             flash()->info(tr('Nuovo stato attività aggiunto.'));

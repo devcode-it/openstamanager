@@ -30,12 +30,13 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $provenienza_new = Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($provenienza_new)) {
-                $provenienza->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $provenienza->name = $descrizione;
                 }
                 $provenienza->colore = $colore;
                 $provenienza->save();
+
+                $provenienza->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una provenienza _NAME_.", [
@@ -54,16 +55,11 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if (empty(Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-                $provenienza = Provenienza::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $provenienza->name = $descrizione;
-                }
+                $provenienza = Provenienza::build($descrizione);
                 $provenienza->colore = $colore;
                 $provenienza->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $provenienza->setTranslation('title', $descrizione);
-                $provenienza->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

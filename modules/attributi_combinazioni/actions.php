@@ -32,8 +32,9 @@ switch (filter('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
         } else {
             $attributo = Attributo::build();
+            $attributo->name = $title;
             $id_record = $dbo->lastInsertedID();
-            $attributo->setTranslation('title', $title);
+            $attributo->save();
 
             flash()->info(tr('Nuovo attributo creato correttamente!'));
         }
@@ -46,6 +47,10 @@ switch (filter('op')) {
         if (!empty($attributo_new) && $attributo_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
         } else {
+            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
+                $attributo->name = $title;
+            }
+            $attributo->save();
             $attributo->setTranslation('title', $title);
             flash()->info(tr('Attributo aggiornato correttamente!'));
         }

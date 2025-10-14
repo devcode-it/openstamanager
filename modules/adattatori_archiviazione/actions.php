@@ -33,7 +33,7 @@ switch (filter('op')) {
 
         $id_record = $adapter->id;
 
-        flash()->info(tr('Nuoovo adattatore aggiunto!'));
+        flash()->info(tr('Nuovo adattatore aggiunto!'));
 
         break;
 

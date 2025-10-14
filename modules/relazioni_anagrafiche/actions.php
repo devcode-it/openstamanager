@@ -31,13 +31,14 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $relazione_new = Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($relazione_new)) {
-                $relazione->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $relazione->name = $descrizione;
                 }
                 $relazione->colore = $colore;
                 $relazione->is_bloccata = $is_bloccata;
                 $relazione->save();
+
+                $relazione->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una relazione _NAME_.", [
@@ -56,16 +57,11 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if (empty(Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-                $relazione = Relazione::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $relazione->name = $descrizione;
-                }
+                $relazione = Relazione::build($descrizione);
                 $relazione->colore = $colore;
                 $relazione->is_bloccata = $is_bloccata;
                 $relazione->save();
                 $id_record = $dbo->lastInsertedID();
-                $relazione->setTranslation('title', $descrizione);
-                $relazione->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

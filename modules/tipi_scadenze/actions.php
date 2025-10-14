@@ -32,8 +32,6 @@ switch (filter('op')) {
             $nome_new = Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first();
             $nome_prev = $tipo->getTranslation('title');
             if (empty($nome_new)) {
-                // nome_prev
-                $tipo->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $nome;
                 }
@@ -42,7 +40,6 @@ switch (filter('op')) {
 
                 $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`title` = "Scadenzario '.$nome_prev.'"')['id'];
 
-                // aggiorno anche il segmento
                 $dbo->update('zz_segments', [
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                 ], [
@@ -56,6 +53,7 @@ switch (filter('op')) {
                     'id_lang' => Models\Locale::getDefault()->id,
                 ]);
 
+                $tipo->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato!'));
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con nome: _NOME_", [
@@ -77,14 +75,10 @@ switch (filter('op')) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
             if (empty(Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first())) {
                 $tipo = Tipo::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $tipo->name = $nome;
-                }
+                $tipo->name = $nome;
                 $tipo->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $tipo->setTranslation('title', $descrizione);
-                $tipo->save();
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [

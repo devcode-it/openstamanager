@@ -29,11 +29,12 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             $settore_new = Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($settore_new)) {
-                $settore->setTranslation('title', $descrizione);
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $settore->name = $descrizione;
                 }
                 $settore->save();
+
+                $settore->setTranslation('title', $descrizione);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una settore _NAME_.", [
@@ -50,15 +51,10 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if (empty(Settore::where('id', '=', (new Settore())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
-                $settore = Settore::build();
-                if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                    $settore->name = $descrizione;
-                }
+                $settore = Settore::build($descrizione);
                 $settore->save();
 
                 $id_record = $dbo->lastInsertedID();
-                $settore->setTranslation('title', $descrizione);
-                $settore->save();
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

@@ -38,8 +38,12 @@ trait SimpleModelTrait
      *
      * @return static
      */
-    public static function build()
+    public static function build($name = null)
     {
-        return new static();
+        $model = new static();
+        $model->name = $name;
+        $model->save();
+
+        return $model;
     }
 }

@@ -38,9 +38,9 @@ switch (post('op')) {
             $stato->is_bloccato = post('completato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->impegnato = post('impegnato');
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
 
+            $stato->setTranslation('title', $descrizione);
             flash()->info(tr('Informazioni salvate correttamente.'));
         }
 
@@ -60,12 +60,10 @@ switch (post('op')) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro stato ordine.'));
         } else {
             $stato = Stato::build($icona, $colore, $is_bloccato, $is_fatturabile, $impegnato);
-            if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
-                $stato->name = $descrizione;
-            }
+            $stato->name = $descrizione;
             $id_record = $dbo->lastInsertedID();
-            $stato->setTranslation('title', $descrizione);
             $stato->save();
+
             flash()->info(tr('Nuovo stato ordine aggiunto.'));
         }
 

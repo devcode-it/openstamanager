@@ -45,8 +45,9 @@ switch (filter('op')) {
                 $tipo->predefined = $predefined;
                 $tipo->enabled = post('enabled');
                 $tipo->id_segment = post('id_segment');
-                $tipo->setTranslation('title', $descrizione);
                 $tipo->save();
+
+                $tipo->setTranslation('title', $descrizione);
 
                 flash()->info(tr('Salvataggio completato!'));
             }
@@ -69,7 +70,6 @@ switch (filter('op')) {
                     $tipo->name = $descrizione;
                 }
                 $id_record = $dbo->lastInsertedID();
-                $tipo->setTranslation('title', $descrizione);
                 $tipo->save();
 
                 if (isAjaxRequest()) {

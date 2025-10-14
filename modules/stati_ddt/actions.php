@@ -59,8 +59,6 @@ switch (post('op')) {
         } else {
             $stato = Stato::build($descrizione, $icona, $colore, $is_bloccato, $is_fatturabile);
             $id_record = $dbo->lastInsertedID();
-            $stato->setTranslation('title', $descrizione);
-
             flash()->info(tr('Nuovo stato DDT aggiunto.'));
         }
 

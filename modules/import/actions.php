@@ -150,8 +150,12 @@ switch (filter('op')) {
                 $filename = 'anomalie_'.date('Ymd_His').'_'.basename($filepath);
                 $failed_records_path = $anomalie_dir.'/'.$filename;
 
-                // Salva i record falliti
-                $csv->saveFailedRecords($failed_records_path);
+                // Salva i record falliti con errori specifici se il metodo è disponibile
+                if (method_exists($csv, 'saveFailedRecordsWithErrors')) {
+                    $csv->saveFailedRecordsWithErrors($failed_records_path);
+                } else {
+                    $csv->saveFailedRecords($failed_records_path);
+                }
 
                 // Converti il percorso assoluto in relativo per l'URL
                 $failed_records_path = 'files/anomalie/'.$filename;

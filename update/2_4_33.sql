@@ -125,7 +125,7 @@ INSERT INTO `an_regioni` (`id`, `nome`, `id_nazione`) VALUES
 (20, 'Veneto', (SELECT `id` FROM `an_nazioni` WHERE `iso2` = 'IT'));
 
 -- Aggiunta sezionale per fatture non elettroniche
-INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Fatture non elettroniche', '1=1', 'WHR', '#', '0', '0', '0', '0', '0', '1');
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Fatture non elettroniche', '1=1', 'WHR', '#', '0', '0', '0', '1');
 
 -- Ordinamento vista N. Prot.
 UPDATE `zz_views` SET `order_by` = 'CAST(co_documenti.numero AS UNSIGNED)' WHERE `zz_views`.`name` = 'N. Prot.'; 

@@ -126,15 +126,6 @@ switch (post('op')) {
                         if ($copia->isArticolo()) {
                             $copia->serials = $riga->serials;
                         }
-
-                        if ($documento_import->data_accettazione && $documento_import->data_conclusione) {
-                            $copia->dati_aggiuntivi_fe = [
-                                'id_riga' => $copia->id,
-                                'data_inizio_periodo' => $documento_import->data_accettazione->format('Y-m-d'),
-                                'data_fine_periodo' => $documento_import->data_conclusione->format('Y-m-d'),
-                            ];
-                        }
-
                         $copia->save();
                     }
                 }

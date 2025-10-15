@@ -240,8 +240,40 @@ if ($options['dir'] == 'entrata') {
     <br>';
 }
 
-// Data prevista evasione (per ordini)
+echo '
+    <div class="card card-info collapsed-card"> 
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Informazioni aggiuntive').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
 
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data inizio competenza').'", "name": "data_inizio_competenza", "value": "'.$result['data_inizio_competenza'].'" ]}
+                </div>
+                
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data fine competenza').'", "name": "data_fine_competenza", "value": "'.$result['data_fine_competenza'].'" ]}
+                </div>';
+
+                if (isset($result['type']) && isset($result['id'])) {
+                    $riga = $result['type']::find($result['id']);
+                    if ($riga->hasDifferentOriginalDateCompetenza()) {
+                        echo '
+                        <div class="col-md-4">
+                            <div class="alert alert-danger">
+                                <i class="fa fa-warning"></i> '.tr('Attenzione! Le date di competenza non coincidono con le date della riga di origine.').'
+                            </div>
+                        </div>';
+                    }
+                }
+            echo '
+            </div>';
+
+// Data prevista evasione (per ordini)
 if (in_array($module->name, ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
     if ($options['action'] == 'add') {
         if ($module->name == 'Ordini cliente') {
@@ -254,16 +286,8 @@ if (in_array($module->name, ['Ordini cliente', 'Ordini fornitore', 'Preventivi']
     } else {
         $confermato = $result['confermato'];
     }
-    echo '
-    <div class="card card-info collapsed-card"> 
-        <div class="card-header with-border">
-            <h3 class="card-title">'.tr('Informazioni aggiuntive').'</h3>
-            <div class="card-tools pull-right">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
-            </div>
-        </div>
 
-        <div class="card-body">
+    echo '
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
@@ -286,8 +310,6 @@ if (in_array($module->name, ['Ordini cliente', 'Ordini fornitore', 'Preventivi']
                     {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
                 </div>
             </div>
-        </div>
-    </div>
 
     <script>
         $(document).ready(function() {
@@ -306,6 +328,10 @@ if (in_array($module->name, ['Ordini cliente', 'Ordini fornitore', 'Preventivi']
         });
     </script>';
 }
+
+echo '
+        </div>
+    </div>';
 
 if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
     echo '
@@ -383,3 +409,22 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
         }
     </script>';
 }
+
+echo '
+    <script>
+        // Data inizio competenza deve essere minore di data fine competenza e data fine competenza deve essere maggiore di data inizio competenza
+        $(document).ready(function() {
+            $("#data_inizio_competenza, #data_fine_competenza").on("dp.change", function (e) {
+                var dataInizio = $("#data_inizio_competenza").data("DateTimePicker");
+                var dataFine = $("#data_fine_competenza").data("DateTimePicker");
+
+                if (dataInizio && dataFine && dataInizio.date() && dataFine.date()) {
+                    if (dataInizio.date() > dataFine.date()) {
+                        dataFine.date(dataInizio.date());
+                    } else if (dataFine.date() < dataInizio.date()) {
+                        dataInizio.date(dataFine.date());
+                    }
+                }
+            });
+        });
+    </script>';

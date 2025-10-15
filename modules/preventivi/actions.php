@@ -201,6 +201,8 @@ switch (post('op')) {
         $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
+        $articolo->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
         $articolo->data_evasione = post('data_evasione') ?: null;
         $articolo->ora_evasione = post('ora_evasione') ?: null;
         $articolo->confermato = post('confermato') ?: 0;
@@ -279,6 +281,8 @@ switch (post('op')) {
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
         $riga->um = post('um') ?: null;
+        $riga->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
         $riga->data_evasione = post('data_evasione') ?: null;
         $riga->ora_evasione = post('ora_evasione') ?: null;
         $riga->confermato = post('confermato') ?: 0;

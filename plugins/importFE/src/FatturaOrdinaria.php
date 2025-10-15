@@ -405,6 +405,13 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
                 }
 
+                if (!empty($riga['DataInizioPeriodo'])) {
+                    $obj->data_inizio_competenza = $riga['DataInizioPeriodo'];
+                }
+                if (!empty($riga['DataFinePeriodo'])) {
+                    $obj->data_fine_competenza = $riga['DataFinePeriodo'];
+                }
+
                 // Sconti e maggiorazioni
                 $sconti = $riga['ScontoMaggiorazione'];
                 if (!empty($sconti)) {

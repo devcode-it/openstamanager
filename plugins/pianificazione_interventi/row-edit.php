@@ -42,7 +42,7 @@ $riga = $documento->getRiga($type, $id_riga);
 
 $result = $riga->toArray();
 $result['prezzo'] = $riga->prezzo_unitario;
-
+$result['type'] = $type;
 // Importazione della gestione dedicata
 $file = 'riga';
 if ($riga->isDescrizione()) {

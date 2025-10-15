@@ -136,13 +136,11 @@ class Movimenti
             }
 
             if (!empty($imponibile)) {
-                $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
-
                 $movimenti[] = [
                     'id_conto' => $id_conto,
                     'avere' => $imponibile,
-                    'data_inizio_competenza' => $dati_aggiuntivi['data_inizio_periodo'],
-                    'data_fine_competenza' => $dati_aggiuntivi['data_fine_periodo'],
+                    'data_inizio_competenza' => $riga->data_inizio_competenza,
+                    'data_fine_competenza' => $riga->data_fine_competenza,
                 ];
             }
         }

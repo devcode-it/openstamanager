@@ -119,24 +119,6 @@ if (empty($riga->isDescrizione())) {
         </tr>';
 }
 
-// Data inizio periodo
-echo '
-        <tr class="fourth-level">
-            <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.7 DataInizioPeriodo</td>
-            <td>
-                {[ "type": "date", "name": "data_inizio_periodo", "value": "'.$result['data_inizio_periodo'].'" ]}
-            </td>
-        </tr>';
-
-// Data fine periodo
-echo '
-        <tr class="fourth-level">
-            <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.8 DataFinePeriodo</td>
-            <td>
-                {[ "type": "date", "name": "data_fine_periodo", "value": "'.$result['data_fine_periodo'].'" ]}
-            </td>
-        </tr>';
-
 // Riferimento amministrazione
 echo '
         <tr class="fourth-level">

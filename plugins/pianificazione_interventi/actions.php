@@ -218,6 +218,8 @@ switch ($operazione) {
 
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
+        $articolo->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
@@ -250,6 +252,8 @@ switch ($operazione) {
 
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
+        $riga->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));

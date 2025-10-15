@@ -153,6 +153,17 @@ foreach ($righe as $riga) {
         echo '
                     <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
     }
+
+    if (!empty($riga->data_inizio_competenza) || !empty($riga->data_fine_competenza)) {
+        $has_alert = $riga->hasDifferentOriginalDateCompetenza();
+        echo '
+                    <br><span class="text-xs text-muted">'.tr('Competenza (_START_ - _END_)', [
+                            '_START_' => Translator::dateToLocale($riga->data_inizio_competenza),
+                            '_END_' => Translator::dateToLocale($riga->data_fine_competenza),
+                        ]).'
+                        '.($has_alert ? '<i class="fa fa-warning text-danger"></i>' : '').'
+                    </span>';
+    }
     echo '
                 </td>';
 

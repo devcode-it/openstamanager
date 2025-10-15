@@ -76,6 +76,34 @@ abstract class Component extends Model
         return $this->original_model;
     }
 
+    /**
+     * Verifica se le date di competenza del componente corrente sono valorizzate e diverse da quelle del componente di origine.
+     *
+     * @return bool
+     */
+    public function hasDifferentOriginalDateCompetenza()
+    {
+        $original_id = $this->original_id;
+        $original_type = $this->original_type;
+        if ($original_id && $original_type && ($this->data_inizio_competenza || $this->data_fine_competenza)) {
+            // Istanzio la classe della riga di origine
+            if (class_exists($original_type)) {
+                $riga_origine = $original_type::find($original_id);
+                if ($riga_origine) {
+                    $data_inizio_origine = $riga_origine->data_inizio_competenza;
+                    $data_fine_origine = $riga_origine->data_fine_competenza;
+
+                    // Controllo se le date di competenza sono diverse
+                    if (($data_inizio_origine  || $data_fine_origine) && ($data_inizio_origine != $this->data_inizio_competenza || $data_fine_origine != $this->data_fine_competenza)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function referenceSources()
     {
         $class = static::class;

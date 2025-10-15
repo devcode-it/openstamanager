@@ -529,6 +529,8 @@ switch ($op) {
         $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
+        $articolo->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $articolo->id_iva = post('idiva');
         $articolo->idconto = post('idconto');
@@ -605,6 +607,8 @@ switch ($op) {
         $riga->descrizione = post('descrizione');
         $riga->note = post('note');
         $riga->um = post('um') ?: null;
+        $riga->data_inizio_competenza = post('data_inizio_competenza') ?: null;
+        $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
@@ -876,17 +880,6 @@ switch ($op) {
 
                     $copia->serials = $serials;
                 }
-
-                if ($documento instanceof Contratto) {
-                    if ($documento->data_accettazione && $documento->data_conclusione) {
-                        $copia->dati_aggiuntivi_fe = [
-                            'id_riga' => $copia->id,
-                            'data_inizio_periodo' => $documento->data_accettazione->format('Y-m-d'),
-                            'data_fine_periodo' => $documento->data_conclusione->format('Y-m-d'),
-                        ];
-                    }
-                }
-
                 $copia->save();
             }
         }

@@ -1448,11 +1448,11 @@ class FatturaElettronica implements \Stringable
                     $dettaglio['UnitaMisura'] = $riga['um'];
                 }
 
-                if (!empty($dati_aggiuntivi['data_inizio_periodo'])) {
-                    $dettaglio['DataInizioPeriodo'] = $dati_aggiuntivi['data_inizio_periodo'];
+                if (!empty($riga['data_inizio_competenza'])) {
+                    $dettaglio['DataInizioPeriodo'] = $riga['data_inizio_competenza'];
                 }
-                if (!empty($dati_aggiuntivi['data_fine_periodo'])) {
-                    $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
+                if (!empty($riga['data_fine_competenza'])) {
+                    $dettaglio['DataFinePeriodo'] = $riga['data_fine_competenza'];
                 }
 
                 $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario && $first_riga ? $riga->prezzo_unitario : 0;

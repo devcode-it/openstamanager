@@ -180,6 +180,7 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`mg_articoli_lang`.`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli`.`codice` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'CONCAT(`mg_articoli`.`codice`, " - ", `mg_articoli_lang`.`title`) LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`categoria_lang`.`title` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`mg_articoli_barcode`.`barcode` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`sottocategoria_lang`.`title` LIKE '.prepare('%'.$search.'%');

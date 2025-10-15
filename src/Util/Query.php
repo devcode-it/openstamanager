@@ -665,7 +665,7 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace('1=1', '1=1 '.\Modules::getAdditionalsQuery($element->id, null, self::$segments), $query);
+        // Nota: i filtri vengono applicati successivamente in ajax_dataload.php
         $views = self::getViews($element);
         $select = [];
 

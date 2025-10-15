@@ -535,7 +535,7 @@ class Update
             $infos = pathinfo($file);
             $version = str_replace('_', '.', $infos['filename']);
 
-            if (array_search($version, $previous) === false && self::isVersion($version)) {
+            if (array_search($version, $previous, true) === false && self::isVersion($version)) {
                 $path = str_replace(base_dir(), '', $infos['dirname'].'/'.$infos['filename']);
                 $path = ltrim($path, '/');
 

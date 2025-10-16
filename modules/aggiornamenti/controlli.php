@@ -308,7 +308,8 @@ function hasGlobalActions(controllo) {
     const controlliConAzioniGlobali = [
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
@@ -349,6 +350,17 @@ function getMessaggioConferma(controlloClass) {
                 "'.tr('Manterrà sempre il record più recente (con ID maggiore) ed eliminerà gli altri').'",
                 "'.tr('I record eliminati non potranno essere recuperati').'",
                 "'.tr('Le viste duplicate verranno rimosse definitivamente dal database').'",
+                "'.tr('Non può essere annullata').'"
+            ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati": {
+            titolo: "'.tr('Conferma risoluzione conflitti plugin').'",
+            descrizione: "'.tr('Sei sicuro di voler risolvere tutti i conflitti dei plugin duplicati?').'",
+            operazioni: [
+                "'.tr('Eliminerà i record duplicati nelle tabelle zz_plugins e zz_plugins_lang').'",
+                "'.tr('Manterrà sempre il record più recente (con ID maggiore) ed eliminerà gli altri').'",
+                "'.tr('I record eliminati non potranno essere recuperati').'",
+                "'.tr('I plugin duplicati verranno rimossi definitivamente dal database').'",
                 "'.tr('Non può essere annullata').'"
             ]
         }

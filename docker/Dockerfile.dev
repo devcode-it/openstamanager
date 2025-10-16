@@ -51,7 +51,8 @@ RUN touch /var/www/html/manifest.json \
     /var/www/html/mysql_8_3.json \
     /var/www/html/mysql.json \
     /var/www/html/checksum.json \
-    /var/www/html/settings.json
+    /var/www/html/settings.json \
+    /var/www/html/views.json
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN git config --global --add safe.directory /var/www/html

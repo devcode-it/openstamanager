@@ -541,6 +541,7 @@ export function release(done) {
         '!mysql_8_3.json',
         '!mariadb_10_x.json',
         '!settings.json',
+        '!views.json',
         '!manifest.json',
         '!.idea/**',
         '!.git/**',
@@ -615,6 +616,14 @@ export function release(done) {
         }).stdout);
         bufferStream.push(null);
         archive.append(bufferStream, { name: 'settings.json' });
+
+        // Aggiunta del file per il controllo delle viste
+        bufferStream = new Readable();
+        bufferStream.push(shell.exec('php update/views.php', {
+            silent: true
+        }).stdout);
+        bufferStream.push(null);
+        archive.append(bufferStream, { name: 'views.json' });
 
         // Aggiunta del commit corrente nel file REVISION
         bufferStream = new Readable();

@@ -445,6 +445,46 @@ class Update
         return $settings;
     }
 
+    public static function getViews()
+    {
+        $views_all = database()->fetchArray('SELECT zv.`name`, zv.`id_module`, zv.`query`, zm.`name` as module_name FROM `zz_views` zv LEFT JOIN `zz_modules` zm ON zv.`id_module` = zm.`id`');
+
+        foreach ($views_all as $view) {
+            $module_key = $view['module_name'] ?: 'module_' . $view['id_module'];
+
+            // Normalizza la query rimuovendo i tag <br> per il confronto standard
+            $normalized_query = self::normalizeViewQuery($view['query']);
+
+            $views[$module_key][$view['name']] = $normalized_query;
+        }
+
+        return $views;
+    }
+
+    /**
+     * Normalizza una query di vista rimuovendo elementi che non dovrebbero essere considerati come differenze
+     *
+     * @param string $query
+     * @return string
+     */
+    private static function normalizeViewQuery($query)
+    {
+        // Rimuovi tutti i tag BR (tutte le varianti)
+        $query = preg_replace('/<br\s*\/?>/i', '', $query);
+
+        // Normalizza spazi multipli
+        $query = preg_replace('/\s+/', ' ', $query);
+
+        // Normalizza virgolette
+        $query = str_replace(['"', "'", '`'], "'", $query);
+
+        // Normalizza entità HTML comuni
+        $query = html_entity_decode($query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim($query);
+    }
+
+
     /**
      * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
      */

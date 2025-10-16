@@ -344,6 +344,7 @@ $files_to_check = [
     'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),
+    'views.json' => tr('Necessario per il controllo delle viste del database'),
 ];
 
 $files = [];

@@ -36,14 +36,16 @@ class ReaValidi extends Controllo
 
     public function getOptions($record)
     {
-        return [
-            [
-                'name' => tr('Rimuovi'),
-                'icon' => 'fa fa-trash',
-                'color' => 'danger',
-                'params' => [],
-            ],
-        ];
+        // Nessuna opzione per le singole righe - utilizzare solo la risoluzione globale
+        return [];
+    }
+
+    /**
+     * Indica se questo controllo supporta azioni globali
+     */
+    public function hasGlobalActions()
+    {
+        return true;
     }
 
     public function check()
@@ -85,10 +87,25 @@ class ReaValidi extends Controllo
 
     public function execute($record, $params = [])
     {
-        $anagrafica = Anagrafica::find($record['id']);
-        $anagrafica->codicerea = null;
-        $anagrafica->save();
+        // La risoluzione singola non è più supportata
+        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
+        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+    }
 
-        return true;
+    /**
+     * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi
+     */
+    public function solveGlobal($params = [])
+    {
+        $results = [];
+        foreach ($this->results as $record) {
+            $anagrafica = Anagrafica::find($record['id']);
+            $anagrafica->codicerea = null;
+            $anagrafica->save();
+
+            $results[$record['id']] = true;
+        }
+
+        return $results;
     }
 }

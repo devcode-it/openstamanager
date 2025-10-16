@@ -306,10 +306,43 @@ function addRiga(controllo, card, record) {
 function hasGlobalActions(controllo) {
     // Lista dei controlli che supportano azioni globali
     const controlliConAzioniGlobali = [
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
+}
+
+/**
+* Restituisce il messaggio di conferma specifico per ogni controllo
+* @param controlloClass
+* @returns {object}
+*/
+function getMessaggioConferma(controlloClass) {
+    const messaggi = {
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale": {
+            titolo: "'.tr('Conferma risoluzione conflitti').'",
+            descrizione: "'.tr('Sei sicuro di voler risolvere tutti i conflitti?').'",
+            operazioni: [
+                "'.tr('Creerà nuovi conti per le anagrafiche con conflitti multipli').'",
+                "'.tr('Aggiornerà i movimenti contabili collegati').'",
+                "'.tr('Eliminerà i conti vuoti non più utilizzati').'",
+                "'.tr('Non può essere annullata').'"
+            ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi": {
+            titolo: "'.tr('Conferma rimozione codici REA').'",
+            descrizione: "'.tr('Sei sicuro di voler rimuovere tutti i codici REA non validi?').'",
+            operazioni: [
+                "'.tr('Rimuoverà tutti i codici REA che non rispettano il formato corretto (XX-NNNNNN)').'",
+                "'.tr('I codici REA verranno svuotati per le anagrafiche interessate').'",
+                "'.tr('Le anagrafiche rimarranno invariate, solo il campo REA verrà pulito').'",
+                "'.tr('Non può essere annullata').'"
+            ]
+        }
+    };
+
+    return messaggi[controlloClass] || messaggi["Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale"];
 }
 
 /**
@@ -321,6 +354,15 @@ function eseguiAzioneGlobale(buttonElement) {
     let controlloId = button.data("controllo-id");
     let controlloClass = button.data("controllo-class");
 
+    // Ottieni il messaggio specifico per questo controllo
+    let messaggio = getMessaggioConferma(controlloClass);
+
+    // Genera la lista delle operazioni
+    let operazioniHtml = "";
+    messaggio.operazioni.forEach(function(operazione) {
+        operazioniHtml += `<li>${operazione}</li>`;
+    });
+
     // Crea modal di conferma con lo stile del gestionale
     let modalHtml = `
         <div class="modal fade" id="modal-conferma-risoluzione" tabindex="-1" role="dialog">
@@ -329,22 +371,19 @@ function eseguiAzioneGlobale(buttonElement) {
                     <div class="modal-header">
                         <h4 class="modal-title">
                             <i class="fa fa-exclamation-triangle text-warning"></i>
-                            '.tr('Conferma risoluzione conflitti').'
+                            ${messaggio.titolo}
                         </h4>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>'.tr('Sei sicuro di voler risolvere tutti i conflitti?').'</p>
+                        <p>${messaggio.descrizione}</p>
                         <div class="alert alert-warning">
                             <i class="fa fa-info-circle"></i>
                             '.tr('Questa operazione:').'
                             <ul class="mb-0 mt-2">
-                                <li>'.tr('Creerà nuovi conti per le anagrafiche con conflitti multipli').'</li>
-                                <li>'.tr('Aggiornerà i movimenti contabili collegati').'</li>
-                                <li>'.tr('Eliminerà i conti vuoti non più utilizzati').'</li>
-                                <li>'.tr('Non può essere annullata').'</li>
+                                ${operazioniHtml}
                             </ul>
                         </div>
                     </div>

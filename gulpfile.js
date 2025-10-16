@@ -542,6 +542,7 @@ export function release(done) {
         '!mariadb_10_x.json',
         '!settings.json',
         '!views.json',
+        '!modules.json',
         '!manifest.json',
         '!.idea/**',
         '!.git/**',
@@ -624,6 +625,15 @@ export function release(done) {
         }).stdout);
         bufferStream.push(null);
         archive.append(bufferStream, { name: 'views.json' });
+
+        // Aggiunta del file per il controllo dei moduli
+        bufferStream = new Readable();
+        bufferStream.push(shell.exec('php update/modules.php', {
+            silent: true
+        }).stdout);
+        bufferStream.push(null);
+        archive.append(bufferStream, { name: 'modules.json' });
+
 
         // Aggiunta del commit corrente nel file REVISION
         bufferStream = new Readable();

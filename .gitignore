@@ -96,6 +96,7 @@ mysql_8_3.json
 mariadb_10_x.json
 settings.json
 views.json
+modules.json
 
 /tests/_log/*
 /tests/_temp/*

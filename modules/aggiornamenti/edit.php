@@ -29,39 +29,8 @@ $module = Module::find($id_module);
 echo '<div class="module-aggiornamenti">
 
 <style>
-.query-container {
-    position: relative;
-}
-
-.query-toggle {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 3px;
-    transition: all 0.2s ease;
-}
-
-.query-toggle:hover {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.query-toggle i {
-    font-size: 10px;
-    margin-right: 3px;
-}
-
-.query-toggle-container {
-    text-align: left;
-}
-
-.query-cell {
-    max-width: 300px;
-    word-wrap: break-word;
-}
-
-.query-preview code,
-.query-full code {
+.query-preview,
+.query-full {
     font-size: 11px;
     line-height: 1.3;
     background-color: #f8f9fa;
@@ -69,6 +38,8 @@ echo '<div class="module-aggiornamenti">
     border-radius: 3px;
     padding: 8px;
     display: block;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 .btn-xs {
@@ -104,35 +75,6 @@ echo '<div class="module-aggiornamenti">
 
 .table th {
     padding: 10px 8px !important;
-}
-
-/* Stili per i link ai moduli */
-td a {
-    text-decoration: none;
-    color: inherit;
-}
-
-td a:hover {
-    text-decoration: none;
-    color: #007bff;
-}
-
-td a:hover strong {
-    color: #007bff;
-}
-
-td a:hover code {
-    color: #007bff;
-    background-color: #e3f2fd;
-}
-
-.fa-external-link {
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-}
-
-td a:hover .fa-external-link {
-    opacity: 1;
 }
 </style>';
 

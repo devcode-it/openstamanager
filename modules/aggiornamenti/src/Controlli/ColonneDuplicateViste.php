@@ -59,39 +59,7 @@ class ColonneDuplicateViste extends Controllo
             ]);
         }
 
-        // 2. Controllo viste diverse con stesso title nello stesso modulo e lingua
-        $duplicati_title_diverse = database()->fetchArray('
-            SELECT `zz_views`.`id_module`, `zz_views_lang`.`title`, `zz_views_lang`.`id_lang`,
-                   COUNT(DISTINCT `zz_views_lang`.`id_record`) as `count_viste`,
-                   GROUP_CONCAT(DISTINCT `zz_views`.`name`) as `nomi_viste`
-            FROM `zz_views_lang`
-            INNER JOIN `zz_views` ON `zz_views`.`id` = `zz_views_lang`.`id_record`
-            WHERE `zz_views_lang`.`title` IS NOT NULL AND `zz_views_lang`.`title` != ""
-            GROUP BY `zz_views`.`id_module`, `zz_views_lang`.`title`, `zz_views_lang`.`id_lang`
-            HAVING COUNT(DISTINCT `zz_views_lang`.`id_record`) > 1
-        ');
-
-        foreach ($duplicati_title_diverse as $colonna) {
-            $modulo = Module::find($colonna['id_module']);
-            $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($colonna['id_lang']));
-
-            // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
-
-            $this->addResult([
-                'id' => 'title_diverse_' . $colonna['id_module'] . '_' . $colonna['id_lang'] . '_' . md5($colonna['title']),
-                'nome' => $modulo->getTranslation('title') . ': ' . $colonna['title'] . ' (' . $nome_lingua . ')',
-                'descrizione' => tr('Il titolo "_TITLE_" del modulo _MODULE_ è usato da _COUNT_ viste diverse (_VIEWS_) nella lingua _LANG_', [
-                    '_TITLE_' => $colonna['title'],
-                    '_MODULE_' => $modulo->getTranslation('title'),
-                    '_COUNT_' => $colonna['count_viste'],
-                    '_VIEWS_' => $colonna['nomi_viste'],
-                    '_LANG_' => $nome_lingua,
-                ]),
-            ]);
-        }
-
-        // 3. Controllo record duplicati in zz_views_lang con stesso id_record e id_lang
+        // 2. Controllo record duplicati in zz_views_lang con stesso id_record e id_lang
         $duplicati_record_lang = database()->fetchArray('
             SELECT `zz_views`.`id_module`, `zz_views_lang`.`id_record`, `zz_views_lang`.`id_lang`, COUNT(*) as `count`
             FROM `zz_views_lang`

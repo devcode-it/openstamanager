@@ -307,7 +307,8 @@ function hasGlobalActions(controllo) {
     // Lista dei controlli che supportano azioni globali
     const controlliConAzioniGlobali = [
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
@@ -337,6 +338,17 @@ function getMessaggioConferma(controlloClass) {
                 "'.tr('Rimuoverà tutti i codici REA che non rispettano il formato corretto (XX-NNNNNN)').'",
                 "'.tr('I codici REA verranno svuotati per le anagrafiche interessate').'",
                 "'.tr('Le anagrafiche rimarranno invariate, solo il campo REA verrà pulito').'",
+                "'.tr('Non può essere annullata').'"
+            ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste": {
+            titolo: "'.tr('Conferma risoluzione conflitti viste').'",
+            descrizione: "'.tr('Sei sicuro di voler risolvere tutti i conflitti delle viste duplicate?').'",
+            operazioni: [
+                "'.tr('Eliminerà i record duplicati nelle tabelle zz_views e zz_views_lang').'",
+                "'.tr('Manterrà sempre il record più recente (con ID maggiore) ed eliminerà gli altri').'",
+                "'.tr('I record eliminati non potranno essere recuperati').'",
+                "'.tr('Le viste duplicate verranno rimosse definitivamente dal database').'",
                 "'.tr('Non può essere annullata').'"
             ]
         }

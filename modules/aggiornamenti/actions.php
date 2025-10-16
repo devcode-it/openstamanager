@@ -186,4 +186,23 @@ switch (filter('op')) {
         echo json_encode($result);
 
         break;
+
+    case 'controlli-action-global':
+        $class = post('controllo');
+        $params = post('params');
+
+        // Controllo sulla classe
+        if (!is_subclass_of($class, Controllo::class)) {
+            echo json_encode([]);
+
+            return;
+        }
+
+        $manager = new $class();
+        $manager->check(); // Ricarica i risultati
+        $result = $manager->solveGlobal($params);
+
+        echo json_encode($result);
+
+        break;
 }

@@ -42,6 +42,22 @@ abstract class Controllo
         return [];
     }
 
+    /**
+     * Indica se questo controllo supporta azioni globali
+     */
+    public function hasGlobalActions()
+    {
+        return false;
+    }
+
+    /**
+     * Restituisce le azioni globali disponibili per questo controllo
+     */
+    public function getGlobalActions()
+    {
+        return [];
+    }
+
     abstract public function getName();
 
     abstract public function getType($record);
@@ -56,6 +72,19 @@ abstract class Controllo
 
         $results = [];
         foreach ($records as $record) {
+            $results[$record['id']] = $this->execute($record, $params);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Esegue un'azione globale su tutti i record del controllo
+     */
+    public function solveGlobal($params = [])
+    {
+        $results = [];
+        foreach ($this->results as $record) {
             $results[$record['id']] = $this->execute($record, $params);
         }
 

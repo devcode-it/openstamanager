@@ -800,7 +800,7 @@ echo '              </div>
                 </div>';
 
 // Avviso personalizzazioni nella card di caricamento
-if (!empty($custom) || $has_field_errors || $has_view_errors) {
+if ($has_any_errors) {
     echo '
                 <div class="alert alert-warning mb-2" role="alert" style="border-radius: 4px; padding: 8px 12px; font-size: 12px;">
                     <i class="fa fa-exclamation-triangle mr-1"></i>
@@ -818,7 +818,7 @@ echo '
                         </div>
                         ';
 
-if (!empty($custom) || !empty($tables)) {
+if ($has_any_errors) {
     $disabled = 'disabled';
     echo '                          <div class="alert alert-warning mt-2 mb-2" style="border-radius: 4px; padding: 10px 12px;">
                                 <div class="form-check mb-0">

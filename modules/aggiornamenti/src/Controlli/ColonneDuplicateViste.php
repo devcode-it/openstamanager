@@ -36,24 +36,181 @@ class ColonneDuplicateViste extends Controllo
 
     public function check()
     {
-        $duplicati = database()->fetchArray('SELECT `id_module`, `title` FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') GROUP BY `id_module`, `title` HAVING COUNT(`title`) > 1');
+        // 1. Controllo duplicati nel campo 'name' della tabella zz_views
+        $duplicati_name = database()->fetchArray('
+            SELECT `id_module`, `name`, COUNT(*) as `count`
+            FROM `zz_views`
+            WHERE `name` IS NOT NULL AND `name` != ""
+            GROUP BY `id_module`, `name`
+            HAVING COUNT(*) > 1
+        ');
 
-        foreach ($duplicati as $colonna) {
+        foreach ($duplicati_name as $colonna) {
             $modulo = Module::find($colonna['id_module']);
 
             $this->addResult([
-                'id' => $colonna['title'],
-                'nome' => $modulo->getTranslation('title').': '.$colonna['title'],
-                'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste più volte', [
-                    '_NAME_' => $colonna['title'],
+                'id' => 'name_' . $colonna['id_module'] . '_' . $colonna['name'],
+                'nome' => $modulo->getTranslation('title') . ': ' . $colonna['name'] . ' (name)',
+                'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste _COUNT_ volte nella tabella zz_views (campo name)', [
+                    '_NAME_' => $colonna['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
+                    '_COUNT_' => $colonna['count'],
+                ]),
+            ]);
+        }
+
+        // 2. Controllo viste diverse con stesso title nello stesso modulo e lingua
+        $duplicati_title_diverse = database()->fetchArray('
+            SELECT `zz_views`.`id_module`, `zz_views_lang`.`title`, `zz_views_lang`.`id_lang`,
+                   COUNT(DISTINCT `zz_views_lang`.`id_record`) as `count_viste`,
+                   GROUP_CONCAT(DISTINCT `zz_views`.`name`) as `nomi_viste`
+            FROM `zz_views_lang`
+            INNER JOIN `zz_views` ON `zz_views`.`id` = `zz_views_lang`.`id_record`
+            WHERE `zz_views_lang`.`title` IS NOT NULL AND `zz_views_lang`.`title` != ""
+            GROUP BY `zz_views`.`id_module`, `zz_views_lang`.`title`, `zz_views_lang`.`id_lang`
+            HAVING COUNT(DISTINCT `zz_views_lang`.`id_record`) > 1
+        ');
+
+        foreach ($duplicati_title_diverse as $colonna) {
+            $modulo = Module::find($colonna['id_module']);
+            $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($colonna['id_lang']));
+
+            // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
+            $nome_lingua = explode(' (', $lingua['name'])[0];
+
+            $this->addResult([
+                'id' => 'title_diverse_' . $colonna['id_module'] . '_' . $colonna['id_lang'] . '_' . md5($colonna['title']),
+                'nome' => $modulo->getTranslation('title') . ': ' . $colonna['title'] . ' (' . $nome_lingua . ')',
+                'descrizione' => tr('Il titolo "_TITLE_" del modulo _MODULE_ è usato da _COUNT_ viste diverse (_VIEWS_) nella lingua _LANG_', [
+                    '_TITLE_' => $colonna['title'],
+                    '_MODULE_' => $modulo->getTranslation('title'),
+                    '_COUNT_' => $colonna['count_viste'],
+                    '_VIEWS_' => $colonna['nomi_viste'],
+                    '_LANG_' => $nome_lingua,
+                ]),
+            ]);
+        }
+
+        // 3. Controllo record duplicati in zz_views_lang con stesso id_record e id_lang
+        $duplicati_record_lang = database()->fetchArray('
+            SELECT `zz_views`.`id_module`, `zz_views_lang`.`id_record`, `zz_views_lang`.`id_lang`, COUNT(*) as `count`
+            FROM `zz_views_lang`
+            INNER JOIN `zz_views` ON `zz_views`.`id` = `zz_views_lang`.`id_record`
+            GROUP BY `zz_views_lang`.`id_record`, `zz_views_lang`.`id_lang`
+            HAVING COUNT(*) > 1
+        ');
+
+        foreach ($duplicati_record_lang as $colonna) {
+            $modulo = Module::find($colonna['id_module']);
+            $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($colonna['id_lang']));
+            $vista = database()->fetchOne('SELECT `name` FROM `zz_views` WHERE `id` = '.prepare($colonna['id_record']));
+
+            // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
+            $nome_lingua = explode(' (', $lingua['name'])[0];
+
+            $this->addResult([
+                'id' => 'record_lang_' . $colonna['id_record'] . '_' . $colonna['id_lang'],
+                'nome' => $modulo->getTranslation('title') . ': ' . $vista['name'] . ' (' . $nome_lingua . ')',
+                'descrizione' => tr('La vista _NAME_ del modulo _MODULE_ ha _COUNT_ traduzioni duplicate per la lingua _LANG_', [
+                    '_NAME_' => $vista['name'],
+                    '_MODULE_' => $modulo->getTranslation('title'),
+                    '_COUNT_' => $colonna['count'],
+                    '_LANG_' => $nome_lingua,
                 ]),
             ]);
         }
     }
 
+    /**
+     * Indica se questo controllo supporta azioni globali
+     */
+    public function hasGlobalActions()
+    {
+        return true;
+    }
+
     public function execute($record, $params = [])
     {
-        return false;
+        // La risoluzione singola non è supportata per questo controllo
+        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
+        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+    }
+
+    /**
+     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente
+     */
+    public function solveGlobal($params = [])
+    {
+        $results = [];
+        $database = database();
+
+        try {
+            // 1. Risolvi duplicati nel campo 'name' della tabella zz_views
+            $duplicati_name = $database->fetchArray('
+                SELECT `id`, `id_module`, `name`, `created_at`
+                FROM `zz_views`
+                WHERE `name` IS NOT NULL AND `name` != ""
+                AND (`id_module`, `name`) IN (
+                    SELECT `id_module`, `name`
+                    FROM `zz_views`
+                    WHERE `name` IS NOT NULL AND `name` != ""
+                    GROUP BY `id_module`, `name`
+                    HAVING COUNT(*) > 1
+                )
+                ORDER BY `id_module`, `name`, `id` DESC
+            ');
+
+            $grouped_name = [];
+            foreach ($duplicati_name as $record) {
+                $key = $record['id_module'] . '_' . $record['name'];
+                $grouped_name[$key][] = $record;
+            }
+
+            foreach ($grouped_name as $group) {
+                if (count($group) > 1) {
+                    // Mantieni il primo record (più recente per ID) ed elimina gli altri
+                    for ($i = 1; $i < count($group); $i++) {
+                        $database->query('DELETE FROM `zz_views` WHERE `id` = ' . prepare($group[$i]['id']));
+                        $results['name_' . $group[$i]['id']] = true;
+                    }
+                }
+            }
+
+            // 2. Risolvi record duplicati in zz_views_lang con stesso id_record e id_lang
+            $duplicati_record_lang = $database->fetchArray('
+                SELECT `id`, `id_record`, `id_lang`
+                FROM `zz_views_lang`
+                WHERE (`id_record`, `id_lang`) IN (
+                    SELECT `id_record`, `id_lang`
+                    FROM `zz_views_lang`
+                    GROUP BY `id_record`, `id_lang`
+                    HAVING COUNT(*) > 1
+                )
+                ORDER BY `id_record`, `id_lang`, `id` DESC
+            ');
+
+            $grouped_record_lang = [];
+            foreach ($duplicati_record_lang as $record) {
+                $key = $record['id_record'] . '_' . $record['id_lang'];
+                $grouped_record_lang[$key][] = $record;
+            }
+
+            foreach ($grouped_record_lang as $group) {
+                if (count($group) > 1) {
+                    // Mantieni il primo record (più recente per ID) ed elimina gli altri
+                    for ($i = 1; $i < count($group); $i++) {
+                        $database->query('DELETE FROM `zz_views_lang` WHERE `id` = ' . prepare($group[$i]['id']));
+                        $results['record_lang_' . $group[$i]['id']] = true;
+                    }
+                }
+            }
+
+            return $results;
+
+        } catch (\Exception $e) {
+            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', [
+                '_ERROR_' => $e->getMessage(),
+            ]));
+        }
     }
 }

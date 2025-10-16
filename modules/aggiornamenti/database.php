@@ -275,13 +275,18 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     <tbody>';
 
                 foreach ($foreign_keys as $name => $diff) {
+                    $query = '';
+
+                    $query = 'ALTER TABLE '.$table.' ADD CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';';
+                    $query_conflitti[] = $query;
+
                     echo '
         <tr class="row-warning">
             <td class="column-name">
-                '.($name ?: $diff['expected']['title']).'
+                '.($name ?: ($diff['expected']['title'] ?? $name)).'
             </td>
             <td class="column-conflict">
-                ALTER TABLE '.$table.' ADD CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';
+                '.$query.'
             </td>
         </tr>';
                 }
@@ -339,11 +344,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                             $query = '';
                             if (!isset($results[$table][$name])) {
                                 if (isset($diff['key'])) {
-                                    if ($diff['key']['expected'] == '') {
-                                        $query = 'Chiave non prevista';
-                                    } else {
-                                        $query = 'Chiave mancante';
-                                    }
+                                    $query = 'Chiave non prevista';
 
                                     echo '
         <tr class="row-info">
@@ -376,15 +377,8 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     <tbody>';
 
                     foreach ($foreign_keys as $name => $diff) {
-                        $query = 'ALTER TABLE `'.$table.'` ADD FOREIGN KEY (`'.$name.'`) REFERENCES ';
-
-                        if (isset($diff['referenced_table']) && isset($diff['referenced_column'])) {
-                            $query .= '`'.$diff['referenced_table']['current'].'`(`'.$diff['referenced_column']['current'].'`)';
-                        } else {
-                            $query .= 'altra_tabella(id)';
-                        }
-                        $query .= ' ON DELETE CASCADE ON UPDATE CASCADE';
-                        $query_conflitti[] = $query.';';
+                        $query = '';
+                        $query = 'Chiave esterna non prevista';
 
                         echo '
         <tr class="row-warning">
@@ -392,7 +386,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 '.$name.'
             </td>
             <td class="column-conflict">
-                '.$query.';
+                '.$query.($query !== 'Chiave esterna non prevista' ? ';' : '').'
             </td>
         </tr>';
                     }
@@ -583,6 +577,7 @@ $(document).ready(function() {
                         var query = $(this).text().trim();
                         if (query &&
                             query !== "Chiave non prevista" &&
+                            query !== "Chiave esterna non prevista" &&
                             query !== "Chiave mancante" &&
                             !query.startsWith("query=")) {
 

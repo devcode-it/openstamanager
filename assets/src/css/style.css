@@ -1425,6 +1425,29 @@ input.small-width {
     text-decoration: none !important;
 }
 
+
+.diff-added {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.diff-removed {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-decoration: line-through;
+}
+
+.diff-unchanged {
+    color: #6c757d;
+}
+
+
 /* Stili per la barra di progresso nelle notifiche */
 #hooks .progress {
     background-color: #e9ecef;

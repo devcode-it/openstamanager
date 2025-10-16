@@ -99,7 +99,7 @@ foreach ($gruppi as $modulo => $hooks) {
 }
 
 echo '<tr><td colspan="3" class="text-right p-3"><button type="button" class="btn btn-sm btn-danger" onclick="svuotaCacheHooks(this)">
-    <i class="fa fa-trash mr-1" title="'.tr('Svuota cache degli hooks').'"></i>'.tr('Svuota cache').'</button>
+    <i class="fa fa-refresh mr-1" title="'.tr('Svuota cache e sblocca hooks').'"></i>'.tr('Svuota cache e sblocca hooks').'</button>
     </td></tr>';
 
 echo '
@@ -112,8 +112,8 @@ echo '
 
 function svuotaCacheHooks(button){
     swal({
-        title: "'.tr('Svuota la cache degli hooks', []).'",
-        html: "'.tr('Sei sicuro di voler svuotare la cache degli hooks?', []).'",
+        title: "'.tr('Svuota cache e sblocca hooks', []).'",
+        html: "'.tr('Questa operazione svuoterà la cache di tutti gli hooks e li sbloccherà. Sei sicuro di voler continuare?', []).'",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
@@ -130,6 +130,18 @@ function svuotaCacheHooks(button){
             },
             success: function (response) {
                 buttonRestore(button, restore);
+
+                if (response.success) {
+                    // Ricarica la pagina per mostrare i cambiamenti
+                    caricaElencoHooks();
+                } else {
+                    swal({
+                        type: "error",
+                        title: "'.tr('Errore').'",
+                        text: response.error || "'.tr('Errore durante lo svuotamento della cache').'",
+                    });
+                }
+
                 renderMessages();
             },
             error: function() {

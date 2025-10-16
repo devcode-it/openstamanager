@@ -58,7 +58,7 @@ switch (post('op')) {
         $anagrafica->data_nascita = post('data_nascita') ?: null;
         $anagrafica->luogo_nascita = post('luogo_nascita');
         $anagrafica->sesso = post('sesso');
-        $anagrafica->capitale_sociale = post('capitale_sociale');
+        $anagrafica->capitale_sociale = post('capitale_sociale') ?: null;
         $anagrafica->pec = post('pec');
         $anagrafica->idsede_fatturazione = post('idsede_fatturazione');
         $anagrafica->note = post('note');

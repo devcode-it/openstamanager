@@ -427,3 +427,125 @@ if (!function_exists('customViewsNotStandard')) {
         return $custom_views;
     }
 }
+
+/*
+ * Normalizza una stringa rimuovendo elementi che non dovrebbero essere considerati come differenze
+ *
+ * @param string $text
+ * @return string
+ */
+if (!function_exists('normalizeModuleOptions')) {
+    function normalizeModuleOptions($text)
+    {
+        // Rimuovi tutti i tag BR (tutte le varianti)
+        $text = preg_replace('/<br\s*\/?>/i', '', $text);
+
+        // Normalizza spazi multipli
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        // Normalizza virgolette
+        $text = str_replace(['"', "'", '`'], "'", $text);
+
+        // Normalizza entità HTML comuni
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim($text);
+    }
+}
+
+/*
+ * Ottiene l'elenco dei moduli personalizzati non previsti dal gestionale.
+ *
+ * @return array
+ */
+if (!function_exists('customModulesNotStandard')) {
+    function customModulesNotStandard()
+    {
+        $database = database();
+
+        // Leggi i moduli standard dal file modules.json nella root
+        $standard_modules = [];
+        $modules_json_path = base_dir().'/modules.json';
+
+        if (file_exists($modules_json_path)) {
+            $modules_data = json_decode(file_get_contents($modules_json_path), true);
+
+            if (is_array($modules_data)) {
+                // Il file modules.json è organizzato per nome modulo
+                foreach ($modules_data as $module_name => $module_data) {
+                    if (is_array($module_data)) {
+                        $standard_modules[$module_name] = [
+                            'options' => $module_data['options'] ?? '',
+                            'options2' => $module_data['options2'] ?? ''
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Ottieni tutti i moduli presenti nel database
+        $query = "SELECT
+            zm.id,
+            zm.name,
+            zm.options,
+            zm.options2,
+            COALESCE(zml.title, zm.name) as module_display_name
+        FROM zz_modules zm
+        LEFT JOIN zz_modules_lang zml ON (zm.id = zml.id_record AND zml.id_lang = (SELECT valore FROM zz_settings WHERE nome = 'Lingua'))
+        WHERE 1=1
+        ORDER BY module_display_name";
+
+        $all_modules = $database->fetchArray($query);
+        $custom_modules = [];
+
+        foreach ($all_modules as $module) {
+            $module_name = $module['name'];
+            $is_custom = false;
+            $reason = '';
+
+            // Normalizza le options del modulo corrente
+            $current_options = normalizeModuleOptions($module['options']);
+            $current_options2 = normalizeModuleOptions($module['options2']);
+
+            if (empty($module_name)) {
+                continue;
+            }
+
+            // Controlla se il modulo non è previsto nel file standard
+            if (!isset($standard_modules[$module_name])) {
+                $is_custom = true;
+                $reason = 'Modulo non previsto';
+            }
+            else {
+                // Normalizza le options standard
+                $expected_options = normalizeModuleOptions($standard_modules[$module_name]['options']);
+
+                // Controlla se options2 è valorizzato (modulo personalizzato)
+                if (!empty($current_options2)) {
+                    $is_custom = true;
+                    $reason = 'Options2 valorizzato';
+                }
+                // Controlla se options è diverso da quello standard
+                elseif ($current_options !== $expected_options) {
+                    $is_custom = true;
+                    $reason = 'Options modificato';
+                }
+            }
+
+            if ($is_custom) {
+                $custom_modules[] = [
+                    'id' => $module['id'],
+                    'name' => $module_name,
+                    'module_display_name' => $module['module_display_name'],
+                    'reason' => $reason,
+                    'current_options' => $module['options'],
+                    'current_options2' => $module['options2'],
+                    'expected_options' => $standard_modules[$module_name]['options'] ?? '',
+                    'expected_options2' => $standard_modules[$module_name]['options2'] ?? ''
+                ];
+            }
+        }
+
+        return $custom_modules;
+    }
+}

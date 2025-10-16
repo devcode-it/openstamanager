@@ -20,8 +20,121 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
+// Inizializzazione del modulo corrente
+$module = Module::find($id_module);
+
 // Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti">';
+echo '<div class="module-aggiornamenti">
+
+<style>
+.query-container {
+    position: relative;
+}
+
+.query-toggle {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.query-toggle:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.query-toggle i {
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.query-toggle-container {
+    text-align: left;
+}
+
+.query-cell {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.query-preview code,
+.query-full code {
+    font-size: 11px;
+    line-height: 1.3;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 3px;
+    padding: 8px;
+    display: block;
+}
+
+.btn-xs {
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 1.3;
+    border-radius: 3px;
+    font-weight: 600;
+    border: 1px solid #007bff;
+    color: #007bff;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-xs i {
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.btn-xs:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+}
+
+/* Padding per le celle della tabella */
+.table td {
+    padding: 12px 8px !important;
+    vertical-align: top;
+}
+
+.table th {
+    padding: 10px 8px !important;
+}
+
+/* Stili per i link ai moduli */
+td a {
+    text-decoration: none;
+    color: inherit;
+}
+
+td a:hover {
+    text-decoration: none;
+    color: #007bff;
+}
+
+td a:hover strong {
+    color: #007bff;
+}
+
+td a:hover code {
+    color: #007bff;
+    background-color: #e3f2fd;
+}
+
+.fa-external-link {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+td a:hover .fa-external-link {
+    opacity: 1;
+}
+</style>';
 
 if (!function_exists('normalizeForDiff')) {
     function normalizeForDiff($text) {
@@ -31,6 +144,46 @@ if (!function_exists('normalizeForDiff')) {
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         return trim($text);
     }
+}
+
+function createCollapsibleQuery($query_content, $row_id, $column_type) {
+    if (empty($query_content) || $query_content === '<span class="text-muted">-</span>') {
+        return $query_content;
+    }
+
+    // Decodifica le entità HTML e rimuovi i tag HTML per calcolare la lunghezza del testo puro
+    $text_content = html_entity_decode(strip_tags($query_content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    // Se il contenuto è breve (meno di 300 caratteri), mostra tutto
+    if (strlen($text_content) <= 300) {
+        // Decodifica anche il contenuto completo per la visualizzazione
+        $decoded_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return '<code style="white-space: pre-wrap; word-break: break-all;">' . $decoded_content . '</code>';
+    }
+
+    // Tronca il contenuto a 300 caratteri per l'anteprima
+    $preview_content = substr($text_content, 0, 300);
+
+    // Trova l'ultimo spazio per evitare di tagliare a metà parola
+    $last_space = strrpos($preview_content, ' ');
+    if ($last_space !== false && $last_space > 250) {
+        $preview_content = substr($preview_content, 0, $last_space);
+    }
+
+    $preview_content = htmlspecialchars($preview_content) . '...';
+
+    // Decodifica il contenuto completo per la visualizzazione
+    $decoded_full_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    return '
+        <div class="query-container">
+            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_' . $row_id . '_' . $column_type . '">' .
+                $preview_content . '
+            </code>
+            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_' . $row_id . '_' . $column_type . '">' .
+                $decoded_full_content . '
+            </code>
+        </div>';
 }
 
 function highlightDifferences($current, $expected) {
@@ -49,8 +202,8 @@ function highlightDifferences($current, $expected) {
 
     if ($current_normalized === $expected_normalized) {
         return [
-            'current' => '<span class="diff-unchanged">' . htmlspecialchars($current) . '</span>',
-            'expected' => '<span class="diff-unchanged">' . htmlspecialchars($expected) . '</span>'
+            'current' => htmlspecialchars($current),
+            'expected' => htmlspecialchars($expected)
         ];
     }
 
@@ -60,15 +213,18 @@ function highlightDifferences($current, $expected) {
     $i = 0; $j = 0;
     while ($i < count($current_words) || $j < count($expected_words)) {
         if ($i < count($current_words) && $j < count($expected_words) && $current_words[$i] === $expected_words[$j]) {
+            // Parti uguali: mostra senza evidenziazione
             $word = htmlspecialchars($current_words[$i]);
-            $current_highlighted .= '<span class="diff-unchanged">' . $word . '</span>';
-            $expected_highlighted .= '<span class="diff-unchanged">' . $word . '</span>';
+            $current_highlighted .= $word;
+            $expected_highlighted .= $word;
             $i++; $j++;
         } elseif ($i < count($current_words) && ($j >= count($expected_words) || $current_words[$i] !== $expected_words[$j])) {
-            $current_highlighted .= '<span class="diff-added">' . htmlspecialchars($current_words[$i]) . '</span>';
+            // Parti aggiunte nel current: evidenzia in verde
+            $current_highlighted .= '<span class="diff-added" style="background-color: #d4edda; color: #155724;">' . htmlspecialchars($current_words[$i]) . '</span>';
             $i++;
         } elseif ($j < count($expected_words)) {
-            $expected_highlighted .= '<span class="diff-removed">' . htmlspecialchars($expected_words[$j]) . '</span>';
+            // Parti rimosse (presenti nell'expected ma non nel current): evidenzia in rosso
+            $expected_highlighted .= '<span class="diff-removed" style="background-color: #f8d7da; color: #721c24;">' . htmlspecialchars($expected_words[$j]) . '</span>';
             $j++;
         }
     }
@@ -86,13 +242,15 @@ if (function_exists('customComponents')) {
     $custom_fields = customFields();
 
     $custom_views_not_standard = customViewsNotStandard();
+    $custom_modules_not_standard = customModulesNotStandard();
 
     // Determina se ci sono errori per ogni sezione
     $has_file_errors = !empty($custom_files);
     $has_table_errors = !empty($tables);
     $has_view_errors = !empty($custom_views_not_standard);
+    $has_module_errors = !empty($custom_modules_not_standard);
     $has_field_errors = !empty($custom_fields);
-    $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_field_errors;
+    $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
     if ($has_any_errors) {
         echo '
@@ -259,7 +417,7 @@ if (function_exists('customComponents')) {
                             </thead>
                             <tbody>';
 
-            foreach ($custom_views_not_standard as $view) {
+            foreach ($custom_views_not_standard as $index => $view) {
                 switch ($view['reason']) {
                     case 'Vista aggiuntiva':
                         $badge_class = 'badge-warning';
@@ -277,14 +435,22 @@ if (function_exists('customComponents')) {
                         $badge_class = 'badge-secondary';
                 }
 
+                $row_id = 'view_' . $index;
+                $has_long_content = false;
+
                 if (empty($view['current_query'])) {
                     $current_query_display = '<span class="text-muted">-</span>';
-                    $expected_query_display = '<code style="white-space: pre-wrap; word-break: break-all;">' . htmlspecialchars($view['expected_query']) . '</code>';
+                    if (!empty($view['expected_query'])) {
+                        $expected_query_display = createCollapsibleQuery(htmlspecialchars($view['expected_query']), $row_id, 'expected');
+                        $has_long_content = strlen(strip_tags(htmlspecialchars($view['expected_query']))) > 300;
+                    } else {
+                        $expected_query_display = '<span class="text-muted">-</span>';
+                    }
                 } else {
                     $diff_result = highlightDifferences($view['current_query'], $view['expected_query']);
-
-                    $current_query_display = '<code style="white-space: pre-wrap; word-break: break-all;">' . $diff_result['current'] . '</code>';
-                    $expected_query_display = '<code style="white-space: pre-wrap; word-break: break-all;">' . $diff_result['expected'] . '</code>';
+                    $current_query_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
+                    $expected_query_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
+                    $has_long_content = strlen(strip_tags($view['current_query'])) > 300 || strlen(strip_tags($view['expected_query'])) > 300;
                 }
 
                 $module_id_display = $view['module_id'] ? 'ID: '.$view['module_id'] : 'Mancante';
@@ -294,9 +460,17 @@ if (function_exists('customComponents')) {
                     $view['name'] :
                     '(Assente)';
 
+                // Crea il pulsante espandi solo se c'è contenuto lungo
+                $expand_button = '';
+                if ($has_long_content) {
+                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
+                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+                    </button>';
+                }
+
                 echo '
-                                <tr>
-                                    <td><code>'.$view_name_display.'</code></td>
+                                <tr id="row_' . $row_id . '">
+                                    <td><code>'.$view_name_display.'</code>' . $expand_button . '</td>
                                     <td>'.$module_display.'</td>
                                     <td><span class="badge '.$badge_class.'">'.$view['reason'].'</span></td>
                                     <td class="query-cell">'.$current_query_display.'</td>
@@ -312,6 +486,111 @@ if (function_exists('customComponents')) {
             echo '
                     <p class="text-success mb-0">
                         <i class="fa fa-check-circle"></i> '.tr('Nessuna vista personalizzata rilevata').'
+                    </p>';
+        }
+
+        echo '
+                </div>
+        </div>';
+
+        // Card Moduli
+        $module_icon = $has_module_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
+        $module_count = $has_module_errors ? count($custom_modules_not_standard) : 0;
+        $module_expand_icon = $has_module_errors ? 'fa-minus' : 'fa-plus';
+
+        echo '
+        <div class="card card-outline card-'.($has_module_errors ? 'danger' : 'success').' requirements-card mb-3 collapsable '.($has_module_errors ? '' : 'collapsed-card').'">
+            <div class="card-header with-border requirements-card-header requirements-card-header-'.($has_module_errors ? 'danger' : 'success').'">
+                <h3 class="card-title requirements-card-title requirements-card-title-'.($has_module_errors ? 'danger' : 'success').'">
+                    <i class="fa '.$module_icon.' mr-2 requirements-icon"></i>
+                    '.tr('Moduli personalizzati').'
+                    '.($module_count > 0 ? '<span class="badge badge-info ml-2">'.$module_count.'</span>' : '').'
+                </h3>
+                <div class="card-tools pull-right">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fa '.$module_expand_icon.'"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">';
+
+        if ($has_module_errors) {
+            echo '
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="15%">'.tr('Nome modulo').'</th>
+                                    <th width="10%">'.tr('Tipo modifica').'</th>
+                                    <th width="37.5%">'.tr('Options attuale').'</th>
+                                    <th width="37.5%">'.tr('Options previsto').'</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+
+            foreach ($custom_modules_not_standard as $index => $modulo) {
+                switch ($modulo['reason']) {
+                    case 'Options2 valorizzato':
+                        $badge_class = 'badge-warning';
+                        break;
+                    case 'Options modificato':
+                        $badge_class = 'badge-info';
+                        break;
+                    case 'Modulo non previsto':
+                        $badge_class = 'badge-danger';
+                        break;
+                    default:
+                        $badge_class = 'badge-secondary';
+                }
+
+                // Determina quale options mostrare: se options2 è valorizzato, mostra quello, altrimenti options
+                $current_to_show = !empty($modulo['current_options2']) ? $modulo['current_options2'] : $modulo['current_options'];
+                $expected_to_show = $modulo['expected_options'];
+
+                $row_id = 'module_' . $index;
+                $has_long_content = false;
+
+                // Applica l'evidenziazione delle differenze come per le viste
+                if (empty($current_to_show)) {
+                    $current_options_display = '<span class="text-muted">-</span>';
+                    if (!empty($expected_to_show)) {
+                        $expected_options_display = createCollapsibleQuery(htmlspecialchars($expected_to_show), $row_id, 'expected');
+                        $has_long_content = strlen(strip_tags(htmlspecialchars($expected_to_show))) > 300;
+                    } else {
+                        $expected_options_display = '<span class="text-muted">-</span>';
+                    }
+                } else {
+                    $diff_result = highlightDifferences($current_to_show, $expected_to_show);
+                    $current_options_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
+                    $expected_options_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
+                    $has_long_content = strlen(strip_tags($current_to_show)) > 300 || strlen(strip_tags($expected_to_show)) > 300;
+                }
+
+                // Crea il pulsante espandi solo se c'è contenuto lungo
+                $expand_button = '';
+                if ($has_long_content) {
+                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
+                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+                    </button>';
+                }
+
+                echo '
+                                <tr id="row_' . $row_id . '">
+                                    <td><strong>'.$modulo['module_display_name'].'</strong><br><small class="text-muted">ID: '.$modulo['id'].'</small>' . $expand_button . '</td>
+                                    <td><span class="badge '.$badge_class.'">'.$modulo['reason'].'</span></td>
+                                    <td class="query-cell">'.$current_options_display.'</td>
+                                    <td class="query-cell">'.$expected_options_display.'</td>
+                                </tr>';
+            }
+
+            echo '
+                            </tbody>
+                        </table>
+                    </div>';
+        } else {
+            echo '
+                    <p class="text-success mb-0">
+                        <i class="fa fa-check-circle"></i> '.tr('Nessun modulo personalizzato rilevato').'
                     </p>';
         }
 
@@ -682,4 +961,45 @@ echo '
         </div>
     </div>
 </div>
-</div>';
+</div>
+
+<script>
+function toggleModuleRow(rowId) {
+    const previewCurrent = document.getElementById("preview_" + rowId + "_current");
+    const fullCurrent = document.getElementById("full_" + rowId + "_current");
+    const previewExpected = document.getElementById("preview_" + rowId + "_expected");
+    const fullExpected = document.getElementById("full_" + rowId + "_expected");
+    const icon = document.getElementById("icon_" + rowId);
+    const text = document.getElementById("text_" + rowId);
+
+    // Verifica se almeno uno degli elementi preview è visibile
+    const isCollapsed = (previewCurrent && previewCurrent.style.display !== "none") ||
+                       (previewExpected && previewExpected.style.display !== "none");
+
+    if (isCollapsed) {
+        // Espandi: nascondi preview, mostra full
+        if (previewCurrent && fullCurrent) {
+            previewCurrent.style.display = "none";
+            fullCurrent.style.display = "block";
+        }
+        if (previewExpected && fullExpected) {
+            previewExpected.style.display = "none";
+            fullExpected.style.display = "block";
+        }
+        icon.className = "fa fa-compress";
+        text.textContent = "Comprimi";
+    } else {
+        // Comprimi: mostra preview, nascondi full
+        if (previewCurrent && fullCurrent) {
+            previewCurrent.style.display = "block";
+            fullCurrent.style.display = "none";
+        }
+        if (previewExpected && fullExpected) {
+            previewExpected.style.display = "block";
+            fullExpected.style.display = "none";
+        }
+        icon.className = "fa fa-expand";
+        text.textContent = "Espandi";
+    }
+}
+</script>';

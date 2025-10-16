@@ -3640,6 +3640,40 @@ section.content, .main-footer {
     border-bottom: 1px solid #f0f0f0; /* Bordo sottile per separare le righe */
 }
 
+/* Stili specifici per il modulo Log operazioni */
+/* Impedisce il word-wrap nella colonna Data e ora */
+table.dataTable tbody td:nth-child(6) {
+    white-space: nowrap !important;
+    min-width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Stile specifico per la colonna Data e ora nel modulo Log operazioni */
+.log-operazioni-datetime {
+    white-space: nowrap !important;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    min-width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 4px 6px !important;
+}
+
+/* Stili generali per migliorare le tabelle DataTables */
+table.dataTable tbody td {
+    vertical-align: middle;
+}
+
+/* Stile per header della colonna Data e ora */
+table.dataTable thead th:nth-child(6) {
+    min-width: 150px;
+    max-width: 150px;
+    text-align: center;
+}
+
 /* Mantieni lo sfondo giallo per le righe nella sezione problemi impostazioni */
 .table-title + .table-database .row-warning td {
     background-color: #fff3cd;

@@ -107,15 +107,31 @@ switch (filter('op')) {
         exit;
 
     case 'check':
-        $result = UpdateHook::isAvailable();
-        $versione = false;
-        if ($result) {
-            $versione = $result[0].' ('.$result[1].')';
-        }
+        try {
+            $result = UpdateHook::isAvailable();
+            $versione = false;
+            if ($result) {
+                $versione = $result[0].' ('.$result[1].')';
+            }
 
-        // Salvataggio della versione nella cache
-        Cache::where('name', 'Ultima esecuzione del cron')->first()->set($versione);
-        echo $versione;
+            // Salvataggio della versione nella cache
+            $cache = Cache::where('name', 'Ultima esecuzione del cron')->first();
+            if ($cache) {
+                $cache->set($versione);
+            }
+
+            echo $versione ?: 'none';
+        } catch (Exception $e) {
+            // Log dell'errore per debug
+            error_log('Errore verifica aggiornamenti: ' . $e->getMessage());
+
+            // Restituisce un messaggio di errore specifico
+            http_response_code(500);
+            echo json_encode([
+                'error' => true,
+                'message' => tr('Errore durante la verifica degli aggiornamenti: _ERROR_', ['_ERROR_' => $e->getMessage()])
+            ]);
+        }
 
         break;
 

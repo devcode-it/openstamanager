@@ -293,14 +293,70 @@ switch (filter('op')) {
         break;
 
     case 'svuota-cache-hooks':
-        // Svuota cache hooks
-        $database->table('zz_cache')
-        ->update(['expire_at' => Carbon::now()->subMinutes(1)]);
+        try {
+            // 1. Sblocca tutti gli hooks che potrebbero essere bloccati
+            $unlocked_hooks = $database->table('zz_hooks')
+                ->update([
+                    'processing_at' => null,
+                    'processing_token' => null
+                ]);
 
-        // Messaggio informativo
-        flash()->info(tr('Cache hooks svuotata!', []));
+            // 2. Invalida tutte le cache degli hooks impostando la scadenza nel passato
+            $cache_affected = $database->table('zz_cache')
+                ->update(['expire_at' => Carbon::now()->subMinutes(1)]);
 
-        echo json_encode([]);
+            // 3. Svuota il contenuto delle cache specifiche degli hooks
+            $hook_caches = [
+                'Informazioni su Services',
+                'Spazio utilizzato',
+                'Ultima versione di OpenSTAManager disponibile',
+                'Ricevute Elettroniche',
+                'Ultima esecuzione del cron'
+            ];
+
+            $content_cleared = 0;
+            foreach ($hook_caches as $cache_name) {
+                $cache = Cache::where('name', $cache_name)->first();
+                if ($cache) {
+                    $cache->content = null;
+                    $cache->expire_at = Carbon::now()->subMinutes(1);
+                    $cache->save();
+                    $content_cleared++;
+                }
+            }
+
+            // 4. Rimuovi fisicamente le cache scadute (solo quelle temporanee)
+            $deleted_rows = $database->table('zz_cache')
+                ->where('expire_at', '<', Carbon::now())
+                ->whereNull('valid_time')
+                ->delete();
+
+            // Messaggio informativo
+            flash()->info(tr('Cache hooks svuotata con successo! Hooks sbloccati: _HOOKS_, Cache invalidate: _CACHE_, Contenuti svuotati: _CONTENT_', [
+                '_HOOKS_' => $unlocked_hooks,
+                '_CACHE_' => $cache_affected,
+                '_CONTENT_' => $content_cleared
+            ]));
+
+            $result = [
+                'success' => true,
+                'unlocked_hooks' => $unlocked_hooks,
+                'cache_affected' => $cache_affected,
+                'content_cleared' => $content_cleared,
+                'deleted_rows' => $deleted_rows
+            ];
+        } catch (\Exception $e) {
+            flash()->error(tr('Errore durante lo svuotamento della cache: _ERROR_', [
+                '_ERROR_' => $e->getMessage()
+            ]));
+
+            $result = [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        echo json_encode($result);
         break;
 
     case 'disabilita-hook':

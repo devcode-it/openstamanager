@@ -320,16 +320,7 @@ echo '
             </div>
         </div>
 
-        <div class="card card-info card-outline mb-4">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fa fa-history mr-2"></i>'.tr('Ultime operazioni').'
-                </div>
-            </div>
 
-            <div class="card-body p-0" id="operazioni">
-            </div>
-        </div>
 
     </div>
 </div>
@@ -499,39 +490,13 @@ function caricaElencoSessioni() {
     });
 }
 
-function caricaElencoOperazioni() {
-    let container = $("#operazioni");
 
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-
-        init();
-    });
-}
-
-function caricaAltreOperazioni(offset, limit) {
-    let container = $("#operazioni");
-
-    // Mostra loading
-    localLoading(container, true);
-
-    $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'&offset=" + offset + "&limit=" + limit, function(data) {
-        // Sostituisci completamente il contenuto del container
-        container.html(data);
-        localLoading(container, false);
-
-        init();
-    });
-}
 
 $(document).ready(function() {
     caricaElencoModuli();
     caricaElencoWidget();
     caricaElencoHooks();
     caricaElencoSessioni();
-    caricaElencoOperazioni();
 
     init();
 });

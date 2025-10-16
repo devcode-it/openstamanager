@@ -96,16 +96,18 @@ if (function_exists('customComponents')) {
 
     if ($has_any_errors) {
         echo '
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-12">
-                <h3 class="font-weight-normal mb-4">
-                    <i class="fa fa-edit"></i> '.tr('Personalizzazioni').'
-                    <span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'">
-                        <i class="fa fa-question-circle-o"></i>
-                    </span>
-                </h3>
-            </div>
-        </div>';
+                <div class="card card-warning card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-exclamation-triangle"></i> '.tr('Personalizzazioni Rilevate').'
+                            <span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'">
+                                <i class="fa fa-question-circle-o"></i>
+                            </span>
+                        </h3>
+                    </div>
+                    <div class="card-body">';
 
         // Card File
         $file_icon = $has_file_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
@@ -357,25 +359,28 @@ if (function_exists('customComponents')) {
             </div>';
         }
 
-        // Alert di avvertimento generale
-        if (!empty($custom) || $has_field_errors || $has_view_errors) {
-            echo '
-            <div class="alert alert-warning" role="alert">
-                <i class="fa fa-exclamation-triangle"></i>
-                <strong>'.tr('Attenzione!').'</strong> '.tr("Il gestionale presenta delle personalizzazioni: si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'
-            </div>';
-        }
+
+
+                        echo '
+                    </div>
+                </div>
+            </div>
+        </div>';
 
     } else {
         echo '
-        <div class="card card-success">
-            <div class="card-header with-border">
-                <h3 class="card-title">
-                    <i class="fa fa-check"></i> '.tr('Personalizzazioni').'
-                </h3>
-            </div>
-            <div class="card-body">
-                <p class="text-success"><i class="fa fa-check-circle"></i> '.tr('Non sono state rilevate personalizzazioni nel sistema').'.</p>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-check"></i> '.tr('Personalizzazioni').'
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-success mb-0"><i class="fa fa-check-circle"></i> '.tr('Non sono state rilevate personalizzazioni nel sistema').'.</p>
+                    </div>
+                </div>
             </div>
         </div>';
     }
@@ -429,34 +434,7 @@ if (!empty($alerts)) {
 }
 
 echo '
-<style>
-.card-header[data-toggle="collapse"] {
-    transition: all 0.3s ease;
-}
 
-.collapse-icon {
-    transition: all 0.3s ease;
-}
-
-.query-cell {
-    max-width: 300px;
-    word-wrap: break-word;
-}
-
-.diff-unchanged {
-    color: #6c757d;
-}
-
-.diff-added {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.diff-removed {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-</style>
 
 <script>
 function update() {
@@ -499,139 +477,207 @@ function search(button) {
             id_module: globals.id_module,
             op: "check",
         },
-        success: function(data){
-            if (data === "none" || !data) {
-                $("#update-search").html("<i class=\"fa fa-check-circle text-success\" aria-hidden=\"true\"></i> '.tr('Nessun aggiornamento disponibile').'.");
-            } else {
-                let beta_warning = data.includes("beta") ? "<br><i class=\"fa-exclamation-triangle text-danger\" aria-hidden=\"true\"></i> <b class=\"text-danger\">'.tr('Attenzione: la versione individuata è in fase sperimentale e potrebbe pertanto presentare diversi malfunzionamenti. Se ne sconsiglia l\'aggiornamento in installazioni di produzione').'.</b>" : "";
-                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + "." + beta_warning + "<br>'.tr('Scaricalo ora: _LINK_', [
-    '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-]).'");
+        success: function(data, textStatus, xhr){
+            buttonRestore(button, restore);
+
+            // Controlla se la risposta è un errore JSON
+            try {
+                let jsonData = JSON.parse(data);
+                if (jsonData.error) {
+                    $("#update-search").html("<div class=\"alert alert-danger mb-0\"><i class=\"fa fa-exclamation-circle\"></i> " + jsonData.message + "</div>");
+                    return;
+                }
+            } catch (e) {
+                // Non è JSON, continua con la logica normale
             }
-        }
+
+            if (data === "none" || !data || data === "false") {
+                $("#update-search").html("<div class=\"alert alert-success mb-0\"><i class=\"fa fa-check-circle\"></i> '.tr('Nessun aggiornamento disponibile').'</div>");
+            } else {
+                let beta_warning = data.includes("beta") ? "<div class=\"alert alert-warning mt-2 mb-0\"><i class=\"fa fa-exclamation-triangle\"></i> <strong>'.tr('Attenzione').':</strong> '.tr('La versione individuata è in fase sperimentale e potrebbe presentare malfunzionamenti. Se ne sconsiglia l\'aggiornamento in installazioni di produzione').'</div>" : "";
+                $("#update-search").html("<div class=\"alert alert-info mb-0\"><i class=\"fa fa-download\"></i> <strong>'.tr("Nuovo aggiornamento disponibile").':</strong> " + data + "</div>" + beta_warning + "<div class=\"mt-2\"><a href=\"https://github.com/devcode-it/openstamanager/releases\" target=\"_blank\" class=\"btn btn-sm btn-primary\"><i class=\"fa fa-external-link\"></i> '.tr('Scarica da GitHub').'</a></div>");
+            }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            buttonRestore(button, restore);
+            let errorMessage = "'.tr('Errore durante la ricerca degli aggiornamenti').': ";
+
+            if (xhr.status === 0) {
+                errorMessage += "'.tr('Impossibile connettersi al server').'";
+            } else if (xhr.status === 500) {
+                try {
+                    let errorData = JSON.parse(xhr.responseText);
+                    errorMessage += errorData.message || "'.tr('Errore interno del server').'";
+                } catch (e) {
+                    errorMessage += "'.tr('Errore interno del server').'";
+                }
+            } else {
+                errorMessage += textStatus + " (" + xhr.status + ")";
+            }
+
+            $("#update-search").html("<div class=\"alert alert-danger mb-0\"><i class=\"fa fa-exclamation-circle\"></i> " + errorMessage + "</div>");
+        },
+        timeout: 30000 // 30 secondi di timeout
     });
 }
 
 
 </script>
 
-<div class="row">';
-
-echo '
-
-    <div class="col-md-4">
-        <div class="card card-primary card-outline">
-            <div class="card-header with-border">
-                <h3 class="card-title">
-                    <i class="fa fa-refresh"></i> '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
+<!-- Sezione principale aggiornamenti -->
+<div class="row mb-4">
+    <!-- Card Ricerca Aggiornamenti -->
+    <div class="col-lg-4 mb-3">
+        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div class="card-header text-center" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
+                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
+                    <i class="fa fa-cloud-download mr-2"></i>'.tr('Ricerca Aggiornamenti').'
                 </h3>
             </div>
-            <div class="card-body" id="update-search">';
+            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
+                <div class="mb-3 flex-grow-1">
+                    <div class="mb-2" style="background: rgba(23,162,184,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa fa-search fa-lg text-info"></i>
+                    </div>
+                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
+                </div>
+                <div id="update-search" class="mt-auto">';
 if (extension_loaded('curl')) {
-    echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
-                    <i class="fa fa-search"></i> '.tr('Ricerca').'
-                </button>';
+    echo '                  <button type="button" class="btn btn-info btn-block" onclick="search(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                                <i class="fa fa-search mr-2"></i>'.tr('Verifica Aggiornamenti').'
+                            </button>
+                            <div class="mt-2">
+                                <small class="text-muted" style="font-size: 11px;">'.tr('Controlla automaticamente su GitHub').'</small>
+                            </div>';
 } else {
-    echo '		<button type="button" class="btn btn-warning btn-block disabled" >
-                    <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
-                </button>';
+    echo '                  <div class="alert alert-warning mb-0" style="border-radius: 4px; padding: 10px;">
+                                <i class="fa fa-exclamation-triangle"></i>
+                                <strong>'.tr('Funzione non disponibile').'</strong><br>
+                                <small>'.tr('L\'estensione cURL di PHP non è installata').'</small>
+                            </div>';
 }
 
-echo '   </div>
+echo '              </div>
+            </div>
         </div>
-    </div>';
+    </div>
 
-// Form di caricamento aggiornamenti gestionale o moduli
-echo '
-    <div class="col-md-4">
-        <div class="card card-primary card-outline">
-            <div class="card-header with-border">
-                <h3 class="card-title">
-                    <i class="fa fa-upload"></i> '.tr('Carica aggiornamenti o nuovi moduli').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
+    <!-- Card Caricamento Aggiornamenti -->
+    <div class="col-lg-4 mb-3">
+        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div class="card-header text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
+                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
+                    <i class="fa fa-cloud-upload mr-2"></i>'.tr('Installa Aggiornamenti').'
                 </h3>
             </div>
-            <div class="card-body">
-                <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
-                    <input type="hidden" name="op" value="upload">
+            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
+                <div class="mb-3">
+                    <div class="mb-2" style="background: rgba(40,167,69,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa fa-upload fa-lg text-success"></i>
+                    </div>
+                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
+                </div>';
 
-			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti') ? 0 : 1).' ]}
+// Avviso personalizzazioni nella card di caricamento
+if (!empty($custom) || $has_field_errors || $has_view_errors) {
+    echo '
+                <div class="alert alert-warning mb-2" role="alert" style="border-radius: 4px; padding: 8px 12px; font-size: 12px;">
+                    <i class="fa fa-exclamation-triangle mr-1"></i>
+                    <strong>'.tr('Attenzione!').'</strong>
+                    '.tr("Il gestionale presenta delle personalizzazioni: si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'
+                </div>';
+}
 
-                    ';
+echo '
+                <div class="mt-auto">
+                    <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
+                        <input type="hidden" name="op" value="upload">
+                        <div class="mb-3">
+                            {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti') ? 0 : 1).' ]}
+                        </div>
+                        ';
 
 if (!empty($custom) || !empty($tables)) {
     $disabled = 'disabled';
-    echo '                  <input type="checkbox" id="aggiorna_custom" class="pull-left" style="margin-top:10px;"  value="1" >&nbsp;
-                        <label for="aggiorna_custom" style="margin-top:7px;" >'.tr("Desidero comunque procedere all'aggiornamento").'.</label>
-                        <script>
-                            $("#aggiorna_custom").change(function() {
-                                if(this.checked) {
-                                    $("#aggiorna").removeClass("disabled");
-                                }else{
-                                    $("#aggiorna").addClass("disabled");
-                                }
-                            });
-                        </script>';
+    echo '                          <div class="alert alert-warning mt-2 mb-2" style="border-radius: 4px; padding: 10px 12px;">
+                                <div class="form-check mb-0">
+                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1" style="transform: scale(1.2);">
+                                    <label for="aggiorna_custom" class="form-check-label" style="font-size: 13px; font-weight: 600; margin-left: 5px;">
+                                        <i class="fa fa-exclamation-triangle mr-2 text-warning"></i>'.tr("Desidero comunque procedere all'aggiornamento").'
+                                    </label>
+                                </div>
+                            </div>
+                            <script>
+                                $("#aggiorna_custom").change(function() {
+                                    if(this.checked) {
+                                        $("#aggiorna").removeClass("disabled");
+                                    }else{
+                                        $("#aggiorna").addClass("disabled");
+                                    }
+                                });
+                            </script>';
 }
 echo '
-
-                    <button type="button" class="btn btn-primary pull-right '.$disabled.'" id="aggiorna" onclick="update()">
-                        <i class="fa fa-upload"></i> '.tr('Carica').'
-                    </button>';
-
-echo '
-                </form>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-success btn-block '.$disabled.'" id="aggiorna" onclick="update()" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                                <i class="fa fa-upload mr-2"></i>'.tr('Carica aggiornamento').'
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>';
+    </div>
 
-echo '
+    <!-- Card Controlli di Integrità -->
+    <div class="col-lg-4 mb-3">
+        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div class="card-header text-center" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
+                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
+                    <i class="fa fa-stethoscope mr-2"></i>'.tr('Controlli di Integrità').'
+                </h3>
+            </div>
+            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
+                <div class="mb-3 flex-grow-1">
+                    <div class="mb-2" style="background: rgba(0,123,255,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa fa-shield fa-lg text-primary"></i>
+                    </div>
+                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Verifica l\'integrità del sistema').'</p>
+                </div>
+                <div class="mt-auto">
+                    <button type="button" class="btn btn-primary btn-block mb-2" onclick="checksum(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                        <i class="fa fa-list-alt mr-2"></i>'.tr('File').'
+                    </button>
+                    <button type="button" class="btn btn-primary btn-block mb-2" onclick="database(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                        <i class="fa fa-database mr-2"></i>'.tr('Database').'
+                    </button>
+                    <button type="button" class="btn btn-primary btn-block" onclick="controlli(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                        <i class="fa fa-stethoscope mr-2"></i>'.tr('Gestionale').'
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>';
 
 // Sezione Verifica integrità
 echo '
-<hr>
-<div>
-    <h3 class="font-weight-normal mb-4"><i class="fa fa-shield"></i> '.tr('Verifica integrità').'</h3>
-
-    <div class="row">
-        <!-- Card Requisiti di sistema -->
-        <div class="col-md-9">
-            <div class="card card-primary card-outline">
-                <div class="card-header with-border">
-                    <h3 class="card-title">
-                        <i class="fa fa-check-square-o"></i> '.tr('Requisiti di sistema').' <span class="tip" title="'.tr('Verifica dei requisiti minimi di sistema per il corretto funzionamento del gestionale').'."><i class="fa fa-question-circle-o"></i></span>
-                    </h3>
-                </div>
-                <div class="card-body">';
+<div class="row">
+    <div class="col-12">
+        <div class="card card-warning card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-shield"></i> '.tr('Requisiti di sistema').'
+                    <span class="tip" title="'.tr('Verifica dei requisiti minimi di sistema per il corretto funzionamento del gestionale').'">
+                        <i class="fa fa-question-circle-o"></i>
+                    </span>
+                </h3>
+            </div>
+            <div class="card-body">';
 
 include base_dir().'/include/init/requirements.php';
 
 echo '
-                </div>
-            </div>
-        </div>
-
-        <!-- Card Controlli integrità -->
-        <div class="col-md-3">
-            <div class="card card-primary card-outline">
-                <div class="card-header with-border">
-                    <h3 class="card-title">
-                        <i class="fa fa-stethoscope"></i> '.tr('Controlli integrità').' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <button type="button" class="btn btn-info btn-block" onclick="checksum(this)">
-                        <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
-                    </button>
-
-                    <button type="button" class="btn btn-info btn-block" onclick="database(this)">
-                        <i class="fa fa-database"></i> '.tr('Controlla database').'
-                    </button>
-
-                    <button type="button" class="btn btn-info btn-block" onclick="controlli(this)">
-                        <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
-                    </button>
-                </div>
             </div>
         </div>
     </div>

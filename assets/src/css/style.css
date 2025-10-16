@@ -3809,3 +3809,17 @@ section.content, .main-footer {
         padding: 0.75rem;
     }
 }
+/* Stili per il diff delle query */
+.diff-unchanged {
+    color: #6c757d;
+}
+
+.diff-added {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.diff-removed {
+    background-color: #f8d7da;
+    color: #721c24;
+}

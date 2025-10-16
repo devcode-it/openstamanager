@@ -72,19 +72,25 @@ class UpdateHook extends CachedManager
      */
     public static function isAvailable()
     {
-        $api = self::getAPI();
+        try {
+            $api = self::getAPI();
 
-        if (!$api['prerelease'] or setting('Abilita canale pre-release per aggiornamenti')) {
-            $version[0] = ltrim((string) $api['tag_name'], 'v');
-            $version[1] = !empty($api['prerelease']) ? 'beta' : 'stabile';
-            $current = \Update::getVersion();
+            if (!$api['prerelease'] or setting('Abilita canale pre-release per aggiornamenti')) {
+                $version[0] = ltrim((string) $api['tag_name'], 'v');
+                $version[1] = !empty($api['prerelease']) ? 'beta' : 'stabile';
+                $current = \Update::getVersion();
 
-            if (version_compare($current, $version[0]) < 0) {
-                return $version;
+                if (version_compare($current, $version[0]) < 0) {
+                    return $version;
+                }
             }
-        }
 
-        return false;
+            return false;
+        } catch (\Exception $e) {
+            // Log dell'errore per debug
+            error_log('Errore UpdateHook::isAvailable: ' . $e->getMessage());
+            throw new \Exception('Impossibile verificare gli aggiornamenti: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -116,36 +122,44 @@ class UpdateHook extends CachedManager
      */
     protected static function getAPI()
     {
-        // Se è abilitato il canale pre-release, usa l'endpoint latest per l'ultima versione assoluta
-        if (setting('Abilita canale pre-release per aggiornamenti')) {
-            $response = self::getClient()->request('GET', 'releases/latest');
+        try {
+            // Se è abilitato il canale pre-release, usa l'endpoint latest per l'ultima versione assoluta
+            if (setting('Abilita canale pre-release per aggiornamenti')) {
+                $response = self::getClient()->request('GET', 'releases/latest');
+                $body = $response->getBody();
+
+                $result = json_decode($body, true);
+                if (!is_array($result) || empty($result)) {
+                    throw new \Exception('Risposta API non valida: dati vuoti o malformati');
+                }
+
+                return $result;
+            }
+
+            // Altrimenti cerca l'ultima versione stabile (non pre-release)
+            $response = self::getClient()->request('GET', 'releases');
             $body = $response->getBody();
 
-            $result = json_decode($body, true);
-            if (!is_array($result) || empty($result)) {
-                throw new \Exception('Invalid API response: empty or malformed data');
+            $releases = json_decode($body, true);
+            if (!is_array($releases) || empty($releases)) {
+                throw new \Exception('Risposta API non valida: dati vuoti o malformati');
             }
 
-            return $result;
-        }
-
-        // Altrimenti cerca l'ultima versione stabile (non pre-release)
-        $response = self::getClient()->request('GET', 'releases');
-        $body = $response->getBody();
-
-        $releases = json_decode($body, true);
-        if (!is_array($releases) || empty($releases)) {
-            throw new \Exception('Invalid API response: empty or malformed data');
-        }
-
-        // Cerca la prima release stabile
-        foreach ($releases as $release) {
-            if (!$release['prerelease']) {
-                return $release;
+            // Cerca la prima release stabile
+            foreach ($releases as $release) {
+                if (!$release['prerelease']) {
+                    return $release;
+                }
             }
-        }
 
-        // Se non trova release stabili, restituisce la prima disponibile come fallback
-        return $releases[0];
+            // Se non trova release stabili, restituisce la prima disponibile come fallback
+            return $releases[0];
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+            throw new \Exception('Impossibile connettersi a GitHub: verificare la connessione internet');
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \Exception('Errore nella richiesta a GitHub: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception('Errore durante la verifica degli aggiornamenti: ' . $e->getMessage());
+        }
     }
 }

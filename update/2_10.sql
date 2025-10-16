@@ -13,8 +13,8 @@ UPDATE `dt_causalet` SET `is_rientrabile` = '1' WHERE `dt_causalet`.`name` = 'Co
 UPDATE `dt_causalet` SET `is_rientrabile` = '1' WHERE `dt_causalet`.`name` = 'Conto visione';
 
 -- Aggiunta campi in zz_operations per mappatura log API
-ALTER TABLE `zz_operations` 
-    ADD `level` VARCHAR(255) NULL DEFAULT NULL, 
+ALTER TABLE `zz_operations`
+    ADD `level` VARCHAR(255) NULL DEFAULT NULL,
     ADD `id_api` INT NULL DEFAULT NULL,
     ADD `context` LONGTEXT NULL DEFAULT NULL,
     ADD `message` LONGTEXT NULL DEFAULT NULL,
@@ -26,7 +26,7 @@ ALTER TABLE `zz_operations` ADD INDEX(`id_api`);
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Log risposte API', 'Solo errori', 'list[Solo errori,debug]', '1', 'API');
 
 SELECT @id := MAX(`id`) FROM `zz_settings`;
-INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES 
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES
 (NULL, '1', @id, 'Log risposte API', ''),
 (NULL, '2', @id, 'Log API responses', '');
 
@@ -34,7 +34,7 @@ INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) V
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Log operazioni', 'log_operazioni', 'SELECT |select| FROM zz_operations LEFT JOIN zz_users ON zz_operations.id_utente = zz_users.id LEFT JOIN an_anagrafiche ON zz_users.idanagrafica = an_anagrafiche.idanagrafica LEFT JOIN zz_modules_lang ON zz_operations.id_module = zz_modules_lang.id_record AND zz_modules_lang.id_lang = 1 LEFT JOIN zz_plugins_lang ON zz_operations.id_plugin = zz_plugins_lang.id_record AND zz_plugins_lang.id_lang = 1 WHERE 1=1|date_period(zz_operations.created_at)| HAVING 2=2 ORDER BY zz_operations.created_at DESC', '', 'fa fa-database', '2.9.2', '2.9.2', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Stato dei servizi'), '1', '1');
 
 SELECT @id_module := MAX(`id`) FROM `zz_modules`;
-INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`, `meta_title`) VALUES 
+INSERT INTO `zz_modules_lang` (`id`, `id_lang`, `id_record`, `title`, `meta_title`) VALUES
 (NULL, '1', @id_module, 'Log operazioni', 'Log operazioni'),
 (NULL, '2', @id_module, 'Operations log', 'Operations log');
 
@@ -51,7 +51,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 (@id_module, 'Context', 'zz_operations.context', '8', '1', '0', '0', '0', NULL, NULL, '0', '0', '0', '1'),
 (@id_module, '_bg_', 'IF(zz_operations.level = \'error\', \'#ec5353\', \'\')', '9', '1', '0', '0', '1', NULL, NULL, '0', '0', '0', '1');
 
-INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES 
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`)-9 FROM `zz_views`), 'id'),
 (1, (SELECT MAX(`id`)-8 FROM `zz_views`), 'Modulo/Plugin'),
 (1, (SELECT MAX(`id`)-7 FROM `zz_views`), 'Record'),
@@ -69,19 +69,19 @@ CREATE TABLE `in_tipiintervento_tipologie` (`id` INT NOT NULL AUTO_INCREMENT , `
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Permetti l\'inserimento di allegati in attività completate', '0', 'boolean', '1', 'Attività', NULL, '0');
 
 SELECT @id_setting := MAX(`id`) FROM `zz_settings`;
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
-(1, @id_setting, 'Permetti l\'inserimento di allegati in attività completate', ''), 
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, @id_setting, 'Permetti l\'inserimento di allegati in attività completate', ''),
 (2, @id_setting, 'Allow attachment insertion in completed activities', '');
 
 -- Risorsa api per la verifica modifica record
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'retrieve', 'verifica-aggiornamenti', 'API\\App\\v1\\VerificaAggiornamenti', '1');
 
 -- Tabella per la gestione dei token per l'invio di notifiche all'app
 CREATE TABLE `zz_app_tokens` (`id` INT NOT NULL AUTO_INCREMENT , `token` VARCHAR(500) NOT NULL , `id_user` INT NOT NULL , `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 -- Aggiunta colonne specifiche per FCM
-ALTER TABLE `zz_app_tokens` 
+ALTER TABLE `zz_app_tokens`
 ADD COLUMN `platform` VARCHAR(50) NULL AFTER `token`,
 ADD COLUMN `device_info` TEXT NULL AFTER `platform`;
 
@@ -89,17 +89,17 @@ ADD COLUMN `device_info` TEXT NULL AFTER `platform`;
 ALTER TABLE `zz_app_tokens` ADD INDEX `idx_user_fcm` (`id_user`, `token`);
 
 -- Registrazione della risorsa API per la gestione dei token FCM
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'create', 'fcm-tokens', 'API\\App\\v1\\FcmTokens', '1');
 
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'update', 'fcm-tokens', 'API\\App\\v1\\FcmTokens', '1');
 
 -- Tabella per la gestione dei gruppi in tipi di intervento
 CREATE TABLE `in_tipiintervento_groups` (`id` INT NOT NULL AUTO_INCREMENT , `idtipointervento` INT NOT NULL , `id_gruppo` INT NOT NULL , PRIMARY KEY (`id`));
 
 -- Registrazione della risorsa API per la gestione delle notifiche
-INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) 
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'retrieve', 'gestione-notifiche', 'API\\App\\v1\\GestioneNotifiche', '1');
 
 -- Aggiunta {tipo} come variabile per l'impostazione "Descrizione personalizzata in fatturazione"
@@ -115,3 +115,6 @@ ALTER TABLE `co_righe_preventivi` ADD `data_inizio_competenza` DATE NULL, ADD `d
 ALTER TABLE `in_righe_interventi` ADD `data_inizio_competenza` DATE NULL, ADD `data_fine_competenza` DATE NULL;
 ALTER TABLE `or_righe_ordini` ADD `data_inizio_competenza` DATE NULL, ADD `data_fine_competenza` DATE NULL;
 ALTER TABLE `co_righe_promemoria` ADD `data_inizio_competenza` DATE NULL, ADD `data_fine_competenza` DATE NULL;
+
+-- Impostazione format = 1 per tutti i campi data nella tabella zz_views
+UPDATE `zz_views` SET `format` = 1 WHERE (`name` LIKE '%data%' OR `name` LIKE '%Data%')

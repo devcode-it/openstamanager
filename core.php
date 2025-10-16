@@ -185,9 +185,9 @@ if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissi
 
     // Memorizza l'URL corrente per il redirect post-login
     if (!Auth::check() && !API\Response::isAPIRequest()) {
-        $current_url = $_SERVER['REQUEST_URI'];
+        $current_url = $_SERVER['REQUEST_URI'] ?? '';
         // Evita di memorizzare URL di logout o login per prevenire loop
-        if (strpos($current_url, 'op=logout') === false && strpos($current_url, 'op=login') === false) {
+        if (!empty($current_url) && strpos($current_url, 'op=logout') === false && strpos($current_url, 'op=login') === false) {
             Auth::setIntended($current_url);
         }
     }

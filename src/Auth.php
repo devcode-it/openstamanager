@@ -1089,6 +1089,21 @@ class Auth extends Util\Singleton
 
         // L'URL deve iniziare con il base_path del sistema o essere relativo
         if (strpos($url, $base_path) === 0 || strpos($url, '/') === 0) {
+            // Verifica che non sia un URL di actions.php senza parametri necessari
+            $parsed_url = parse_url($url);
+            $path = $parsed_url['path'] ?? '';
+
+            // Esclude actions.php se chiamato direttamente senza id_module
+            if (strpos($path, 'actions.php') !== false) {
+                $query = $parsed_url['query'] ?? '';
+                parse_str($query, $params);
+
+                // actions.php richiede id_module per funzionare correttamente
+                if (empty($params['id_module'])) {
+                    return false;
+                }
+            }
+
             return true;
         }
 

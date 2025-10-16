@@ -485,11 +485,11 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
             // Nascondi il pulsante di azione globale
             button.hide();
 
-            // Mostra messaggio di successo dettagliato
+            // Mostra messaggio di successo discreto
             let successMessage = `
-                <div class="alert alert-success">
-                    <h4><i class="fa fa-check-circle"></i> '.tr('Risoluzione completata con successo!').'</h4>
-                    <p>'.tr('Tutti i conflitti sono stati risolti. I conti sono stati aggiornati e i movimenti contabili sono stati rigenerati.').'</p>
+                <div class="alert alert-success alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <i class="fa fa-check"></i> '.tr('Conflitti risolti con successo').'
                 </div>
             `;
 

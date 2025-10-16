@@ -38,7 +38,7 @@ return '
         <p>'.$f_citta_full.'</p>
         <p>'.(!empty($f_piva) ? tr('P.Iva').': '.$f_piva : '').'</p>
         <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': '.$f_codicefiscale : '').'</p>
-        <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': '.moneyFormat($f_capsoc, 2) : '').'</p>
+        <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': '.moneyFormat($f_capsoc, 0) : '').'</p>
         <p>'.(!empty($f_telefono) ? tr('Tel').': '.$f_telefono : '').'</p>
 		<p>'.(!empty($f_email) ? tr('Email').': '.$f_email : '').'</p>
 		<p>'.(!empty($f_pec) ? tr('PEC').': '.$f_pec : '').'</p>

@@ -85,6 +85,12 @@ if (Auth::check()) {
 
     $has_plugins = Plugin::where('idmodule_to', $id_module)->where('position', $position)->where('enabled', 1)->count();
 
+    // Determina se mostrare la barra dei plugin
+    // Include il tab Info per gli admin quando siamo in editor.php
+    $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
+    $has_info_tab = $in_editor && Auth::admin();
+    $show_plugin_bar = $has_plugins > 0 || $has_info_tab;
+
     echo '
 		<script>
             search = []';
@@ -247,7 +253,7 @@ if (Auth::check()) {
                 end_date_settings_formatted: "'.setting('Fine periodo calendario').'",
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
-                collapse_plugin_sidebar: '.($has_plugins ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
+                collapse_plugin_sidebar: '.($show_plugin_bar ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
 
                 ckeditorToolbar: [
                     ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt"],
@@ -553,9 +559,8 @@ if (Auth::check()) {
         </aside>';
     }
 
-    $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
     $in_controller = string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php');
-    if (($in_editor || $in_controller) && !$isInstallation && $has_plugins > 0) {
+    if (($in_editor || $in_controller) && !$isInstallation && $show_plugin_bar) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <div class="control-sidebar-button" title="'.tr('Plugin').'">

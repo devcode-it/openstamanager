@@ -138,7 +138,7 @@ function avviaControllo(controllo) {
             }
 
             // Creazione pannello informativo e aggiunta righe
-            let card = initcard(controllo, success);
+            let card = initcard(controllo, success, records);
             for(const record of records) {
                 addRiga(controllo, card, record);
             }
@@ -192,9 +192,10 @@ function setPercentage(percent) {
 *
 * @param controllo
 * @param success
+* @param records
 * @returns {*|jQuery|HTMLElement}
 */
-function initcard(controllo, success) {
+function initcard(controllo, success, records) {
     let cssClass = "";
     let icon = "minus";
     if (success) {
@@ -205,7 +206,17 @@ function initcard(controllo, success) {
     let card = `<div class="card ` + cssClass + `" id="controllo-` + controllo["id"] + `">
     <div class="card-header with-border">
         <h3 class="card-title">` + controllo["name"] + `</h3>
-        <div class="card-tools pull-right">
+        <div class="card-tools pull-right">`;
+
+    // Aggiungi pulsante azione globale se il controllo lo supporta e ci sono record
+    if (!success && records.length > 0 && hasGlobalActions(controllo)) {
+        card += `
+            <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
+                <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+            </button>`;
+    }
+
+    card += `
             <button type="button" class="btn btn-tool" data-widget="collapse">
                 <i class="fa fa-` + icon + `"></i>
             </button>
@@ -213,6 +224,9 @@ function initcard(controllo, success) {
     </div>`
 
     if (!success) {
+        // Verifica se ci sono opzioni per le singole righe
+        let hasRowOptions = records.length > 0 && records[0].options && records[0].options.length > 0;
+
         card += `
     <div class="card-body">
         <div class="table-responsive">
@@ -220,8 +234,13 @@ function initcard(controllo, success) {
                 <thead>
                     <tr>
                         <th width="15%">'.tr('Record').'</th>
-                        <th>'.tr('Descrizione').'</th>
-                        <th class="text-center" width="15%">'.tr('Opzioni').'</th>
+                        <th>'.tr('Descrizione').'</th>`;
+
+        if (hasRowOptions) {
+            card += `<th class="text-center" width="15%">'.tr('Opzioni').'</th>`;
+        }
+
+        card += `
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -244,32 +263,201 @@ function initcard(controllo, success) {
 */
 function addRiga(controllo, card, record) {
     let body = card.find("tbody");
+    let hasOptions = record.options && record.options.length > 0;
 
     // Generazione riga
     let riga = `<tr class="` + record.type + `" id="controllo-` + controllo["id"] + `-` + record.id + `">
     <td>` + record.nome + `</td>
-    <td>` + record.descrizione + `</td>
-    <td></td>
-</tr>`;
+    <td>` + record.descrizione + `</td>`;
+
+    if (hasOptions) {
+        riga += `<td></td>`;
+    }
+
+    riga += `</tr>`;
     riga = $(riga);
 
-    // Generazione opzioni
-    const options_columns = riga.find("td").last();
-    record.options.forEach(function (option, id){
-         let button = `<button type="button" class="btn btn-` + option.color + `">
-    <i class="` + option.icon + `"></i> ` + option.name + `
-</buttton>`;
-        button = $(button);
+    // Generazione opzioni solo se presenti
+    if (hasOptions) {
+        const options_columns = riga.find("td").last();
+        record.options.forEach(function (option, id){
+             let button = `<button type="button" class="btn btn-` + option.color + `">
+        <i class="` + option.icon + `"></i> ` + option.name + `
+    </buttton>`;
+            button = $(button);
 
-        button.on("click", function () {
-            option.params.id = id;
-            eseguiAzione(controllo, record, option.params);
+            button.on("click", function () {
+                option.params.id = id;
+                eseguiAzione(controllo, record, option.params);
+            });
+
+            options_columns.append(button);
         });
-
-        options_columns.append(button);
-    });
+    }
 
     body.append(riga);
+}
+
+/**
+* Verifica se un controllo supporta azioni globali
+* @param controllo
+* @returns {boolean}
+*/
+function hasGlobalActions(controllo) {
+    // Lista dei controlli che supportano azioni globali
+    const controlliConAzioniGlobali = [
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale"
+    ];
+
+    return controlliConAzioniGlobali.includes(controllo["class"]);
+}
+
+/**
+* Esegue un\'azione globale su tutti i record di un controllo
+* @param buttonElement
+*/
+function eseguiAzioneGlobale(buttonElement) {
+    let button = $(buttonElement);
+    let controlloId = button.data("controllo-id");
+    let controlloClass = button.data("controllo-class");
+
+    // Crea modal di conferma con lo stile del gestionale
+    let modalHtml = `
+        <div class="modal fade" id="modal-conferma-risoluzione" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            <i class="fa fa-exclamation-triangle text-warning"></i>
+                            '.tr('Conferma risoluzione conflitti').'
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>'.tr('Sei sicuro di voler risolvere tutti i conflitti?').'</p>
+                        <div class="alert alert-warning">
+                            <i class="fa fa-info-circle"></i>
+                            '.tr('Questa operazione:').'
+                            <ul class="mb-0 mt-2">
+                                <li>'.tr('Creerà nuovi conti per le anagrafiche con conflitti multipli').'</li>
+                                <li>'.tr('Aggiornerà i movimenti contabili collegati').'</li>
+                                <li>'.tr('Eliminerà i conti vuoti non più utilizzati').'</li>
+                                <li>'.tr('Non può essere annullata').'</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="float: left;">
+                            <i class="fa fa-times"></i> '.tr('Annulla').'
+                        </button>
+                        <button type="button" class="btn btn-warning" id="conferma-risoluzione" style="float: right;">
+                            <i class="fa fa-check"></i> '.tr('Procedi').'
+                        </button>
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Rimuovi modal esistente se presente
+    $("#modal-conferma-risoluzione").remove();
+
+    // Aggiungi modal al DOM
+    $("body").append(modalHtml);
+
+    // Mostra modal con configurazione per evitare chiusura accidentale
+    $("#modal-conferma-risoluzione").modal({
+        backdrop: "static",
+        keyboard: false,
+        show: true
+    });
+
+    // Gestisci click su conferma
+    $("#conferma-risoluzione").on("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let confirmButton = $(this);
+        let restoreConfirm = buttonLoading(confirmButton);
+
+        // Disabilita il pulsante di annulla durante l\'operazione
+        $("#modal-conferma-risoluzione .btn-default").prop("disabled", true);
+
+        eseguiRisoluzioneGlobale(button, controlloId, controlloClass, function() {
+            // Callback di successo: chiudi modal
+            $("#modal-conferma-risoluzione").modal("hide");
+        }, function() {
+            // Callback di errore: ripristina pulsanti
+            buttonRestore(confirmButton, restoreConfirm);
+            $("#modal-conferma-risoluzione .btn-default").prop("disabled", false);
+        });
+
+        return false;
+    });
+}
+
+/**
+* Esegue effettivamente la risoluzione globale
+*/
+function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCallback, errorCallback) {
+    let restore = buttonLoading(button);
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            id_module: globals.id_module,
+            op: "controlli-action-global",
+            controllo: controlloClass,
+            params: {},
+        },
+        success: function(results) {
+            // Rimuovi tutte le righe del controllo
+            $("#controllo-" + controlloId + " tbody tr").remove();
+
+            // Nascondi il pulsante di azione globale
+            button.hide();
+
+            // Mostra messaggio di successo dettagliato
+            let successMessage = `
+                <div class="alert alert-success">
+                    <h4><i class="fa fa-check-circle"></i> '.tr('Risoluzione completata con successo!').'</h4>
+                    <p>'.tr('Tutti i conflitti sono stati risolti. I conti sono stati aggiornati e i movimenti contabili sono stati rigenerati.').'</p>
+                </div>
+            `;
+
+            $("#controllo-" + controlloId + " .card-body").html(successMessage);
+
+            buttonRestore(button, restore);
+
+            // Chiama il callback di successo
+            if (typeof successCallback === "function") {
+                successCallback();
+            }
+        },
+        error: function(xhr, r, error) {
+            let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error.message : error;
+
+            let errorHtml = `
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-exclamation-triangle"></i> '.tr('Errore durante la risoluzione').'</h4>
+                    <p>'.tr('Si è verificato un errore').': ${errorMessage}</p>
+                </div>
+            `;
+
+            $("#controllo-" + controlloId + " .card-body").prepend(errorHtml);
+            buttonRestore(button, restore);
+
+            // Chiama il callback di errore
+            if (typeof errorCallback === "function") {
+                errorCallback();
+            }
+        }
+    });
 }
 </script>
 

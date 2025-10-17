@@ -528,29 +528,29 @@ function search(button) {
 <div class="row mb-4">
     <!-- Card Ricerca Aggiornamenti -->
     <div class="col-lg-4 mb-3">
-        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div class="card-header text-center" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
-                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
-                    <i class="fa fa-cloud-download mr-2"></i>'.tr('Ricerca Aggiornamenti').'
+        <div class="card card-info card-outline h-100">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-search"></i> '.tr('Ricerca Aggiornamenti').'
                 </h3>
             </div>
-            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
-                <div class="mb-3 flex-grow-1">
-                    <div class="mb-2" style="background: rgba(23,162,184,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa fa-search fa-lg text-info"></i>
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background-color: rgba(23, 162, 184, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                        <i class="fa fa-search fa-lg" style="color: #17a2b8;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
+                    <p class="text-muted">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
                 </div>
                 <div id="update-search" class="mt-auto">';
 if (extension_loaded('curl')) {
-    echo '                  <button type="button" class="btn btn-info btn-block" onclick="search(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+    echo '                  <button type="button" class="btn btn-info btn-block" onclick="search(this)">
                                 <i class="fa fa-search mr-2"></i>'.tr('Verifica Aggiornamenti').'
                             </button>
                             <div class="mt-2">
-                                <small class="text-muted" style="font-size: 11px;">'.tr('Controlla automaticamente su GitHub').'</small>
+                                <small class="text-muted">'.tr('Controlla automaticamente su GitHub').'</small>
                             </div>';
 } else {
-    echo '                  <div class="alert alert-warning mb-0" style="border-radius: 4px; padding: 10px;">
+    echo '                  <div class="alert alert-warning mb-0">
                                 <i class="fa fa-exclamation-triangle"></i>
                                 <strong>'.tr('Funzione non disponibile').'</strong><br>
                                 <small>'.tr('L\'estensione cURL di PHP non è installata').'</small>
@@ -564,24 +564,24 @@ echo '              </div>
 
     <!-- Card Caricamento Aggiornamenti -->
     <div class="col-lg-4 mb-3">
-        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div class="card-header text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
-                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
-                    <i class="fa fa-cloud-upload mr-2"></i>'.tr('Installa Aggiornamenti').'
+        <div class="card card-success card-outline h-100">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-upload"></i> '.tr('Installa Aggiornamenti').'
                 </h3>
             </div>
-            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
+            <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
-                    <div class="mb-2" style="background: rgba(40,167,69,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa fa-upload fa-lg text-success"></i>
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background-color: rgba(40, 167, 69, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                        <i class="fa fa-upload fa-lg" style="color: #28a745;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
+                    <p class="text-muted">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
                 </div>';
 
 // Avviso personalizzazioni nella card di caricamento
 if ($has_any_errors) {
     echo '
-                <div class="alert alert-warning mb-2" role="alert" style="border-radius: 4px; padding: 8px 12px; font-size: 12px;">
+                <div class="alert alert-warning mb-2" role="alert">
                     <i class="fa fa-exclamation-triangle mr-1"></i>
                     <strong>'.tr('Attenzione!').'</strong>
                     '.tr("Il gestionale presenta delle personalizzazioni: si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'
@@ -599,10 +599,10 @@ echo '
 
 if ($has_any_errors) {
     $disabled = 'disabled';
-    echo '                          <div class="alert alert-warning mt-2 mb-2" style="border-radius: 4px; padding: 10px 12px;">
+    echo '                          <div class="alert alert-warning mt-2 mb-2">
                                 <div class="form-check mb-0">
-                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1" style="transform: scale(1.2);">
-                                    <label for="aggiorna_custom" class="form-check-label" style="font-size: 13px; font-weight: 600; margin-left: 5px;">
+                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1">
+                                    <label for="aggiorna_custom" class="form-check-label">
                                         <i class="fa fa-exclamation-triangle mr-2 text-warning"></i>'.tr("Desidero comunque procedere all'aggiornamento").'
                                     </label>
                                 </div>
@@ -619,7 +619,7 @@ if ($has_any_errors) {
 }
 echo '
                         <div class="mt-2">
-                            <button type="button" class="btn btn-success btn-block '.$disabled.'" id="aggiorna" onclick="update()" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                            <button type="button" class="btn btn-success btn-block '.$disabled.'" id="aggiorna" onclick="update()">
                                 <i class="fa fa-upload mr-2"></i>'.tr('Carica aggiornamento').'
                             </button>
                         </div>
@@ -631,27 +631,27 @@ echo '
 
     <!-- Card Controlli di Integrità -->
     <div class="col-lg-4 mb-3">
-        <div class="card h-100" style="border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div class="card-header text-center" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%); color: white; border-radius: 6px 6px 0 0; padding: 12px 15px;">
-                <h3 class="card-title mb-0" style="font-weight: 600; font-size: 15px;">
-                    <i class="fa fa-stethoscope mr-2"></i>'.tr('Controlli di Integrità').'
+        <div class="card card-primary card-outline h-100">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-shield"></i> '.tr('Controlli di Integrità').'
                 </h3>
             </div>
-            <div class="card-body text-center d-flex flex-column" style="padding: 20px 15px;">
-                <div class="mb-3 flex-grow-1">
-                    <div class="mb-2" style="background: rgba(0,123,255,0.1); border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa fa-shield fa-lg text-primary"></i>
+            <div class="card-body text-center d-flex flex-column">
+                <div class="mb-3">
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background-color: rgba(0, 123, 255, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                        <i class="fa fa-shield fa-lg" style="color: #007bff;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 13px; line-height: 1.4;">'.tr('Verifica l\'integrità del sistema').'</p>
+                    <p class="text-muted">'.tr('Verifica l\'integrità del sistema').'</p>
                 </div>
                 <div class="mt-auto">
-                    <button type="button" class="btn btn-primary btn-block mb-2" onclick="checksum(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
-                        <i class="fa fa-list-alt mr-2"></i>'.tr('File').'
-                    </button>
-                    <button type="button" class="btn btn-primary btn-block mb-2" onclick="database(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
-                        <i class="fa fa-database mr-2"></i>'.tr('Database').'
-                    </button>
-                    <button type="button" class="btn btn-primary btn-block" onclick="controlli(this)" style="border-radius: 4px; font-weight: 600; padding: 10px;">
+                    <button type="button" class="btn btn-primary btn-block mb-2" onclick="checksum(this)">
+                    <i class="fa fa-list-alt mr-2"></i>'.tr('File').'
+                </button>
+                <button type="button" class="btn btn-primary btn-block mb-2" onclick="database(this)">
+                    <i class="fa fa-database mr-2"></i>'.tr('Database').'
+                </button>
+                    <button type="button" class="btn btn-primary btn-block" onclick="controlli(this)">
                         <i class="fa fa-stethoscope mr-2"></i>'.tr('Gestionale').'
                     </button>
                 </div>

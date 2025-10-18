@@ -125,7 +125,7 @@ function rimuoviVariante(id) {
 
 function generaVarianti(button) {
     // Redirect
-    redirect(globals.rootdir + "/editor.php", {
+    redirect_url(globals.rootdir + "/editor.php", {
        id_module: globals.id_module,
        id_record: globals.id_record,
        op: "genera-varianti",

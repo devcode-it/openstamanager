@@ -81,7 +81,7 @@ if (empty($fattura)) {
 
 <script>
 function skip() {
-    redirect("'.$skip_link.'");
+    redirect_url("'.$skip_link.'");
 }
 
 function cleanup(){

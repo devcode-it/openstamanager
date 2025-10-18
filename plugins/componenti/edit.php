@@ -265,7 +265,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {
-            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect_url("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }).catch(swal.noop);
             
     }
@@ -280,7 +280,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {
-            redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect_url("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }).catch(swal.noop);
     }
 

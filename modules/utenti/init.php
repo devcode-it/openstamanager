@@ -32,7 +32,7 @@ if (!empty($id_record)) {
         if (!$record) {
             // Se il record non esiste, reindirizza alla lista
             flash()->error(tr('Gruppo non trovato'));
-            redirect(base_path().'/controller.php?id_module='.$id_module);
+            redirect_url(base_path().'/controller.php?id_module='.$id_module);
         }
     }
 }

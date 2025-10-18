@@ -60,7 +60,7 @@ switch (post('op')) {
             flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
 
-        redirect(base_path().'/index.php');
+        redirect_url(base_path().'/index.php');
         exit;
 
     case 'update':
@@ -76,7 +76,7 @@ switch (post('op')) {
 
         flash()->info(tr('Password cambiata!'));
 
-        redirect(base_path().'/index.php');
+        redirect_url(base_path().'/index.php');
         exit;
 }
 

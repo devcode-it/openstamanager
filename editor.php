@@ -27,9 +27,9 @@ $read_only = $structure->permission == 'r';
 $module_header_html = '';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
-    redirect(base_path().'/controller.php?id_module='.$id_module);
+    redirect_url(base_path().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect(base_path().'/index.php');
+    redirect_url(base_path().'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');

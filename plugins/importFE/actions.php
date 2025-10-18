@@ -190,7 +190,7 @@ switch (filter('op')) {
             $process_result = Interaction::processInvoice($filename);
             if ($process_result != '') {
                 flash()->error($process_result);
-                redirect(base_path().'/controller.php?id_module='.$id_module);
+                redirect_url(base_path().'/controller.php?id_module='.$id_module);
 
                 return;
             }
@@ -200,9 +200,9 @@ switch (filter('op')) {
         $file = $files[$id_record - 1];
 
         if (get('sequence') == null) {
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
+            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
             flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
                 '_NUM_' => $fattura->numero,
                 '_DATA_' => dateFormat($fattura->data),
@@ -210,7 +210,7 @@ switch (filter('op')) {
             ]));
         } else {
             flash()->info(tr('Tutte le fatture salvate sono state importate!'));
-            redirect(base_path().'/controller.php?id_module='.$id_module);
+            redirect_url(base_path().'/controller.php?id_module='.$id_module);
         }
         break;
 

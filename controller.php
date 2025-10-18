@@ -23,9 +23,9 @@ use Models\Plugin;
 include_once __DIR__.'/core.php';
 
 if (!empty($id_record) && !empty($id_module)) {
-    redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 } elseif (empty($id_module)) {
-    redirect(base_path().'/index.php');
+    redirect_url(base_path().'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');

@@ -156,7 +156,7 @@ function import_fe_vendita(button, file, data_registrazione) {
                 data = JSON.parse(data);
 
                 if (!data.already) {
-                    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
+                    redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
                 } else {
                     swal({
                         title: "'.tr('Fattura già importata.').'",
@@ -288,7 +288,7 @@ function delete_fe_vendita(button, file_id) {
 }
 
 function download_fe_vendita(button, file_id) {
-    redirect(globals.rootdir + "/actions.php", {
+    redirect_url(globals.rootdir + "/actions.php", {
         id_module: globals.id_module,
         id_plugin: '.$id_plugin.',
         op: "download",

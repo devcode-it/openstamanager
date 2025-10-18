@@ -212,7 +212,7 @@ switch ($operazione) {
 
         flash()->info(tr('Rata fatturata correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&id_record='.$fattura->id);
+        redirect_url(base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&id_record='.$fattura->id);
         exit;
 
     case 'add_fattura_multipla':
@@ -274,6 +274,6 @@ switch ($operazione) {
 
         flash()->info(tr('Rate fatturate correttamente!'));
         database()->commitTransaction();
-        redirect(base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id);
+        redirect_url(base_path().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id);
         exit;
 }

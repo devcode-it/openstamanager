@@ -155,7 +155,7 @@ class Upload extends Model
         $model->id_adapter = $adapter_config->id;
         $model->filename = $file['filename'];
 
-        $model->user()->associate(auth()->getUser());
+        $model->user()->associate(auth_osm()->getUser());
 
         // Rimozione estensione dal nome visibile
         $extension = $file['extension'];

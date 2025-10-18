@@ -123,7 +123,7 @@ switch (post('op')) {
                         // Aggiungo email anagrafica
                         if (!empty($documento->anagrafica->email)) {
                             $emails[] = $documento->anagrafica->email;
-                            $mail = Mail::build(auth()->getUser(), $template, $scadenza->id);
+                            $mail = Mail::build(auth_osm()->getUser(), $template, $scadenza->id);
                             $mail->addReceiver($documento->anagrafica->email);
                             $creata_mail = true;
                         }
@@ -133,7 +133,7 @@ switch (post('op')) {
                         foreach ($mansioni as $mansione) {
                             $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                             if (!$referenti->isEmpty() && $creata_mail == false) {
-                                $mail = Mail::build(auth()->getUser(), $template, $id);
+                                $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                                 $creata_mail = true;
                             }
 

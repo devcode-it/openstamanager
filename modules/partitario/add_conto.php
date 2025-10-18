@@ -23,7 +23,7 @@ use Models\Module;
 $id_conto = get('id');
 $lvl = get('lvl');
 
-?><form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Module::where('name', 'Piano dei conti')->first()->id; ?>" method="post">
+?><form action="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo Module::where('name', 'Piano dei conti')->first()->id; ?>" method="post">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-list">
 

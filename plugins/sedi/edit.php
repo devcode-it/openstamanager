@@ -41,7 +41,7 @@ echo '
 if (!$utenti && $id_parent == $id_azienda && !$record['is_automezzo']) {
     echo '
 	<div class="alert alert-warning">
-		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>
+		<i class="fa fa-warning"></i> '.tr('Nessun utente ha i permessi per questa sede, impostali da').' <a href='.base_path_osm().'/editor.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.' target="_blank">'.tr('Utenti e Permessi.').'</a>
 	</div>';
 }
 

@@ -60,7 +60,7 @@ switch (post('op')) {
             flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
 
-        redirect_url(base_path().'/index.php');
+        redirect_url(base_path_osm().'/index.php');
         exit;
 
     case 'update':
@@ -76,7 +76,7 @@ switch (post('op')) {
 
         flash()->info(tr('Password cambiata!'));
 
-        redirect_url(base_path().'/index.php');
+        redirect_url(base_path_osm().'/index.php');
         exit;
 }
 
@@ -244,7 +244,7 @@ echo '
                     </button>
 
                     <div class="text-center mt-4">
-                        <a href="'.base_path().'/index.php" class="text-secondary">
+                        <a href="'.base_path_osm().'/index.php" class="text-secondary">
                             <i class="fa fa-sign-in mr-1"></i>'.tr('Torna alla pagina di accesso').'
                         </a>
                     </div>

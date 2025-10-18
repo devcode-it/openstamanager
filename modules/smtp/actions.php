@@ -87,7 +87,7 @@ switch (filter('op')) {
 
             // Link di redirect dopo la configurazione
             $id_modulo_account_email = Module::where('name', 'Account email')->first()->id;
-            $oauth2->after_configuration = base_path().'/editor.php?id_module='.$id_modulo_account_email.'&id_record='.$id_record;
+            $oauth2->after_configuration = base_path_osm().'/editor.php?id_module='.$id_modulo_account_email.'&id_record='.$id_record;
 
             $oauth2->save();
 
@@ -139,7 +139,7 @@ switch (filter('op')) {
 
     case 'oauth2':
         $oauth2 = $account->oauth2;
-        redirect_url(base_path().'/oauth2.php?id='.$oauth2->id);
+        redirect_url(base_path_osm().'/oauth2.php?id='.$oauth2->id);
 
         break;
 }

@@ -82,7 +82,7 @@ if (!$is_anagrafica_deleted) {
 if (in_array($id_agente, $tipi_anagrafica)) {
     // Aggiunta liquidazione provvigioni per agente
     echo '
-        <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" >
+        <button type="button" class="btn btn-primary" data-title="'.tr('Liquida Provvigioni').'" data-href="'.base_path_osm().'/modules/anagrafiche/liquida_provvigioni.php?nome_stampa=Provvigioni&id_record='.$id_record.'" >
             <i class="fa fa-print"></i> '.tr('Liquida Provvigioni').'
         </button>';
 }

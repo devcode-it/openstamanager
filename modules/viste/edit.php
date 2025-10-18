@@ -176,7 +176,7 @@ echo '<script>
     globals.translations.format_query = "'.tr('Formatta query').'";
     globals.translations.compress_query = "'.tr('Comprimi query').'";
 </script>
-<link rel="stylesheet" href="'.base_path().'/modules/viste/css/main.css">
-<script src="'.base_path().'/modules/viste/js/main.js"></script>
-<link rel="stylesheet" href="'.base_path().'/modules/viste/css/style.css">
+<link rel="stylesheet" href="'.base_path_osm().'/modules/viste/css/main.css">
+<script src="'.base_path_osm().'/modules/viste/js/main.js"></script>
+<link rel="stylesheet" href="'.base_path_osm().'/modules/viste/css/style.css">
 ';

@@ -65,6 +65,6 @@ function esporta(button) {
     let pagati = input("pagati").get();
     let processati = input("processati").get();
 
-    redirect_url("'.base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&records=" + records + "&pagati=" + pagati + "&processati=" + processati);
+    redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&records=" + records + "&pagati=" + pagati + "&processati=" + processati);
 }
 </script>';

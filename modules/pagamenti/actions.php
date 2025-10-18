@@ -121,10 +121,10 @@ switch (filter('op')) {
             if ($id_record == $id) {
                 $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `title`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
-                    redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
+                    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {
                     // $_POST['backto'] = 'record-list';
-                    redirect_url(base_path().'/controller.php?id_module='.$id_module);
+                    redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
                 }
             }
         }

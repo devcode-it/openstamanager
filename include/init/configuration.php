@@ -151,14 +151,14 @@ if (!empty(post('db_host'))) {
 				<p>'.tr('Non è possibile creare il file di configurazione _FILE_ per mancanza di permessi di scrittura', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</p>
-				<form action="'.base_path().'/index.php?action=updateconfig&firstuse=true" method="post">
+				<form action="'.base_path_osm().'/index.php?action=updateconfig&firstuse=true" method="post">
 					<div class="hide">
 						<input type="hidden" name="db_name" value="'.$db_name.'">
 						<input type="hidden" name="db_password" value="'.$db_password.'">
 						<input type="hidden" name="db_username" value="'.$db_username.'">;
 						<input type="hidden" name="db_host" value="'.$db_host.'">
 					</div>
-					<a class="btn btn-warning btn-lg" href="'.base_path().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Indietro').'</a>
+					<a class="btn btn-warning btn-lg" href="'.base_path_osm().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Indietro').'</a>
 					<button class="btn btn-info btn-lg"><i class="fa fa-refresh"></i> '.tr('Riprova').'</button>
 				</form>
 				<hr>
@@ -183,7 +183,7 @@ if (!empty(post('db_host'))) {
         else {
             // Creazione manifest.json
             include_once App::filepath('include/init', 'manifest.php');
-            redirect_url(base_path().'/index.php');
+            redirect_url(base_path_osm().'/index.php');
             exit;
         }
     }
@@ -199,7 +199,7 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
         <div class="card-body">
             <p>'.tr('Impossibile stabilire una connessione con il database').'.</p>
             <p>'.tr('Verifica che i dati di accesso siano corretti e che il database esista').'.</p>
-            <a class="btn btn-info btn-lg" href="'.base_path().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
+            <a class="btn btn-info btn-lg" href="'.base_path_osm().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
             </div>
     </div>';
 }
@@ -220,7 +220,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
             '_FILE_' => '<b>config.inc.php</b>',
         ]).'.</p>
 				<p>'.tr("Se il problema persiste, contatta l'assistenza").'.</p>
-				<a class="btn btn-info btn-lg" href="'.base_path().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
+				<a class="btn btn-info btn-lg" href="'.base_path_osm().'/index.php"><i class="fa fa-refresh"></i> '.tr('Riprova').'</a>
             </div>
 		</div>';
     }
@@ -314,7 +314,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     $("#test").prop("disabled", true);
                     $("#install").prop("disabled", true);
                     $(this).closest("form").ajaxSubmit({
-                        url: "'.base_path().'/index.php",
+                        url: "'.base_path_osm().'/index.php",
                         data: {
                             test: 1,
                         },

@@ -17,19 +17,23 @@ use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\Serializer\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 return [
-    'title' => 'API Platform',
-    'description' => 'My awesome API',
+    'title' => 'OpenSTAManager API',
+    'description' => 'API for OpenSTAManager application',
     'version' => '1.0.0',
     'show_webby' => true,
 
     'routes' => [
         'domain' => null,
         // Global middleware applied to every API Platform routes
-        // 'middleware' => [],
+        'middleware' => [
+            \Middlewares\APIAuthMiddleware::class,
+            \Middlewares\OSMAuthMiddleware::class,
+            //'auth:api'
+        ],
     ],
 
     'resources' => [
-        app_path('Controllers'),
+        app_path('API/Controllers'),
     ],
 
     'formats' => [
@@ -97,12 +101,12 @@ return [
 
     'swagger_ui' => [
         'enabled' => true,
-        // 'apiKeys' => [
-        //     'api' => [
-        //         'name' => 'Authorization',
-        //         'type' => 'header',
-        //     ],
-        // ],
+        'apiKeys' => [
+            'api' => [
+                'name' => 'X-API-Key',
+                'type' => 'header',
+            ],
+        ],
         // 'oauth' => [
         //     'enabled' => true,
         //     'type' => 'oauth2',

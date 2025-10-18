@@ -14,23 +14,15 @@ return [
      */
     'directories' => [
         realpath(__DIR__ . '/../src/Controllers'),
-        /*
-        app_path('Http/Controllers/Api') => [
-           'prefix' => 'api',
-           'middleware' => 'api',
-            // only register routes in files that match the patterns
-           'patterns' => ['*Controller.php'],
-           // do not register routes in files that match the patterns
-           'not_patterns' => [],
-        ],
-        */
     ],
 
     /*
      * This middleware will be applied to all routes.
      */
     'middleware' => [
-        \Illuminate\Routing\Middleware\SubstituteBindings::class
+        \Middlewares\OSMAuthMiddleware::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'auth:sanctum'
     ],
 
     /*

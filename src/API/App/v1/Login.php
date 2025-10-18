@@ -31,9 +31,9 @@ class Login extends Resource implements CreateInterface
         $database = database();
 
         // Controllo sulle credenziali
-        if (auth()->attempt($request['username'], $request['password'])) {
+        if (auth_osm()->attempt($request['username'], $request['password'])) {
             $user = $this->getUser();
-            $token = auth()->getToken();
+            $token = auth_osm()->getToken();
 
             if (setting("Permetti l'accesso agli amministratori")) {
                 $utente = $database->fetchOne('SELECT

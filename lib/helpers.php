@@ -206,7 +206,7 @@ if (!function_exists('_')) {
  *
  * @return Monolog\Logger
  */
-function logger()
+function logger_osm()
 {
     return Monolog\Registry::getInstance('logs');
 }

@@ -64,7 +64,7 @@ switch ($op) {
 
             flash()->error(Auth::getStatus()[$status]['message']);
 
-            redirect_url(base_path().'/index.php');
+            redirect_url(base_path_osm().'/index.php');
             exit;
         }
 
@@ -75,7 +75,7 @@ switch ($op) {
         // Pulisce anche l'intended URL al logout
         Auth::clearIntended();
 
-        redirect_url(base_path().'/index.php');
+        redirect_url(base_path_osm().'/index.php');
         exit;
 }
 
@@ -83,7 +83,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     // Priorità 1: Token access (sistema esistente)
     if (Permissions::isTokenAccess()) {
         if (!empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
-            redirect_url(base_path().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
+            redirect_url(base_path_osm().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
             exit;
         }
     }
@@ -108,16 +108,16 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect_url(base_path().'/controller.php?id_module='.$module);
+        redirect_url(base_path_osm().'/controller.php?id_module='.$module);
     } else {
-        redirect_url(base_path().'/index.php?op=logout');
+        redirect_url(base_path_osm().'/index.php?op=logout');
     }
     exit;
 }
 
 // Gestione accesso tramite token OTP
 if (!empty($token) && $dbo->isConnected() && $dbo->isInstalled()) {
-    redirect_url(base_path().'/token_login.php?token='.urlencode($token));
+    redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token));
     exit;
 }
 
@@ -244,7 +244,7 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
                             </button>
 
                             <div class="text-center mt-4">
-                                <a href="'.base_path().'/reset.php" class="text-secondary">
+                                <a href="'.base_path_osm().'/reset.php" class="text-secondary">
                                     <i class="fa fa-question-circle mr-1"></i>'.tr('Password dimenticata?').'
                                 </a>
                             </div>';
@@ -253,7 +253,7 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
                         <div class="social-auth-links text-center mt-4 pt-3 border-top">
                             <p class="text-muted">'.tr('- oppure -').'</p>
 
-                            <a href="'.base_path().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
+                            <a href="'.base_path_osm().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
                                 <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
                             </a>
                         </div>';

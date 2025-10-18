@@ -62,7 +62,7 @@ if (!headers_sent()) {
     ini_set('session.use_trans_sid', '0');
     ini_set('session.use_only_cookies', '1');
 
-    session_set_cookie_params(0, base_path(), null, isHTTPS(true));
+    session_set_cookie_params(0, base_path_osm(), null, isHTTPS(true));
     session_start();
 }
 
@@ -178,7 +178,7 @@ if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissions::getSkip()) {
+if (!$continue && getURLPath() != slashes(base_path_osm().'/index.php') && !Permissions::getSkip()) {
     if (Auth::check()) {
         Auth::logout();
     }
@@ -192,7 +192,7 @@ if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissi
         }
     }
 
-    redirect_url(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
     exit;
 }
 

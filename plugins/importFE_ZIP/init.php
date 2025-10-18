@@ -44,6 +44,6 @@ if (!empty($id_record)) {
     if (empty($record)) {
         flash()->warning(tr('Nessuna fattura da importare!'));
 
-        redirect_url(base_path().'/controller.php?id_module='.$id_module);
+        redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
     }
 }

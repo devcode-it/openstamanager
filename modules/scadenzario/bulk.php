@@ -228,7 +228,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'scadenzario',
-        'url' => base_path().'/add.php?id_module='.Module::where('name', 'Prima nota')->first()->id,
+        'url' => base_path_osm().'/add.php?id_module='.Module::where('name', 'Prima nota')->first()->id,
     ],
 ];
 

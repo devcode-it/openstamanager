@@ -64,7 +64,7 @@ if (empty($_GET['error'])) {
         if (!auth()->attempt($username, null, true)) {
             flash()->error(tr('Autenticazione fallita!'));
         }
-        redirect_url(base_path().'/');
+        redirect_url(base_path_osm().'/');
     } else {
         redirect_url($redirect);
     }

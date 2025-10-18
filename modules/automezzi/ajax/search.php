@@ -26,7 +26,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
+    $result['link'] = base_path_osm().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['nome'];
     $result['category'] = tr('Automezzi');
 

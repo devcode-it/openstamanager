@@ -42,7 +42,7 @@ if (!empty($intervento->id_contratto)) {
     $query = 'SELECT `in_tipiintervento`.`id`, `title` as `descrizione`, `in_tariffe`.`costo_ore` AS prezzo_ore_unitario, `in_tariffe`.`costo_km` AS prezzo_km_unitario, `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` WHERE `in_tariffe`.`idtecnico` = '.prepare($sessione['idtecnico']).' AND `in_tipiintervento`.`deleted_at` IS NULL ORDER BY `title`';
 }
 echo '
-<form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
+<form id="add_form" action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">

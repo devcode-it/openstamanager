@@ -61,12 +61,12 @@ if (empty($_GET['error'])) {
     if ($response['access_token']) {
         $username = $account->getProvider()->getUser($response['access_token']);
 
-        if (!auth()->attempt($username, null, true)) {
+        if (!auth_osm()->attempt($username, null, true)) {
             flash()->error(tr('Autenticazione fallita!'));
         }
-        redirect(base_path().'/');
+        redirect_url(base_path_osm().'/');
     } else {
-        redirect($redirect);
+        redirect_url($redirect);
     }
 
     exit;

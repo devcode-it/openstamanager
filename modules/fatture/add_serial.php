@@ -100,7 +100,7 @@ $rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`
 echo '
 <h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
 
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="serial-form">
+<form action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="serial-form">
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="idriga" value="'.$idriga.'">
@@ -287,7 +287,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-card-widget="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
+            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-card-widget="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path_osm().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
         </div>
 
 		<div class="col-md-10 text-right">

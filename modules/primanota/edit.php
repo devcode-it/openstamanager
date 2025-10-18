@@ -41,13 +41,13 @@ if (sizeof($rs_doc) > 0) {
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $rs[0]['dir'] == 'uscita' ? Module::where('name', 'Fatture di acquisto')->first()->id : Module::where('name', 'Fatture di vendita')->first()->id; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                    <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $rs[0]['dir'] == 'uscita' ? Module::where('name', 'Fatture di acquisto')->first()->id : Module::where('name', 'Fatture di vendita')->first()->id; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
                     <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <a class="btn dropdown-item" href="<?php echo base_path(); ?>/controller.php?id_module=<?php echo $id_modulo; ?>"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a>
+                        <a class="btn dropdown-item" href="<?php echo base_path_osm(); ?>/controller.php?id_module=<?php echo $id_modulo; ?>"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai all\'elenco delle fatture'); ?></a>
                     </ul>
                 </div>
             </div>
@@ -67,7 +67,7 @@ if (sizeof($rs_doc) > 0) {
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
             $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
-                        <a href="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="btn dropdown-item">
+                        <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="btn dropdown-item">
                             <i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?>
                         </a>
         <?php

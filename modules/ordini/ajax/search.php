@@ -56,7 +56,7 @@ foreach ($rs as $r) {
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 
-    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
+    $result['link'] = base_path_osm().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['tipologia'].' num. '.$numero.' del '.Translator::dateToLocale($r['data']);
     $result['category'] = $r['tipologia'];
 

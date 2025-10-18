@@ -192,7 +192,7 @@ if (!empty($elementi)) {
                         <td>'.($sezionale_stampa ?: tr('Tutti i sezionali')).'</td>
                         <td>'.$elemento['first_page'].' - '.$elemento['last_page'].'</td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-info" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
+                            <a class="btn btn-sm btn-info" href="'.base_path_osm().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
                                 <i class="fa fa-download"></i> '.tr('Scarica').'
                             </a>
                         </td>

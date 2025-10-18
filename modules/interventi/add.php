@@ -463,7 +463,7 @@ echo '
 
             // Carico nel card i dettagli del cliente
             $("#dettagli_cliente").html(\'<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>'.tr('Caricamento informazioni cliente...').'</p></div>\');
-            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+            $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         }
@@ -572,7 +572,7 @@ echo '
         if (data !== undefined) {
             // Carico nel card i dettagli del cliente
             $("#dettagli_cliente").html(\'<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>'.tr('Caricamento informazioni cliente...').'</p></div>\');
-            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
+            $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
         } else {

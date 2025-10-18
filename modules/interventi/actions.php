@@ -119,7 +119,7 @@ switch (post('op')) {
                         $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
                         if (!empty($template)) {
-                            $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -142,7 +142,7 @@ switch (post('op')) {
                         $template = Template::where('name', 'Notifica intervento')->first();
 
                         if (!empty($template)) {
-                            $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -165,14 +165,14 @@ switch (post('op')) {
             $template = Template::find($stato['id_email']);
 
             if (!empty($stato['destinatari'])) {
-                $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                 $mail->addReceiver($stato['destinatari']);
                 $mail->save();
             }
 
             if (!empty($stato['notifica_cliente'])) {
                 if (!empty($intervento->anagrafica->email)) {
-                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($intervento->anagrafica->email);
                     $mail->save();
                 }
@@ -193,7 +193,7 @@ switch (post('op')) {
             foreach ($tecnici as $tecnico) {
                 $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
                 if (!empty($mail_tecnico['email'])) {
-                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($mail_tecnico['email']);
                     $mail->save();
                 }
@@ -365,7 +365,7 @@ switch (post('op')) {
                     $template = Template::where('name', 'Notifica intervento')->first();
 
                     if (!empty($template)) {
-                        $mail = Mail::build(auth()->getUser(), $template, $intervento->id);
+                        $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
                         $mail->addReceiver($tecnico->email);
                         $mail->save();
                         flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -904,14 +904,14 @@ switch (post('op')) {
                         $template = Template::find($stato['id_email']);
 
                         if (!empty($stato['destinatari'])) {
-                            $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                            $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                             $mail->addReceiver($stato['destinatari']);
                             $mail->save();
                         }
 
                         if (!empty($stato['notifica_cliente'])) {
                             if (!empty($intervento->anagrafica->email)) {
-                                $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                 $mail->addReceiver($intervento->anagrafica->email);
                                 $mail->save();
                             }
@@ -926,7 +926,7 @@ switch (post('op')) {
                                 $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
                                 if (!empty($mail_tecnico['email'])) {
                                     if (!empty($template)) {
-                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                        $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                         $mail->addReceiver($mail_tecnico['email']);
                                         $mail->save();
                                         flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -987,14 +987,14 @@ switch (post('op')) {
                             $template = Template::find($stato['id_email']);
 
                             if (!empty($stato['destinatari'])) {
-                                $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                 $mail->addReceiver($stato['destinatari']);
                                 $mail->save();
                             }
 
                             if (!empty($stato['notifica_cliente'])) {
                                 if (!empty($intervento->anagrafica->email)) {
-                                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                     $mail->addReceiver($intervento->anagrafica->email);
                                     $mail->save();
                                 }
@@ -1008,7 +1008,7 @@ switch (post('op')) {
                                 foreach ($tecnici as $tecnico) {
                                     $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
                                     if (!empty($mail_tecnico['email'])) {
-                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                                        $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                         $mail->addReceiver($mail_tecnico['email']);
                                         $mail->save();
                                     }
@@ -1094,7 +1094,7 @@ switch (post('op')) {
                 $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
                 if (!empty($template)) {
-                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($tecnico['email']);
                     $mail->save();
                     flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));

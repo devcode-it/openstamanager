@@ -137,19 +137,19 @@ switch ($op) {
         $fattura->note_aggiuntive = post('note_aggiuntive');
 
         $fattura->idanagrafica = post('idanagrafica');
-        $fattura->idagente = post('idagente') ?: '';
-        $fattura->idreferente = post('idreferente');
-        $fattura->idpagamento = post('idpagamento');
-        $fattura->id_banca_azienda = post('id_banca_azienda');
-        $fattura->id_banca_controparte = post('id_banca_controparte');
-        $fattura->idcausalet = post('idcausalet');
-        $fattura->idspedizione = post('idspedizione');
-        $fattura->idporto = post('idporto');
-        $fattura->idaspettobeni = post('idaspettobeni');
-        $fattura->idvettore = post('idvettore');
-        $fattura->idsede_partenza = post('idsede_partenza');
-        $fattura->idsede_destinazione = post('idsede_destinazione');
-        $fattura->idconto = post('idconto');
+        $fattura->idagente = post('idagente') ?: null;
+        $fattura->idreferente = post('idreferente') ?: null;
+        $fattura->idpagamento = post('idpagamento') ?: null;
+        $fattura->id_banca_azienda = post('id_banca_azienda') ?: null;
+        $fattura->id_banca_controparte = post('id_banca_controparte') ?: null;
+        $fattura->idcausalet = post('idcausalet') ?: null;
+        $fattura->idspedizione = post('idspedizione') ?: null;
+        $fattura->idporto = post('idporto') ?: null;
+        $fattura->idaspettobeni = post('idaspettobeni') ?: null;
+        $fattura->idvettore = post('idvettore') ?: null;
+        $fattura->idsede_partenza = post('idsede_partenza') ?: null;
+        $fattura->idsede_destinazione = post('idsede_destinazione') ?: null;
+        $fattura->idconto = post('idconto') ?: null;
         $fattura->split_payment = post('split_payment') ?: 0;
         $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
         $fattura->n_colli = post('n_colli');
@@ -171,8 +171,8 @@ switch ($op) {
         if ($dir == 'uscita') {
             $fattura->numero = post('numero');
             $fattura->numero_esterno = post('numero_esterno');
-            $fattura->idrivalsainps = post('id_rivalsa_inps');
-            $fattura->idritenutaacconto = post('id_ritenuta_acconto');
+            $fattura->idrivalsainps = post('id_rivalsa_inps') ?: null;
+            $fattura->idritenutaacconto = post('id_ritenuta_acconto') ?: null;
         }
 
         // Operazioni sul bollo
@@ -533,7 +533,7 @@ switch ($op) {
         $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $articolo->id_iva = post('idiva');
-        $articolo->idconto = post('idconto');
+        $articolo->idconto = post('idconto') ?: null;
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
@@ -784,17 +784,17 @@ switch ($op) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
-            if (!empty($documento->idpagamento)) {
+            if (!empty($documento->idpagamento) && $documento->idpagamento != 0) {
                 $fattura->idpagamento = $documento->idpagamento;
             } else {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $fattura->idsede_partenza = $idsede_partenza;
-            $fattura->idsede_destinazione = $idsede_destinazione;
+            $fattura->idsede_partenza = $idsede_partenza ?: null;
+            $fattura->idsede_destinazione = $idsede_destinazione ?: null;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
-            $fattura->idreferente = $documento->idreferente;
-            $fattura->idagente = $documento->idagente ?: '';
+            $fattura->idreferente = $documento->idreferente ?: null;
+            $fattura->idagente = $documento->idagente ?: null;
 
             $fattura->save();
 
@@ -1159,8 +1159,8 @@ switch ($op) {
 
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
 
-                $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: '';
-                $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: '';
+                $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: null;
+                $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: null;
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 $articolo->setSconto($sconto, 'PRC');
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');

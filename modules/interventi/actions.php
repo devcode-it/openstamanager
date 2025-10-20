@@ -47,7 +47,6 @@ $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
 
 switch (post('op')) {
     case 'update':
-        $idcontratto = post('idcontratto') ?: null;
         $id_promemoria = post('idcontratto_riga');
         $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
 
@@ -65,7 +64,7 @@ switch (post('op')) {
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
 
         $intervento->idanagrafica = post('idanagrafica');
-        $intervento->idclientefinale = post('idclientefinale');
+        $intervento->idclientefinale = post('idclientefinale') ?: null;
         $intervento->idreferente = post('idreferente');
         $intervento->idagente = post('idagente');
         $intervento->idtipointervento = post('idtipointervento');
@@ -74,7 +73,7 @@ switch (post('op')) {
         $intervento->idsede_partenza = post('idsede_partenza');
         $intervento->idsede_destinazione = post('idsede_destinazione');
         $intervento->id_preventivo = post('idpreventivo') ?: null;
-        $intervento->id_contratto = $idcontratto;
+        $intervento->id_contratto = post('idcontratto') ?: null;
         $intervento->id_ordine = post('idordine') ?: null;
         $intervento->idpagamento = post('idpagamento');
 
@@ -334,7 +333,7 @@ switch (post('op')) {
             OperationLog::setInfo('id_record', $id_record);
             OperationLog::setInfo('level', 'info');
             OperationLog::build('add_sessione');
-            
+
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -667,6 +666,7 @@ switch (post('op')) {
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        $articolo->idconto = post('idconto') ?: null;
 
         try {
             $articolo->qta = $qta;

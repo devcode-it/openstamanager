@@ -71,8 +71,8 @@ switch (post('op')) {
             $preventivo->idsede_destinazione = post('idsede_destinazione');
             $preventivo->idagente = post('idagente');
             $preventivo->idreferente = post('idreferente');
-            $preventivo->idpagamento = post('idpagamento');
-            $preventivo->idporto = post('idporto');
+            $preventivo->idpagamento = post('idpagamento') ?: null;
+            $preventivo->idporto = post('idporto') ?: null;
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');
             $preventivo->condizioni_fornitura = post('condizioni_fornitura');
@@ -211,6 +211,7 @@ switch (post('op')) {
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        $articolo->idconto = post('idconto') ?: null;
 
         try {
             $articolo->qta = $qta;

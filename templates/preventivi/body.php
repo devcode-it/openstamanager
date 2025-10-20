@@ -30,11 +30,11 @@ $anagrafica = Anagrafica::find($documento['idanagrafica']);
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-$pagamento = Pagamento::find($documento['idpagamento']);
+$pagamento = $documento['idpagamento'] ? Pagamento::find($documento['idpagamento']) : null;
 
 // Banca dell'Azienda corrente impostata come predefinita per il Cliente
 $banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id)
-    ->where('id_pianodeiconti3', '=', $pagamento['idconto_vendite'] ?: 0);
+    ->where('id_pianodeiconti3', '=', $pagamento ? ($pagamento['idconto_vendite'] ?: 0) : 0);
 try {
     $banca = (clone $banca_azienda)
         ->findOrFail($anagrafica->idbanca_vendite);

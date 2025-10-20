@@ -91,16 +91,16 @@ switch (filter('op')) {
             $ddt->idanagrafica = $id_anagrafica;
             $ddt->idreferente = post('idreferente');
             $ddt->idagente = post('idagente');
-            $ddt->idspedizione = post('idspedizione');
-            $ddt->idcausalet = post('idcausalet');
+            $ddt->idspedizione = post('idspedizione') ?: null;
+            $ddt->idcausalet = post('idcausalet') ?: null;
             $ddt->idsede_partenza = post('idsede_partenza');
             $ddt->idsede_destinazione = post('idsede_destinazione');
-            $ddt->idvettore = post('idvettore');
+            $ddt->idvettore = post('idvettore') ?: null;
             $ddt->data_ora_trasporto = post('data_ora_trasporto') ?: null;
-            $ddt->idporto = post('idporto');
-            $ddt->idaspettobeni = post('idaspettobeni');
-            $ddt->idrivalsainps = $idrivalsainps;
-            $ddt->idritenutaacconto = $idritenutaacconto;
+            $ddt->idporto = post('idporto') ?: null;
+            $ddt->idaspettobeni = post('idaspettobeni') ?: null;
+            $ddt->idrivalsainps = $idrivalsainps ?: null;
+            $ddt->idritenutaacconto = $idritenutaacconto ?: null;
 
             $ddt->n_colli = post('n_colli');
             $ddt->peso = post('peso');
@@ -174,6 +174,7 @@ switch (filter('op')) {
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->idconto = post('idconto') ?: null;
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
@@ -298,7 +299,7 @@ switch (filter('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ddt->idpagamento = $documento->idpagamento;
+            $ddt->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
 
             $ddt->id_documento_fe = $documento->id_documento_fe;
             $ddt->codice_cup = $documento->codice_cup;
@@ -497,7 +498,7 @@ switch (filter('op')) {
         $copia->idcausalet = $ddt->idcausalet;
         $copia->idspedizione = $ddt->idspedizione;
         $copia->n_colli = $ddt->n_colli;
-        $copia->idpagamento = $ddt->idpagamento;
+        $copia->idpagamento = $ddt->idpagamento?:setting('Tipo di pagamento predefinito');
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;

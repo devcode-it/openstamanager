@@ -117,7 +117,7 @@ ALTER TABLE `or_righe_ordini` ADD `data_inizio_competenza` DATE NULL, ADD `data_
 ALTER TABLE `co_righe_promemoria` ADD `data_inizio_competenza` DATE NULL, ADD `data_fine_competenza` DATE NULL;
 
 -- Impostazione format = 1 per tutti i campi data nella tabella zz_views
-UPDATE `zz_views` SET `format` = 1 WHERE (`name` LIKE '%data%' OR `name` LIKE '%Data%')
+UPDATE `zz_views` SET `format` = 1 WHERE (`name` LIKE '%data%' OR `name` LIKE '%Data%');
 
 UPDATE `an_anagrafiche` SET `idiva_vendite` = null WHERE `idiva_vendite` = 0;
 UPDATE `an_anagrafiche` SET `idiva_acquisti` = null WHERE `idiva_acquisti` = 0;

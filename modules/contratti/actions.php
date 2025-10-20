@@ -91,8 +91,8 @@ switch (post('op')) {
             $contratto->idreferente = post('idreferente');
             $contratto->condizioni_fornitura = post('condizioni_fornitura');
             $contratto->informazioniaggiuntive = post('informazioniaggiuntive');
-            $contratto->id_categoria = post('id_categoria');
-            $contratto->id_sottocategoria = post('id_sottocategoria');
+            $contratto->id_categoria = post('id_categoria') ?: null;
+            $contratto->id_sottocategoria = post('id_sottocategoria') ?: null;
 
             // Informazioni sulle date del documento
             $contratto->data_bozza = post('data_bozza') ?: null;
@@ -204,6 +204,7 @@ switch (post('op')) {
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
+        $articolo->idconto = post('idconto') ?: null;
 
         try {
             $articolo->qta = $qta;
@@ -541,7 +542,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
-            $contratto->idpagamento = $documento->idpagamento;
+            $contratto->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
             $contratto->idsede_partenza = $idsede_partenza;
             $contratto->idsede_destinazione = $idsede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');

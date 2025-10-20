@@ -93,14 +93,14 @@ switch (post('op')) {
             $ordine->idagente = post('idagente');
             $ordine->idstatoordine = $idstatoordine;
             $ordine->idpagamento = $idpagamento;
-            $ordine->idspedizione = post('idspedizione');
-            $ordine->idporto = post('idporto');
-            $ordine->idvettore = post('idvettore');
+            $ordine->idspedizione = post('idspedizione') ?: null;
+            $ordine->idporto = post('idporto') ?: null;
+            $ordine->idvettore = post('idvettore') ?: null;
             $ordine->idsede_partenza = post('idsede_partenza');
             $ordine->idsede_destinazione = post('idsede_destinazione');
             $ordine->idconto = post('idconto');
-            $ordine->idrivalsainps = $idrivalsainps;
-            $ordine->idritenutaacconto = $idritenutaacconto;
+            $ordine->idrivalsainps = $idrivalsainps ?: null;
+            $ordine->idritenutaacconto = $idritenutaacconto ?: null;
 
             $ordine->bollo = 0;
             $ordine->rivalsainps = 0;
@@ -183,6 +183,7 @@ switch (post('op')) {
         $articolo->confermato = post('confermato') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->idconto = post('idconto') ?: null;
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }
@@ -427,7 +428,7 @@ switch (post('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ordine->idpagamento = $documento->idpagamento;
+            $ordine->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
             $ordine->idsede_partenza = $idsede_partenza;
             $ordine->idsede_destinazione = $idsede_destinazione;
 

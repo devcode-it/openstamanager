@@ -122,26 +122,21 @@ class CSV extends CSVImporter
         try {
             $database = database();
 
-            // Validazione dei campi obbligatori
             if (empty($record['numero']) || empty($record['nome']) || empty($record['ragione_sociale'])
                 || empty($record['data_bozza']) || empty($record['prezzo_unitario'])) {
                 return false;
             }
 
-            // Validazione per righe: deve essere presente codice articolo O descrizione riga
             if (empty($record['codice']) && empty($record['descrizione_riga'])) {
                 return false;
             }
 
-            // Ricerca del preventivo esistente
             $preventivo = $this->trovaPreventivo($record, $database);
 
-            // Controllo se creare o aggiornare il record
             if (($preventivo && !$update_record) || (!$preventivo && !$add_record)) {
                 return null;
             }
 
-            // Creazione o aggiornamento del preventivo
             if (empty($preventivo)) {
                 $preventivo = $this->creaPreventivo($record);
                 if (empty($preventivo)) {
@@ -149,14 +144,11 @@ class CSV extends CSVImporter
                 }
             }
 
-            // Aggiunta della riga al preventivo (articolo o riga generica)
             $this->aggiungiRigaAlPreventivo($preventivo, $record);
 
             return true;
         } catch (\Exception $e) {
-            // Registra l'errore in un log
             error_log('Errore durante l\'importazione del preventivo: '.$e->getMessage());
-
             return false;
         }
     }
@@ -170,9 +162,9 @@ class CSV extends CSVImporter
     {
         return [
             ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Partita IVA Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Descrizione riga generica', 'Aliquota IVA riga (%)', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', '12345678901', 'Generico', '27/04/2024', '001', '', '', '2', '30/04/2024', '50'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Rossi', '12345678901', 'Generico', '27/04/2024', '043', '', '', '1', '10/05/2024', '100'],
-            ['16', 'Preventivo Servizi', 'Preventivo servizi', 'Bianchi', '98765432109', 'Generico', '28/04/2024', '', 'Consulenza tecnica', '22', '1', '05/05/2024', '150'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', 'OSM-BUDGET', '', '22', '1', '30/04/2025', '100'],
+            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', '', 'Manodopera', '22', '1', '10/05/2025', '150'],
+            ['16', 'Preventivo Servizi', 'Preventivo servizi', 'Mario Rossi', '123456789', 'Generico', '28/04/2025', '', 'Consulenza tecnica', '22', '1', '05/05/2025', '150'],
         ];
     }
 
@@ -205,16 +197,13 @@ class CSV extends CSVImporter
     protected function creaPreventivo($record)
     {
         try {
-            // Ricerca o creazione dell'anagrafica cliente
             $anagrafica = $this->trovaOCreaAnagrafica($record);
             if (empty($anagrafica)) {
                 return null;
             }
 
-            // Ricerca del tipo di intervento
             $tipo = $this->trovaTipoIntervento($record);
 
-            // Creazione del preventivo
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], $this->parseData($record['data_bozza']), 0);
             $preventivo->numero = $record['numero'];
             $preventivo->idstato = Stato::where('name', 'Bozza')->first()->id;
@@ -224,7 +213,6 @@ class CSV extends CSVImporter
             return $preventivo;
         } catch (\Exception $e) {
             error_log('Errore durante la creazione del preventivo: '.$e->getMessage());
-
             return null;
         }
     }
@@ -244,21 +232,17 @@ class CSV extends CSVImporter
 
         $anagrafica = null;
 
-        // Prima ricerca per partita IVA se presente
         if (!empty($record['partita_iva'])) {
             $anagrafica = Anagrafica::where('piva', $record['partita_iva'])->first();
         }
 
-        // Se non trovata per partita IVA, ricerca per ragione sociale
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::where('ragione_sociale', $record['ragione_sociale'])->first();
         }
 
-        // Se non trovata, crea nuova anagrafica
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($record['ragione_sociale']);
 
-            // Imposta la partita IVA se fornita
             if (!empty($record['partita_iva'])) {
                 $anagrafica->partita_iva = $record['partita_iva'];
             }
@@ -294,7 +278,6 @@ class CSV extends CSVImporter
     protected function aggiungiRigaAlPreventivo($preventivo, $record)
     {
         try {
-            // Se è presente il codice articolo, prova a creare una riga articolo
             if (!empty($record['codice'])) {
                 $articolo_orig = ArticoloOriginale::where('codice', $record['codice'])->first();
                 if (!empty($articolo_orig)) {
@@ -302,7 +285,6 @@ class CSV extends CSVImporter
                 }
             }
 
-            // Se non è un articolo o l'articolo non è stato trovato, crea una riga generica
             if (!empty($record['descrizione_riga'])) {
                 return $this->aggiungiRigaGenericaAlPreventivo($preventivo, $record);
             }
@@ -310,7 +292,6 @@ class CSV extends CSVImporter
             return false;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta della riga al preventivo: '.$e->getMessage());
-
             return false;
         }
     }
@@ -330,12 +311,10 @@ class CSV extends CSVImporter
             $riga_articolo = Articolo::build($preventivo, $articolo_orig);
             $riga_articolo->um = $articolo_orig->um ?: null;
 
-            // Gestione della data di evasione
             if (!empty($record['data_evasione'])) {
                 $riga_articolo->data_evasione = $this->parseData($record['data_evasione']);
             }
 
-            // Gestione dell'IVA
             $anagrafica = $preventivo->anagrafica;
             $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->idiva_vendite ?: setting('Iva predefinita'));
 
@@ -348,7 +327,6 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta dell\'articolo al preventivo: '.$e->getMessage());
-
             return false;
         }
     }
@@ -366,12 +344,10 @@ class CSV extends CSVImporter
         try {
             $riga = Riga::build($preventivo);
 
-            // Gestione della data di evasione
             if (!empty($record['data_evasione'])) {
                 $riga->data_evasione = $this->parseData($record['data_evasione']);
             }
 
-            // Gestione dell'IVA
             $idiva = $this->trovaAliquotaIva($record, $preventivo);
 
             $riga->descrizione = $record['descrizione_riga'];
@@ -383,7 +359,6 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta della riga generica al preventivo: '.$e->getMessage());
-
             return false;
         }
     }
@@ -398,7 +373,6 @@ class CSV extends CSVImporter
      */
     protected function trovaAliquotaIva($record, $preventivo)
     {
-        // Se è specificata un'aliquota IVA nel record, cerca per percentuale
         if (!empty($record['aliquota_iva'])) {
             $aliquota = Aliquota::where('percentuale', $record['aliquota_iva'])->first();
             if (!empty($aliquota)) {
@@ -406,7 +380,6 @@ class CSV extends CSVImporter
             }
         }
 
-        // Fallback: usa l'IVA dell'anagrafica o quella predefinita
         $anagrafica = $preventivo->anagrafica;
         return $anagrafica->idiva_vendite ?: setting('Iva predefinita');
     }
@@ -423,14 +396,11 @@ class CSV extends CSVImporter
         try {
             return new Carbon($data_string);
         } catch (\Exception $e) {
-            // Prova a interpretare formati di data italiani (dd/mm/yyyy)
             if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $data_string, $matches)) {
                 return Carbon::createFromDate($matches[3], $matches[2], $matches[1]);
             }
 
-            // Fallback alla data corrente
             error_log('Errore nel parsing della data: '.$e->getMessage());
-
             return Carbon::now();
         }
     }

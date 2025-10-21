@@ -220,3 +220,9 @@ HAVING
     2=2
 ORDER BY
     `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
+
+-- Ordinamento vista Modelli prima nota
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_movimenti_modelli` WHERE 1=1 GROUP BY `idmastrino` HAVING 2=2 ORDER BY `co_movimenti_modelli`.`nome`' WHERE `zz_modules`.`name` = 'Modelli prima nota';
+
+-- Ordinamento vista IVA
+UPDATE `zz_modules` SET `options` = '\nSELECT\n |select|\nFROM\n `co_iva`\n LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND |lang|)\nWHERE\n 1=1 AND `deleted_at` IS NULL\nHAVING\n 2=2 \nORDER BY\n `co_iva_lang`.`title`' WHERE `zz_modules`.`name` = 'Iva';

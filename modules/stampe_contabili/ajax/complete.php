@@ -28,7 +28,26 @@ switch ($resource) {
         $id_sezionale = get('id_sezionale');
         $dir = get('dir');
 
-        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampecontabili WHERE id_print='.prepare($id_print).' AND id_sezionale='.prepare($id_sezionale).' AND dir='.prepare($dir).' AND date_start='.prepare($date_start).' AND date_end='.prepare($date_end))['id'];
+        $where_conditions = [
+            'id_print='.prepare($id_print),
+            'date_start='.prepare($date_start),
+            'date_end='.prepare($date_end)
+        ];
+
+        if (!empty($id_sezionale)) {
+            $where_conditions[] = 'id_sezionale='.prepare($id_sezionale);
+        } else {
+            $where_conditions[] = '(id_sezionale IS NULL OR id_sezionale = "")';
+        }
+
+        if (!empty($dir)) {
+            $where_conditions[] = 'dir='.prepare($dir);
+        } else {
+            $where_conditions[] = '(dir IS NULL OR dir = "")';
+        }
+
+        $where_clause = implode(' AND ', $where_conditions);
+        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampecontabili WHERE '.$where_clause)['id'];
 
         echo json_encode($stampa_definitiva ?: 0);
 

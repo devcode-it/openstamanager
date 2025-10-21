@@ -146,7 +146,19 @@ echo '
     </div>
 </form>';
 
-$elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' AND id_print='.prepare($id_print).' AND dir='.prepare($dir));
+$where_conditions = [
+    'date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']),
+    'id_print='.prepare($id_print)
+];
+
+if (!empty($dir)) {
+    $where_conditions[] = 'dir='.prepare($dir);
+} else {
+    $where_conditions[] = '(dir IS NULL OR dir = "")';
+}
+
+$where_clause = implode(' AND ', $where_conditions);
+$elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE '.$where_clause);
 echo '
 <div class="card card-info card-outline mt-3 collapsed-card">
     <div class="card-header">
@@ -181,7 +193,7 @@ if (!empty($elementi)) {
     foreach ($elementi as $elemento) {
         $sezionale_stampa = $dbo->fetchOne('SELECT `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_segments`.`id` = '.$elemento['id_sezionale'])['title'];
 
-        $file = $dbo->selectOne('zz_files', '*', [
+        $file = $dbo->selectOne('zz_files', ['*'], [
             'id_module' => $id_module,
             'id_record' => $elemento['id'],
         ]);

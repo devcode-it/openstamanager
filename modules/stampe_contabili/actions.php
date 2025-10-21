@@ -23,25 +23,67 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'crea_definitiva':
         $year = date('Y', strtotime(post('date_start')));
+        $id_print = post('id_print');
+        $id_sezionale = post('id_sezionale');
+        $dir = post('dir');
+        $date_start = post('date_start');
+        $date_end = post('date_end');
 
-        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE `id_print`='.prepare(post('id_print')).' AND `id_sezionale`='.prepare(post('id_sezionale')).' AND YEAR(`date_end`)='.prepare($year).' AND `dir`='.prepare(post('dir')))['last_page'] + 1;
+        $where_conditions = [
+            '`id_print`='.prepare($id_print),
+            'YEAR(`date_end`)='.prepare($year)
+        ];
 
-        $print = Prints::render(post('id_print'), null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
+        if (!empty($id_sezionale)) {
+            $where_conditions[] = '`id_sezionale`='.prepare($id_sezionale);
+        } else {
+            $where_conditions[] = '(`id_sezionale` IS NULL OR `id_sezionale` = "")';
+        }
+
+        if (!empty($dir)) {
+            $where_conditions[] = '`dir`='.prepare($dir);
+        } else {
+            $where_conditions[] = '(`dir` IS NULL OR `dir` = "")';
+        }
+
+        $where_clause = implode(' AND ', $where_conditions);
+        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE '.$where_clause)['last_page'] + 1;
+
+        $print = Prints::render($id_print, null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
         $pages = count($print['pages']);
         $last_page = $first_page + $pages - 1;
 
-        $result = $dbo->table('co_stampecontabili')->insertGetId([
-            'id_print' => post('id_print'),
-            'id_sezionale' => post('id_sezionale') ?: '',
-            'date_start' => post('date_start'),
-            'date_end' => post('date_end'),
+        $insert_data = [
+            'id_print' => $id_print,
+            'date_start' => $date_start,
+            'date_end' => $date_end,
             'first_page' => $first_page,
             'last_page' => $last_page,
-            'dir' => post('dir'),
-        ]);
+        ];
 
-        $print = Prints::render(post('id_print'), null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
-        $name = 'Registro_iva_'.(post('dir') == 'entrata' ? 'vendite' : 'acquisti').'_del_'.post('date_start');
+        if (!empty($id_sezionale)) {
+            $insert_data['id_sezionale'] = $id_sezionale;
+        }
+
+        if (!empty($dir)) {
+            $insert_data['dir'] = $dir;
+        }
+
+        $result = $dbo->table('co_stampecontabili')->insertGetId($insert_data);
+
+        $print = Prints::render($id_print, null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
+
+        $print_name = $print['name'];
+        $print_name = str_replace('.pdf', '', $print_name);
+        $date_formatted = date('Y-m-d', strtotime($date_start));
+
+        if (!empty($dir)) {
+            $dir_text = ($dir == 'entrata') ? 'vendite' : 'acquisti';
+            $name = $print_name.'_'.$dir_text.'_del_'.$date_formatted;
+        } else {
+            $name = $print_name.'_del_'.$date_formatted;
+        }
+
         $upload = Uploads::upload($print['pdf'], [
             'name' => $name,
             'original_name' => $name.'.pdf',

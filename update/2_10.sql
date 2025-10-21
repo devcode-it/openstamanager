@@ -226,3 +226,9 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_movimenti_modelli`
 
 -- Ordinamento vista IVA
 UPDATE `zz_modules` SET `options` = '\nSELECT\n |select|\nFROM\n `co_iva`\n LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND |lang|)\nWHERE\n 1=1 AND `deleted_at` IS NULL\nHAVING\n 2=2 \nORDER BY\n `co_iva_lang`.`title`' WHERE `zz_modules`.`name` = 'Iva';
+
+-- Fix per stampe contabili
+ALTER TABLE `co_stampecontabili` CHANGE `dir` `dir` VARCHAR(255) NULL;
+ALTER TABLE `co_stampecontabili` CHANGE `id_sezionale` `id_sezionale` INT NULL;
+UPDATE `co_stampecontabili` SET `dir` = NULL WHERE `dir` = '';
+UPDATE `co_stampecontabili` SET `id_sezionale` = NULL WHERE `id_sezionale` = 0;

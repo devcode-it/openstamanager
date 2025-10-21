@@ -40,9 +40,9 @@ class Impianto extends Model
     public static function build($matricola = null, $nome = null, ?Categoria $categoria = null, $anagrafica = null)
     {
         $model = new static();
-        $model->is_impianto = 1;
         $model->matricola = $matricola;
         $model->nome = $nome;
+        $model->idanagrafica = $anagrafica;
 
         $model->categoria()->associate($categoria);
 

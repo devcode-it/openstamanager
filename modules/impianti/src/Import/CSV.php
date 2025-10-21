@@ -25,7 +25,9 @@ use Models\Module;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
+use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Categoria;
+use Modules\Articoli\Marca;
 use Modules\Impianti\Impianto;
 
 /**
@@ -35,6 +37,10 @@ use Modules\Impianti\Impianto;
  */
 class CSV extends CSVImporter
 {
+    /**
+     * Array per memorizzare gli errori specifici per i record falliti.
+     */
+    protected $failed_errors = [];
     /**
      * Definisce i campi disponibili per l'importazione.
      *
@@ -108,6 +114,65 @@ class CSV extends CSVImporter
     }
 
     /**
+     * Importa le righe specificate dal file CSV.
+     *
+     * @param int  $offset        Offset di partenza
+     * @param int  $length        Numero di righe da importare
+     * @param bool $update_record Se true, aggiorna i record esistenti
+     * @param bool $add_record    Se true, aggiunge nuovi record
+     *
+     * @return array Statistiche dell'importazione
+     */
+    public function importRows($offset, $length, $update_record = true, $add_record = true)
+    {
+        $rows = $this->getRows($offset, $length);
+        $imported_count = 0;
+        $failed_count = 0;
+
+        foreach ($rows as $row) {
+            $record = $this->getRecord($row);
+
+            $missing_required_fields = [];
+            foreach ($this->getAvailableFields() as $field) {
+                if (isset($field['required']) && $field['required'] === true && array_key_exists($field['field'], $record)) {
+                    if (trim((string) $record[$field['field']]) === '') {
+                        $missing_required_fields[] = $field['field'];
+                    }
+                }
+            }
+
+            // Validazione specifica per impianti: almeno uno tra partita IVA e codice fiscale
+            if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
+                $missing_required_fields[] = 'partita_iva/codice_fiscale';
+            }
+
+            if (!empty($missing_required_fields)) {
+                $this->failed_records[] = $record;
+                $this->failed_rows[] = $row;
+                $this->failed_errors[] = 'Campi obbligatori mancanti: ' . implode(', ', $missing_required_fields);
+                ++$failed_count;
+                continue;
+            }
+
+            $result = $this->import($record, $update_record, $add_record);
+
+            if ($result === false) {
+                $this->failed_records[] = $record;
+                $this->failed_rows[] = $row;
+                ++$failed_count;
+            } else {
+                ++$imported_count;
+            }
+        }
+
+        return [
+            'imported' => $imported_count,
+            'failed' => $failed_count,
+            'total' => count($rows),
+        ];
+    }
+
+    /**
      * Importa un record nel database.
      *
      * @param array $record        Record da importare
@@ -124,17 +189,20 @@ class CSV extends CSVImporter
 
             // Validazione dei campi obbligatori
             if (empty($record['matricola']) || empty($record['nome'])) {
+                $this->failed_errors[] = 'Campi obbligatori mancanti: matricola e/o nome';
                 return false;
             }
 
             // Verifica che almeno uno tra partita IVA e codice fiscale sia presente
             if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
+                $this->failed_errors[] = 'Almeno uno tra Partita IVA e Codice Fiscale deve essere presente';
                 return false;
             }
 
-            // Ricerca dell'anagrafica cliente
+            // Ricerca o creazione dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
+                $this->failed_errors[] = 'Impossibile trovare o creare anagrafica cliente con Partita IVA: '.($record['partita_iva'] ?? '').' o Codice Fiscale: '.($record['codice_fiscale'] ?? '');
                 return false;
             }
 
@@ -179,8 +247,15 @@ class CSV extends CSVImporter
 
             return true;
         } catch (\Exception $e) {
-            // Registra l'errore in un log
-            error_log('Errore durante l\'importazione dell\'impianto: '.$e->getMessage());
+            // Registra l'errore specifico
+            $error_message = 'Errore durante l\'importazione dell\'impianto';
+            if (!empty($record['matricola'])) {
+                $error_message .= ' (Matricola: ' . $record['matricola'] . ')';
+            }
+            $error_message .= ': ' . $e->getMessage();
+
+            error_log($error_message);
+            $this->failed_errors[] = $e->getMessage();
 
             return false;
         }
@@ -198,31 +273,98 @@ class CSV extends CSVImporter
             ['00001', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Lavatrice Samsung', '12345678901', '', 'Elettrodomestici', 'Lavatrici', 'Sede Principale', 'Lavatrice a carica frontale 8kg', '2023-01-01', 'Samsung', 'WW80TA046AX'],
             ['00002', 'https://openstamanager.com/moduli/3cx/3cx.webp', '2', 'Caldaia Ariston', '', 'RSSMRA80A01H501U', 'Riscaldamento', 'Caldaie', 'Sede Secondaria', 'Caldaia a condensazione 24kW', '2023-03-06', 'Ariston', 'Genus One Net'],
             ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno Electrolux', '98765432109', '', 'Elettrodomestici', 'Forni', 'Sede Principale', 'Forno elettrico multifunzione', '2023-04-01', 'Electrolux', 'EOC6P77WX'],
-            ['00004', 'https://openstamanager.com/moduli/distinta-base/distinta.webp', '2', 'Lavastoviglie Bosch', '12345678901', '', 'Elettrodomestici', 'Lavastoviglie', 'Sede Principale', 'Lavastoviglie da incasso 60cm', '2023-08-06', 'Bosch', 'SMV4HCX48E'],
-            ['00005', '', '', 'Condizionatore Daikin', '', 'VRDLGI75M15F205Z', 'Climatizzazione', 'Split', 'Sede Principale', 'Condizionatore inverter 12000 BTU', '2023-05-15', 'Daikin', 'FTXM35R'],
+            ['00004', 'https://openstamanager.com/moduli/climatizzazione/climatizzazione.webp', '2', 'Condizionatore Daikin', '', 'VRDLGI75M15F205Z', 'Climatizzazione', 'Split', 'Sede Principale', 'Condizionatore inverter 12000 BTU', '2023-05-15', 'Daikin', 'FTXM35R'],
         ];
     }
 
     /**
      * Trova l'anagrafica cliente in base alla partita IVA o al codice fiscale.
+     * Se non trova nessuna corrispondenza, crea una nuova anagrafica.
      *
      * @param array $record Record da importare
      *
-     * @return Anagrafica|null
+     * @return Anagrafica|null Anagrafica trovata o creata, null in caso di errore
      */
     protected function trovaAnagrafica($record)
     {
         $anagrafica = null;
 
+        // Ricerca per partita IVA
         if (!empty($record['partita_iva'])) {
             $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
         }
 
+        // Ricerca per codice fiscale se non trovata con partita IVA
         if (empty($anagrafica) && !empty($record['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
         }
 
+        // Se non trova nessuna anagrafica, ne crea una nuova
+        if (empty($anagrafica)) {
+            $anagrafica = $this->creaAnagrafica($record);
+        }
+
         return $anagrafica;
+    }
+
+    /**
+     * Crea una nuova anagrafica in base ai dati del record.
+     *
+     * @param array $record Record da processare
+     *
+     * @return Anagrafica|null Anagrafica creata o null in caso di errore
+     */
+    protected function creaAnagrafica($record)
+    {
+        try {
+            // Determina la ragione sociale da utilizzare
+            $ragione_sociale = '';
+            if (!empty($record['partita_iva'])) {
+                $ragione_sociale = 'Cliente P.IVA '.$record['partita_iva'];
+            } elseif (!empty($record['codice_fiscale'])) {
+                $ragione_sociale = 'Cliente C.F. '.$record['codice_fiscale'];
+            } else {
+                $ragione_sociale = 'Cliente importato '.date('Y-m-d H:i:s');
+            }
+
+            // Verifica che la ragione sociale non sia vuota
+            if (empty($ragione_sociale)) {
+                error_log('Impossibile determinare la ragione sociale per il record: '.json_encode($record));
+                return null;
+            }
+
+            $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
+            $tipologie = !empty($tipo_cliente) ? [$tipo_cliente->id] : [];
+
+            $anagrafica = Anagrafica::build($ragione_sociale, '', '', $tipologie);
+
+            // Imposta partita IVA se presente
+            if (!empty($record['partita_iva'])) {
+                $anagrafica->piva = $record['partita_iva'];
+            }
+
+            // Imposta codice fiscale se presente
+            if (!empty($record['codice_fiscale'])) {
+                $anagrafica->codice_fiscale = $record['codice_fiscale'];
+            }
+
+            // Imposta un telefono fittizio se mancante (richiesto per le anagrafiche)
+            if (empty($anagrafica->telefono) && empty($anagrafica->piva)) {
+                $anagrafica->telefono = '000000000'; // Telefono fittizio per soddisfare i vincoli
+            }
+
+            $anagrafica->save();
+            $anagrafica->refresh();
+
+            error_log('Anagrafica creata con successo: ID '.$anagrafica->id.', Ragione sociale: '.$ragione_sociale);
+
+            return $anagrafica;
+        } catch (\Exception $e) {
+            // Registra l'errore con più dettagli
+            error_log('Errore durante la creazione dell\'anagrafica: '.$e->getMessage().' - Record: '.json_encode($record).' - Stack trace: '.$e->getTraceAsString());
+
+            return null;
+        }
     }
 
     /**
@@ -255,15 +397,31 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $categoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['categoria'])))->where('is_impianto', '=', 1)->first();
+        try {
+            // Cerca la categoria esistente per nome
+            $categoria_id = (new Categoria())->getByField('title', $record['categoria']);
+            $categoria = $categoria_id ? Categoria::where('id', $categoria_id)->where('is_impianto', '=', 1)->first() : null;
 
-        if (empty($categoria)) {
-            $categoria = Categoria::build();
-            $categoria->setTranslation('title', $record['categoria']);
-            $categoria->save();
+            // Se non trovata, cerca per nome diretto
+            if (empty($categoria)) {
+                $categoria = Categoria::where('name', $record['categoria'])
+                    ->where('is_impianto', 1)
+                    ->where('parent', null)
+                    ->first();
+            }
+
+            // Se ancora non trovata, crea una nuova categoria
+            if (empty($categoria)) {
+                $categoria = Categoria::build(null, $record['categoria']);
+                $categoria->is_impianto = 1;
+                $categoria->setTranslation('title', $record['categoria']);
+                $categoria->save();
+            }
+
+            return $categoria;
+        } catch (\Exception $e) {
+            throw new \Exception('Errore nella creazione/ricerca categoria "' . $record['categoria'] . '": ' . $e->getMessage());
         }
-
-        return $categoria;
     }
 
     /**
@@ -280,16 +438,33 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $sottocategoria = Categoria::where('id', '=', (new Categoria())->getByField('title', strtolower((string) $record['sottocategoria'])))->first();
+        try {
+            // Cerca la sottocategoria esistente per nome
+            $sottocategoria_id = (new Categoria())->getByField('title', $record['sottocategoria']);
+            $sottocategoria = $sottocategoria_id ? Categoria::where('id', $sottocategoria_id)->where('parent', $categoria->id)->first() : null;
 
-        if (empty($sottocategoria)) {
-            $sottocategoria = Categoria::build();
-            $sottocategoria->setTranslation('title', $record['sottocategoria']);
-            $sottocategoria->parent()->associate($categoria);
-            $sottocategoria->save();
+            // Se non trovata, cerca per nome diretto
+            if (empty($sottocategoria)) {
+                $sottocategoria = Categoria::where('name', $record['sottocategoria'])
+                    ->where('parent', $categoria->id)
+                    ->first();
+            }
+
+            // Se ancora non trovata, crea una nuova sottocategoria
+            if (empty($sottocategoria)) {
+                $sottocategoria = Categoria::build($categoria, $record['sottocategoria']);
+                $sottocategoria->is_impianto = 1;
+                $sottocategoria->setTranslation('title', $record['sottocategoria']);
+                $sottocategoria->parent()->associate($categoria);
+                $sottocategoria->save();
+            }
+
+            return $sottocategoria;
+        } catch (\Exception $e) {
+            // Registra l'errore ma continua con l'importazione
+            error_log('Errore nella creazione/ricerca sottocategoria "' . $record['sottocategoria'] . '": ' . $e->getMessage());
+            return null;
         }
-
-        return $sottocategoria;
     }
 
     /**
@@ -306,16 +481,35 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $result = $database->fetchOne('SELECT `id` FROM `my_impianti_marche` WHERE `title`='.prepare($record['marca']));
-        $id_marca = !empty($result) ? $result['id'] : null;
+        try {
+            // Cerca la marca esistente per nome nella tabella unificata zz_marche
+            $marca = Marca::where('name', $record['marca'])
+                ->where('is_impianto', 1)
+                ->first();
 
-        if (empty($id_marca)) {
-            $query = 'INSERT INTO `my_impianti_marche` (`title`) VALUES ('.prepare($record['marca']).')';
-            $database->query($query);
-            $id_marca = $database->lastInsertedID();
+            // Se non trovata, crea una nuova marca
+            if (empty($marca)) {
+                $marca = Marca::build($record['marca']);
+                $marca->is_impianto = 1;
+                $marca->save();
+            }
+
+            return $marca->id;
+        } catch (\Exception $e) {
+            // Fallback al metodo diretto se il modello non funziona
+            error_log('Errore nella gestione marca con modello, uso fallback: ' . $e->getMessage());
+
+            $result = $database->fetchOne('SELECT `id` FROM `zz_marche` WHERE `name`='.prepare($record['marca']).' AND `is_impianto` = 1');
+            $id_marca = !empty($result) ? $result['id'] : null;
+
+            if (empty($id_marca)) {
+                $query = 'INSERT INTO `zz_marche` (`name`, `is_impianto`) VALUES ('.prepare($record['marca']).', 1)';
+                $database->query($query);
+                $id_marca = $database->lastInsertedID();
+            }
+
+            return $id_marca;
         }
-
-        return $id_marca;
     }
 
     /**
@@ -424,5 +618,51 @@ class CSV extends CSVImporter
             // Registra l'errore ma continua con l'importazione
             error_log('Errore durante l\'importazione dell\'immagine: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Salva i record falliti con gli errori specifici in un file CSV.
+     *
+     * @param string $filepath Percorso del file in cui salvare i record falliti
+     *
+     * @return string Percorso del file salvato
+     */
+    public function saveFailedRecordsWithErrors($filepath)
+    {
+        if (empty($this->failed_rows)) {
+            return '';
+        }
+
+        $dir = dirname($filepath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $header = $this->getHeader();
+        $header[] = 'Errore';
+        fputcsv($file, $header, ';');
+
+        foreach ($this->failed_rows as $index => $row) {
+            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
+            $row[] = $error_message;
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        return $filepath;
+    }
+
+    /**
+     * Restituisce gli errori specifici per i record falliti.
+     *
+     * @return array
+     */
+    public function getFailedErrors()
+    {
+        return $this->failed_errors;
     }
 }

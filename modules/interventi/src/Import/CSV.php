@@ -56,17 +56,17 @@ class CSV extends CSVImporter
             [
                 'field' => 'partita_iva',
                 'label' => 'Partita IVA cliente',
-                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
+                'required' => false,
             ],
             [
                 'field' => 'codice_fiscale',
                 'label' => 'Codice Fiscale cliente',
-                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
+                'required' => false, 
             ],
             [
                 'field' => 'ragione_sociale',
                 'label' => 'Ragione Sociale cliente',
-                'required' => false, // Se non trova corrispondenza, verrà creata una nuova anagrafica
+                'required' => false,
             ],
             [
                 'field' => 'data',
@@ -133,17 +133,6 @@ class CSV extends CSVImporter
     }
 
     /**
-     * Procedura di inizializzazione per l'importazione.
-     * Può essere utilizzata per preparare il database prima dell'importazione.
-     *
-     * @return void
-     */
-    public function init()
-    {
-        // Nessuna operazione di inizializzazione necessaria per gli interventi
-    }
-
-    /**
      * Importa un record nel database.
      *
      * @param array $record        Record da importare
@@ -170,14 +159,12 @@ class CSV extends CSVImporter
                 return false;
             }
 
-            // Nota: Non è più necessario verificare la presenza di partita IVA, codice fiscale o ragione sociale
-            // perché se non vengono trovate corrispondenze, verrà creata automaticamente una nuova anagrafica
 
             // Ricerca dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
                 error_log('Impossibile trovare o creare anagrafica per il record: '.json_encode($record));
-                return false; // Non è possibile procedere senza un'anagrafica cliente
+                return false; 
             }
 
             // Ricerca dell'impianto se specificato
@@ -229,6 +216,9 @@ class CSV extends CSVImporter
             // Aggiorna i campi dell'intervento
             $this->aggiornaIntervento($intervento, $record);
 
+            // Imposta la sede di partenza a 0 (sede legale di default)
+            $intervento->idsede_partenza = 0;
+
             // Collega l'impianto all'intervento se specificato
             if (!empty($impianto)) {
                 $this->collegaImpianto($intervento, $impianto);
@@ -261,9 +251,9 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Partita IVA Cliente', 'Codice Fiscale Cliente', 'Ragione Sociale Cliente', 'Data', 'Data richiesta', 'Ora inizio', 'Ora fine', 'Tecnico', 'Tipo', 'Note', 'Impianto', 'Richiesta', 'Descrizione', 'Stato', 'Descrizione riga', 'Imponibile riga', 'Aliquota IVA (%)'],
-            ['00001/2024', '123456789', '123456789', 'Acme S.r.l.', '07/11/2024', '03/11/2025', '8:30', '9:30', 'Stefano Bianchi', '', '', '12345-85A22', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', 'Da programmare', 'Servizio di manutenzione', '100.00', '22'],
-            ['0002/2024', '', '', 'Beta Company S.p.A.', '08/11/2024', '04/11/2025', '11:20', '', 'Stefano Bianchi', '', '', '12345-85B23', 'Manutenzione ordinaria', 'eseguito intervento di manutenzione', '', 'Controllo impianto', '150.00', '22'],
-            ['0003/2024', '', '', '', '09/11/2024', '05/11/2025', '14:00', '15:00', 'Stefano Bianchi', '', '', '', 'Intervento urgente', 'riparazione guasto', 'Completato', 'Riparazione urgente', '200.00', '22'],
+            ['0001/2025', '12345678901', 'RSSMRA80A01H501Z', 'Acme S.r.l.', '15/01/2025', '10/01/2025', '08:30', '09:30', 'Mario Rossi', 'GEN', 'Intervento programmato', 'IMP001', 'Manutenzione ordinaria', 'Eseguito intervento di manutenzione programmata', 'Completato', 'Servizio di manutenzione', '100.00', '22'],
+            ['0002/2025', '98765432109', 'VRDLGU75B15F205X', 'Beta Company S.p.A.', '20/01/2025', '18/01/2025', '10:00', '12:00', 'Mario Rossi', 'GEN', 'Cliente molto soddisfatto', 'IMP002', 'Controllo impianto', 'Eseguito controllo periodico impianto', 'Completato', 'Controllo impianto', '150.00', '22'],
+            ['0003/2025', '11223344556', 'BNCNNA85C20G273Y', 'Gamma S.n.c.', '25/01/2025', '25/01/2025', '14:00', '15:30', 'Mario Rossi', 'GEN', 'Intervento urgente risolto', 'IMP003', 'Riparazione guasto', 'Riparato guasto elettrico', 'Completato', 'Riparazione urgente', '200.00', '22'],
         ];
     }
 
@@ -512,8 +502,10 @@ class CSV extends CSVImporter
                 return null;
             }
 
-            // Crea la nuova anagrafica
-            $anagrafica = Anagrafica::build($ragione_sociale);
+            $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
+            $tipologie = !empty($tipo_cliente) ? [$tipo_cliente->id] : [];
+
+            $anagrafica = Anagrafica::build($ragione_sociale, '', '', $tipologie);
 
             // Imposta partita IVA se presente
             if (!empty($record['partita_iva'])) {
@@ -530,14 +522,8 @@ class CSV extends CSVImporter
                 $anagrafica->telefono = '000000000'; // Telefono fittizio per soddisfare i vincoli
             }
 
-            // Assegna il tipo "Cliente" all'anagrafica
-            $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
-            if (!empty($tipo_cliente)) {
-                $anagrafica->tipologie = [$tipo_cliente->id];
-            }
-
-            // Salva l'anagrafica
             $anagrafica->save();
+            $anagrafica->refresh();
 
             error_log('Anagrafica creata con successo: ID '.$anagrafica->id.', Ragione sociale: '.$ragione_sociale);
 

@@ -46,70 +46,23 @@ class CSV extends CSVImporter
      *
      * @return array
      */
+
     public function getAvailableFields()
     {
         return [
-            [
-                'field' => 'matricola',
-                'label' => 'Matricola',
-                'primary_key' => true,
-                'required' => true,
-            ],
-            [
-                'field' => 'immagine',
-                'label' => 'Immagine',
-                'names' => [
-                    'Immagine',
-                    'Foto',
-                ],
-            ],
-            [
-                'field' => 'import_immagine',
-                'label' => 'Import immagine',
-            ],
-            [
-                'field' => 'nome',
-                'label' => 'Nome',
-                'required' => true,
-            ],
-            [
-                'field' => 'partita_iva',
-                'label' => 'Partita IVA cliente',
-                'required' => false, // Almeno uno tra partita IVA e codice fiscale deve essere presente
-            ],
-            [
-                'field' => 'codice_fiscale',
-                'label' => 'Codice Fiscale cliente',
-                'required' => false, // Almeno uno tra partita IVA e codice fiscale deve essere presente
-            ],
-            [
-                'field' => 'categoria',
-                'label' => 'Categoria',
-            ],
-            [
-                'field' => 'sottocategoria',
-                'label' => 'Sottocategoria',
-            ],
-            [
-                'field' => 'sede',
-                'label' => 'Sede',
-            ],
-            [
-                'field' => 'descrizione',
-                'label' => 'Descrizione',
-            ],
-            [
-                'field' => 'data',
-                'label' => 'Data installazione',
-            ],
-            [
-                'field' => 'marca',
-                'label' => 'Marca',
-            ],
-            [
-                'field' => 'modello',
-                'label' => 'Modello',
-            ],
+            ['field' => 'matricola', 'label' => 'Matricola', 'primary_key' => true, 'required' => true],
+            ['field' => 'immagine', 'label' => 'Immagine', 'names' => ['Immagine', 'Foto']],
+            ['field' => 'import_immagine', 'label' => 'Import immagine'],
+            ['field' => 'nome', 'label' => 'Nome', 'required' => true],
+            ['field' => 'partita_iva', 'label' => 'Partita IVA cliente', 'required' => false],
+            ['field' => 'codice_fiscale', 'label' => 'Codice Fiscale cliente', 'required' => false],
+            ['field' => 'categoria', 'label' => 'Categoria'],
+            ['field' => 'sottocategoria', 'label' => 'Sottocategoria'],
+            ['field' => 'sede', 'label' => 'Sede'],
+            ['field' => 'descrizione', 'label' => 'Descrizione'],
+            ['field' => 'data', 'label' => 'Data installazione'],
+            ['field' => 'marca', 'label' => 'Marca'],
+            ['field' => 'modello', 'label' => 'Modello'],
         ];
     }
 
@@ -132,24 +85,25 @@ class CSV extends CSVImporter
         foreach ($rows as $row) {
             $record = $this->getRecord($row);
 
-            $missing_required_fields = [];
+            // Validazione campi obbligatori
+            $missing_fields = [];
             foreach ($this->getAvailableFields() as $field) {
-                if (isset($field['required']) && $field['required'] === true && array_key_exists($field['field'], $record)) {
+                if (isset($field['required']) && $field['required'] && array_key_exists($field['field'], $record)) {
                     if (trim((string) $record[$field['field']]) === '') {
-                        $missing_required_fields[] = $field['field'];
+                        $missing_fields[] = $field['field'];
                     }
                 }
             }
 
-            // Validazione specifica per impianti: almeno uno tra partita IVA e codice fiscale
+            // Almeno uno tra P.IVA e C.F. deve essere presente
             if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
-                $missing_required_fields[] = 'partita_iva/codice_fiscale';
+                $missing_fields[] = 'partita_iva/codice_fiscale';
             }
 
-            if (!empty($missing_required_fields)) {
+            if (!empty($missing_fields)) {
                 $this->failed_records[] = $record;
                 $this->failed_rows[] = $row;
-                $this->failed_errors[] = 'Campi obbligatori mancanti: ' . implode(', ', $missing_required_fields);
+                $this->failed_errors[] = 'Campi obbligatori mancanti: ' . implode(', ', $missing_fields);
                 ++$failed_count;
                 continue;
             }
@@ -165,11 +119,7 @@ class CSV extends CSVImporter
             }
         }
 
-        return [
-            'imported' => $imported_count,
-            'failed' => $failed_count,
-            'total' => count($rows),
-        ];
+        return ['imported' => $imported_count, 'failed' => $failed_count, 'total' => count($rows)];
     }
 
     /**
@@ -187,76 +137,54 @@ class CSV extends CSVImporter
             $database = database();
             $primary_key = $this->getPrimaryKey();
 
-            // Validazione dei campi obbligatori
             if (empty($record['matricola']) || empty($record['nome'])) {
                 $this->failed_errors[] = 'Campi obbligatori mancanti: matricola e/o nome';
                 return false;
             }
 
-            // Verifica che almeno uno tra partita IVA e codice fiscale sia presente
             if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
                 $this->failed_errors[] = 'Almeno uno tra Partita IVA e Codice Fiscale deve essere presente';
                 return false;
             }
 
-            // Ricerca o creazione dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
-                $this->failed_errors[] = 'Impossibile trovare o creare anagrafica cliente con Partita IVA: '.($record['partita_iva'] ?? '').' o Codice Fiscale: '.($record['codice_fiscale'] ?? '');
+                $this->failed_errors[] = 'Impossibile trovare o creare anagrafica cliente';
                 return false;
             }
 
-            // Ricerca dell'impianto esistente
             $impianto = $this->trovaImpianto($record, $primary_key);
 
-            // Controllo se creare o aggiornare il record
             if (($impianto && !$update_record) || (!$impianto && !$add_record)) {
                 return null;
             }
 
-            // Estrazione URL immagine
             $url = $record['immagine'] ?? '';
             unset($record['immagine']);
 
-            // Gestione categoria e sottocategoria
             $categoria = $this->processaCategoria($record);
-            // Processa la sottocategoria (anche se non viene utilizzata direttamente)
             $this->processaSottocategoria($record, $categoria);
-
-            // Gestione marca
             $id_marca = $this->processaMarca($record, $database);
 
-            // Creazione o aggiornamento dell'impianto
             if (empty($impianto)) {
                 $impianto = Impianto::build($record['matricola'], $record['nome'], $categoria, $anagrafica->id);
             }
 
-            // Aggiornamento dei campi dell'impianto
             $this->aggiornaImpianto($impianto, $record, $anagrafica, $id_marca);
-
-            // Gestione della sede
             $this->collegaSede($impianto, $record, $anagrafica);
-
-            // Salvataggio dell'impianto
             $impianto->save();
-
-            // Gestione immagine
             $this->processaImmagine($impianto, $url, $record, $database);
 
             unset($record['import_immagine']);
-
             return true;
+
         } catch (\Exception $e) {
-            // Registra l'errore specifico
-            $error_message = 'Errore durante l\'importazione dell\'impianto';
+            $error = 'Errore importazione impianto';
             if (!empty($record['matricola'])) {
-                $error_message .= ' (Matricola: ' . $record['matricola'] . ')';
+                $error .= ' (Matricola: ' . $record['matricola'] . ')';
             }
-            $error_message .= ': ' . $e->getMessage();
-
-            error_log($error_message);
+            error_log($error . ': ' . $e->getMessage());
             $this->failed_errors[] = $e->getMessage();
-
             return false;
         }
     }
@@ -289,17 +217,14 @@ class CSV extends CSVImporter
     {
         $anagrafica = null;
 
-        // Ricerca per partita IVA
         if (!empty($record['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
+            $anagrafica = Anagrafica::where('piva', $record['partita_iva'])->first();
         }
 
-        // Ricerca per codice fiscale se non trovata con partita IVA
         if (empty($anagrafica) && !empty($record['codice_fiscale'])) {
-            $anagrafica = Anagrafica::where('codice_fiscale', '=', $record['codice_fiscale'])->first();
+            $anagrafica = Anagrafica::where('codice_fiscale', $record['codice_fiscale'])->first();
         }
 
-        // Se non trova nessuna anagrafica, ne crea una nuova
         if (empty($anagrafica)) {
             $anagrafica = $this->creaAnagrafica($record);
         }
@@ -317,7 +242,6 @@ class CSV extends CSVImporter
     protected function creaAnagrafica($record)
     {
         try {
-            // Determina la ragione sociale da utilizzare
             $ragione_sociale = '';
             if (!empty($record['partita_iva'])) {
                 $ragione_sociale = 'Cliente P.IVA '.$record['partita_iva'];
@@ -327,42 +251,31 @@ class CSV extends CSVImporter
                 $ragione_sociale = 'Cliente importato '.date('Y-m-d H:i:s');
             }
 
-            // Verifica che la ragione sociale non sia vuota
             if (empty($ragione_sociale)) {
-                error_log('Impossibile determinare la ragione sociale per il record: '.json_encode($record));
                 return null;
             }
 
             $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first();
             $tipologie = !empty($tipo_cliente) ? [$tipo_cliente->id] : [];
-
             $anagrafica = Anagrafica::build($ragione_sociale, '', '', $tipologie);
 
-            // Imposta partita IVA se presente
             if (!empty($record['partita_iva'])) {
                 $anagrafica->piva = $record['partita_iva'];
             }
 
-            // Imposta codice fiscale se presente
             if (!empty($record['codice_fiscale'])) {
                 $anagrafica->codice_fiscale = $record['codice_fiscale'];
             }
 
-            // Imposta un telefono fittizio se mancante (richiesto per le anagrafiche)
             if (empty($anagrafica->telefono) && empty($anagrafica->piva)) {
-                $anagrafica->telefono = '000000000'; // Telefono fittizio per soddisfare i vincoli
+                $anagrafica->telefono = '000000000';
             }
 
             $anagrafica->save();
-            $anagrafica->refresh();
-
-            error_log('Anagrafica creata con successo: ID '.$anagrafica->id.', Ragione sociale: '.$ragione_sociale);
-
             return $anagrafica;
-        } catch (\Exception $e) {
-            // Registra l'errore con più dettagli
-            error_log('Errore durante la creazione dell\'anagrafica: '.$e->getMessage().' - Record: '.json_encode($record).' - Stack trace: '.$e->getTraceAsString());
 
+        } catch (\Exception $e) {
+            error_log('Errore creazione anagrafica: '.$e->getMessage());
             return null;
         }
     }
@@ -380,7 +293,6 @@ class CSV extends CSVImporter
         if (empty($primary_key) || empty($record[$primary_key])) {
             return null;
         }
-
         return Impianto::where($primary_key, $record[$primary_key])->first();
     }
 
@@ -398,11 +310,9 @@ class CSV extends CSVImporter
         }
 
         try {
-            // Cerca la categoria esistente per nome
             $categoria_id = (new Categoria())->getByField('title', $record['categoria']);
-            $categoria = $categoria_id ? Categoria::where('id', $categoria_id)->where('is_impianto', '=', 1)->first() : null;
+            $categoria = $categoria_id ? Categoria::where('id', $categoria_id)->where('is_impianto', 1)->first() : null;
 
-            // Se non trovata, cerca per nome diretto
             if (empty($categoria)) {
                 $categoria = Categoria::where('name', $record['categoria'])
                     ->where('is_impianto', 1)
@@ -410,7 +320,6 @@ class CSV extends CSVImporter
                     ->first();
             }
 
-            // Se ancora non trovata, crea una nuova categoria
             if (empty($categoria)) {
                 $categoria = Categoria::build(null, $record['categoria']);
                 $categoria->is_impianto = 1;
@@ -420,7 +329,7 @@ class CSV extends CSVImporter
 
             return $categoria;
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella creazione/ricerca categoria "' . $record['categoria'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore categoria "' . $record['categoria'] . '": ' . $e->getMessage());
         }
     }
 
@@ -439,18 +348,15 @@ class CSV extends CSVImporter
         }
 
         try {
-            // Cerca la sottocategoria esistente per nome
             $sottocategoria_id = (new Categoria())->getByField('title', $record['sottocategoria']);
             $sottocategoria = $sottocategoria_id ? Categoria::where('id', $sottocategoria_id)->where('parent', $categoria->id)->first() : null;
 
-            // Se non trovata, cerca per nome diretto
             if (empty($sottocategoria)) {
                 $sottocategoria = Categoria::where('name', $record['sottocategoria'])
                     ->where('parent', $categoria->id)
                     ->first();
             }
 
-            // Se ancora non trovata, crea una nuova sottocategoria
             if (empty($sottocategoria)) {
                 $sottocategoria = Categoria::build($categoria, $record['sottocategoria']);
                 $sottocategoria->is_impianto = 1;
@@ -461,8 +367,7 @@ class CSV extends CSVImporter
 
             return $sottocategoria;
         } catch (\Exception $e) {
-            // Registra l'errore ma continua con l'importazione
-            error_log('Errore nella creazione/ricerca sottocategoria "' . $record['sottocategoria'] . '": ' . $e->getMessage());
+            error_log('Errore sottocategoria "' . $record['sottocategoria'] . '": ' . $e->getMessage());
             return null;
         }
     }
@@ -482,12 +387,8 @@ class CSV extends CSVImporter
         }
 
         try {
-            // Cerca la marca esistente per nome nella tabella unificata zz_marche
-            $marca = Marca::where('name', $record['marca'])
-                ->where('is_impianto', 1)
-                ->first();
+            $marca = Marca::where('name', $record['marca'])->where('is_impianto', 1)->first();
 
-            // Se non trovata, crea una nuova marca
             if (empty($marca)) {
                 $marca = Marca::build($record['marca']);
                 $marca->is_impianto = 1;
@@ -496,15 +397,13 @@ class CSV extends CSVImporter
 
             return $marca->id;
         } catch (\Exception $e) {
-            // Fallback al metodo diretto se il modello non funziona
-            error_log('Errore nella gestione marca con modello, uso fallback: ' . $e->getMessage());
+            error_log('Errore marca, uso fallback: ' . $e->getMessage());
 
             $result = $database->fetchOne('SELECT `id` FROM `zz_marche` WHERE `name`='.prepare($record['marca']).' AND `is_impianto` = 1');
             $id_marca = !empty($result) ? $result['id'] : null;
 
             if (empty($id_marca)) {
-                $query = 'INSERT INTO `zz_marche` (`name`, `is_impianto`) VALUES ('.prepare($record['marca']).', 1)';
-                $database->query($query);
+                $database->query('INSERT INTO `zz_marche` (`name`, `is_impianto`) VALUES ('.prepare($record['marca']).', 1)');
                 $id_marca = $database->lastInsertedID();
             }
 
@@ -577,7 +476,6 @@ class CSV extends CSVImporter
             }
 
             $file_content = file_get_contents($url);
-
             if (empty($file_content)) {
                 return;
             }
@@ -587,12 +485,7 @@ class CSV extends CSVImporter
                     'id_module' => Module::find('Impianti')->id,
                     'id_record' => $impianto->id,
                 ]);
-
-                $database->update('my_impianti', [
-                    'immagine' => '',
-                ], [
-                    'id' => $impianto->id,
-                ]);
+                $database->update('my_impianti', ['immagine' => ''], ['id' => $impianto->id]);
             }
 
             $name = 'immagine_'.$impianto->id.'.'.Upload::getExtensionFromMimeType($file_content);
@@ -603,20 +496,13 @@ class CSV extends CSVImporter
                 'original_name' => $name,
                 'id_module' => Module::find('Impianti')->id,
                 'id_record' => $impianto->id,
-            ], [
-                'thumbnails' => true,
-            ]);
+            ], ['thumbnails' => true]);
 
             if ($upload && !empty($upload->filename) && ($record['import_immagine'] == 1 || $record['import_immagine'] == 2)) {
-                $database->update('my_impianti', [
-                    'immagine' => $upload->filename,
-                ], [
-                    'id' => $impianto->id,
-                ]);
+                $database->update('my_impianti', ['immagine' => $upload->filename], ['id' => $impianto->id]);
             }
         } catch (\Exception $e) {
-            // Registra l'errore ma continua con l'importazione
-            error_log('Errore durante l\'importazione dell\'immagine: '.$e->getMessage());
+            error_log('Errore importazione immagine: '.$e->getMessage());
         }
     }
 
@@ -652,7 +538,6 @@ class CSV extends CSVImporter
         }
 
         fclose($file);
-
         return $filepath;
     }
 

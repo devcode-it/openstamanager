@@ -72,6 +72,8 @@ switch (post('op')) {
             $preventivo->idagente = post('idagente');
             $preventivo->idreferente = post('idreferente');
             $preventivo->idpagamento = post('idpagamento') ?: null;
+            $preventivo->id_banca_controparte = post('id_banca_controparte') ?: null;
+            $preventivo->id_banca_azienda = post('id_banca_azienda') ?: null;
             $preventivo->idporto = post('idporto') ?: null;
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');

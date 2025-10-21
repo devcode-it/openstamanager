@@ -186,6 +186,11 @@ class Preventivo extends Document
         return $this->belongsTo(TipoSessione::class, 'idtipointervento');
     }
 
+    public function pagamento()
+    {
+        return $this->belongsTo(\Modules\Pagamenti\Pagamento::class, 'idpagamento');
+    }
+
     public function articoli()
     {
         return $this->hasMany(Components\Articolo::class, 'idpreventivo');
@@ -209,6 +214,34 @@ class Preventivo extends Document
     public function interventi()
     {
         return $this->hasMany(Intervento::class, 'id_preventivo');
+    }
+
+    public function bancaAzienda()
+    {
+        return $this->belongsTo(\Modules\Banche\Banca::class, 'id_banca_azienda');
+    }
+
+    public function bancaControparte()
+    {
+        return $this->belongsTo(\Modules\Banche\Banca::class, 'id_banca_controparte');
+    }
+
+    /**
+     * Restituisce i dati bancari in base al pagamento.
+     *
+     * @return \Modules\Banche\Banca|null
+     */
+    public function getBanca()
+    {
+        $pagamento = $this->pagamento;
+
+        if ($pagamento && $pagamento->isRiBa()) {
+            $banca = \Modules\Banche\Banca::find($this->id_banca_controparte) ?: \Modules\Banche\Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->first();
+        } else {
+            $banca = \Modules\Banche\Banca::find($this->id_banca_azienda);
+        }
+
+        return $banca;
     }
 
     public function fixBudget()

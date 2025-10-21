@@ -499,31 +499,31 @@ class FatturaElettronica
         // Estrazione dati ordine acquisto
         if (!empty($dati_generali['DatiOrdineAcquisto'])) {
             $dati_ordini = $this->forceArray($dati_generali['DatiOrdineAcquisto']);
-            $dati_aggiuntivi['dati_ordine_acquisto'] = $dati_ordini;
+            $dati_aggiuntivi['dati_ordine'] = $this->convertDatiAggiuntiviFE($dati_ordini);
         }
 
         // Estrazione dati contratto
         if (!empty($dati_generali['DatiContratto'])) {
             $dati_contratti = $this->forceArray($dati_generali['DatiContratto']);
-            $dati_aggiuntivi['dati_contratto'] = $dati_contratti;
+            $dati_aggiuntivi['dati_contratto'] = $this->convertDatiAggiuntiviFE($dati_contratti);
         }
 
         // Estrazione dati convenzione
         if (!empty($dati_generali['DatiConvenzione'])) {
             $dati_convenzioni = $this->forceArray($dati_generali['DatiConvenzione']);
-            $dati_aggiuntivi['dati_convenzione'] = $dati_convenzioni;
+            $dati_aggiuntivi['dati_convenzione'] = $this->convertDatiAggiuntiviFE($dati_convenzioni);
         }
 
         // Estrazione dati ricezione
         if (!empty($dati_generali['DatiRicezione'])) {
             $dati_ricezioni = $this->forceArray($dati_generali['DatiRicezione']);
-            $dati_aggiuntivi['dati_ricezione'] = $dati_ricezioni;
+            $dati_aggiuntivi['dati_ricezione'] = $this->convertDatiAggiuntiviFE($dati_ricezioni);
         }
 
         // Estrazione dati fatture collegate
         if (!empty($dati_generali['DatiFattureCollegate'])) {
             $dati_fatture = $this->forceArray($dati_generali['DatiFattureCollegate']);
-            $dati_aggiuntivi['dati_fatture'] = $dati_fatture;
+            $dati_aggiuntivi['dati_fatture'] = $this->convertDatiAggiuntiviFE($dati_fatture);
         }
 
         // Estrazione dati DDT
@@ -560,5 +560,54 @@ class FatturaElettronica
         }
 
         return false;
+    }
+
+    /**
+     * Converte i dati dal formato XML al formato interno.
+     * Fa la conversione inversa di exportFE.
+     *
+     * @param array $dati_xml Array dei dati dal XML
+     * @return array Array convertito nel formato interno
+     */
+    protected function convertDatiAggiuntiviFE($dati_xml)
+    {
+        $result = [];
+
+        foreach ($dati_xml as $dato) {
+            $elemento = [];
+
+            // Conversione nodi XML -> campi interni
+            if (!empty($dato['IdDocumento'])) {
+                $elemento['id_documento'] = $dato['IdDocumento'];
+            }
+
+            if (!empty($dato['Data'])) {
+                $elemento['data'] = $dato['Data'];
+            }
+
+            if (!empty($dato['RiferimentoNumeroLinea'])) {
+                $elemento['riferimento_linea'] = $dato['RiferimentoNumeroLinea'];
+            }
+
+            if (!empty($dato['NumItem'])) {
+                $elemento['num_item'] = $dato['NumItem'];
+            }
+
+            if (!empty($dato['CodiceCommessaConvenzione'])) {
+                $elemento['codice_commessa'] = $dato['CodiceCommessaConvenzione'];
+            }
+
+            if (!empty($dato['CodiceCUP'])) {
+                $elemento['codice_cup'] = $dato['CodiceCUP'];
+            }
+
+            if (!empty($dato['CodiceCIG'])) {
+                $elemento['codice_cig'] = $dato['CodiceCIG'];
+            }
+
+            $result[] = $elemento;
+        }
+
+        return $result;
     }
 }

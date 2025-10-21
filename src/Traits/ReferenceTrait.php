@@ -26,6 +26,8 @@ trait ReferenceTrait
 
     abstract public function getReferenceNumber();
 
+    abstract public function getReferenceSecondaryNumber();
+
     abstract public function getReferenceDate();
 
     abstract public function getReferenceRagioneSociale();
@@ -36,12 +38,15 @@ trait ReferenceTrait
         $name = $this->getReferenceName()->name ?? $this->getReferenceName();
 
         $number = $this->getReferenceNumber();
+        $secondary_number = $this->getReferenceSecondaryNumber();
         $date = $this->getReferenceDate();
 
         $ragione_sociale = $this->getReferenceRagioneSociale();
 
         // Testi predefiniti
-        if (!empty($date) && !empty($number) && !empty($ragione_sociale) && !empty($show_ragione_sociale)) {
+        if (!empty($date) && !empty($number) && !empty($secondary_number) && !empty($ragione_sociale) && !empty($show_ragione_sociale)) {
+            $description = tr('_DOC_ num. _NUM_ _SECONDARY_ del _DATE_ (_RAGIONE_SOCIALE_)');
+        } elseif (!empty($date) && !empty($number) && !empty($ragione_sociale) && !empty($show_ragione_sociale)) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_ (_RAGIONE_SOCIALE_)');
         } elseif (!empty($date) && !empty($number)) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_');
@@ -57,6 +62,7 @@ trait ReferenceTrait
         $description = replace($description, [
             '_DOC_' => $name,
             '_NUM_' => $number,
+            '_SECONDARY_' => !empty($secondary_number) ? '('.$secondary_number.')' : '',
             '_RAGIONE_SOCIALE_' => $ragione_sociale,
             '_DATE_' => dateFormat($date),
         ]);

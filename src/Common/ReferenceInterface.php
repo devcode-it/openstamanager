@@ -26,6 +26,8 @@ interface ReferenceInterface
 
     public function getReferenceNumber();
 
+    public function getReferenceSecondaryNumber();
+
     public function getReferenceDate();
 
     public function getReferenceRagioneSociale();

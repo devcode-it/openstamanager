@@ -317,6 +317,11 @@ class Ordine extends Document
         return setting('Visualizza numero ordine cliente') ? ($this->numero_cliente ?: ($this->numero_esterno ?: $this->numero)) : ($this->numero_esterno ?: $this->numero);
     }
 
+    public function getReferenceSecondaryNumber()
+    {
+        return null;
+    }
+
     public function getReferenceDate()
     {
         return setting('Visualizza numero ordine cliente') ? ($this->data_cliente ?: $this->data) : $this->data;

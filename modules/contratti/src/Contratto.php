@@ -303,6 +303,11 @@ class Contratto extends Document
         return $this->numero;
     }
 
+    public function getReferenceSecondaryNumber()
+    {
+        return null;
+    }
+
     public function getReferenceDate()
     {
         return $this->data_bozza;

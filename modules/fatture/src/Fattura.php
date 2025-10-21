@@ -1013,7 +1013,12 @@ class Fattura extends Document
 
     public function getReferenceNumber()
     {
-        return $this->numero_esterno ?: $this->numero;
+        return $this->numero_esterno;
+    }
+
+    public function getReferenceSecondaryNumber()
+    {
+        return $this->numero;
     }
 
     public function getReferenceDate()

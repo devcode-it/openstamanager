@@ -263,6 +263,11 @@ class Intervento extends Document
         return $this->codice;
     }
 
+    public function getReferenceSecondaryNumber()
+    {
+        return null;
+    }
+
     public function getReferenceDate()
     {
         return $this->fine;

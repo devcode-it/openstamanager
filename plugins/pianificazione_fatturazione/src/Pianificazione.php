@@ -132,6 +132,11 @@ class Pianificazione extends Document
     {
     }
 
+    public function getReferenceSecondaryNumber()
+    {
+        return null;
+    }
+
     public function getReferenceDate()
     {
     }

@@ -372,6 +372,11 @@ class DDT extends Document
         return $this->numero_esterno ?: $this->numero;
     }
 
+    public function getReferenceSecondaryNumber()
+    {
+        return null;
+    }
+
     public function getReferenceDate()
     {
         return $this->data;

@@ -19,8 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Anagrafiche\Anagrafica;
 
 $block_edit = $record['is_bloccato'];
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 // Mostro un avviso se ci sono più revisioni del preventivo
 if (count($preventivo->revisioni) > 1) {
@@ -57,7 +59,7 @@ if (count($preventivo->revisioni) > 1) {
             </div>
         </div>
 
-      
+
         <div class="card-body">
             <!-- RIGA 1 -->
             <div class="row">
@@ -127,7 +129,7 @@ echo '
                     {[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
                 </div>
 			</div>
-			
+
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Nome preventivo'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
@@ -142,13 +144,27 @@ echo '
                     {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                 </div>
 
-				<div class="col-md-2">
+                <div class="col-md-3">
+<?php
+$id_module_banche = Module::where('name', 'Banche')->first()->id;
+echo '
+                    {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
+?>
+                </div>
+
+            </div>
+
+            <div class="row">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$" ]}
 				</div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $preventivo->sconto_finale_percentuale ?: $preventivo->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($preventivo->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
                 </div>
-				<div class="col-md-2">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Tempi di consegna'); ?>", "name": "tempi_consegna", "value": "$tempi_consegna$" ]}
 				</div>
             </div>
@@ -175,7 +191,7 @@ echo '
                     ]);
 echo '
                 </div>
-                
+
                 <div class="col-md-6">
                     {[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "class": "autosize", "value": "$note$", "extra": "rows=\'5\'" ]}';
 if ($user->gruppo != 'Clienti') {
@@ -206,7 +222,7 @@ if ($user->gruppo != 'Clienti') {
     <div class="card card-primary collapsable  <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?> <?php echo $collapsed; ?>">
         <div class=" card-header">
             <h4 class=" card-title">
-                
+
                 <?php echo tr('Dati appalto'); ?></h4>
 
                 <div class="card-tools pull-right">
@@ -214,7 +230,7 @@ if ($user->gruppo != 'Clienti') {
                     <i class="fa fa-plus"></i>
                     </button>
                 </div>
-            
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -269,7 +285,7 @@ if (!$block_edit) {
                     <button title="'.tr('Aggiungi articolo alla vendita').'" class="btn btn-primary tip" type="button" onclick="salvaArticolo()">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
-                    
+
                     <a class="btn btn-primary" onclick="gestioneRiga(this)" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>
@@ -355,13 +371,14 @@ function caricaRighe(id_riga) {
 
 $(document).ready(function() {
     caricaRighe(null);
-    
+
     $("#idanagrafica").change(function() {
         updateSelectOption("idanagrafica", $(this).val());
         session_set("superselect,idanagrafica", $(this).val(), 0);
 
         $("#idsede_destinazione").selectReset();
         $("#idpagamento").selectReset();
+        $("#id_banca_controparte").selectReset();
 
         let data = $(this).selectData();
         if (data) {

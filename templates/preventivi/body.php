@@ -30,27 +30,7 @@ $anagrafica = Anagrafica::find($documento['idanagrafica']);
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-$pagamento = $documento['idpagamento'] ? Pagamento::find($documento['idpagamento']) : null;
-
-// Banca dell'Azienda corrente impostata come predefinita per il Cliente
-$banca_azienda = Banca::where('id_anagrafica', '=', $anagrafica_azienda->id)
-    ->where('id_pianodeiconti3', '=', $pagamento ? ($pagamento['idconto_vendite'] ?: 0) : 0);
-try {
-    $banca = (clone $banca_azienda)
-        ->findOrFail($anagrafica->idbanca_vendite);
-} catch (ModelNotFoundException) {
-    // Ricerca prima banca dell'Azienda con Conto corrispondente
-    $banca = (clone $banca_azienda)
-        ->orderBy('predefined', 'DESC')
-        ->first();
-}
-
-// Ri.Ba: Banca predefinita *del Cliente* piuttosto che dell'Azienda
-if ($pagamento && $pagamento->isRiBa()) {
-    $banca = Banca::where('id_anagrafica', $anagrafica->id)
-        ->where('predefined', 1)
-        ->first();
-}
+$banca = $documento->getBanca();
 
 // Righe documento
 $righe = $documento->getRighe();

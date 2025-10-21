@@ -28,7 +28,6 @@ use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;
-use Permissions;
 use Util\Zip;
 
 if (empty($structure) || empty($structure['enabled'])) {

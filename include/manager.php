@@ -196,9 +196,9 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         <div class="col-md-2 dropup">';
     if (!empty($bulk) && $structure->permission == 'rw' && empty($id_plugin)) {
         echo '
-            <div class="btn-group">
+            <div class="btn-group actions-container">
 
-                <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> '.tr('Azioni di gruppo').'   </button>
+                <button class="btn btn-primary dropdown-toggle dropdown-toggle-split disabled" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled> '.tr('Azioni di gruppo').'   </button>
                 <div class="dropdown-menu dropdown-menu-right">';
 
         foreach ($bulk as $key => $value) {

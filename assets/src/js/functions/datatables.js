@@ -499,12 +499,13 @@ function getTable(selector) {
 
             // Abilitazione dinamica di azioni di gruppo e esportazione
             const bulk_container = this.getActionsContainer();
+            const bulk_button = bulk_container.find('button');
             const export_buttons = this.getExportContainer().find('.table-btn');
             if (selected_rows.length > 0) {
-                bulk_container.removeClass('disabled').attr('disabled', false);
+                bulk_button.removeClass('disabled').attr('disabled', false);
                 export_buttons.removeClass('disabled').attr('disabled', false);
             } else {
-                bulk_container.addClass('disabled').attr('disabled', true);
+                bulk_button.addClass('disabled').attr('disabled', true);
                 export_buttons.addClass('disabled').attr('disabled', true);
             }
 

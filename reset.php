@@ -87,13 +87,6 @@ include_once App::filepath('include|custom|', 'top.php');
 // Add inline styles for reset password page enhancement
 echo '
 <style>
-    .login-page {
-        background: linear-gradient(135deg, rgba(245,247,250,1) 0%, rgba(230,233,240,1) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-    }
     .card-center-large {
         margin: 0 auto;
         max-width: 450px;

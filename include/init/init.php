@@ -128,7 +128,7 @@ if (post('action') == 'init') {
 
 $img = App::getPaths()['img'];
 
-// Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti
+// Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i parametri non siano sufficienti
 echo '
 <div class="card card-center-large shadow-lg" style="max-width: 1200px; margin: 3% auto; border-radius: 8px; border: none; opacity: 0; animation: fadeIn 0.5s forwards;">
     <div class="card-header text-center">

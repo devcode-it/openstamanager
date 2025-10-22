@@ -112,6 +112,35 @@ $(document).ready(function () {
         }, 350);
     });
 
+    // Gestione cambio logo sidebar in base allo stato di collapse
+    // Usa MutationObserver per rilevare quando cambia la classe sidebar-collapse sul body
+    const sidebarLogoObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class') {
+                const $body = $('body');
+                const $logo = $('#sidebar-logo');
+                const imgPath = globals.img;
+
+                if ($body.hasClass('sidebar-collapse')) {
+                    // Sidebar chiusa: mostra logo piccolo
+                    $logo.attr('src', imgPath + '/logo.png');
+                } else {
+                    // Sidebar aperta: mostra logo completo
+                    $logo.attr('src', imgPath + '/logo_completo.png');
+                }
+            }
+        });
+    });
+
+    // Osserva i cambiamenti della classe sul body
+    const bodyElement = document.querySelector('body');
+    if (bodyElement) {
+        sidebarLogoObserver.observe(bodyElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    }
+
     // Barra plugin laterale
     const pluginToggle = $(".control-sidebar-button");
     const largeScreen = screen.width > 1280;

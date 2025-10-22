@@ -723,6 +723,23 @@ span.form-control {
     border-bottom-right-radius: 4px !important;
 }
 
+/* Allineamento larghezza input field e icon button nella pagina di login */
+.login-box .input-group {
+    display: flex;
+}
+
+.login-box .input-group .form-control-lg {
+    flex: 1;
+}
+
+.login-box .input-group-append .input-group-text {
+    width: auto;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .btn-primary {
     transition: all 0.3s ease;
 }

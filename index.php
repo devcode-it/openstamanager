@@ -229,8 +229,8 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
 
     echo ' required>
                                 <div class="input-group-append">
-                                    <div class="input-group-text bg-light">
-                                        <i class="fa fa-user text-primary"></i>
+                                    <div class="input-group-text after">
+                                        <i class="fa fa-user"></i>
                                     </div>
                                 </div>
                             </div>

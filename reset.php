@@ -119,6 +119,21 @@ echo '
     .btn-primary {
         transition: all 0.3s ease;
     }
+    /* Allineamento larghezza input field e icon button */
+    .card-center-large .input-group {
+        display: flex;
+    }
+    .card-center-large .input-group .form-control,
+    .card-center-large .input-group .form-control-lg {
+        flex: 1;
+    }
+    .card-center-large .input-group-append .input-group-text {
+        width: auto;
+        min-width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     @media (max-width: 576px) {
         .card-center-large {
             width: 90%;
@@ -194,8 +209,8 @@ if (empty($token)) {
                     <div class="input-group mb-4">
                         <input type="text" name="username" class="form-control form-control-lg" placeholder="'.tr('Username').'" required>
                         <div class="input-group-append">
-                            <div class="input-group-text bg-light">
-                                <i class="fa fa-user text-primary"></i>
+                            <div class="input-group-text after">
+                                <i class="fa fa-user"></i>
                             </div>
                         </div>
                     </div>
@@ -203,8 +218,8 @@ if (empty($token)) {
                     <div class="input-group mb-4">
                         <input type="email" name="email" class="form-control form-control-lg email-mask" placeholder="'.tr('Email').'" required>
                         <div class="input-group-append">
-                            <div class="input-group-text bg-light">
-                                <i class="fa fa-envelope text-primary"></i>
+                            <div class="input-group-text after">
+                                <i class="fa fa-envelope"></i>
                             </div>
                         </div>
                     </div>';

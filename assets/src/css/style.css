@@ -700,6 +700,8 @@ span.form-control {
 
 .login-box {
     margin: 0 auto;
+    max-width: 450px;
+    width: 100%;
 }
 
 .card-outline.card-primary {

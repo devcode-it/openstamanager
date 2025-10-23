@@ -46,6 +46,11 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Scadenza inserita!'));
+
+        // Restituisce l'ID della scadenza appena creata per le chiamate AJAX
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            echo json_encode(['id_record' => $id_record]);
+        }
         break;
 
     case 'update':
@@ -202,6 +207,43 @@ switch (post('op')) {
             flash()->info(tr('Scadenza aggiornata!'));
         } else {
             flash()->error(tr('Scadenza non trovata!'));
+        }
+
+        break;
+
+    case 'save_new_scadenza':
+        $index = post('index');
+        $iddocumento = post('iddocumento');
+        $idanagrafica = post('idanagrafica');
+
+        // Recupera i dati dai campi del form
+        $id_banca_azienda = post('id_banca_azienda');
+        $id_banca_controparte = post('id_banca_controparte');
+        $id_pagamento = post('id_pagamento');
+        $scadenza = post('scadenza');
+        $data_concordata = post('data_concordata');
+        $da_pagare = post('da_pagare');
+        $pagato = post('pagato');
+
+        // Verifica se i campi essenziali sono valorizzati
+        if (!empty($scadenza) && !empty($da_pagare) && $da_pagare != 0) {
+            // Crea una nuova scadenza
+            $descrizione = 'Scadenza documento';
+            $tipo = 'fattura'; // Tipo di default
+            $data_emissione = date('Y-m-d');
+
+            $dbo->query('INSERT INTO co_scadenziario(idanagrafica, iddocumento, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato, id_pagamento, id_banca_azienda, id_banca_controparte, data_concordata) VALUES('.prepare($idanagrafica).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($tipo).', '.prepare($data_emissione).', '.prepare($scadenza).', '.prepare($da_pagare).', '.prepare($pagato ?: 0).', '.prepare($id_pagamento ?: null).', '.prepare($id_banca_azienda ?: null).', '.prepare($id_banca_controparte ?: null).', '.prepare($data_concordata ?: null).')');
+            $id_record = $dbo->lastInsertedID();
+
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $scadenza)->where('data_fine', '>=', $scadenza)->first();
+            if (!empty($assicurazione_crediti)) {
+                $assicurazione_crediti->fixTotale();
+                $assicurazione_crediti->save();
+            }
+
+            echo json_encode(['success' => true, 'id_record' => $id_record]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Dati insufficienti per salvare la scadenza']);
         }
 
         break;

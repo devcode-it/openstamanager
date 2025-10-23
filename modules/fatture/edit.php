@@ -210,7 +210,9 @@ if ($dir == 'entrata') {
 </div>';
     }
 
-    $data_fattura = new DateTime($fattura->data);
+    // Usa la data della ricevuta di scarto SDI se disponibile, altrimenti la data della fattura
+    $data_riferimento = !empty($fattura->data_stato_fe) ? $fattura->data_stato_fe : $fattura->data;
+    $data_fattura = new DateTime($data_riferimento);
     $data_odierna = new DateTime();
     $differenza = $data_odierna->diff($data_fattura)->days;
 

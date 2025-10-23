@@ -85,7 +85,6 @@ UPDATE `co_contratti` SET `id_sottocategoria` = null WHERE `id_sottocategoria` =
 UPDATE `in_interventi` SET `idclientefinale` = null WHERE `idclientefinale` = 0;
 UPDATE `in_interventi` SET `id_preventivo` = null WHERE `id_preventivo` = 0;
 UPDATE `in_interventi` SET `id_ordine` = null WHERE `id_ordine` = 0;
-UPDATE `in_interventi` SET `idcontratto` = null WHERE `idcontratto` = 0;
 
 ALTER TABLE `co_preventivi` CHANGE `idpagamento` `idpagamento` INT NULL DEFAULT NULL;
 UPDATE `co_preventivi` SET `idpagamento` = null WHERE `idpagamento` = 0;

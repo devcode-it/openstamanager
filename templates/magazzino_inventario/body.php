@@ -52,7 +52,7 @@ if (post('acquisto') == 'standard') {
     $query = preg_replace('/^SELECT/', 'SELECT (SELECT (`prezzo_unitario`-`sconto_unitario`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE `dir`="uscita") AND `idarticolo`=`mg_articoli`.`id` ORDER BY `co_righe_documenti`.`id`  DESC LIMIT 0,1) AS acquisto, ', (string) $query);
     $text = "all'ultimo articolo acquistato";
 } else {
-    $query = preg_replace('/^SELECT/', 'SELECT (SELECT (SUM((`prezzo_unitario`-`sconto_unitario`)*`qta`)/SUM(`qta`)) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE dir="uscita" AND `idarticolo`=`mg_articoli`.`id`) AS acquisto, ', (string) $query);
+    $query = preg_replace('/^SELECT/', 'SELECT (SELECT COALESCE((SUM((`prezzo_unitario`-`sconto_unitario`)*`qta`)/SUM(`qta`)), `mg_articoli`.`prezzo_acquisto`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE dir="uscita" AND `idarticolo`=`mg_articoli`.`id`) AS acquisto, ', (string) $query);
     $text = "alla media ponderata dell'articolo";
 }
 
@@ -96,7 +96,8 @@ $totali = [];
 
 foreach ($data['results'] as $r) {
     $articolo = Articolo::find($r['id']);
-    $valore_magazzino = ($articolo->fattore_um_secondaria != 0 ? $articolo->fattore_um_secondaria : 1) * $articolo->prezzo_acquisto * $articolo->qta;
+    $qta = $r['qta_totale'];
+    $valore_magazzino = $r['acquisto'] * $qta;
 
     echo '
         <tr>
@@ -104,8 +105,8 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Categoria'].'</td>
             <td>'.$articolo->getTranslation('title').'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
-            <td class="text-right">'.Translator::numberToLocale($articolo->qta).' '.$articolo->um.'</td>
-            <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>
+            <td class="text-right">'.Translator::numberToLocale($qta).' '.$articolo->um.'</td>
+            <td class="text-right">'.moneyFormat($r['acquisto']).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 

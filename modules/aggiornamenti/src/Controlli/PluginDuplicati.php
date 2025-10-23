@@ -49,8 +49,8 @@ class PluginDuplicati extends Controllo
             $modulo = Module::find($plugin['idmodule_to']);
 
             $this->addResult([
-                'id' => 'name_' . $plugin['idmodule_to'] . '_' . $plugin['name'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin['name'] . ' (name)',
+                'id' => 'name_'.$plugin['idmodule_to'].'_'.$plugin['name'],
+                'nome' => $modulo->getTranslation('title').': '.$plugin['name'].' (name)',
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste _COUNT_ volte nella tabella zz_plugins (campo name)', [
                     '_NAME_' => $plugin['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -76,11 +76,11 @@ class PluginDuplicati extends Controllo
             $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($plugin['id_lang']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
+            $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'title_diversi_' . $plugin['idmodule_to'] . '_' . $plugin['id_lang'] . '_' . md5($plugin['title']),
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin['title'] . ' (' . $nome_lingua . ')',
+                'id' => 'title_diversi_'.$plugin['idmodule_to'].'_'.$plugin['id_lang'].'_'.md5((string) $plugin['title']),
+                'nome' => $modulo->getTranslation('title').': '.$plugin['title'].' ('.$nome_lingua.')',
                 'descrizione' => tr('Il titolo "_TITLE_" del modulo _MODULE_ è usato da _COUNT_ plugin diversi (_PLUGINS_) nella lingua _LANG_', [
                     '_TITLE_' => $plugin['title'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -106,11 +106,11 @@ class PluginDuplicati extends Controllo
             $plugin_record = database()->fetchOne('SELECT `name` FROM `zz_plugins` WHERE `id` = '.prepare($plugin['id_record']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
+            $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'record_lang_' . $plugin['id_record'] . '_' . $plugin['id_lang'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin_record['name'] . ' (' . $nome_lingua . ')',
+                'id' => 'record_lang_'.$plugin['id_record'].'_'.$plugin['id_lang'],
+                'nome' => $modulo->getTranslation('title').': '.$plugin_record['name'].' ('.$nome_lingua.')',
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ ha _COUNT_ traduzioni duplicate per la lingua _LANG_', [
                     '_NAME_' => $plugin_record['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -122,14 +122,14 @@ class PluginDuplicati extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
         return true;
     }
 
-    public function execute($record, $params = [])
+    public function execute($record, $params = []): never
     {
         // La risoluzione singola non è supportata per questo controllo
         // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
@@ -137,7 +137,7 @@ class PluginDuplicati extends Controllo
     }
 
     /**
-     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente
+     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente.
      */
     public function solveGlobal($params = [])
     {
@@ -162,16 +162,16 @@ class PluginDuplicati extends Controllo
 
             $grouped_name = [];
             foreach ($duplicati_name as $record) {
-                $key = $record['idmodule_to'] . '_' . $record['name'];
+                $key = $record['idmodule_to'].'_'.$record['name'];
                 $grouped_name[$key][] = $record;
             }
 
             foreach ($grouped_name as $group) {
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_plugins` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['name_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['name_'.$group[$i]['id']] = true;
                     }
                 }
             }
@@ -191,26 +191,23 @@ class PluginDuplicati extends Controllo
 
             $grouped_record_lang = [];
             foreach ($duplicati_record_lang as $record) {
-                $key = $record['id_record'] . '_' . $record['id_lang'];
+                $key = $record['id_record'].'_'.$record['id_lang'];
                 $grouped_record_lang[$key][] = $record;
             }
 
             foreach ($grouped_record_lang as $group) {
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['record_lang_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['record_lang_'.$group[$i]['id']] = true;
                     }
                 }
             }
 
             return $results;
-
         } catch (\Exception $e) {
-            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', [
-                '_ERROR_' => $e->getMessage(),
-            ]));
+            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', ['_ERROR_' => $e->getMessage()]));
         }
     }
 }

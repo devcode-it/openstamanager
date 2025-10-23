@@ -450,7 +450,7 @@ class Update
         $views_all = database()->fetchArray('SELECT zv.`name`, zv.`id_module`, zv.`query`, zm.`name` as module_name FROM `zz_views` zv LEFT JOIN `zz_modules` zm ON zv.`id_module` = zm.`id`');
 
         foreach ($views_all as $view) {
-            $module_key = $view['module_name'] ?: 'module_' . $view['id_module'];
+            $module_key = $view['module_name'] ?: 'module_'.$view['id_module'];
 
             $normalized_query = self::normalizeViewQuery($view['query']);
 
@@ -460,12 +460,12 @@ class Update
         return $views;
     }
 
-        public static function getModules()
+    public static function getModules()
     {
         $modules_all = database()->fetchArray('SELECT zm.`name`, zm.`options`, zm.`options2` FROM `zz_modules` zm WHERE 1=1 ORDER BY zm.`name` ASC');
 
         foreach ($modules_all as $module) {
-            $module_key = $module['name'] ?: 'module_' . $module['name'];
+            $module_key = $module['name'] ?: 'module_'.$module['name'];
 
             // Normalizza le options rimuovendo i tag HTML di rumore per il confronto standard
             $normalized_options = self::normalizeViewQuery($module['options']);
@@ -477,41 +477,6 @@ class Update
 
         return $modules;
     }
-
-
-    /**
-     * Normalizza una query di vista rimuovendo elementi che non dovrebbero essere considerati come differenze
-     *
-     * @param string $query
-     * @return string
-     */
-    private static function normalizeViewQuery($query)
-    {
-
-        $query = preg_replace('/<br\s*\/?>/i', '', $query);
-
-        // Rimuovi SOLO tag di formattazione base senza attributi (mantieni i tag <i> per le icone)
-        $query = preg_replace('/<\/?(?:b|strong|em|u|small|big)>/i', '', $query);
-        $query = preg_replace('/<\/?(?:p|div)>/i', '', $query);
-
-        $query = preg_replace('/<\/?(?:h[1-6]|ul|ol|li|dl|dt|dd|table|tr|td|th|thead|tbody|tfoot)>/i', '', $query);
-
-        // Rimuovi tag HTML strutturali e di metadati (ma mantieni i tag <a> per i link)
-        $query = preg_replace('/<\/?(?:script|style|noscript|meta|title|head|body|html)\b[^>]*>/i', '', $query);
-        // Rimuovi solo i tag <link> HTML (non i tag <a>)
-        $query = preg_replace('/<\/?link\b[^>]*>/i', '', $query);
-
-        // Normalizza entità HTML comuni prima della rimozione degli spazi
-        $query = html_entity_decode($query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-        $query = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}]+/u', ' ', $query);
-        $query = str_replace(['"', '\'', '\'', '"', '"'], "'", $query);
-
-        $query = preg_replace('/[\x{200C}\x{200D}\x{FEFF}]/u', '', $query);
-
-        return trim($query);
-    }
-
 
     /**
      * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
@@ -750,5 +715,38 @@ class Update
         $mysql_ver = $database->getMySQLVersion();
 
         include $script;
+    }
+
+    /**
+     * Normalizza una query di vista rimuovendo elementi che non dovrebbero essere considerati come differenze.
+     *
+     * @param string $query
+     *
+     * @return string
+     */
+    private static function normalizeViewQuery($query)
+    {
+        $query = preg_replace('/<br\s*\/?>/i', '', $query);
+
+        // Rimuovi SOLO tag di formattazione base senza attributi (mantieni i tag <i> per le icone)
+        $query = preg_replace('/<\/?(?:b|strong|em|u|small|big)>/i', '', (string) $query);
+        $query = preg_replace('/<\/?(?:p|div)>/i', '', (string) $query);
+
+        $query = preg_replace('/<\/?(?:h[1-6]|ul|ol|li|dl|dt|dd|table|tr|td|th|thead|tbody|tfoot)>/i', '', (string) $query);
+
+        // Rimuovi tag HTML strutturali e di metadati (ma mantieni i tag <a> per i link)
+        $query = preg_replace('/<\/?(?:script|style|noscript|meta|title|head|body|html)\b[^>]*>/i', '', (string) $query);
+        // Rimuovi solo i tag <link> HTML (non i tag <a>)
+        $query = preg_replace('/<\/?link\b[^>]*>/i', '', (string) $query);
+
+        // Normalizza entità HTML comuni prima della rimozione degli spazi
+        $query = html_entity_decode((string) $query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        $query = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}]+/u', ' ', $query);
+        $query = str_replace(['"', '\'', '\'', '"', '"'], "'", $query);
+
+        $query = preg_replace('/[\x{200C}\x{200D}\x{FEFF}]/u', '', $query);
+
+        return trim((string) $query);
     }
 }

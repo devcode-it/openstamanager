@@ -298,7 +298,7 @@ switch (filter('op')) {
             $unlocked_hooks = $database->table('zz_hooks')
                 ->update([
                     'processing_at' => null,
-                    'processing_token' => null
+                    'processing_token' => null,
                 ]);
 
             // 2. Invalida tutte le cache degli hooks impostando la scadenza nel passato
@@ -311,7 +311,7 @@ switch (filter('op')) {
                 'Spazio utilizzato',
                 'Ultima versione di OpenSTAManager disponibile',
                 'Ricevute Elettroniche',
-                'Ultima esecuzione del cron'
+                'Ultima esecuzione del cron',
             ];
 
             $content_cleared = 0;
@@ -321,7 +321,7 @@ switch (filter('op')) {
                     $cache->content = null;
                     $cache->expire_at = Carbon::now()->subMinutes(1);
                     $cache->save();
-                    $content_cleared++;
+                    ++$content_cleared;
                 }
             }
 
@@ -335,7 +335,7 @@ switch (filter('op')) {
             flash()->info(tr('Cache hooks svuotata con successo! Hooks sbloccati: _HOOKS_, Cache invalidate: _CACHE_, Contenuti svuotati: _CONTENT_', [
                 '_HOOKS_' => $unlocked_hooks,
                 '_CACHE_' => $cache_affected,
-                '_CONTENT_' => $content_cleared
+                '_CONTENT_' => $content_cleared,
             ]));
 
             $result = [
@@ -343,16 +343,16 @@ switch (filter('op')) {
                 'unlocked_hooks' => $unlocked_hooks,
                 'cache_affected' => $cache_affected,
                 'content_cleared' => $content_cleared,
-                'deleted_rows' => $deleted_rows
+                'deleted_rows' => $deleted_rows,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             flash()->error(tr('Errore durante lo svuotamento della cache: _ERROR_', [
-                '_ERROR_' => $e->getMessage()
+                '_ERROR_' => $e->getMessage(),
             ]));
 
             $result = [
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
 

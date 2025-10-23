@@ -542,7 +542,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
-            $contratto->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
+            $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
             $contratto->idsede_partenza = $idsede_partenza;
             $contratto->idsede_destinazione = $idsede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');

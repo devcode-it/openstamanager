@@ -149,6 +149,7 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             error_log('Errore durante l\'importazione del preventivo: '.$e->getMessage());
+
             return false;
         }
     }
@@ -213,6 +214,7 @@ class CSV extends CSVImporter
             return $preventivo;
         } catch (\Exception $e) {
             error_log('Errore durante la creazione del preventivo: '.$e->getMessage());
+
             return null;
         }
     }
@@ -292,6 +294,7 @@ class CSV extends CSVImporter
             return false;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta della riga al preventivo: '.$e->getMessage());
+
             return false;
         }
     }
@@ -327,6 +330,7 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta dell\'articolo al preventivo: '.$e->getMessage());
+
             return false;
         }
     }
@@ -359,6 +363,7 @@ class CSV extends CSVImporter
             return true;
         } catch (\Exception $e) {
             error_log('Errore durante l\'aggiunta della riga generica al preventivo: '.$e->getMessage());
+
             return false;
         }
     }
@@ -402,6 +407,7 @@ class CSV extends CSVImporter
             }
 
             error_log('Errore nel parsing della data: '.$e->getMessage());
+
             return Carbon::now();
         }
     }

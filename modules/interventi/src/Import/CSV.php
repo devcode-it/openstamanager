@@ -61,7 +61,7 @@ class CSV extends CSVImporter
             [
                 'field' => 'codice_fiscale',
                 'label' => 'Codice Fiscale cliente',
-                'required' => false, 
+                'required' => false,
             ],
             [
                 'field' => 'ragione_sociale',
@@ -161,12 +161,12 @@ class CSV extends CSVImporter
                 return false;
             }
 
-
             // Ricerca dell'anagrafica cliente
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
                 error_log('Impossibile trovare o creare anagrafica per il record: '.json_encode($record));
-                return false; 
+
+                return false;
             }
 
             // Ricerca dell'impianto se specificato

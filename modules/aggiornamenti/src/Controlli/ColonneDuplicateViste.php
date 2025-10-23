@@ -49,8 +49,8 @@ class ColonneDuplicateViste extends Controllo
             $modulo = Module::find($colonna['id_module']);
 
             $this->addResult([
-                'id' => 'name_' . $colonna['id_module'] . '_' . $colonna['name'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $colonna['name'] . ' (name)',
+                'id' => 'name_'.$colonna['id_module'].'_'.$colonna['name'],
+                'nome' => $modulo->getTranslation('title').': '.$colonna['name'].' (name)',
                 'descrizione' => tr('La colonna _NAME_ del modulo _MODULE_ esiste _COUNT_ volte nella tabella zz_views (campo name)', [
                     '_NAME_' => $colonna['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -74,11 +74,11 @@ class ColonneDuplicateViste extends Controllo
             $vista = database()->fetchOne('SELECT `name` FROM `zz_views` WHERE `id` = '.prepare($colonna['id_record']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
+            $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'record_lang_' . $colonna['id_record'] . '_' . $colonna['id_lang'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $vista['name'] . ' (' . $nome_lingua . ')',
+                'id' => 'record_lang_'.$colonna['id_record'].'_'.$colonna['id_lang'],
+                'nome' => $modulo->getTranslation('title').': '.$vista['name'].' ('.$nome_lingua.')',
                 'descrizione' => tr('La vista _NAME_ del modulo _MODULE_ ha _COUNT_ traduzioni duplicate per la lingua _LANG_', [
                     '_NAME_' => $vista['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -90,14 +90,14 @@ class ColonneDuplicateViste extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
         return true;
     }
 
-    public function execute($record, $params = [])
+    public function execute($record, $params = []): never
     {
         // La risoluzione singola non è supportata per questo controllo
         // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
@@ -105,7 +105,7 @@ class ColonneDuplicateViste extends Controllo
     }
 
     /**
-     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente
+     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente.
      */
     public function solveGlobal($params = [])
     {
@@ -130,16 +130,16 @@ class ColonneDuplicateViste extends Controllo
 
             $grouped_name = [];
             foreach ($duplicati_name as $record) {
-                $key = $record['id_module'] . '_' . $record['name'];
+                $key = $record['id_module'].'_'.$record['name'];
                 $grouped_name[$key][] = $record;
             }
 
             foreach ($grouped_name as $group) {
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_views` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['name_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_views` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['name_'.$group[$i]['id']] = true;
                     }
                 }
             }
@@ -159,26 +159,23 @@ class ColonneDuplicateViste extends Controllo
 
             $grouped_record_lang = [];
             foreach ($duplicati_record_lang as $record) {
-                $key = $record['id_record'] . '_' . $record['id_lang'];
+                $key = $record['id_record'].'_'.$record['id_lang'];
                 $grouped_record_lang[$key][] = $record;
             }
 
             foreach ($grouped_record_lang as $group) {
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_views_lang` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['record_lang_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_views_lang` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['record_lang_'.$group[$i]['id']] = true;
                     }
                 }
             }
 
             return $results;
-
         } catch (\Exception $e) {
-            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', [
-                '_ERROR_' => $e->getMessage(),
-            ]));
+            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', ['_ERROR_' => $e->getMessage()]));
         }
     }
 }

@@ -428,7 +428,7 @@ switch (post('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ordine->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
+            $ordine->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
             $ordine->idsede_partenza = $idsede_partenza;
             $ordine->idsede_destinazione = $idsede_destinazione;
 

@@ -29,7 +29,7 @@ include_once App::filepath('include|custom|', 'top.php');
 echo '
 <div class="card">
     <div class="card-header">
-        <img src="' . App::getPaths()['img'] . '/logo_completo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
+        <img src="'.App::getPaths()['img'].'/logo_completo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
         <div class="float-right d-none d-sm-inline">
             <i class="fa fa-info"></i> '.tr('Informazioni').'
         </div>

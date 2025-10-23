@@ -123,13 +123,13 @@ switch (filter('op')) {
             echo $versione ?: 'none';
         } catch (Exception $e) {
             // Log dell'errore per debug
-            error_log('Errore verifica aggiornamenti: ' . $e->getMessage());
+            error_log('Errore verifica aggiornamenti: '.$e->getMessage());
 
             // Restituisce un messaggio di errore specifico
             http_response_code(500);
             echo json_encode([
                 'error' => true,
-                'message' => tr('Errore durante la verifica degli aggiornamenti: _ERROR_', ['_ERROR_' => $e->getMessage()])
+                'message' => tr('Errore durante la verifica degli aggiornamenti: _ERROR_', ['_ERROR_' => $e->getMessage()]),
             ]);
         }
 

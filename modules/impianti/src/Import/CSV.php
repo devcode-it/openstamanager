@@ -41,12 +41,12 @@ class CSV extends CSVImporter
      * Array per memorizzare gli errori specifici per i record falliti.
      */
     protected $failed_errors = [];
+
     /**
      * Definisce i campi disponibili per l'importazione.
      *
      * @return array
      */
-
     public function getAvailableFields()
     {
         return [
@@ -103,7 +103,7 @@ class CSV extends CSVImporter
             if (!empty($missing_fields)) {
                 $this->failed_records[] = $record;
                 $this->failed_rows[] = $row;
-                $this->failed_errors[] = 'Campi obbligatori mancanti: ' . implode(', ', $missing_fields);
+                $this->failed_errors[] = 'Campi obbligatori mancanti: '.implode(', ', $missing_fields);
                 ++$failed_count;
                 continue;
             }
@@ -139,17 +139,20 @@ class CSV extends CSVImporter
 
             if (empty($record['matricola']) || empty($record['nome'])) {
                 $this->failed_errors[] = 'Campi obbligatori mancanti: matricola e/o nome';
+
                 return false;
             }
 
             if (empty($record['partita_iva']) && empty($record['codice_fiscale'])) {
                 $this->failed_errors[] = 'Almeno uno tra Partita IVA e Codice Fiscale deve essere presente';
+
                 return false;
             }
 
             $anagrafica = $this->trovaAnagrafica($record);
             if (empty($anagrafica)) {
                 $this->failed_errors[] = 'Impossibile trovare o creare anagrafica cliente';
+
                 return false;
             }
 
@@ -176,15 +179,16 @@ class CSV extends CSVImporter
             $this->processaImmagine($impianto, $url, $record, $database);
 
             unset($record['import_immagine']);
-            return true;
 
+            return true;
         } catch (\Exception $e) {
             $error = 'Errore importazione impianto';
             if (!empty($record['matricola'])) {
-                $error .= ' (Matricola: ' . $record['matricola'] . ')';
+                $error .= ' (Matricola: '.$record['matricola'].')';
             }
-            error_log($error . ': ' . $e->getMessage());
+            error_log($error.': '.$e->getMessage());
             $this->failed_errors[] = $e->getMessage();
+
             return false;
         }
     }
@@ -203,6 +207,52 @@ class CSV extends CSVImporter
             ['00003', 'https://openstamanager.com/moduli/disponibilita-tecnici/tecnici.webp', '2', 'Forno Electrolux', '98765432109', '', 'Elettrodomestici', 'Forni', 'Sede Principale', 'Forno elettrico multifunzione', '2023-04-01', 'Electrolux', 'EOC6P77WX'],
             ['00004', 'https://openstamanager.com/moduli/climatizzazione/climatizzazione.webp', '2', 'Condizionatore Daikin', '', 'VRDLGI75M15F205Z', 'Climatizzazione', 'Split', 'Sede Principale', 'Condizionatore inverter 12000 BTU', '2023-05-15', 'Daikin', 'FTXM35R'],
         ];
+    }
+
+    /**
+     * Salva i record falliti con gli errori specifici in un file CSV.
+     *
+     * @param string $filepath Percorso del file in cui salvare i record falliti
+     *
+     * @return string Percorso del file salvato
+     */
+    public function saveFailedRecordsWithErrors($filepath)
+    {
+        if (empty($this->failed_rows)) {
+            return '';
+        }
+
+        $dir = dirname($filepath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $header = $this->getHeader();
+        $header[] = 'Errore';
+        fputcsv($file, $header, ';');
+
+        foreach ($this->failed_rows as $index => $row) {
+            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
+            $row[] = $error_message;
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        return $filepath;
+    }
+
+    /**
+     * Restituisce gli errori specifici per i record falliti.
+     *
+     * @return array
+     */
+    public function getFailedErrors()
+    {
+        return $this->failed_errors;
     }
 
     /**
@@ -272,10 +322,11 @@ class CSV extends CSVImporter
             }
 
             $anagrafica->save();
-            return $anagrafica;
 
+            return $anagrafica;
         } catch (\Exception $e) {
             error_log('Errore creazione anagrafica: '.$e->getMessage());
+
             return null;
         }
     }
@@ -293,6 +344,7 @@ class CSV extends CSVImporter
         if (empty($primary_key) || empty($record[$primary_key])) {
             return null;
         }
+
         return Impianto::where($primary_key, $record[$primary_key])->first();
     }
 
@@ -329,7 +381,7 @@ class CSV extends CSVImporter
 
             return $categoria;
         } catch (\Exception $e) {
-            throw new \Exception('Errore categoria "' . $record['categoria'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore categoria "'.$record['categoria'].'": '.$e->getMessage());
         }
     }
 
@@ -367,7 +419,8 @@ class CSV extends CSVImporter
 
             return $sottocategoria;
         } catch (\Exception $e) {
-            error_log('Errore sottocategoria "' . $record['sottocategoria'] . '": ' . $e->getMessage());
+            error_log('Errore sottocategoria "'.$record['sottocategoria'].'": '.$e->getMessage());
+
             return null;
         }
     }
@@ -397,7 +450,7 @@ class CSV extends CSVImporter
 
             return $marca->id;
         } catch (\Exception $e) {
-            error_log('Errore marca, uso fallback: ' . $e->getMessage());
+            error_log('Errore marca, uso fallback: '.$e->getMessage());
 
             $result = $database->fetchOne('SELECT `id` FROM `zz_marche` WHERE `name`='.prepare($record['marca']).' AND `is_impianto` = 1');
             $id_marca = !empty($result) ? $result['id'] : null;
@@ -504,50 +557,5 @@ class CSV extends CSVImporter
         } catch (\Exception $e) {
             error_log('Errore importazione immagine: '.$e->getMessage());
         }
-    }
-
-    /**
-     * Salva i record falliti con gli errori specifici in un file CSV.
-     *
-     * @param string $filepath Percorso del file in cui salvare i record falliti
-     *
-     * @return string Percorso del file salvato
-     */
-    public function saveFailedRecordsWithErrors($filepath)
-    {
-        if (empty($this->failed_rows)) {
-            return '';
-        }
-
-        $dir = dirname($filepath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $file = fopen($filepath, 'w');
-        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        $header = $this->getHeader();
-        $header[] = 'Errore';
-        fputcsv($file, $header, ';');
-
-        foreach ($this->failed_rows as $index => $row) {
-            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
-            $row[] = $error_message;
-            fputcsv($file, $row, ';');
-        }
-
-        fclose($file);
-        return $filepath;
-    }
-
-    /**
-     * Restituisce gli errori specifici per i record falliti.
-     *
-     * @return array
-     */
-    public function getFailedErrors()
-    {
-        return $this->failed_errors;
     }
 }

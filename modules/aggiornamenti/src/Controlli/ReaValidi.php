@@ -41,7 +41,7 @@ class ReaValidi extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -85,7 +85,7 @@ class ReaValidi extends Controllo
         }
     }
 
-    public function execute($record, $params = [])
+    public function execute($record, $params = []): never
     {
         // La risoluzione singola non è più supportata
         // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
@@ -93,7 +93,7 @@ class ReaValidi extends Controllo
     }
 
     /**
-     * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi
+     * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi.
      */
     public function solveGlobal($params = [])
     {

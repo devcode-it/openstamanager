@@ -31,7 +31,7 @@ switch (filter('op')) {
 
         $where_conditions = [
             '`id_print`='.prepare($id_print),
-            'YEAR(`date_end`)='.prepare($year)
+            'YEAR(`date_end`)='.prepare($year),
         ];
 
         if (!empty($id_sezionale)) {

@@ -137,28 +137,32 @@ td a:hover .fa-external-link {
 </style>';
 
 if (!function_exists('normalizeForDiff')) {
-    function normalizeForDiff($text) {
-        $text = preg_replace('/<br\s*\/?>/i', '', $text);
+    function normalizeForDiff($text)
+    {
+        $text = preg_replace('/<br\s*\/?>/i', '', (string) $text);
         $text = preg_replace('/\s+/', ' ', $text);
         $text = str_replace(['"', "'", '`'], "'", $text);
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
         return trim($text);
     }
 }
 
-function createCollapsibleQuery($query_content, $row_id, $column_type) {
+function createCollapsibleQuery($query_content, $row_id, $column_type)
+{
     if (empty($query_content) || $query_content === '<span class="text-muted">-</span>') {
         return $query_content;
     }
 
     // Decodifica le entità HTML e rimuovi i tag HTML per calcolare la lunghezza del testo puro
-    $text_content = html_entity_decode(strip_tags($query_content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text_content = html_entity_decode(strip_tags((string) $query_content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
     // Se il contenuto è breve (meno di 300 caratteri), mostra tutto
     if (strlen($text_content) <= 300) {
         // Decodifica anche il contenuto completo per la visualizzazione
-        $decoded_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return '<code style="white-space: pre-wrap; word-break: break-all;">' . $decoded_content . '</code>';
+        $decoded_content = html_entity_decode((string) $query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return '<code style="white-space: pre-wrap; word-break: break-all;">'.$decoded_content.'</code>';
     }
 
     // Tronca il contenuto a 300 caratteri per l'anteprima
@@ -170,68 +174,71 @@ function createCollapsibleQuery($query_content, $row_id, $column_type) {
         $preview_content = substr($preview_content, 0, $last_space);
     }
 
-    $preview_content = htmlspecialchars($preview_content) . '...';
+    $preview_content = htmlspecialchars($preview_content).'...';
 
     // Decodifica il contenuto completo per la visualizzazione
-    $decoded_full_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $decoded_full_content = html_entity_decode((string) $query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
     return '
         <div class="query-container">
-            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_' . $row_id . '_' . $column_type . '">' .
-                $preview_content . '
+            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_'.$row_id.'_'.$column_type.'">'.
+                $preview_content.'
             </code>
-            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_' . $row_id . '_' . $column_type . '">' .
-                $decoded_full_content . '
+            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_'.$row_id.'_'.$column_type.'">'.
+                $decoded_full_content.'
             </code>
         </div>';
 }
 
-function highlightDifferences($current, $expected) {
+function highlightDifferences($current, $expected)
+{
     if (empty($expected)) {
         return [
-            'current' => htmlspecialchars($current),
-            'expected' => '<span class="text-muted">-</span>'
+            'current' => htmlspecialchars((string) $current),
+            'expected' => '<span class="text-muted">-</span>',
         ];
     }
 
     $current_normalized = normalizeForDiff($current);
     $expected_normalized = normalizeForDiff($expected);
 
-    $current_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $current_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-    $expected_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $expected_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $current_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', (string) $current_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $expected_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', (string) $expected_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
     if ($current_normalized === $expected_normalized) {
         return [
-            'current' => htmlspecialchars($current),
-            'expected' => htmlspecialchars($expected)
+            'current' => htmlspecialchars((string) $current),
+            'expected' => htmlspecialchars((string) $expected),
         ];
     }
 
     $current_highlighted = '';
     $expected_highlighted = '';
 
-    $i = 0; $j = 0;
+    $i = 0;
+    $j = 0;
     while ($i < count($current_words) || $j < count($expected_words)) {
         if ($i < count($current_words) && $j < count($expected_words) && $current_words[$i] === $expected_words[$j]) {
             // Parti uguali: mostra senza evidenziazione
             $word = htmlspecialchars($current_words[$i]);
             $current_highlighted .= $word;
             $expected_highlighted .= $word;
-            $i++; $j++;
+            ++$i;
+            ++$j;
         } elseif ($i < count($current_words) && ($j >= count($expected_words) || $current_words[$i] !== $expected_words[$j])) {
             // Parti aggiunte nel current: evidenzia in verde
-            $current_highlighted .= '<span class="diff-added" style="background-color: #d4edda; color: #155724;">' . htmlspecialchars($current_words[$i]) . '</span>';
-            $i++;
+            $current_highlighted .= '<span class="diff-added" style="background-color: #d4edda; color: #155724;">'.htmlspecialchars($current_words[$i]).'</span>';
+            ++$i;
         } elseif ($j < count($expected_words)) {
             // Parti rimosse (presenti nell'expected ma non nel current): evidenzia in rosso
-            $expected_highlighted .= '<span class="diff-removed" style="background-color: #f8d7da; color: #721c24;">' . htmlspecialchars($expected_words[$j]) . '</span>';
-            $j++;
+            $expected_highlighted .= '<span class="diff-removed" style="background-color: #f8d7da; color: #721c24;">'.htmlspecialchars($expected_words[$j]).'</span>';
+            ++$j;
         }
     }
 
     return [
         'current' => $current_highlighted,
-        'expected' => $expected_highlighted
+        'expected' => $expected_highlighted,
     ];
 }
 
@@ -301,9 +308,7 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
             foreach ($custom_files as $element) {
-                $files_list = implode(', ', array_map(function($file) {
-                    return '<code>'.$file.'</code>';
-                }, $element['files']));
+                $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $element['files']));
 
                 echo '
                                 <tr>
@@ -418,31 +423,22 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
             foreach ($custom_views_not_standard as $index => $view) {
-                switch ($view['reason']) {
-                    case 'Vista aggiuntiva':
-                        $badge_class = 'badge-warning';
-                        break;
-                    case 'Vista mancante':
-                        $badge_class = 'badge-dark';
-                        break;
-                    case 'Query modificata':
-                        $badge_class = 'badge-info';
-                        break;
-                    case 'Modulo non previsto':
-                        $badge_class = 'badge-danger';
-                        break;
-                    default:
-                        $badge_class = 'badge-secondary';
-                }
+                $badge_class = match ($view['reason']) {
+                    'Vista aggiuntiva' => 'badge-warning',
+                    'Vista mancante' => 'badge-dark',
+                    'Query modificata' => 'badge-info',
+                    'Modulo non previsto' => 'badge-danger',
+                    default => 'badge-secondary',
+                };
 
-                $row_id = 'view_' . $index;
+                $row_id = 'view_'.$index;
                 $has_long_content = false;
 
                 if (empty($view['current_query'])) {
                     $current_query_display = '<span class="text-muted">-</span>';
                     if (!empty($view['expected_query'])) {
-                        $expected_query_display = createCollapsibleQuery(htmlspecialchars($view['expected_query']), $row_id, 'expected');
-                        $has_long_content = strlen(strip_tags(htmlspecialchars($view['expected_query']))) > 300;
+                        $expected_query_display = createCollapsibleQuery(htmlspecialchars((string) $view['expected_query']), $row_id, 'expected');
+                        $has_long_content = strlen(strip_tags(htmlspecialchars((string) $view['expected_query']))) > 300;
                     } else {
                         $expected_query_display = '<span class="text-muted">-</span>';
                     }
@@ -450,11 +446,11 @@ if (function_exists('customComponents')) {
                     $diff_result = highlightDifferences($view['current_query'], $view['expected_query']);
                     $current_query_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
                     $expected_query_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
-                    $has_long_content = strlen(strip_tags($view['current_query'])) > 300 || strlen(strip_tags($view['expected_query'])) > 300;
+                    $has_long_content = strlen(strip_tags((string) $view['current_query'])) > 300 || strlen(strip_tags((string) $view['expected_query'])) > 300;
                 }
 
                 $module_id_display = $view['module_id'] ? 'ID: '.$view['module_id'] : 'Mancante';
-                $module_display = $view['module_name'] . ' <small class="text-muted">('.$module_id_display.')</small>';
+                $module_display = $view['module_name'].' <small class="text-muted">('.$module_id_display.')</small>';
 
                 $view_name_display = !empty($view['name']) ?
                     $view['name'] :
@@ -463,14 +459,14 @@ if (function_exists('customComponents')) {
                 // Crea il pulsante espandi solo se c'è contenuto lungo
                 $expand_button = '';
                 if ($has_long_content) {
-                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
-                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\''.$row_id.'\')">
+                        <i class="fa fa-expand" id="icon_'.$row_id.'"></i> <span id="text_'.$row_id.'">Espandi</span>
                     </button>';
                 }
 
                 echo '
-                                <tr id="row_' . $row_id . '">
-                                    <td><code>'.$view_name_display.'</code>' . $expand_button . '</td>
+                                <tr id="row_'.$row_id.'">
+                                    <td><code>'.$view_name_display.'</code>'.$expand_button.'</td>
                                     <td>'.$module_display.'</td>
                                     <td><span class="badge '.$badge_class.'">'.$view['reason'].'</span></td>
                                     <td class="query-cell">'.$current_query_display.'</td>
@@ -529,33 +525,26 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
             foreach ($custom_modules_not_standard as $index => $modulo) {
-                switch ($modulo['reason']) {
-                    case 'Options2 valorizzato':
-                        $badge_class = 'badge-warning';
-                        break;
-                    case 'Options modificato':
-                        $badge_class = 'badge-info';
-                        break;
-                    case 'Modulo non previsto':
-                        $badge_class = 'badge-danger';
-                        break;
-                    default:
-                        $badge_class = 'badge-secondary';
-                }
+                $badge_class = match ($modulo['reason']) {
+                    'Options2 valorizzato' => 'badge-warning',
+                    'Options modificato' => 'badge-info',
+                    'Modulo non previsto' => 'badge-danger',
+                    default => 'badge-secondary',
+                };
 
                 // Determina quale options mostrare: se options2 è valorizzato, mostra quello, altrimenti options
                 $current_to_show = !empty($modulo['current_options2']) ? $modulo['current_options2'] : $modulo['current_options'];
                 $expected_to_show = $modulo['expected_options'];
 
-                $row_id = 'module_' . $index;
+                $row_id = 'module_'.$index;
                 $has_long_content = false;
 
                 // Applica l'evidenziazione delle differenze come per le viste
                 if (empty($current_to_show)) {
                     $current_options_display = '<span class="text-muted">-</span>';
                     if (!empty($expected_to_show)) {
-                        $expected_options_display = createCollapsibleQuery(htmlspecialchars($expected_to_show), $row_id, 'expected');
-                        $has_long_content = strlen(strip_tags(htmlspecialchars($expected_to_show))) > 300;
+                        $expected_options_display = createCollapsibleQuery(htmlspecialchars((string) $expected_to_show), $row_id, 'expected');
+                        $has_long_content = strlen(strip_tags(htmlspecialchars((string) $expected_to_show))) > 300;
                     } else {
                         $expected_options_display = '<span class="text-muted">-</span>';
                     }
@@ -563,20 +552,20 @@ if (function_exists('customComponents')) {
                     $diff_result = highlightDifferences($current_to_show, $expected_to_show);
                     $current_options_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
                     $expected_options_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
-                    $has_long_content = strlen(strip_tags($current_to_show)) > 300 || strlen(strip_tags($expected_to_show)) > 300;
+                    $has_long_content = strlen(strip_tags((string) $current_to_show)) > 300 || strlen(strip_tags((string) $expected_to_show)) > 300;
                 }
 
                 // Crea il pulsante espandi solo se c'è contenuto lungo
                 $expand_button = '';
                 if ($has_long_content) {
-                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
-                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\''.$row_id.'\')">
+                        <i class="fa fa-expand" id="icon_'.$row_id.'"></i> <span id="text_'.$row_id.'">Espandi</span>
                     </button>';
                 }
 
                 echo '
-                                <tr id="row_' . $row_id . '">
-                                    <td><strong>'.$modulo['module_display_name'].'</strong><br><small class="text-muted">ID: '.$modulo['id'].'</small>' . $expand_button . '</td>
+                                <tr id="row_'.$row_id.'">
+                                    <td><strong>'.$modulo['module_display_name'].'</strong><br><small class="text-muted">ID: '.$modulo['id'].'</small>'.$expand_button.'</td>
                                     <td><span class="badge '.$badge_class.'">'.$modulo['reason'].'</span></td>
                                     <td class="query-cell">'.$current_options_display.'</td>
                                     <td class="query-cell">'.$expected_options_display.'</td>
@@ -638,14 +627,11 @@ if (function_exists('customComponents')) {
             </div>';
         }
 
-
-
-                        echo '
+        echo '
                     </div>
                 </div>
             </div>
         </div>';
-
     } else {
         echo '
         <div class="row mb-4">
@@ -774,7 +760,7 @@ function search(button) {
                 $("#update-search").html("<div class=\"alert alert-success mb-0\"><i class=\"fa fa-check-circle\"></i> '.tr('Nessun aggiornamento disponibile').'</div>");
             } else {
                 let beta_warning = data.includes("beta") ? "<div class=\"alert alert-warning mt-2 mb-0\"><i class=\"fa fa-exclamation-triangle\"></i> <strong>'.tr('Attenzione').':</strong> '.tr('La versione individuata è in fase sperimentale e potrebbe presentare malfunzionamenti. Se ne sconsiglia l\'aggiornamento in installazioni di produzione').'</div>" : "";
-                $("#update-search").html("<div class=\"alert alert-info mb-0\"><i class=\"fa fa-download\"></i> <strong>'.tr("Nuovo aggiornamento disponibile").':</strong> " + data + "</div>" + beta_warning + "<div class=\"mt-2\"><a href=\"https://github.com/devcode-it/openstamanager/releases\" target=\"_blank\" class=\"btn btn-sm btn-primary\"><i class=\"fa fa-external-link\"></i> '.tr('Scarica da GitHub').'</a></div>");
+                $("#update-search").html("<div class=\"alert alert-info mb-0\"><i class=\"fa fa-download\"></i> <strong>'.tr('Nuovo aggiornamento disponibile').':</strong> " + data + "</div>" + beta_warning + "<div class=\"mt-2\"><a href=\"https://github.com/devcode-it/openstamanager/releases\" target=\"_blank\" class=\"btn btn-sm btn-primary\"><i class=\"fa fa-external-link\"></i> '.tr('Scarica da GitHub').'</a></div>");
             }
         },
         error: function(xhr, textStatus, errorThrown) {

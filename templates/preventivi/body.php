@@ -19,10 +19,7 @@
  */
 
 use Carbon\CarbonInterval;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Banche\Banca;
-use Modules\Pagamenti\Pagamento;
 
 include_once __DIR__.'/../../core.php';
 

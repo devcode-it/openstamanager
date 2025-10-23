@@ -88,8 +88,8 @@ class UpdateHook extends CachedManager
             return false;
         } catch (\Exception $e) {
             // Log dell'errore per debug
-            error_log('Errore UpdateHook::isAvailable: ' . $e->getMessage());
-            throw new \Exception('Impossibile verificare gli aggiornamenti: ' . $e->getMessage());
+            error_log('Errore UpdateHook::isAvailable: '.$e->getMessage());
+            throw new \Exception('Impossibile verificare gli aggiornamenti: '.$e->getMessage());
         }
     }
 
@@ -154,12 +154,12 @@ class UpdateHook extends CachedManager
 
             // Se non trova release stabili, restituisce la prima disponibile come fallback
             return $releases[0];
-        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+        } catch (\GuzzleHttp\Exception\ConnectException) {
             throw new \Exception('Impossibile connettersi a GitHub: verificare la connessione internet');
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            throw new \Exception('Errore nella richiesta a GitHub: ' . $e->getMessage());
+            throw new \Exception('Errore nella richiesta a GitHub: '.$e->getMessage());
         } catch (\Exception $e) {
-            throw new \Exception('Errore durante la verifica degli aggiornamenti: ' . $e->getMessage());
+            throw new \Exception('Errore durante la verifica degli aggiornamenti: '.$e->getMessage());
         }
     }
 }

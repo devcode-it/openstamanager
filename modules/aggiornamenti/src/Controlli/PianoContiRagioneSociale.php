@@ -41,7 +41,7 @@ class PianoContiRagioneSociale extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -84,7 +84,7 @@ class PianoContiRagioneSociale extends Controllo
         }
     }
 
-    public function execute($record, $params = [])
+    public function execute($record, $params = []): never
     {
         // La risoluzione singola non è più supportata
         // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
@@ -92,10 +92,57 @@ class PianoContiRagioneSociale extends Controllo
     }
 
     /**
-     * Gestisce la risoluzione del conto per un'anagrafica specifica
+     * Override del metodo solveGlobal per gestire l'eliminazione dei conti vuoti.
+     */
+    public function solveGlobal($params = [])
+    {
+        $database = database();
+        $conti_da_verificare = [];
+
+        // Raccogli tutti i conti che potrebbero diventare vuoti
+        foreach ($this->results as $record) {
+            $anagrafica = Anagrafica::find($record['id']);
+
+            if (!empty($anagrafica->idconto_cliente)) {
+                $conti_da_verificare[] = $anagrafica->idconto_cliente;
+            }
+            if (!empty($anagrafica->idconto_fornitore)) {
+                $conti_da_verificare[] = $anagrafica->idconto_fornitore;
+            }
+        }
+
+        // Esegui la risoluzione globale direttamente
+        $results = [];
+        foreach ($this->results as $record) {
+            $anagrafica = Anagrafica::find($record['id']);
+
+            // Gestione conto cliente
+            if (!empty($anagrafica->idconto_cliente)) {
+                $this->gestisciConto($anagrafica, 'idconto_cliente');
+            }
+
+            // Gestione conto fornitore
+            if (!empty($anagrafica->idconto_fornitore)) {
+                $this->gestisciConto($anagrafica, 'idconto_fornitore');
+            }
+
+            $results[$record['id']] = true;
+        }
+
+        // Elimina i conti vuoti rimasti
+        $conti_da_verificare = array_unique($conti_da_verificare);
+        foreach ($conti_da_verificare as $id_conto) {
+            $this->eliminaContoSeVuoto($id_conto);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Gestisce la risoluzione del conto per un'anagrafica specifica.
      *
      * @param Anagrafica $anagrafica
-     * @param string $campo_conto ('idconto_cliente' o 'idconto_fornitore')
+     * @param string     $campo_conto ('idconto_cliente' o 'idconto_fornitore')
      */
     private function gestisciConto($anagrafica, $campo_conto)
     {
@@ -121,11 +168,11 @@ class PianoContiRagioneSociale extends Controllo
     }
 
     /**
-     * Crea un nuovo conto per l'anagrafica e aggiorna i movimenti contabili
+     * Crea un nuovo conto per l'anagrafica e aggiorna i movimenti contabili.
      *
      * @param Anagrafica $anagrafica
-     * @param string $campo_conto
-     * @param int $vecchio_id_conto
+     * @param string     $campo_conto
+     * @param int        $vecchio_id_conto
      */
     private function creaECollegaNuovoConto($anagrafica, $campo_conto, $vecchio_id_conto)
     {
@@ -168,7 +215,7 @@ class PianoContiRagioneSociale extends Controllo
 
     /**
      * Aggiorna i movimenti contabili sostituendo il vecchio conto con il nuovo
-     * per una specifica anagrafica
+     * per una specifica anagrafica.
      *
      * @param int $id_anagrafica
      * @param int $vecchio_id_conto
@@ -205,7 +252,7 @@ class PianoContiRagioneSociale extends Controllo
     }
 
     /**
-     * Elimina un conto se non è più collegato ad alcuna anagrafica e non ha movimenti
+     * Elimina un conto se non è più collegato ad alcuna anagrafica e non ha movimenti.
      *
      * @param int $id_conto
      */
@@ -225,52 +272,5 @@ class PianoContiRagioneSociale extends Controllo
         if ($totale_anagrafiche_collegate == 0 && $movimenti_collegati == 0) {
             $database->delete('co_pianodeiconti3', ['id' => $id_conto]);
         }
-    }
-
-    /**
-     * Override del metodo solveGlobal per gestire l'eliminazione dei conti vuoti
-     */
-    public function solveGlobal($params = [])
-    {
-        $database = database();
-        $conti_da_verificare = [];
-
-        // Raccogli tutti i conti che potrebbero diventare vuoti
-        foreach ($this->results as $record) {
-            $anagrafica = \Modules\Anagrafiche\Anagrafica::find($record['id']);
-
-            if (!empty($anagrafica->idconto_cliente)) {
-                $conti_da_verificare[] = $anagrafica->idconto_cliente;
-            }
-            if (!empty($anagrafica->idconto_fornitore)) {
-                $conti_da_verificare[] = $anagrafica->idconto_fornitore;
-            }
-        }
-
-        // Esegui la risoluzione globale direttamente
-        $results = [];
-        foreach ($this->results as $record) {
-            $anagrafica = Anagrafica::find($record['id']);
-
-            // Gestione conto cliente
-            if (!empty($anagrafica->idconto_cliente)) {
-                $this->gestisciConto($anagrafica, 'idconto_cliente');
-            }
-
-            // Gestione conto fornitore
-            if (!empty($anagrafica->idconto_fornitore)) {
-                $this->gestisciConto($anagrafica, 'idconto_fornitore');
-            }
-
-            $results[$record['id']] = true;
-        }
-
-        // Elimina i conti vuoti rimasti
-        $conti_da_verificare = array_unique($conti_da_verificare);
-        foreach ($conti_da_verificare as $id_conto) {
-            $this->eliminaContoSeVuoto($id_conto);
-        }
-
-        return $results;
     }
 }

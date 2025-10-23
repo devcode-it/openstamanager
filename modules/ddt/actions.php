@@ -295,7 +295,7 @@ switch (filter('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ddt->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
+            $ddt->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
 
             $ddt->id_documento_fe = $documento->id_documento_fe;
             $ddt->codice_cup = $documento->codice_cup;
@@ -494,7 +494,7 @@ switch (filter('op')) {
         $copia->idcausalet = $ddt->idcausalet;
         $copia->idspedizione = $ddt->idspedizione;
         $copia->n_colli = $ddt->n_colli;
-        $copia->idpagamento = $ddt->idpagamento?:setting('Tipo di pagamento predefinito');
+        $copia->idpagamento = $ddt->idpagamento ?: setting('Tipo di pagamento predefinito');
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;

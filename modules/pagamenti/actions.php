@@ -39,12 +39,12 @@ switch (filter('op')) {
 
                 // Data fatturazione giorno fisso
                 if (post('scadenza')[$key] == 3) {
-                    $giorno = post('giorno')[$key];
+                    $giorno = (int) post('giorno')[$key];
                 }
 
                 // Data fatturazione fine mese (giorno fisso)
                 elseif (post('scadenza')[$key] == 4) {
-                    $giorno = -post('giorno')[$key] - 1;
+                    $giorno = -(int) post('giorno')[$key] - 1;
                 }
 
                 if (empty($id)) {
@@ -54,14 +54,14 @@ switch (filter('op')) {
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $pagamento->name = $descrizione;
                 }
-                $pagamento->num_giorni = post('distanza')[$key];
+                $pagamento->num_giorni = (int) post('distanza')[$key];
                 $pagamento->giorno = $giorno;
-                $pagamento->prc = post('percentuale')[$key];
+                $pagamento->prc = (float) post('percentuale')[$key];
                 $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
                 $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
                 $pagamento->descrizione_incasso = post('descrizione_incasso');
-                $pagamento->importo_fisso_incasso = post('importo_fisso_incasso');
-                $pagamento->importo_percentuale_incasso = post('importo_percentuale_incasso');
+                $pagamento->importo_fisso_incasso = (float) post('importo_fisso_incasso');
+                $pagamento->importo_percentuale_incasso = (float) post('importo_percentuale_incasso');
                 $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
                 $pagamento->save();
                 $pagamento->setTranslation('title', $descrizione);

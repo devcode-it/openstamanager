@@ -80,7 +80,7 @@ class Pagamento extends Model
                 if ($rata->num_giorni % 30 == 0) {
                     $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay();
+                    $date->addDays($rata->num_giorni);
                 }
 
                 $date->modify('last day of this month');
@@ -100,7 +100,7 @@ class Pagamento extends Model
                 if ($rata->num_giorni % 30 == 0) {
                     $date->addMonthsNoOverflow(round($rata->num_giorni / 30));
                 } else {
-                    $date->addDay();
+                    $date->addDays($rata->num_giorni);
                 }
 
                 // Individuazione giorno effettivo (se il giorno indicato è eccessivamente grande, viene preso il massimo possibile)

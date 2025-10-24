@@ -236,7 +236,7 @@ class Preventivo extends Document
         $pagamento = $this->pagamento;
 
         if ($pagamento && $pagamento->isRiBa()) {
-            $banca = \Modules\Banche\Banca::find($this->id_banca_controparte) ?: \Modules\Banche\Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->first();
+            $banca = \Modules\Banche\Banca::find($this->id_banca_controparte) ?: \Modules\Banche\Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
         } else {
             $banca = \Modules\Banche\Banca::find($this->id_banca_azienda);
         }

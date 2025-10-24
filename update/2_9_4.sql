@@ -87,7 +87,7 @@ UPDATE `in_interventi` SET `id_preventivo` = null WHERE `id_preventivo` = 0;
 UPDATE `in_interventi` SET `id_ordine` = null WHERE `id_ordine` = 0;
 
 ALTER TABLE `co_preventivi` CHANGE `idpagamento` `idpagamento` INT NULL DEFAULT NULL;
-UPDATE `co_preventivi` SET `idpagamento` = null WHERE `idpagamento` = 0;
+UPDATE `co_preventivi` SET `idpagamento` = null WHERE `idpagamento` NOT IN (SELECT `id` FROM `co_pagamenti`);
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_3` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE SET NULL;
 
 -- Allineamento vista Fatture di acquisto

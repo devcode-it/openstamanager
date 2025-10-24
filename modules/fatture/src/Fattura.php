@@ -598,7 +598,7 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata])
+            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])
             && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida]))
             || $options[0] == 'forza_emissione'
         ) {
@@ -968,6 +968,13 @@ class Fattura extends Document
 
     /**
      * Determina la banca dell'azienda da utilizzare per il documento.
+     *
+     * @param Anagrafica $azienda
+     * @param int $id_pagamento
+     * @param string $conto
+     * @param string $direzione
+     * @param Anagrafica $anagrafica_controparte
+     * @return int|null
      */
     private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
     {

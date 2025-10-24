@@ -275,9 +275,10 @@ echo '
                 <!-- TAB DETTAGLI CLIENTE -->
                 <div class="tab-pane fade show active" id="tab_dettagli_cliente" role="tabpanel" aria-labelledby="dettagli-cliente-tab">
                     <div id="dettagli_cliente" class="p-4">
-                        <div class="text-center text-muted py-5">
-                            <i class="fa fa-user fa-3x mb-3"></i>
-                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
+                        <div class="alert alert-info text-center mx-auto mt-4" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <i class="fa fa-user fa-2x mb-3"></i>
+                            <h5 class="mb-2">'.tr('Cliente non selezionato').'</h5>
+                            <p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
                         </div>
                     </div>
                 </div>
@@ -285,9 +286,16 @@ echo '
                 <!-- TAB POSIZIONE -->
                 <div class="tab-pane fade" id="tab_posizione" role="tabpanel" aria-labelledby="posizione-tab">
                     <div class="p-4">
-                        <div id="map-add" style="height: 300px; width: 100%; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);"></div>
-                        <div id="map-warning" class="hide alert alert-warning mt-3">
-                            <i class="fa fa-exclamation-triangle"></i> '.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'
+                        <div id="map-add" style="height: 300px; width: 100%; display: none; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);"></div>
+                        <div id="no-client-message" class="alert alert-info text-center mx-auto mt-4" style="display: none; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <i class="fa fa-map-marker fa-2x mb-3"></i>
+                            <h5 class="mb-2">'.tr('Cliente non selezionato').'</h5>
+                            <p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni sulla posizione geografica').'</p>
+                        </div>
+                        <div id="map-warning" class="alert alert-info text-center mx-auto mt-4" style="display: none; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <i class="fa fa-map-marker fa-2x mb-3"></i>
+                            <h5 class="mb-2">'.tr('Posizione non definita').'</h5>
+                            <p class="mb-0">'.tr('La posizione non è stata definita per questo cliente').'</p>
                         </div>
                     </div>
                 </div>
@@ -519,6 +527,8 @@ echo '
             $(".nav-tabs .nav-link").removeClass("active-tab bg-white");
             $(this).addClass("active-tab");
         });
+
+        caricaMappa();
     });
 
 	input("idtecnico").change(function() {
@@ -576,7 +586,8 @@ echo '
                 $("#dettagli_cliente").html(data);
             });
         } else {
-            $("#dettagli_cliente").html(\'<div class="text-center text-muted"><i class="fa fa-user fa-3x mb-2"></i><p>'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
+            $("#dettagli_cliente").html(\'<div class="alert alert-info text-center mx-auto mt-4" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"><i class="fa fa-user fa-2x mb-3"></i><h5 class="mb-2">'.tr('Cliente non selezionato').'</h5><p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
+            caricaMappa();
         }
 
         plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
@@ -625,6 +636,8 @@ echo '
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
             caricaMappa(data.lat, data.lng);
+		} else {
+		    caricaMappa();
 		}
 	});
 
@@ -891,15 +904,76 @@ echo '
             return false;
         }
 
-        var lat = lat ? lat : input("idanagrafica").getData("select-options").lat;
-        var lng = lng ? lng :input("idanagrafica").getData("select-options").lng;
-        if (typeof lat === "undefined" || typeof lng === "undefined"){
-            $("#map-warning").removeClass("hide");
+        // Controllo 1: Verificare se è stato selezionato un cliente
+        var clienteSelezionato = input("idanagrafica").get();
+        if (!clienteSelezionato) {
+            // Nessun cliente selezionato
+            $("#no-client-message").show();
+            $("#map-warning").hide();
+            $("#map-add").hide();
+
+            // Rimuovi la mappa esistente
+            var container = L.DomUtil.get("map-add");
+            if (container && container._leaflet_id != null && map) {
+                map.remove();
+                map = null;
+            }
+            return false;
         } else {
-            $("#map-warning").addClass("hide");
+            // Cliente selezionato
+            $("#no-client-message").hide();
+            $("#map-add").css("display", "flex");
         }
 
-        if (input("idanagrafica").getData("select-options")) {
+        // Controllo 2: Recuperare le coordinate in base alla sede selezionata
+        if (lat && lng) {
+            // Coordinate passate come parametri (da sede specifica)
+            // Non fare nulla, usa quelle
+        } else {
+            // Recupera coordinate in base alla logica sede
+            var sedeSelezionata = input("idsede_destinazione").get();
+
+            if (sedeSelezionata && sedeSelezionata !== "0") {
+                // Caso C: Sede specifica selezionata
+                var sedeData = input("idsede_destinazione").getData("select-options");
+                if (sedeData) {
+                    lat = sedeData.lat;
+                    lng = sedeData.lng;
+                }
+            } else {
+                // Caso A/B: Nessuna sede o sede legale - usa anagrafica
+                var anagraficaData = input("idanagrafica").getData("select-options");
+                if (anagraficaData) {
+                    lat = anagraficaData.lat;
+                    lng = anagraficaData.lng;
+                }
+            }
+        }
+
+        // Controllo più robusto per verificare se le coordinate sono valide
+        var hasValidCoordinates = lat && lng &&
+                                 typeof lat !== "undefined" && typeof lng !== "undefined" &&
+                                 lat !== null && lng !== null &&
+                                 lat !== "" && lng !== "" &&
+                                 !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng)) &&
+                                 parseFloat(lat) !== 0 && parseFloat(lng) !== 0;
+
+        if (!hasValidCoordinates) {
+            $("#map-warning").show();
+            $("#map-add").hide();
+            // Rimuovi la mappa esistente se le coordinate non sono valide
+            var container = L.DomUtil.get("map-add");
+            if (container && container._leaflet_id != null && map) {
+                map.remove();
+                map = null;
+            }
+        } else {
+            $("#map-warning").hide();
+            $("#map-add").css("display", "flex");
+        }
+
+        // Renderizza la mappa solo se ci sono coordinate valide e un cliente selezionato
+        if (input("idanagrafica").getData("select-options") && hasValidCoordinates) {
             var container = L.DomUtil.get("map-add");
             if(container._leaflet_id != null){
                 map.eachLayer(function (layer) {
@@ -918,22 +992,20 @@ echo '
                 }).addTo(map);
             }
 
-            if (lat && lng) {
-                var icon = new L.Icon({
-                    iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
-                    shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                });
+            var icon = new L.Icon({
+                iconUrl: globals.rootdir + "/assets/dist/img/marker-icon.png",
+                shadowUrl:globals.rootdir + "/assets/dist/img/leaflet/marker-shadow.png",
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
 
-                var marker = L.marker([lat, lng], {
-                    icon: icon
-                }).addTo(map);
+            var marker = L.marker([parseFloat(lat), parseFloat(lng)], {
+                icon: icon
+            }).addTo(map);
 
-                map.setView([parseFloat(lat), parseFloat(lng)], 14);
-            }
+            map.setView([parseFloat(lat), parseFloat(lng)], 14);
         }
     }
 </script>';

@@ -19,6 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/modutil.php';
 
 use Models\Module;
 

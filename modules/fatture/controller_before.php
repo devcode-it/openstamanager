@@ -32,7 +32,8 @@ $services_enable = Interaction::isEnabled();
 if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti_scarto = [];
     $documenti_invio = [];
-    $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];
+    $codici_scarto = ['EC02', 'NS'];
+    $codici_errore = ['ERR', 'ERVAL',];
     $codici_invio = ['GEN', 'QUEUE'];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
@@ -52,7 +53,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
         $stato_fe = StatoFE::find($documento->codice_stato_fe);
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
-            if ($documento->codice_stato_fe == 'NS' && ($documento->stato != Stato::where('name', 'Bozza')->first()->id) && ($documento->stato != Stato::where('name', 'Non valida')->first()->id)) {
+            if ($documento->stato->name != 'Bozza' && $documento->stato->name != 'Non valida') {
                 $ricevuta_principale = $documento->getRicevutaPrincipale();
 
                 if (!empty($ricevuta_principale)) {
@@ -76,6 +77,17 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                 }
             }
             $show_avviso = $show_avviso ?: ($documento->data_stato_fe < (new Carbon())->subDays(4) ? 1 : 0);
+        } elseif (in_array($documento->codice_stato_fe, $codici_errore)) {
+            $documenti_scarto[] = [
+                'id' => $documento->id,
+                'label' => tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
+                    '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
+                    '_NUM_' => $documento->numero_esterno,
+                    '_DATE_' => dateFormat($documento->data),
+                    '_STATO_' => $stato_fe->name,
+                ]),
+            ];
+        
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
             $is_estera = false;
 

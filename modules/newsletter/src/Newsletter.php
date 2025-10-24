@@ -152,7 +152,7 @@ class Newsletter extends Model
         }
 
         // Inizializzazione email
-        $mail = Mail::build(auth()->getUser(), $template, $anagrafica->id);
+        $mail = Mail::build(auth_osm()->getUser(), $template, $anagrafica->id);
 
         // Completamento informazioni
         $mail->addReceiver($email);

@@ -56,7 +56,7 @@ if (!empty($user)) {
 }
 
 echo '
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'"  method="post" enctype="multipart/form-data" id="user_update">
+<form action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'"  method="post" enctype="multipart/form-data" id="user_update">
 	<input type="hidden" name="op" value="update_user">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_utente" value="'.$utente['id'].'">

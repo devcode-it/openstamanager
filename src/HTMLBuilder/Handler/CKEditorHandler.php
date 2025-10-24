@@ -35,6 +35,6 @@ class CKEditorHandler implements HandlerInterface
         // Generazione del codice HTML
         return '
     <textarea |attr|>|value|</textarea>
-    <script src="'.base_path().'/assets/dist/js/ckeditor/ckeditor.js"></script>';
+    <script src="'.base_path_osm().'/assets/dist/js/ckeditor/ckeditor.js"></script>';
     }
 }

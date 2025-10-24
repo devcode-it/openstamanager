@@ -147,7 +147,7 @@ if ($dir == 'entrata') {
 $(document).ready(function () {
     if($("#idanagrafica_add").val()){
         // Carico nel card i dettagli del cliente
-        $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#idanagrafica_add").val(), function(data){
+        $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#idanagrafica_add").val(), function(data){
             $("#dettagli_cliente").html(data);
         });
     }
@@ -220,7 +220,7 @@ $(document).ready(function () {
             });
 
             // Carico nel card i dettagli del cliente
-            $.get("'.base_path().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + data.id, function(data){
+            $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + data.id, function(data){
                 $("#dettagli_cliente").html(data);
             });
         }else{

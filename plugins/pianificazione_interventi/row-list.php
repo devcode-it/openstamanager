@@ -138,7 +138,7 @@ if (!$righe->isEmpty()) {
 
             if ($riga->abilita_serial) {
                 echo '
-                <button type="button" class="btn btn-info btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.base_path().'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$riga->id.'&idriga='.$riga->id.'\');">
+                <button type="button" class="btn btn-info btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.base_path_osm().'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$riga->id.'&idriga='.$riga->id.'\');">
                     <i class="fa fa-barcode"></i>
                 </button>';
             }

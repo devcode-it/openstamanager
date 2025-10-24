@@ -218,7 +218,7 @@ class Prints
             return false;
         }
 
-        $link = base_path().'/pdfgen.php?';
+        $link = base_path_osm().'/pdfgen.php?';
 
         if (self::isOldStandard($infos['id'])) {
             $link .= 'ptype='.$infos['directory'];
@@ -279,7 +279,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.random_int(0, mt_getrandmax())), '/');
+        return base_path_osm().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.random_int(0, mt_getrandmax())), '/');
     }
 
     /**
@@ -714,7 +714,7 @@ class Prints
                 $fil = Models\Upload::find($id_file)->first();
 
                 if ($fil->isImage()) {
-                    $link = base_path().'/'.$fil->filepath;
+                    $link = base_path_osm().'/'.$fil->filepath;
                     $mpdf->WriteHTML('<pagebreak />');
                     $mpdf->WriteHTML('<img src="'.$link.'"></img>');
                 } elseif ($fil->isPdf()) {

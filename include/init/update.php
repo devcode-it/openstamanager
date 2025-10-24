@@ -166,7 +166,7 @@ if (filter('action') == 'do_update') {
                 // Mostra tutti i segni di spunta per gli aggiornamenti completati
                 $("#updates-list .fa-check").show();
 
-                $("#versions-details-container").after(\'<div class="mt-4"><a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'"><i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'</a></div>\');
+                $("#versions-details-container").after(\'<div class="mt-4"><a class="btn btn-success btn-lg btn-block shadow" href="'.base_path_osm().'"><i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'</a></div>\');
             </script>';
 
         // Instructions for the first installation
@@ -205,7 +205,7 @@ if (filter('action') == 'do_update') {
                 </script>
                 <p>'.tr('Questo processo potrebbe richiedere fino a 10 minuti. Ti preghiamo di attendere il completamento').'.</p>
                 <p>'.tr("Se il problema persiste, contatta l'amministratore di sistema").'.</p>
-                <a class="btn btn-info btn-lg mt-3" href="'.base_path().'/index.php"><i class="fa fa-refresh mr-2"></i> '.tr('Aggiorna pagina').'</a>
+                <a class="btn btn-info btn-lg mt-3" href="'.base_path_osm().'/index.php"><i class="fa fa-refresh mr-2"></i> '.tr('Aggiorna pagina').'</a>
             </div>
         </div>';
 
@@ -452,7 +452,7 @@ if (filter('action') == 'do_update') {
     if (Update::isUpdateCompleted()) {
         echo '
         <div class="mt-4">
-            <a class="btn btn-success btn-lg btn-block shadow" href="'.base_path().'">
+            <a class="btn btn-success btn-lg btn-block shadow" href="'.base_path_osm().'">
                 <i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'
             </a>
         </div>';

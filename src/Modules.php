@@ -327,7 +327,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module->id.'&id_record='.$id_record : 'controller.php?id_module='.$module->id;
 
-            return '<a href="'.base_path().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_path_osm().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }
@@ -407,7 +407,7 @@ class Modules
             return ['', false, false];
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path_osm().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self';
         $active = ($actual == $title);

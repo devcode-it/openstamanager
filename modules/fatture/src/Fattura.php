@@ -977,8 +977,20 @@ class Fattura extends Document
         // Per le fatture di acquisto, priorità alla banca del fornitore
         $anagrafica_principale = ($direzione == 'entrata') ? $azienda : $anagrafica_controparte;
 
+        // Pulizia preventiva dei riferimenti a banche inesistenti nell'anagrafica
+        self::cleanInvalidBankReferences($azienda);
+        self::cleanInvalidBankReferences($anagrafica_controparte);
+
         // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
         $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
+
+        // Verifica che la banca esista effettivamente
+        if ($id_banca) {
+            $banca_esistente = Banca::find($id_banca);
+            if (!$banca_esistente || $banca_esistente->deleted_at) {
+                $id_banca = null;
+            }
+        }
 
         // 2. Banca dell'azienda con conto corrispondente al tipo di pagamento (predefinita)
         if (empty($id_banca)) {
@@ -1023,5 +1035,36 @@ class Fattura extends Document
         ]);
 
         return $result['id'] ?? null;
+    }
+
+    /**
+     * Pulisce i riferimenti a banche inesistenti o eliminate dall'anagrafica.
+     */
+    private static function cleanInvalidBankReferences(Anagrafica $anagrafica): void
+    {
+        $changed = false;
+
+        // Verifica idbanca_vendite
+        if ($anagrafica->idbanca_vendite) {
+            $banca = Banca::find($anagrafica->idbanca_vendite);
+            if (!$banca || $banca->deleted_at) {
+                $anagrafica->idbanca_vendite = null;
+                $changed = true;
+            }
+        }
+
+        // Verifica idbanca_acquisti
+        if ($anagrafica->idbanca_acquisti) {
+            $banca = Banca::find($anagrafica->idbanca_acquisti);
+            if (!$banca || $banca->deleted_at) {
+                $anagrafica->idbanca_acquisti = null;
+                $changed = true;
+            }
+        }
+
+        // Salva le modifiche se necessario
+        if ($changed) {
+            $anagrafica->save();
+        }
     }
 }

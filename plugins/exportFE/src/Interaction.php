@@ -40,7 +40,32 @@ class Interaction extends Services
         try {
             $fattura_elettronica = new FatturaElettronica($id_record);
             $fattura = Fattura::find($id_record);
+
+            // Verifica che la fattura esista
+            if (!$fattura) {
+                return [
+                    'code' => 404,
+                    'message' => tr('Fattura non trovata'),
+                ];
+            }
+
             $file = $fattura->getFatturaElettronica();
+
+            // Verifica che il file della fattura elettronica esista
+            if (!$file) {
+                return [
+                    'code' => 400,
+                    'message' => tr('File della fattura elettronica non trovato'),
+                ];
+            }
+
+            // Verifica che la fattura elettronica sia valida
+            if (!$fattura_elettronica->isGenerated()) {
+                return [
+                    'code' => 400,
+                    'message' => tr('Fattura elettronica non generata correttamente'),
+                ];
+            }
 
             $response = static::request('POST', 'invio_fattura_xml', [
                 'xml' => $file->getContent(),
@@ -48,30 +73,40 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
-            // Aggiornamento dello stato
+            // Aggiornamento dello stato in base alla risposta
             if ($body['status'] == 200 || $body['status'] == 301) {
+                // Invio riuscito
                 database()->update('co_documenti', [
                     'codice_stato_fe' => 'WAIT',
                     'data_stato_fe' => date('Y-m-d H:i:s'),
                 ], ['id' => $id_record]);
-            } elseif ($body['status'] == 405) {
+            } else {
+                // Qualsiasi errore, imposta stato errore
                 database()->update('co_documenti', [
                     'codice_stato_fe' => 'ERR',
                     'data_stato_fe' => date('Y-m-d H:i:s'),
                 ], ['id' => $id_record]);
+
+                logger()->warning('Errore invio FE fattura '.$fattura->numero_esterno.': '.$body['message']);
             }
 
             return [
                 'code' => $body['status'],
-                'message' => $body['message'],
+                'message' => $body['message'] ?? tr('Risposta non valida dal server'),
             ];
-        } catch (\UnexpectedValueException) {
+        } catch (\UnexpectedValueException $e) {
+            logger()->error('Fattura elettronica non valida per ID '.$id_record.': '.$e->getMessage());
+            return [
+                'code' => 400,
+                'message' => tr('Fattura elettronica non valida'),
+            ];
+        } catch (\Exception $e) {
+            logger()->error('Errore durante invio fattura elettronica ID '.$id_record.': '.$e->getMessage());
+            return [
+                'code' => 500,
+                'message' => tr('Errore interno durante l\'invio: _ERR_', ['_ERR_' => $e->getMessage()]),
+            ];
         }
-
-        return [
-            'code' => 400,
-            'message' => tr('Fattura non generata correttamente'),
-        ];
     }
 
     public static function getInvoiceRecepits($id_record)

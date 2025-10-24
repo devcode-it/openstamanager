@@ -152,26 +152,76 @@ switch (post('op')) {
         break;
 
     case 'hook_send':
+        $added = [];
+        $failed = [];
+        $skipped = [];
+
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
+
+            if (!$fattura) {
+                $failed[] = 'ID '.$id.' (non trovata)';
+                continue;
+            }
 
             try {
                 $fattura_elettronica = new FatturaElettronica($fattura->id);
 
-                if (!empty($fattura_elettronica) && $fattura_elettronica->isGenerated() && $fattura->codice_stato_fe == 'GEN') {
+                // Verifica che la fattura sia in stato corretto per l'invio
+                // Accetta sia 'GEN' che NULL/vuoto (fatture appena generate)
+                if (!empty($fattura->codice_stato_fe) && $fattura->codice_stato_fe != 'GEN') {
+                    $skipped[] = $fattura->numero_esterno.' (stato: '.$fattura->codice_stato_fe.')';
+                    continue;
+                }
+
+                // Verifica che la fattura elettronica sia generata e valida
+                if (!empty($fattura_elettronica) && $fattura_elettronica->isGenerated()) {
                     $fattura->codice_stato_fe = 'QUEUE';
                     $fattura->data_stato_fe = date('Y-m-d H:i:s');
                     $fattura->hook_send = true;
                     $fattura->save();
 
                     $added[] = $fattura->numero_esterno;
+                } else {
+                    // Se la FE non è generata ma lo stato è vuoto, impostalo a GEN
+                    if (empty($fattura->codice_stato_fe)) {
+                        $fattura->codice_stato_fe = 'GEN';
+                        $fattura->save();
+                    }
+                    $failed[] = $fattura->numero_esterno.' (FE non generata)';
                 }
-            } catch (UnexpectedValueException) {
-                $failed[] = $fattura->numero_esterno;
+            } catch (UnexpectedValueException $e) {
+                $failed[] = $fattura->numero_esterno.' (FE non valida)';
+            } catch (Exception $e) {
+                $failed[] = $fattura->numero_esterno.' (errore: '.$e->getMessage().')';
             }
         }
 
-        flash()->info(tr('Le fatture elettroniche sono state aggiunte alla coda di invio'));
+        // Messaggi di feedback
+        if (!empty($added)) {
+            flash()->info(tr('_NUM_ fatture elettroniche aggiunte alla coda di invio: _LIST_', [
+                '_NUM_' => count($added),
+                '_LIST_' => implode(', ', $added)
+            ]));
+        }
+
+        if (!empty($skipped)) {
+            flash()->warning(tr('_NUM_ fatture saltate (stato non corretto): _LIST_', [
+                '_NUM_' => count($skipped),
+                '_LIST_' => implode(', ', $skipped)
+            ]));
+        }
+
+        if (!empty($failed)) {
+            flash()->error(tr('_NUM_ fatture non aggiunte alla coda (errori): _LIST_', [
+                '_NUM_' => count($failed),
+                '_LIST_' => implode(', ', $failed)
+            ]));
+        }
+
+        if (empty($added) && empty($skipped) && empty($failed)) {
+            flash()->warning(tr('Nessuna fattura elaborata'));
+        }
 
         break;
 

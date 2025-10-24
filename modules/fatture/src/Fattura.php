@@ -598,7 +598,7 @@ class Fattura extends Document
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata])
+            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])
             && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida]))
             || $options[0] == 'forza_emissione'
         ) {
@@ -851,77 +851,6 @@ class Fattura extends Document
     }
 
     // Metodi statici
-
-    /**
-     * Determina la banca dell'azienda da utilizzare per il documento.
-     *
-     * @param Anagrafica $azienda
-     * @param int $id_pagamento
-     * @param string $conto
-     * @param string $direzione
-     * @param Anagrafica $anagrafica_controparte
-     * @return int|null
-     */
-    private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
-    {
-        $database = database();
-
-        // Per le fatture di vendita, priorità alla banca dell'azienda
-        // Per le fatture di acquisto, priorità alla banca del fornitore
-        $anagrafica_principale = ($direzione == 'entrata') ? $azienda : $anagrafica_controparte;
-
-        // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
-        $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
-
-        // 2. Banca dell'azienda con conto corrispondente al tipo di pagamento (predefinita)
-        if (empty($id_banca)) {
-            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, true);
-        }
-
-        // 3. Banca dell'azienda con conto corrispondente al tipo di pagamento (qualsiasi)
-        if (empty($id_banca)) {
-            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, false);
-        }
-
-        // 4. Fallback: banca predefinita dell'azienda
-        if (empty($id_banca)) {
-            $banca_predefinita = Banca::where('id_anagrafica', $azienda->id)
-                ->where('predefined', 1)
-                ->first();
-            $id_banca = $banca_predefinita?->id;
-        }
-
-        return $id_banca;
-    }
-
-    /**
-     * Cerca una banca dell'azienda associata al tipo di pagamento.
-     *
-     * @param object $database
-     * @param int $id_anagrafica
-     * @param int $id_pagamento
-     * @param string $conto
-     * @param bool $solo_predefinita
-     * @return int|null
-     */
-    private static function getBancaByPagamento($database, int $id_anagrafica, int $id_pagamento, string $conto, bool $solo_predefinita): ?int
-    {
-        $where_predefined = $solo_predefinita ? 'AND `predefined`=1' : '';
-
-        $query = "SELECT `id` FROM `co_banche`
-                  WHERE `deleted_at` IS NULL
-                  {$where_predefined}
-                  AND `id_pianodeiconti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
-                  AND `id_anagrafica` = :id_anagrafica";
-
-        $result = $database->fetchOne($query, [
-            ':id_pagamento' => $id_pagamento,
-            ':id_anagrafica' => $id_anagrafica,
-        ]);
-
-        return $result['id'] ?? null;
-    }
-
     /**
      * Calcola il nuovo numero di fattura.
      *
@@ -1045,6 +974,13 @@ class Fattura extends Document
 
     /**
      * Determina la banca dell'azienda da utilizzare per il documento.
+     *
+     * @param Anagrafica $azienda
+     * @param int $id_pagamento
+     * @param string $conto
+     * @param string $direzione
+     * @param Anagrafica $anagrafica_controparte
+     * @return int|null
      */
     private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
     {

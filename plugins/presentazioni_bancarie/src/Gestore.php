@@ -423,6 +423,7 @@ class Gestore
         if (empty($banca_controparte)) {
             $banca_controparte = Banca::where('id_anagrafica', $scadenza->idanagrafica)
                 ->where('predefined', 1)
+                ->whereNull('deleted_at')
                 ->first();
         }
 
@@ -449,6 +450,7 @@ class Gestore
         if (!isset(self::$banca_predefinita_azienda)) {
             self::$banca_predefinita_azienda = Banca::where('id_anagrafica', self::getAzienda()->id)
                 ->where('predefined', 1)
+                ->whereNull('deleted_at')
                 ->first();
         }
 

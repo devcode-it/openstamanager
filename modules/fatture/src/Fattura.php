@@ -842,7 +842,7 @@ class Fattura extends Document
         $pagamento = $this->pagamento;
 
         if ($pagamento->isRiBa()) {
-            $banca = Banca::find($this->id_banca_controparte) ?: Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->first();
+            $banca = Banca::find($this->id_banca_controparte) ?: Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
         } else {
             $banca = Banca::find($this->id_banca_azienda);
         }
@@ -1039,5 +1039,66 @@ class Fattura extends Document
         } else {
             return $totale;
         }
+    }
+
+    // Metodi statici
+
+    /**
+     * Determina la banca dell'azienda da utilizzare per il documento.
+     */
+    private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
+    {
+        $database = database();
+
+        // Per le fatture di vendita, priorità alla banca dell'azienda
+        // Per le fatture di acquisto, priorità alla banca del fornitore
+        $anagrafica_principale = ($direzione == 'entrata') ? $azienda : $anagrafica_controparte;
+
+        // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
+        $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
+
+        // 2. Banca dell'azienda con conto corrispondente al tipo di pagamento (predefinita)
+        if (empty($id_banca)) {
+            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, true);
+        }
+
+        // 3. Banca dell'azienda con conto corrispondente al tipo di pagamento (qualsiasi)
+        if (empty($id_banca)) {
+            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, false);
+        }
+
+        // 4. Fallback: banca predefinita dell'azienda
+        if (empty($id_banca)) {
+            $banca_predefinita = Banca::where('id_anagrafica', $azienda->id)
+                ->where('predefined', 1)
+                ->whereNull('deleted_at')
+                ->first();
+            $id_banca = $banca_predefinita?->id;
+        }
+
+        return $id_banca;
+    }
+
+    /**
+     * Cerca una banca dell'azienda associata al tipo di pagamento.
+     *
+     * @param object $database
+     */
+    private static function getBancaByPagamento($database, int $id_anagrafica, int $id_pagamento, string $conto, bool $solo_predefinita): ?int
+    {
+        $where_predefined = $solo_predefinita ? 'AND `predefined`=1' : '';
+
+        $query = "SELECT `id` FROM `co_banche`
+                  WHERE `deleted_at` IS NULL
+                  {$where_predefined}
+                  AND `id_pianodeiconti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
+                  AND `id_anagrafica` = :id_anagrafica";
+
+        $result = $database->fetchOne($query, [
+            ':id_pagamento' => $id_pagamento,
+            ':id_anagrafica' => $id_anagrafica,
+        ]);
+
+        return $result['id'] ?? null;
     }
 }

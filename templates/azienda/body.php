@@ -24,6 +24,7 @@ include_once __DIR__.'/../../core.php';
 
 $banca = Banca::where('id_anagrafica', $anagrafica->idanagrafica)
     ->where('predefined', 1)
+    ->whereNull('deleted_at')
     ->first();
 
 /*

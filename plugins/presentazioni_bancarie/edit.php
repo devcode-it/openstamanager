@@ -12,6 +12,7 @@ if (!empty($records)) {
 } else {
     $banca_azienda = Banca::where('id_anagrafica', Gestore::getAzienda()->id)
     ->where('predefined', 1)
+    ->whereNull('deleted_at')
     ->first();
 
     try {

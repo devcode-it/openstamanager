@@ -21,6 +21,21 @@
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/modutil.php';
 
+// Definizioni di fallback per le funzioni base
+if (!function_exists('base_path')) {
+    function base_path()
+    {
+        return ROOTDIR;
+    }
+}
+
+if (!function_exists('base_dir')) {
+    function base_dir()
+    {
+        return DOCROOT;
+    }
+}
+
 use Models\Module;
 
 // Inizializzazione del modulo corrente
@@ -180,12 +195,12 @@ function highlightDifferences($current, $expected) {
 
 if (function_exists('customComponents')) {
     $custom = customComponents();
-    $custom_files = customStructureWithFiles();
-    $tables = customTables();
-    $custom_fields = customFields();
+    $custom_files = function_exists('customStructureWithFiles') ? customStructureWithFiles() : [];
+    $tables = function_exists('customTables') ? customTables() : [];
+    $custom_fields = function_exists('customFields') ? customFields() : [];
 
-    $custom_views_not_standard = customViewsNotStandard();
-    $custom_modules_not_standard = customModulesNotStandard();
+    $custom_views_not_standard = function_exists('customViewsNotStandard') ? customViewsNotStandard() : [];
+    $custom_modules_not_standard = function_exists('customModulesNotStandard') ? customModulesNotStandard() : [];
 
     // Determina se ci sono errori per ogni sezione
     $has_file_errors = !empty($custom_files);
@@ -608,19 +623,7 @@ if (function_exists('customComponents')) {
     }
 }
 
-if (!function_exists('base_path')) {
-    function base_path()
-    {
-        return ROOTDIR;
-    }
-}
 
-if (!function_exists('base_dir')) {
-    function base_dir()
-    {
-        return DOCROOT;
-    }
-}
 
 $alerts = [];
 

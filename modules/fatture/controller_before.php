@@ -22,7 +22,6 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Stato;
 use Modules\Fatture\StatoFE;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
@@ -33,7 +32,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti_scarto = [];
     $documenti_invio = [];
     $codici_scarto = ['EC02', 'NS'];
-    $codici_errore = ['ERR', 'ERVAL',];
+    $codici_errore = ['ERR', 'ERVAL'];
     $codici_invio = ['GEN', 'QUEUE'];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
@@ -87,7 +86,6 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                     '_STATO_' => $stato_fe->name,
                 ]),
             ];
-        
         } elseif (in_array($documento->codice_stato_fe, $codici_invio)) {
             $is_estera = false;
 

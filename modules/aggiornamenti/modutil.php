@@ -438,7 +438,7 @@ if (!function_exists('normalizeModuleOptions')) {
         $text = preg_replace('/<br\s*\/?>/i', '', (string) $text);
 
         // Normalizza spazi multipli
-        $text = preg_replace('/\s+/', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', (string) $text);
 
         // Normalizza virgolette
         $text = str_replace(['"', "'", '`'], "'", $text);

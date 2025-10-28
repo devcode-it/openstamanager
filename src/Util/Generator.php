@@ -132,7 +132,7 @@ class Generator
         // Individuazione dei valori
         preg_match('/^'.$pattern.'/', (string) $string, $m);
 
-        return array_filter($m, 'is_string', ARRAY_FILTER_USE_KEY);
+        return array_filter($m, is_string(...), ARRAY_FILTER_USE_KEY);
     }
 
     /**

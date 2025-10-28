@@ -190,7 +190,7 @@ switch (post('op')) {
                     }
                     $failed[] = $fattura->numero_esterno.' (FE non generata)';
                 }
-            } catch (UnexpectedValueException $e) {
+            } catch (UnexpectedValueException) {
                 $failed[] = $fattura->numero_esterno.' (FE non valida)';
             } catch (Exception $e) {
                 $failed[] = $fattura->numero_esterno.' (errore: '.$e->getMessage().')';
@@ -201,21 +201,21 @@ switch (post('op')) {
         if (!empty($added)) {
             flash()->info(tr('_NUM_ fatture elettroniche aggiunte alla coda di invio: _LIST_', [
                 '_NUM_' => count($added),
-                '_LIST_' => implode(', ', $added)
+                '_LIST_' => implode(', ', $added),
             ]));
         }
 
         if (!empty($skipped)) {
             flash()->warning(tr('_NUM_ fatture saltate (stato non corretto): _LIST_', [
                 '_NUM_' => count($skipped),
-                '_LIST_' => implode(', ', $skipped)
+                '_LIST_' => implode(', ', $skipped),
             ]));
         }
 
         if (!empty($failed)) {
             flash()->error(tr('_NUM_ fatture non aggiunte alla coda (errori): _LIST_', [
                 '_NUM_' => count($failed),
-                '_LIST_' => implode(', ', $failed)
+                '_LIST_' => implode(', ', $failed),
             ]));
         }
 

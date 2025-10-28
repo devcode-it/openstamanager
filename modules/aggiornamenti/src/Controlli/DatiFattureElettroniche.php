@@ -249,8 +249,8 @@ class DatiFattureElettroniche extends Controllo
 
             // Controllo più flessibile per la denominazione (ignora differenze minori)
             if (!empty($denominazione_xml) && !empty($denominazione_gestionale)) {
-                $denominazione_xml_clean = strtolower(trim(preg_replace('/\s+/', ' ', (string) $denominazione_xml)));
-                $denominazione_gestionale_clean = strtolower(trim(preg_replace('/\s+/', ' ', (string) $denominazione_gestionale)));
+                $denominazione_xml_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $denominazione_xml)));
+                $denominazione_gestionale_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $denominazione_gestionale)));
 
                 if ($denominazione_xml_clean !== $denominazione_gestionale_clean) {
                     $errors[] = [
@@ -644,7 +644,7 @@ class DatiFattureElettroniche extends Controllo
                 if (!empty($causale_xml) && !empty($causale_gestionale)) {
                     // Controllo più flessibile per la causale
                     $causale_xml_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_xml)));
-                    $causale_gestionale_clean = strtolower(trim(preg_replace('/\s+/', ' ', (string) $causale_gestionale)));
+                    $causale_gestionale_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_gestionale)));
 
                     if ($causale_xml_clean !== $causale_gestionale_clean) {
                         $errors[] = [

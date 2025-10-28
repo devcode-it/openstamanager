@@ -968,13 +968,6 @@ class Fattura extends Document
 
     /**
      * Determina la banca dell'azienda da utilizzare per il documento.
-     *
-     * @param Anagrafica $azienda
-     * @param int $id_pagamento
-     * @param string $conto
-     * @param string $direzione
-     * @param Anagrafica $anagrafica_controparte
-     * @return int|null
      */
     private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
     {

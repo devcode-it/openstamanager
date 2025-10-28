@@ -92,7 +92,7 @@ class Query
         // Sostituzione periodi temporali
         $date_query = $date_filter = null;
         if (preg_match('|date_period\((.+?)\)|', (string) $query, $matches)) {
-            $dates = array_map('trim', explode(',', $matches[1]));
+            $dates = array_map(trim(...), explode(',', $matches[1]));
             $date_filter = $matches[0];
 
             $filters = [];
@@ -211,7 +211,7 @@ class Query
 
                 // Campo con ricerca personalizzata
                 if (string_contains($search_query, '|search|')) {
-                    $pieces = array_filter(array_map('trim', explode(',', $value)));
+                    $pieces = array_filter(array_map(trim(...), explode(',', $value)));
                     foreach ($pieces as $piece) {
                         if (!empty($piece)) {
                             $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $search_query);
@@ -461,9 +461,9 @@ class Query
         }
         // Gestione lista valori
         elseif (str_contains((string) $value, ',')) {
-            $values = array_filter(array_map('trim', explode(',', (string) $value)));
+            $values = array_filter(array_map(trim(...), explode(',', (string) $value)));
             if (!empty($values)) {
-                $escaped_values = array_map('prepare', $values);
+                $escaped_values = array_map(prepare(...), $values);
 
                 return $search_query.' IN ('.implode(', ', $escaped_values).')';
             }
@@ -565,7 +565,7 @@ class Query
     {
         if (is_array($original_value)) {
             if (!empty($original_value)) {
-                $safe_ids = array_filter(array_map('intval', $original_value));
+                $safe_ids = array_filter(array_map(intval(...), $original_value));
                 if (!empty($safe_ids)) {
                     return $field.' IN ('.implode(', ', $safe_ids).')';
                 }

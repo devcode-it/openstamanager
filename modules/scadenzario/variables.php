@@ -23,7 +23,7 @@ $giorni_promemoria = setting('Intervallo di giorni in anticipo per invio promemo
 // Filtro per scadenze selezionate (se presente in sessione)
 $filtro_scadenze_selezionate = '';
 if (!empty($_SESSION['scadenzario_selected_ids'])) {
-    $ids_selezionati = implode(',', array_map('intval', $_SESSION['scadenzario_selected_ids']));
+    $ids_selezionati = implode(',', array_map(intval(...), $_SESSION['scadenzario_selected_ids']));
     $filtro_scadenze_selezionate = ' AND `co_scadenziario`.`id` IN ('.$ids_selezionati.')';
 }
 

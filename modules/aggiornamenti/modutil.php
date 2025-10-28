@@ -438,7 +438,7 @@ if (!function_exists('normalizeModuleOptions')) {
     function normalizeModuleOptions($text)
     {
         // Rimuovi tutti i tag BR (tutte le varianti)
-        $text = preg_replace('/<br\s*\/?>/i', '', $text);
+        $text = preg_replace('/<br\s*\/?>/i', '', (string)$text);
 
         // Normalizza spazi multipli
         $text = preg_replace('/\s+/', ' ', $text);

@@ -234,7 +234,7 @@ echo '              </tbody>
                                     <i class="fa fa-calendar text-muted mr-2"></i>
                                     <div>
                                         <div class="text font-weight-bold"></div>
-                                        <small class="text-muted"></small>
+                                        <small class="text-muted contratto-ref"></small>
                                     </div>
                                 </div>
                             </td>
@@ -480,12 +480,12 @@ function update_table(currentMonth, currentYear) {
                     rowClass = "table-danger";
                     statusIcon = "fa-exclamation-triangle";
                     statusClass = "text-danger";
-                    statusText = \'<br><small class="text-danger"><i class="fa fa-exclamation-triangle"></i> '.tr('Scaduta').'</small>\';
+                    statusText = \'<br><small class="text-danger">'.tr('Scaduta').'</small>\';
                 } else if (giorni <= 7) {
                     rowClass = "table-warning";
                     statusIcon = "fa-clock-o";
                     statusClass = "text-warning";
-                    statusText = \'<br><small class="text-warning"><i class="fa fa-clock-o"></i> '.tr('Scade tra').' \' + giorni + \' '.tr('giorni').'</small>\';
+                    statusText = \'<br><small class="text-warning">'.tr('Scade tra').' \' + giorni + \' '.tr('giorni').'</small>\';
                 } else {
                     statusIcon = "fa-calendar-check-o";
                     statusClass = "text-success";
@@ -500,7 +500,7 @@ function update_table(currentMonth, currentYear) {
                 // Icona di stato e data
                 $row.find(".data-scadenza i").removeClass().addClass("fa " + statusIcon + " " + statusClass + " mr-2");
                 $row.find(".data-scadenza .text").html(value.dataScadenza + statusText);
-                $row.find(".data-scadenza small").html(value.contratto);
+                $row.find(".data-scadenza .contratto-ref").html(value.contratto);
 
                 // Ragione sociale
                 $row.find(".ragione-sociale div div").html(value.ragioneSociale);

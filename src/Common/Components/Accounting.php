@@ -401,6 +401,33 @@ abstract class Accounting extends Component
     }
 
     /**
+     * Imposta l'identificatore del conto solo se la colonna esiste.
+     *
+     * @param int $value
+     */
+    public function setIdContoAttribute($value)
+    {
+        if ($this->hasColumn('idconto')) {
+            $this->attributes['idconto'] = $value;
+        }
+    }
+
+    /**
+     * Restituisce l'identificatore del conto se la colonna esiste.
+     *
+     * @return int|null
+     */
+    public function getIdContoAttribute()
+    {
+        if ($this->hasColumn('idconto')) {
+            return $this->attributes['idconto'] ?? null;
+        }
+        return null;
+    }
+
+
+
+    /**
      * Salva la riga, impostando i campi dipendenti dai singoli parametri.
      *
      * @return bool
@@ -413,6 +440,7 @@ abstract class Accounting extends Component
         $this->fixProvvigione();
 
         $this->fixIva();
+        $this->fixIdConto();
 
         return parent::save($options);
     }
@@ -446,6 +474,78 @@ abstract class Accounting extends Component
     protected function fixIvaIndetraibile()
     {
         $this->attributes['iva_indetraibile'] = $this->iva_indetraibile;
+    }
+
+    /**
+     * Imposta il campo idconto solo se esiste nella tabella.
+     */
+    protected function fixIdConto()
+    {
+        // Verifica se la colonna idconto esiste nella tabella
+        if ($this->hasColumn('idconto')) {
+            // Se il campo idconto non è già impostato, prova a copiarlo dal documento padre
+            if (empty($this->attributes['idconto']) && !empty($this->getDocument()->idconto)) {
+                $this->attributes['idconto'] = $this->getDocument()->idconto;
+            }
+        }
+    }
+
+    /**
+     * Verifica se una colonna esiste nella tabella del modello.
+     *
+     * @param string $column
+     * @return bool
+     */
+    protected function hasColumn($column)
+    {
+        static $columns = [];
+
+        $table = $this->getTable();
+
+        if (!isset($columns[$table])) {
+            try {
+                // Usa una query diretta per verificare l'esistenza della colonna
+                $result = database()->fetchArray("SHOW COLUMNS FROM `{$table}` LIKE '{$column}'");
+                $columns[$table][$column] = !empty($result);
+            } catch (\Exception $e) {
+                $columns[$table][$column] = false;
+            }
+        }
+
+        return isset($columns[$table][$column]) ? $columns[$table][$column] : false;
+    }
+
+    /**
+     * Gestisce l'impostazione di proprietà con nomi alternativi.
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function __set($key, $value)
+    {
+        // Gestisce id_conto come alias per idconto
+        if ($key === 'id_conto') {
+            $this->setIdContoAttribute($value);
+            return;
+        }
+
+        parent::__set($key, $value);
+    }
+
+    /**
+     * Gestisce l'accesso a proprietà con nomi alternativi.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        // Gestisce id_conto come alias per idconto
+        if ($key === 'id_conto') {
+            return $this->getIdContoAttribute();
+        }
+
+        return parent::__get($key);
     }
 
     /**

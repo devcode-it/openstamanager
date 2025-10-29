@@ -30,16 +30,14 @@ if (Services::isEnabled()) {
     echo '
 <div class="row">
     <div class="col-md-12 col-lg-6">
-        <div class="row">
-            <div class="col-12 mb-3">
-                <div class="card card-primary card-outline">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fa fa-cogs mr-2"></i>'.tr('Servizi OSMCloud').'
-                        </div>
-                    </div>
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fa fa-cogs mr-2"></i>'.tr('Servizi OSMCloud').'
+                </div>
+            </div>
 
-                    <div class="card-body p-0">';
+            <div class="card-body p-0">';
 
     // Recupero di tutti i servizi e risorse attivi
     $servizi = Services::getServiziAttivi(true);
@@ -71,36 +69,36 @@ if (Services::isEnabled()) {
         // Messaggi di avviso
         if (!$servizi_scaduti->isEmpty()) {
             echo '
-                        <div class="alert alert-danger m-3 mb-0">
-                            <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti o hanno esaurito i crediti: _NUM_', [
-                '_NUM_' => $servizi_scaduti->count(),
-            ]).'
-                        </div>';
+                <div class="alert alert-danger m-3 mb-0">
+                    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti o hanno esaurito i crediti: _NUM_', [
+                        '_NUM_' => $servizi_scaduti->count(),
+                    ]).'
+                </div>';
         }
 
         if (!$servizi_in_scadenza->isEmpty()) {
             echo '
-                        <div class="alert alert-warning m-3 mb-0">
-                            <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza o stanno per esaurire i crediti: _NUM_', [
-                '_NUM_' => $servizi_in_scadenza->count(),
-            ]).'
-                        </div>';
+                <div class="alert alert-warning m-3 mb-0">
+                    <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza o stanno per esaurire i crediti: _NUM_', [
+                        '_NUM_' => $servizi_in_scadenza->count(),
+                    ]).'
+                </div>';
         }
 
         echo '
-                        <table class="table table-hover table-striped table-sm mb-0">
-                            <thead>
-                                <tr>
-                                    <th width="5%" class="text-center">'.tr('Stato').'</th>
-                                    <th width="35%">'.tr('Nome').'</th>
-                                    <th width="15%">'.tr('Tipo').'</th>
-                                    <th width="15%">'.tr('Crediti').'</th>
-                                    <th width="20%">'.tr('Scadenza').'</th>
-                                    <th width="10%" class="text-center">'.tr('#').'</th>
-                                </tr>
-                            </thead>
+                <table class="table table-hover table-striped table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th width="5%" class="text-center">'.tr('Stato').'</th>
+                            <th width="35%">'.tr('Nome').'</th>
+                            <th width="15%">'.tr('Tipo').'</th>
+                            <th width="15%">'.tr('Crediti').'</th>
+                            <th width="20%">'.tr('Scadenza').'</th>
+                            <th width="10%" class="text-center">'.tr('#').'</th>
+                        </tr>
+                    </thead>
 
-                            <tbody>';
+                    <tbody>';
         foreach ($servizi as $elemento) {
             // Verifica che $elemento sia un array e contenga i campi necessari
             if (!is_array($elemento) || !isset($elemento['expiration_at'])) {
@@ -131,51 +129,47 @@ if (Services::isEnabled()) {
                 '<span class="text-muted">-</span>';
 
             echo '
-                                <tr class="'.$status_class.'">
-                                    <td class="text-center">'.$status_icon.'</td>
-                                    <td><strong>'.$codice.'</strong><br><small class="text-muted">'.$nome.'</small></td>
-                                    <td><span class="badge badge-secondary">'.$tipo.'</span></td>
-                                    <td>'.$crediti_display.'</td>
-                                    <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
-                                    <td class="text-center">
-                                        <input type="checkbox" class="check_rinnova '.($is_expiring || $is_expired || $credits_warning || $credits_expired ? '' : 'hide').'" name="rinnova[]" value="'.$codice.'">
-                                    </td>
-                                </tr>';
+                        <tr class="'.$status_class.'">
+                            <td class="text-center">'.$status_icon.'</td>
+                            <td><strong>'.$codice.'</strong><br><small class="text-muted">'.$nome.'</small></td>
+                            <td><span class="badge badge-secondary">'.$tipo.'</span></td>
+                            <td>'.$crediti_display.'</td>
+                            <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
+                            <td class="text-center">
+                                <input type="checkbox" class="check_rinnova '.($is_expiring || $is_expired || $credits_warning || $credits_expired ? '' : 'hide').'" name="rinnova[]" value="'.$codice.'">
+                            </td>
+                        </tr>';
         }
 
         // Conteggio servizi e risorse
         $count_servizi = $servizi->filter(fn ($item) => !isset($item['credits']))->count();
 
         echo '
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-light">
-                                    <td colspan="4">
-                                        <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
-                                    </td>
-                                    <td colspan="2" class="text-right">';
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="4">
+                                <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
+                            </td>
+                            <td colspan="2" class="text-right">';
 
         if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
             echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-primary"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
         }
 
-        echo '                      </td>
-                                </tr>
-                            </tfoot>
-                        </table>';
+echo '                      </td>
+                        </tr>
+                    </tfoot>
+                </table>';
     } else {
         echo '
-                        <div class="alert alert-info m-3">
-                            <i class="fa fa-info-circle mr-2"></i>'.tr('Nessun servizio OSMCloud abilitato al momento').'.
-                        </div>';
+                <div class="alert alert-info m-3">
+                    <i class="fa fa-info-circle mr-2"></i>'.tr('Nessun servizio OSMCloud abilitato al momento').'.
+                </div>';
     }
 
     echo '
-                    </div>
-                </div>
             </div>
-
-
         </div>
     </div>
 
@@ -191,7 +185,7 @@ if (Services::isEnabled()) {
                 <div class="card-title">
                     <i class="fa fa-file-text-o mr-2"></i>'.tr('Statistiche FE').'
                 </div>
-                <div class="card-tools">
+                <div class="card-body">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
                     </button>

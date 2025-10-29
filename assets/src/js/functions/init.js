@@ -27,7 +27,29 @@ function init() {
     initTooltips();
 
     if ($('form').length) {
-      $('form').not('.no-check').parsley();
+      // Configurazione per posizionare correttamente i messaggi di errore di Parsley.js
+      $('form').not('.no-check').parsley({
+        errorsContainer: function(parsleyField) {
+          // Per i campi dentro input-group, crea un contenitore dopo l'input-group
+          var $inputGroup = parsleyField.$element.closest('.input-group');
+          if ($inputGroup.length) {
+            var containerId = 'parsley-errors-' + parsleyField.$element.attr('name');
+            var $container = $('#' + containerId);
+
+            // Se il contenitore non esiste, crealo dopo l'input-group
+            if (!$container.length) {
+              $container = $('<div id="' + containerId + '" class="parsley-errors-container"></div>');
+              $inputGroup.after($container);
+            }
+
+            return $container;
+          }
+          // Altrimenti usa il comportamento predefinito
+          return parsleyField.$element.parent();
+        },
+        errorsWrapper: '<div class="parsley-errors-list"></div>',
+        errorTemplate: '<div class="parsley-error-message"></div>'
+      });
 
       if (window.CKEDITOR){
         CKEDITOR.on('instanceReady', function () {
@@ -73,6 +95,14 @@ function init() {
 
     window.Parsley.on('field:success', function () {
         this.$element.removeClass('parsley-success');
+    });
+
+    // Ripristina il pulsante di login quando la validazione fallisce
+    window.Parsley.on('field:error', function() {
+        var $loginButton = $('#login-button');
+        if ($loginButton.length && $loginButton.html().indexOf('Autenticazione') !== -1) {
+            $loginButton.html('<i class="fa fa-sign-in mr-2"></i> Accedi');
+        }
     });
 
     restart_inputs();

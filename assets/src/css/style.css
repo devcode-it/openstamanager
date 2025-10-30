@@ -1667,21 +1667,19 @@ input.small-width {
 }
 
 /* Stili per allineare l'avviso di Parsley.js con quello delle credenziali non valide */
-.login-box .parsley-error-message {
+.parsley-error-message {
     display: block;
     width: 100%;
     margin-top: 0.25rem;
-    font-size: 0.875rem;
     color: #dc3545;
 }
 
-.login-box .parsley-error-message:before {
+.parsley-error-message:before {
     content: "\f06a";
     font-family: "FontAwesome";
     margin-right: 0.25rem;
     display: inline-block;
 }
-
 
 /** TIMELINE */
 

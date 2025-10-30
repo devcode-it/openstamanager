@@ -309,7 +309,8 @@ function hasGlobalActions(controllo) {
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
@@ -362,6 +363,17 @@ function getMessaggioConferma(controlloClass) {
                 "'.tr('I record eliminati non potranno essere recuperati').'",
                 "'.tr('I plugin duplicati verranno rimossi definitivamente dal database').'",
                 "'.tr('Non può essere annullata').'"
+            ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage": {
+            titolo: "'.tr('Conferma correzione tabelle multilingua').'",
+            descrizione: "'.tr('Sei sicuro di voler correggere tutti i record mancanti nelle tabelle multilingua?').'",
+            operazioni: [
+                "'.tr('Inserirà i record mancanti nelle tabelle _lang per tutte le lingue disponibili').'",
+                "'.tr('Popolerà i campi con valori di default presi dalle tabelle principali quando possibile').'",
+                "'.tr('Non modificherà i record esistenti, aggiungerà solo quelli mancanti').'",
+                "'.tr('Migliorerà la coerenza del database multilingua').'",
+                "'.tr('Operazione sicura e reversibile').'"
             ]
         }
     };

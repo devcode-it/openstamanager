@@ -28,6 +28,7 @@ use Modules\Aggiornamenti\Controlli\PianoConti;
 use Modules\Aggiornamenti\Controlli\PianoContiRagioneSociale;
 use Modules\Aggiornamenti\Controlli\PluginDuplicati;
 use Modules\Aggiornamenti\Controlli\ReaValidi;
+use Modules\Aggiornamenti\Controlli\TabelleLanguage;
 use Modules\Aggiornamenti\UpdateHook;
 
 $id = post('id');
@@ -152,6 +153,7 @@ switch (filter('op')) {
             ColonneDuplicateViste::class,
             PluginDuplicati::class,
             ReaValidi::class,
+            TabelleLanguage::class,
         ];
 
         $results = [];

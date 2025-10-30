@@ -36,7 +36,7 @@ class AllegatiInterventi extends AppResource
         // Elenco allegati degli interventi da rimuovere
         $da_interventi = [];
         if (!empty($interventi)) {
-            $query = 'SELECT `zz_files`.`id` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $interventi).')';
+            $query = 'SELECT `zz_files`.`id` FROM `zz_files` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND `id_record` IN ('.implode(',', $interventi).')';
             $allegati_interventi = database()->fetchArray($query);
             $da_interventi = array_column($allegati_interventi, 'id');
         }
@@ -58,7 +58,7 @@ class AllegatiInterventi extends AppResource
         }
 
         $id_interventi = array_keys($interventi);
-        $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Interventi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).') AND `id_record` IN ('.implode(',', $id_interventi).')';
+        $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND `id_record` IN ('.implode(',', $id_interventi).')';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -90,21 +90,33 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = Module::where('name', 'Interventi')->first()->id;
+        $module_record = Module::where('name', 'Interventi')->first();
+        if (!$module_record) {
+            throw new InternalError('Modulo Interventi non trovato');
+        }
+        $module = $module_record->id;
+
+        // Validazione dati richiesti
+        if (empty($data['contenuto']) || empty($data['nome']) || empty($data['id_intervento'])) {
+            throw new InternalError('Dati mancanti: contenuto, nome o id_intervento');
+        }
 
         // Creazione del file temporaneo
         $content = explode(',', (string) $data['contenuto']);
-        if (count($content) < 1) {
-            throw new InternalError();
+        if (count($content) < 2) {
+            throw new InternalError('Formato contenuto non valido');
         }
 
         $file = base64_decode($content[1]);
+        if ($file === false) {
+            throw new InternalError('Errore nella decodifica base64');
+        }
 
         // Salvataggio del file come allegato
         $upload = Upload::build($file, [
             'id_module' => $module,
             'id_record' => $data['id_intervento'],
-        ], $data['nome'], $data['categoria']);
+        ], $data['nome'], $data['categoria'] ?? '');
 
         return [
             'id' => $upload->id,

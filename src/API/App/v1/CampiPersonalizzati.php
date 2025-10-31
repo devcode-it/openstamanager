@@ -34,7 +34,7 @@ class CampiPersonalizzati extends AppResource
     {
         $module = Module::where('name', 'Interventi')->first()->id;
 
-        $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module->id_record)." AND `content` LIKE '%text%'";
+        $query = 'SELECT `zz_fields`.`id`, `zz_fields`.`updated_at` FROM `zz_fields` WHERE id_module='.prepare($module)." AND `content` LIKE '%text%'";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -49,14 +49,14 @@ class CampiPersonalizzati extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT 
+        $query = 'SELECT
             `zz_fields`.`id` AS id,
             `zz_fields`.`title`,
             `zz_fields`.`html_name`,
             `zz_fields`.`order`
-        FROM 
+        FROM
             `zz_fields`
-        WHERE 
+        WHERE
             `zz_fields`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

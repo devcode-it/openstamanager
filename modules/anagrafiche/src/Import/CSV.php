@@ -314,7 +314,7 @@ class CSV extends CSVImporter
 
         // Gestione della nazione
         if (!empty($record['id_nazione'])) {
-            $record['id_nazione'] = (new Nazione())->getByField('title', $record['id_nazione'], \Models\Locale::getPredefined()->id);
+            $record['id_nazione'] = Nazione::where('name', $record['id_nazione'])->first()->id ?? null;
         } else {
             unset($record['id_nazione']);
         }
@@ -427,15 +427,15 @@ class CSV extends CSVImporter
         $database = database();
         $settore = trim((string) $record['id_settore']);
 
-        $result = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori` 
-            LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record` 
-            AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
+        $result = $database->fetchArray('SELECT `an_settori`.`id` FROM `an_settori`
+            LEFT JOIN `an_settori_lang` ON (`an_settori`.`id` = `an_settori_lang`.`id_record`
+            AND `an_settori_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
             WHERE LOWER(`title`) = LOWER('.prepare($settore).')');
 
         $id_settore = !empty($result) ? $result[0]['id'] : null;
 
         if (empty($id_settore)) {
-            $database->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`) 
+            $database->query('INSERT INTO `an_settori` (`id`, `created_at`, `updated_at`)
                 VALUES (NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
             $id_settore = $database->lastInsertedID();
 
@@ -466,15 +466,15 @@ class CSV extends CSVImporter
         $database = database();
         $iban = trim((string) $record['codiceiban']);
 
-        $result = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche` 
-            WHERE LOWER(`iban`) = LOWER('.prepare($iban).') 
-            AND `id_anagrafica` = '.$anagrafica->id.' 
+        $result = $database->fetchOne('SELECT `co_banche`.`id` FROM `co_banche`
+            WHERE LOWER(`iban`) = LOWER('.prepare($iban).')
+            AND `id_anagrafica` = '.$anagrafica->id.'
             AND deleted_at IS NULL');
 
         $id_banca = !empty($result) ? $result['id'] : null;
 
         if (empty($id_banca)) {
-            $database->query('INSERT INTO `co_banche` (`iban`, `nome`, `id_anagrafica`) 
+            $database->query('INSERT INTO `co_banche` (`iban`, `nome`, `id_anagrafica`)
                 VALUES ('.prepare($iban).', "Banca da importazione '.addslashes((string) $anagrafica->ragione_sociale).'", '.$anagrafica->id.')');
             $id_banca = $database->lastInsertedID();
         }

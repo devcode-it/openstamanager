@@ -400,7 +400,7 @@ class CSV extends CSVImporter
         }
 
         try {
-            $sottocategoria_id = (new Categoria())->getByField('title', $record['sottocategoria']);
+            $sottocategoria_id = Categoria::where('name', $record['sottocategoria'])->first()->id ?? null;
             $sottocategoria = $sottocategoria_id ? Categoria::where('id', $sottocategoria_id)->where('parent', $categoria->id)->first() : null;
 
             if (empty($sottocategoria)) {

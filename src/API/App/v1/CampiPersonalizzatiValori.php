@@ -34,7 +34,7 @@ class CampiPersonalizzatiValori extends AppResource
     {
         $module = Module::where('name', 'Interventi')->first()->id;
 
-        $query = 'SELECT `zz_field_record`.`id`, `zz_field_record`.`updated_at` FROM `zz_field_record` INNER JOIN `zz_fields` ON `zz_field_record`.`id_field` = `zz_fields`.`id` WHERE id_module='.prepare($module->id_record).' AND `zz_fields`.`content` LIKE "%text%"';
+        $query = 'SELECT `zz_field_record`.`id`, `zz_field_record`.`updated_at` FROM `zz_field_record` INNER JOIN `zz_fields` ON `zz_field_record`.`id_field` = `zz_fields`.`id` WHERE id_module='.prepare($module).' AND `zz_fields`.`content` LIKE "%text%"';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -49,14 +49,14 @@ class CampiPersonalizzatiValori extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT 
+        $query = 'SELECT
             `zz_field_record`.`id` AS id,
             `zz_field_record`.`id_field`,
             `zz_field_record`.`id_record`,
             `zz_field_record`.`value`
-        FROM 
+        FROM
             `zz_field_record`
-        WHERE 
+        WHERE
             `zz_field_record`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

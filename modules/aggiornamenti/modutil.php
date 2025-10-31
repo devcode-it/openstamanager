@@ -344,8 +344,8 @@ if (!function_exists('customViewsNotStandard')) {
 
             $current_query = trim($view['query']);
             $current_query = preg_replace('/<br\s*\/?>/i', '', $current_query);
-            $current_query = preg_replace('/\s+/', ' ', $current_query);
-            $current_query = str_replace(['"', "'", '`'], "'", $current_query);
+            $current_query = preg_replace('/\s+/', ' ', (string) $current_query);
+            $current_query = str_replace(['"', "'"], "'", $current_query);
             $current_query = html_entity_decode($current_query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $current_query = trim($current_query);
 
@@ -366,8 +366,8 @@ if (!function_exists('customViewsNotStandard')) {
                 $expected_query = trim($standard_views[$module_name][$view_name]);
 
                 $expected_query = preg_replace('/<br\s*\/?>/i', '', $expected_query);
-                $expected_query = preg_replace('/\s+/', ' ', $expected_query);
-                $expected_query = str_replace(['"', "'", '`'], "'", $expected_query);
+                $expected_query = preg_replace('/\s+/', ' ', (string) $expected_query);
+                $expected_query = str_replace(['"', "'"], "'", $expected_query);
                 $expected_query = html_entity_decode($expected_query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $expected_query = trim($expected_query);
 
@@ -443,8 +443,8 @@ if (!function_exists('normalizeModuleOptions')) {
         // Normalizza spazi multipli
         $text = preg_replace('/\s+/', ' ', $text);
 
-        // Normalizza virgolette
-        $text = str_replace(['"', "'", '`'], "'", $text);
+        // Normalizza virgolette (mantieni i backtick per le query SQL)
+        $text = str_replace(['"', "'"], "'", $text);
 
         // Normalizza entità HTML comuni
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');

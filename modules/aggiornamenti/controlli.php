@@ -189,6 +189,23 @@ function setPercentage(percent) {
 }
 
 /**
+* Formatta i bytes in formato leggibile
+* @param bytes
+* @param decimals
+*/
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes";
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
+/**
 *
 * @param controllo
 * @param success
@@ -205,15 +222,53 @@ function initcard(controllo, success, records) {
 
     let card = `<div class="card ` + cssClass + `" id="controllo-` + controllo["id"] + `">
     <div class="card-header with-border">
-        <h3 class="card-title">` + controllo["name"] + `</h3>
+        <h3 class="card-title">` + controllo["name"];
+
+    // Aggiungi badge inline per il controllo IntegritaFile
+    if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile" && !success && records.length > 0) {
+        let orphanFiles = records.filter(r => r.tipo === "file_orfano");
+        let orphanRecords = records.filter(r => r.tipo === "file_mancante");
+
+        if (orphanFiles.length > 0 || orphanRecords.length > 0) {
+            if (orphanFiles.length > 0) {
+                let totalSize = 0;
+                orphanFiles.forEach(function(file) {
+                    if (file.dimensione_bytes) {
+                        totalSize += parseInt(file.dimensione_bytes);
+                    }
+                });
+                let sizeFormatted = totalSize > 0 ? formatBytes(totalSize) : "";
+                card += ` <span class="badge badge-danger ml-2">
+                    <i class="fa fa-trash mr-1"></i>${orphanFiles.length} file${sizeFormatted ? " - " + sizeFormatted : ""}
+                </span>`;
+            }
+
+            if (orphanRecords.length > 0) {
+                card += ` <span class="badge badge-warning ml-2">
+                    <i class="fa fa-database mr-1"></i>${orphanRecords.length} record
+                </span>`;
+            }
+        }
+    }
+
+    card += `</h3>
         <div class="card-tools pull-right">`;
 
-    // Aggiungi pulsante azione globale se il controllo lo supporta e ci sono record
+    // Aggiungi pulsanti azione globale se il controllo lo supporta e ci sono record
     if (!success && records.length > 0 && hasGlobalActions(controllo)) {
-        card += `
-            <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
-                <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
-            </button>`;
+        // Pulsante specifico per IntegritaFile che esegue entrambe le operazioni
+        if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile") {
+            card += `
+                <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" data-action="remove_all_both" onclick="eseguiAzioneGlobaleConParametri(this)">
+                    <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+                </button>`;
+        } else {
+            // Pulsante generico per altri controlli
+            card += `
+                <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
+                    <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+                </button>`;
+        }
     }
 
     card += `
@@ -233,11 +288,11 @@ function initcard(controllo, success, records) {
             <table class="table table-striped table-hover table-sm table-bordered">
                 <thead>
                     <tr>
-                        <th width="15%">'.tr('Record').'</th>
+                        <th width="30%">'.tr('Record').'</th>
                         <th>'.tr('Descrizione').'</th>`;
 
         if (hasRowOptions) {
-            card += `<th class="text-center" width="15%">'.tr('Opzioni').'</th>`;
+            card += `<th class="text-center" width="12%">'.tr('Opzioni').'</th>`;
         }
 
         card += `
@@ -271,7 +326,7 @@ function addRiga(controllo, card, record) {
     <td>` + record.descrizione + `</td>`;
 
     if (hasOptions) {
-        riga += `<td></td>`;
+        riga += `<td class="text-center"></td>`;
     }
 
     riga += `</tr>`;
@@ -281,7 +336,7 @@ function addRiga(controllo, card, record) {
     if (hasOptions) {
         const options_columns = riga.find("td").last();
         record.options.forEach(function (option, id){
-             let button = `<button type="button" class="btn btn-` + option.color + `">
+             let button = `<button type="button" class="btn btn-` + option.color + ` btn-sm ">
         <i class="` + option.icon + `"></i> ` + option.name + `
     </buttton>`;
             button = $(button);
@@ -310,7 +365,8 @@ function hasGlobalActions(controllo) {
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
@@ -374,6 +430,17 @@ function getMessaggioConferma(controlloClass) {
                 "'.tr('Non modificherà i record esistenti, aggiungerà solo quelli mancanti').'",
                 "'.tr('Migliorerà la coerenza del database multilingua').'",
                 "'.tr('Operazione sicura e reversibile').'"
+            ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile": {
+            titolo: "'.tr('Conferma operazioni di pulizia').'",
+            descrizione: "'.tr('Sei sicuro di voler procedere con le operazioni di pulizia selezionate?').'",
+            operazioni: [
+                "'.tr('RIMOZIONE FILE ORFANI: Rimuoverà definitivamente tutti i file presenti nel filesystem ma non registrati nel database').'",
+                "'.tr('RIMOZIONE RECORD ORFANI: Rimuoverà dal database tutti i record che puntano a file fisici inesistenti').'",
+                "'.tr('I file e record eliminati non potranno essere recuperati').'",
+                "'.tr('Libererà spazio su disco e pulirà il database da riferimenti non validi').'",
+                "'.tr('Non può essere annullata').'"
             ]
         }
     };
@@ -475,9 +542,102 @@ function eseguiAzioneGlobale(buttonElement) {
 }
 
 /**
+* Esegue un azione globale con parametri specifici
+*/
+function eseguiAzioneGlobaleConParametri(button) {
+    let controlloId = $(button).data("controllo-id");
+    let controlloClass = $(button).data("controllo-class");
+    let action = $(button).data("action");
+
+    // Usa la stessa logica della funzione esistente ma con parametri
+    let messaggio = getMessaggioConferma(controlloClass);
+
+    // Genera la lista delle operazioni
+    let operazioniHtml = "";
+    messaggio.operazioni.forEach(function(operazione) {
+        operazioniHtml += `<li>${operazione}</li>`;
+    });
+
+    // Crea modal di conferma con lo stile del gestionale
+    let modalHtml = `
+        <div class="modal fade" id="modal-conferma-risoluzione" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            <i class="fa fa-exclamation-triangle text-warning"></i>
+                            ${messaggio.titolo}
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>${messaggio.descrizione}</p>
+                        <div class="alert alert-warning">
+                            <i class="fa fa-info-circle"></i>
+                            '.tr('Questa operazione:').'
+                            <ul class="mb-0 mt-2">
+                                ${operazioniHtml}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="float: left;">
+                            <i class="fa fa-times"></i> '.tr('Annulla').'
+                        </button>
+                        <button type="button" class="btn btn-warning" id="conferma-risoluzione" style="float: right;">
+                            <i class="fa fa-check"></i> '.tr('Procedi').'
+                        </button>
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Rimuovi modal esistente se presente
+    $("#modal-conferma-risoluzione").remove();
+
+    // Aggiungi modal al DOM
+    $("body").append(modalHtml);
+
+    // Mostra modal con configurazione per evitare chiusura accidentale
+    $("#modal-conferma-risoluzione").modal({
+        backdrop: "static",
+        keyboard: false,
+        show: true
+    });
+
+    // Gestisci click su conferma
+    $("#conferma-risoluzione").on("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let confirmButton = $(this);
+        let restoreConfirm = buttonLoading(confirmButton);
+
+        // Disabilita il pulsante di annulla durante l operazione
+        $("#modal-conferma-risoluzione .btn-default").prop("disabled", true);
+
+        eseguiRisoluzioneGlobale(button, controlloId, controlloClass, function() {
+            // Callback di successo: chiudi modal
+            $("#modal-conferma-risoluzione").modal("hide");
+            loadControllo(controlloId);
+        }, function() {
+            // Callback di errore: ripristina pulsanti
+            buttonRestore(confirmButton, restoreConfirm);
+            $("#modal-conferma-risoluzione .btn-default").prop("disabled", false);
+        }, {action: action});
+
+        return false;
+    });
+}
+
+/**
 * Esegue effettivamente la risoluzione globale
 */
-function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCallback, errorCallback) {
+function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCallback, errorCallback, params = {}) {
     let restore = buttonLoading(button);
 
     $.ajax({
@@ -488,7 +648,7 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
             id_module: globals.id_module,
             op: "controlli-action-global",
             controllo: controlloClass,
-            params: {},
+            params: params,
         },
         success: function(results) {
             // Rimuovi tutte le righe del controllo

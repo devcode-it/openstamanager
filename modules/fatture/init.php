@@ -94,7 +94,7 @@ if (!empty($id_record)) {
 
         $is_fornitore_estero = !empty($fattura->anagrafica->nazione) && !empty($fattura->anagrafica->nazione->iso2) && $fattura->anagrafica->nazione->iso2 != 'IT';
 
-        $abilita_autofattura = $is_fornitore_estero && $dir == 'uscita' && $fattura->id_autofattura == null;
+        $abilita_autofattura = ($is_fornitore_estero && $dir == 'uscita' && $fattura->id_autofattura == null) || $reverse_charge;
 
         $fattura_acquisto_originale = Fattura::where('id_autofattura', '=', $fattura->id)->first();
         $autofattura_collegata = Fattura::where('id_autofattura', '=', $fattura->id)->where('id', '!=', $fattura_acquisto_originale->id)->orderBy('id', 'DESC')->first();

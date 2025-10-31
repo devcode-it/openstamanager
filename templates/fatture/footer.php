@@ -49,7 +49,7 @@ foreach ($righe as $riga) {
 
 $totale = $totale_iva + $totale_imponibile;
 
-$show_sconto = $sconto > 0;
+$show_sconto = $sconto != 0;
 
 $volume = $documento->volume ?: $documento->volume_calcolato;
 $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
@@ -230,11 +230,11 @@ if ($has_ritenuta || $show_sconto || $has_rivalsa) {
 if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Sconto', [], ['upper' => true])."
+            ".tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Totale scontato', [], ['upper' => true]).'
+            ".tr($sconto > 0 ? 'Totale scontato' : 'Totale maggiorato', [], ['upper' => true]).'
         </th>';
 }
 if ($has_rivalsa) {

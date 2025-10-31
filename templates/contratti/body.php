@@ -270,7 +270,7 @@ $totale = $documento->totale;
 $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
-$show_sconto = $sconto > 0;
+$show_sconto = $sconto != 0;
 
 // TOTALE COSTI FINALI
 if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-only-total']) {
@@ -291,7 +291,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         echo '
     <tr>
         <td colspan="'.($options['show-only-total'] ? 2 : 5).'" class="text-right text-muted">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b>'.tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="'.($options['show-only-total'] ? (($has_image) ? 2 : 1) : (($has_image) ? 3 : 2)).'" class="text-right">

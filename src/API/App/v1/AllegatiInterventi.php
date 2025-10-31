@@ -78,7 +78,7 @@ class AllegatiInterventi extends AppResource
         $record = [
             'id' => $upload->id,
             'tipo' => $upload->extension,
-            'nome' => $upload->getTranslation('title'),
+            'nome' => $upload->name,
             'categoria' => $upload->category,
             'size' => $upload->size,
             'id_intervento' => $upload->id_record,

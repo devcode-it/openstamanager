@@ -157,7 +157,7 @@ if (!function_exists('normalizeForDiff')) {
     {
         $text = preg_replace('/<br\s*\/?>/i', '', (string) $text);
         $text = preg_replace('/\s+/', ' ', (string) $text);
-        $text = str_replace(['"', "'", '`'], "'", $text);
+        $text = str_replace(['"', "'"], "'", $text);
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         return trim($text);

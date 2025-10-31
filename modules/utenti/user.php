@@ -55,17 +55,39 @@ if (!empty($user)) {
     $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(idsede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
 }
 
+// Verifica se si sta creando un utente per il gruppo Tecnici
+$is_new_user = empty($user);
+$is_tecnici_group = false;
+if (!empty($id_record)) {
+    $current_group = Group::find($id_record);
+    $is_tecnici_group = $current_group && $current_group->getTranslation('title') == 'Tecnici';
+}
+
 echo '
 <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'"  method="post" enctype="multipart/form-data" id="user_update">
 	<input type="hidden" name="op" value="update_user">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_utente" value="'.$utente['id'].'">
 
+	<!-- Contenitore per avviso dinamico -->
+	<div id="anagrafica-warning" style="display: none;">
+	    <div class="alert alert-warning">
+	        <i class="fa fa-exclamation-triangle"></i> <span id="warning-message">'.tr('Attenzione: per poter utilizzare l\'applicazione mobile, questo utente deve essere associato ad un\'anagrafica di tipo <strong>Tecnico</strong>').'.</span>
+	    </div>
+	</div>
+
+
 	<div class="row">
 		<div class="col-md-3">';
 
 // Photo component
-$user_photo = $rootdir.'/files/utenti/'.Upload::find($user->image_file_id)->filename;
+$user_photo = null;
+if (!empty($user) && !empty($user->image_file_id)) {
+    $upload = Upload::find($user->image_file_id);
+    if ($upload) {
+        $user_photo = $rootdir.'/files/utenti/'.$upload->filename;
+    }
+}
 
 if ($user_photo) {
     echo '
@@ -165,6 +187,49 @@ $(document).ready(function() {
     $("#idanag").change(function() {
         session_set("superselect,idanagrafica", $(this).val(), 0);
         $("#idsede").selectReset();
+
+        // Verifica tipo anagrafica per utenti tecnici
+        var isNewUser = '.($is_new_user ? 'true' : 'false').';
+        var isTecniciGroup = '.($is_tecnici_group ? 'true' : 'false').';
+
+        if (isNewUser && isTecniciGroup) {
+            if ($(this).val()) {
+                // Anagrafica selezionata - verifica il tipo
+                $.ajax({
+                    url: "'.base_path().'/ajax_complete.php",
+                    type: "GET",
+                    data: {
+                        module: "Utenti",
+                        op: "check_anagrafica_tipo",
+                        idanagrafica: $(this).val()
+                    },
+                    success: function(data) {
+                        try {
+                            var result = JSON.parse(data);
+                            if (!result.is_tecnico) {
+                                // Aggiorna il messaggio con il tipo effettivo
+                                var tipoEffettivo = result.tipi.join(", ");
+                                var messaggio = "'.tr('Attenzione: per poter utilizzare l\'applicazione mobile, questo utente deve essere associato ad un\'anagrafica di tipo <strong>Tecnico</strong>').'. '.tr('L\'anagrafica selezionata è di tipo').': <strong>" + tipoEffettivo + "</strong>.";
+                                $("#warning-message").html(messaggio);
+                                // Mostra warning se non è tecnico
+                                $("#anagrafica-warning").show();
+                            } else {
+                                // Nascondi warning se è tecnico
+                                $("#anagrafica-warning").hide();
+                            }
+                        } catch (e) {
+                            console.error("Errore parsing JSON:", e);
+                        }
+                    },
+                    error: function() {
+                        console.error("Errore nella verifica del tipo anagrafica");
+                    }
+                });
+            } else {
+                // Nessuna anagrafica selezionata - nascondi warning
+                $("#anagrafica-warning").hide();
+            }
+        }
     });';
 
 if (!empty($user)) {

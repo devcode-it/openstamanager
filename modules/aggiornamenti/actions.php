@@ -24,6 +24,7 @@ use Models\Cache;
 use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
+use Modules\Aggiornamenti\Controlli\IntegritaFile;
 use Modules\Aggiornamenti\Controlli\PianoConti;
 use Modules\Aggiornamenti\Controlli\PianoContiRagioneSociale;
 use Modules\Aggiornamenti\Controlli\PluginDuplicati;
@@ -154,6 +155,7 @@ switch (filter('op')) {
             PluginDuplicati::class,
             ReaValidi::class,
             TabelleLanguage::class,
+            IntegritaFile::class,
         ];
 
         $results = [];

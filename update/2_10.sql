@@ -101,3 +101,17 @@ CREATE TABLE `in_tipiintervento_groups` (`id` INT NOT NULL AUTO_INCREMENT , `idt
 -- Registrazione della risorsa API per la gestione delle notifiche
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'retrieve', 'gestione-notifiche', 'API\\App\\v1\\GestioneNotifiche', '1');
+
+-- Aggiunta colonna name alla tabella an_nazioni dopo iso2
+ALTER TABLE `an_nazioni` ADD COLUMN `name` VARCHAR(255) NULL AFTER `iso2`;
+
+-- Popolamento della colonna name con i valori di an_nazioni_lang per id_lang = 1
+UPDATE `an_nazioni`
+SET `name` = (
+    SELECT `an_nazioni_lang`.`title`
+    FROM `an_nazioni_lang`
+    WHERE `an_nazioni_lang`.`id_record` = `an_nazioni`.`id`
+    AND `an_nazioni_lang`.`id_lang` = 1
+    LIMIT 1
+);
+

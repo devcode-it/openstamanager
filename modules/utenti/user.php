@@ -71,8 +71,8 @@ echo '
 
 	<!-- Contenitore per avviso dinamico -->
 	<div id="anagrafica-warning" style="display: none;">
-	    <div class="alert alert-warning">
-	        <i class="fa fa-exclamation-triangle"></i> <span id="warning-message">'.tr('Attenzione: per poter utilizzare l\'applicazione mobile, questo utente deve essere associato ad un\'anagrafica di tipo <strong>Tecnico</strong>').'.</span>
+	    <div class="alert alert-info">
+	        <i class="fa fa-exclamation-triangle"></i> <span id="warning-message"> '.tr('Attenzione: per poter utilizzare l\'applicazione mobile, questo utente deve essere associato ad un\'anagrafica di tipo <strong>Tecnico</strong>').'.</span>
 	    </div>
 	</div>
 

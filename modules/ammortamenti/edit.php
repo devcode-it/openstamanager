@@ -47,7 +47,7 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Cespite'); ?>", "name": "descrizione_riga", "value": "<?php echo $record['descrizione']; ?>", "disabled": 1 ]}
+					{[ "type": "text", "label": "<?php echo tr('Cespite'); ?>", "name": "descrizione_riga", "value": "$descrizione$", "disabled": 1 ]}
 				</div>
 				
 				<div class="col-md-2">

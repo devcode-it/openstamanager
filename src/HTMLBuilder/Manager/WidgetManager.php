@@ -167,7 +167,7 @@ class WidgetManager implements ManagerInterface
                                 '.$title.'
 
                     '.(!empty($widget['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
-                    <button type="button" class="btn close pull-right" onclick="if(confirm(\'Disabilitare questo widget?\')) { 
+                    <button type="button" class="btn close pull-right" onclick="if(confirm(\'Disabilitare questo widget?\')) {
                         $.post(\''.base_path().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disabilita-widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); }">
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only">'.tr('Chiudi').'</span>
@@ -228,7 +228,7 @@ class WidgetManager implements ManagerInterface
 
             // Aggiungo ad uno ad uno tutti i widget
             foreach ($widgets as $widget) {
-                if ($widget['id_module'] == $database->fetchOne('SELECT `id_record` FROM `zz_modules_lang` WHERE `title` = "Stato dei servizi" AND `id_lang` = '.prepare(\Models\Locale::getDefault()->id).'')['id']) {
+                if ($widget['id_module'] == $database->fetchOne('SELECT `id` FROM `zz_modules` WHERE `name` = "Stato dei servizi"')['id']) {
                     $result .= '
                     <div class="col-md-3 col-sm-6 col-12 li-widget" id="widget_'.$widget['id'].'" data-id="'.$widget['id'].'">';
                 } else {

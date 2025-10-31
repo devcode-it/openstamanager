@@ -184,8 +184,8 @@ foreach ($righe as $riga) {
             <td class="text-right" nowrap="nowrap">
 				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
 
-            if ($riga->sconto > 0) {
-                $text = discountInfo($riga, false);
+            if ($riga->sconto != 0) {
+                $text = discountInfo($riga, true);
 
                 $text = '<br><small class="text-muted">'.$text.'</small>';
                 echo $text;

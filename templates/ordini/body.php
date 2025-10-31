@@ -311,7 +311,7 @@ $totale = $documento->totale;
 $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
-$show_sconto = $sconto > 0;
+$show_sconto = $sconto != 0;
 
 $colspan = 5;
 $documento->direzione == 'uscita' ? $colspan += 2 : $colspan;
@@ -336,7 +336,7 @@ if ($options['pricing']) {
         echo '
     <tr>
         <td colspan="'.$colspan.'" class="text-right text-muted">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b>'.tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="2" class="text-right">

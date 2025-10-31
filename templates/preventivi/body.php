@@ -201,7 +201,7 @@ foreach ($righe as $key => $riga) {
 
                 // Gestione ottimizzata degli sconti
                 if ($riga->sconto != 0) {
-                    $text = discountInfo($riga, false);
+                    $text = discountInfo($riga, true);
 
                     echo '
                     <br><small class="text-muted">'.$text.'</small>';
@@ -300,7 +300,7 @@ $totale = $documento->totale;
 $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
-$show_sconto = $sconto > 0;
+$show_sconto = $sconto != 0;
 
 // TOTALE COSTI FINALI
 if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-only-total']) {
@@ -321,7 +321,7 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         echo '
     <tr>
         <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right text-muted">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b>'.tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="1" class="text-right">

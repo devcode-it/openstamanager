@@ -22,22 +22,23 @@ class APIAuthMiddleware
 
             $user = null;
             if (!empty($token)) {
-                $user_match = UserTokens::where('enabled', 1)->find($token);
+                $user_match = UserTokens::where('enabled', 1)->where('token', $token)->first();
 
-                if ($user_match) {
+                if (!empty($user_match)) {
                     $user = User::with('group')->find($user_match->id_utente);
                 }
             }
 
             if ($user) {
-                Auth::once($user);
+                Auth::login($user, false);
+                auth_osm()->identifyUser($user->id);
 
                 return $next($request);
             }
         }
 
         // Disabilita autenticazione su base delle opzioni
-        if (config('osm.api_development', false)) {
+        if (config('osm.api_development', false) && !$request->headers->has('X-API-Key')) {
             return $next($request);
         }
 

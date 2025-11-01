@@ -34,7 +34,7 @@ final class DataTablesController implements ProcessorInterface
         if (!$data instanceof DataTablesLoadRequest) {
             throw new InvalidArgumentException();
         }
-        
+
         $id_module = !empty($uriVariables['id_module']) ? $uriVariables['id_module'] : null;
         $id_plugin = !empty($uriVariables['id_plugin']) ? $uriVariables['id_plugin'] : null;
         $id_parent = !empty($uriVariables['id_parent']) ? $uriVariables['id_parent'] : null;

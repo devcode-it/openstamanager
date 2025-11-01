@@ -971,7 +971,7 @@ class AuthOSM extends Util\Singleton
      *
      * @param int $user_id
      */
-    protected function identifyUser($user_id)
+    public function identifyUser($user_id)
     {
         $database = database();
 

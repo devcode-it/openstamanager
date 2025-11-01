@@ -33,13 +33,13 @@ $token = filter('token');
 // Verifica che sia stata fornita un token
 if (empty($token)) {
     flash()->warning(tr('Token mancante'));
-    redirect(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
     exit;
 }
 
 // Verifica connessione database
 if (!$dbo->isConnected() || !$dbo->isInstalled()) {
-    redirect(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
     exit;
 }
 
@@ -50,7 +50,7 @@ switch ($op) {
         $otp_code = post('otp_code');
 
         // Utilizza il metodo della classe Auth per gestire il login OTP
-        $result = auth()->attemptOTPLogin($token_param, $otp_code);
+        $result = auth_osm()->attemptOTPLogin($token_param, $otp_code);
 
         if ($result['success']) {
             // Imposta variabili di sessione per il calendario
@@ -74,24 +74,24 @@ switch ($op) {
                 // Token con utente: usa il redirect normale
                 $redirect_url = Permissions::getTokenRedirectURL();
                 if ($redirect_url) {
-                    redirect($redirect_url);
+                    redirect_url($redirect_url);
                 } else {
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path_osm().'/index.php');
                 }
             } else {
                 // Token senza utente: redirect a shared_editor.php
                 if (!empty($token_info['id_module_target']) && !empty($token_info['id_record_target'])) {
-                    redirect(base_path().'/shared_editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
+                    redirect_url(base_path_osm().'/shared_editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
                 } else {
                     flash()->warning(tr('Token non configurato correttamente per l\'accesso diretto'));
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path_osm().'/index.php');
                 }
             }
             exit;
         } else {
             // Login fallito, mostra errore e torna al form OTP
             flash()->warning($result['message']);
-            redirect(base_path().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
+            redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
             exit;
         }
 
@@ -103,7 +103,7 @@ switch ($op) {
 
         if (!empty($token_param)) {
             // Utilizza il metodo della classe Auth per gestire il login tramite token
-            $result = auth()->attemptTokenLogin($token_param);
+            $result = auth_osm()->attemptTokenLogin($token_param);
 
             if ($result['success']) {
                 // Imposta variabili di sessione per il calendario
@@ -124,20 +124,20 @@ switch ($op) {
                 // Login riuscito, redirect al modulo/record specifico se configurato
                 $redirect_url = Permissions::getTokenRedirectURL();
                 if ($redirect_url) {
-                    redirect($redirect_url);
+                    redirect_url($redirect_url);
                 } else {
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path_osm().'/index.php');
                 }
                 exit;
             } else {
                 // Login fallito, mostra errore
                 flash()->warning($result['message']);
-                redirect(base_path().'/index.php');
+                redirect_url(base_path_osm().'/index.php');
                 exit;
             }
         } else {
             flash()->error(tr('Token non valido'));
-            redirect(base_path().'/index.php');
+            redirect_url(base_path_osm().'/index.php');
             exit;
         }
 
@@ -149,11 +149,11 @@ switch ($op) {
 
         if (!empty($token_param)) {
             // Genera e invia il primo codice OTP
-            redirect(base_path().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
+            redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
             exit;
         } else {
             flash()->error(tr('Token non valido'));
-            redirect(base_path().'/index.php');
+            redirect_url(base_path_osm().'/index.php');
             exit;
         }
 
@@ -184,7 +184,7 @@ if (empty($token_record)) {
     ]);
 
     flash()->warning(tr('Token non valido o non abilitato'));
-    redirect(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
     exit;
 }
 
@@ -210,7 +210,7 @@ if ($is_not_active) {
     ]);
 
     flash()->warning(tr('Token non attivo'));
-    redirect(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
     exit;
 }
 
@@ -228,7 +228,7 @@ if (!empty($token_record['id_utente'])) {
         ]);
 
         flash()->warning(tr('Utente non abilitato'));
-        redirect(base_path().'/index.php');
+        redirect_url(base_path_osm().'/index.php');
         exit;
     }
 }
@@ -242,7 +242,7 @@ if ($tipo_accesso == 'token') {
 
     if ($confirm_access == '1') {
         // L'utente ha confermato, procedi con il login
-        $result = auth()->attemptTokenLogin($token);
+        $result = auth_osm()->attemptTokenLogin($token);
 
         if ($result['success']) {
             // Imposta variabili di sessione per il calendario
@@ -265,23 +265,23 @@ if ($tipo_accesso == 'token') {
                 // Token con utente: usa il redirect normale
                 $redirect_url = Permissions::getTokenRedirectURL();
                 if ($redirect_url) {
-                    redirect($redirect_url);
+                    redirect_url($redirect_url);
                 } else {
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path_osm().'/index.php');
                 }
             } else {
                 // Token senza utente: redirect a editor_lite.php
                 if (!empty($token_record['id_module_target']) && !empty($token_record['id_record_target'])) {
-                    redirect(base_path().'/shared_editor.php?id_module='.$token_record['id_module_target'].'&id_record='.$token_record['id_record_target']);
+                    redirect_url(base_path_osm().'/shared_editor.php?id_module='.$token_record['id_module_target'].'&id_record='.$token_record['id_record_target']);
                 } else {
                     flash()->warning(tr('Token non configurato correttamente per l\'accesso diretto'));
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path_osm().'/index.php');
                 }
             }
             exit;
         } else {
             flash()->warning($result['message']);
-            redirect(base_path().'/index.php');
+            redirect_url(base_path_osm().'/index.php');
             exit;
         }
     } else {
@@ -295,7 +295,7 @@ if ($tipo_accesso == 'otp') {
     // Controlla se è stata richiesta la generazione dell'OTP
     if ($otp_requested) {
         // Genera nuovo codice OTP sicuro
-        $otp_code = auth()->getOTP();
+        $otp_code = auth_osm()->getOTP();
 
         // Salva l'OTP nel database
         $dbo->query('UPDATE `zz_otp_tokens` SET `last_otp` = '.prepare($otp_code).' WHERE `id` = '.prepare($token_record['id']));
@@ -332,7 +332,7 @@ if ($tipo_accesso == 'otp') {
                 flash()->error(tr('Errore durante l\'invio dell\'email OTP: _MSG_', [
                     '_MSG_' => $e->getMessage(),
                 ]));
-                redirect(base_path().'/token_login.php?token='.urlencode($token));
+                redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token));
                 exit;
             }
         } else {
@@ -357,9 +357,9 @@ if (Auth::check()) {
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(base_path().'/controller.php?id_module='.$module);
+        redirect_url(base_path_osm().'/controller.php?id_module='.$module);
     } else {
-        redirect(base_path().'/index.php?op=logout');
+        redirect_url(base_path_osm().'/index.php?op=logout');
     }
     exit;
 }
@@ -510,7 +510,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 </form>
 
                 <div class="text-center mt-4">
-                    <a href="'.base_path().'/index.php" class="text-secondary">
+                    <a href="'.base_path_osm().'/index.php" class="text-secondary">
                         <i class="fa fa-arrow-left mr-1"></i>'.tr('Torna al login classico').'
                     </a>
                 </div>
@@ -646,7 +646,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                                 <i class="fa fa-refresh mr-1"></i>'.tr('Invia nuovo codice OTP').'
                             </a>
                         </div>
-                        <a href="'.base_path().'/index.php" class="text-secondary">
+                        <a href="'.base_path_osm().'/index.php" class="text-secondary">
                             <i class="fa fa-arrow-left mr-1"></i>'.tr('Torna al login classico').'
                         </a>
                     </div>
@@ -803,7 +803,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 </form>
 
                 <div class="text-center mt-4">
-                    <a href="'.base_path().'/index.php" class="text-secondary">
+                    <a href="'.base_path_osm().'/index.php" class="text-secondary">
                         <i class="fa fa-arrow-left mr-1"></i>'.tr('Torna al login classico').'
                     </a>
                 </div>
@@ -851,7 +851,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="'.base_path().'/index.php" class="text-secondary">
+                    <a href="'.base_path_osm().'/index.php" class="text-secondary">
                         <i class="fa fa-arrow-left mr-1"></i>'.tr('Torna al login classico').'
                     </a>
                 </div>

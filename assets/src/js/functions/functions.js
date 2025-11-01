@@ -300,7 +300,7 @@ function message(element) {
                     },
                 });
             } else {
-                redirect(href, data, method, blank);
+                redirect_url(href, data, method, blank);
             }
         },
         function (dismiss) {
@@ -308,7 +308,7 @@ function message(element) {
     );
 }
 
-function redirect(href, data, method, blank) {
+function redirect_url(href, data, method, blank) {
     method = method ? method : "get";
     blank = blank ? blank : false;
 

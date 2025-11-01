@@ -23,8 +23,9 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
+use Illuminate\Contracts\Auth\Authenticatable;
 
-class User extends Model
+class User extends Model implements Authenticatable
 {
     use SimpleModelTrait;
 
@@ -149,7 +150,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path().'/files/'.$image->module->directory.'/'.$image->filename;
+        return base_path_osm().'/files/'.$image->module->directory.'/'.$image->filename;
     }
 
     public function setPhotoAttribute($value)
@@ -249,5 +250,39 @@ class User extends Model
     public function modules()
     {
         return $this->group->modules();
+    }
+
+    public function getAuthIdentifierName() : string
+    {
+        return $this->username;
+    }
+
+    public function getAuthIdentifier() : mixed
+    {
+        return $this->id;
+    }
+    
+    public function getAuthPassword() : string
+    {
+        return $this->password;
+    }
+
+    public function getAuthPasswordName() : string
+    {
+        return 'password';
+    }
+    
+    public function getRememberToken() : string
+    {
+        return '';
+    } 
+    
+    public function setRememberToken($value)
+    {
+    } 
+    
+    public function getRememberTokenName() : string
+    {
+        return '';
     }
 }

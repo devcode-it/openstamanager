@@ -45,7 +45,7 @@ $(document).ready(function() {
 });
 </script>';
 
-$skip_link = $has_next ? base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence') : base_path().'/editor.php?id_module='.$id_module;
+$skip_link = $has_next ? base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence') : base_path_osm().'/editor.php?id_module='.$id_module;
 
 if (empty($fattura_pa)) {
     if (!empty($error)) {
@@ -80,7 +80,7 @@ if (empty($fattura_pa)) {
 
 <script>
 function skip() {
-    redirect("'.$skip_link.'");
+    redirect_url("'.$skip_link.'");
 }
 
 function cleanup(){

@@ -208,7 +208,7 @@ class SelectHandler implements HandlerInterface
                 $element['text'] = '<a href="'.\Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif ($link == 'allegato') {
                 $element['title'] = ' ';
-                $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+                $element['text'] = '<a href="'.base_path_osm().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif (string_contains($link, 'module:')) {
                 $element['title'] = ' ';
                 $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');

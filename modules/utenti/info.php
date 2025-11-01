@@ -33,7 +33,7 @@ if (post('op') == 'self_update') {
 }
 
 $user = Auth::user();
-$token = auth()->getToken();
+$token = auth_osm()->getToken();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
 $anagrafica = [];

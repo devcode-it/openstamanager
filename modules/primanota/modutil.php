@@ -86,7 +86,7 @@ function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = nu
                             <td>'.$causale.'</td>
                             <td style="text-align: right; width: 100px;">'.$importo.'</td>
                             <td style="width: 100px;">
-                                <a href="'.base_path().'/editor.php?id_module='.$dbo->fetchOne("SELECT id FROM zz_modules WHERE name = 'Prima nota'")['id'].'&id_record='.$movimento['idmastrino'].'"
+                                <a href="'.base_path_osm().'/editor.php?id_module='.$dbo->fetchOne("SELECT id FROM zz_modules WHERE name = 'Prima nota'")['id'].'&id_record='.$movimento['idmastrino'].'"
                                    class="btn btn-primary btn-xs" target="_blank">
                                     Visualizza »
                                 </a>

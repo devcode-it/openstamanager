@@ -150,7 +150,7 @@ class DefaultHandler implements HandlerInterface
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
     
-    <script src="'.base_path().'/assets/dist/password-strength/password.min.js"></script>
+    <script src="'.base_path_osm().'/assets/dist/password-strength/password.min.js"></script>
     <script>
         $(document).ready(function(){
             $("#'.$values['id'].'").pwstrength({

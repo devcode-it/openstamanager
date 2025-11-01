@@ -24,7 +24,7 @@ use Models\Module;
 $id_module = Module::where('name', 'Stato dei servizi')->first()->id;
 
 echo '
-<script src="'.base_path().'/assets/dist/js/chartjs/chart.min.js"></script>';
+<script src="'.base_path_osm().'/assets/dist/js/chartjs/chart.min.js"></script>';
 
 // Operazioni JavaScript
 echo '

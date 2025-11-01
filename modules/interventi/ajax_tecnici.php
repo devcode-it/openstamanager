@@ -290,7 +290,7 @@ if (!$is_bloccato) {
 }
 
 echo '
-<script src="'.base_path().'/assets/dist/js/functions.min.js"></script>
+<script src="'.base_path_osm().'/assets/dist/js/functions.min.js"></script>
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">

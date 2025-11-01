@@ -275,10 +275,9 @@ echo '
                 <!-- TAB DETTAGLI CLIENTE -->
                 <div class="tab-pane fade show active" id="tab_dettagli_cliente" role="tabpanel" aria-labelledby="dettagli-cliente-tab">
                     <div id="dettagli_cliente" class="p-4">
-                        <div class="alert alert-info text-center mx-auto mt-4" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <i class="fa fa-user fa-2x mb-3"></i>
-                            <h5 class="mb-2">'.tr('Cliente non selezionato').'</h5>
-                            <p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
+                        <div class="alert alert-light text-center text-muted py-5">
+                            <i class="fa fa-user fa-3x mb-3"></i>
+                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
                         </div>
                     </div>
                 </div>
@@ -287,15 +286,13 @@ echo '
                 <div class="tab-pane fade" id="tab_posizione" role="tabpanel" aria-labelledby="posizione-tab">
                     <div class="p-4">
                         <div id="map-add" style="height: 300px; width: 100%; display: none; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);"></div>
-                        <div id="no-client-message" class="alert alert-info text-center mx-auto mt-4" style="display: none; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <i class="fa fa-map-marker fa-2x mb-3"></i>
-                            <h5 class="mb-2">'.tr('Cliente non selezionato').'</h5>
-                            <p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni sulla posizione geografica').'</p>
+                        <div id="no-client-message" class="alert alert-light text-center text-muted py-5 hide">
+                            <i class="fa fa-map-marker fa-3x mb-3"></i>
+                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni sulla posizione geografica').'</p>
                         </div>
-                        <div id="map-warning" class="alert alert-info text-center mx-auto mt-4" style="display: none; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <i class="fa fa-map-marker fa-2x mb-3"></i>
-                            <h5 class="mb-2">'.tr('Posizione non definita').'</h5>
-                            <p class="mb-0">'.tr('La posizione non è stata definita per questo cliente').'</p>
+                        <div id="map-warning" class="alert alert-light text-center text-muted py-5 hide">
+                            <i class="fa fa-map-marker fa-3x mb-3"></i>
+                            <p class="lead">'.tr('La posizione non è stata definita per questo cliente').'</p>
                         </div>
                     </div>
                 </div>
@@ -586,7 +583,7 @@ echo '
                 $("#dettagli_cliente").html(data);
             });
         } else {
-            $("#dettagli_cliente").html(\'<div class="alert alert-info text-center mx-auto mt-4" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"><i class="fa fa-user fa-2x mb-3"></i><h5 class="mb-2">'.tr('Cliente non selezionato').'</h5><p class="mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
+            $("#dettagli_cliente").html(\'<div class="alert alert-light text-center text-muted py-5"><i class="fa fa-user fa-3x mb-3"></i><p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
             caricaMappa();
         }
 
@@ -908,8 +905,8 @@ echo '
         var clienteSelezionato = input("idanagrafica").get();
         if (!clienteSelezionato) {
             // Nessun cliente selezionato
-            $("#no-client-message").show();
-            $("#map-warning").hide();
+            $("#no-client-message").removeClass("hide");
+            $("#map-warning").addClass("hide");
             $("#map-add").hide();
 
             // Rimuovi la mappa esistente
@@ -921,7 +918,7 @@ echo '
             return false;
         } else {
             // Cliente selezionato
-            $("#no-client-message").hide();
+            $("#no-client-message").addClass("hide");
             $("#map-add").css("display", "flex");
         }
 
@@ -959,7 +956,7 @@ echo '
                                  parseFloat(lat) !== 0 && parseFloat(lng) !== 0;
 
         if (!hasValidCoordinates) {
-            $("#map-warning").show();
+            $("#map-warning").removeClass("hide");
             $("#map-add").hide();
             // Rimuovi la mappa esistente se le coordinate non sono valide
             var container = L.DomUtil.get("map-add");
@@ -968,7 +965,7 @@ echo '
                 map = null;
             }
         } else {
-            $("#map-warning").hide();
+            $("#map-warning").addClass("hide");
             $("#map-add").css("display", "flex");
         }
 

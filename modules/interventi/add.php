@@ -275,9 +275,10 @@ echo '
                 <!-- TAB DETTAGLI CLIENTE -->
                 <div class="tab-pane fade show active" id="tab_dettagli_cliente" role="tabpanel" aria-labelledby="dettagli-cliente-tab">
                     <div id="dettagli_cliente" class="p-4">
-                        <div class="alert alert-light text-center text-muted py-5">
-                            <i class="fa fa-user fa-3x mb-3"></i>
-                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
+                        <div class="alert alert-light text-center py-4">
+                            <i class="fa fa-user fa-2x text-muted mb-2"></i>
+                            <h5 class="mb-2"><strong>'.tr('Cliente non selezionato').'</strong></h5>
+                            <p class="text-muted mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p>
                         </div>
                     </div>
                 </div>
@@ -286,13 +287,15 @@ echo '
                 <div class="tab-pane fade" id="tab_posizione" role="tabpanel" aria-labelledby="posizione-tab">
                     <div class="p-4">
                         <div id="map-add" style="height: 300px; width: 100%; display: none; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);"></div>
-                        <div id="no-client-message" class="alert alert-light text-center text-muted py-5 hide">
-                            <i class="fa fa-map-marker fa-3x mb-3"></i>
-                            <p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni sulla posizione geografica').'</p>
+                        <div id="no-client-message" class="alert alert-light text-center py-4 hide">
+                            <i class="fa fa-map-marker fa-2x text-muted mb-2"></i>
+                            <h5 class="mb-2"><strong>'.tr('Cliente non selezionato').'</strong></h5>
+                            <p class="text-muted mb-0">'.tr('Seleziona un cliente per visualizzare la posizione geografica').'</p>
                         </div>
-                        <div id="map-warning" class="alert alert-light text-center text-muted py-5 hide">
-                            <i class="fa fa-map-marker fa-3x mb-3"></i>
-                            <p class="lead">'.tr('La posizione non è stata definita per questo cliente').'</p>
+                        <div id="map-warning" class="alert alert-info text-center py-4 hide">
+                            <i class="fa fa-info-circle fa-2x mb-2"></i>
+                            <h5 class="mb-2"><strong>'.tr('Posizione non definita').'</strong></h5>
+                            <p class="mb-0">'.tr('La posizione geografica non è stata definita per questo cliente').'</p>
                         </div>
                     </div>
                 </div>
@@ -583,7 +586,7 @@ echo '
                 $("#dettagli_cliente").html(data);
             });
         } else {
-            $("#dettagli_cliente").html(\'<div class="alert alert-light text-center text-muted py-5"><i class="fa fa-user fa-3x mb-3"></i><p class="lead">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
+            $("#dettagli_cliente").html(\'<div class="alert alert-light text-center py-4"><i class="fa fa-user fa-2x text-muted mb-2"></i><h5 class="mb-2"><strong>'.tr('Cliente non selezionato').'</strong></h5><p class="text-muted mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
             caricaMappa();
         }
 

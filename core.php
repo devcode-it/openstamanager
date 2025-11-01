@@ -41,11 +41,14 @@ if (file_exists(__DIR__.'/config.inc.php')) {
 
 // Caricamento delle dipendenze e delle librerie del progetto
 $loader = require_once __DIR__.'/vendor/autoload.php';
+$is_laravel = $loader === true;
 
-$namespaces = require_once __DIR__.'/config/namespaces.php';
-foreach ($namespaces as $path => $namespace) {
-    $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
-    $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
+if (!$is_laravel) {
+    $namespaces = require_once __DIR__.'/config/namespaces.php';
+    foreach ($namespaces as $path => $namespace) {
+        $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
+        $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
+    }
 }
 
 // Individuazione dei percorsi di base
@@ -178,7 +181,9 @@ if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-if (!$continue && getURLPath() != slashes(base_path_osm().'/index.php') && !Permissions::getSkip()) {
+# Verifica di autenticazione
+# Per i componenti Laravel, l'autenticazione viene gestita internamente
+if (!$continue && !$is_laravel && getURLPath() != slashes(base_path_osm().'/index.php') && !Permissions::getSkip()) {
     if (AuthOSM::check()) {
         AuthOSM::logout();
     }
@@ -216,7 +221,6 @@ if (!API\Response::isAPIRequest()) {
     foreach ((array) $config['HTMLHandlers'] as $key => $value) {
         HTMLBuilder\HTMLBuilder::setHandler($key, $value);
     }
-
     // Aggiunta dei gestori per componenti personalizzate
     foreach ((array) $config['HTMLManagers'] as $key => $value) {
         HTMLBuilder\HTMLBuilder::setManager($key, $value);
@@ -280,6 +284,7 @@ if (!API\Response::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
+
 
 // Inclusione dei file modutil.php
 // TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}

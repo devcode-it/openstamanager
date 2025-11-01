@@ -104,3 +104,5 @@ codeception.yml
 !.gitkeep
 .vscode
 .php-cs-fixer.cache
+.phpunit.*
+.env

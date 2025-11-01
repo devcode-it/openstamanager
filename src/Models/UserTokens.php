@@ -31,18 +31,10 @@ class UserTokens extends Model
 
     protected $table = 'zz_tokens';
 
-    public static function build(?Group $gruppo = null, $username = null, $email = null, $password = null)
-    {
-        $model = new static();
-        $model->save();
-
-        return $model;
-    }
-
     /* Relazioni Eloquent */
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_utente');
+        return $this->belongsTo(User::class, 'id_utente', 'id');
     }
 }

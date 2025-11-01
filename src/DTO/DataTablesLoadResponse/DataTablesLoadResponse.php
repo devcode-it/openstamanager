@@ -9,7 +9,7 @@ class DataTablesLoadResponse
      * @param int $draw
      * @param int $recordsTotal
      * @param int $recordsFiltered
-     * @param array<map<string, string>> $data To be defined as DTO in the future
+     * @param array<string, string> $data To be defined as DTO in the future
      * @param array<string> $summable
      * @param array<string> $avg
      * @param string|null $error

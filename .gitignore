@@ -106,3 +106,6 @@ codeception.yml
 .php-cs-fixer.cache
 .phpunit.*
 .env
+openapi.json
+assets/api
+openapitools.json

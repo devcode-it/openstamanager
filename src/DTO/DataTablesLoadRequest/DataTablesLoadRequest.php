@@ -5,9 +5,9 @@ namespace DTO\DataTablesLoadRequest;
 
 final class DataTablesLoadRequest
 {
-	public int $draw;
-	public int $start;
-	public int $length;
+	public int $draw = 0;
+	public int $start = 0;
+	public int $length = 200;
 	/**
 	* @var Search
 	*/

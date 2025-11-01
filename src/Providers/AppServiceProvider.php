@@ -8,6 +8,10 @@ use ApiPlatform\State\ProviderInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
 use Models\Locale;
+use Modules\Impostazioni\API\Controllers\GetImpostazioneProvider;
+use Modules\Impostazioni\API\Controllers\ListImpostazioniProvider;
+use Modules\Impostazioni\API\Controllers\ListSezioniImpostazioniProvider;
+use Modules\Impostazioni\API\Controllers\UpdateImpostazioneProcessor;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +46,10 @@ class AppServiceProvider extends ServiceProvider
             $translator->setLocale($lang, $formatter);
         }
         
+        $this->app->tag(GetImpostazioneProvider::class, ProviderInterface::class);
+        $this->app->tag(UpdateImpostazioneProcessor::class, ProcessorInterface::class);
+        $this->app->tag(ListSezioniImpostazioniProvider::class, ProviderInterface::class);
+        $this->app->tag(ListImpostazioniProvider::class, ProviderInterface::class);
         $this->app->tag(DataTablesController::class, ProcessorInterface::class);    
     }
 }

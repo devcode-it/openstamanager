@@ -2,7 +2,9 @@
 
 namespace Providers;
 
+use API\Controllers\DataTablesController;
 use ApiPlatform\State\ProcessorInterface;
+use ApiPlatform\State\ProviderInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
 use Models\Locale;
@@ -40,5 +42,6 @@ class AppServiceProvider extends ServiceProvider
             $translator->setLocale($lang, $formatter);
         }
         
+        $this->app->tag(DataTablesController::class, ProcessorInterface::class);    
     }
 }

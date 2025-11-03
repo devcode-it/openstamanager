@@ -31,7 +31,7 @@ class Articoli extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT `mg_articoli`.`id`, `mg_articoli`.`updated_at` FROM `mg_articoli` WHERE `deleted_at` IS NULL';
+        $query = 'SELECT `mg_articoli`.`id`, `mg_articoli`.`updated_at` FROM `mg_articoli` WHERE 1=1';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -58,7 +58,8 @@ class Articoli extends AppResource
             `mg_articoli`.`idiva_vendita` AS id_iva,
             `categoria_lang`.`title` AS categoria,
             `sottocategoria_lang`.`title` AS sottocategoria,
-            `mg_articoli`.`abilita_serial`
+            `mg_articoli`.`abilita_serial`,
+            IF(`mg_articoli`.`deleted_at` IS NULL, 0, 1) AS soft_delete
         FROM
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')

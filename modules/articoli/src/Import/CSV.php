@@ -28,6 +28,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Sede;
 use Modules\Anagrafiche\Tipo;
 use Modules\Articoli\Articolo;
+use Modules\Articoli\Barcode;
 use Modules\Articoli\Categoria;
 use Modules\Articoli\Marca;
 use Modules\Iva\Aliquota;
@@ -337,7 +338,21 @@ class CSV extends CSVImporter
                 }
 
                 if (!empty($record['prezzo_listino'])) {
-                    $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+                    // Determina la direzione del listino
+                    $direzione = strtolower((string) ($record['dir'] ?? ''));
+                    $direzione = match ($direzione) {
+                        'fornitore' => 'uscita',
+                        'cliente' => 'entrata',
+                        default => null,
+                    };
+
+                    if ($direzione) {
+                        // Elimina solo i prezzi nella direzione specificata
+                        $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id).' AND dir = '.prepare($direzione));
+                    } else {
+                        // Se la direzione non è specificata, elimina tutti i prezzi per questa combinazione
+                        $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+                    }
                 }
 
                 if (!empty($record['codice_fornitore']) && !empty($record['descrizione_fornitore'])) {
@@ -519,12 +534,15 @@ class CSV extends CSVImporter
                 $this->aggiornaDettaglioPrezzi($articolo, $dettagli);
             }
 
+            // Gestione barcode separata
+            $barcode_value = $record['barcode'] ?? '';
+
             unset($record['anagrafica_listino'], $record['p_iva'], $record['qta_minima'],
                 $record['qta_massima'], $record['prezzo_listino'], $record['sconto_listino'],
                 $record['dir'], $record['codice_fornitore'], $record['barcode_fornitore'],
                 $record['descrizione_fornitore'], $record['id_fornitore'],
                 $record['categoria'], $record['sottocategoria'], $record['marca'], $record['modello'],
-                $record['codice_iva_vendita'], $record['data_qta'], $record['nome_sede']);
+                $record['codice_iva_vendita'], $record['data_qta'], $record['nome_sede'], $record['barcode']);
 
             $this->processaImmagine($articolo, $url, $record);
             unset($record['import_immagine']);
@@ -551,6 +569,11 @@ class CSV extends CSVImporter
             }
 
             $articolo->save();
+
+            // Gestione barcode dopo il salvataggio dell'articolo
+            if (!empty($barcode_value)) {
+                $this->processaBarcode($articolo, $barcode_value);
+            }
 
             $this->aggiornaGiacenza($articolo, $nuova_qta, $nome_sede, $record);
 
@@ -843,6 +866,16 @@ class CSV extends CSVImporter
         };
 
         if (!empty($anagrafica) && !empty($dettagli['dir']) && $dettagli['prezzo_listino']) {
+            // Elimina i prezzi esistenti per questo articolo e anagrafica nella direzione specificata
+            $deleted_count = DettaglioPrezzo::where('id_articolo', $articolo->id)
+                ->where('id_anagrafica', $anagrafica->id)
+                ->where('dir', $dettagli['dir'])
+                ->delete();
+
+            if ($deleted_count > 0) {
+                error_log("Eliminati {$deleted_count} prezzi esistenti per articolo {$articolo->codice} e anagrafica {$anagrafica->ragione_sociale} (direzione: {$dettagli['dir']})");
+            }
+
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $dettagli['dir']);
             $dettaglio_predefinito->sconto_percentuale = $dettagli['sconto_listino'];
             $dettaglio_predefinito->setPrezzoUnitario($dettagli['prezzo_listino']);
@@ -853,14 +886,25 @@ class CSV extends CSVImporter
             }
 
             $dettaglio_predefinito->save();
+            error_log("Creato nuovo prezzo per articolo {$articolo->codice} e anagrafica {$anagrafica->ragione_sociale}: {$dettagli['prezzo_listino']}");
         }
 
         if (!empty($anagrafica) && $dettagli['dir'] == 'uscita' && !empty($dettagli['codice_fornitore']) && !empty($dettagli['descrizione_fornitore'])) {
+            // Elimina i dettagli fornitore esistenti per questo articolo e fornitore
+            $deleted_count = DettaglioFornitore::where('id_articolo', $articolo->id)
+                ->where('id_fornitore', $anagrafica->id)
+                ->delete();
+
+            if ($deleted_count > 0) {
+                error_log("Eliminati {$deleted_count} dettagli fornitore esistenti per articolo {$articolo->codice} e fornitore {$anagrafica->ragione_sociale}");
+            }
+
             $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
             $fornitore->codice_fornitore = $dettagli['codice_fornitore'];
             $fornitore->barcode_fornitore = $dettagli['barcode_fornitore'];
             $fornitore->descrizione = $dettagli['descrizione_fornitore'];
             $fornitore->save();
+            error_log("Creato nuovo dettaglio fornitore per articolo {$articolo->codice} e fornitore {$anagrafica->ragione_sociale}: {$dettagli['codice_fornitore']}");
         }
 
         $dettagli['id_fornitore'] = $anagrafica->id;
@@ -941,6 +985,58 @@ class CSV extends CSVImporter
             return $modello;
         } catch (\Exception $e) {
             throw new \Exception('Errore nella creazione/ricerca modello "'.$record['modello'].'": '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Gestisce l'importazione dei barcode per un articolo.
+     *
+     * @param Articolo $articolo
+     * @param string   $barcode_value
+     *
+     * @throws \Exception
+     */
+    protected function processaBarcode(Articolo $articolo, $barcode_value)
+    {
+        if (empty($barcode_value)) {
+            return;
+        }
+
+        try {
+            $database = database();
+
+            // Supporta barcode multipli separati da virgola
+            $barcodes = array_map('trim', explode(',', $barcode_value));
+
+            foreach ($barcodes as $barcode) {
+                if (empty($barcode)) {
+                    continue;
+                }
+
+                // Verifica che il barcode non sia già presente nella tabella mg_articoli (barcode principali)
+                $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;
+
+                // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode (barcode aggiuntivi)
+                $esistente_barcode = $database->table('mg_articoli_barcode')
+                    ->where('barcode', $barcode)
+                    ->count() > 0;
+
+                // Verifica che il barcode non coincida con un codice articolo esistente
+                $coincide_codice = Articolo::where([
+                    ['codice', $barcode],
+                    ['barcode', '=', ''],
+                ])->count() > 0;
+
+                // Se il barcode è unico, procede con l'inserimento
+                if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
+                    Barcode::build($articolo->id, $barcode);
+                    error_log("Barcode aggiunto per articolo {$articolo->codice}: {$barcode}");
+                } else {
+                    error_log("Barcode già esistente o in conflitto per articolo {$articolo->codice}: {$barcode}");
+                }
+            }
+        } catch (\Exception $e) {
+            throw new \Exception('Errore durante l\'importazione del barcode "'.$barcode_value.'": '.$e->getMessage());
         }
     }
 }

@@ -1013,7 +1013,7 @@ class CSV extends CSVImporter
                 }
 
                 // Verifica che il barcode non sia già presente nella tabella mg_articoli (barcode principali)
-                $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;
+                $esistente_articoli = Articolo::where('name', $articolo->name)->count() > 0;
 
                 // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode (barcode aggiuntivi)
                 $esistente_barcode = $database->table('mg_articoli_barcode')
@@ -1027,7 +1027,7 @@ class CSV extends CSVImporter
                 ])->count() > 0;
 
                 // Se il barcode è unico, procede con l'inserimento
-                if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
+                if ($esistente_articoli && !$esistente_barcode && !$coincide_codice) {
                     Barcode::build($articolo->id, $barcode);
                     error_log("Barcode aggiunto per articolo {$articolo->codice}: {$barcode}");
                 } else {

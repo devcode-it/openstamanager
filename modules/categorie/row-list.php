@@ -28,9 +28,12 @@ foreach ($subcategorie as $sub) {
 
     echo '
 <tr>
-<td class="align-middle"><strong>'.$sub->getTranslation('title').'</strong></td>
+<td class="align-middle">
+    <strong>'.$sub->getTranslation('title').'</strong>
+    '.($n_articoli > 0 ? '<span class="badge badge-info ml-2" title="'.tr('Articoli collegati').'">'.$n_articoli.'</span>' : '<span class="badge badge-secondary ml-2" title="'.tr('Nessun articolo collegato').'">0</span>').'
+</td>
 <td class="text-center align-middle">
-<span class="badge" style="background-color: '.$sub->colore.'; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span> 
+<span class="badge" style="background-color: '.$sub->colore.'; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span>
 <span class="text-muted">'.$sub->colore.'</span>
 </td>
 <td class="text-center align-middle">

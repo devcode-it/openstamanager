@@ -107,7 +107,7 @@ use Models\Module;
 <?php
 
 // Articoli collegati alla categoria
-$articoli = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode` FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).' OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).')) AND `deleted_at` IS NULL');
+$articoli = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode`, `sottocategorie_lang`.`title` AS sottocategoria FROM `mg_articoli` LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id` LEFT JOIN `zz_categorie_lang` AS `sottocategorie_lang` ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).' OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).')) AND `deleted_at` IS NULL');
 
 // Impianti collegati alla categoria
 $impianti = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).'))');
@@ -130,9 +130,16 @@ if (!empty($articoli)) {
                 <div class="list-group">';
 
     foreach ($articoli as $elemento) {
+        $codice = !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'];
         $descrizione = tr('Articolo _CODICE_', [
-            '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
+            '_CODICE_' => $codice,
         ]);
+
+        // Aggiunge la sottocategoria se presente
+        if (!empty($elemento['sottocategoria'])) {
+            $descrizione .= ' <small class="text-primary">('.$elemento['sottocategoria'].')</small>';
+        }
+
         $modulo = 'Articoli';
         $id = $elemento['id'];
 

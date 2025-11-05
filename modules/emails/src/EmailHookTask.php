@@ -20,10 +20,10 @@
 
 namespace Modules\Emails;
 
+use Carbon\Carbon;
 use Notifications\EmailNotification;
 use PHPMailer\PHPMailer\Exception;
 use Tasks\Manager;
-
 class EmailHookTask extends Manager
 {
     public function execute()

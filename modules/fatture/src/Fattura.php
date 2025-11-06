@@ -583,7 +583,9 @@ class Fattura extends Document
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
-        // Fix dei campi statici
+
+        $result = parent::save($options);
+
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
         $this->id_riga_spese_incasso = $this->manageRigaSpeseIncasso();
 
@@ -592,8 +594,9 @@ class Fattura extends Document
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
-        // Salvataggio effettivo
-        parent::save($options);
+        if ($this->isDirty(['id_riga_bollo', 'id_riga_spese_incasso'])) {
+            parent::save($options);
+        }
 
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato

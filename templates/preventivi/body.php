@@ -102,7 +102,7 @@ if ($options['pricing']) {
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
     }
     echo "
-            <th class='text-center' style='width:15%'>".($options['hide-total'] ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
+            <th class='text-center' style='width:15%'>".($prezzi_ivati ? tr('Importo ivato', [], ['upper' => true]) : tr('Importo', [], ['upper' => true])).'</th>';
 }
 
 echo '
@@ -221,7 +221,7 @@ foreach ($righe as $key => $riga) {
                 // Imponibile
                 echo '
                 <td class="text-right" style="vertical-align: middle" >
-                    '.(($options['hide-total'] || $prezzi_ivati) ? moneyFormat($riga->totale, $d_importi) : moneyFormat($riga->totale_imponibile, $d_importi)).'
+                    '.($prezzi_ivati ? moneyFormat($riga->totale, $d_importi) : moneyFormat($riga->totale_imponibile, $d_importi)).'
                 </td>';
             }
         } else {

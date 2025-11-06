@@ -991,8 +991,7 @@ class CSV extends CSVImporter
     /**
      * Gestisce l'importazione dei barcode per un articolo.
      *
-     * @param Articolo $articolo
-     * @param string   $barcode_value
+     * @param string $barcode_value
      *
      * @throws \Exception
      */
@@ -1006,7 +1005,7 @@ class CSV extends CSVImporter
             $database = database();
 
             // Supporta barcode multipli separati da virgola
-            $barcodes = array_map('trim', explode(',', $barcode_value));
+            $barcodes = array_map(trim(...), explode(',', $barcode_value));
 
             foreach ($barcodes as $barcode) {
                 if (empty($barcode)) {

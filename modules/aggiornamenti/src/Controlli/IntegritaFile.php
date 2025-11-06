@@ -101,8 +101,172 @@ class IntegritaFile extends Controllo
         $this->checkMissingFiles();
     }
 
+    public function execute($record, $params = [])
+    {
+        $action = $params['action'] ?? '';
+
+        if ($action === 'remove_orphan_file' && $record['tipo'] === 'file_orfano') {
+            $file_path = base_dir().'/files/'.$record['percorso_completo'];
+
+            if (file_exists($file_path)) {
+                if (unlink($file_path)) {
+                    return tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
+                } else {
+                    return tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
+                }
+            } else {
+                return tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+            }
+        } elseif ($action === 'remove_orphan_record' && $record['tipo'] === 'file_mancante') {
+            // Estraggo l'ID del record dal campo id (formato: missing_file_123)
+            $upload_id = str_replace('missing_file_', '', $record['id']);
+
+            try {
+                $upload = Upload::find($upload_id);
+                if ($upload) {
+                    $upload->delete();
+
+                    return tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
+                } else {
+                    return tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
+                }
+            } catch (\Exception $e) {
+                return tr('Errore nella rimozione del record _FILE_: _ERROR_', [
+                    '_FILE_' => $record['nome_file'],
+                    '_ERROR_' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return tr('Azione non supportata per questo tipo di record');
+    }
+
     /**
-     * Controlla i file orfani nel filesystem
+     * Risolve tutti i problemi di integrità.
+     */
+    public function solveGlobal($params = [])
+    {
+        $action = $params['action'] ?? '';
+        $results = [];
+
+        if ($action === 'remove_all_orphan_files') {
+            foreach ($this->results as $record) {
+                if ($record['tipo'] === 'file_orfano') {
+                    $file_path = base_dir().'/files/'.$record['percorso_completo'];
+
+                    $results[$record['id']] = file_exists($file_path)
+                        ? (unlink($file_path) ? tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]) : tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]))
+                        : tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+                }
+            }
+        } elseif ($action === 'remove_all_orphan_records') {
+            foreach ($this->results as $record) {
+                if ($record['tipo'] === 'file_mancante') {
+                    // Estraggo l'ID del record dal campo id (formato: missing_file_123)
+                    $upload_id = str_replace('missing_file_', '', $record['id']);
+
+                    try {
+                        $upload = Upload::find($upload_id);
+                        if ($upload) {
+                            $upload->delete();
+                            $results[$record['id']] = tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
+                        } else {
+                            $results[$record['id']] = tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
+                        }
+                    } catch (\Exception $e) {
+                        $results[$record['id']] = tr('Errore nella rimozione del record _FILE_: _ERROR_', [
+                            '_FILE_' => $record['nome_file'],
+                            '_ERROR_' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+        } elseif ($action === 'remove_all_both') {
+            // Esegui entrambe le operazioni a blocchi di 100 per evitare timeout
+
+            // Separa i record per tipo
+            $orphan_files = [];
+            $orphan_records = [];
+
+            foreach ($this->results as $record) {
+                if ($record['tipo'] === 'file_orfano') {
+                    $orphan_files[] = $record;
+                } elseif ($record['tipo'] === 'file_mancante') {
+                    $orphan_records[] = $record;
+                }
+            }
+
+            $batch_size = 100;
+            $processed_files = 0;
+            $processed_records = 0;
+
+            // 1. Rimuovi file orfani a blocchi
+            $file_batches = array_chunk($orphan_files, $batch_size);
+            foreach ($file_batches as $batch) {
+                foreach ($batch as $record) {
+                    $file_path = base_dir().'/files/'.$record['percorso_completo'];
+
+                    if (file_exists($file_path)) {
+                        if (unlink($file_path)) {
+                            ++$processed_files;
+                            $results[$record['id']] = tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
+                        } else {
+                            $results[$record['id']] = tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
+                        }
+                    } else {
+                        $results[$record['id']] = tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+                    }
+                }
+
+                // Pausa breve tra i blocchi per evitare sovraccarico
+                if (count($file_batches) > 1) {
+                    usleep(100000); // 0.1 secondi
+                }
+            }
+
+            // 2. Rimuovi record orfani a blocchi
+            $record_batches = array_chunk($orphan_records, $batch_size);
+            foreach ($record_batches as $batch) {
+                foreach ($batch as $record) {
+                    $upload_id = str_replace('missing_file_', '', $record['id']);
+
+                    try {
+                        $upload = Upload::find($upload_id);
+                        if ($upload) {
+                            $upload->delete();
+                            ++$processed_records;
+                            $results[$record['id']] = tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
+                        } else {
+                            $results[$record['id']] = tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
+                        }
+                    } catch (\Exception $e) {
+                        $results[$record['id']] = tr('Errore nella rimozione del record _FILE_: _ERROR_', [
+                            '_FILE_' => $record['nome_file'],
+                            '_ERROR_' => $e->getMessage(),
+                        ]);
+                    }
+                }
+
+                // Pausa breve tra i blocchi per evitare sovraccarico del database
+                if (count($record_batches) > 1) {
+                    usleep(100000); // 0.1 secondi
+                }
+            }
+
+            // Aggiungi un messaggio di riepilogo
+            if ($processed_files > 0 || $processed_records > 0) {
+                $results['summary'] = tr('Operazione completata: _FILES_ file e _RECORDS_ record rimossi con successo', [
+                    '_FILES_' => $processed_files,
+                    '_RECORDS_' => $processed_records,
+                ]);
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Controlla i file orfani nel filesystem.
      */
     protected function checkOrphanFiles()
     {
@@ -124,7 +288,7 @@ class IntegritaFile extends Controllo
                     $excluded_dirs[] = $backup_folder_name;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Se non riesco a ottenere la cartella di backup, continuo senza errori
         }
 
@@ -148,7 +312,7 @@ class IntegritaFile extends Controllo
     }
 
     /**
-     * Scansiona ricorsivamente una directory per trovare file orfani
+     * Scansiona ricorsivamente una directory per trovare file orfani.
      */
     protected function scanDirectory($dir, $registered_files, $excluded_dirs, $base_path = '')
     {
@@ -194,7 +358,7 @@ class IntegritaFile extends Controllo
     }
 
     /**
-     * Controlla i record orfani nel database
+     * Controlla i record orfani nel database.
      */
     protected function checkMissingFiles()
     {
@@ -229,178 +393,15 @@ class IntegritaFile extends Controllo
                     'percorso_atteso' => $upload->attachments_directory.'/'.$upload->filename,
                     'descrizione' => tr('Record orfano nel database (_SIZE_)', ['_SIZE_' => '<span class="badge badge-warning">'.FileSystem::formatBytes($upload->size).'</span>']).'<br><small class="text-muted">'.tr('Record presente nel database zz_files (ID: _ID_) ma file fisico mancante in _PATH_', [
                         '_ID_' => $upload->id,
-                        '_PATH_' => $upload->attachments_directory.'/'.$upload->filename
+                        '_PATH_' => $upload->attachments_directory.'/'.$upload->filename,
                     ]).'</small>',
                 ]);
             }
         }
     }
 
-    public function execute($record, $params = [])
-    {
-        $action = $params['action'] ?? '';
-
-        if ($action === 'remove_orphan_file' && $record['tipo'] === 'file_orfano') {
-            $file_path = base_dir().'/files/'.$record['percorso_completo'];
-
-            if (file_exists($file_path)) {
-                if (unlink($file_path)) {
-                    return tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
-                } else {
-                    return tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
-                }
-            } else {
-                return tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
-            }
-        } elseif ($action === 'remove_orphan_record' && $record['tipo'] === 'file_mancante') {
-            // Estraggo l'ID del record dal campo id (formato: missing_file_123)
-            $upload_id = str_replace('missing_file_', '', $record['id']);
-
-            try {
-                $upload = Upload::find($upload_id);
-                if ($upload) {
-                    $upload->delete();
-                    return tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                } else {
-                    return tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
-                }
-            } catch (\Exception $e) {
-                return tr('Errore nella rimozione del record _FILE_: _ERROR_', [
-                    '_FILE_' => $record['nome_file'],
-                    '_ERROR_' => $e->getMessage()
-                ]);
-            }
-        }
-
-        return tr('Azione non supportata per questo tipo di record');
-    }
-
     /**
-     * Risolve tutti i problemi di integrità
-     */
-    public function solveGlobal($params = [])
-    {
-        $action = $params['action'] ?? '';
-        $results = [];
-
-        if ($action === 'remove_all_orphan_files') {
-            foreach ($this->results as $record) {
-                if ($record['tipo'] === 'file_orfano') {
-                    $file_path = base_dir().'/files/'.$record['percorso_completo'];
-
-                    $results[$record['id']] = file_exists($file_path)
-                        ? (unlink($file_path) ? tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]) : tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]))
-                        : tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
-                }
-            }
-        } elseif ($action === 'remove_all_orphan_records') {
-            foreach ($this->results as $record) {
-                if ($record['tipo'] === 'file_mancante') {
-                    // Estraggo l'ID del record dal campo id (formato: missing_file_123)
-                    $upload_id = str_replace('missing_file_', '', $record['id']);
-
-                    try {
-                        $upload = Upload::find($upload_id);
-                        if ($upload) {
-                            $upload->delete();
-                            $results[$record['id']] = tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                        } else {
-                            $results[$record['id']] = tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
-                        }
-                    } catch (\Exception $e) {
-                        $results[$record['id']] = tr('Errore nella rimozione del record _FILE_: _ERROR_', [
-                            '_FILE_' => $record['nome_file'],
-                            '_ERROR_' => $e->getMessage()
-                        ]);
-                    }
-                }
-            }
-        } elseif ($action === 'remove_all_both') {
-            // Esegui entrambe le operazioni a blocchi di 100 per evitare timeout
-
-            // Separa i record per tipo
-            $orphan_files = [];
-            $orphan_records = [];
-
-            foreach ($this->results as $record) {
-                if ($record['tipo'] === 'file_orfano') {
-                    $orphan_files[] = $record;
-                } elseif ($record['tipo'] === 'file_mancante') {
-                    $orphan_records[] = $record;
-                }
-            }
-
-            $batch_size = 100;
-            $processed_files = 0;
-            $processed_records = 0;
-
-            // 1. Rimuovi file orfani a blocchi
-            $file_batches = array_chunk($orphan_files, $batch_size);
-            foreach ($file_batches as $batch) {
-                foreach ($batch as $record) {
-                    $file_path = base_dir().'/files/'.$record['percorso_completo'];
-
-                    if (file_exists($file_path)) {
-                        if (unlink($file_path)) {
-                            $processed_files++;
-                            $results[$record['id']] = tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
-                        } else {
-                            $results[$record['id']] = tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
-                        }
-                    } else {
-                        $results[$record['id']] = tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
-                    }
-                }
-
-                // Pausa breve tra i blocchi per evitare sovraccarico
-                if (count($file_batches) > 1) {
-                    usleep(100000); // 0.1 secondi
-                }
-            }
-
-            // 2. Rimuovi record orfani a blocchi
-            $record_batches = array_chunk($orphan_records, $batch_size);
-            foreach ($record_batches as $batch) {
-                foreach ($batch as $record) {
-                    $upload_id = str_replace('missing_file_', '', $record['id']);
-
-                    try {
-                        $upload = Upload::find($upload_id);
-                        if ($upload) {
-                            $upload->delete();
-                            $processed_records++;
-                            $results[$record['id']] = tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                        } else {
-                            $results[$record['id']] = tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
-                        }
-                    } catch (\Exception $e) {
-                        $results[$record['id']] = tr('Errore nella rimozione del record _FILE_: _ERROR_', [
-                            '_FILE_' => $record['nome_file'],
-                            '_ERROR_' => $e->getMessage()
-                        ]);
-                    }
-                }
-
-                // Pausa breve tra i blocchi per evitare sovraccarico del database
-                if (count($record_batches) > 1) {
-                    usleep(100000); // 0.1 secondi
-                }
-            }
-
-            // Aggiungi un messaggio di riepilogo
-            if ($processed_files > 0 || $processed_records > 0) {
-                $results['summary'] = tr('Operazione completata: _FILES_ file e _RECORDS_ record rimossi con successo', [
-                    '_FILES_' => $processed_files,
-                    '_RECORDS_' => $processed_records
-                ]);
-            }
-        }
-
-        return $results;
-    }
-
-    /**
-     * Calcola le statistiche dei file orfani
+     * Calcola le statistiche dei file orfani.
      */
     protected function getOrphanFilesStats()
     {
@@ -409,7 +410,7 @@ class IntegritaFile extends Controllo
 
         foreach ($this->results as $record) {
             if ($record['tipo'] === 'file_orfano') {
-                $count++;
+                ++$count;
                 // Calcolo la dimensione del file fisico
                 $file_path = base_dir().'/files/'.$record['percorso_completo'];
                 if (file_exists($file_path)) {
@@ -420,12 +421,12 @@ class IntegritaFile extends Controllo
 
         return [
             'count' => $count,
-            'size' => FileSystem::formatBytes($total_size)
+            'size' => FileSystem::formatBytes($total_size),
         ];
     }
 
     /**
-     * Calcola le statistiche dei record orfani
+     * Calcola le statistiche dei record orfani.
      */
     protected function getOrphanRecordsStats()
     {
@@ -434,7 +435,7 @@ class IntegritaFile extends Controllo
 
         foreach ($this->results as $record) {
             if ($record['tipo'] === 'file_mancante') {
-                $count++;
+                ++$count;
                 // Estraggo l'ID del record dal campo id (formato: missing_file_123)
                 $upload_id = str_replace('missing_file_', '', $record['id']);
                 $upload = Upload::find($upload_id);
@@ -446,7 +447,7 @@ class IntegritaFile extends Controllo
 
         return [
             'count' => $count,
-            'size' => FileSystem::formatBytes($total_size)
+            'size' => FileSystem::formatBytes($total_size),
         ];
     }
 }

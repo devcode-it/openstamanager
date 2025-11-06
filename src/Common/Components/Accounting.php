@@ -86,6 +86,38 @@ abstract class Accounting extends Component
         'aliquota',
     ];
 
+    /**
+     * Gestisce l'impostazione di proprietà con nomi alternativi.
+     *
+     * @param string $key
+     */
+    public function __set($key, $value)
+    {
+        // Gestisce id_conto come alias per idconto
+        if ($key === 'id_conto') {
+            $this->setIdContoAttribute($value);
+
+            return;
+        }
+
+        parent::__set($key, $value);
+    }
+
+    /**
+     * Gestisce l'accesso a proprietà con nomi alternativi.
+     *
+     * @param string $key
+     */
+    public function __get($key)
+    {
+        // Gestisce id_conto come alias per idconto
+        if ($key === 'id_conto') {
+            return $this->getIdContoAttribute();
+        }
+
+        return parent::__get($key);
+    }
+
     public function getIvaIndetraibileAttribute()
     {
         return $this->iva / 100 * $this->aliquota->indetraibile;
@@ -422,10 +454,9 @@ abstract class Accounting extends Component
         if ($this->hasColumn('idconto')) {
             return $this->attributes['idconto'] ?? null;
         }
+
         return null;
     }
-
-
 
     /**
      * Salva la riga, impostando i campi dipendenti dai singoli parametri.
@@ -494,6 +525,7 @@ abstract class Accounting extends Component
      * Verifica se una colonna esiste nella tabella del modello.
      *
      * @param string $column
+     *
      * @return bool
      */
     protected function hasColumn($column)
@@ -507,45 +539,12 @@ abstract class Accounting extends Component
                 // Usa una query diretta per verificare l'esistenza della colonna
                 $result = database()->fetchArray("SHOW COLUMNS FROM `{$table}` LIKE '{$column}'");
                 $columns[$table][$column] = !empty($result);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $columns[$table][$column] = false;
             }
         }
 
-        return isset($columns[$table][$column]) ? $columns[$table][$column] : false;
-    }
-
-    /**
-     * Gestisce l'impostazione di proprietà con nomi alternativi.
-     *
-     * @param string $key
-     * @param mixed $value
-     */
-    public function __set($key, $value)
-    {
-        // Gestisce id_conto come alias per idconto
-        if ($key === 'id_conto') {
-            $this->setIdContoAttribute($value);
-            return;
-        }
-
-        parent::__set($key, $value);
-    }
-
-    /**
-     * Gestisce l'accesso a proprietà con nomi alternativi.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function __get($key)
-    {
-        // Gestisce id_conto come alias per idconto
-        if ($key === 'id_conto') {
-            return $this->getIdContoAttribute();
-        }
-
-        return parent::__get($key);
+        return $columns[$table][$column] ?? false;
     }
 
     /**

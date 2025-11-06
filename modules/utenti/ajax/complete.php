@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -24,19 +25,19 @@ switch ($resource) {
         $idanagrafica = get('idanagrafica');
         $result = [
             'is_tecnico' => false,
-            'tipi' => []
+            'tipi' => [],
         ];
-        
+
         if (!empty($idanagrafica)) {
             // Query per ottenere i tipi di anagrafica
-            $query = "SELECT `an_tipianagrafiche_lang`.`title` 
+            $query = 'SELECT `an_tipianagrafiche_lang`.`title` 
                      FROM `an_tipianagrafiche_anagrafiche` 
                      INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
-                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-                     WHERE `an_tipianagrafiche_anagrafiche`.`idanagrafica` = ".prepare($idanagrafica);
-            
+                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                     WHERE `an_tipianagrafiche_anagrafiche`.`idanagrafica` = '.prepare($idanagrafica);
+
             $rs = $dbo->fetchArray($query);
-            
+
             foreach ($rs as $r) {
                 $result['tipi'][] = $r['title'];
                 if ($r['title'] == 'Tecnico') {
@@ -44,7 +45,7 @@ switch ($resource) {
                 }
             }
         }
-        
+
         echo json_encode($result);
         break;
 }

@@ -583,7 +583,6 @@ class Fattura extends Document
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
-
         $result = parent::save($options);
 
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();

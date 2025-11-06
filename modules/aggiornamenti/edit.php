@@ -667,8 +667,6 @@ if (function_exists('customComponents')) {
     }
 }
 
-
-
 $alerts = [];
 
 if (!extension_loaded('zip')) {

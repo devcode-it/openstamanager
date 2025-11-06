@@ -71,8 +71,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-danger m-3 mb-0">
                     <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti o hanno esaurito i crediti: _NUM_', [
-                        '_NUM_' => $servizi_scaduti->count(),
-                    ]).'
+                '_NUM_' => $servizi_scaduti->count(),
+            ]).'
                 </div>';
         }
 
@@ -80,8 +80,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-warning m-3 mb-0">
                     <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza o stanno per esaurire i crediti: _NUM_', [
-                        '_NUM_' => $servizi_in_scadenza->count(),
-                    ]).'
+                '_NUM_' => $servizi_in_scadenza->count(),
+            ]).'
                 </div>';
         }
 
@@ -157,7 +157,7 @@ if (Services::isEnabled()) {
             echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-primary"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
         }
 
-echo '                      </td>
+        echo '                      </td>
                         </tr>
                     </tfoot>
                 </table>';

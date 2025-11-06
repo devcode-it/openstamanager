@@ -584,17 +584,19 @@ class Fattura extends Document
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
 
-        $result = parent::save($options);
+        $save_result = parent::save($options);
 
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
         $this->id_riga_spese_incasso = $this->manageRigaSpeseIncasso();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
+        $numero_generato = false;
         if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
+            $numero_generato = true;
         }
 
-        if ($this->isDirty(['id_riga_bollo', 'id_riga_spese_incasso'])) {
+        if ($this->isDirty(['id_riga_bollo', 'id_riga_spese_incasso']) || $numero_generato) {
             parent::save($options);
         }
 
@@ -649,6 +651,13 @@ class Fattura extends Document
             $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
 
+            $this->refresh();
+
+            if (empty($this->numero_esterno)) {
+                flash()->error(tr('Impossibile generare la fattura elettronica: numero fattura mancante'));
+                return $save_result;
+            }
+
             // Generazione automatica della Fattura Elettronica
             $checks = FatturaElettronica::controllaFattura($this);
             $fattura_elettronica = new FatturaElettronica($this->id);
@@ -657,8 +666,14 @@ class Fattura extends Document
 
                 if (!$fattura_elettronica->isValid()) {
                     $errors = $fattura_elettronica->getErrors();
-
-                    $result[$this->numero_esterno][0][0] = $errors;
+                    // Gestione errori tramite flash message invece di array di ritorno
+                    if (is_array($errors) && !empty($errors)) {
+                        flash()->error(tr('Errori nella generazione della fattura elettronica: _ERRORS_', [
+                            '_ERRORS_' => implode(', ', $errors)
+                        ]));
+                    } else {
+                        flash()->error(tr('Errori nella generazione della fattura elettronica'));
+                    }
                 }
             } elseif (!empty($checks)) {
                 // Rimozione eventuale fattura generata erronamente
@@ -666,21 +681,25 @@ class Fattura extends Document
                 if ($abilita_genera) {
                     $fattura_elettronica->delete();
                 }
+                $error_messages = [];
                 foreach ($checks as $check) {
-                    $errors = [];
-                    foreach ($check['errors'] as $error) {
-                        if (!empty($error)) {
-                            $errors = $error;
+                    if (!empty($check['errors'])) {
+                        foreach ($check['errors'] as $error) {
+                            if (!empty($error)) {
+                                $error_messages[] = strip_tags($error);
+                            }
                         }
                     }
-                    if (!empty($errors)) {
-                        $result[$this->numero_esterno][$check['name']][$check['link']] = $check['errors'];
-                    }
+                }
+                if (!empty($error_messages)) {
+                    flash()->warning(tr('Controlli fattura elettronica falliti: _ERRORS_', [
+                        '_ERRORS_' => implode(', ', $error_messages)
+                    ]));
                 }
             }
         }
 
-        return $result;
+        return $save_result;
     }
 
     public function delete()

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.5 (2025-11-11)](#295-2025-11-11)
 - [2.9.4 (2025-10-28)](#294-2025-10-28)
 - [2.9.3 (2025-10-14)](#293-2025-10-14)
 - [2.9.2 (2025-09-25)](#292-2025-09-25)
@@ -63,6 +64,30 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
+
+## 2.9.5 (2025-11-11)
+### Modificato (Changed)
+- Miglioria widget rate contrattuali con visualizzazione ottimizzata
+- Controllo integrità files allegati per garantire la consistenza dei dati
+- Verifica title assenti database per completezza delle informazioni
+
+### Fixed
+- Corretta visualizzazione importo stampa preventivo
+- Corretta duplicazione fattura con marca da bollo
+- Corretto export FE dati aggiuntivi
+- Corretta visualizzazione pagamento in stampa preventivo
+- Corretta query vista modulo Log eventi
+- Corretta sincronizzazione su app degli articoli eliminati
+- Corretta importazione barcode articoli
+- Corretta generazione autofattura per reverse charge
+- Corretta maggiorazione nei template
+- Corrette API allegati
+- Corretto elenco tipi di spedizione in ordini
+- Corrette anomalie ammortamenti/cespiti
+- Corretto carattere non supportato XML
+- Corretto avviso per valore richiesto al login
+- Corretta impostazione idconto righe
+
 ## 2.9.4 (2025-10-28)
 ### Modificato (Changed)
 - Migliorata la ricerca articoli per codice descrizione
@@ -72,7 +97,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Rimozione console.log per pulizia del codice
 - Su marche, parent = 0 diventa NULL per coerenza database
 - Rimozione warning da riga di comando per output più pulito
-
 
 ### Fixed
 - Corretto salvataggio inline nuova scadenza non funzionante

@@ -28,6 +28,7 @@ $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $banca = $documento->getBanca();
+$pagamento = $documento->pagamento;
 
 // Righe documento
 $righe = $documento->getRighe();

@@ -256,19 +256,11 @@ function initcard(controllo, success, records) {
 
     // Aggiungi pulsanti azione globale se il controllo lo supporta e ci sono record
     if (!success && records.length > 0 && hasGlobalActions(controllo)) {
-        // Pulsante specifico per IntegritaFile che esegue entrambe le operazioni
-        if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile") {
-            card += `
-                <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" data-action="remove_all_both" onclick="eseguiAzioneGlobaleConParametri(this)">
-                    <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
-                </button>`;
-        } else {
-            // Pulsante generico per altri controlli
-            card += `
-                <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
-                    <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
-                </button>`;
-        }
+        // Usa la stessa funzione per tutti i controlli, incluso IntegritaFile
+        card += `
+            <button type="button" class="btn btn-success btn-sm" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
+                <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+            </button>`;
     }
 
     card += `
@@ -528,107 +520,22 @@ function eseguiAzioneGlobale(buttonElement) {
         // Disabilita il pulsante di annulla durante l\'operazione
         $("#modal-conferma-risoluzione .btn-default").prop("disabled", true);
 
+        // Determina i parametri da passare in base al tipo di controllo
+        let params = {};
+        if (controlloClass === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile") {
+            params = {action: "remove_all_both"};
+        }
+
         eseguiRisoluzioneGlobale(button, controlloId, controlloClass, function() {
-            // Callback di successo: chiudi modal
+            // Callback di successo: ripristina pulsante di conferma e chiudi modal
+            buttonRestore(confirmButton, restoreConfirm);
+            $("#modal-conferma-risoluzione .btn-default").prop("disabled", false);
             $("#modal-conferma-risoluzione").modal("hide");
         }, function() {
             // Callback di errore: ripristina pulsanti
             buttonRestore(confirmButton, restoreConfirm);
             $("#modal-conferma-risoluzione .btn-default").prop("disabled", false);
-        });
-
-        return false;
-    });
-}
-
-/**
-* Esegue un azione globale con parametri specifici
-*/
-function eseguiAzioneGlobaleConParametri(button) {
-    let controlloId = $(button).data("controllo-id");
-    let controlloClass = $(button).data("controllo-class");
-    let action = $(button).data("action");
-
-    // Usa la stessa logica della funzione esistente ma con parametri
-    let messaggio = getMessaggioConferma(controlloClass);
-
-    // Genera la lista delle operazioni
-    let operazioniHtml = "";
-    messaggio.operazioni.forEach(function(operazione) {
-        operazioniHtml += `<li>${operazione}</li>`;
-    });
-
-    // Crea modal di conferma con lo stile del gestionale
-    let modalHtml = `
-        <div class="modal fade" id="modal-conferma-risoluzione" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            <i class="fa fa-exclamation-triangle text-warning"></i>
-                            ${messaggio.titolo}
-                        </h4>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>${messaggio.descrizione}</p>
-                        <div class="alert alert-warning">
-                            <i class="fa fa-info-circle"></i>
-                            '.tr('Questa operazione:').'
-                            <ul class="mb-0 mt-2">
-                                ${operazioniHtml}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" style="float: left;">
-                            <i class="fa fa-times"></i> '.tr('Annulla').'
-                        </button>
-                        <button type="button" class="btn btn-warning" id="conferma-risoluzione" style="float: right;">
-                            <i class="fa fa-check"></i> '.tr('Procedi').'
-                        </button>
-                        <div style="clear: both;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Rimuovi modal esistente se presente
-    $("#modal-conferma-risoluzione").remove();
-
-    // Aggiungi modal al DOM
-    $("body").append(modalHtml);
-
-    // Mostra modal con configurazione per evitare chiusura accidentale
-    $("#modal-conferma-risoluzione").modal({
-        backdrop: "static",
-        keyboard: false,
-        show: true
-    });
-
-    // Gestisci click su conferma
-    $("#conferma-risoluzione").on("click", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        let confirmButton = $(this);
-        let restoreConfirm = buttonLoading(confirmButton);
-
-        // Disabilita il pulsante di annulla durante l operazione
-        $("#modal-conferma-risoluzione .btn-default").prop("disabled", true);
-
-        eseguiRisoluzioneGlobale(button, controlloId, controlloClass, function() {
-            // Callback di successo: chiudi modal
-            $("#modal-conferma-risoluzione").modal("hide");
-            loadControllo(controlloId);
-        }, function() {
-            // Callback di errore: ripristina pulsanti
-            buttonRestore(confirmButton, restoreConfirm);
-            $("#modal-conferma-risoluzione .btn-default").prop("disabled", false);
-        }, {action: action});
+        }, params);
 
         return false;
     });

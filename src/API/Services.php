@@ -22,6 +22,9 @@ namespace API;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Models\Cache;
+use Models\User;
+use Util\FileSystem;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -50,13 +53,24 @@ class Services
     public static function getInformazioni($force = false)
     {
         try {
-            $response = self::request('GET', 'info');
-            $content = self::responseBody($response);
+            // Calcolo spazio occupato
+            $spazio_occupato = self::calcolaSpazioOccupato();
 
-            // Verifica che la risposta contenga i dati attesi
-            if (!is_array($content) || !isset($content['risorse-api'])) {
-                return ['risorse-api' => []];
-            }
+            // Conteggio utenti attivi
+            $utenti_attivi = self::contaUtentiAttivi();
+
+            // Recupero ultimi 100 accessi
+            $ultimi_accessi = self::getUltimiAccessi();
+
+            $response = self::request('GET', 'info', [
+                'spazio_occupato' => $spazio_occupato,
+                'utenti_attivi' => $utenti_attivi,
+                'versione' => \Update::getVersion(),
+                'ultimi_accessi' => $ultimi_accessi,
+                'sync_at' => Carbon::now()->toDateTimeString(),
+                'url_installazione' => base_url()
+            ]);
+            $content = self::responseBody($response);
 
             return $content;
         } catch (\Exception $e) {
@@ -77,7 +91,7 @@ class Services
      */
     public static function getServiziAttivi($force = false)
     {
-        return collect(self::getInformazioni($force)['risorse-api']);
+        return collect(self::getInformazioni($force)['servizi']);
     }
 
     /**
@@ -90,7 +104,7 @@ class Services
     public static function getServiziInScadenza($limite_scadenze)
     {
         return self::getServiziAttivi()
-            ->filter(fn ($item) => is_array($item) && isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze));
+            ->filter(fn ($item) => is_array($item) && isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->greaterThan(Carbon::now()) && Carbon::parse($item['data_conclusione'])->lessThan($limite_scadenze));
     }
 
     /**
@@ -101,7 +115,7 @@ class Services
     public static function getServiziScaduti()
     {
         return self::getServiziAttivi()
-            ->filter(fn ($item) => is_array($item) && isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now()));
+            ->filter(fn ($item) => is_array($item) && isset($item['data_conclusione']) && Carbon::parse($item['data_conclusione'])->lessThan(Carbon::now()));
     }
 
     /**
@@ -207,5 +221,57 @@ class Services
         }
 
         return self::$client;
+    }
+
+    /**
+     * Calcola lo spazio occupato dal sistema.
+     *
+     * @return int Spazio occupato in bytes
+     */
+    protected static function calcolaSpazioOccupato()
+    {
+        try {
+            // Prova a recuperare dalla cache
+            $cache = Cache::where('name', 'Spazio utilizzato')->first();
+            if ($cache && $cache->isValid()) {
+                return (int) $cache->content;
+            }
+            $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
+
+            return $osm_size;
+        } catch (\Exception $e) {
+            // In caso di errore, restituisce 0
+            return 0;
+        }
+    }
+
+    /**
+     * Conta gli utenti attivi nel sistema.
+     *
+     * @return int Numero di utenti attivi
+     */
+    protected static function contaUtentiAttivi()
+    {
+        try {
+            $result = User::where('enabled', 1)->count();
+
+            return (int) $result;
+        } catch (\Exception $e) {
+            // In caso di errore, restituisce 0
+            return 0;
+        }
+    }
+
+    /**
+     * Recupera gli ultimi 100 accessi.
+     *
+     * @return string JSON
+     */
+    protected static function getUltimiAccessi()
+    {
+        $database = database();
+        $logs = $database->fetchArray('SELECT username, ip, created_at FROM zz_logs ORDER BY created_at DESC LIMIT 100');
+
+        return json_encode($logs);
     }
 }

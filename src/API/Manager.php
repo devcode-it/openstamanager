@@ -146,6 +146,14 @@ class Manager
         $joins = $response['joins'];
         $group = $response['group'];
 
+        // Ottieni la lista dei campi di database dalla tabella con nome $table, e escludi da $select quelli non inclusi
+        if (!empty($table)) {
+            $database = database();
+            $columns = $database->fetchArray('SHOW COLUMNS FROM `'.$table.'`');
+            $column_names = array_column($columns, 'Field');
+            $select = array_intersect($select, $column_names);
+        }
+
         if (!empty($response['where'])) {
             $where = array_merge($where, $response['where']);
         }

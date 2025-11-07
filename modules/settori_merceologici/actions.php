@@ -54,8 +54,8 @@ switch (filter('op')) {
                 $settore = Settore::build($descrizione);
                 $settore->save();
 
-                $id_record = $dbo->lastInsertedID();
-
+                $id_record = $settore->id;
+                
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }

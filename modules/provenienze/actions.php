@@ -59,7 +59,7 @@ switch (filter('op')) {
                 $provenienza->colore = $colore;
                 $provenienza->save();
 
-                $id_record = $dbo->lastInsertedID();
+                $id_record = $provenienza->id;
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);

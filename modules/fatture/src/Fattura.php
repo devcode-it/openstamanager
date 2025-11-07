@@ -583,22 +583,17 @@ class Fattura extends Document
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
-        $save_result = parent::save($options);
+        parent::save($options);
 
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
         $this->id_riga_spese_incasso = $this->manageRigaSpeseIncasso();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        $numero_generato = false;
         if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
-            $numero_generato = true;
         }
 
-        if ($this->isDirty(['id_riga_bollo', 'id_riga_spese_incasso']) || $numero_generato) {
-            parent::save($options);
-        }
-
+        parent::save($options);
         // Operazioni al cambiamento di stato
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
@@ -649,13 +644,8 @@ class Fattura extends Document
         if ($this->direzione == 'entrata' && $id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) {
             $stato_fe = StatoFE::find($this->codice_stato_fe);
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
-
             $this->refresh();
 
-            if (empty($this->numero_esterno)) {
-                flash()->error(tr('Impossibile generare la fattura elettronica: numero fattura mancante'));
-                return $save_result;
-            }
 
             // Generazione automatica della Fattura Elettronica
             $checks = FatturaElettronica::controllaFattura($this);
@@ -697,8 +687,6 @@ class Fattura extends Document
                 }
             }
         }
-
-        return $save_result;
     }
 
     public function delete()

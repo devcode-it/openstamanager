@@ -108,6 +108,8 @@ switch (post('op')) {
         $tipo->setTranslation('title', post('descrizione'));
         $tipo->save();
 
+        $id_record = $tipo->id;
+
         // Fix per impostare i valori inziali a tutti i tecnici
         $tipo->fixTecnici();
 

@@ -35,8 +35,7 @@ switch (post('op')) {
         $count = $exporter->exportRecords();
 
         download($file, 'impianti.csv');
-
-        break;
+        exit;
 
         // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete_bulk':

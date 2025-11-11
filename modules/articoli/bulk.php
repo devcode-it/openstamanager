@@ -257,7 +257,7 @@ switch (post('op')) {
         $count = $exporter->exportRecords();
 
         download($file, 'articoli.csv');
-        break;
+        exit;
 
     case 'change_category':
         $categoria = post('id_categoria');

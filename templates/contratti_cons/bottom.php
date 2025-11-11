@@ -18,7 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../riepilogo_interventi/bottom.php';
+//fix per generazione allegato email
+include __DIR__.'/../riepilogo_interventi/bottom.php';
 
 $budget = get_imponibile_contratto($id_record);
 $somma_totale_imponibile = get_totale_interventi_contratto($id_record);

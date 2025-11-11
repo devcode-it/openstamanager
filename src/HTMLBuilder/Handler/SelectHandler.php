@@ -211,10 +211,12 @@ class SelectHandler implements HandlerInterface
                 $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
             } elseif (string_contains($link, 'module:')) {
                 $element['title'] = ' ';
-                $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+                // Per i select, mostra sempre il testo anche senza permessi sul modulo
+                $element['text'] = \Modules::link(str_replace('module:', '', $link), $element['id'], $element['text'], $element['text'], ' target="_blank"');
             } elseif (string_contains($link, 'plugin:')) {
                 $element['title'] = ' ';
-                $element['text'] = \Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], false, ' target="_blank"');
+                // Per i select, mostra sempre il testo anche senza permessi sul plugin
+                $element['text'] = \Plugins::link(str_replace('plugin:', '', $link), $element['id'], $element['text'], $element['text'], ' target="_blank"');
             }
 
             $attributes = [];

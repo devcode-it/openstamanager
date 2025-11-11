@@ -1135,11 +1135,9 @@ switch (post('op')) {
 
         // Note
         $sessione->note = post('note');
-
         $sessione->save();
 
-        // Trigger aggiornamento intervento
-        $intervento = Intervento::find($id_record);
+        $intervento = $sessione->intervento;
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
 
@@ -1161,7 +1159,7 @@ switch (post('op')) {
         $sessione->save();
 
         // Trigger aggiornamento intervento
-        $intervento = Intervento::find($id_record);
+        $intervento = $sessione->intervento;
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
 

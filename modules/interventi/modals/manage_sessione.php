@@ -117,7 +117,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary">'.$button.'</button>
+			<button type="button" class="btn btn-primary" onclick="salvaSessione()">'.$button.'</button>
 		</div>
     </div>
 </form>';
@@ -149,4 +149,36 @@ $(document).ready(function () {
         $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
     });
 });
+
+function salvaSessione() {
+    // Validazione del form
+    var valid = $("#add_form").parsley().validate();
+    if (!valid) {
+        return false;
+    }
+
+    // Invio dei dati via AJAX
+    $("#add_form").ajaxSubmit({
+        url: globals.rootdir + "/actions.php",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            ajax: true,
+        },
+        type: "post",
+        success: function(response) {
+            renderMessages();
+
+            // Chiusura del modale
+            $("#modals > div").modal("hide");
+
+            // Ricaricamento dei costi
+            caricaCosti();
+            caricaTecnici();
+        },
+        error: function() {
+            alert("'.tr('Errore durante il salvataggio').'");
+        }
+    });
+}
 </script>';

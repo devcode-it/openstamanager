@@ -68,8 +68,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-danger m-3 mb-0">
                     <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti: _NUM_', [
-                '_NUM_' => $servizi_scaduti->count(),
-            ]).'
+                        '_NUM_' => $servizi_scaduti->count(),
+                    ]).'
                 </div>';
         }
 
@@ -77,8 +77,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-warning m-3 mb-0">
                     <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza: _NUM_', [
-                '_NUM_' => $servizi_in_scadenza->count(),
-            ]).'
+                        '_NUM_' => $servizi_in_scadenza->count(),
+                    ]).'
                 </div>';
         }
 
@@ -122,13 +122,13 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-info">'.$servizio['sottocategoria'].'</span></td>
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                '.($servizio['spazio_limite'] ? '<span class="badge badge-'.$spazio_class.'"><i class="fa fa-database mr-1"></i> '.numberFormat($spazio_utilizzato, 1).' / '.numberFormat($servizio['spazio_limite'], 1).' '.tr('GB').' '.$spazio_icon.'</span>' : '').'
+                                '.($servizio['spazio_limite'] ? '<span class="badge badge-'.$spazio_class.'"><i class="fa fa-database mr-1"></i> '.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').' '.$spazio_icon.'</span>' : '').'
                                 '.($servizio['utenti_limite'] ? '<br><span class="badge badge-'.$utenti_class.'"><i class="fa fa-users mr-1"></i> '.$utenti_attivi.' / '.$servizio['utenti_limite'].' '.tr('utenti').' '.$utenti_icon.'</span>' : '').'
                             </td>
                         </tr>';
         }
 
-        // Conteggio servizi e risorse
+         // Conteggio servizi e risorse
         $count_servizi = $servizi->filter(fn ($item) => !isset($item['credits']))->count();
         echo '
                     </tbody>
@@ -138,10 +138,10 @@ if (Services::isEnabled()) {
                                 <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
                             </td>
                             <td colspan="2" class="text-right">';
-        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
-        }
-        echo '
+                            if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
+                                echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
+                            }
+                            echo '
                             </td>
                         </tr>
                     </tfoot>
@@ -168,38 +168,45 @@ if (Services::isEnabled()) {
     // Recupero di tutti i servizi e risorse attivi
     $servizi = Services::getRisorseAttive(true);
     if (!$servizi->isEmpty()) {
-        // Calcolo degli elementi con crediti in esaurimento 
-        $servizi_in_scadenza = $servizi->filter(function ($item) {
-            if (!is_array($item)) {
+        // Calcolo degli elementi in scadenza e scaduti
+        $servizi_in_scadenza = $servizi->filter(function ($item) use ($limite_scadenze) {
+            if (!is_array($item) || !isset($item['expiration_at'])) {
                 return false;
             }
-            return isset($item['credits']) && $item['credits'] !== null && $item['credits'] !== 0 && $item['credits'] < 100 && $item['credits'] >= 0;
+            $scadenza = Carbon::parse($item['expiration_at']);
+            $credits_warning = isset($item['credits']) && $item['credits'] < 100 && $item['credits'] !== null;
+            $is_expiring = $scadenza->greaterThan(Carbon::now()) && $scadenza->lessThan($limite_scadenze);
+
+            return $is_expiring || $credits_warning;
         });
 
         $servizi_scaduti = $servizi->filter(function ($item) {
-            if (!is_array($item)) {
+            if (!is_array($item) || !isset($item['expiration_at'])) {
                 return false;
             }
-            // Crediti esauriti: presenti, non null, e < 0
-            return isset($item['credits']) && $item['credits'] !== null && $item['credits'] < 0;
+            $scadenza = Carbon::parse($item['expiration_at']);
+            $credits_expired = isset($item['credits']) && $item['credits'] < 0;
+            $is_expired = $scadenza->lessThan(Carbon::now());
+
+            return $is_expired || $credits_expired;
         });
 
         // Messaggi di avviso
         if (!$servizi_scaduti->isEmpty()) {
             echo '
                 <div class="alert alert-danger m-3 mb-0">
-                    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi hanno esaurito i crediti: _NUM_', [
-                '_NUM_' => $servizi_scaduti->count(),
-            ]).'
+                    <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti o hanno esaurito i crediti: _NUM_', [
+                        '_NUM_' => $servizi_scaduti->count(),
+                    ]).'
                 </div>';
         }
 
         if (!$servizi_in_scadenza->isEmpty()) {
             echo '
                 <div class="alert alert-warning m-3 mb-0">
-                    <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi stanno per esaurire i crediti: _NUM_', [
-                '_NUM_' => $servizi_in_scadenza->count(),
-            ]).'
+                    <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza o stanno per esaurire i crediti: _NUM_', [
+                        '_NUM_' => $servizi_in_scadenza->count(),
+                    ]).'
                 </div>';
         }
 
@@ -209,8 +216,9 @@ if (Services::isEnabled()) {
                         <tr>
                             <th width="5%" class="text-center">'.tr('Stato').'</th>
                             <th>'.tr('Nome').'</th>
-                            <th width="25%" class="text-center">'.tr('#').'</th>
-                            <th width="20%">'.tr('Scadenza').'</th>
+                            <th width="15%">'.tr('Tipo').'</th>
+                            <th width="15%">'.tr('Scadenza').'</th>
+                            <th width="20%" class="text-center">'.tr('#').'</th>
                         </tr>
                     </thead>
 
@@ -222,54 +230,41 @@ if (Services::isEnabled()) {
             }
 
             $scadenza = Carbon::parse($elemento['expiration_at']);
+            $has_credits = isset($elemento['credits']);
+            $credits_warning = $has_credits && $elemento['credits'] < 100 && $elemento['credits'] !== null;
+            $credits_expired = $has_credits && $elemento['credits'] < 0;
+            $is_expired = $scadenza->lessThan(Carbon::now());
+            $is_expiring = $scadenza->greaterThan(Carbon::now()) && $scadenza->lessThan($limite_scadenze);
+
+            // Determinazione dello stato
+            $status_class = ($is_expired || $credits_expired) ? 'table-danger' : (($is_expiring || $credits_warning) ? 'table-warning' : '');
+            $status_icon = ($is_expired || $credits_expired) ? '<i class="fa fa-times-circle text-danger" title="'.tr('Scaduto/Esaurito').'"></i>' :
+                          (($is_expiring || $credits_warning) ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Attenzione').'"></i>' :
+                          '<i class="fa fa-check-circle text-success" title="'.tr('Attivo').'"></i>');
+
+            $credits_class = ($credits_expired ? 'danger' : ($credits_warning ? 'warning' : 'secondary'));
+            $credits_icon = ($credits_warning || $credits_expired ? '<i class="fa fa-exclamation-triangle" title="'.tr('Attenzione').'"></i>' : '');
+
+
             // Campi dell'elemento
             $codice = $elemento['code'] ?? $elemento['name'] ?? 'N/A';
             $nome = $elemento['name'] ?? 'N/A';
+            $tipo = $elemento['type'] ?? $elemento['category'] ?? 'N/A';
 
-            // Gestione crediti semplificata
-            if (!isset($elemento['credits']) || $elemento['credits'] === null || $elemento['credits'] === 0) {
-                // Crediti infiniti
-                $crediti_display = tr('Infiniti');
-                $credits_class = 'success';
-                $credits_icon = '';
-                $status_class = '';
-                $status_icon = '<i class="fa fa-check-circle text-success" title="'.tr('Crediti infiniti').'"></i>';
-            } else {
-                // Crediti specificati
-                $credits_value = (int) $elemento['credits'];
-
-                if ($credits_value < 0) {
-                    // Crediti esauriti
-                    $crediti_display = '<i class="fa fa-times-circle text-danger mr-1"></i>'.$credits_value;
-                    $credits_class = 'danger';
-                    $credits_icon = '<i class="fa fa-exclamation-triangle" title="'.tr('Crediti esauriti').'"></i>';
-                    $status_class = 'table-danger';
-                    $status_icon = '<i class="fa fa-times-circle text-danger" title="'.tr('Crediti esauriti').'"></i>';
-                } elseif ($credits_value < 100) {
-                    // Crediti in esaurimento
-                    $crediti_display = '<i class="fa fa-exclamation-triangle text-warning mr-1"></i>'.$credits_value;
-                    $credits_class = 'warning';
-                    $credits_icon = '<i class="fa fa-exclamation-triangle" title="'.tr('Crediti in esaurimento').'"></i>';
-                    $status_class = 'table-warning';
-                    $status_icon = '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Crediti in esaurimento').'"></i>';
-                } else {
-                    // Crediti OK
-                    $crediti_display = $credits_value;
-                    $credits_class = 'secondary';
-                    $credits_icon = '';
-                    $status_class = '';
-                    $status_icon = '<i class="fa fa-check-circle text-success" title="'.tr('Crediti OK').'"></i>';
-                }
-            }
+            // Gestione crediti: mostra solo se presenti, altrimenti "-"
+            $crediti_display = $has_credits ?
+                ($credits_warning || $credits_expired ? '<i class="fa fa-exclamation-triangle text-warning mr-1"></i>' : '').($elemento['credits'] ?? '-') :
+                '<span class="text-muted">-</span>';
 
             echo '
                         <tr class="'.$status_class.'">
                             <td class="text-center">'.$status_icon.'</td>
                             <td><strong>'.$codice.'</strong><br><small class="text-muted">'.$nome.'</small></td>
+                            <td><span class="badge badge-info">'.$tipo.'</span></td>
+                            <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
                                 <span class="badge badge-'.$credits_class.'">'.$crediti_display.' '.tr('Crediti').' '.$credits_icon.'</span>
                             </td>
-                            <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                         </tr>';
         }
 
@@ -284,14 +279,15 @@ if (Services::isEnabled()) {
                                 <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
                             </td>
                             <td colspan="2" class="text-right">';
-        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
-        }
-        echo '
+                            if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
+                                echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
+                            }
+                            echo '
                             </td>
                         </tr>
                     </tfoot>
                 </table>';
+
     } else {
         echo '
                 <div class="alert alert-info m-3">
@@ -438,16 +434,7 @@ echo '
             </div>
         </div>
 
-        <div class="card card-info card-outline mb-4">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fa fa-history mr-2"></i>'.tr('Ultime operazioni').'
-                </div>
-            </div>
 
-            <div class="card-body p-0" id="operazioni">
-            </div>
-        </div>
 
     </div>
 </div>
@@ -593,39 +580,13 @@ function caricaElencoSessioni() {
     });
 }
 
-function caricaElencoOperazioni() {
-    let container = $("#operazioni");
 
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-
-        init();
-    });
-}
-
-function caricaAltreOperazioni(offset, limit) {
-    let container = $("#operazioni");
-
-    // Mostra loading
-    localLoading(container, true);
-
-    $.get("'.$structure->fileurl('elenco-operazioni.php').'?id_module='.$id_module.'&offset=" + offset + "&limit=" + limit, function(data) {
-        // Sostituisci completamente il contenuto del container
-        container.html(data);
-        localLoading(container, false);
-
-        init();
-    });
-}
 
 $(document).ready(function() {
     caricaElencoModuli();
     caricaElencoWidget();
     caricaElencoHooks();
     caricaElencoSessioni();
-    caricaElencoOperazioni();
 
     init();
 });

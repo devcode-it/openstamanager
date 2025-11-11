@@ -311,11 +311,6 @@ if (Services::isEnabled()) {
                 <div class="card-title">
                     <i class="fa fa-file-text-o mr-2"></i>'.tr('Statistiche FE').'
                 </div>
-                <div class="card-body">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </div>
             </div>
 
             <div class="card-body">

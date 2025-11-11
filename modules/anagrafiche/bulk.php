@@ -68,7 +68,7 @@ switch (post('op')) {
         $count = $exporter->exportRecords();
 
         download($file, 'anagrafiche.csv');
-        break;
+        exit;
 
     case 'change_relation':
         $idrelazione = post('idrelazione');

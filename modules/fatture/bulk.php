@@ -486,8 +486,7 @@ switch (post('op')) {
         $count = $exporter->exportRecords();
 
         download($file, 'fatture.csv');
-
-        break;
+        exit;
 
     case 'delete_bulk':
         $count = 0;

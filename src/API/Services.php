@@ -68,7 +68,7 @@ class Services
                 'versione' => \Update::getVersion(),
                 'ultimi_accessi' => $ultimi_accessi,
                 'sync_at' => Carbon::now()->toDateTimeString(),
-                'url_installazione' => base_url()
+                'url_installazione' => base_url(),
             ]);
             $content = self::responseBody($response);
 
@@ -239,7 +239,7 @@ class Services
             $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
 
             return $osm_size;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // In caso di errore, restituisce 0
             return 0;
         }
@@ -256,7 +256,7 @@ class Services
             $result = User::where('enabled', 1)->count();
 
             return (int) $result;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // In caso di errore, restituisce 0
             return 0;
         }

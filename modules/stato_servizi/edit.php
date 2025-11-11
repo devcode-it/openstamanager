@@ -68,8 +68,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-danger m-3 mb-0">
                     <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti: _NUM_', [
-                        '_NUM_' => $servizi_scaduti->count(),
-                    ]).'
+                '_NUM_' => $servizi_scaduti->count(),
+            ]).'
                 </div>';
         }
 
@@ -77,8 +77,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-warning m-3 mb-0">
                     <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza: _NUM_', [
-                        '_NUM_' => $servizi_in_scadenza->count(),
-                    ]).'
+                '_NUM_' => $servizi_in_scadenza->count(),
+            ]).'
                 </div>';
         }
 
@@ -122,13 +122,13 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-info">'.$servizio['sottocategoria'].'</span></td>
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                '.($servizio['spazio_limite'] ? '<span class="badge badge-'.$spazio_class.'"><i class="fa fa-database mr-1"></i> '.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').' '.$spazio_icon.'</span>' : '').'
+                                '.($servizio['spazio_limite'] ? '<span class="badge badge-'.$spazio_class.'"><i class="fa fa-database mr-1"></i> '.numberFormat($spazio_utilizzato, 1).' / '.numberFormat($servizio['spazio_limite'], 1).' '.tr('GB').' '.$spazio_icon.'</span>' : '').'
                                 '.($servizio['utenti_limite'] ? '<br><span class="badge badge-'.$utenti_class.'"><i class="fa fa-users mr-1"></i> '.$utenti_attivi.' / '.$servizio['utenti_limite'].' '.tr('utenti').' '.$utenti_icon.'</span>' : '').'
                             </td>
                         </tr>';
         }
 
-         // Conteggio servizi e risorse
+        // Conteggio servizi e risorse
         $count_servizi = $servizi->filter(fn ($item) => !isset($item['credits']))->count();
         echo '
                     </tbody>
@@ -138,10 +138,10 @@ if (Services::isEnabled()) {
                                 <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
                             </td>
                             <td colspan="2" class="text-right">';
-                            if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-                                echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
-                            }
-                            echo '
+        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
+            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
+        }
+        echo '
                             </td>
                         </tr>
                     </tfoot>
@@ -245,7 +245,6 @@ if (Services::isEnabled()) {
             $credits_class = ($credits_expired ? 'danger' : ($credits_warning ? 'warning' : 'secondary'));
             $credits_icon = ($credits_warning || $credits_expired ? '<i class="fa fa-exclamation-triangle" title="'.tr('Attenzione').'"></i>' : '');
 
-
             // Campi dell'elemento
             $codice = $elemento['code'] ?? $elemento['name'] ?? 'N/A';
             $nome = $elemento['name'] ?? 'N/A';
@@ -279,10 +278,10 @@ if (Services::isEnabled()) {
                                 <strong>'.tr('Totale elementi: _NUM_', ['_NUM_' => $servizi->count()]).'</strong>
                             </td>
                             <td colspan="2" class="text-right">';
-                            if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
-                                echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
-                            }
-                            echo '
+        if (!$servizi_in_scadenza->isEmpty() || !$servizi_scaduti->isEmpty()) {
+            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
+        }
+        echo '
                             </td>
                         </tr>
                     </tfoot>

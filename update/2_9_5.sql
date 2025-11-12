@@ -77,3 +77,8 @@ ORDER BY
     `mg_articoli_lang`.`title`" WHERE `name` = 'Articoli';
 
 UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `query` = "IF(COALESCE(giacenze.stato_giacenza, 0) = -1, '#ec5353', IF(COALESCE(giacenze.stato_giacenza, 0) = 1, '#CCFFCC', ''))" WHERE `zz_views`.`name` = '_bg_' AND `zz_modules`.`name` = 'Articoli';
+
+-- Aggiunta stampa intervento checklist con note
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), '1', 'Intervento & checklist con note', 'interventi', 'idintervento', '{\"pricing\":true, \"checklist\": true, \"note\":true}', 'fa fa-print', '', '', '0', '0', '1', NULL); 
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES ('1', (SELECT MAX(`id`) FROM `zz_prints`), 'Intervento & checklist con note', 'Intervento num {numero} del {data}'); 
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES ('2', (SELECT MAX(`id`) FROM `zz_prints`), 'Intervento & checklist con note', 'Intervento num {numero} del {data}'); 

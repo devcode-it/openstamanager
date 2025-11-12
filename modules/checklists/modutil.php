@@ -75,7 +75,7 @@ if (!function_exists('renderChecklist')) {
                         </td>';
 
             $result .= '
-                        <td style="width:400px;border-top:0px;"> 
+                        <td style="width:400px;border-top:0px;">
                             '.input([
                 'type' => 'textarea',
                 'name' => 'note_checklist',
@@ -203,7 +203,7 @@ if (!function_exists('renderChecklistInserimento')) {
 }
 
 if (!function_exists('renderChecklistHtml')) {
-    function renderChecklistHtml($check, $level = 0, $has_images = false)
+    function renderChecklistHtml($check, $level = 0, $has_images = false, $show_notes = false)
     {
         $user = auth()->getUser();
         $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
@@ -229,13 +229,25 @@ if (!function_exists('renderChecklistHtml')) {
             $result .= '
                         </td>
                         <td style="border:none;vertical-align:middle;">
-                            <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>
+                            <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>';
+
+            // Aggiunta delle note se richiesto e se presenti
+            if ($show_notes && !empty($check->note)) {
+                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br($check->note).'</small>';
+            }
+
+            $result .= '
                         </td>
                     </tr>
                 </table>';
         } else {
             $result .= '
                 <span class="text"><b>'.$check->content.'</b>'.(!empty($check->value) ? ': '.$check->value : '').'</span>';
+
+            // Aggiunta delle note se richiesto e se presenti
+            if ($show_notes && !empty($check->note)) {
+                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br($check->note).'</small>';
+            }
         }
 
         $result .= '
@@ -244,7 +256,7 @@ if (!function_exists('renderChecklistHtml')) {
 
         $children = $check->children;
         foreach ($children as $child) {
-            $result .= renderChecklistHtml($child, $level + 1);
+            $result .= renderChecklistHtml($child, $level + 1, $has_images, $show_notes);
         }
 
         return $result;

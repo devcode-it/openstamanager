@@ -321,7 +321,3 @@ if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs'
     $lang = Models\Locale::find($id_lang)->language_code;
     $translator->setLocale($lang, $formatter);
 }
-
-if (!setting('Base URL') && $_SERVER['HTTP_HOST']) {
-    Settings::setValue('Base URL', base_url());
-}

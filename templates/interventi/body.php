@@ -630,7 +630,7 @@ if ($options['checklist']) {
         $has_images = $checks->where('id_immagine', '!=', null)->count();
 
         foreach ($checks as $check) {
-            echo renderChecklistHtml($check, 0, $has_images);
+            echo renderChecklistHtml($check, 0, $has_images, $options['note']);
         }
 
         $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
@@ -646,7 +646,7 @@ if ($options['checklist']) {
                 </th>
             </tr>';
                 foreach ($checks as $check) {
-                    echo renderChecklistHtml($check, 0, $has_images);
+                    echo renderChecklistHtml($check, 0, $has_images, $options['note']);
                 }
             }
         }

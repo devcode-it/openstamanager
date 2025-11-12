@@ -53,26 +53,34 @@ class Services
     public static function getInformazioni($force = false)
     {
         try {
-            // Calcolo spazio occupato
-            $spazio_occupato = self::calcolaSpazioOccupato();
+            $cache = Cache::where('name', 'Informazioni su Services')->first();
 
-            // Conteggio utenti attivi
-            $utenti_attivi = self::contaUtentiAttivi();
+            // Aggiornamento dei contenuti della cache
+            if (!$cache->isValid() || $force) {
+                // Calcolo spazio occupato
+                $spazio_occupato = self::calcolaSpazioOccupato();
 
-            // Recupero ultimi 100 accessi
-            $ultimi_accessi = self::getUltimiAccessi();
+                // Conteggio utenti attivi
+                $utenti_attivi = self::contaUtentiAttivi();
 
-            $response = self::request('GET', 'info', [
-                'spazio_occupato' => $spazio_occupato,
-                'utenti_attivi' => $utenti_attivi,
-                'versione' => \Update::getVersion(),
-                'ultimi_accessi' => $ultimi_accessi,
-                'sync_at' => Carbon::now()->toDateTimeString(),
-                'url_installazione' => base_url(),
-            ]);
-            $content = self::responseBody($response);
+                // Recupero ultimi 100 accessi
+                $ultimi_accessi = self::getUltimiAccessi();
 
-            return $content;
+                $response = self::request('GET', 'info', [
+                    'spazio_occupato' => $spazio_occupato,
+                    'utenti_attivi' => $utenti_attivi,
+                    'versione' => \Update::getVersion(),
+                    'ultimi_accessi' => $ultimi_accessi,
+                    'sync_at' => Carbon::now()->toDateTimeString(),
+                    'url_installazione' => setting('Base URL'),
+                ]);
+                $content = self::responseBody($response);
+                $cache->set($content);
+
+                return $content;
+            }
+
+            return $cache->content;
         } catch (\Exception $e) {
             // Log dell'errore per debug
             if (function_exists('logger')) {

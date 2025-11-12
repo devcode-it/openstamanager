@@ -82,3 +82,10 @@ UPDATE `zz_views` LEFT JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules
 INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`, `available_options`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), '1', 'Intervento & checklist con note', 'interventi', 'idintervento', '{\"pricing\":true, \"checklist\": true, \"note\":true}', 'fa fa-print', '', '', '0', '0', '1', NULL); 
 INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES ('1', (SELECT MAX(`id`) FROM `zz_prints`), 'Intervento & checklist con note', 'Intervento num {numero} del {data}'); 
 INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES ('2', (SELECT MAX(`id`) FROM `zz_prints`), 'Intervento & checklist con note', 'Intervento num {numero} del {data}'); 
+
+-- Aggiunta impostazione per Base URL
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `is_user_setting`) VALUES (NULL, 'Base URL', '', 'string', '0', 'Generali', NULL, NULL, NULL, '0');
+SELECT @id_setting := MAX(`id`) FROM `zz_settings`;
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, @id_setting, 'Base URL', ''),
+(2, @id_setting, 'Base URL', '');

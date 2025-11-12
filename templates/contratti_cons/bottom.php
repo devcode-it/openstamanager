@@ -18,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-//fix per generazione allegato email
+// fix per generazione allegato email
 include __DIR__.'/../riepilogo_interventi/bottom.php';
 
 $budget = get_imponibile_contratto($id_record);

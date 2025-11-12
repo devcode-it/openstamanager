@@ -84,8 +84,7 @@ INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUE
 INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES ('2', (SELECT MAX(`id`) FROM `zz_prints`), 'Intervento & checklist con note', 'Intervento num {numero} del {data}'); 
 
 -- Aggiunta impostazione per Base URL
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `is_user_setting`) VALUES (NULL, 'Base URL', '', 'string', '0', 'Generali', NULL, NULL, NULL, '0');
-SELECT @id_setting := MAX(`id`) FROM `zz_settings`;
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Base URL', '', 'string', '0', 'Generali', NULL, '0');
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
-(1, @id_setting, 'Base URL', ''),
-(2, @id_setting, 'Base URL', '');
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Base URL', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Base URL', '');

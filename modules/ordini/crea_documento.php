@@ -31,7 +31,7 @@ $documento = Ordine::find($id_record);
 $module = Module::where('name', $documento->module)->first();
 
 if (get('documento') == 'fattura') {
-    $final_module = $module->name = 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
+    $final_module = $module->name == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
     $op = 'add_documento';
     $tipo_documento_finale = Fattura::class;
 } elseif (get('documento') == 'ordine_fornitore') {

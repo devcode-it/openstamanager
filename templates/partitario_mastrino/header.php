@@ -1,5 +1,4 @@
 <?php
-
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -26,9 +25,15 @@
  *
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
+
+if (get('lev') == '3' || get('lev') == '2') {
+    $title = tr('Mastrino', [], ['upper' => true]);
+} else {
+    $title = tr('Bilancio', [], ['upper' => true]);
+}
 echo '
 <h5 style="border-bottom:1px solid #777; display:block;">
-    <div class="col-xs-5">STAMPA MASTRINO <small>'.Translator::dateToLocale($date_start).' - '.Translator::dateTolocale($date_end).'</small></div>
+    <div class="col-xs-5">STAMPA '.$title.' <small>'.Translator::dateToLocale($date_start).' - '.Translator::dateTolocale($date_end).'</small></div>
     <div class="col-xs-7 text-right">'.$azienda['ragione_sociale'].'</div>
 </h5>
 '.$conto1['descrizione'].'<br>';

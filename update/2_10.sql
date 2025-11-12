@@ -102,3 +102,6 @@ CREATE TABLE `in_tipiintervento_groups` (`id` INT NOT NULL AUTO_INCREMENT , `idt
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`)
 VALUES (NULL, 'app-v1', 'retrieve', 'gestione-notifiche', 'API\\App\\v1\\GestioneNotifiche', '1');
 
+-- Aggiunta impostazione per il calcolo delle provvigioni agenti
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Calcola provvigione agenti su', 'Ricavo', 'list[Ricavo,Utile]', '1', 'Generali', '5', '0');
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Calcola provvigione agenti su'), 'Calcola provvigione agenti su', NULL), (NULL, '2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Calcola provvigione agenti su'), 'Calcola provvigione agenti su', NULL);

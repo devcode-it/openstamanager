@@ -279,7 +279,11 @@ abstract class Accounting extends Component
 
         if ($type == 'PRC') {
             $this->provvigione_percentuale = $value;
-            $provvigione_unitaria = ($this->prezzo_unitario - $this->sconto_unitario) / 100 * floatval($value);
+            if(setting('Calcola provvigione agenti su') == 'Ricavo') {
+                $provvigione_unitaria = ($this->prezzo_unitario - $this->sconto_unitario) / 100 * floatval($value);
+            } else {
+                $provvigione_unitaria = ($this->prezzo_unitario - $this->sconto_unitario - $this->costo_unitario) / 100 * floatval($value);
+            }
             $this->provvigione_unitaria = $provvigione_unitaria;
         } else {
             $this->provvigione_percentuale = 0;

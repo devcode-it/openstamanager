@@ -1007,12 +1007,6 @@ switch ($op) {
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;
         }
 
-        // Se non ci sono importi da fatturare, non creare l'autofattura
-        if (empty($totale_imponibile)) {
-            flash()->warning(tr('Nessun importo da integrare per il reverse charge'));
-            break;
-        }
-
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $autofattura->idconto = $fattura->idconto;
         $autofattura->idpagamento = $fattura->idpagamento;

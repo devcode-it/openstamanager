@@ -73,9 +73,9 @@ switch (filter('op')) {
             $id_record = $dbo->lastInsertedID();
             $categoria->name = $nome;
             $categoria->parent = $id_original;
-            $categoria->setTranslation('note', $nota);
             $categoria->save();
-
+            
+            $categoria->setTranslation('note', $nota);
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
             ]));

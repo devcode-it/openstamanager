@@ -312,6 +312,35 @@ class IntegritaFile extends Controllo
     }
 
     /**
+     * Verifica se un file deve essere escluso dal controllo.
+     *
+     * @param string $item Nome del file
+     * @param string $relative_path Percorso relativo del file
+     * @return bool True se il file deve essere escluso
+     */
+    protected function shouldExcludeFile($item, $relative_path)
+    {
+        // File di sistema
+        if (in_array($item, ['.htaccess', '.gitkeep', 'index.html'])) {
+            return true;
+        }
+
+        // File delle firme degli interventi (salvati direttamente senza passare per zz_files)
+        // Pattern: interventi/firma_*.jpg o interventi/firma_*.png
+        if (preg_match('#^interventi/firma_\d+\.(jpg|png)$#', $relative_path)) {
+            return true;
+        }
+
+        // File delle presentazioni bancarie (salvati direttamente)
+        // Pattern: presentazioni_bancarie/*.xml
+        if (preg_match('#^presentazioni_bancarie/.*\.xml$#', $relative_path)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Scansiona ricorsivamente una directory per trovare file orfani.
      */
     protected function scanDirectory($dir, $registered_files, $excluded_dirs, $base_path = '')
@@ -336,8 +365,8 @@ class IntegritaFile extends Controllo
                     $this->scanDirectory($full_path, $registered_files, $excluded_dirs, $relative_path);
                 }
             } else {
-                // Escludo i file di sistema
-                if (!in_array($item, ['.htaccess', '.gitkeep', 'index.html'])) {
+                // Escludo i file di sistema e i file che non devono essere controllati
+                if (!$this->shouldExcludeFile($item, $relative_path)) {
                     // Controllo se il file è registrato nel database
                     if (!in_array($relative_path, $registered_files)) {
                         $file_size = filesize($full_path);

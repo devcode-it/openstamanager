@@ -330,6 +330,12 @@ class IntegritaFile extends Controllo
         if (preg_match('#^interventi/firma_\d+\.(jpg|png)$#', $relative_path)) {
             return true;
         }
+ 
+        // PDF degli interventi generati dalle stampe (salvati direttamente senza passare per zz_files)
+        // Pattern: interventi/Intervento num*.pdf
+        if (preg_match('#^interventi/Intervento num.*\.pdf$#', $relative_path)) {
+            return true;
+        }
 
         // File delle presentazioni bancarie (salvati direttamente)
         // Pattern: presentazioni_bancarie/*.xml

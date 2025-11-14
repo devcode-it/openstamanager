@@ -108,6 +108,13 @@ if (!empty($fattura_acquisto_originale)) {
         '_DATE_' => dateFormat($fattura_acquisto_originale->data),
     ])).'</b>
 </div>';
+
+if ($fattura_acquisto_originale->totale_imponibile != $fattura->totale_imponibile) {
+echo '
+<div class="alert alert-warning">
+    <i class="fa fa-exclamation-triangle"></i> '.tr("Attenzione! Il totale dell'autofattura non corrisponde al totale della fattura di acquisto").'.
+</div>';
+}
 }
 
 if ($abilita_autofattura) {

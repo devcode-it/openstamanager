@@ -23,7 +23,7 @@ if (!function_exists('renderChecklist')) {
     {
         global $structure;
 
-        $user = auth()->getUser();
+        $user = auth_osm()->getUser();
         $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || $user->idgruppo == 1) : true;
 
         $margin = ($level * 20);
@@ -205,7 +205,7 @@ if (!function_exists('renderChecklistInserimento')) {
 if (!function_exists('renderChecklistHtml')) {
     function renderChecklistHtml($check, $level = 0, $has_images = false, $show_notes = false)
     {
-        $user = auth()->getUser();
+        $user = auth_osm()->getUser();
         $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
 
         $width = 10 + 20 * $level;

@@ -146,7 +146,7 @@ function flash()
  *
  * @return Auth
  */
-function auth()
+function auth_osm()
 {
     return Auth::getInstance();
 }
@@ -158,7 +158,7 @@ function auth()
  *
  * @return Translator
  */
-function trans()
+function trans_osm()
 {
     return Translator::getInstance();
 }
@@ -206,7 +206,7 @@ if (!function_exists('_')) {
  *
  * @return Monolog\Logger
  */
-function logger()
+function logger_osm()
 {
     return Monolog\Registry::getInstance('logs');
 }

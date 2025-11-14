@@ -46,7 +46,7 @@ if (empty($result)) {
             </h3>
             <br>
 
-            <a class="btn btn-default" href="'.base_path().'/index.php">
+            <a class="btn btn-default" href="'.base_path_osm().'/index.php">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>
         </div>';

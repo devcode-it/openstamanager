@@ -27,7 +27,7 @@ switch (filter('op')) {
             'client_secret' => post('client_secret'),
             'config' => post('config'),
             'enabled' => post('enabled'),
-            'after_configuration' => base_path().'/index.php',
+            'after_configuration' => base_path_osm().'/index.php',
         ], ['id' => $id_record]);
 
         flash()->info(tr('Salvataggio completato!'));

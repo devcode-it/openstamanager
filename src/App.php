@@ -66,6 +66,7 @@ class App
             'i18n/moment/|lang|.min.js',
             'i18n/locales.min.js',
             'i18n/@fullcalendar/|lang|.min.js',
+            'api.js'
         ],
     ];
 
@@ -176,7 +177,7 @@ class App
      */
     public static function getPaths()
     {
-        $assets = base_path().'/assets/dist';
+        $assets = base_path_osm().'/assets/dist';
 
         return [
             'assets' => $assets,
@@ -200,7 +201,7 @@ class App
 
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = trans()->getCurrentLocale();
+        $lang = trans_osm()->getCurrentLocale();
 
         // Sezioni: nome - percorso
         $sections = [
@@ -231,7 +232,7 @@ class App
                     foreach ($lang_replace as $replace) {
                         $name = str_replace('|lang|', $replace, $element);
 
-                        if (file_exists(base_dir().str_replace(base_path(), '', $name))) {
+                        if (file_exists(base_dir().str_replace(base_path_osm(), '', $name))) {
                             $element = $name;
                             break;
                         }

@@ -67,7 +67,7 @@ use Models\Module;
 
 	<div class="card-body">
 		<div class="pull-left">
-			<a class="btn btn-primary" data-href="<?php echo base_path(); ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-card-widget="modal" data-title="<?php echo tr('Aggiungi riga'); ?>"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
+			<a class="btn btn-primary" data-href="<?php echo base_path_osm(); ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-card-widget="modal" data-title="<?php echo tr('Aggiungi riga'); ?>"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
 		</div>
 		<div class="clearfix"></div>
 		<hr>
@@ -144,7 +144,7 @@ if (!empty($articoli)) {
         $id = $elemento['id'];
 
         echo '
-		<a class="list-group-item list-group-item-action" href="'.base_path().'/editor.php?id_module='.Module::where('name', $modulo)->first()->id.'&id_record='.$id.'">
+		<a class="list-group-item list-group-item-action" href="'.base_path_osm().'/editor.php?id_module='.Module::where('name', $modulo)->first()->id.'&id_record='.$id.'">
 				<i class="fa fa-cube"></i> '.$descrizione.'
 			</a>';
     }
@@ -182,7 +182,7 @@ if (!empty($impianti)) {
         $id = $elemento['id'];
 
         echo '
-		<a class="list-group-item list-group-item-action" href="'.base_path().'/editor.php?id_module='.Module::where('name', $modulo)->first()->id.'&id_record='.$id.'">
+		<a class="list-group-item list-group-item-action" href="'.base_path_osm().'/editor.php?id_module='.Module::where('name', $modulo)->first()->id.'&id_record='.$id.'">
 				<i class="fa fa-industry"></i> '.$descrizione.'
 			</a>';
     }

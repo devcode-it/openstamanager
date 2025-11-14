@@ -319,7 +319,7 @@ class AJAX
             $element['text'] = '<a href="'.Prints::getHref($element['id'], get('id_record')).'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
         } elseif ($link == 'allegato') {
             $element['title'] = ' ';
-            $element['text'] = '<a href="'.base_path().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
+            $element['text'] = '<a href="'.base_path_osm().'/view.php?file_id='.$element['id'].'" target="_blank">'.$element['text'].' <i class="fa fa-external-link"></i></a>';
         } elseif (string_contains($link, 'module:')) {
             $element['title'] = ' ';
             // Per i select AJAX, mostra sempre il testo anche senza permessi sul modulo

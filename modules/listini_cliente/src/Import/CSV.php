@@ -56,7 +56,7 @@ class CSV extends CSVImporter
         $this->failed_errors = [];
         $this->current_row = 0;
 
-        logger()->info('Inizializzazione importazione listino cliente', [
+        logger_osm()->info('Inizializzazione importazione listino cliente', [
             'timestamp' => date('Y-m-d H:i:s'),
             'classe' => static::class
         ]);
@@ -69,7 +69,7 @@ class CSV extends CSVImporter
     {
         parent::complete();
 
-        logger()->info('Completamento importazione listino cliente', [
+        logger_osm()->info('Completamento importazione listino cliente', [
             'timestamp' => date('Y-m-d H:i:s'),
             'record_falliti' => count($this->failed_records),
             'listini_in_cache' => count(self::$listini_cache),
@@ -126,7 +126,7 @@ class CSV extends CSVImporter
     public function import($record, $update_record = true, $add_record = true)
     {
         $this->current_row++;
-        $logger = logger();
+        $logger = logger_osm();
 
         try {
             $database = database();
@@ -252,7 +252,7 @@ class CSV extends CSVImporter
      */
     protected function logError($type, $message, $record, $exception = null)
     {
-        $logger = logger();
+        $logger = logger_osm();
         $this->failed_errors[] = $message;
 
         $context = [
@@ -368,7 +368,7 @@ class CSV extends CSVImporter
         }
 
         try {
-            $logger = logger();
+            $logger = logger_osm();
 
             $nuovo_listino = Listino::build($nome_listino);
             $nuovo_listino->attivo = 1;
@@ -385,7 +385,7 @@ class CSV extends CSVImporter
 
             return $listino_data;
         } catch (\Exception $e) {
-            logger()->error('Errore durante la creazione del listino', [
+            logger_osm()->error('Errore durante la creazione del listino', [
                 'nome_listino' => $nome_listino,
                 'errore' => $e->getMessage(),
                 'riga' => $this->current_row
@@ -448,7 +448,7 @@ class CSV extends CSVImporter
 
         fclose($file);
 
-        logger()->info('File anomalie listino cliente creato', [
+        logger_osm()->info('File anomalie listino cliente creato', [
             'filepath' => $filepath,
             'record_falliti' => count($this->failed_rows),
             'timestamp' => date('Y-m-d H:i:s')
@@ -468,7 +468,7 @@ class CSV extends CSVImporter
     public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $this->current_row = $offset;
-        $logger = logger();
+        $logger = logger_osm();
 
         $logger->info('Inizio importazione batch listino cliente', [
             'offset' => $offset,

@@ -28,7 +28,7 @@ if (empty($_GET['visualizza_movimenti'])) {
     echo '
         <div class="row">
             <div class="col-md-12 text-center">
-                <a class="btn btn-info btn-lg" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&visualizza_movimenti=1#tab_'.$id_plugin.'">
+                <a class="btn btn-info btn-lg" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&visualizza_movimenti=1#tab_'.$id_plugin.'">
                     <i class="fa fa-eye"></i>
                     '.tr('Visualizza tutti i movimenti').'
                 </a>

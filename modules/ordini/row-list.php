@@ -555,6 +555,22 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
             <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
         </button>
+
+        <button type="button" class="btn btn-xs btn-primary disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
+            <i class="fa fa-clipboard"></i> '.tr('Copia').'
+        </button>
+
+        <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
+            <i class="fa fa-paste"></i> '.tr('Incolla').'
+        </button>
+    </div>';
+}
+if (!$block_edit && sizeof($righe) == 0) {
+    echo '
+    <div class="btn-group">
+        <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
+            <i class="fa fa-paste"></i> '.tr('Incolla').'
+        </button>
     </div>';
 }
 echo '
@@ -731,6 +747,112 @@ function modificaIvaRighe(righe) {
     }
 }
 
+function copiaRighe(righe) {
+    if (righe.length === 0) {
+        return;
+    }
+
+    // Raccolgo i dati delle righe selezionate
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "get_righe_data",
+            righe: righe,
+        },
+        success: function (response) {
+            if (response && response.data) {
+                // Copio i dati negli appunti del browser
+                navigator.clipboard.writeText(JSON.stringify(response.data)).then(function() {
+                    swal({
+                        title: "'.tr('Righe copiate!').'",
+                        text: "'.tr('Le righe selezionate sono state copiate negli appunti').'",
+                        type: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }).catch(function(err) {
+                    swal({
+                        title: "'.tr('Errore').'",
+                        text: "'.tr('Impossibile copiare negli appunti').': " + err,
+                        type: "error"
+                    });
+                });
+            }
+        },
+        error: function() {
+            swal({
+                title: "'.tr('Errore').'",
+                text: "'.tr('Errore durante il recupero dei dati delle righe').'",
+                type: "error"
+            });
+        }
+    });
+}
+
+function incollaRighe() {
+    // Leggo i dati dagli appunti del browser
+    navigator.clipboard.readText().then(function(text) {
+        try {
+            let righe_data = JSON.parse(text);
+
+            swal({
+                title: "'.tr('Incollare le righe?').'",
+                html: "'.tr('Sei sicuro di voler incollare').' " + righe_data.length + " '.tr('righe in questo documento?').'",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "'.tr('Sì').'"
+            }).then(function () {
+                $.ajax({
+                    url: globals.rootdir + "/actions.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id_module: globals.id_module,
+                        id_record: globals.id_record,
+                        op: "paste_righe",
+                        righe_data: JSON.stringify(righe_data),
+                    },
+                    success: function (response) {
+                        renderMessages();
+                        caricaRighe(null);
+                        swal({
+                            title: "'.tr('Righe incollate!').'",
+                            text: "'.tr('Le righe sono state incollate con successo').'",
+                            type: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function() {
+                        renderMessages();
+                        swal({
+                            title: "'.tr('Errore').'",
+                            text: "'.tr('Errore durante l\'incollaggio delle righe').'",
+                            type: "error"
+                        });
+                    }
+                });
+            }).catch(swal.noop);
+        } catch (e) {
+            swal({
+                title: "'.tr('Errore').'",
+                text: "'.tr('I dati negli appunti non sono validi').'",
+                type: "error"
+            });
+        }
+    }).catch(function(err) {
+        swal({
+            title: "'.tr('Errore').'",
+            text: "'.tr('Impossibile leggere dagli appunti').': " + err,
+            type: "error"
+        });
+    });
+}
+
 $(document).ready(function() {
 	sortable(".sortable", {
         axis: "y",
@@ -764,6 +886,7 @@ $(".check").on("change", function() {
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
         $("#modifica_iva_righe").removeClass("disabled");
+        $("#copia_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");
     } else {
         $("#elimina_righe").addClass("disabled");
@@ -771,6 +894,7 @@ $(".check").on("change", function() {
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
         $("#modifica_iva_righe").addClass("disabled");
+        $("#copia_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");
     }
 });

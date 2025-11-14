@@ -437,6 +437,74 @@ switch (filter('op')) {
 
         break;
 
+    case 'get_righe_data':
+        $id_righe = (array) post('righe');
+        $righe_data = [];
+        foreach ($id_righe as $id_riga) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+            if ($riga) {
+                $riga_array = [
+                    'type' => get_class($riga), 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
+                    'prezzo_unitario' => $riga->prezzo_unitario, 'sconto_unitario' => $riga->sconto_unitario,
+                    'sconto_percentuale' => $riga->sconto_percentuale, 'tipo_sconto' => $riga->tipo_sconto,
+                    'idiva' => $riga->idiva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
+                ];
+                if ($riga->isArticolo()) {
+                    $riga_array['idarticolo'] = $riga->idarticolo;
+                    $riga_array['codice'] = $riga->codice;
+                    $riga_array['costo_unitario'] = $riga->costo_unitario;
+                }
+                $righe_data[] = $riga_array;
+            }
+        }
+        echo json_encode(['data' => $righe_data]);
+        break;
+
+    case 'paste_righe':
+        $righe_data = json_decode(post('righe_data'), true);
+        if (is_array($righe_data)) {
+            foreach ($righe_data as $riga_data) {
+                $type = $riga_data['type'];
+                $class_name = substr($type, strrpos($type, '\\') + 1);
+                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
+                    $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
+                    if ($articolo_originale) {
+                        $riga = Articolo::build($ddt, $articolo_originale);
+                        $riga->costo_unitario = $riga_data['costo_unitario'];
+                    } else {
+                        $riga = Riga::build($ddt);
+                    }
+                } elseif ($class_name == 'Descrizione') {
+                    $riga = Descrizione::build($ddt);
+                } elseif ($class_name == 'Sconto') {
+                    $riga = Sconto::build($ddt);
+                } else {
+                    $riga = Riga::build($ddt);
+                }
+                $riga->descrizione = $riga_data['descrizione'];
+                $riga->qta = $riga_data['qta'];
+                $riga->um = $riga_data['um'];
+                if (!$riga->isDescrizione()) {
+                    $riga->prezzo_unitario = $riga_data['prezzo_unitario'];
+                    $riga->sconto_unitario = $riga_data['sconto_unitario'];
+                    $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
+                    $riga->tipo_sconto = $riga_data['tipo_sconto'];
+                    $riga->idiva = $riga_data['idiva'];
+                    $riga->id_conto = $riga_data['id_conto'];
+                }
+                $riga->note = $riga_data['note'];
+                $riga->save();
+            }
+            flash()->info(tr('Righe incollate correttamente!'));
+            echo json_encode(['status' => 'success']);
+        } else {
+            flash()->error(tr('Errore durante l\'incollaggio delle righe'));
+            echo json_encode(['status' => 'error']);
+        }
+        break;
+
         // eliminazione ddt
     case 'delete':
         try {

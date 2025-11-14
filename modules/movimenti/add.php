@@ -167,6 +167,17 @@ echo '
             }
         });
 
+        // Listener per auto-submit quando viene selezionato un articolo da barcode
+        $("#idarticolo").on("change", function () {
+            if (window.barcodeAutoSubmit === true) {
+                window.barcodeAutoSubmit = false;
+                // Aspetta un momento per assicurarsi che i dati siano disponibili
+                setTimeout(function(){
+                    salva($("#aggiungi"));
+                }, 100);
+            }
+        });
+
         // Reload pagina appena chiudo il modal
         $("#modals > div").on("hidden.bs.modal", function () {
             location.reload();
@@ -175,13 +186,23 @@ echo '
 
     function ricercaBarcode(barcode) {
         // Ricerca via ajax del barcode negli articoli
-        $.get(globals.rootdir + "/ajax_select.php?op=articoli&search=" + barcode,
-            function(data){
-                data = JSON.parse(data);
+        let options = $("#idarticolo").data("select-options");
+        $.get(globals.rootdir + "/ajax_select.php", {
+            op: "articoli",
+            search: barcode,
+            options: options
+        }, function(data){
+            data = JSON.parse(data);
 
                 // Articolo trovato
                 if(data.results.length === 1) {
                     let record = data.results[0];
+                    // Usa qta_sede se disponibile, altrimenti qta
+                    record.qta = record.qta_sede !== undefined ? record.qta_sede : (record.qta || 0);
+
+                    // Imposta un flag per indicare che stiamo facendo un carico automatico da barcode
+                    window.barcodeAutoSubmit = true;
+
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
                     let qta = record.qta-parseFloat($("#qta").val());';
 
@@ -197,9 +218,6 @@ if (!setting('Permetti selezione articoli con quantità minore o uguale a zero i
 }
 
 echo '
-                    setTimeout(function(){
-                        salva($("#aggiungi"));
-                    },300);
                 }
 
                 // Articolo non trovato
@@ -218,9 +236,19 @@ echo '
         let qta_input = input("qta");
         let tipo_movimento = $("#tipo_movimento").val();
 
+        // Per i movimenti di carico assicuriamoci di non salvare mai 0 o valori vuoti
+        let qta_val = parseFloat(qta_input.get()) || 0;
+        if (tipo_movimento === "carico" && qta_val <= 0) {
+            qta_input.set(1);
+        }
+
         await salvaForm("#add-form", {}, button);
 
         let articolo = $("#idarticolo").selectData();
+
+        if (!articolo) {
+            return;
+        }
 
         let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
         let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
@@ -228,22 +256,25 @@ echo '
 
         let qta_movimento = qta_input.get();
 
+        // Usa qta_sede se disponibile, altrimenti qta
+        let qta_articolo = articolo.qta_sede !== undefined ? parseFloat(articolo.qta_sede) : parseFloat(articolo.qta || 0);
+
         let alert_type, icon, text, qta_rimanente;
         if (tipo_movimento === "carico") {
             alert_type = "alert-success";
             icon = "fa-arrow-up";
             text = "Carico";
-            qta_rimanente = parseFloat(articolo.qta) + parseFloat(qta_movimento);
+            qta_rimanente = qta_articolo + parseFloat(qta_movimento);
         } else if (tipo_movimento === "scarico") {
             alert_type = "alert-danger";
             icon = "fa-arrow-down";
             text = "Scarico";
-            qta_rimanente = parseFloat(articolo.qta) - parseFloat(qta_movimento);
+            qta_rimanente = qta_articolo - parseFloat(qta_movimento);
         } else if (tipo_movimento === "spostamento") {
             alert_type = "alert-info";
             icon = "fa-arrow-down";
             text = "Spostamento";
-            qta_rimanente = parseFloat(articolo.qta);
+            qta_rimanente = qta_articolo;
         }
 
         if (articolo.descrizione) {

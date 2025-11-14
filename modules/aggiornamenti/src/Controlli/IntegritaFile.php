@@ -333,7 +333,7 @@ class IntegritaFile extends Controllo
  
         // PDF degli interventi generati dalle stampe (salvati direttamente senza passare per zz_files)
         // Pattern: interventi/Intervento num*.pdf
-        if (preg_match('#^interventi/Intervento num.*\.pdf$#', $relative_path)) {
+        if (preg_match('#^interventi/Intervento-num.*\.pdf$#', $relative_path)) {
             return true;
         }
 

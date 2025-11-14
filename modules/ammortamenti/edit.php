@@ -36,7 +36,7 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="add_ammortamento">
+	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
 	<div class="card card-primary">
@@ -46,22 +46,40 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 
 		<div class="card-body">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-9">
 					{[ "type": "text", "label": "<?php echo tr('Cespite'); ?>", "name": "descrizione_riga", "value": "$descrizione$", "disabled": 1 ]}
 				</div>
-				
-				<div class="col-md-2">
+
+				<div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Smaltito'); ?>", "name": "is_smaltito", "value": "<?php echo $record['is_smaltito']; ?>" ]}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice_cespite", "value": "<?php echo $record['codice_cespite']; ?>", "class": "text-center", "disabled": 1 ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Codice interno'); ?>", "name": "codice_interno_cespite", "value": "<?php echo $record['codice_interno_cespite']; ?>", "class": "text-center" ]}
+				</div>
+
+				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Importo'); ?>", "name": "importo_riga", "value": "<?php echo numberFormat($record['subtotale']); ?>", "disabled": 1, "class": "text-right", "icon-after": "<?php echo currency(); ?>" ]}
 				</div>
 				
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<?php echo Modules::link('Fatture di acquisto', $documento['id'], null, null, 'class="pull-right"'); ?>
 					{[ "type": "text", "label": "<?php echo tr('Fattura di origine'); ?>", "name": "fattura_collegata", "value": "<?php echo $documento['numero']; ?> del <?php echo dateFormat($documento['data_competenza']); ?>", "disabled": 1 ]}
 				</div>
 			</div>
 		</div>
 	</div>
+</form>
 
+<form action="" method="post" id="ammortamento-form">
+	<input type="hidden" name="backto" value="record-edit">
+	<input type="hidden" name="op" value="add_ammortamento">
 	<div class="card card-primary">
 		<div class="card-header">
 			<h3 class="card-title"><?php echo tr('Ammortamenti'); ?></h3>
@@ -158,8 +176,6 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 
 <script>
 $(document).ready(function() {
-	$("#save-buttons").hide();
-
 	// Variabili globali
 	var importo_totale = <?php echo $record['subtotale']; ?>;
 	var indice_riga = 0;
@@ -263,7 +279,7 @@ function applicaAmmortamento() {
 		showCancelButton: true,
 		confirmButtonText: "<?php echo tr('Sì, procedi'); ?>"
 	}).then(function () {
-		$('#save').click();
+		$('#ammortamento-form').submit();
 	}).catch(swal.noop);
 }
 </script>

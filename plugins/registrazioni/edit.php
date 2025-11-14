@@ -52,8 +52,12 @@ echo '
                     <th>'.tr('Descrizione').'</th>
                     <th class="text-center" width="100">'.tr('Q.tà').'</th>
                     <th class="text-center" width="140">'.tr('Prezzo unitario').'</th>
-                    <th width="450">'.tr('Conto').'</th>
-                    <th width="200">'.tr('Cespite').'</th>
+                    <th width="450">'.tr('Conto').'</th>';
+                if ($dir == 'uscita') {
+                    echo '
+                    <th width="200">'.tr('Cespite').'</th>';
+                }
+                echo '
                 </tr>
             </thead>
             <tbody class="sortable">';
@@ -118,11 +122,15 @@ if (!empty($fattura)) {
                         <div id="select-conto-cespite-'.$riga['id'].'" '.(!$riga->is_cespite ? 'style="display:none;"' : '').'>
                             {[ "type": "select", "name": "idconto_cespiti['.$riga['id'].']", "required": "'.($riga->is_cespite ? 1 : 0).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
                         </div>
-                    </td>
-
+                    </td>';
+                if ($dir == 'uscita') {
+                    $has_ammortamento_cespite = $dbo->selectOne('co_righe_ammortamenti', '*', ['id_riga' => $riga->id])['id'];
+                    echo '
                     <td>
-                        {[ "type": "checkbox", "name": "is_cespite['.$riga['id'].']", "value": "'.$riga->is_cespite.'", "values": "Sì,No", "class": "unblockable" ]}
-                    </td>
+                        {[ "type": "checkbox", "name": "is_cespite['.$riga['id'].']", "value": "'.$riga->is_cespite.'", "values": "Sì,No", "class": "'.($has_ammortamento_cespite ? '' : 'unblockable').'", "disabled": "'.($has_ammortamento_cespite ? 1 : 0).'" ]}
+                    </td>';
+                }
+                echo '
                 </tr>';
         }
     }

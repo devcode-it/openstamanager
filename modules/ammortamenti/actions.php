@@ -23,10 +23,22 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Sconto;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
 switch (filter('op')) {
+    case 'update':
+        $riga = Articolo::find($id_record) ?: Riga::find($id_record);
+        $riga = $riga ?: Sconto::find($id_record);
+        $riga->codice_interno_cespite = post('codice_interno_cespite');
+        $riga->is_smaltito = post('is_smaltito');
+        $riga->save();
+
+        flash()->info(tr('Informazioni salvate correttamente!'));
+
+        break;
+
     case 'add_ammortamento':
         $id_conto = post('id_conto');
         $anni = (array) post('anno');

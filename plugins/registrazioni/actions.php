@@ -25,6 +25,7 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
+use Util\Generator;
 
 $operazione = filter('op');
 
@@ -49,6 +50,21 @@ switch ($operazione) {
 
                 $is_cespite = !empty($cespiti[$id_riga]);
                 $conto_selezionato = $is_cespite ? ($conti_cespiti[$id_riga] ?? null) : $conto;
+
+                // Generazione codice cespite
+                if ($is_cespite) {
+                    if (!$riga->codice_cespite) {
+                        $maschera = setting('Formato codice cespite');
+                        $ultimo = Generator::getPreviousFrom($maschera, 'co_righe_documenti', 'codice_cespite', [
+                            "codice_cespite IS NOT NULL"
+                        ]);
+                        $codice = Generator::generate($maschera, $ultimo);
+                        $riga->codice_cespite = $codice;
+                    }
+                } else {
+                    $riga->codice_cespite = null;
+                    $riga->is_smaltito = 0;
+                }
 
                 // Validazione lato server
                 if (empty($conto_selezionato)) {

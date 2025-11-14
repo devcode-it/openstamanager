@@ -105,3 +105,49 @@ VALUES (NULL, 'app-v1', 'retrieve', 'gestione-notifiche', 'API\\App\\v1\\Gestion
 -- Aggiunta impostazione per il calcolo delle provvigioni agenti
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES (NULL, 'Calcola provvigione agenti su', 'Ricavo', 'list[Ricavo,Utile]', '1', 'Generali', '5', '0');
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES (NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Calcola provvigione agenti su'), 'Calcola provvigione agenti su', NULL), (NULL, '2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Calcola provvigione agenti su'), 'Calcola provvigione agenti su', NULL);
+
+-- Aggiunta campi per la gestione dei cespiti
+ALTER TABLE `co_righe_documenti` ADD `codice_cespite` VARCHAR(255) NULL , ADD `codice_interno_cespite` VARCHAR(255) NULL , ADD `is_smaltito` BOOLEAN NOT NULL DEFAULT 0; 
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `is_user_setting`) VALUES (NULL, 'Formato codice cespite', '#/YYYY', 'string', '1', 'Cespiti', NULL, NULL, NULL, '0');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Formato codice cespite', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Asset code format', '');
+
+UPDATE `zz_modules` SET `name` = 'Cespiti', `options` = 'SELECT |select| FROM `co_righe_documenti` LEFT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE 1=1 AND `is_cespite` = 1 GROUP BY co_righe_documenti.id HAVING 2=2' WHERE `name` = 'Ammortamenti / Cespiti';
+UPDATE `zz_modules_lang` SET `title` = 'Cespiti' WHERE `id_record` = (select `id` from `zz_modules` where `name` = 'Cespiti');
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES ('Ammortamenti', 'ammortamenti', 'SELECT |select| FROM `co_righe_documenti` RIGHT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE 1=1 AND `is_cespite` = 1 HAVING 2=2', '', 'fa fa-circle-o', '2.10', '2.10', '1', (SELECT `id` FROM `zz_modules` AS `t` WHERE `name` = 'Cespiti'), '1', '1', '1', '1');
+
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Ammortamenti', 'Ammortamenti'),
+('2', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Ammortamenti', 'Ammortamenti');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Descrizione', '`co_righe_documenti`.`descrizione`', '2', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Importo', '`co_righe_documenti`.`subtotale`', '3', '1', '0', '1', '0', NULL, NULL, '1', '1', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Fattura', 'CONCAT("Fattura ", `co_documenti`.`numero_esterno`, " del ", YEAR(`co_documenti`.`data`))', '4', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Anno', '`co_righe_ammortamenti`.`anno`', '5', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'id', '`co_righe_documenti`.`id`', '1', '0', '0', '0', '0', NULL, NULL, '0', '0', '0', '1'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Stato', 'IF(co_righe_documenti.is_smaltito=1,\'Smaltito\',IF(co_righe_documenti.is_smaltito=1,\'Smaltito\',IF(anno>YEAR(NOW()),\'Ammortizzato\',\'In ammortamento\')))', '6', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1');
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Descrizione'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Description'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Importo'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Importo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Amount'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Fattura'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Invoice'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anno' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Anno'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Anno' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Year'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'id'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'id'),
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Stato'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti')), 'Status');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Cespiti'), 'Stato', 'IF(anno IS NULL,\'\',IF(MAX(anno)>=YEAR(NOW()),\'In ammortamento\',\'Ammortizzato\'))', '6', '1', '0', '0', '0', NULL, NULL, '1', '0', '0', '1');
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Cespiti')), 'Stato'),
+('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Cespiti')), 'Status');

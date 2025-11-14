@@ -38,7 +38,7 @@ echo '
         <thead>
             <tr>
                 <th width="5" class="text-center">';
-if (!$block_edit && sizeof($righe) > 0) {
+if (sizeof($righe) > 0) {
     echo '
                     <input id="check_all" type="checkbox"/>';
 }
@@ -90,10 +90,8 @@ foreach ($righe as $riga) {
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.$riga::class.'">
                 <td class="text-center">';
-    if (!$block_edit) {
-        echo '
+    echo '
                     <input class="check" type="checkbox"/>';
-    }
     echo '
                 </td>
 
@@ -434,9 +432,11 @@ if (!empty($ddt->provvigione)) {
 
 echo '
     </table>';
-if (!$block_edit && sizeof($righe) > 0) {
+if (sizeof($righe) > 0) {
     echo '
-    <div class="btn-group">
+    <div class="btn-group">';
+    if (!$block_edit) {
+        echo '
         <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
             <i class="fa fa-copy"></i>
         </button>
@@ -444,13 +444,13 @@ if (!$block_edit && sizeof($righe) > 0) {
         <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
             <i class="fa fa-trash"></i>
         </button>';
-    if ($dir == 'entrata') {
-        echo '
+        if ($dir == 'entrata') {
+            echo '
         <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
             '.tr('Confronta prezzi').'
         </button>';
-    }
-    echo '
+        }
+        echo '
         <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
             '.tr('Aggiorna prezzi').'
         </button>
@@ -461,24 +461,32 @@ if (!$block_edit && sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="stampa_barcode_righe" onclick="stampaBarcodeDDT(getSelectData());">
             <i class="fa fa-barcode"></i> '.tr('Stampa barcode').'
-        </button>
-
+        </button>';
+    }
+    echo '
         <button type="button" class="btn btn-xs btn-primary disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
             <i class="fa fa-clipboard"></i> '.tr('Copia').'
-        </button>
+        </button>';
 
+    // Il tasto incolla è disponibile solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
         <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
             <i class="fa fa-paste"></i> '.tr('Incolla').'
-        </button>
-    </div>';
-}
-if (!$block_edit && sizeof($righe) == 0) {
+        </button>';
+    }
     echo '
+    </div>';
+} else {
+    // Anche quando non ci sono righe, il tasto incolla è disponibile solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
     <div class="btn-group">
         <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
             <i class="fa fa-paste"></i> '.tr('Incolla').'
         </button>
     </div>';
+    }
 }
 echo '
 </div>
@@ -755,23 +763,37 @@ $(".check").on("change", function() {
     });
 
     if (checked) {
+        // Pulsanti sempre attivi anche se documento bloccato
+        $("#copia_righe").removeClass("disabled");
+
+        // Pulsanti attivi solo se documento non bloccato';
+        if (!$block_edit) {
+echo '
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
         $("#modifica_iva_righe").removeClass("disabled");
         $("#stampa_barcode_righe").removeClass("disabled");
-        $("#copia_righe").removeClass("disabled");
-        $("#elimina").addClass("disabled");
+        $("#elimina").addClass("disabled");';
+        }
+echo '
     } else {
+        // Pulsanti sempre disabilitati quando nessuna riga è selezionata
+        $("#copia_righe").addClass("disabled");
+
+        // Pulsanti disabilitati solo se documento non bloccato';
+        if (!$block_edit) {
+echo '
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
         $("#modifica_iva_righe").addClass("disabled");
         $("#stampa_barcode_righe").addClass("disabled");
-        $("#copia_righe").addClass("disabled");
-        $("#elimina").removeClass("disabled");
+        $("#elimina").removeClass("disabled");';
+        }
+echo '
     }
 });
 

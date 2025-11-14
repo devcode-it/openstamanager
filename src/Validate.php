@@ -116,15 +116,25 @@ class Validate
             // Indirizzo
             $address = $data->company_address ?: '';
             $info = explode(PHP_EOL, (string) $address);
-            $fields['indirizzo'] = $info[0];
 
-            $info = explode(' ', $info[1] ?: '');
+            // Se l'indirizzo è su più righe
+            if (count($info) > 1 && !empty($info[1])) {
+                $fields['indirizzo'] = $info[0];
+                $info = explode(' ', $info[1]);
 
-            $fields['cap'] = $info[0];
-            $fields['provincia'] = end($info);
+                $fields['cap'] = $info[0] ?? '';
+                $fields['provincia'] = end($info);
 
-            $citta = array_slice($info, 1, -1);
-            $fields['citta'] = implode(' ', $citta);
+                $citta = array_slice($info, 1, -1);
+                $fields['citta'] = implode(' ', $citta);
+            } else {
+                // Se l'indirizzo è su una sola riga, prova a parsarlo
+                $parsed = self::parseIndirizzo($address);
+                $fields['indirizzo'] = $parsed['indirizzo'];
+                $fields['cap'] = $parsed['cap'];
+                $fields['citta'] = $parsed['citta'];
+                $fields['provincia'] = $parsed['provincia'];
+            }
 
             $result['fields'] = $fields;
         } elseif (Services::verificaRisorsaAttiva('Verifica Partita IVA')) {
@@ -145,15 +155,24 @@ class Validate
                 $address = $data['result']['company_address'];
                 $info = explode(PHP_EOL, (string) $address);
 
-                $fields['indirizzo'] = $info[0];
+                // Se l'indirizzo è su più righe
+                if (count($info) > 1 && !empty($info[1])) {
+                    $fields['indirizzo'] = $info[0];
+                    $info = explode(' ', $info[1]);
 
-                $info = $info[1] ? explode(' ', $info[1]) : $info;
+                    $fields['cap'] = $info[0] ?? '';
+                    $fields['provincia'] = end($info);
 
-                $fields['cap'] = $info[0];
-                $fields['provincia'] = end($info);
-
-                $citta = array_slice($info, 1, -1);
-                $fields['citta'] = implode(' ', $citta);
+                    $citta = array_slice($info, 1, -1);
+                    $fields['citta'] = implode(' ', $citta);
+                } else {
+                    // Se l'indirizzo è su una sola riga, prova a parsarlo
+                    $parsed = self::parseIndirizzo($address);
+                    $fields['indirizzo'] = $parsed['indirizzo'];
+                    $fields['cap'] = $parsed['cap'];
+                    $fields['citta'] = $parsed['citta'];
+                    $fields['provincia'] = $parsed['provincia'];
+                }
 
                 $result['fields'] = $fields;
             }
@@ -257,5 +276,62 @@ class Validate
         $validator = new CodiceFiscale\Validator($codice_fiscale);
 
         return $validator->isFormallyValid();
+    }
+
+    /**
+     * Parsa un indirizzo su una sola riga cercando di estrarre CAP, città e provincia.
+     * Formato tipico: "VIA ROMA 123 20100 MILANO MI"
+     *
+     * @param string $address
+     * @return array
+     */
+    protected static function parseIndirizzo($address)
+    {
+        $result = [
+            'indirizzo' => '',
+            'cap' => '',
+            'citta' => '',
+            'provincia' => '',
+        ];
+
+        if (empty($address)) {
+            return $result;
+        }
+
+        // Cerca il CAP (5 cifre consecutive)
+        if (preg_match('/\b(\d{5})\b/', $address, $matches)) {
+            $cap = $matches[1];
+            $result['cap'] = $cap;
+
+            // Dividi l'indirizzo in base alla posizione del CAP
+            $parts = explode($cap, $address, 2);
+
+            // La parte prima del CAP è l'indirizzo
+            $result['indirizzo'] = trim($parts[0]);
+
+            // La parte dopo il CAP contiene città e provincia
+            if (isset($parts[1])) {
+                $resto = trim($parts[1]);
+
+                // Cerca la provincia (2 lettere maiuscole alla fine, eventualmente tra parentesi)
+                if (preg_match('/\b([A-Z]{2})\s*$/i', $resto, $prov_matches)) {
+                    $result['provincia'] = strtoupper($prov_matches[1]);
+                    // Rimuovi la provincia dal resto
+                    $resto = trim(preg_replace('/\b[A-Z]{2}\s*$/i', '', $resto));
+                } elseif (preg_match('/\(([A-Z]{2})\)\s*$/i', $resto, $prov_matches)) {
+                    $result['provincia'] = strtoupper($prov_matches[1]);
+                    // Rimuovi la provincia dal resto
+                    $resto = trim(preg_replace('/\([A-Z]{2}\)\s*$/i', '', $resto));
+                }
+
+                // Quello che rimane è la città
+                $result['citta'] = trim($resto);
+            }
+        } else {
+            // Se non trova il CAP, metti tutto nell'indirizzo
+            $result['indirizzo'] = $address;
+        }
+
+        return $result;
     }
 }

@@ -141,7 +141,7 @@ switch ($resource) {
         // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
         if (!$sedi_non_impostate) {
             $query .= '
-            LEFT JOIN (SELECT `idarticolo`, `idsede` FROM `mg_movimenti` GROUP BY `idarticolo`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id`
+            LEFT JOIN (SELECT `idarticolo`, `idsede` FROM `mg_movimenti` GROUP BY `idarticolo`, `idsede`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id`
             LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `movimenti`.`idsede`';
         }
 
@@ -207,10 +207,11 @@ switch ($resource) {
         // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
-            $qta_sede = $dbo->fetchOne('SELECT SUM(`mg_movimenti`.`qta`) AS qta FROM `mg_movimenti` LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `mg_movimenti`.`idsede` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
+            $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `mg_movimenti`.`idsede` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_sede).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),
+                'qta_sede' => $qta_sede,
                 'disabled' => $qta_sede <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }

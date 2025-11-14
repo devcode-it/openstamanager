@@ -88,8 +88,25 @@ echo '
             '.tr('È già presente la stampa definitiva per il periodo selezionato!').'
         </div>
     </div>
-</div>
+</div>';
 
+if ($nome_stampa == 'Libro giornale') {
+    echo '
+<div class="alert alert-danger hidden" id="sbilanci_libro_giornale">
+    <div class="row">
+        <div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+            <i class="fa fa-exclamation-triangle fa-2x"></i>
+        </div>
+        <div class="col-md-11">
+            <strong>'.tr('Attenzione: Sono presenti sbilanci nel libro giornale!').'</strong><br>
+            <span id="dettagli_sbilanci"></span><br>
+            <small>'.tr('Prima di stampare definitivamente il libro giornale è necessario risolvere tutti gli sbilanciamenti nei movimenti di prima nota.').'</small>
+        </div>
+    </div>
+</div>';
+}
+
+echo '
 <form action="" method="post" id="form" class="mb-3">
     <div class="card card-primary card-outline">
         <div class="card-header">
@@ -198,6 +215,15 @@ if (!empty($elementi)) {
             'id_record' => $elemento['id'],
         ]);
 
+        // Verifica se esiste un movimento di prima nota collegato
+        $movimento_button = '';
+        if (!empty($elemento['idmastrino']) && $nome_stampa === 'Liquidazione IVA') {
+            $movimento_button = '
+                            <a class="btn btn-sm btn-primary" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_record='.$elemento['idmastrino'].'" target="_blank">
+                                <i class="fa fa-book"></i> '.tr('Prima nota').'
+                            </a>';
+        }
+
         echo '
                     <tr>
                         <td>'.dateFormat($elemento['date_start']).' - '.dateFormat($elemento['date_end']).'</td>
@@ -207,6 +233,7 @@ if (!empty($elementi)) {
                             <a class="btn btn-sm btn-info" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
                                 <i class="fa fa-download"></i> '.tr('Scarica').'
                             </a>
+                            '.$movimento_button.'
                         </td>
                     </tr>';
     }
@@ -248,6 +275,11 @@ echo '
 		let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
 		let date_end = $("#date_end").data("DateTimePicker").date().format("YYYY-MM-DD");
 		controllaDate(date_start, date_end);
+
+		// Controllo sbilanci per il libro giornale
+		if ("'.$nome_stampa.'" === "Libro giornale") {
+			controllaSbilanciLibroGiornale(date_start, date_end);
+		}
 	}
 
 	// Controllo se le date inserite corrispondono ad uno dei 4 trimestri o ad un mese
@@ -306,7 +338,19 @@ echo '
 
 			if (stampa_definitiva==0) {
 				$("#is_definitiva").addClass("hidden");
-				input("definitiva").enable();
+
+				// Per il libro giornale, controlla anche gli sbilanci prima di abilitare la stampa definitiva
+				if ("'.$nome_stampa.'" === "Libro giornale") {
+					// Verifica se l\'avviso sbilanci è nascosto (significa che non ci sono sbilanci)
+					if ($("#sbilanci_libro_giornale").hasClass("hidden")) {
+						input("definitiva").enable();
+					} else {
+						input("definitiva").disable();
+						$("#definitiva").prop("checked", false);
+					}
+				} else {
+					input("definitiva").enable();
+				}
 			} else {
 				$("#is_definitiva").removeClass("hidden");
 				input("definitiva").disable();
@@ -316,6 +360,46 @@ echo '
 	}
 
 	$(document).ready(init);
+
+	// Controllo sbilanci nel libro giornale
+	function controllaSbilanciLibroGiornale(date_start, date_end) {
+		$.ajax({
+			url: globals.rootdir + "/ajax_complete.php",
+			type: "GET",
+			data: {
+				module: "stampe_contabili",
+				op: "controlla_sbilanci_libro_giornale",
+				date_start: date_start,
+				date_end: date_end
+			},
+			success: function(response) {
+				try {
+					let risultato = JSON.parse(response);
+
+					if (risultato.ha_sbilanci) {
+						let dettagli = "Il libro giornale presenta uno sbilancio totale di " + parseFloat(risultato.totale_sbilancio).toFixed(2) + " " + globals.currency;
+						$("#dettagli_sbilanci").html(dettagli);
+						$("#sbilanci_libro_giornale").removeClass("hidden");
+
+						// Disabilita la stampa definitiva se ci sono sbilanci
+						input("definitiva").disable();
+						$("#definitiva").prop("checked", false);
+					} else {
+						$("#sbilanci_libro_giornale").addClass("hidden");
+
+						// Se non ci sono sbilanci, riabilita la stampa definitiva solo se non è già presente una stampa definitiva
+						// Richiama il controllo della stampa per verificare se può essere abilitata
+						controllaStampa(date_start, date_end);
+					}
+				} catch (e) {
+					console.error("Errore nel parsing della risposta per controllo sbilanci:", e);
+				}
+			},
+			error: function() {
+				console.error("Errore nella richiesta di controllo sbilanci");
+			}
+		});
+	}
 
 	function avvia_stampa (){
 		if ($("#definitiva").is(":checked")) {

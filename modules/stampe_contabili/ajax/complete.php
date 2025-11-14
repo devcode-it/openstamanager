@@ -52,4 +52,17 @@ switch ($resource) {
         echo json_encode($stampa_definitiva ?: 0);
 
         break;
+
+    case 'controlla_sbilanci_libro_giornale':
+        $date_start = get('date_start');
+        $date_end = get('date_end');
+
+        // Includo il file modutil per utilizzare la funzione verificaSbilanciLibroGiornale
+        include_once __DIR__.'/../modutil.php';
+
+        $risultato = verificaSbilanciLibroGiornale($date_start, $date_end);
+
+        echo json_encode($risultato);
+
+        break;
 }

@@ -151,3 +151,12 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ('1', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Cespiti')), 'Stato'),
 ('2', (SELECT `id` FROM `zz_views` WHERE `name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Cespiti')), 'Status');
+
+-- Aggiunta conto per erario Iva
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Conto per erario Iva', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione` = 'Erario c/to iva'), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei conti', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Conto per erario Iva', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Account to use for VAT collection', '');
+
+-- Aggiunta campo idmastrino alla tabella co_stampecontabili
+ALTER TABLE `co_stampecontabili` ADD `idmastrino` INT NULL;

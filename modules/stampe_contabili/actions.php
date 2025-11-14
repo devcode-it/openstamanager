@@ -69,6 +69,16 @@ switch (filter('op')) {
             $insert_data['dir'] = $dir;
         }
 
+        // Creazione movimento in prima nota per liquidazione IVA
+        $idmastrino = null;
+        $print_info = $dbo->fetchOne('SELECT name FROM zz_prints WHERE id = '.prepare($id_print));
+        if ($print_info && $print_info['name'] === 'Liquidazione IVA') {
+            $idmastrino = creaMovimentoLiquidazioneIva($date_start, $date_end);
+            if ($idmastrino) {
+                $insert_data['idmastrino'] = $idmastrino;
+            }
+        }
+
         $result = $dbo->table('co_stampecontabili')->insertGetId($insert_data);
 
         $print = Prints::render($id_print, null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);

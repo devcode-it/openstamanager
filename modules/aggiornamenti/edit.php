@@ -42,68 +42,8 @@ use Models\Module;
 $module = Module::find($id_module);
 
 // Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti">
+echo '<div class="module-aggiornamenti">';
 
-<style>
-.query-preview,
-.query-full {
-    font-size: 11px;
-    line-height: 1.3;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 3px;
-    padding: 8px;
-    display: block;
-    white-space: pre-wrap;
-    word-break: break-all;
-}
-
-.btn-xs {
-    padding: 4px 8px;
-    font-size: 11px;
-    line-height: 1.3;
-    border-radius: 3px;
-    font-weight: 600;
-    border: 1px solid #007bff;
-    color: #007bff;
-    background-color: white;
-    transition: all 0.2s ease;
-}
-
-.btn-xs i {
-    font-size: 10px;
-    margin-right: 3px;
-}
-
-.btn-xs:hover {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,123,255,0.2);
-}
-
-/* Padding per le celle della tabella */
-.table td {
-    padding: 12px 8px !important;
-    vertical-align: top;
-}
-
-.table th {
-    padding: 10px 8px !important;
-}
-</style>';
-
-if (!function_exists('normalizeForDiff')) {
-    function normalizeForDiff($text)
-    {
-        $text = preg_replace('/<br\s*\/?>/i', '', (string) $text);
-        $text = preg_replace('/\s+/', ' ', (string) $text);
-        $text = str_replace(['"', "'"], "'", $text);
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return trim($text);
-    }
-}
 
 function createCollapsibleQuery($query_content, $row_id, $column_type) {
     if (empty($query_content) || $query_content === '<span class="text-muted">-</span>') {
@@ -153,8 +93,8 @@ function highlightDifferences($current, $expected) {
         ];
     }
 
-    $current_normalized = normalizeForDiff($current);
-    $expected_normalized = normalizeForDiff($expected);
+    $current_normalized = normalizeModuleOptions($current);
+    $expected_normalized = normalizeModuleOptions($expected);
 
     $current_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $current_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     $expected_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $expected_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -169,22 +109,39 @@ function highlightDifferences($current, $expected) {
     $current_highlighted = '';
     $expected_highlighted = '';
 
-    $i = 0; $j = 0;
-    while ($i < count($current_words) || $j < count($expected_words)) {
-        if ($i < count($current_words) && $j < count($expected_words) && $current_words[$i] === $expected_words[$j]) {
+    $current_count = count($current_words);
+    $expected_count = count($expected_words);
+
+    $lcs = array_fill(0, $current_count + 1, array_fill(0, $expected_count + 1, 0));
+
+    for ($i = $current_count - 1; $i >= 0; --$i) {
+        for ($j = $expected_count - 1; $j >= 0; --$j) {
+            if ($current_words[$i] === $expected_words[$j]) {
+                $lcs[$i][$j] = $lcs[$i + 1][$j + 1] + 1;
+            } else {
+                $lcs[$i][$j] = max($lcs[$i + 1][$j], $lcs[$i][$j + 1]);
+            }
+        }
+    }
+
+    $i = 0;
+    $j = 0;
+    while ($i < $current_count || $j < $expected_count) {
+        if ($i < $current_count && $j < $expected_count && $current_words[$i] === $expected_words[$j]) {
             // Parti uguali: mostra senza evidenziazione
             $word = htmlspecialchars($current_words[$i]);
             $current_highlighted .= $word;
             $expected_highlighted .= $word;
-            $i++; $j++;
-        } elseif ($i < count($current_words) && ($j >= count($expected_words) || $current_words[$i] !== $expected_words[$j])) {
-            // Parti aggiunte nel current: evidenzia in verde
-            $current_highlighted .= '<span class="diff-added" style="background-color: #d4edda; color: #155724;">' . htmlspecialchars($current_words[$i]) . '</span>';
-            $i++;
-        } elseif ($j < count($expected_words)) {
-            // Parti rimosse (presenti nell'expected ma non nel current): evidenzia in rosso
-            $expected_highlighted .= '<span class="diff-removed" style="background-color: #f8d7da; color: #721c24;">' . htmlspecialchars($expected_words[$j]) . '</span>';
-            $j++;
+            ++$i;
+            ++$j;
+        } elseif ($i < $current_count && ($j >= $expected_count || $lcs[$i + 1][$j] >= $lcs[$i][$j + 1])) {
+            $current_highlighted .= '<span class="diff-removed">'.htmlspecialchars($current_words[$i]).'</span>';
+            ++$i;
+        } elseif ($j < $expected_count) {
+            $expected_highlighted .= '<span class="diff-added">'.htmlspecialchars($expected_words[$j]).'</span>';
+            ++$j;
+        } else {
+            break;
         }
     }
 

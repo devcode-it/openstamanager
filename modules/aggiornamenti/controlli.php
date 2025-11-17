@@ -264,7 +264,7 @@ function initcard(controllo, success, records) {
     }
 
     card += `
-            <button type="button" class="btn btn-tool" data-widget="collapse">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-` + icon + `"></i>
             </button>
         </div>

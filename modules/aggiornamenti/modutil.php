@@ -309,10 +309,20 @@ if (!function_exists('customViewsNotStandard')) {
         if (is_array($views_data)) {
             // Il file views.json è organizzato per nome modulo
             foreach ($views_data as $module_name => $module_views) {
-                if (is_array($module_views)) {
-                    foreach ($module_views as $view_name => $view_query) {
-                        $standard_views[$module_name][$view_name] = $view_query;
+                $module_key = trim((string) $module_name);
+
+                if ($module_key === '' || !is_array($module_views)) {
+                    continue;
+                }
+
+                foreach ($module_views as $view_name => $view_query) {
+                    $view_key = trim((string) $view_name);
+
+                    if ($view_key === '') {
+                        continue;
                     }
+
+                    $standard_views[$module_key][$view_key] = $view_query;
                 }
             }
         }
@@ -339,10 +349,10 @@ if (!function_exists('customViewsNotStandard')) {
             $reason = '';
             $expected_query = '';
 
-            $module_name = $view['module_name'];
-            $view_name = $view['name'];
+            $module_name = trim((string) $view['module_name']);
+            $view_name = trim((string) $view['name']);
 
-            if (empty($view_name) || empty(trim((string) $view_name))) {
+            if ($view_name === '') {
                 $custom_views[] = [
                     'id' => $view['id'],
                     'name' => '', // Nome vuoto
@@ -408,9 +418,11 @@ if (!function_exists('customViewsNotStandard')) {
 
         $db_views_by_module = [];
         foreach ($all_views as $view) {
-            $module_name = $view['module_name'];
-            if (!empty($module_name)) {
-                $db_views_by_module[$module_name][$view['name']] = true;
+            $module_name = trim((string) $view['module_name']);
+            $view_name = trim((string) $view['name']);
+
+            if ($module_name !== '' && $view_name !== '') {
+                $db_views_by_module[$module_name][$view_name] = true;
             }
         }
 

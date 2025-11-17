@@ -530,14 +530,14 @@ if (sizeof($righe) > 0) {
         </button>';
     }
     echo '
-        <button type="button" class="btn btn-xs btn-primary disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
+        <button type="button" class="btn btn-xs btn-default disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
             <i class="fa fa-clipboard"></i> '.tr('Copia').'
         </button>';
 
     // Il tasto incolla è disponibile solo se il documento non è bloccato
     if (!$block_edit) {
         echo '
-        <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
+        <button type="button" class="btn btn-xs btn-default" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
             <i class="fa fa-paste"></i> '.tr('Incolla').'
         </button>';
     }
@@ -548,7 +548,7 @@ if (sizeof($righe) > 0) {
     if (!$block_edit) {
         echo '
     <div class="btn-group">
-        <button type="button" class="btn btn-xs btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
+        <button type="button" class="btn btn-xs btn-default" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
             <i class="fa fa-paste"></i> '.tr('Incolla').'
         </button>
     </div>';

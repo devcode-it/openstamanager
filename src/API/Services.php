@@ -56,7 +56,7 @@ class Services
             $cache = Cache::where('name', 'Informazioni su Services')->first();
 
             // Aggiornamento dei contenuti della cache
-            if (!$cache->isValid() || $force) {
+            if (!$cache->isValid() || $force || empty($cache->content)) {
                 // Calcolo spazio occupato
                 $spazio_occupato = self::calcolaSpazioOccupato();
 

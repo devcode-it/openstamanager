@@ -20,6 +20,7 @@
 
 use API\Services;
 use Carbon\Carbon;
+use Models\Cache;
 use Models\User;
 use Util\FileSystem;
 
@@ -150,8 +151,15 @@ if (Services::isEnabled()) {
 
             $spazio_utilizzato = FileSystem::folderSize(base_dir(), ['htaccess']) / (1024 ** 3);
             $utenti_attivi = User::where('enabled', 1)->count();
-            $spazio_warning = $servizio['spazio_limite'] && $spazio_utilizzato >= $servizio['spazio_limite'];
-            $utenti_warning = $servizio['utenti_limite'] && $utenti_attivi >= $servizio['utenti_limite'];
+
+            // Calcolo percentuale spazio utilizzato e determinazione livello di allerta
+            $spazio_percentuale = ($servizio['spazio_limite'] && $servizio['spazio_limite'] > 0) ? ($spazio_utilizzato / $servizio['spazio_limite']) * 100 : 0;
+            $spazio_warning = ($servizio['spazio_limite'] && $servizio['spazio_limite'] > 0) && $spazio_percentuale >= 80;
+            $spazio_danger = ($servizio['spazio_limite'] && $servizio['spazio_limite'] > 0) && $spazio_percentuale >= 100;
+
+            // Determinazione livello di allerta per utenti
+            $utenti_warning = ($servizio['utenti_limite'] && $servizio['utenti_limite'] > 0) && $utenti_attivi >= ($servizio['utenti_limite'] - 1);
+            $utenti_danger = ($servizio['utenti_limite'] && $servizio['utenti_limite'] > 0) && $utenti_attivi >= $servizio['utenti_limite'];
 
             // Determinazione dello stato
             $status_class = $is_expired ? 'table-danger' : ($is_expiring ? 'table-warning' : '');
@@ -159,10 +167,29 @@ if (Services::isEnabled()) {
                           ($is_expiring ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Attenzione').'"></i>' :
                           '<i class="fa fa-check-circle text-success" title="'.tr('Attivo').'"></i>');
 
-            $spazio_class = ($spazio_warning ? 'danger' : 'secondary');
-            $spazio_icon = ($spazio_warning ? '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Attenzione').'"></i>' : '');
-            $utenti_class = ($utenti_warning ? 'danger' : 'secondary');
-            $utenti_icon = ($utenti_warning ? '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Attenzione').'"></i>' : '');
+            // Determinazione classe e icona per lo spazio
+            if ($spazio_danger) {
+                $spazio_class = 'danger';
+                $spazio_icon = '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Spazio esaurito').'"></i>';
+            } elseif ($spazio_warning) {
+                $spazio_class = 'warning';
+                $spazio_icon = '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Spazio in esaurimento').'"></i>';
+            } else {
+                $spazio_class = 'secondary';
+                $spazio_icon = '';
+            }
+
+            // Determinazione classe e icona per gli utenti
+            if ($utenti_danger) {
+                $utenti_class = 'danger';
+                $utenti_icon = '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Limite utenti raggiunto').'"></i>';
+            } elseif ($utenti_warning) {
+                $utenti_class = 'warning';
+                $utenti_icon = '<i class="fa fa-exclamation-triangle" style="font-size: 0.65rem; margin-left: 4px;" title="'.tr('Limite utenti quasi raggiunto').'"></i>';
+            } else {
+                $utenti_class = 'secondary';
+                $utenti_icon = '';
+            }
             echo '
                         <tr class="'.$status_class.'">
                             <td class="text-center">'.$status_icon.'</td>
@@ -170,7 +197,7 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-primary">'.$servizio['sottocategoria'].'</span><br><small class="text-muted">
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                '.($servizio['spazio_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
+                                '.($servizio['spazio_limite'] && $servizio['utenti_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
                                 '.($servizio['utenti_limite'] ? '<div><span class="badge badge-'.$utenti_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-users" style="font-size: 0.65rem; margin-right: 4px;"></i>'.$utenti_attivi.' / '.$servizio['utenti_limite'].' '.tr('utenti').$utenti_icon.'</span></div>' : '').'
                             </td>
                         </tr>';
@@ -204,8 +231,14 @@ if (Services::isEnabled()) {
             $nome = $elemento['name'];
 
             // Gestione crediti: mostra solo se presenti, altrimenti "-"
-            $crediti_display = $has_credits ? ($elemento['credits'] ?? '-') : 'Infiniti';
+            $crediti_display = $has_credits ? ($elemento['credits'] ?? '-') : '∞';
             $credits_warning_icon = ($credits_warning || $credits_expired) ? '<i class="fa fa-exclamation-triangle" style="font-size: 0.7rem; margin-left: 3px;"></i>' : '';
+
+            $max_size = null;
+            if ($elemento['name'] == 'Fatturazione Elettronica') {
+                $info = Cache::where('name', 'Informazioni su spazio FE')->first();
+                $max_size = $info->content['maxSize'];
+            }
 
             echo '
                         <tr class="'.$status_class.'">
@@ -214,7 +247,11 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-info">'.tr('Risorsa').'</span></td>
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                <span class="badge badge-'.$credits_class.' d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$crediti_display.' '.tr('Crediti').' '.$credits_warning_icon.'</span>
+                                <span class="badge badge-'.$credits_class.' d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$crediti_display.' '.tr('Crediti').' '.$credits_warning_icon.'</span>';
+                                if ($max_size) {
+                                    echo '<br><span class="badge badge-secondary d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$max_size.' '.tr('MB').'</span>';
+                                }
+                            echo '
                             </td>
                         </tr>';
         }
@@ -410,34 +447,32 @@ function aggiornaStatisticheFE(){
             $("#spazio-fe-totale").html(response.spazio_totale);
 
             if (response.avviso_spazio) {
-
                 $("#spazio-fe").removeClass("hidden");
+            }
 
-                response.spazio_occupato = parseFloat(response.spazio_occupato);
-                response.spazio_totale = parseFloat(response.spazio_totale);
+            response.spazio_occupato = parseFloat(response.spazio_occupato);
+            response.spazio_totale = parseFloat(response.spazio_totale);
 
-                if (response.spazio_totale){
-                    $("#fe_spazio").html($("#fe_spazio").html() + " / " + response.spazio_totale);
+            if (response.spazio_totale){
+                $("#fe_spazio").html($("#fe_spazio").html() + " / " + response.spazio_totale + " MB");
 
-                    if (response.spazio_occupato>response.spazio_totale && response.avviso_spazio){
-                        $("#fe_spazio").html("<span style=\"font-weight:bold;\" ><i class=\"fa fa-warning text-warning\" ></i> " + $("#fe_spazio").html() + "</span>");
-                    }
-                }
-
-                if (response.spazio_occupato<response.spazio_totale){
-                    $("#spazio-fe-icon").addClass("fa fa-clock-o");
-                    $("#spazio-fe").addClass("alert-warning");
-                    $("#spazio-fe-text").html("'.tr('in esaurimento').'");
-                }
-                else if (response.spazio_occupato>=response.spazio_totale){
-                    $("#spazio-fe-icon").addClass("fa fa-warning");
-                    $("#spazio-fe").addClass("alert-danger");
-                    $("#spazio-fe-text").html("'.tr('terminato').'");
+                if (response.spazio_occupato>response.spazio_totale && response.avviso_spazio){
+                    $("#fe_spazio").html("<span style=\"font-weight:bold;\" ><i class=\"fa fa-warning text-warning\" ></i> " + $("#fe_spazio").html() + "</span>");
                 }
             }
 
-            if (response.history.length) {
+            if (response.spazio_occupato<response.spazio_totale){
+                $("#spazio-fe-icon").addClass("fa fa-clock-o");
+                $("#spazio-fe").addClass("alert-warning");
+                $("#spazio-fe-text").html("'.tr('in esaurimento').'");
+            }
+            else if (response.spazio_occupato>=response.spazio_totale){
+                $("#spazio-fe-icon").addClass("fa fa-warning");
+                $("#spazio-fe").addClass("alert-danger");
+                $("#spazio-fe-text").html("'.tr('terminato').'");
+            }
 
+            if (response.history.length) {
                 for (let i = 0; i < response.history.length; i++) {
                     const data = response.history[i];
                     if (data["year"] == '.date('Y').'){

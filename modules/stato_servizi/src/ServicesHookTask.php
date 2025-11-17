@@ -35,13 +35,13 @@ class ServicesHookTask extends Manager
         $result = [
             'response' => 1,
             'message' => tr('Controllo servizi attivi completato!'),
-        ];      
-        
+        ];
+
+        $cache = Cache::where('name', 'Informazioni su Services')->first();
+
         try {
             if (Services::isEnabled()) {
-                $servizi = Services::getServiziAttivi();
-                $cache = Cache::where('name', 'Informazioni su Services')->first();
-                $cache->set($servizi);
+                $result = Services::getServiziAttivi();
             }
         } catch (\Exception $e) {
             $result = [
@@ -50,9 +50,9 @@ class ServicesHookTask extends Manager
                     '_error_' => $e->getMessage(),
                 ]),
             ];
-            $cache->set($result);
-        }     
+        }
 
+        $cache->set($result);
         return $result;
     }
 }

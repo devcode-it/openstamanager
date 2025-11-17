@@ -60,12 +60,12 @@ if (!empty($rs)) {
         $data_conclusione = !empty($r['data_conclusione']) ? Translator::dateToLocale($r['data_conclusione']) : '';
 
         // Se scaduto, segna la riga in rosso
-        $class = (strtotime((string) $r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';
+        $class = (strtotime((string) $r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'row-danger' : '';
 
         if (isset($r['ore_rimanenti'])) {
             // Se ore finite, segna la riga in rosso
-            if ($class != 'danger') {
-                $class = ($r['ore_rimanenti'] < 0) ? 'warning' : '';
+            if ($class != 'row-danger') {
+                $class = ($r['ore_rimanenti'] < 0) ? 'row-warning' : '';
             }
 
             $ore_rimanenti = ($r['ore_rimanenti'] >= 0) ? tr('ore rimanenti: _NUM_') : tr('ore in aggiunta: _NUM_');

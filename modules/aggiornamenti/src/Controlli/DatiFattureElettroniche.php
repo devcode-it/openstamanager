@@ -21,6 +21,7 @@
 namespace Modules\Aggiornamenti\Controlli;
 
 use Modules\Fatture\Fattura;
+use Plugins\ExportFE\Validator;
 use Util\XML;
 
 class DatiFattureElettroniche extends Controllo
@@ -45,6 +46,9 @@ class DatiFattureElettroniche extends Controllo
         return 'info';
     }
 
+    // Array per raccogliere le fatture senza XML
+    protected $fatture_senza_xml = [];
+
     public function check()
     {
         $fatture_vendita = Fattura::vendita()
@@ -56,6 +60,11 @@ class DatiFattureElettroniche extends Controllo
 
         foreach ($fatture_vendita as $fattura_vendita) {
             $this->checkFattura($fattura_vendita);
+        }
+
+        // Aggiungi una riga riepilogativa per le fatture senza XML
+        if (!empty($this->fatture_senza_xml)) {
+            $this->addRiepilogoFattureSenzaXML();
         }
     }
 
@@ -82,13 +91,14 @@ class DatiFattureElettroniche extends Controllo
             if (!empty($all_errors)) {
                 $this->processErrors($fattura_vendita, $all_errors);
             }
-
         } catch (\Exception $e) {
-            $this->addResult([
+            // Raccogli le fatture senza XML invece di aggiungerle ai risultati
+            $this->fatture_senza_xml[] = [
                 'id' => $fattura_vendita->id,
-                'nome' => $fattura_vendita->getReference(),
-                'descrizione' => tr("Impossibile verificare l'XML di questa fattura") . ': ' . $e->getMessage(),
-            ]);
+                'numero' => $fattura_vendita->getReference(),
+                'data' => $fattura_vendita->data,
+                'cliente' => $fattura_vendita->anagrafica->ragione_sociale ?? '',
+            ];
         }
     }
 
@@ -98,7 +108,49 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Controlla la struttura XML e i campi obbligatori
+     * Aggiunge una riga riepilogativa per tutte le fatture senza XML.
+     */
+    protected function addRiepilogoFattureSenzaXML()
+    {
+        $count = count($this->fatture_senza_xml);
+
+        // Ordina per data
+        usort($this->fatture_senza_xml, function ($a, $b) {
+            return strcmp($a['data'], $b['data']);
+        });
+
+        // Crea la lista delle fatture
+        $lista_fatture = [];
+        foreach ($this->fatture_senza_xml as $fattura) {
+            $lista_fatture[] = $fattura['numero'];
+        }
+
+        // Crea la descrizione HTML
+        $descrizione = '<div style="padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">';
+        $descrizione .= '<div style="margin-bottom: 8px;">';
+        $descrizione .= '<i class="fa fa-exclamation-triangle" style="color: #ffc107; margin-right: 8px;"></i>';
+        $descrizione .= '<strong style="color: #856404;">'.tr('Fatture senza file XML').'</strong>';
+        $descrizione .= ' <span style="background: #ffc107; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: 6px;">'.$count.'</span>';
+        $descrizione .= '</div>';
+        $descrizione .= '<div style="font-size: 12px; color: #856404; margin-top: 8px;">';
+        $descrizione .= tr('Le seguenti fatture non hanno un file XML associato').': ';
+        $descrizione .= '<strong>'.implode(', ', $lista_fatture).'</strong>';
+        $descrizione .= '</div>';
+        $descrizione .= '<div style="font-size: 11px; color: #6c757d; margin-top: 8px; font-style: italic;">';
+        $descrizione .= '<i class="fa fa-lightbulb-o" style="margin-right: 4px;"></i>';
+        $descrizione .= tr('Verificare se le fatture devono essere inviate al SdI o se sono state escluse intenzionalmente');
+        $descrizione .= '</div>';
+        $descrizione .= '</div>';
+
+        $this->addResult([
+            'id' => 'riepilogo_senza_xml',
+            'nome' => tr('Riepilogo fatture senza XML').' ('.$count.')',
+            'descrizione' => $descrizione,
+        ]);
+    }
+
+    /**
+     * Controlla la struttura XML e i campi obbligatori.
      */
     protected function checkXMLStructure($xml)
     {
@@ -111,7 +163,7 @@ class DatiFattureElettroniche extends Controllo
                 'category' => self::CATEGORY_XML_STRUCTURE,
                 'field' => 'FatturaElettronicaHeader',
                 'message' => tr('Manca la sezione FatturaElettronicaHeader nell\'XML'),
-                'suggestion' => tr('Rigenerare il file XML della fattura')
+                'suggestion' => tr('Rigenerare il file XML della fattura'),
             ];
         }
 
@@ -121,7 +173,7 @@ class DatiFattureElettroniche extends Controllo
                 'category' => self::CATEGORY_XML_STRUCTURE,
                 'field' => 'FatturaElettronicaBody',
                 'message' => tr('Manca la sezione FatturaElettronicaBody nell\'XML'),
-                'suggestion' => tr('Rigenerare il file XML della fattura')
+                'suggestion' => tr('Rigenerare il file XML della fattura'),
             ];
         }
 
@@ -135,7 +187,7 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_XML_STRUCTURE,
                     'field' => 'ProgressivoInvio',
                     'message' => tr('Manca il ProgressivoInvio nei DatiTrasmissione'),
-                    'suggestion' => tr('Verificare la configurazione della fatturazione elettronica')
+                    'suggestion' => tr('Verificare la configurazione della fatturazione elettronica'),
                 ];
             }
 
@@ -145,7 +197,7 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_XML_STRUCTURE,
                     'field' => 'FormatoTrasmissione',
                     'message' => tr('Manca il FormatoTrasmissione nei DatiTrasmissione'),
-                    'suggestion' => tr('Verificare la configurazione della fatturazione elettronica')
+                    'suggestion' => tr('Verificare la configurazione della fatturazione elettronica'),
                 ];
             }
         }
@@ -160,7 +212,7 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_XML_STRUCTURE,
                     'field' => 'TipoDocumento',
                     'message' => tr('Manca il TipoDocumento nei DatiGeneraliDocumento'),
-                    'suggestion' => tr('Verificare il tipo documento della fattura')
+                    'suggestion' => tr('Verificare il tipo documento della fattura'),
                 ];
             }
 
@@ -170,7 +222,7 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_XML_STRUCTURE,
                     'field' => 'Data',
                     'message' => tr('Manca la Data nei DatiGeneraliDocumento'),
-                    'suggestion' => tr('Verificare la data della fattura')
+                    'suggestion' => tr('Verificare la data della fattura'),
                 ];
             }
 
@@ -180,7 +232,7 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_XML_STRUCTURE,
                     'field' => 'Numero',
                     'message' => tr('Manca il Numero nei DatiGeneraliDocumento'),
-                    'suggestion' => tr('Verificare il numero della fattura')
+                    'suggestion' => tr('Verificare il numero della fattura'),
                 ];
             }
         }
@@ -189,7 +241,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Controlla i dati anagrafici tra XML e gestionale
+     * Controlla i dati anagrafici tra XML e gestionale.
      */
     protected function checkAnagraficaData(Fattura $fattura_vendita, $xml)
     {
@@ -218,7 +270,7 @@ class DatiFattureElettroniche extends Controllo
                     'message' => tr('P.IVA non corrispondente'),
                     'xml_value' => $piva_xml,
                     'gestionale_value' => $piva_gestionale,
-                    'suggestion' => tr('Verificare e aggiornare la P.IVA dell\'anagrafica cliente')
+                    'suggestion' => tr('Verificare e aggiornare la P.IVA dell\'anagrafica cliente'),
                 ];
             }
 
@@ -234,7 +286,7 @@ class DatiFattureElettroniche extends Controllo
                     'message' => tr('Codice Fiscale non corrispondente'),
                     'xml_value' => $cf_xml,
                     'gestionale_value' => $cf_gestionale,
-                    'suggestion' => tr('Verificare e aggiornare il Codice Fiscale dell\'anagrafica cliente')
+                    'suggestion' => tr('Verificare e aggiornare il Codice Fiscale dell\'anagrafica cliente'),
                 ];
             }
 
@@ -243,25 +295,30 @@ class DatiFattureElettroniche extends Controllo
             if (isset($dati_anagrafici['Anagrafica']['Denominazione'])) {
                 $denominazione_xml = $dati_anagrafici['Anagrafica']['Denominazione'];
             } elseif (isset($dati_anagrafici['Anagrafica']['Nome']) && isset($dati_anagrafici['Anagrafica']['Cognome'])) {
-                $denominazione_xml = trim($dati_anagrafici['Anagrafica']['Nome'] . ' ' . $dati_anagrafici['Anagrafica']['Cognome']);
+                $denominazione_xml = trim($dati_anagrafici['Anagrafica']['Nome'].' '.$dati_anagrafici['Anagrafica']['Cognome']);
             }
 
             $denominazione_gestionale = $anagrafica->ragione_sociale ?? '';
 
             // Controllo più flessibile per la denominazione (ignora differenze minori)
             if (!empty($denominazione_xml) && !empty($denominazione_gestionale)) {
-                $denominazione_xml_clean = strtolower(trim(preg_replace('/\s+/', ' ', $denominazione_xml)));
-                $denominazione_gestionale_clean = strtolower(trim(preg_replace('/\s+/', ' ', $denominazione_gestionale)));
+                $denominazione_xml_clean = $this->normalizeTextForComparison($denominazione_xml, false);
+                $denominazione_gestionale_clean = $this->normalizeTextForComparison($denominazione_gestionale, true);
 
                 if ($denominazione_xml_clean !== $denominazione_gestionale_clean) {
+                    // Prepara i valori per la visualizzazione: applica sanitizeXML2 a entrambi
+                    $denominazione_xml_display = Validator::sanitizeXML2((string) $denominazione_xml);
+                    $denominazione_gestionale_display = html_entity_decode((string) $denominazione_gestionale, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $denominazione_gestionale_display = Validator::sanitizeXML2($denominazione_gestionale_display);
+
                     $errors[] = [
                         'type' => self::ERROR_WARNING,
                         'category' => self::CATEGORY_ANAGRAFICA,
                         'field' => 'denominazione',
                         'message' => tr('Denominazione/Ragione Sociale differente'),
-                        'xml_value' => $denominazione_xml,
-                        'gestionale_value' => $denominazione_gestionale,
-                        'suggestion' => tr('Verificare la correttezza della denominazione nell\'anagrafica cliente')
+                        'xml_value' => $denominazione_xml_display,
+                        'gestionale_value' => $denominazione_gestionale_display,
+                        'suggestion' => tr('Verificare la correttezza della denominazione nell\'anagrafica cliente'),
                     ];
                 }
             }
@@ -278,17 +335,26 @@ class DatiFattureElettroniche extends Controllo
                 $comune_gestionale = $anagrafica->sedeLegale->citta ?? '';
                 $provincia_gestionale = $anagrafica->sedeLegale->provincia ?? '';
 
-                if (!empty($indirizzo_xml) && !empty($indirizzo_gestionale) &&
-                    strtolower(trim($indirizzo_xml)) !== strtolower(trim($indirizzo_gestionale))) {
-                    $errors[] = [
-                        'type' => self::ERROR_INFO,
-                        'category' => self::CATEGORY_ANAGRAFICA,
-                        'field' => 'indirizzo',
-                        'message' => tr('Indirizzo differente'),
-                        'xml_value' => $indirizzo_xml,
-                        'gestionale_value' => $indirizzo_gestionale,
-                        'suggestion' => tr('Verificare l\'indirizzo nell\'anagrafica cliente')
-                    ];
+                if (!empty($indirizzo_xml) && !empty($indirizzo_gestionale)) {
+                    $indirizzo_xml_clean = $this->normalizeTextForComparison($indirizzo_xml, false);
+                    $indirizzo_gestionale_clean = $this->normalizeTextForComparison($indirizzo_gestionale, true);
+
+                    if ($indirizzo_xml_clean !== $indirizzo_gestionale_clean) {
+                        // Prepara i valori per la visualizzazione: applica sanitizeXML2 a entrambi
+                        $indirizzo_xml_display = Validator::sanitizeXML2((string) $indirizzo_xml);
+                        $indirizzo_gestionale_display = html_entity_decode((string) $indirizzo_gestionale, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        $indirizzo_gestionale_display = Validator::sanitizeXML2($indirizzo_gestionale_display);
+
+                        $errors[] = [
+                            'type' => self::ERROR_INFO,
+                            'category' => self::CATEGORY_ANAGRAFICA,
+                            'field' => 'indirizzo',
+                            'message' => tr('Indirizzo differente'),
+                            'xml_value' => $indirizzo_xml_display,
+                            'gestionale_value' => $indirizzo_gestionale_display,
+                            'suggestion' => tr('Verificare l\'indirizzo nell\'anagrafica cliente'),
+                        ];
+                    }
                 }
 
                 if (!empty($cap_xml) && !empty($cap_gestionale) && $cap_xml !== $cap_gestionale) {
@@ -299,25 +365,33 @@ class DatiFattureElettroniche extends Controllo
                         'message' => tr('CAP differente'),
                         'xml_value' => $cap_xml,
                         'gestionale_value' => $cap_gestionale,
-                        'suggestion' => tr('Verificare il CAP nell\'anagrafica cliente')
+                        'suggestion' => tr('Verificare il CAP nell\'anagrafica cliente'),
                     ];
                 }
 
-                if (!empty($comune_xml) && !empty($comune_gestionale) &&
-                    strtolower(trim($comune_xml)) !== strtolower(trim($comune_gestionale))) {
-                    $errors[] = [
-                        'type' => self::ERROR_INFO,
-                        'category' => self::CATEGORY_ANAGRAFICA,
-                        'field' => 'comune',
-                        'message' => tr('Comune differente'),
-                        'xml_value' => $comune_xml,
-                        'gestionale_value' => $comune_gestionale,
-                        'suggestion' => tr('Verificare il comune nell\'anagrafica cliente')
-                    ];
+                if (!empty($comune_xml) && !empty($comune_gestionale)) {
+                    $comune_xml_clean = $this->normalizeTextForComparison($comune_xml, false);
+                    $comune_gestionale_clean = $this->normalizeTextForComparison($comune_gestionale, true);
+
+                    if ($comune_xml_clean !== $comune_gestionale_clean) {
+                        // Prepara i valori per la visualizzazione: decodifica HTML e applica sanitizeXML2
+                        $comune_gestionale_display = html_entity_decode((string) $comune_gestionale, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        $comune_gestionale_display = Validator::sanitizeXML2($comune_gestionale_display);
+
+                        $errors[] = [
+                            'type' => self::ERROR_INFO,
+                            'category' => self::CATEGORY_ANAGRAFICA,
+                            'field' => 'comune',
+                            'message' => tr('Comune differente'),
+                            'xml_value' => $comune_xml,
+                            'gestionale_value' => $comune_gestionale_display,
+                            'suggestion' => tr('Verificare il comune nell\'anagrafica cliente'),
+                        ];
+                    }
                 }
 
-                if (!empty($provincia_xml) && !empty($provincia_gestionale) &&
-                    strtoupper(trim($provincia_xml)) !== strtoupper(trim($provincia_gestionale))) {
+                if (!empty($provincia_xml) && !empty($provincia_gestionale)
+                    && strtoupper(trim((string) $provincia_xml)) !== strtoupper(trim((string) $provincia_gestionale))) {
                     $errors[] = [
                         'type' => self::ERROR_INFO,
                         'category' => self::CATEGORY_ANAGRAFICA,
@@ -325,18 +399,17 @@ class DatiFattureElettroniche extends Controllo
                         'message' => tr('Provincia differente'),
                         'xml_value' => $provincia_xml,
                         'gestionale_value' => $provincia_gestionale,
-                        'suggestion' => tr('Verificare la provincia nell\'anagrafica cliente')
+                        'suggestion' => tr('Verificare la provincia nell\'anagrafica cliente'),
                     ];
                 }
             }
-
         } catch (\Exception $e) {
             $errors[] = [
                 'type' => self::ERROR_WARNING,
                 'category' => self::CATEGORY_ANAGRAFICA,
                 'field' => 'general',
-                'message' => tr('Errore durante il controllo dei dati anagrafici') . ': ' . $e->getMessage(),
-                'suggestion' => tr('Verificare la struttura XML della fattura')
+                'message' => tr('Errore durante il controllo dei dati anagrafici').': '.$e->getMessage(),
+                'suggestion' => tr('Verificare la struttura XML della fattura'),
             ];
         }
 
@@ -344,7 +417,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Controlla i totali tra XML e gestionale
+     * Controlla i totali tra XML e gestionale.
      */
     protected function checkTotaliData(Fattura $fattura_vendita, $xml)
     {
@@ -390,13 +463,13 @@ class DatiFattureElettroniche extends Controllo
                     'category' => self::CATEGORY_TOTALI,
                     'field' => 'totale_documento',
                     'message' => tr('Totale documento non corrispondente (diff: _DIFF_€)', [
-                        '_DIFF_' => str_replace('&euro;', '€', moneyFormat($differenza_totale, 2))
+                        '_DIFF_' => str_replace('&euro;', '€', moneyFormat($differenza_totale, 2)),
                     ]),
                     'xml_value' => str_replace('&euro;', '€', moneyFormat($totale_documento_xml, 2)),
                     'gestionale_value' => str_replace('&euro;', '€', moneyFormat($totale_gestionale, 2)),
                     'suggestion' => $differenza_totale > 1.00
                         ? tr('Differenza significativa: verificare i calcoli della fattura e rigenerare l\'XML')
-                        : tr('Differenza minima probabilmente dovuta ad arrotondamenti: verificare se accettabile')
+                        : tr('Differenza minima probabilmente dovuta ad arrotondamenti: verificare se accettabile'),
                 ];
             }
 
@@ -407,110 +480,51 @@ class DatiFattureElettroniche extends Controllo
                     $riepiloghi_xml = [$riepiloghi_xml];
                 }
 
-                // Raggruppa i riepiloghi IVA del gestionale con normalizzazione delle aliquote
-                $riepiloghi_gestionale = [];
-                foreach ($fattura_vendita->righe as $riga) {
-                    $aliquota = floatval($riga->aliquota->percentuale ?? 0);
-                    // Normalizza l'aliquota per evitare problemi di floating point
-                    $aliquota_key = number_format($aliquota, 2, '.', '');
+                // Usa i totali della fattura che tengono già conto degli sconti
+                $totale_imponibile_gestionale = abs($fattura_vendita->totale_imponibile);
+                $totale_imposta_gestionale = abs($fattura_vendita->iva);
 
-                    if (!isset($riepiloghi_gestionale[$aliquota_key])) {
-                        $riepiloghi_gestionale[$aliquota_key] = [
-                            'aliquota' => $aliquota,
-                            'imponibile' => 0,
-                            'imposta' => 0
-                        ];
-                    }
-                    $riepiloghi_gestionale[$aliquota_key]['imponibile'] += $riga->imponibile;
-                    $riepiloghi_gestionale[$aliquota_key]['imposta'] += $riga->iva;
-                }
+                // Calcola i totali dall'XML
+                $totale_imponibile_xml = 0;
+                $totale_imposta_xml = 0;
 
-                // Confronta i riepiloghi con logica migliorata
                 foreach ($riepiloghi_xml as $riepilogo_xml) {
-                    $aliquota_xml = floatval($riepilogo_xml['AliquotaIVA']);
-                    $aliquota_xml_key = number_format($aliquota_xml, 2, '.', '');
-                    $imponibile_xml = floatval($riepilogo_xml['ImponibileImporto']);
-                    $imposta_xml = floatval($riepilogo_xml['Imposta']);
-
-                    // Cerca l'aliquota corrispondente nel gestionale
-                    $found_aliquota = false;
-                    $imponibile_gestionale = 0;
-                    $imposta_gestionale = 0;
-
-                    // Controllo esatto
-                    if (isset($riepiloghi_gestionale[$aliquota_xml_key])) {
-                        $found_aliquota = true;
-                        $imponibile_gestionale = $riepiloghi_gestionale[$aliquota_xml_key]['imponibile'];
-                        $imposta_gestionale = $riepiloghi_gestionale[$aliquota_xml_key]['imposta'];
-                    } else {
-                        // Controllo con tolleranza per problemi di arrotondamento
-                        foreach ($riepiloghi_gestionale as $riepilogo_gest) {
-                            if (abs($riepilogo_gest['aliquota'] - $aliquota_xml) < 0.01) {
-                                $found_aliquota = true;
-                                $imponibile_gestionale = $riepilogo_gest['imponibile'];
-                                $imposta_gestionale = $riepilogo_gest['imposta'];
-                                break;
-                            }
-                        }
-                    }
-
-                    if ($found_aliquota) {
-                        // Controllo con tolleranza per gli importi (differenza massima di 1 centesimo)
-                        $diff_imponibile = abs($imponibile_xml - $imponibile_gestionale);
-                        $diff_imposta = abs($imposta_xml - $imposta_gestionale);
-
-                        if ($diff_imponibile > 0.01) {
-                            $errors[] = [
-                                'type' => self::ERROR_WARNING,
-                                'category' => self::CATEGORY_TOTALI,
-                                'field' => "imponibile_iva_{$aliquota_xml}",
-                                'message' => tr('Imponibile IVA _ALIQUOTA_% non corrispondente (diff: _DIFF_€)', [
-                                    '_ALIQUOTA_' => $aliquota_xml,
-                                    '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_imponibile, 2))
-                                ]),
-                                'xml_value' => str_replace('&euro;', '€', moneyFormat($imponibile_xml, 2)),
-                                'gestionale_value' => str_replace('&euro;', '€', moneyFormat($imponibile_gestionale, 2)),
-                                'suggestion' => tr('Verificare le righe con IVA _ALIQUOTA_% - differenza: _DIFF_€', [
-                                    '_ALIQUOTA_' => $aliquota_xml,
-                                    '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_imponibile, 2))
-                                ])
-                            ];
-                        }
-
-                        if ($diff_imposta > 0.01) {
-                            $errors[] = [
-                                'type' => self::ERROR_WARNING,
-                                'category' => self::CATEGORY_TOTALI,
-                                'field' => "imposta_iva_{$aliquota_xml}",
-                                'message' => tr('Imposta IVA _ALIQUOTA_% non corrispondente (diff: _DIFF_€)', [
-                                    '_ALIQUOTA_' => $aliquota_xml,
-                                    '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_imposta, 2))
-                                ]),
-                                'xml_value' => str_replace('&euro;', '€', moneyFormat($imposta_xml, 2)),
-                                'gestionale_value' => str_replace('&euro;', '€', moneyFormat($imposta_gestionale, 2)),
-                                'suggestion' => tr('Verificare il calcolo IVA per l\'aliquota _ALIQUOTA_% - differenza: _DIFF_€', [
-                                    '_ALIQUOTA_' => $aliquota_xml,
-                                    '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_imposta, 2))
-                                ])
-                            ];
-                        }
-                    } else {
-                        // Debug: mostra le aliquote disponibili nel gestionale
-                        $aliquote_disponibili = array_map(function($r) { return $r['aliquota'] . '%'; }, $riepiloghi_gestionale);
-
-                        $errors[] = [
-                            'type' => self::ERROR_WARNING,
-                            'category' => self::CATEGORY_TOTALI,
-                            'field' => "aliquota_iva_{$aliquota_xml}",
-                            'message' => tr('Aliquota IVA _ALIQUOTA_% presente nell\'XML ma non trovata nel gestionale', ['_ALIQUOTA_' => $aliquota_xml]),
-                            'xml_value' => $aliquota_xml . '%',
-                            'gestionale_value' => 'Disponibili: ' . implode(', ', $aliquote_disponibili),
-                            'suggestion' => tr('Verificare la configurazione delle aliquote IVA. Aliquote nel gestionale: _ALIQUOTE_', [
-                                '_ALIQUOTE_' => implode(', ', $aliquote_disponibili)
-                            ])
-                        ];
-                    }
+                    $totale_imponibile_xml += floatval($riepilogo_xml['ImponibileImporto']);
+                    $totale_imposta_xml += floatval($riepilogo_xml['Imposta']);
                 }
+
+                // Controllo totale imponibile complessivo
+                $diff_totale_imponibile = abs($totale_imponibile_xml - $totale_imponibile_gestionale);
+                if ($diff_totale_imponibile > 0.01) {
+                    $errors[] = [
+                        'type' => self::ERROR_WARNING,
+                        'category' => self::CATEGORY_TOTALI,
+                        'field' => 'imponibile',
+                        'message' => tr('Totale imponibile non corrispondente (diff: _DIFF_€)', [
+                            '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_totale_imponibile, 2)),
+                        ]),
+                        'xml_value' => str_replace('&euro;', '€', moneyFormat($totale_imponibile_xml, 2)),
+                        'gestionale_value' => str_replace('&euro;', '€', moneyFormat($totale_imponibile_gestionale, 2)),
+                        'suggestion' => tr('Verificare il totale imponibile della fattura'),
+                    ];
+                }
+
+                // Controllo totale IVA complessivo
+                $diff_totale_imposta = abs($totale_imposta_xml - $totale_imposta_gestionale);
+                if ($diff_totale_imposta > 0.01) {
+                    $errors[] = [
+                        'type' => self::ERROR_WARNING,
+                        'category' => self::CATEGORY_TOTALI,
+                        'field' => 'iva',
+                        'message' => tr('Totale IVA non corrispondente (diff: _DIFF_€)', [
+                            '_DIFF_' => str_replace('&euro;', '€', moneyFormat($diff_totale_imposta, 2)),
+                        ]),
+                        'xml_value' => str_replace('&euro;', '€', moneyFormat($totale_imposta_xml, 2)),
+                        'gestionale_value' => str_replace('&euro;', '€', moneyFormat($totale_imposta_gestionale, 2)),
+                        'suggestion' => tr('Verificare il totale IVA della fattura'),
+                    ];
+                }
+
             }
 
             // Controllo sconti e maggiorazioni
@@ -539,18 +553,17 @@ class DatiFattureElettroniche extends Controllo
                         'message' => tr('Sconti/Maggiorazioni non corrispondenti'),
                         'xml_value' => str_replace('&euro;', '€', moneyFormat($sconto_totale_xml, 2)),
                         'gestionale_value' => str_replace('&euro;', '€', moneyFormat($sconto_totale_gestionale, 2)),
-                        'suggestion' => tr('Verificare gli sconti e le maggiorazioni applicate')
+                        'suggestion' => tr('Verificare gli sconti e le maggiorazioni applicate'),
                     ];
                 }
             }
-
         } catch (\Exception $e) {
             $errors[] = [
                 'type' => self::ERROR_WARNING,
                 'category' => self::CATEGORY_TOTALI,
                 'field' => 'general',
-                'message' => tr('Errore durante il controllo dei totali') . ': ' . $e->getMessage(),
-                'suggestion' => tr('Verificare la struttura XML della fattura')
+                'message' => tr('Errore durante il controllo dei totali').': '.$e->getMessage(),
+                'suggestion' => tr('Verificare la struttura XML della fattura'),
             ];
         }
 
@@ -558,7 +571,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Controlla i dati del documento tra XML e gestionale
+     * Controlla i dati del documento tra XML e gestionale.
      */
     protected function checkDocumentoData(Fattura $fattura_vendita, $xml)
     {
@@ -571,7 +584,7 @@ class DatiFattureElettroniche extends Controllo
             $numero_xml = $dati_generali['Numero'] ?? '';
             $numero_gestionale = $fattura_vendita->numero_esterno ?: $fattura_vendita->numero;
 
-            if ($numero_xml !== (string)$numero_gestionale) {
+            if ($numero_xml !== (string) $numero_gestionale) {
                 $errors[] = [
                     'type' => self::ERROR_WARNING,
                     'category' => self::CATEGORY_DOCUMENTO,
@@ -579,7 +592,7 @@ class DatiFattureElettroniche extends Controllo
                     'message' => tr('Numero documento non corrispondente'),
                     'xml_value' => $numero_xml,
                     'gestionale_value' => $numero_gestionale,
-                    'suggestion' => tr('Verificare il numero della fattura')
+                    'suggestion' => tr('Verificare il numero della fattura'),
                 ];
             }
 
@@ -590,7 +603,7 @@ class DatiFattureElettroniche extends Controllo
             if (!empty($data_xml) && !empty($data_gestionale)) {
                 // Normalizza le date per il confronto
                 try {
-                    $data_xml_normalized = date('Y-m-d', strtotime($data_xml));
+                    $data_xml_normalized = date('Y-m-d', strtotime((string) $data_xml));
                     $data_gestionale_normalized = date('Y-m-d', strtotime($data_gestionale));
 
                     if ($data_xml_normalized !== $data_gestionale_normalized) {
@@ -599,12 +612,12 @@ class DatiFattureElettroniche extends Controllo
                             'category' => self::CATEGORY_DOCUMENTO,
                             'field' => 'data',
                             'message' => tr('Data documento non corrispondente'),
-                            'xml_value' => date('d/m/Y', strtotime($data_xml)),
+                            'xml_value' => date('d/m/Y', strtotime((string) $data_xml)),
                             'gestionale_value' => date('d/m/Y', strtotime($data_gestionale)),
                             'suggestion' => tr('Verificare la data della fattura. XML: _XML_DATE_, Gestionale: _GEST_DATE_', [
                                 '_XML_DATE_' => $data_xml,
-                                '_GEST_DATE_' => $data_gestionale
-                            ])
+                                '_GEST_DATE_' => $data_gestionale,
+                            ]),
                         ];
                     }
                 } catch (\Exception $e) {
@@ -615,7 +628,7 @@ class DatiFattureElettroniche extends Controllo
                         'message' => tr('Errore nel controllo della data documento'),
                         'xml_value' => $data_xml,
                         'gestionale_value' => $data_gestionale,
-                        'suggestion' => tr('Verificare il formato delle date: ') . $e->getMessage()
+                        'suggestion' => tr('Verificare il formato delle date: ').$e->getMessage(),
                     ];
                 }
             }
@@ -632,7 +645,7 @@ class DatiFattureElettroniche extends Controllo
                     'message' => tr('Tipo documento non corrispondente'),
                     'xml_value' => $tipo_xml,
                     'gestionale_value' => $tipo_gestionale,
-                    'suggestion' => tr('Verificare il tipo documento della fattura')
+                    'suggestion' => tr('Verificare il tipo documento della fattura'),
                 ];
             }
 
@@ -646,8 +659,8 @@ class DatiFattureElettroniche extends Controllo
 
                 if (!empty($causale_xml) && !empty($causale_gestionale)) {
                     // Controllo più flessibile per la causale
-                    $causale_xml_clean = strtolower(trim(preg_replace('/\s+/', ' ', $causale_xml)));
-                    $causale_gestionale_clean = strtolower(trim(preg_replace('/\s+/', ' ', $causale_gestionale)));
+                    $causale_xml_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_xml)));
+                    $causale_gestionale_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_gestionale)));
 
                     if ($causale_xml_clean !== $causale_gestionale_clean) {
                         $errors[] = [
@@ -657,7 +670,7 @@ class DatiFattureElettroniche extends Controllo
                             'message' => tr('Causale differente'),
                             'xml_value' => $causale_xml,
                             'gestionale_value' => $causale_gestionale,
-                            'suggestion' => tr('Verificare le note della fattura')
+                            'suggestion' => tr('Verificare le note della fattura'),
                         ];
                     }
                 }
@@ -675,7 +688,7 @@ class DatiFattureElettroniche extends Controllo
                     'message' => tr('Divisa non corrispondente'),
                     'xml_value' => $divisa_xml,
                     'gestionale_value' => $divisa_gestionale,
-                    'suggestion' => tr('Verificare la configurazione della divisa')
+                    'suggestion' => tr('Verificare la configurazione della divisa'),
                 ];
             }
 
@@ -692,18 +705,17 @@ class DatiFattureElettroniche extends Controllo
                         'message' => tr('Importo bollo differente'),
                         'xml_value' => str_replace('&euro;', '€', moneyFormat($bollo_xml, 2)),
                         'gestionale_value' => str_replace('&euro;', '€', moneyFormat($bollo_gestionale, 2)),
-                        'suggestion' => tr('Verificare l\'applicazione del bollo')
+                        'suggestion' => tr('Verificare l\'applicazione del bollo'),
                     ];
                 }
             }
-
         } catch (\Exception $e) {
             $errors[] = [
                 'type' => self::ERROR_WARNING,
                 'category' => self::CATEGORY_DOCUMENTO,
                 'field' => 'general',
-                'message' => tr('Errore durante il controllo dei dati documento') . ': ' . $e->getMessage(),
-                'suggestion' => tr('Verificare la struttura XML della fattura')
+                'message' => tr('Errore durante il controllo dei dati documento').': '.$e->getMessage(),
+                'suggestion' => tr('Verificare la struttura XML della fattura'),
             ];
         }
 
@@ -711,7 +723,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Determina il tipo documento FE basato sulla fattura
+     * Determina il tipo documento FE basato sulla fattura.
      */
     protected function getTipoDocumentoFE(Fattura $fattura)
     {
@@ -728,7 +740,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Processa gli errori e genera il report
+     * Processa gli errori e genera il report.
      */
     protected function processErrors(Fattura $fattura_vendita, $errors)
     {
@@ -736,7 +748,7 @@ class DatiFattureElettroniche extends Controllo
         $grouped_errors = [
             self::ERROR_WARNING => [],
             self::ERROR_WARNING => [],
-            self::ERROR_INFO => []
+            self::ERROR_INFO => [],
         ];
 
         foreach ($errors as $error) {
@@ -758,12 +770,12 @@ class DatiFattureElettroniche extends Controllo
             'id' => $fattura_vendita->id,
             'nome' => $fattura_vendita->getReference(),
             'descrizione' => $report_html,
-            'type' => $result_type
+            'type' => $result_type,
         ]);
     }
 
     /**
-     * Genera il report HTML degli errori
+     * Genera il report HTML degli errori.
      */
     protected function generateErrorReport($grouped_errors)
     {
@@ -778,13 +790,11 @@ class DatiFattureElettroniche extends Controllo
         $total_errors = $warning_count + $info_count;
         $status_color = $warning_count > 0 ? '#ffc107' : '#28a745';
 
-
         $html .= '</div>';
-
 
         // Usa sempre la modalità compatta per migliorare la leggibilità
         $use_compact_mode = true;
-        
+
         // Avvisi
         if (!empty($grouped_errors[self::ERROR_WARNING])) {
             $html .= $this->generateErrorSection(
@@ -793,6 +803,11 @@ class DatiFattureElettroniche extends Controllo
                 'warning',
                 $use_compact_mode
             );
+
+            // Aggiungi spazio tra le sezioni se ci sono anche controlli informativi
+            if (!empty($grouped_errors[self::ERROR_INFO])) {
+                $html .= '<div style="height: 20px;"></div>';
+            }
         }
 
         // Informativi
@@ -811,7 +826,7 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Genera una sezione del report per un tipo di errore
+     * Genera una sezione del report per un tipo di errore.
      */
     protected function generateErrorSection($title, $errors, $type, $compact_mode = false)
     {
@@ -819,18 +834,18 @@ class DatiFattureElettroniche extends Controllo
         $colors = [
             'danger' => ['bg' => '#f8d7da', 'border' => '#dc3545', 'text' => '#721c24'],
             'warning' => ['bg' => '#fff3cd', 'border' => '#ffc107', 'text' => '#856404'],
-            'info' => ['bg' => '#d1ecf1', 'border' => '#17a2b8', 'text' => '#0c5460']
+            'info' => ['bg' => '#d1ecf1', 'border' => '#17a2b8', 'text' => '#0c5460'],
         ];
 
         $color = $colors[$type] ?? $colors['info'];
 
-        $html = '<div style="margin-bottom: 20px;">';
-        $html .= '<div style="border: 1px solid ' . $color['border'] . '; border-radius: 6px; overflow: hidden;">';
+        $html = '<div>';
+        $html .= '<div style="border: 1px solid '.$color['border'].'; border-radius: 6px; overflow: hidden;">';
 
         // Header della sezione compatto
-        $html .= '<div style="background: ' . $color['bg'] . '; padding: 6px 10px; border-bottom: 1px solid ' . $color['border'] . ';">';
-        $html .= '<h5 style="margin: 0; color: ' . $color['text'] . '; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">';
-        $html .= $this->getTypeIcon($type) . ' ' . $title . ' <span style="font-weight: normal; font-size: 11px;">(' . count($errors) . ')</span>';
+        $html .= '<div style="background: '.$color['bg'].'; padding: 6px 10px; border-bottom: 1px solid '.$color['border'].';">';
+        $html .= '<h5 style="margin: 0; color: '.$color['text'].'; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">';
+        $html .= $this->getTypeIcon($type).' '.$title.' <span style="font-weight: normal; font-size: 11px;">('.count($errors).')</span>';
         $html .= '</h5>';
         $html .= '</div>';
 
@@ -849,7 +864,7 @@ class DatiFattureElettroniche extends Controllo
 
             $html .= '<div style="border-bottom: 1px solid #e9ecef; padding: 10px 15px;">';
             $html .= '<h6 style="margin: 0 0 8px 0; color: #495057; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">';
-            $html .= '<i class="fa fa-' . $category_icon . '" style="margin-right: 6px; color: #6c757d; font-size: 11px;"></i>' . $category_title;
+            $html .= '<i class="fa fa-'.$category_icon.'" style="margin-right: 6px; color: #6c757d; font-size: 11px;"></i>'.$category_title;
             $html .= '</h6>';
 
             // Layout a lista invece di tabella per evitare conflitti
@@ -861,27 +876,31 @@ class DatiFattureElettroniche extends Controllo
                     $border_color = $error['type'] === self::ERROR_WARNING ? '#dc3545' :
                                    ($error['type'] === self::ERROR_WARNING ? '#ffc107' : '#17a2b8');
 
-                    $html .= '<div style="background: #f8f9fa; border-left: 3px solid ' . $border_color . '; padding: 5px 10px; margin-bottom: 3px; font-size: 12px; display: flex; align-items: center; gap: 8px; min-height: 28px;">';
+                    $html .= '<div style="background: #f8f9fa; border-left: 3px solid '.$border_color.'; padding: 5px 10px; margin-bottom: 3px; font-size: 11px; display: flex; align-items: center; gap: 0; min-height: 28px;">';
 
-                    // Campo + Messaggio in una riga compatta
-                    $html .= '<div style="display: flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0;">';
-                    $html .= '<code style="background: #e83e8c; color: white; padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: 600; white-space: nowrap;">' . htmlspecialchars($error['field']) . '</code>';
-                    $html .= '<span style="font-weight: 600; color: #495057; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' . htmlspecialchars($error['message']) . '</span>';
-                    $html .= '</div>';
+                    // Nome del campo in grassetto nero - larghezza fissa per allineamento
+                    $html .= '<span style="color: #000; font-weight: 700; font-size: 11px; white-space: nowrap; min-width: 180px; display: inline-block;">'.htmlspecialchars((string) $error['field']).'</span>';
 
-                    // Valori in formato ultra-compatto con correzione simbolo euro
+                    // Valori in formato ultra-compatto con correzione simbolo euro - incolonnati
                     if (!empty($error['xml_value']) && $error['xml_value'] !== '-') {
-                        $xml_short = strlen($error['xml_value']) > 15 ? substr($error['xml_value'], 0, 15) . '…' : $error['xml_value'];
-                        // Correggi &euro; con €
-                        $xml_short = str_replace('&euro;', '€', $xml_short);
-                        $html .= '<span style="font-size: 10px; color: #6c757d; white-space: nowrap;">XML: <span style="background: #e7f3ff; padding: 2px 4px; border-radius: 2px; color: #495057;">' . htmlspecialchars($xml_short) . '</span></span>';
+                        $xml_value = str_replace('&euro;', '€', (string) $error['xml_value']);
+                        $html .= '<span style="font-size: 11px; color: #6c757d; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-width: 280px;"><span style="min-width: 35px; font-weight: 600;">XML:</span><span style="color: #495057;">'.htmlspecialchars($xml_value).'</span></span>';
                     }
 
                     if (!empty($error['gestionale_value']) && $error['gestionale_value'] !== '-') {
-                        $gest_short = strlen($error['gestionale_value']) > 15 ? substr($error['gestionale_value'], 0, 15) . '…' : $error['gestionale_value'];
-                        // Correggi &euro; con €
-                        $gest_short = str_replace('&euro;', '€', $gest_short);
-                        $html .= '<span style="font-size: 10px; color: #6c757d; white-space: nowrap;">Gest: <span style="background: #f0f8f0; padding: 2px 4px; border-radius: 2px; color: #495057;">' . htmlspecialchars($gest_short) . '</span></span>';
+                        $gest_value = str_replace('&euro;', '€', (string) $error['gestionale_value']);
+                        $html .= '<span style="font-size: 11px; color: #6c757d; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-width: 280px;"><span style="min-width: 35px; font-weight: 600;">Gest:</span><span style="color: #495057;">'.htmlspecialchars($gest_value).'</span></span>';
+                    }
+
+                    // Mostra la differenza solo per campi totali (imponibile, iva, totale_documento)
+                    $field_name = strtolower((string) $error['field']);
+                    $show_diff = in_array($field_name, ['imponibile', 'iva', 'totale_documento']);
+
+                    if ($show_diff && !empty($error['xml_value']) && !empty($error['gestionale_value']) && $this->isNumericValue($error['xml_value']) && $this->isNumericValue($error['gestionale_value'])) {
+                        $diff = $this->calculateDifference($error['xml_value'], $error['gestionale_value']);
+                        if ($diff !== null) {
+                            $html .= '<span style="font-size: 10px; color: #dc3545; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;"><span style="min-width: 30px; font-weight: 600;">Diff:</span><span>'.htmlspecialchars($diff).'</span></span>';
+                        }
                     }
 
                     $html .= '</div>';
@@ -891,8 +910,8 @@ class DatiFattureElettroniche extends Controllo
 
                     // Header della card
                     $html .= '<div style="display: flex; align-items: center; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef;">';
-                    $html .= '<code style="background: #e83e8c; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-right: 12px;">' . htmlspecialchars($error['field']) . '</code>';
-                    $html .= '<span style="font-weight: 600; color: #495057; font-size: 14px;">' . htmlspecialchars($error['message']) . '</span>';
+                    $html .= '<code style="background: #e83e8c; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-right: 12px;">'.htmlspecialchars((string) $error['field']).'</code>';
+                    $html .= '<span style="font-weight: 600; color: #495057; font-size: 14px;">'.htmlspecialchars((string) $error['message']).'</span>';
                     $html .= '</div>';
 
                     // Contenuto della card
@@ -900,19 +919,19 @@ class DatiFattureElettroniche extends Controllo
 
                     $html .= '<div>';
                     $html .= '<div style="font-size: 11px; color: #6c757d; margin-bottom: 4px; font-weight: 600;">XML</div>';
-                    $html .= '<div style="background: #e7f3ff; padding: 6px 10px; border-radius: 4px; font-size: 12px; word-break: break-word;">' . htmlspecialchars($error['xml_value'] ?? '-') . '</div>';
+                    $html .= '<div style="background: #e7f3ff; padding: 6px 10px; border-radius: 4px; font-size: 12px; word-break: break-word;">'.htmlspecialchars($error['xml_value'] ?? '-').'</div>';
                     $html .= '</div>';
 
                     $html .= '<div>';
                     $html .= '<div style="font-size: 11px; color: #6c757d; margin-bottom: 4px; font-weight: 600;">Gestionale</div>';
-                    $html .= '<div style="background: #f0f8f0; padding: 6px 10px; border-radius: 4px; font-size: 12px; word-break: break-word;">' . htmlspecialchars($error['gestionale_value'] ?? '-') . '</div>';
+                    $html .= '<div style="background: #f0f8f0; padding: 6px 10px; border-radius: 4px; font-size: 12px; word-break: break-word;">'.htmlspecialchars($error['gestionale_value'] ?? '-').'</div>';
                     $html .= '</div>';
 
                     $html .= '</div>';
 
                     // Suggerimento
                     $html .= '<div style="background: #fff3cd; border-left: 3px solid #ffc107; padding: 8px 12px; font-size: 11px; color: #856404;">';
-                    $html .= '<i class="fa fa-lightbulb-o" style="margin-right: 6px;"></i>' . htmlspecialchars($error['suggestion']);
+                    $html .= '<i class="fa fa-lightbulb-o" style="margin-right: 6px;"></i>'.htmlspecialchars((string) $error['suggestion']);
                     $html .= '</div>';
 
                     $html .= '</div>';
@@ -930,58 +949,44 @@ class DatiFattureElettroniche extends Controllo
     }
 
     /**
-     * Restituisce l'icona per il tipo di errore
+     * Restituisce l'icona per il tipo di errore.
      */
     protected function getTypeIcon($type)
     {
-        switch ($type) {
-            case 'danger':
-                return '<i class="fa fa-exclamation-triangle" style="color: #dc3545;"></i>';
-            case 'warning':
-                return '<i class="fa fa-exclamation-circle" style="color: #ffc107;"></i>';
-            case 'info':
-                return '<i class="fa fa-info-circle" style="color: #17a2b8;"></i>';
-            default:
-                return '<i class="fa fa-question-circle"></i>';
-        }
+        return match ($type) {
+            'danger' => '<i class="fa fa-exclamation-triangle" style="color: #dc3545;"></i>',
+            'warning' => '<i class="fa fa-exclamation-circle" style="color: #ffc107;"></i>',
+            'info' => '<i class="fa fa-info-circle" style="color: #17a2b8;"></i>',
+            default => '<i class="fa fa-question-circle"></i>',
+        };
     }
 
     /**
-     * Restituisce il titolo della categoria
+     * Restituisce il titolo della categoria.
      */
     protected function getCategoryTitle($category)
     {
-        switch ($category) {
-            case self::CATEGORY_ANAGRAFICA:
-                return tr('Dati Anagrafici');
-            case self::CATEGORY_TOTALI:
-                return tr('Totali e Importi');
-            case self::CATEGORY_DOCUMENTO:
-                return tr('Dati Documento');
-            case self::CATEGORY_XML_STRUCTURE:
-                return tr('Struttura XML');
-            default:
-                return tr('Altri');
-        }
+        return match ($category) {
+            self::CATEGORY_ANAGRAFICA => tr('Dati Anagrafici'),
+            self::CATEGORY_TOTALI => tr('Totali e Importi'),
+            self::CATEGORY_DOCUMENTO => tr('Dati Documento'),
+            self::CATEGORY_XML_STRUCTURE => tr('Struttura XML'),
+            default => tr('Altri'),
+        };
     }
 
     /**
-     * Restituisce l'icona della categoria
+     * Restituisce l'icona della categoria.
      */
     protected function getCategoryIcon($category)
     {
-        switch ($category) {
-            case self::CATEGORY_ANAGRAFICA:
-                return 'user';
-            case self::CATEGORY_TOTALI:
-                return 'calculator';
-            case self::CATEGORY_DOCUMENTO:
-                return 'file-text';
-            case self::CATEGORY_XML_STRUCTURE:
-                return 'code';
-            default:
-                return 'question';
-        }
+        return match ($category) {
+            self::CATEGORY_ANAGRAFICA => 'user',
+            self::CATEGORY_TOTALI => 'calculator',
+            self::CATEGORY_DOCUMENTO => 'file-text',
+            self::CATEGORY_XML_STRUCTURE => 'code',
+            default => 'question',
+        };
     }
 
     protected function diff($old, $new)
@@ -1024,5 +1029,84 @@ class DatiFattureElettroniche extends Controllo
         }
 
         return $ret;
+    }
+
+    /**
+     * Verifica se un valore è numerico (anche con simbolo €).
+     */
+    protected function isNumericValue($value)
+    {
+        // Rimuovi simboli comuni e spazi
+        $cleaned = str_replace(['€', '&euro;', ' ', ','], ['', '', '', '.'], (string) $value);
+
+        return is_numeric($cleaned);
+    }
+
+    /**
+     * Normalizza un valore testuale per il confronto.
+     * Applica le stesse trasformazioni usate per generare l'XML della fattura elettronica.
+     */
+    protected function normalizeTextForComparison($value, $fromDatabase = false)
+    {
+        if (empty($value)) {
+            return '';
+        }
+
+        // Converti in stringa
+        $normalized = (string) $value;
+
+        // Se il valore viene dal database, decodifica le entità HTML
+        if ($fromDatabase) {
+            // Decodifica le entità HTML (potrebbe essere codificato più volte)
+            $normalized = html_entity_decode($normalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $normalized = html_entity_decode($normalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
+        // Applica sanitizeXML2 per normalizzare i caratteri speciali
+        $normalized = Validator::sanitizeXML2($normalized);
+
+        // Normalizza gli spazi
+        $normalized = preg_replace('/\s+/', ' ', $normalized);
+
+        // Normalizza apici e backtick duplicati (es. '' -> ', `` -> `)
+        $normalized = preg_replace("/'+/", "'", $normalized);
+        $normalized = preg_replace('/`+/', '`', $normalized);
+
+        // Converti in minuscolo e rimuovi spazi iniziali/finali
+        $normalized = strtolower(trim($normalized));
+
+        return $normalized;
+    }
+
+    /**
+     * Calcola la differenza tra due valori numerici.
+     */
+    protected function calculateDifference($value1, $value2)
+    {
+        // Pulisci i valori
+        $cleaned1 = str_replace(['€', '&euro;', ' ', ','], ['', '', '', '.'], (string) $value1);
+        $cleaned2 = str_replace(['€', '&euro;', ' ', ','], ['', '', '', '.'], (string) $value2);
+
+        if (!is_numeric($cleaned1) || !is_numeric($cleaned2)) {
+            return null;
+        }
+
+        $num1 = floatval($cleaned1);
+        $num2 = floatval($cleaned2);
+        $diff = abs($num1 - $num2);
+
+        // Se la differenza è molto piccola, non mostrarla
+        if ($diff < 0.01) {
+            return null;
+        }
+
+        // Determina se il valore originale aveva il simbolo €
+        $hasEuro = strpos((string) $value1, '€') !== false || strpos((string) $value1, '&euro;') !== false;
+
+        if ($hasEuro) {
+            return str_replace('&euro;', '€', moneyFormat($diff, 2));
+        }
+
+        return number_format($diff, 2, ',', '.');
     }
 }

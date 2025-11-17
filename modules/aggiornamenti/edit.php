@@ -286,14 +286,17 @@ if (function_exists('customComponents')) {
     $has_field_errors = !empty($custom_fields);
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
-    if ($has_any_errors) {
-        echo '
+    $customizations_card_class = $has_any_errors ? 'card-warning' : 'card-success';
+    $customizations_icon = $has_any_errors ? 'fa-exclamation-triangle' : 'fa-check';
+    $customizations_title = $has_any_errors ? tr('Personalizzazioni Rilevate') : tr('Personalizzazioni');
+
+    echo '
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card card-warning card-outline">
+                <div class="card '.$customizations_card_class.' card-outline">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <i class="fa fa-exclamation-triangle"></i> '.tr('Personalizzazioni Rilevate').'
+                            <i class="fa '.$customizations_icon.'"></i> '.$customizations_title.'
                             <span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'">
                                 <i class="fa fa-question-circle-o"></i>
                             </span>
@@ -675,23 +678,6 @@ if (function_exists('customComponents')) {
                 </div>
             </div>
         </div>';
-    } else {
-        echo '
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card card-success card-outline">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fa fa-check"></i> '.tr('Personalizzazioni').'
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-success mb-0"><i class="fa fa-check-circle"></i> '.tr('Non sono state rilevate personalizzazioni nel sistema').'.</p>
-                    </div>
-                </div>
-            </div>
-        </div>';
-    }
 }
 
 $alerts = [];

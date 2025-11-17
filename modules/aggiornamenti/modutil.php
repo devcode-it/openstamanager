@@ -289,16 +289,29 @@ if (!function_exists('customViewsNotStandard')) {
         $standard_views = [];
         $views_json_path = base_dir().'/views.json';
 
-        if (file_exists($views_json_path)) {
-            $views_data = json_decode(file_get_contents($views_json_path), true);
+        // Se il file non esiste, segnala la mancanza e non marcare tutte le viste come non previste
+        if (!file_exists($views_json_path)) {
+            return [
+                [
+                    'id' => null,
+                    'name' => '',
+                    'module_name' => '',
+                    'module_id' => null,
+                    'reason' => 'File views.json assente',
+                    'current_query' => '',
+                    'expected_query' => '',
+                ],
+            ];
+        }
 
-            if (is_array($views_data)) {
-                // Il file views.json è organizzato per nome modulo
-                foreach ($views_data as $module_name => $module_views) {
-                    if (is_array($module_views)) {
-                        foreach ($module_views as $view_name => $view_query) {
-                            $standard_views[$module_name][$view_name] = $view_query;
-                        }
+        $views_data = json_decode(file_get_contents($views_json_path), true);
+
+        if (is_array($views_data)) {
+            // Il file views.json è organizzato per nome modulo
+            foreach ($views_data as $module_name => $module_views) {
+                if (is_array($module_views)) {
+                    foreach ($module_views as $view_name => $view_query) {
+                        $standard_views[$module_name][$view_name] = $view_query;
                     }
                 }
             }
@@ -467,18 +480,32 @@ if (!function_exists('customModulesNotStandard')) {
         $standard_modules = [];
         $modules_json_path = base_dir().'/modules.json';
 
-        if (file_exists($modules_json_path)) {
-            $modules_data = json_decode(file_get_contents($modules_json_path), true);
+        // Se il file non esiste, segnala la mancanza e non marcare tutti i moduli come non previsti
+        if (!file_exists($modules_json_path)) {
+            return [
+                [
+                    'id' => null,
+                    'name' => '',
+                    'module_display_name' => '',
+                    'reason' => 'File modules.json assente',
+                    'current_options' => '',
+                    'current_options2' => '',
+                    'expected_options' => '',
+                    'expected_options2' => '',
+                ],
+            ];
+        }
 
-            if (is_array($modules_data)) {
-                // Il file modules.json è organizzato per nome modulo
-                foreach ($modules_data as $module_name => $module_data) {
-                    if (is_array($module_data)) {
-                        $standard_modules[$module_name] = [
-                            'options' => $module_data['options'] ?? '',
-                            'options2' => $module_data['options2'] ?? ''
-                        ];
-                    }
+        $modules_data = json_decode(file_get_contents($modules_json_path), true);
+
+        if (is_array($modules_data)) {
+            // Il file modules.json è organizzato per nome modulo
+            foreach ($modules_data as $module_name => $module_data) {
+                if (is_array($module_data)) {
+                    $standard_modules[$module_name] = [
+                        'options' => $module_data['options'] ?? '',
+                        'options2' => $module_data['options2'] ?? '',
+                    ];
                 }
             }
         }

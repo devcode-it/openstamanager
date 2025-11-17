@@ -203,11 +203,22 @@ if (function_exists('customComponents')) {
     $custom_views_not_standard = function_exists('customViewsNotStandard') ? customViewsNotStandard() : [];
     $custom_modules_not_standard = function_exists('customModulesNotStandard') ? customModulesNotStandard() : [];
 
+    // Verifica se mancano i file di riferimento per viste e moduli
+    $views_file_missing = !empty($custom_views_not_standard)
+        && count($custom_views_not_standard) === 1
+        && isset($custom_views_not_standard[0]['reason'])
+        && $custom_views_not_standard[0]['reason'] === 'File views.json assente';
+
+    $modules_file_missing = !empty($custom_modules_not_standard)
+        && count($custom_modules_not_standard) === 1
+        && isset($custom_modules_not_standard[0]['reason'])
+        && $custom_modules_not_standard[0]['reason'] === 'File modules.json assente';
+
     // Determina se ci sono errori per ogni sezione
     $has_file_errors = !empty($custom_files);
     $has_table_errors = !empty($tables);
-    $has_view_errors = !empty($custom_views_not_standard);
-    $has_module_errors = !empty($custom_modules_not_standard);
+    $has_view_errors = !empty($custom_views_not_standard) || $views_file_missing;
+    $has_module_errors = !empty($custom_modules_not_standard) || $modules_file_missing;
     $has_field_errors = !empty($custom_fields);
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
@@ -341,8 +352,9 @@ if (function_exists('customComponents')) {
         </div>';
 
         // Card Viste
+        $has_view_data_issues = !empty($custom_views_not_standard) && !$views_file_missing;
         $view_icon = $has_view_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
-        $view_count = $has_view_errors ? count($custom_views_not_standard) : 0;
+        $view_count = $has_view_data_issues ? count($custom_views_not_standard) : 0;
         $view_expand_icon = $has_view_errors ? 'fa-minus' : 'fa-plus';
 
         echo '
@@ -361,7 +373,7 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_view_errors) {
+        if ($has_view_data_issues) {
             echo '
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-sm">
@@ -441,6 +453,13 @@ if (function_exists('customComponents')) {
                             </tbody>
                         </table>
                     </div>';
+        } elseif ($views_file_missing) {
+            echo '
+                    <div class="alert alert-warning alert-database">
+                        <i class="fa fa-warning"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
+                            '_FILE_' => '<b>views.json</b>',
+                        ]).'.
+                    </div>';
         } else {
             echo '
                     <p class="text-success mb-0">
@@ -453,8 +472,9 @@ if (function_exists('customComponents')) {
         </div>';
 
         // Card Moduli
+        $has_module_data_issues = !empty($custom_modules_not_standard) && !$modules_file_missing;
         $module_icon = $has_module_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
-        $module_count = $has_module_errors ? count($custom_modules_not_standard) : 0;
+        $module_count = $has_module_data_issues ? count($custom_modules_not_standard) : 0;
         $module_expand_icon = $has_module_errors ? 'fa-minus' : 'fa-plus';
 
         echo '
@@ -473,7 +493,7 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_module_errors) {
+        if ($has_module_data_issues) {
             echo '
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-sm">
@@ -545,6 +565,13 @@ if (function_exists('customComponents')) {
             echo '
                             </tbody>
                         </table>
+                    </div>';
+        } elseif ($modules_file_missing) {
+            echo '
+                    <div class="alert alert-warning alert-database">
+                        <i class="fa fa-warning"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
+                            '_FILE_' => '<b>modules.json</b>',
+                        ]).'.
                     </div>';
         } else {
             echo '

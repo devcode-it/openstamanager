@@ -33,7 +33,7 @@
         "devcode-it/sdd_ita": "dev-master",
         "digitick/sepa-xml": "^2.1",
         "doctrine/sql-formatter": "^1.5",
-        "dragonmantank/cron-expression": "^1.0",
+        "dragonmantank/cron-expression": "^3.6",
         "endroid/qr-code": "^6.0",
         "ergebnis/json-printer": "^3.8",
         "ezyang/htmlpurifier": "^4.8",

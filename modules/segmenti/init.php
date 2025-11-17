@@ -42,8 +42,13 @@ if (!empty($id_record)) {
     $table = $parsed['FROM'][0]['table'];
 
     if ($record['is_sezionale'] == 1) {
-        $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table.' WHERE `id_segment` = '.prepare($id_record));
-        $tot = $righe[0]['tot'];
+        // Verifica se la tabella ha la colonna id_segment prima di eseguire la query
+        if ($dbo->columnExists($table, 'id_segment')) {
+            $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table.' WHERE `id_segment` = '.prepare($id_record));
+            $tot = $righe[0]['tot'];
+        } else {
+            $tot = 0;
+        }
     } else {
         $tot = 0;
     }

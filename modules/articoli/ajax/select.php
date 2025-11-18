@@ -342,6 +342,37 @@ switch ($resource) {
         $where[] = 'mg_prodotti.id_articolo='.prepare($superselect['idarticolo']);
         $where[] = 'mg_prodotti.dir=\'uscita\'';
         $where[] = 'mg_prodotti.id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)';
+        // Escludi i serial già venduti, considerando la data di carico effettiva (DDT se esiste, altrimenti fattura)
+        $where[] = 'mg_prodotti.serial NOT IN (
+            SELECT DISTINCT vendite.serial
+            FROM mg_prodotti AS vendite
+            INNER JOIN co_righe_documenti AS riga_vendita ON vendite.id_riga_documento = riga_vendita.id
+            INNER JOIN co_documenti AS doc_vendita ON riga_vendita.iddocumento = doc_vendita.id
+            WHERE vendite.dir = \'entrata\'
+            AND vendite.id_articolo = mg_prodotti.id_articolo
+            AND vendite.serial IS NOT NULL
+            AND doc_vendita.data >= COALESCE(
+                (
+                    SELECT MIN(ddt.data)
+                    FROM mg_prodotti AS acquisti_ddt
+                    INNER JOIN dt_righe_ddt AS riga_ddt ON acquisti_ddt.id_riga_ddt = riga_ddt.id
+                    INNER JOIN dt_ddt AS ddt ON riga_ddt.idddt = ddt.id
+                    WHERE acquisti_ddt.serial = mg_prodotti.serial
+                    AND acquisti_ddt.id_articolo = mg_prodotti.id_articolo
+                    AND acquisti_ddt.dir = \'uscita\'
+                ),
+                (
+                    SELECT MIN(doc_acquisto.data)
+                    FROM mg_prodotti AS acquisti_fat
+                    INNER JOIN co_righe_documenti AS riga_acquisto ON acquisti_fat.id_riga_documento = riga_acquisto.id
+                    INNER JOIN co_documenti AS doc_acquisto ON riga_acquisto.iddocumento = doc_acquisto.id
+                    WHERE acquisti_fat.serial = mg_prodotti.serial
+                    AND acquisti_fat.id_articolo = mg_prodotti.id_articolo
+                    AND acquisti_fat.dir = \'uscita\'
+                    AND acquisti_fat.id_riga_ddt IS NULL
+                )
+            )
+        )';
 
         if (!empty($search)) {
             $search_fields[] = '`mg_prodotti`.`serial` LIKE '.prepare('%'.$search.'%');

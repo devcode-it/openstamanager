@@ -52,12 +52,14 @@ echo '
 <script>
     function submitForm() {
         var form = input("#submit-form");
+        var id_riga = form.getElement().find("input[name=idriga]").val();
+
         salvaForm("#submit-form", {
             id_module: "'.$id_module.'",
             id_record: "'.$id_record.'",
         }).then(function(response) {
             form.getElement().closest("div[id^=bs-popup").modal("hide");
-            caricaRighe(null);
+            caricaRighe(id_riga);
         });
 
         return false;

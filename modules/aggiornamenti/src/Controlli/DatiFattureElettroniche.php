@@ -658,9 +658,10 @@ class DatiFattureElettroniche extends Controllo
                 $causale_gestionale = $fattura_vendita->note ?? '';
 
                 if (!empty($causale_xml) && !empty($causale_gestionale)) {
-                    // Controllo più flessibile per la causale
-                    $causale_xml_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_xml)));
-                    $causale_gestionale_clean = strtolower(trim((string) preg_replace('/\s+/', ' ', (string) $causale_gestionale)));
+                    // Controllo più flessibile per la causale usando normalizeTextForComparison
+                    // per applicare le stesse trasformazioni usate nella generazione dell'XML
+                    $causale_xml_clean = $this->normalizeTextForComparison($causale_xml, false);
+                    $causale_gestionale_clean = $this->normalizeTextForComparison($causale_gestionale, true);
 
                     if ($causale_xml_clean !== $causale_gestionale_clean) {
                         $errors[] = [
@@ -876,20 +877,20 @@ class DatiFattureElettroniche extends Controllo
                     $border_color = $error['type'] === self::ERROR_WARNING ? '#dc3545' :
                                    ($error['type'] === self::ERROR_WARNING ? '#ffc107' : '#17a2b8');
 
-                    $html .= '<div style="background: #f8f9fa; border-left: 3px solid '.$border_color.'; padding: 5px 10px; margin-bottom: 3px; font-size: 11px; display: flex; align-items: center; gap: 0; min-height: 28px;">';
+                    $html .= '<div style="background: #f8f9fa; border-left: 3px solid '.$border_color.'; padding: 5px 10px; margin-bottom: 3px; font-size: 11px; display: flex; align-items: flex-start; gap: 10px; min-height: 28px;">';
 
-                    // Nome del campo in grassetto nero - larghezza fissa per allineamento
-                    $html .= '<span style="color: #000; font-weight: 700; font-size: 11px; white-space: nowrap; min-width: 180px; display: inline-block;">'.htmlspecialchars((string) $error['field']).'</span>';
+                    // Nome del campo in grassetto nero - può andare a capo
+                    $html .= '<span style="color: #000; font-weight: 700; font-size: 11px; flex: 1; display: inline-block; word-wrap: break-word;">'.htmlspecialchars((string) $error['field']).'</span>';
 
-                    // Valori in formato ultra-compatto con correzione simbolo euro - incolonnati
+                    // Valori in formato ultra-compatto con correzione simbolo euro - larghezza fissa, può andare a capo
                     if (!empty($error['xml_value']) && $error['xml_value'] !== '-') {
                         $xml_value = str_replace('&euro;', '€', (string) $error['xml_value']);
-                        $html .= '<span style="font-size: 11px; color: #6c757d; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-width: 280px;"><span style="min-width: 35px; font-weight: 600;">XML:</span><span style="color: #495057;">'.htmlspecialchars($xml_value).'</span></span>';
+                        $html .= '<span style="font-size: 11px; color: #6c757d; display: inline-flex; align-items: flex-start; gap: 6px; width: 280px; flex-shrink: 0;"><span style="min-width: 35px; font-weight: 600; flex-shrink: 0;">XML:</span><span style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($xml_value).'</span></span>';
                     }
 
                     if (!empty($error['gestionale_value']) && $error['gestionale_value'] !== '-') {
                         $gest_value = str_replace('&euro;', '€', (string) $error['gestionale_value']);
-                        $html .= '<span style="font-size: 11px; color: #6c757d; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-width: 280px;"><span style="min-width: 35px; font-weight: 600;">Gest:</span><span style="color: #495057;">'.htmlspecialchars($gest_value).'</span></span>';
+                        $html .= '<span style="font-size: 11px; color: #6c757d; display: inline-flex; align-items: flex-start; gap: 6px; width: 280px; flex-shrink: 0;"><span style="min-width: 35px; font-weight: 600; flex-shrink: 0;">Gest:</span><span style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($gest_value).'</span></span>';
                     }
 
                     // Mostra la differenza solo per campi totali (imponibile, iva, totale_documento)
@@ -899,7 +900,7 @@ class DatiFattureElettroniche extends Controllo
                     if ($show_diff && !empty($error['xml_value']) && !empty($error['gestionale_value']) && $this->isNumericValue($error['xml_value']) && $this->isNumericValue($error['gestionale_value'])) {
                         $diff = $this->calculateDifference($error['xml_value'], $error['gestionale_value']);
                         if ($diff !== null) {
-                            $html .= '<span style="font-size: 10px; color: #dc3545; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;"><span style="min-width: 30px; font-weight: 600;">Diff:</span><span>'.htmlspecialchars($diff).'</span></span>';
+                            $html .= '<span style="font-size: 10px; color: #dc3545; white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;"><span style="min-width: 30px; font-weight: 600;">Diff:</span><span>'.htmlspecialchars($diff).'</span></span>';
                         }
                     }
 

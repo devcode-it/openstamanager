@@ -43,6 +43,109 @@ trait RelationTrait
     }
 
     /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     * Aggiunge la descrizione aggiuntiva personalizzata se impostata.
+     */
+    protected function customAfterDataCopiaIn($original)
+    {
+        // Chiama il metodo parent per mantenere la compatibilità
+        parent::customAfterDataCopiaIn($original);
+
+        // Verifica se l'impostazione "Descrizione aggiuntiva personalizzata in fatturazione" è configurata
+        $descrizione_aggiuntiva = setting('Descrizione aggiuntiva personalizzata in fatturazione');
+
+        if ($descrizione_aggiuntiva) {
+            // Sostituisce i placeholder con i valori effettivi dalla riga originale
+            $descrizione_personalizzata = $this->replacePlaceholders($descrizione_aggiuntiva, $original);
+
+            // Aggiunge la descrizione personalizzata alla descrizione esistente
+            if ($descrizione_personalizzata) {
+                $this->descrizione = $this->descrizione . "\n" . $descrizione_personalizzata;
+            }
+        }
+    }
+
+    /**
+     * Sostituisce i placeholder nella descrizione con i valori dalla riga originale.
+     *
+     * @param string $text Testo con placeholder da sostituire
+     * @param mixed $original Riga originale da cui prendere i valori
+     * @return string Testo con placeholder sostituiti
+     */
+    private function replacePlaceholders($text, $original)
+    {
+        // Trova tutti i placeholder nel formato {campo}
+        preg_match_all('/\{([^}]+)\}/', $text, $matches);
+
+        if (empty($matches[1])) {
+            return $text;
+        }
+
+        $result = $text;
+
+        foreach ($matches[1] as $field) {
+            $placeholder = '{' . $field . '}';
+            $value = '';
+
+            // Prova ad accedere al campo dalla riga originale
+            if (isset($original->$field)) {
+                $value = $original->$field;
+            }
+            // Se il campo non esiste direttamente, prova con getAttributes()
+            elseif (method_exists($original, 'getAttributes')) {
+                $attributes = $original->getAttributes();
+                if (isset($attributes[$field])) {
+                    $value = $attributes[$field];
+                }
+            }
+
+            // Formatta il valore se è una data
+            if ($value) {
+                $value = $this->formatFieldValue($field, $value);
+            }
+
+            // Sostituisce il placeholder con il valore trovato
+            $result = str_replace($placeholder, $value, $result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Formatta il valore del campo in base al tipo.
+     * Se il campo è una data, la formatta usando Translator.
+     *
+     * @param string $field Nome del campo
+     * @param mixed $value Valore del campo
+     * @return string Valore formattato
+     */
+    private function formatFieldValue($field, $value)
+    {
+        if ($this->isDateFormat($value)) {
+            // Usa Translator per formattare la data
+            return \Translator::dateToLocale($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Verifica se un valore ha il formato di una data.
+     *
+     * @param mixed $value Valore da verificare
+     * @return bool True se il valore è una data
+     */
+    private function isDateFormat($value)
+    {
+        if (!is_string($value) || empty($value)) {
+            return false;
+        }
+
+        // Verifica formati data comuni: YYYY-MM-DD, YYYY-MM-DD HH:MM:SS
+        return preg_match('/^\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2}:\d{2})?$/', $value) === 1;
+    }
+
+    /**
      * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
      *
      * @return array

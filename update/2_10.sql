@@ -160,3 +160,9 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 
 -- Aggiunta campo idmastrino alla tabella co_stampecontabili
 ALTER TABLE `co_stampecontabili` ADD `idmastrino` INT NULL;
+
+-- Descrizione aggiuntiva personalizzata in fatturazione
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES ('Descrizione aggiuntiva personalizzata in fatturazione', '', 'textarea', '1', 'Fatturazione', NULL, '0');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Descrizione aggiuntiva personalizzata in fatturazione', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Additional custom description in invoices', '');

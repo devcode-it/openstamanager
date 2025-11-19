@@ -312,7 +312,7 @@ if (!empty($rs)) {
                                 </td>
 
                                 <td>
-                                    <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                    <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
                                     <i class="fa fa-download"></i>
                                     </button>
                                 </td>
@@ -364,7 +364,7 @@ if (!empty($rs)) {
                                 </td>
 
                                 <td>
-                                <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
                                     <i class="fa fa-download"></i>
                                 </button>
                                 </td>

@@ -104,3 +104,8 @@ codeception.yml
 !.gitkeep
 .vscode
 .php-cs-fixer.cache
+.phpunit.*
+.env
+openapi.json
+assets/api
+openapitools.json

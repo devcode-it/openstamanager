@@ -61,7 +61,7 @@ echo '<!DOCTYPE html>
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_path().'/manifest.json?r='.random_int(0, mt_getrandmax()).'">';
+        <link rel="manifest" href="'.base_path_osm().'/manifest.json?r='.random_int(0, mt_getrandmax()).'">';
 }
 
 // CSS
@@ -219,7 +219,7 @@ if (Auth::check()) {
                 },
             };
 			globals = {
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_path_osm().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
                 img: "'.$paths['img'].'",
@@ -294,7 +294,7 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_path_osm().'",
 
                 search: {},
                 translations: {
@@ -478,25 +478,25 @@ if (Auth::check()) {
                     </li>
 
                     <li class="nav-item">
-                        <a href="'.base_path().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
+                        <a href="'.base_path_osm().'/log.php" class="nav-link" title="'.tr('Log accessi').'">
                             <i class="fa fa-book nav-icon"></i>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="#" onclick="openModal(`'.tr('Scorciatoie').'`, `'.base_path().'/shortcuts.php`);" class="nav-link" title="'.tr('Scorciatoie').'">
+                        <a href="#" onclick="openModal(`'.tr('Scorciatoie').'`, `'.base_path_osm().'/shortcuts.php`);" class="nav-link" title="'.tr('Scorciatoie').'">
                             <i class="fa fa-keyboard-o nav-icon"></i>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="'.base_path().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
+                        <a href="'.base_path_osm().'/info.php" class="nav-link" title="'.tr('Informazioni').'">
                             <i class="fa fa-info nav-icon"></i>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
+                        <a href="'.base_path_osm().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
                             <i class="fa fa-power-off nav-icon"></i>
                         </a>
                     </li>
@@ -528,7 +528,7 @@ if (Auth::check()) {
                     </div>
 
                     <div class="info">
-                    <a href="'.base_path().'/modules/utenti/info.php" class="d-block">
+                    <a href="'.base_path_osm().'/modules/utenti/info.php" class="d-block">
                             '.$user['username'].'
                         </a>
                     </div>

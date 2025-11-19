@@ -27,10 +27,10 @@ return [
         'GET' => 0,
         'POST' => 0,
     ],
-    'jsUrl' => base_path().'/assets/dist/js/csrf/csrfprotector.js',
+    'jsUrl' => base_path_osm().'/assets/dist/js/csrf/csrfprotector.js',
     'tokenLength' => 10,
     'cookieConfig' => [
-        'path' => base_path(),
+        'path' => base_path_osm(),
         'secure' => isHTTPS(true),
     ],
     'verifyGetFor' => [],

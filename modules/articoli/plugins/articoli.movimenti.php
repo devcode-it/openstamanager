@@ -31,27 +31,27 @@ echo '
         <div class="float-right d-none d-sm-inline">';
 
 echo '
-        <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path().'/modules/articoli/modals/add_movimento.php?id_module='.Module::where('name', 'Movimenti')->first()->id.'&id_articolo='.$id_record.'\');">
+        <a class="btn btn-warning btn-xs" onclick="openModal(\''.tr('Movimenta articolo').'\', \''.base_path_osm().'/modules/articoli/modals/add_movimento.php?id_module='.Module::where('name', 'Movimenti')->first()->id.'&id_articolo='.$id_record.'\');">
             <i class="fa fa-truck"></i>
             '.tr('Movimenta articolo').'
         </a>';
 
 if (empty($_GET['movimentazione_completa'])) {
     echo '
-        <a class="btn btn-info btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">
+        <a class="btn btn-info btn-xs" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">
             <i class="fa fa-eye"></i>
             '.tr('Mostra tutti i movimenti').'
         </a>';
 } else {
     echo '
-        <a class="btn btn-info btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">
+        <a class="btn btn-info btn-xs" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">
             <i class="fa fa-eye-slash"></i>
             '.tr('Mostra gli ultimi 20 movimenti').'
         </a>';
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Movimenti')->first()->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->getTranslation('title')).'">
+        <a class="btn btn-warning btn-xs" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Movimenti')->first()->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->getTranslation('title')).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

@@ -38,7 +38,7 @@ class MessageHandler extends AbstractProcessingHandler
         }
 
         // Verifica se l'utente è un amministratore
-        $is_admin = auth()->check() && auth()->isAdmin();
+        $is_admin = auth_osm()->check() && auth_osm()->isAdmin();
 
         // Estrai i dati dal record
         $uid = $record->extra['uid'] ?? '';

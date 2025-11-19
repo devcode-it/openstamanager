@@ -87,7 +87,7 @@ class Interaction extends Services
                     'data_stato_fe' => date('Y-m-d H:i:s'),
                 ], ['id' => $id_record]);
 
-                logger()->warning('Errore invio FE fattura '.$fattura->numero_esterno.': '.$body['message']);
+                logger_osm()->warning('Errore invio FE fattura '.$fattura->numero_esterno.': '.$body['message']);
             }
 
             return [
@@ -95,13 +95,13 @@ class Interaction extends Services
                 'message' => $body['message'] ?? tr('Risposta non valida dal server'),
             ];
         } catch (\UnexpectedValueException $e) {
-            logger()->error('Fattura elettronica non valida per ID '.$id_record.': '.$e->getMessage());
+            logger_osm()->error('Fattura elettronica non valida per ID '.$id_record.': '.$e->getMessage());
             return [
                 'code' => 400,
                 'message' => tr('Fattura elettronica non valida'),
             ];
         } catch (\Exception $e) {
-            logger()->error('Errore durante invio fattura elettronica ID '.$id_record.': '.$e->getMessage());
+            logger_osm()->error('Errore durante invio fattura elettronica ID '.$id_record.': '.$e->getMessage());
             return [
                 'code' => 500,
                 'message' => tr('Errore interno durante l\'invio: _ERR_', ['_ERR_' => $e->getMessage()]),

@@ -28,12 +28,13 @@
         "ext-simplexml": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
+        "api-platform/laravel": "^4.1",
         "davidepastore/codice-fiscale": "^0.9.1",
         "devcode-it/ical-easy-reader": "dev-main",
         "devcode-it/sdd_ita": "dev-master",
         "digitick/sepa-xml": "^2.1",
         "doctrine/sql-formatter": "^1.5",
-        "dragonmantank/cron-expression": "^1.0",
+        "dragonmantank/cron-expression": "^3.0",
         "endroid/qr-code": "^6.0",
         "ergebnis/json-printer": "^3.8",
         "ezyang/htmlpurifier": "^4.8",
@@ -41,11 +42,14 @@
         "greenlion/php-sql-parser": "^4.5",
         "guzzlehttp/guzzle": "^7.0.1",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/database": "^10.0",
-        "illuminate/cache": "^10.0",
-        "illuminate/filesystem": "^10.0",
+        "illuminate/cache": "^12.0",
+        "illuminate/database": "^12.0",
+        "illuminate/filesystem": "^12.0",
         "intervention/image": "^3.0",
         "jurosh/pdf-merge": "^2.1",
+        "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.0",
         "league/csv": "^9.7.0",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
@@ -59,20 +63,27 @@
         "respect/validation": "^2.0",
         "servo/fluidxml": "^2.0",
         "slim/flash": "^0.4.0",
+        "spatie/laravel-route-attributes": "^1.25",
         "spipu/html2pdf": "^5.0.0",
-        "symfony/filesystem": "^6.0",
-        "symfony/finder": "^6.0",
+        "symfony/filesystem": "^7.0",
+        "symfony/finder": "^7.0",
+        "symfony/framework-bundle": "^7.0",
         "symfony/polyfill-ctype": "^1.8",
-        "symfony/translation": "^6.0",
-        "symfony/var-dumper": "^6.0",
+        "symfony/translation": "^7.0",
+        "symfony/var-dumper": "^7.0",
         "thenetworg/oauth2-azure": "^2.0",
         "voku/stringy": "^6.0.0",
         "willdurand/geocoder": "^4.2"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.23",
         "friendsofphp/php-cs-fixer": "^3.53",
-        "phpunit/phpunit": "^11.5",
-        "rector/rector": "^2.0"
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.24",
+        "laravel/sail": "^1.41",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^10|^11"
     },
     "autoload": {
         "psr-4": {
@@ -141,6 +152,11 @@
             "lib/deprecated.php"
         ]
     },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true,
@@ -154,5 +170,43 @@
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }
+    },
+    "scripts": {
+        "unit-tests": "phpunit --configuration phpunit.xml",
+        "format": "php-cs-fixer fix",
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan migrate --force",
+            "npm install",
+            "npm run build"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ]
     }
 }

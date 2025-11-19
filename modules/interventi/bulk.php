@@ -394,7 +394,7 @@ switch (post('op')) {
         $_SESSION['superselect']['interventi'] = $id_records;
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
+        redirect_url(base_path_osm().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
         exit;
 
     case 'send_mail':
@@ -413,7 +413,7 @@ switch (post('op')) {
                 // Aggiungo email anagrafica
                 if (!empty($intervento->anagrafica->email)) {
                     $emails[] = $intervento->anagrafica->email;
-                    $mail = Mail::build(auth()->getUser(), $template, $id);
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                     $mail->addReceiver($intervento->anagrafica->email);
                     $creata_mail = true;
                 }
@@ -423,7 +423,7 @@ switch (post('op')) {
                 foreach ($mansioni as $mansione) {
                     $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                     if (!$referenti->isEmpty() && $creata_mail == false) {
-                        $mail = Mail::build(auth()->getUser(), $template, $id);
+                        $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                         $creata_mail = true;
                     }
 

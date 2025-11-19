@@ -52,7 +52,7 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                            redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata').'.",
@@ -241,13 +241,13 @@ function importComplete(count, counter, btn, restore) {
         $("#main_loading").fadeOut();
         buttonRestore(btn, restore);
 
-        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+        redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
     }
 }';
 } else {
     echo '
 function importAll(btn) {
-    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+    redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
 }';
 }
 echo '

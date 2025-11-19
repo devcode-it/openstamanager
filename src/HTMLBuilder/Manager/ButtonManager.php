@@ -67,7 +67,7 @@ class ButtonManager implements ManagerInterface
             $template_email = TemplateEmail::find($options['id']);
 
             $result = [
-                'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'link' => base_path_osm().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper((string) $template_email->getTranslation('title')) == $template_email->getTranslation('title')) ? $template_email->getTranslation('title') : lcfirst((string) $template_email->getTranslation('title'))),
                 'icon' => $template_email['icon'],
                 'type' => 'modal',
@@ -76,7 +76,7 @@ class ButtonManager implements ManagerInterface
             $template_sms = TemplateSMS::find($options['id']);
 
             $result = [
-                'link' => base_path().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'link' => base_path_osm().'/modules/sms/sms.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper((string) $template_sms['name']) == $template_sms['name']) ? $template_sms['name'] : lcfirst((string) $template_sms['name'])),
                 'icon' => 'fa fa-comment',
                 'type' => 'modal',

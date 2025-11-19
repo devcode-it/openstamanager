@@ -36,10 +36,12 @@ $period_end = $_SESSION['period_end'];
 Query::setSegments(false);
 $query = Query::getQuery($structure, $where, 0, []);
 
-$query = Modules::replaceAdditionals($structure->id, $query);
-
-// Modifiche alla query principale
-$query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM `mg_articoli` LEFT JOIN (SELECT `idarticolo`, SUM(`qta`) AS qta_totale FROM `mg_movimenti` WHERE `data` <='.prepare($period_end).' GROUP BY `idarticolo`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id` ', (string) $query);
+$movimenti_where = '`data` <='.prepare($period_end);
+if (post('tipo') == 'nozero') {
+    $query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM `mg_articoli` INNER JOIN (SELECT `idarticolo`, SUM(`qta`) AS qta_totale FROM `mg_movimenti` WHERE '.$movimenti_where.' GROUP BY `idarticolo` HAVING SUM(`qta`) > 0) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id` ', (string) $query);
+} else {
+    $query = preg_replace('/FROM[\s\t\n]+`mg_articoli`/s', 'FROM `mg_articoli` LEFT JOIN (SELECT `idarticolo`, SUM(`qta`) AS qta_totale FROM `mg_movimenti` WHERE '.$movimenti_where.' GROUP BY `idarticolo`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id` ', (string) $query);
+}
 $query = preg_replace('/^SELECT/', 'SELECT `movimenti`.`qta_totale`, ', (string) $query);
 
 if (post('acquisto') == 'standard') {
@@ -54,10 +56,6 @@ if (post('acquisto') == 'standard') {
 } else {
     $query = preg_replace('/^SELECT/', 'SELECT (SELECT COALESCE((SUM((`prezzo_unitario`-`sconto_unitario`)*`qta`)/SUM(`qta`)), `mg_articoli`.`prezzo_acquisto`) AS acquisto FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` WHERE dir="uscita" AND `idarticolo`=`mg_articoli`.`id`) AS acquisto, ', (string) $query);
     $text = "alla media ponderata dell'articolo";
-}
-
-if (post('tipo') == 'nozero') {
-    $query = str_replace('1=1', '1=1 AND `qta_totale` > 0', $query);
 }
 
 $query = str_replace('1=1', '1=1 AND servizio = 0', $query);
@@ -94,10 +92,17 @@ echo '
 $totale_qta = 0;
 $totali = [];
 
+$articoli_ids = array_column($data['results'], 'id');
+$articoli = Articolo::whereIn('id', $articoli_ids)->get()->keyBy('id');
+
 foreach ($data['results'] as $r) {
-    $articolo = Articolo::find($r['id']);
-    $qta = $r['qta_totale'];
-    $valore_magazzino = $r['acquisto'] * $qta;
+    $articolo = $articoli[$r['id']] ?? null;
+    if (!$articolo) {
+        continue;
+    }
+
+    $qta_filtrata = $r['qta_totale'] ?? 0;
+    $valore_magazzino = ($articolo->fattore_um_secondaria != 0 ? $articolo->fattore_um_secondaria : 1) * $articolo->prezzo_acquisto * $qta_filtrata;
 
     echo '
         <tr>
@@ -105,12 +110,12 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Categoria'].'</td>
             <td>'.$articolo->getTranslation('title').'</td>
             <td class="text-right">'.moneyFormat($articolo->prezzo_vendita).'</td>
-            <td class="text-right">'.Translator::numberToLocale($qta).' '.$articolo->um.'</td>
-            <td class="text-right">'.moneyFormat($r['acquisto']).'</td>
+            <td class="text-right">'.Translator::numberToLocale($qta_filtrata).' '.$articolo->um.'</td>
+            <td class="text-right">'.moneyFormat($articolo->prezzo_acquisto).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
 
-    $totale_qta += $r['Q.tà'];
+    $totale_qta += $qta_filtrata;
     $totali[] = $valore_magazzino;
 }
 

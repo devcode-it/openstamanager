@@ -260,7 +260,36 @@ class Upload extends Model
 
         $filesystem->delete($this->attachments_directory.'/'.$this->filename);
 
+        // Elimino i thumbnails associati se il file è un'immagine
+        if ($this->isImage()) {
+            $this->deleteThumbnails($filesystem);
+        }
+
         return parent::delete();
+    }
+
+    /**
+     * Elimina i thumbnails associati al file immagine.
+     *
+     * @param OSMFilesystem $filesystem
+     * @return void
+     */
+    protected function deleteThumbnails($filesystem)
+    {
+        $info = $this->info;
+        $directory = $this->attachments_directory;
+
+        // Dimensioni dei thumbnails
+        $thumbnail_sizes = ['600', '250', '100'];
+
+        foreach ($thumbnail_sizes as $size) {
+            $thumbnail_filename = $info['filename'].'_thumb'.$size.'.'.$info['extension'];
+            try {
+                $filesystem->delete($directory.'/'.$thumbnail_filename);
+            } catch (\Exception) {
+                // Se il thumbnail non esiste, continuo senza errori
+            }
+        }
     }
 
     public function save(array $options = [], $skip_resize = false)

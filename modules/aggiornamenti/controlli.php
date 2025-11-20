@@ -213,16 +213,22 @@ function formatBytes(bytes, decimals = 2) {
 * @returns {*|jQuery|HTMLElement}
 */
 function initcard(controllo, success, records) {
-    let cssClass = "";
-    let icon = "minus";
-    if (success) {
-        cssClass = "card-success";
-        icon = "check text-success";
+    let cssClass = "card-outline";
+    let headerClass = "requirements-card-header requirements-card-header-success";
+    let titleClass = "requirements-card-title requirements-card-title-success";
+    let icon = "check-circle";
+
+    if (!success) {
+        cssClass = "card-outline card-danger";
+        headerClass = "requirements-card-header requirements-card-header-danger";
+        titleClass = "requirements-card-title requirements-card-title-danger";
+        icon = "exclamation-circle";
     }
 
-    let card = `<div class="card ` + cssClass + `" id="controllo-` + controllo["id"] + `">
-    <div class="card-header with-border">
-        <h3 class="card-title">` + controllo["name"];
+    let card = `<div class="card ` + cssClass + ` requirements-card mb-3 collapsable collapsed-card" id="controllo-` + controllo["id"] + `">
+    <div class="card-header with-border ` + headerClass + `">
+        <h3 class="card-title ` + titleClass + `">
+            <i class="fa fa-` + icon + ` mr-2 requirements-icon"></i>` + controllo["name"];
 
     // Aggiungi badge inline per il controllo IntegritaFile
     if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile" && !success && records.length > 0) {
@@ -249,6 +255,9 @@ function initcard(controllo, success, records) {
                 </span>`;
             }
         }
+    } else if (!success && records.length > 0) {
+        // Per altri controlli, mostra il contatore di errori
+        card += ` <span class="badge badge-danger ml-2">${records.length}</span>`;
     }
 
     card += `</h3>
@@ -265,7 +274,7 @@ function initcard(controllo, success, records) {
 
     card += `
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-` + icon + `"></i>
+                <i class="fa fa-plus"></i>
             </button>
         </div>
     </div>`

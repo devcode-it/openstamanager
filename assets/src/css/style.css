@@ -3642,6 +3642,18 @@ section.content, .main-footer {
     background-color: #f0f9f0 !important;
 }
 
+.requirements-card-header-warning {
+    background-color: #fff8f0 !important;
+}
+
+.requirements-card-header-info {
+    background-color: #f0f8ff !important;
+}
+
+.requirements-card-header-primary {
+    background-color: #f0f7ff !important;
+}
+
 .requirements-card-header-danger {
     background-color: #fff1f1 !important;
 }
@@ -3653,6 +3665,18 @@ section.content, .main-footer {
 
 .requirements-card-title-success {
     color: #28a745 !important;
+}
+
+.requirements-card-title-warning {
+    color: #ffc107 !important;
+}
+
+.requirements-card-title-info {
+    color: #17a2b8 !important;
+}
+
+.requirements-card-title-primary {
+    color: #007bff !important;
 }
 
 .requirements-card-title-danger {

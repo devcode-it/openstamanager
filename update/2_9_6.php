@@ -43,3 +43,36 @@ if (!empty($id_module)) {
 
     $database->query('ALTER TABLE `mg_articoli` DROP COLUMN `immagine`');
 }
+
+// Migrazione firme da in_interventi a zz_files
+$id_module = Module::where('name', 'Interventi')->first()->id;
+
+if (!empty($id_module)) {
+    $interventi = $database->fetchArray('SELECT `id`, `firma_file`, `firma_nome`, `firma_data` FROM `in_interventi` WHERE `firma_file` IS NOT NULL');
+
+    foreach ($interventi as $intervento) {
+        $data_firma = !empty($intervento['firma_data']) ? date('Y-m-d', strtotime($intervento['firma_data'])) : date('Y-m-d');
+        $key = 'signature_'.$intervento['firma_nome'].'_'.$data_firma;
+        $file_exists = $database->selectOne('zz_files', ['id'], [
+            'id_module' => $id_module,
+            'id_record' => $intervento['id'],
+            'key' => $key,
+        ]);
+
+        if (empty($file_exists)) {
+            $database->insert('zz_files', [
+                'id_module' => $id_module,
+                'id_record' => $intervento['id'],
+                'nome' => 'Firma',
+                'filename' => $intervento['firma_file'],
+                'original' => $intervento['firma_file'],
+                'key' => $key,
+            ]);
+        }
+    }
+
+    $database->query('ALTER TABLE `in_interventi` DROP COLUMN `firma_file`');
+    $database->query('ALTER TABLE `in_interventi` DROP COLUMN `firma_data`');
+    $database->query('ALTER TABLE `in_interventi` DROP COLUMN `firma_nome`');
+}
+

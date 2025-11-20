@@ -470,16 +470,15 @@ if (!$block_edit) {
 <div class="text-center row">
 	<div class="col-md-12" >
 	    <?php
-        if ($record['firma_file'] == '') {
+        if (empty($intervento->signature)) {
             echo '
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
-	   	<div class="col-md-6 offset-md-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-                '_DATE_' => Translator::dateToLocale($record['firma_data']),
-                '_TIME_' => Translator::timeToLocale($record['firma_data']),
-                '_PERSON_' => (!empty($record['firma_nome']) ? $record['firma_nome'] : $intervento->anagrafica->ragione_sociale),
+	    <img src="'.$intervento->signature.'" class="img-thumbnail"><div>&nbsp;</div>
+	   	<div class="col-md-6 offset-md-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ da _PERSON_', [
+                '_DATE_' => Translator::dateToLocale($intervento->signature_date),
+                '_PERSON_' => (!empty($intervento->signature_name) ? $intervento->signature_name : $intervento->anagrafica->ragione_sociale),
             ]).'</div>';
         }
 

@@ -247,6 +247,11 @@ function translateTemplate()
         OperationLog::setInfo('id_plugin', $id_plugin);
         OperationLog::setInfo('id_record', $id_record);
 
+        // Aggiunta del nome del file per l'operazione di upload
+        if ($op === 'upload' && !empty($_FILES['blob']['name'])) {
+            OperationLog::setInfo('options', json_encode(['filename' => $_FILES['blob']['name']]));
+        }
+
         OperationLog::build($op);
     }
 

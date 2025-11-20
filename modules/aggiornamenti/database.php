@@ -130,8 +130,12 @@ switch ($database->getType()) {
         break;
 }
 
-$contents = file_get_contents(base_dir().'/'.$file_to_check_database);
-$data = json_decode($contents, true);
+if (file_exists(base_dir().'/'.$file_to_check_database)) {
+    $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
+    $data = json_decode($contents, true);
+} else {
+    $data = [];
+}
 
 if (empty($data)) {
     echo '

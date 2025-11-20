@@ -240,22 +240,26 @@ if (function_exists('customComponents')) {
     $custom_modules_not_standard = function_exists('customModulesNotStandard') ? customModulesNotStandard() : [];
 
     // Verifica se mancano i file di riferimento per viste e moduli
-    $views_file_missing = !empty($custom_views_not_standard)
-        && count($custom_views_not_standard) === 1
-        && isset($custom_views_not_standard[0]['reason'])
-        && $custom_views_not_standard[0]['reason'] === 'File views.json assente';
+    $views_file_missing = !file_exists(base_dir().'/views.json');
+    $modules_file_missing = !file_exists(base_dir().'/modules.json');
 
-    $modules_file_missing = !empty($custom_modules_not_standard)
-        && count($custom_modules_not_standard) === 1
-        && isset($custom_modules_not_standard[0]['reason'])
-        && $custom_modules_not_standard[0]['reason'] === 'File modules.json assente';
+    // Verifica se manca il file di riferimento per il database
+    $file_to_check_database = 'mysql.json';
+    if ($database->getType() === 'MariaDB') {
+        $file_to_check_database = 'mariadb_10_x.json';
+    } elseif ($database->getType() === 'MySQL') {
+        $mysql_min_version = '8.0.0';
+        $mysql_max_version = '8.3.99';
+        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
+    }
+    $database_file_missing = !file_exists(base_dir().'/'.$file_to_check_database);
 
     // Determina se ci sono errori per ogni sezione
     $has_file_errors = !empty($custom_files) || !empty($checksum_errors);
     $has_table_errors = !empty($tables);
     $has_view_errors = !empty($custom_views_not_standard) || $views_file_missing;
     $has_module_errors = !empty($custom_modules_not_standard) || $modules_file_missing;
-    $has_field_errors = !empty($custom_fields);
+    $has_field_errors = !empty($custom_fields) || $database_file_missing;
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
     $customizations_card_class = $has_any_errors ? 'card-warning' : 'card-success';
@@ -424,7 +428,7 @@ if (function_exists('customComponents')) {
         // Determina il colore della card in base all'avviso più grave
         $view_card_color = 'success';
         $view_icon = 'fa-check-circle';
-        if ($view_warning_count > 0) {
+        if ($view_warning_count > 0 || $views_file_missing) {
             $view_card_color = 'warning';
             $view_icon = 'fa-exclamation-circle';
         } elseif ($view_dark_count > 0) {
@@ -563,7 +567,7 @@ if (function_exists('customComponents')) {
         // Determina il colore della card in base all'avviso più grave
         $module_card_color = 'success';
         $module_icon = 'fa-check-circle';
-        if ($module_warning_count > 0) {
+        if ($module_warning_count > 0 || $modules_file_missing) {
             $module_card_color = 'warning';
             $module_icon = 'fa-exclamation-circle';
         } elseif ($module_info_count > 0) {
@@ -681,16 +685,7 @@ if (function_exists('customComponents')) {
         $database_info_count = 0;
 
         try {
-            $file_to_check_database = 'mysql.json';
-            if ($database->getType() === 'MariaDB') {
-                $file_to_check_database = 'mariadb_10_x.json';
-            } elseif ($database->getType() === 'MySQL') {
-                $mysql_min_version = '8.0.0';
-                $mysql_max_version = '8.3.99';
-                $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
-            }
-
-            if (file_exists(base_dir().'/'.$file_to_check_database)) {
+            if (!$database_file_missing) {
                 $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
                 $data = json_decode($contents, true);
 
@@ -791,14 +786,11 @@ if (function_exists('customComponents')) {
             // Silenzio gli errori
         }
 
-        $database_card_color = $database_has_errors ? 'warning' : 'success';
-        $database_icon = $database_has_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
-
         // Determina il colore in base all'avviso più grave
         if ($database_danger_count > 0) {
             $database_card_color = 'danger';
             $database_icon = 'fa-exclamation-circle';
-        } elseif ($database_warning_count > 0) {
+        } elseif ($database_warning_count > 0 || $database_file_missing) {
             $database_card_color = 'warning';
             $database_icon = 'fa-exclamation-circle';
         } elseif ($database_info_count > 0) {

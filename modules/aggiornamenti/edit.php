@@ -285,14 +285,14 @@ if (function_exists('customComponents')) {
 
         // Determina il colore in base all'avviso più grave
         $file_card_color = 'success';
-        $file_icon = 'fa-check-circle';
+        $file_icon = 'fa-check';
         if ($modified_files_count > 0) {
             $file_card_color = 'warning';
-            $file_icon = 'fa-exclamation-circle';
+            $file_icon = 'fa-warning';
         }
         if ($custom_files_count > 0 && $file_card_color === 'success') {
             $file_card_color = 'info';
-            $file_icon = 'fa-check-circle';
+            $file_icon = 'fa-info-circle';
         }
 
         echo '
@@ -367,7 +367,7 @@ if (function_exists('customComponents')) {
         // Card Tabelle
         $table_count = count($tables);
         $table_card_color = $table_count > 0 ? 'info' : 'success';
-        $table_icon = $table_count > 0 ? 'fa-check-circle' : 'fa-check-circle';
+        $table_icon = $table_count > 0 ? 'fa-info-circle' : 'fa-check';
 
         echo '
         <div class="card card-outline card-'.$table_card_color.' requirements-card mb-3 collapsable collapsed-card">
@@ -424,16 +424,16 @@ if (function_exists('customComponents')) {
 
         // Determina il colore della card in base all'avviso più grave
         $view_card_color = 'success';
-        $view_icon = 'fa-check-circle';
-        if ($view_warning_count > 0) {
+        $view_icon = 'fa-check';
+        if ($view_warning_count > 0 || $views_file_missing) {
             $view_card_color = 'warning';
-            $view_icon = 'fa-exclamation-circle';
+            $view_icon = 'fa-warning';
         } elseif ($view_dark_count > 0) {
             $view_card_color = 'dark';
-            $view_icon = 'fa-check-circle';
+            $view_icon = 'fa-check';
         } elseif ($view_info_count > 0) {
             $view_card_color = 'info';
-            $view_icon = 'fa-check-circle';
+            $view_icon = 'fa-info-circle';
         }
 
         echo '
@@ -563,13 +563,13 @@ if (function_exists('customComponents')) {
 
         // Determina il colore della card in base all'avviso più grave
         $module_card_color = 'success';
-        $module_icon = 'fa-check-circle';
-        if ($module_warning_count > 0) {
+        $module_icon = 'fa-check';
+        if ($module_warning_count > 0 || $modules_file_missing) {
             $module_card_color = 'warning';
-            $module_icon = 'fa-exclamation-circle';
+            $module_icon = 'fa-warning';
         } elseif ($module_info_count > 0) {
             $module_card_color = 'info';
-            $module_icon = 'fa-check-circle';
+            $module_icon = 'fa-info-circle';
         }
 
         echo '
@@ -798,16 +798,18 @@ if (function_exists('customComponents')) {
         // Determina il colore in base all'avviso più grave
         if ($database_danger_count > 0) {
             $database_card_color = 'danger';
-            $database_icon = 'fa-exclamation-circle';
-        } elseif ($database_warning_count > 0) {
+            $database_icon = 'fa-warning';
+        } elseif ($database_warning_count > 0 || $database_file_missing) {
             $database_card_color = 'warning';
-            $database_icon = 'fa-exclamation-circle';
+            $database_icon = 'fa-warning';
         } elseif ($database_info_count > 0) {
             $database_card_color = 'info';
-            $database_icon = 'fa-check-circle';
+            $database_icon = 'fa-info-circle';
         } else {
             $database_card_color = 'success';
+            $database_icon = 'fa-check';
         }
+
 
         $database_badge_html = '';
         if ($database_danger_count > 0) {

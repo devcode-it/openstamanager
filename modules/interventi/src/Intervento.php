@@ -285,7 +285,7 @@ class Intervento extends Document
 
         // Cerca il primo file con key che inizia con 'signature_'
         foreach ($uploads as $upload) {
-            if (strpos($upload->key, 'signature_') === 0) {
+            if (strpos($upload->key ?: '', 'signature_') === 0) {
                 return $upload;
             }
         }

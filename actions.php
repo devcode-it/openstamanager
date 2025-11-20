@@ -148,6 +148,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
                 'id_record' => $id_record,
+                'key' => filter('key') ?: null,
             ]);
 
             // Creazione file fisico
@@ -164,6 +165,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
                 'id_record' => $id_record,
+                'key' => filter('key') ?: null,
             ]);
 
             if (!empty($name)) {

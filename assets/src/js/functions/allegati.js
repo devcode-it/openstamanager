@@ -48,7 +48,8 @@ function initGestioneAllegati(gestione) {
         id_module: gestione.data('id_module'),
         id_plugin: gestione.data('id_plugin'),
         id_record: gestione.data('id_record'),
-        id_category: gestione.data('id_category')
+        id_category: gestione.data('id_category'),
+        key: gestione.data('key')
     }).toString();
 
     let dragdrop = new Dropzone(dropzone_id, {
@@ -145,7 +146,8 @@ function ricaricaAllegati(gestione) {
         id_record: gestione.data('id_record'),
         id_category: gestione.data('id_category'),
         upload_only: gestione.data('upload_only') === true || gestione.data('upload_only') === 'true' ? 'true' : 'false',
-        disable_edit: gestione.data('disable_edit') === true || gestione.data('disable_edit') === 'true' ? 'true' : 'false'
+        disable_edit: gestione.data('disable_edit') === true || gestione.data('disable_edit') === 'true' ? 'true' : 'false',
+        key: gestione.data('key')
     }).toString();
 
     $(id).load(globals.rootdir + "/ajax.php?" + params, function () {
@@ -256,6 +258,7 @@ function rimuoviAllegato(button) {
             id_record: gestione.data('id_record'),
             id_allegato: allegato.id,
             filename: allegato.filename,
+            key: gestione.data('key')
         }).toString();
 
         // Richiesta AJAX

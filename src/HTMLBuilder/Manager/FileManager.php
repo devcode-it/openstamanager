@@ -33,7 +33,7 @@ class FileManager implements ManagerInterface
 {
     /**
      * Gestione "filelist_and_upload".
-     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "category": "", "upload_only": "false", "disable_edit": "false" )}.
+     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "category": "", "upload_only": "false", "disable_edit": "false", "key": "table:1" )}.
      *
      * @param array $options
      *
@@ -52,11 +52,12 @@ class FileManager implements ManagerInterface
         $options['disable_edit'] = ($options['disable_edit'] === true || $options['disable_edit'] === 'true' || $options['disable_edit'] === '1') ? true : false;
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
+        $options['key'] = !empty($options['key']) ? $options['key'] : null;
 
         $id_categoria = $options['category'] ? Categoria::where('name', $options['category'])->first()->id : null;
 
         // ID del form
-        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'].($id_categoria ? '_'.$id_categoria : '');
+        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'].($id_categoria ? '_'.$id_categoria : '').($options['key'] ? '_'.md5($options['key']) : '');
 
         if (ini_get('upload_max_filesize') < ini_get('post_max_size')) {
             $upload_max_filesize = ini_get('upload_max_filesize');
@@ -72,7 +73,7 @@ class FileManager implements ManagerInterface
 
         // Codice HTML
         $result = '
-<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'" data-id_category="'.$id_categoria.'" data-upload_only="'.($options['upload_only'] ? 'true' : 'false').'" data-disable_edit="'.($options['disable_edit'] ? 'true' : 'false').'">';
+<div class="gestione-allegati" id="'.$attachment_id.'" data-id_module="'.$options['id_module'].'" data-id_plugin="'.$options['id_plugin'].'" data-id_record="'.$options['id_record'].'" data-max_filesize="'.$upload_max_filesize.'" data-id_category="'.$id_categoria.'" data-upload_only="'.($options['upload_only'] ? 'true' : 'false').'" data-disable_edit="'.($options['disable_edit'] ? 'true' : 'false').'" data-key="'.$options['key'].'" >';
 
         if (!empty($options['showcard'])) {
             $result .= '
@@ -87,7 +88,14 @@ class FileManager implements ManagerInterface
 
         $count = 0;
 
-        $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').' AND `key` IS NULL';
+        $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL');
+
+        // Filtrare per key se specificata
+        if (!empty($options['key'])) {
+            $where .= ' AND `key` = '.prepare($options['key']);
+        } else {
+            $where .= ' AND (`key` IS NULL OR `key` = "")';
+        }
 
         // Limitare alle categorie specificate
         if (!empty($id_categoria)) {
@@ -281,39 +289,39 @@ $("#'.$attachment_id.' #upload").click(function(){
 // Estraggo le righe spuntate
 function getSelectFiles() {
     let data=new Array();
-    $(".files").find(".check_files:checked").each(function (){ 
+    $("#'.$attachment_id.' .files").find(".check_files:checked").each(function (){ 
         data.push($(this).closest("tr").data("id"));
     });
 
     return data;
 }
 
-$(".check_files").on("change", function() {
+$("#'.$attachment_id.' .check_files").on("change", function() {
     let checked = 0;
-    $(".check_files").each(function() {
+    $("#'.$attachment_id.' .check_files").each(function() {
         if ($(this).is(":checked")) {
             checked = 1;
         }
     });
 
     if (checked) {
-        $("#zip_files").removeClass("disabled");
-        $("#modifica_files").removeClass("disabled");
+        $("#'.$attachment_id.' #zip_files").removeClass("disabled");
+        $("#'.$attachment_id.' #modifica_files").removeClass("disabled");
     } else {
-        $("#zip_files").addClass("disabled");
-        $("#modifica_files").addClass("disabled");
+        $("#'.$attachment_id.' #zip_files").addClass("disabled");
+        $("#'.$attachment_id.' #modifica_files").addClass("disabled");
     }
 });
 
-$("#check_all_files").click(function(){    
+$("#'.$attachment_id.' #check_all_files").click(function(){    
     if( $(this).is(":checked") ){
-        $(".check_files").each(function(){
+        $("#'.$attachment_id.' .check_files").each(function(){
             if( !$(this).is(":checked") ){
                 $(this).trigger("click");
             }
         });
     }else{
-        $(".check_files").each(function(){
+        $("#'.$attachment_id.' .check_files").each(function(){
             if( $(this).is(":checked") ){
                 $(this).trigger("click");
             }

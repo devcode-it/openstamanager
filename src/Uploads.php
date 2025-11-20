@@ -40,12 +40,14 @@ class Uploads
     {
         $database = database();
 
-        $uploads = $database->select('zz_files', '*', [], [
+        $where = [
             'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
-            'key' => NULL,
-        ]);
+            'key' => $data['key'] ?: null,
+        ];
+
+        $uploads = $database->select('zz_files', '*', [], $where);
 
         return $uploads;
     }
@@ -102,13 +104,15 @@ class Uploads
         if (!empty($filename)) {
             $database = database();
 
-            $file = $database->selectOne('zz_files', '*', [
+            $where = [
                 'filename' => $filename,
                 'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
                 'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                 'id_record' => $data['id_record'],
-            ]);
+                'key' => $data['key'] ?: null,
+            ];
 
+            $file = $database->selectOne('zz_files', '*', $where);
             if (!empty($file)) {
                 $name = $file['name'];
 

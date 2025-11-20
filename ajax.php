@@ -72,7 +72,8 @@ switch (filter('op')) {
         $category = get('id_category') ? Categoria::find(get('id_category'))->name : null;
         $upload_only = get('upload_only') === 'true' ? 'true' : 'false';
         $disable_edit = get('disable_edit') === 'true' ? 'true' : 'false';
-        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "category": "'.$category.'", "upload_only": "'.$upload_only.'", "disable_edit": "'.$disable_edit.'" )}';
+        $key = get('key');
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "category": "'.$category.'", "upload_only": "'.$upload_only.'", "disable_edit": "'.$disable_edit.'", "key": "'.$key.'" )}';
 
         break;
 

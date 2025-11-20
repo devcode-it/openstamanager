@@ -36,7 +36,12 @@ class ServicesHook extends Manager
             $message = "";
 
             $cache = Cache::where('name', 'Informazioni su Services')->first();
-            $services = $cache->content;
+
+            if (empty($cache->content)) {
+                $services = Services::getInformazioni(true);
+            } else {
+                $services = $cache->content;
+            }
 
             //Filtra i risultati che hanno expiration_at fra oggi e $limite_scadenze
             $servizi_in_scadenza = array_filter($services, function ($service) use ($limite_scadenze) {

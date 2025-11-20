@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 use Modules\Checklists\Check;
+use Modules\Impianti\Impianto;
 
 $op = post('op');
 
@@ -62,20 +63,15 @@ switch ($op) {
             if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
                 $upload = Uploads::upload($_FILES['immagine'], [
                     'name' => 'Immagine',
+                    'category' => 'Immagini',
                     'id_module' => $id_module,
                     'id_record' => $id_record,
+                    'key' => 'cover',
                 ], [
                     'thumbnails' => true,
                 ]);
-                $filename = $upload->filename;
 
-                if (!empty($filename)) {
-                    $dbo->update('my_impianti', [
-                        'immagine' => $filename,
-                    ], [
-                        'id' => $id_record,
-                    ]);
-                } else {
+                if (empty($upload)) {
                     flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
                         '_DIR_' => $upload_dir,
                     ]));
@@ -84,16 +80,10 @@ switch ($op) {
 
             // Eliminazione file
             if (!empty(post('delete_immagine'))) {
-                Uploads::delete($record['immagine'], [
-                    'id_module' => $id_module,
-                    'id_record' => $id_record,
-                ]);
-
-                $dbo->update('my_impianti', [
-                    'immagine' => null,
-                ], [
-                    'id' => $id_record,
-                ]);
+                $impianto = Impianto::find($id_record);
+                if (!empty($impianto->immagine_upload)) {
+                    $impianto->immagine_upload->delete();
+                }
             }
         }
         break;
@@ -310,16 +300,11 @@ switch ($op) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'rimuovi-allegato' && filter('filename') == $record['immagine']) {
-    $dbo->update('my_impianti', [
-        'immagine' => null,
-    ], [
-        'id' => $id_record,
-    ]);
+if (filter('op') == 'rimuovi-allegato' && filter('nome_allegato') == 'Immagine') {
+    $impianto = Impianto::find($id_record);
+    if (!empty($impianto->immagine_upload)) {
+        $impianto->immagine_upload->delete();
+    }
 } elseif (filter('op') == 'aggiungi-allegato' && filter('nome_allegato') == 'Immagine') {
-    $dbo->update('my_impianti', [
-        'immagine' => $upload->filename,
-    ], [
-        'id' => $id_record,
-    ]);
+    // L'upload è già stato gestito dal FileManager con key='cover'
 }

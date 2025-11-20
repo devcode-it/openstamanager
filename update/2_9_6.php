@@ -76,3 +76,39 @@ if (!empty($id_module)) {
     $database->query('ALTER TABLE `in_interventi` DROP COLUMN `firma_nome`');
 }
 
+// Migrazione immagini da my_impianti a zz_files
+$id_module = Module::where('name', 'Impianti')->first()->id;
+
+if (!empty($id_module)) {
+    $impianti = $database->fetchArray('SELECT `id`, `immagine` FROM `my_impianti` WHERE `immagine` IS NOT NULL');
+
+    foreach ($impianti as $impianto) {
+        $file_exists = $database->selectOne('zz_files', ['id'], [
+            'id_module' => $id_module,
+            'id_record' => $impianto['id'],
+            'filename' => $impianto['immagine'],
+        ]);
+
+        if (empty($file_exists)) {
+            $database->insert('zz_files', [
+                'id_module' => $id_module,
+                'id_record' => $impianto['id'],
+                'nome' => 'Immagine',
+                'filename' => $impianto['immagine'],
+                'original' => $impianto['immagine'],
+                'key' => 'cover',
+            ]);
+        } else {
+            $database->update('zz_files', [
+                'key' => 'cover',
+            ], [
+                'id_module' => $id_module,
+                'id_record' => $impianto['id'],
+                'filename' => $impianto['immagine'],
+            ]);
+        }
+    }
+
+    $database->query('ALTER TABLE `my_impianti` DROP COLUMN `immagine`');
+}
+

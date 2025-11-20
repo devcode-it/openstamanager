@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Articoli\Marca;
 
-$immagine_articolo = $articolo->immagine ? base_path().'/files/articoli/'.$articolo->immagine : App::getPaths()['img'].'/logo_header.png';
+$immagine_articolo = $articolo->image ?: App::getPaths()['img'].'/logo_header.png';
 
 echo '
 <hr>

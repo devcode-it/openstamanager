@@ -121,7 +121,7 @@ if (empty($_GET['visualizza_allegati'])) {
                 </tr>';
 
         foreach ($documenti as $documento) {
-            $allegati = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($documento['id_module']).' AND id_record='.prepare($documento['id_record']));
+            $allegati = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($documento['id_module']).' AND id_record='.prepare($documento['id_record']).' AND `key` IS NULL');
 
             foreach ($allegati as $allegato) {
                 $file = Upload::find($allegato['id']);

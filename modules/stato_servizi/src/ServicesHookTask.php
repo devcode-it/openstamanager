@@ -21,7 +21,6 @@
 namespace Modules\StatoServizi;
 
 use API\Services;
-use Models\Cache;
 use Tasks\Manager;
 
 class ServicesHookTask extends Manager
@@ -31,26 +30,37 @@ class ServicesHookTask extends Manager
     public function execute()
     {
         $result = [
-            'response' => 1,
-            'message' => tr('Controllo servizi attivi completato!'),
+            'response' => 2,
+            'message' => tr('Token Services non configurato. Aggiornamento saltato.'),
         ];
 
-        $cache = Cache::where('name', 'Informazioni su Services')->first();
+        if (!Services::isEnabled()) {
+            return $result;
+        }
 
         try {
-            if (Services::isEnabled()) {
-                $result = Services::getServiziAttivi();
+            $informazioni = Services::getInformazioni(true);
+
+            if (!empty($informazioni)) {
+                $result = [
+                    'response' => 1,
+                    'message' => tr('Controllo servizi attivi completato!'),
+                ];
+            } else {
+                $result = [
+                    'response' => 2,
+                    'message' => tr('Risposta vuota dal servizio Services. Cache mantenuta.'),
+                ];
             }
         } catch (\Exception $e) {
             $result = [
-                'response' => 0,
-                'message' => tr('Errore nel controllo dei servizi attivi! _error_', [
+                'response' => 2,
+                'message' => tr('Errore nel controllo dei servizi attivi! _error_. Cache mantenuta.', [
                     '_error_' => $e->getMessage(),
                 ]),
             ];
         }
 
-        $cache->set($result);
         return $result;
     }
 }

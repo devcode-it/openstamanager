@@ -257,24 +257,25 @@ class Articolo extends Model
 
     public function getImmagineUploadAttribute()
     {
-        if (empty($this->immagine)) {
-            return null;
-        }
-
-        return $this->uploads()->where('filename', $this->immagine)->first();
+        $module = $this->getModule();
+        return $module->files($this->id, true)->where('key', 'cover')->first();
     }
 
     public function getImageAttribute()
     {
-        if (empty($this->immagine)) {
+        $module = $this->getModule();
+        $upload = $module->files($this->id, true)
+            ->where('key', 'cover')
+            ->first();
+
+        if (empty($upload)) {
             return null;
         }
 
-        $module = Module::where('name', $this->module)->first();
-        $fileinfo = \Uploads::fileInfo($this->immagine);
+        $fileinfo = \Uploads::fileInfo($upload->filename);
 
         $directory = '/'.$module->upload_directory.'/';
-        $image = $directory.$this->immagine;
+        $image = $directory.$upload->filename;
         $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
         $url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;

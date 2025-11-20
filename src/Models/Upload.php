@@ -112,6 +112,7 @@ class Upload extends Model
         $model->id_module = !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null;
         $model->id_plugin = !empty($data['id_plugin']) ? $data['id_plugin'] : null;
         $model->id_record = !empty($data['id_record']) ? $data['id_record'] : null;
+        $model->key = isset($data['key']) ? $data['key'] : null;
 
         // Caricamento file con interfaccia di upload
 
@@ -278,6 +279,7 @@ class Upload extends Model
     public function copia($data)
     {
         $data['original_name'] = $this->original_name;
+        $data['key'] = $this->key;
 
         $adapter_config = FileAdapter::find($this->id_adapter);
         $class = $adapter_config->class;

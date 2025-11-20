@@ -722,38 +722,24 @@ class CSV extends CSVImporter
                 return;
             }
 
-            $database = database();
-
             if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                 \Uploads::deleteLinked([
                     'id_module' => Module::where('name', 'Articoli')->first()->id,
                     'id_record' => $articolo->id,
                 ]);
-
-                $database->update('mg_articoli', [
-                    'immagine' => '',
-                ], [
-                    'id' => $articolo->id,
-                ]);
             }
 
-            $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
+            if ($record['import_immagine'] == 1 || $record['import_immagine'] == 2) {
+                $name = 'immagine_'.$articolo->id.'.'.Upload::getExtensionFromMimeType($file_content);
 
-            $upload = \Uploads::upload($file_content, [
-                'name' => 'Immagine',
-                'category' => 'Immagini',
-                'original_name' => $name,
-                'id_module' => Module::where('name', 'Articoli')->first()->id,
-                'id_record' => $articolo->id,
-            ], [
-                'thumbnails' => true,
-            ]);
-
-            if ($upload && !empty($upload->filename) && ($record['import_immagine'] == 1 || $record['import_immagine'] == 2)) {
-                $database->update('mg_articoli', [
-                    'immagine' => $upload->filename,
+                \Uploads::upload($file_content, [
+                    'name' => 'Immagine',
+                    'category' => 'Immagini',
+                    'original_name' => $name,
+                    'id_module' => Module::where('name', 'Articoli')->first()->id,
+                    'id_record' => $articolo->id,
                 ], [
-                    'id' => $articolo->id,
+                    'thumbnails' => true,
                 ]);
             }
         } catch (\Exception $e) {

@@ -246,34 +246,22 @@ switch (post('op')) {
                 'category' => 'Immagini',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
+                'key' => 'cover',
             ], [
                 'thumbnails' => true,
             ]);
-            $filename = $upload->filename;
 
-            if (!empty($filename)) {
-                $dbo->update('mg_articoli', [
-                    'immagine' => $filename,
-                ], [
-                    'id' => $id_record,
-                ]);
-            } else {
+            if (empty($upload)) {
                 flash()->warning(tr("Errore durante il caricamento dell'immagine!"));
             }
         }
 
-        // Eliminazione file
+        // Eliminazione immagine
         if (!empty(post('delete_immagine'))) {
-            Uploads::delete($record['immagine'], [
-                'id_module' => $id_module,
-                'id_record' => $id_record,
-            ]);
-
-            $dbo->update('mg_articoli', [
-                'immagine' => null,
-            ], [
-                'id' => $id_record,
-            ]);
+            $immagine = $articolo->immagine_upload;
+            if (!empty($immagine)) {
+                $immagine->delete();
+            }
         }
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -293,8 +281,6 @@ switch (post('op')) {
 
         $new->codice = $codice;
         $new->qta = 0;
-        $nome_immagine = $articolo->immagine;
-        $new->immagine = $nome_immagine;
         $new->save();
 
         $new->setTranslation('title', $articolo->getTranslation('title'));
@@ -544,19 +530,4 @@ switch (post('op')) {
         }
 
         break;
-}
-
-// Operazioni aggiuntive per l'immagine
-if (filter('op') == 'rimuovi-allegato' && filter('filename') == $record['immagine']) {
-    $dbo->update('mg_articoli', [
-        'immagine' => null,
-    ], [
-        'id' => $id_record,
-    ]);
-} elseif (filter('op') == 'aggiungi-allegato' && filter('nome_allegato') == 'Immagine') {
-    $dbo->update('mg_articoli', [
-        'immagine' => $upload->filename,
-    ], [
-        'id' => $id_record,
-    ]);
 }

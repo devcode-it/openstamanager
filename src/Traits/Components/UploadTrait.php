@@ -41,8 +41,14 @@ trait UploadTrait
         return $result;
     }
 
-    public function files($id_record)
+    public function files($id_record, $include_images = false)
     {
-        return $this->hasMany(Upload::class, $this->component_identifier)->where('id_record', $id_record)->get();
+        $query = $this->hasMany(Upload::class, $this->component_identifier)->where('id_record', $id_record);
+
+        if (!$include_images) {
+            $query->where('key', NULL);
+        }
+
+        return $query->get();
     }
 }

@@ -36,6 +36,7 @@ switch ($resource) {
                 $where[] = '`zz_files`.`id_plugin` = '.prepare($id_plugin);
             }
             $where[] = '`zz_files`.`id_record` = '.prepare($id_record);
+            $where[] = '`zz_files`.`key` IS NULL';
 
             if ($is_fiscale != null) {
                 $where[] = '`zz_segments`.`is_fiscale` = '.prepare($is_fiscale);

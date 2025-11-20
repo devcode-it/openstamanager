@@ -30,7 +30,7 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $sessioni = $documento->sessioni->sortBy('orario_inizio');
 
-$firma = !empty($documento['firma_file']) ? '<img src="'.base_dir().'/files/interventi/'.$documento['firma_file'].'" style="width:70mm;">' : '';
+$firma = !empty($documento->signature) ? '<img src="'.$documento->signature.'" style="width:70mm;">' : '';
 
 echo '
 <br>
@@ -422,10 +422,10 @@ if (count($sessioni) > 0) {
             <td rowspan="'.(count($sessioni) + 1).'" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
                 '.$firma.'<br>';
 
-            if (empty($documento['firma_file'])) {
+            if (empty($documento->signature)) {
                 echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
             } else {
-                echo '      <i>'.$documento['firma_nome'].'</i>';
+                echo '      <i>'.$documento->signature_name.'</i>';
             }
 
             echo '
@@ -476,10 +476,10 @@ if (count($sessioni) == 1) {
     echo '<td rowspan="2" class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
             '.$firma.'<br>';
 
-    if (empty($documento['firma_file'])) {
+    if (empty($documento->signature)) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
-        echo '      <i>'.$documento['firma_nome'].'</i>';
+        echo '      <i>'.$documento->signature_name.'</i>';
     }
 
     echo '
@@ -523,10 +523,10 @@ if (count($sessioni) == 0) {
     echo '<td class="text-center" style="font-size:6pt; vertical-align:bottom; border-left:1px solid #aaa;">
             '.$firma.'<br>';
 
-    if (empty($documento['firma_file'])) {
+    if (empty($documento->signature)) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
-        echo '      <i>'.$documento['firma_nome'].'</i>';
+        echo '      <i>'.$documento->signature_name.'</i>';
     }
 
     echo '

@@ -22,15 +22,14 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Stato;
 
-if (empty($record['firma_file'])) {
+if (empty($record->signature)) {
     $frase = tr('Anteprima e firma');
     $info_firma = '';
 } else {
     $frase = tr('Nuova anteprima e firma');
-    $info_firma = ''.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($record['firma_data']),
-        '_TIME_' => Translator::timeToLocale($record['firma_data']),
-        '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
+    $info_firma = ''.tr('Firmato il _DATE_ da _PERSON_', [
+        '_DATE_' => Translator::dateToLocale($record->signature_date),
+        '_PERSON_' => '<b>'.$record->signature_name.'</b>',
     ]).'';
 }
 

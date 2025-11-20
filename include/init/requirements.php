@@ -486,27 +486,30 @@ if (!$database->isInstalled() || empty($mysql)) {
 foreach ($requirements as $key => $values) {
     $statuses = array_column($values, 'status');
     $general_status = true;
+    $error_count = 0;
+
     foreach ($statuses as $status) {
         $general_status &= $status;
+        if (!$status) {
+            $error_count++;
+        }
     }
 
-    echo '
-<div class="card card-outline card-'.($general_status ? 'success collapsed-card' : 'danger').' requirements-card">
-    <div class="card-header with-border requirements-card-header requirements-card-header-'.($general_status ? 'success' : 'danger').'">
-        <h3 class="card-title requirements-card-title requirements-card-title-'.($general_status ? 'success' : 'danger').'">
-            <i class="fa fa-'.($general_status ? 'check-circle' : 'exclamation-circle').' mr-2"></i>'.$key.'
-        </h3>';
+    $card_color = $general_status ? 'success' : 'danger';
+    $card_icon = $general_status ? 'fa-check-circle' : 'fa-exclamation-circle';
 
-    if ($general_status) {
-        echo '
+    echo '
+<div class="card card-outline card-'.$card_color.' requirements-card mb-3 collapsable collapsed-card">
+    <div class="card-header with-border requirements-card-header requirements-card-header-'.$card_color.'">
+        <h3 class="card-title requirements-card-title requirements-card-title-'.$card_color.'">
+            <i class="fa '.$card_icon.' mr-2 requirements-icon"></i>'.$key.'
+            '.($error_count > 0 ? '<span class="badge badge-danger ml-2">'.$error_count.'</span>' : '').'
+        </h3>
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fa fa-plus"></i>
             </button>
-        </div>';
-    }
-
-    echo '
+        </div>
     </div>
     <div class="card-body no-padding">
         <table class="table table-striped requirements-table">

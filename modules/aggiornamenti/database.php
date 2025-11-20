@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\OperationLog;
+
 // Aggiunta della classe per il modulo
 echo '<div class="module-aggiornamenti">';
 
@@ -619,6 +621,11 @@ $(document).ready(function() {
 });
 </script>';
 }
+
+// Log dell'esecuzione del controllo database
+OperationLog::setInfo('id_module', $id_module);
+OperationLog::setInfo('options', json_encode(['controllo_name' => 'Controllo database'], JSON_UNESCAPED_UNICODE));
+OperationLog::build('effettua_controllo');
 
 // Chiusura del div module-aggiornamenti
 echo '</div>';

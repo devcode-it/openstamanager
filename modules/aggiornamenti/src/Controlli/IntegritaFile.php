@@ -301,6 +301,16 @@ class IntegritaFile extends Controllo
             $directory = $upload->attachments_directory;
             if (!empty($directory)) {
                 $registered_files[] = $directory.'/'.$upload->filename;
+
+                // Aggiungo i thumbnails se il file è un'immagine
+                if ($upload->isImage()) {
+                    $info = $upload->info;
+                    $thumbnail_sizes = ['600', '250', '100'];
+                    foreach ($thumbnail_sizes as $size) {
+                        $thumbnail_filename = $info['filename'].'_thumb'.$size.'.'.$info['extension'];
+                        $registered_files[] = $directory.'/'.$thumbnail_filename;
+                    }
+                }
             } else {
                 // File nella root della cartella files (caso raro)
                 $registered_files[] = $upload->filename;
@@ -325,13 +335,13 @@ class IntegritaFile extends Controllo
             return true;
         }
 
-        // File delle firme degli interventi (salvati direttamente senza passare per zz_files)
-        // Pattern: interventi/firma_*.jpg o interventi/firma_*.png
-        if (preg_match('#^interventi/firma_\d+\.(jpg|png)$#', $relative_path)) {
+        // Thumbnails delle immagini (gestiti automaticamente)
+        // Pattern: *_thumb600.*, *_thumb250.*, *_thumb100.*
+        if (preg_match('#_thumb(600|250|100)\.[a-z]+$#i', $item)) {
             return true;
         }
 
-        // File delle presentazioni bancarie (salvati direttamente)
+        // File delle presentazioni bancarie (plugin di fatturazione)
         // Pattern: presentazioni_bancarie/*.xml
         if (preg_match('#^presentazioni_bancarie/.*\.xml$#', $relative_path)) {
             return true;

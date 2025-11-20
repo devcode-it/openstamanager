@@ -19,18 +19,13 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Impianti\Impianto;
 
 $id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 
-$img = null;
-if (!empty($record['immagine'])) {
-    $fileinfo = Uploads::fileInfo($record['immagine']);
-
-    $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
-
-    $img = file_exists(base_dir().$default_img) ? base_path().$default_img : base_path().'/'.Uploads::getDirectory($id_module).'/'.$record['immagine'];
-}
+$impianto = Impianto::find($id_record);
+$img = !empty($impianto) ? $impianto->image : null;
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">

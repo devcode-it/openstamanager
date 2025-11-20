@@ -80,7 +80,6 @@ OperationLog::setInfo('id_module', $id_module);
 
 // Schermata di visualizzazione degli errori
 if (!empty($errors)) {
-    OperationLog::setInfo('options', 'KO');
     echo '
 <p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello registrato nella versione ufficiale").'.</p>
 <div class="alert alert-warning">
@@ -112,13 +111,12 @@ if (!empty($errors)) {
     </tbody>
 </table>';
 } else {
-    OperationLog::setInfo('options', 'OK');
-
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Nessun file con problemi di integrità').'.
 </div>';
 }
+OperationLog::setInfo('options', json_encode(['controllo_name' => 'Controllo file'], JSON_UNESCAPED_UNICODE));
 OperationLog::build('effettua_controllo');
 
 // Chiusura del div module-aggiornamenti

@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Cache;
+use Models\OperationLog;
 use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
@@ -86,6 +87,14 @@ switch (filter('op')) {
 
             flash()->info($success_message);
 
+            // Log dell'operazione di risoluzione conflitti database
+            OperationLog::setInfo('id_module', $id_module ?? null);
+            OperationLog::setInfo('options', json_encode([
+                'queries_executed' => $executed,
+                'total_queries' => count($queries),
+            ], JSON_UNESCAPED_UNICODE));
+            OperationLog::build('risolvi-conflitti-database');
+
             echo json_encode([
                 'success' => true,
                 'message' => $success_message.'<br><br>'.tr('Query eseguite:').'<br>'.$debug_queries,
@@ -98,6 +107,15 @@ switch (filter('op')) {
             ]);
 
             flash()->error($error_message);
+
+            // Log dell'errore nell'operazione di risoluzione conflitti database
+            OperationLog::setInfo('id_module', $id_module ?? null);
+            OperationLog::setInfo('options', json_encode([
+                'queries_executed' => $executed,
+                'total_queries' => count($queries),
+                'errors_count' => count($errors),
+            ], JSON_UNESCAPED_UNICODE));
+            OperationLog::build('risolvi-conflitti-database-error');
 
             echo json_encode([
                 'success' => false,
@@ -184,6 +202,9 @@ switch (filter('op')) {
         $manager = new $class();
         $manager->check();
 
+        // Aggiunta del nome del controllo alle opzioni di log
+        OperationLog::setInfo('options', json_encode(['controllo_name' => $manager->getName()], JSON_UNESCAPED_UNICODE));
+
         echo json_encode($manager->getResults());
 
         break;
@@ -221,6 +242,9 @@ switch (filter('op')) {
         $manager = new $class();
         $manager->check(); // Ricarica i risultati
         $result = $manager->solveGlobal($params);
+
+        // Aggiunta del nome del controllo alle opzioni di log
+        OperationLog::setInfo('options', json_encode(['controllo_name' => $manager->getName()], JSON_UNESCAPED_UNICODE));
 
         echo json_encode($result);
 

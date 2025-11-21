@@ -3630,12 +3630,13 @@ section.content, .main-footer {
 /* Requirements cards styling */
 .requirements-card {
     border-radius: 6px !important;
-    margin-bottom: 15px !important;
+    margin-bottom: 8px !important;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
 }
 
 .requirements-card-header {
-    padding: 12px 15px !important;
+    padding: 10px 12px !important;
+    min-height: 50px !important;
 }
 
 .requirements-card-header-success {

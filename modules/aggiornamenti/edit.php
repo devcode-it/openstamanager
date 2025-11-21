@@ -37,57 +37,18 @@ if (!function_exists('base_dir')) {
 }
 
 use Models\Module;
+use Modules\Aggiornamenti\IntegrityChecker;
+use Modules\Aggiornamenti\Utils;
 
-// Funzioni per il controllo database
+// Funzioni per il controllo database (wrapper per compatibilità)
 function integrity_diff($expected, $current)
 {
-    foreach ($expected as $key => $value) {
-        if (array_key_exists($key, $current) && is_array($value)) {
-            if (!is_array($current[$key])) {
-                $difference[$key] = $value;
-            } else {
-                $new_diff = integrity_diff($value, $current[$key]);
-                if (!empty($new_diff)) {
-                    $difference[$key] = $new_diff;
-                }
-            }
-        } elseif (!array_key_exists($key, $current) || $current[$key] != $value && !empty($value)) {
-            $difference[$key] = [
-                'current' => $current[$key],
-                'expected' => $value,
-            ];
-        }
-    }
-
-    return !isset($difference) ? [] : $difference;
+    return IntegrityChecker::diff($expected, $current);
 }
 
 function settings_diff($expected, $current)
 {
-    foreach ($expected as $key => $value) {
-        if (array_key_exists($key, $current)) {
-            if (!is_array($current[$key])) {
-                if ($current[$key] !== $value) {
-                    $difference[$key] = [
-                        'current' => $current[$key],
-                        'expected' => $value,
-                    ];
-                }
-            } else {
-                $new_diff = integrity_diff($value, $current[$key]);
-                if (!empty($new_diff)) {
-                    $difference[$key] = $new_diff;
-                }
-            }
-        } else {
-            $difference[$key] = [
-                'current' => null,
-                'expected' => $value,
-            ];
-        }
-    }
-
-    return $difference;
+    return IntegrityChecker::settingsDiff($expected, $current);
 }
 
 // Inizializzazione del modulo corrente
@@ -171,7 +132,12 @@ function highlightDifferences($current, $expected)
 
     for ($i = $current_count - 1; $i >= 0; --$i) {
         for ($j = $expected_count - 1; $j >= 0; --$j) {
-            if ($current_words[$i] === $expected_words[$j]) {
+            // Confronto case-insensitive per le parole (ignora spazi e punteggiatura)
+            $current_word_lower = strtolower(trim($current_words[$i]));
+            $expected_word_lower = strtolower(trim($expected_words[$j]));
+            $is_match = ($current_word_lower === $expected_word_lower) && !empty($current_word_lower);
+
+            if ($is_match) {
                 $lcs[$i][$j] = $lcs[$i + 1][$j + 1] + 1;
             } else {
                 $lcs[$i][$j] = max($lcs[$i + 1][$j], $lcs[$i][$j + 1]);
@@ -182,18 +148,37 @@ function highlightDifferences($current, $expected)
     $i = 0;
     $j = 0;
     while ($i < $current_count || $j < $expected_count) {
-        if ($i < $current_count && $j < $expected_count && $current_words[$i] === $expected_words[$j]) {
+        // Confronto case-insensitive per le parole (ignora spazi e punteggiatura)
+        $current_word_lower = strtolower(trim($current_words[$i] ?? ''));
+        $expected_word_lower = strtolower(trim($expected_words[$j] ?? ''));
+        $is_match = ($current_word_lower === $expected_word_lower) && !empty($current_word_lower);
+
+        // Verifica se la parola è solo spazi/punteggiatura
+        $current_is_whitespace = empty($current_word_lower);
+        $expected_is_whitespace = empty($expected_word_lower);
+
+        if ($i < $current_count && $j < $expected_count && $is_match) {
             // Parti uguali: mostra senza evidenziazione
             $word = htmlspecialchars($current_words[$i]);
             $current_highlighted .= $word;
-            $expected_highlighted .= $word;
+            $expected_highlighted .= htmlspecialchars($expected_words[$j]);
             ++$i;
             ++$j;
         } elseif ($i < $current_count && ($j >= $expected_count || $lcs[$i + 1][$j] >= $lcs[$i][$j + 1])) {
-            $current_highlighted .= '<span class="diff-removed">'.htmlspecialchars($current_words[$i]).'</span>';
+            // Mostra la parola rimossa solo se non è spazio/punteggiatura
+            if (!$current_is_whitespace) {
+                $current_highlighted .= '<span class="diff-removed">'.htmlspecialchars($current_words[$i]).'</span>';
+            } else {
+                $current_highlighted .= htmlspecialchars($current_words[$i]);
+            }
             ++$i;
         } elseif ($j < $expected_count) {
-            $expected_highlighted .= '<span class="diff-added">'.htmlspecialchars($expected_words[$j]).'</span>';
+            // Mostra la parola aggiunta solo se non è spazio/punteggiatura
+            if (!$expected_is_whitespace) {
+                $expected_highlighted .= '<span class="diff-added">'.htmlspecialchars($expected_words[$j]).'</span>';
+            } else {
+                $expected_highlighted .= htmlspecialchars($expected_words[$j]);
+            }
             ++$j;
         } else {
             break;
@@ -284,25 +269,20 @@ if (function_exists('customComponents')) {
         $custom_files_count = count($custom_files);
 
         // Determina il colore in base all'avviso piu grave
-        $file_card_color = 'success';
-        $file_icon = 'fa-check-circle';
-        if ($modified_files_count > 0) {
-            $file_card_color = 'warning';
-            $file_icon = 'fa-warning';
-        }
-        if ($custom_files_count > 0 && $file_card_color === 'success') {
-            $file_card_color = 'info';
-            $file_icon = 'fa-info-circle';
-        }
+        // File modificati e personalizzati sono entrambi warning
+        $file_warning = ($modified_files_count > 0 || $custom_files_count > 0) ? 1 : 0;
+        $file_colors = Utils::determineCardColor(0, $file_warning, 0);
+        $file_card_color = $file_colors['color'];
+        $file_icon = $file_colors['icon'];
 
         echo '
-        <div class="card card-outline card-'.$file_card_color.' requirements-card mb-3 collapsable collapsed-card">
+        <div class="card card-outline card-'.$file_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$file_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$file_card_color.'">
                     <i class="fa '.$file_icon.' mr-2 requirements-icon"></i>
                     '.tr('File personalizzati').'
                     '.($modified_files_count > 0 ? '<span class="badge badge-warning ml-2">'.$modified_files_count.'</span>' : '').'
-                    '.($custom_files_count > 0 ? '<span class="badge badge-info ml-2">'.$custom_files_count.'</span>' : '').'
+                    '.($custom_files_count > 0 ? '<span class="badge badge-warning ml-2">'.$custom_files_count.'</span>' : '').'
                 </h3>
                 <div class="card-tools pull-right">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -337,14 +317,14 @@ if (function_exists('customComponents')) {
                                 </tr>';
             }
 
-            // Mostra file personalizzati in info
+            // Mostra file personalizzati in warning
             foreach ($custom_files as $element) {
                 $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $element['files']));
 
                 echo '
                                 <tr>
                                     <td><strong>'.$element['path'].'/custom</strong></td>
-                                    <td><span class="badge badge-info badge-lg">'.tr('Cartella custom').'</span></td>
+                                    <td><span class="badge badge-warning badge-lg">'.tr('Cartella custom').'</span></td>
                                     <td>'.$files_list.'</td>
                                 </tr>';
             }
@@ -366,11 +346,12 @@ if (function_exists('customComponents')) {
 
         // Card Tabelle
         $table_count = count($tables);
-        $table_card_color = $table_count > 0 ? 'info' : 'success';
-        $table_icon = $table_count > 0 ? 'fa-info-circle' : 'fa-check-circle';
+        $table_colors = Utils::determineCardColor(0, 0, $table_count > 0 ? 1 : 0);
+        $table_card_color = $table_colors['color'];
+        $table_icon = $table_colors['icon'];
 
         echo '
-        <div class="card card-outline card-'.$table_card_color.' requirements-card mb-3 collapsable collapsed-card">
+        <div class="card card-outline card-'.$table_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$table_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$table_card_color.'">
                     <i class="fa '.$table_icon.' mr-2 requirements-icon"></i>
@@ -422,18 +403,14 @@ if (function_exists('customComponents')) {
         }
 
         // Determina il colore della card in base all'avviso piu grave
-        $view_card_color = 'success';
-        $view_icon = 'fa-check-circle';
-        if ($view_warning_count > 0 || $views_file_missing) {
-            $view_card_color = 'warning';
-            $view_icon = 'fa-warning';
-        } elseif ($view_info_count > 0) {
-            $view_card_color = 'info';
-            $view_icon = 'fa-info-circle';
-        }
+        $view_danger = ($views_file_missing && $view_warning_count > 0) ? 1 : 0;
+        $view_warning = ($view_warning_count > 0 || $views_file_missing) ? 1 : 0;
+        $view_colors = Utils::determineCardColor($view_danger, $view_warning, $view_info_count > 0 ? 1 : 0);
+        $view_card_color = $view_colors['color'];
+        $view_icon = $view_colors['icon'];
 
         echo '
-        <div class="card card-outline card-'.$view_card_color.' requirements-card mb-3 collapsable collapsed-card">
+        <div class="card card-outline card-'.$view_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$view_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$view_card_color.'">
                     <i class="fa '.$view_icon.' mr-2 requirements-icon"></i>
@@ -557,18 +534,14 @@ if (function_exists('customComponents')) {
         }
 
         // Determina il colore della card in base all'avviso piu grave
-        $module_card_color = 'success';
-        $module_icon = 'fa-check-circle';
-        if ($module_warning_count > 0 || $modules_file_missing) {
-            $module_card_color = 'warning';
-            $module_icon = 'fa-warning';
-        } elseif ($module_info_count > 0) {
-            $module_card_color = 'info';
-            $module_icon = 'fa-info-circle';
-        }
+        $module_danger = ($modules_file_missing && $module_warning_count > 0) ? 1 : 0;
+        $module_warning = ($module_warning_count > 0 || $modules_file_missing) ? 1 : 0;
+        $module_colors = Utils::determineCardColor($module_danger, $module_warning, $module_info_count > 0 ? 1 : 0);
+        $module_card_color = $module_colors['color'];
+        $module_icon = $module_colors['icon'];
 
         echo '
-        <div class="card card-outline card-'.$module_card_color.' requirements-card mb-3 collapsable collapsed-card">
+        <div class="card card-outline card-'.$module_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$module_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$module_card_color.'">
                     <i class="fa '.$module_icon.' mr-2 requirements-icon"></i>
@@ -710,35 +683,11 @@ if (function_exists('customComponents')) {
                             $foreign_keys = $errors['foreign_keys'] ?: [];
                             unset($errors['foreign_keys']);
 
-                            // Conta i campi
-                            foreach ($errors as $name => $diff) {
-                                if ($name === 'foreign_keys') {
-                                    continue;
-                                }
-                                if (array_key_exists('key', $diff)) {
-                                    // Chiave
-                                    if ($diff['key']['expected'] == '') {
-                                        $database_info_count++; // Chiave non prevista
-                                    } else {
-                                        $database_danger_count++; // Chiave mancante
-                                    }
-                                } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                                    $database_danger_count++; // Campo mancante
-                                } else {
-                                    $database_warning_count++; // Campo modificato
-                                }
-                            }
-
-                            // Conta le chiavi esterne
-                            foreach ($foreign_keys as $name => $diff) {
-                                if (is_array($diff) && isset($diff['expected']) && is_array($diff['expected'])) {
-                                    $database_danger_count++; // Chiave esterna mancante
-                                } elseif (is_array($diff) && isset($diff['current']) && is_array($diff['current'])) {
-                                    $database_info_count++; // Chiave esterna non prevista
-                                } else {
-                                    $database_warning_count++; // Chiave esterna modificata
-                                }
-                            }
+                            // Usa la funzione di utilità per contare gli errori
+                            $error_counts = Utils::countErrorsByType($errors, $foreign_keys);
+                            $database_danger_count += $error_counts['danger'];
+                            $database_warning_count += $error_counts['warning'];
+                            $database_info_count += $error_counts['info'];
                         }
 
                         // Conta i tipi di errori nei risultati aggiunti (campi non previsti)
@@ -793,7 +742,7 @@ if (function_exists('customComponents')) {
         // Determina il colore in base all'avviso più grave
         if ($database_danger_count > 0) {
             $database_card_color = 'danger';
-            $database_icon = 'fa-times-circle';
+            $database_icon = 'fa-exclamation-triangle';
         } elseif ($database_warning_count > 0 || $database_file_missing) {
             $database_card_color = 'warning';
             $database_icon = 'fa-exclamation-circle';
@@ -806,19 +755,10 @@ if (function_exists('customComponents')) {
         }
 
 
-        $database_badge_html = '';
-        if ($database_danger_count > 0) {
-            $database_badge_html .= '<span class="badge badge-danger ml-2">'.$database_danger_count.'</span>';
-        }
-        if ($database_warning_count > 0) {
-            $database_badge_html .= '<span class="badge badge-warning ml-2">'.$database_warning_count.'</span>';
-        }
-        if ($database_info_count > 0) {
-            $database_badge_html .= '<span class="badge badge-info ml-2">'.$database_info_count.'</span>';
-        }
+        $database_badge_html = Utils::generateBadgeHtml($database_danger_count, $database_warning_count, $database_info_count);
 
             echo '
-            <div class="card card-outline card-'.$database_card_color.' requirements-card mb-3 collapsable collapsed-card">
+            <div class="card card-outline card-'.$database_card_color.' requirements-card mb-2 collapsable collapsed-card">
                 <div class="card-header with-border requirements-card-header requirements-card-header-'.$database_card_color.'">
                     <h3 class="card-title requirements-card-title requirements-card-title-'.$database_card_color.'">
                         <i class="fa '.$database_icon.' mr-2 requirements-icon"></i>

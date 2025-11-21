@@ -146,7 +146,7 @@ function avviaControlli(button) {
         dataType: "JSON",
         data: {
             id_module: globals.id_module,
-            op: "controlli-disponibili",
+            op: "controlli-ultima-esecuzione",
         },
         success: async function(controlli) {
             // Ripristino pulsante
@@ -257,6 +257,11 @@ function avviaControllo(controllo) {
                 titleElement.addClass("requirements-card-title-success");
                 cardElement.addClass("card-success");
 
+                // Aggiorna icona a check-circle
+                let iconElement = titleElement.find(".requirements-icon");
+                iconElement.removeClass("fa-info-circle fa-exclamation-circle fa-times-circle");
+                iconElement.addClass("fa-check-circle");
+
                 // Pulisci il body e mostra il messaggio di successo
                 bodyElement.html(`<p class="text-muted">'.tr('Nessun problema rilevato').'</p>`);
 
@@ -286,7 +291,16 @@ function avviaControllo(controllo) {
                     titleElement.addClass(titleColorCls);
                     cardElement.addClass(cardColorCls);
 
-                    // Ordina per gravità: warning prima di info
+                    // Aggiorna icona in base al colore
+                    let iconElement = titleElement.find(".requirements-icon");
+                    iconElement.removeClass("fa-info-circle fa-exclamation-circle fa-warning fa-times-circle");
+                    if (orphanRecords.length > 0) {
+                        iconElement.addClass("fa-exclamation-circle");
+                    } else {
+                        iconElement.addClass("fa-info-circle");
+                    }
+
+                    // Ordina per gravita: warning prima di info
                     if (orphanRecords.length > 0) {
                         titleElement.append(` <span class="badge badge-warning ml-2">${orphanRecords.length}</span>`);
                     }
@@ -327,15 +341,22 @@ function avviaControllo(controllo) {
                         });
                     });
 
-                    // Aggiungi le nuove classi in base al tipo di badge più grave
+                    // Aggiungi le nuove classi in base al tipo di badge piu grave
+                    let iconElement = titleElement.find(".requirements-icon");
+                    iconElement.removeClass("fa-info-circle fa-exclamation-circle fa-warning fa-times-circle");
+
                     if (hasDanger) {
                         headerElement.addClass("requirements-card-header-danger");
                         titleElement.addClass("requirements-card-title-danger");
                         cardElement.addClass("card-danger");
+                        iconElement.addClass("fa-times-circle");
                     } else if (hasWarning) {
                         headerElement.addClass("requirements-card-header-warning");
                         titleElement.addClass("requirements-card-title-warning");
                         cardElement.addClass("card-warning");
+                        iconElement.addClass("fa-exclamation-circle");
+                    } else {
+                        iconElement.addClass("fa-info-circle");
                     }
 
                     // Mostra le badge per tipo di avviso
@@ -348,20 +369,36 @@ function avviaControllo(controllo) {
                     if (infoCount > 0) {
                         titleElement.append(` <span class="badge badge-info ml-2">${infoCount}</span>`);
                     }
+
+                    // Aggiungi le date di filtro in testo grigio
+                    if (controllo["period_start"] && controllo["period_end"]) {
+                        let dataInizio = new Date(controllo["period_start"]);
+                        let dataFine = new Date(controllo["period_end"]);
+                        let dataInizioFormattata = dataInizio.toLocaleDateString("it-IT");
+                        let dataFineFormattata = dataFine.toLocaleDateString("it-IT");
+                        titleElement.append(` <span style="color: #999; font-size: 0.9rem; margin-left: 10px;">${dataInizioFormattata} - ${dataFineFormattata}</span>`);
+                    }
                 } else {
-                    // Se ci sono avvisi, determina il tipo di badge più grave
+                    // Se ci sono avvisi, determina il tipo di badge piu grave
                     let hasDanger = records.some(r => r.type === "danger");
                     let hasWarning = records.some(r => r.type === "warning");
 
                     // Aggiungi le nuove classi in base al tipo di badge
+                    let iconElement = titleElement.find(".requirements-icon");
+                    iconElement.removeClass("fa-info-circle fa-exclamation-circle fa-warning fa-times-circle");
+
                     if (hasDanger) {
                         headerElement.addClass("requirements-card-header-danger");
                         titleElement.addClass("requirements-card-title-danger");
                         cardElement.addClass("card-danger");
+                        iconElement.addClass("fa-times-circle");
                     } else if (hasWarning) {
                         headerElement.addClass("requirements-card-header-warning");
                         titleElement.addClass("requirements-card-title-warning");
                         cardElement.addClass("card-warning");
+                        iconElement.addClass("fa-exclamation-circle");
+                    } else {
+                        iconElement.addClass("fa-info-circle");
                     }
 
                     // Per altri controlli, mostra il contatore di errori
@@ -824,7 +861,7 @@ function initcard(controllo, success, records) {
         cssClass = "card-outline card-danger";
         headerClass = "requirements-card-header requirements-card-header-danger";
         titleClass = "requirements-card-title requirements-card-title-danger";
-        icon = "exclamation-circle";
+        icon = "times-circle";
     }
 
     // Usa i colori determinati sopra
@@ -836,6 +873,7 @@ function initcard(controllo, success, records) {
     let cardColorClass = "card-info";
     let headerColorClass = "requirements-card-header-info";
     let titleColorClass = "requirements-card-title-info";
+    let finalIcon = icon;
 
     if (records.length > 0) {
         // Determina il colore più grave
@@ -865,10 +903,14 @@ function initcard(controllo, success, records) {
             cardColorClass = "card-danger";
             headerColorClass = "requirements-card-header-danger";
             titleColorClass = "requirements-card-title-danger";
+            finalIcon = "times-circle";
         } else if (hasWarning) {
             cardColorClass = "card-warning";
             headerColorClass = "requirements-card-header-warning";
             titleColorClass = "requirements-card-title-warning";
+            finalIcon = "warning";
+        } else {
+            finalIcon = "info-circle";
         }
     }
 
@@ -881,7 +923,7 @@ function initcard(controllo, success, records) {
     let card = `<div class="card ` + finalCssClass + `" id="controllo-` + controllo["id"] + `" data-controllo-name="` + controllo["name"] + `" data-controllo-class="` + controllo["class"] + `">
     <div class="card-header with-border ` + finalHeaderClass + `">
         <h3 class="card-title ` + finalTitleClass + `">
-            <i class="fa fa-` + icon + ` mr-2 requirements-icon"></i>` + controllo["name"];
+            <i class="fa fa-` + finalIcon + ` mr-2 requirements-icon"></i>` + controllo["name"];
 
     // Aggiungi badge inline per il controllo IntegritaFile
     if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile" && !success && records.length > 0) {
@@ -909,6 +951,8 @@ function initcard(controllo, success, records) {
         // Per altri controlli, mostra il contatore di errori
         card += ` <span class="badge badge-danger ml-2">${records.length}</span>`;
     }
+
+    // Le date di filtro per il controllo DatiFattureElettroniche verranno aggiunte dopo esecuzione
 
     card += `</h3>
         <div class="card-tools pull-right" style="display: flex; align-items: center; gap: 10px;">`;
@@ -1253,7 +1297,7 @@ function eseguiAzioneGlobale(buttonElement) {
 
     let isInfo = controlliInfo.includes(controlloClass);
     let alertClass = isInfo ? "alert-info" : "alert-warning";
-    let iconClass = isInfo ? "fa-info-circle text-info" : "fa-exclamation-triangle text-warning";
+    let iconClass = isInfo ? "fa-info-circle text-info" : "fa-exclamation-circle text-warning";
 
     // Genera la lista delle operazioni
     let operazioniHtml = "";
@@ -1396,7 +1440,7 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
 
             let errorHtml = `
                 <div class="alert alert-danger">
-                    <h4><i class="fa fa-exclamation-triangle"></i> '.tr('Errore durante la risoluzione').'</h4>
+                    <h4><i class="fa fa-times-circle"></i> '.tr('Errore durante la risoluzione').'</h4>
                     <p>'.tr('Si è verificato un errore').': ${errorMessage}</p>
                 </div>
             `;

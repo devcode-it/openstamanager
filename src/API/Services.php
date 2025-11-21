@@ -242,9 +242,11 @@ class Services
             // Prova a recuperare dalla cache
             $cache = Cache::where('name', 'Spazio utilizzato')->first();
             if ($cache && $cache->isValid()) {
-                return (int) $cache->content;
+                $osm_size = $cache->content;
             }
-            $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
+            if (!$osm_size) {
+                $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
+            }
 
             return $osm_size;
         } catch (\Exception $e) {

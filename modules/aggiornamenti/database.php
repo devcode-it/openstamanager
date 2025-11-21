@@ -21,6 +21,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\OperationLog;
+use Modules\Aggiornamenti\IntegrityChecker;
+use Modules\Aggiornamenti\Utils;
 
 // Aggiunta della classe per il modulo
 echo '<div class="module-aggiornamenti">';
@@ -32,59 +34,18 @@ function saveQueriesToSession($queries)
     $_SESSION['query_conflitti'] = $queries;
 }
 
-// Funzioni per il controllo database (dichiarate solo se non già presenti)
+// Funzioni per il controllo database (wrapper per compatibilità)
 if (!function_exists('integrity_diff')) {
     function integrity_diff($expected, $current)
     {
-        foreach ($expected as $key => $value) {
-            if (array_key_exists($key, $current) && is_array($value)) {
-                if (!is_array($current[$key])) {
-                    $difference[$key] = $value;
-                } else {
-                    $new_diff = integrity_diff($value, $current[$key]);
-                    if (!empty($new_diff)) {
-                        $difference[$key] = $new_diff;
-                    }
-                }
-            } elseif (!array_key_exists($key, $current) || $current[$key] != $value && !empty($value)) {
-                $difference[$key] = [
-                    'current' => $current[$key],
-                    'expected' => $value,
-                ];
-            }
-        }
-
-        return !isset($difference) ? [] : $difference;
+        return IntegrityChecker::diff($expected, $current);
     }
 }
 
 if (!function_exists('settings_diff')) {
     function settings_diff($expected, $current)
     {
-        foreach ($expected as $key => $value) {
-            if (array_key_exists($key, $current)) {
-                if (!is_array($current[$key])) {
-                    if ($current[$key] !== $value) {
-                        $difference[$key] = [
-                            'current' => $current[$key],
-                            'expected' => $value,
-                        ];
-                    }
-                } else {
-                    $new_diff = integrity_diff($value, $current[$key]);
-                    if (!empty($new_diff)) {
-                        $difference[$key] = $new_diff;
-                    }
-                }
-            } else {
-                $difference[$key] = [
-                    'current' => null,
-                    'expected' => $value,
-                ];
-            }
-        }
-
-        return $difference;
+        return IntegrityChecker::settingsDiff($expected, $current);
     }
 }
 
@@ -216,25 +177,8 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 $error_count = $danger_count + $warning_count + $info_count;
             }
 
-            $badge_html = '';
-            $border_color = '#17a2b8'; // default info
-
-            if ($danger_count > 0) {
-                $badge_html .= '<span class="badge badge-danger ml-2">'.$danger_count.'</span>';
-                $border_color = '#dc3545'; // danger
-            }
-            if ($warning_count > 0) {
-                $badge_html .= '<span class="badge badge-warning ml-2">'.$warning_count.'</span>';
-                if ($border_color === '#17a2b8') {
-                    $border_color = '#ffc107'; // warning
-                }
-            }
-            if ($info_count > 0) {
-                $badge_html .= '<span class="badge badge-info ml-2">'.$info_count.'</span>';
-                if ($border_color === '#17a2b8') {
-                    $border_color = '#17a2b8'; // info
-                }
-            }
+            $badge_html = Utils::generateBadgeHtml($danger_count, $warning_count, $info_count);
+            $border_color = Utils::determineBorderColor($danger_count, $warning_count);
 
             echo '
 <div class="mb-3">
@@ -584,25 +528,8 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
             }
         }
 
-        $settings_border_color = '#17a2b8'; // default info
-        $settings_badge_html = '';
-
-        if ($settings_danger_count > 0) {
-            $settings_badge_html .= '<span class="badge badge-danger ml-2">'.$settings_danger_count.'</span>';
-            $settings_border_color = '#dc3545'; // danger
-        }
-        if ($settings_warning_count > 0) {
-            $settings_badge_html .= '<span class="badge badge-warning ml-2">'.$settings_warning_count.'</span>';
-            if ($settings_border_color === '#17a2b8') {
-                $settings_border_color = '#ffc107'; // warning
-            }
-        }
-        if ($settings_info_count > 0) {
-            $settings_badge_html .= '<span class="badge badge-info ml-2">'.$settings_info_count.'</span>';
-            if ($settings_border_color === '#17a2b8') {
-                $settings_border_color = '#17a2b8'; // info
-            }
-        }
+        $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
+        $settings_border_color = Utils::determineBorderColor($settings_danger_count, $settings_warning_count);
 
         echo '
 <div class="mb-3">

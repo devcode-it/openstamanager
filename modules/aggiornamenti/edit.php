@@ -262,7 +262,7 @@ if (function_exists('customComponents')) {
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
     $customizations_card_class = $has_any_errors ? 'card-warning' : 'card-success';
-    $customizations_icon = $has_any_errors ? 'fa-exclamation-triangle' : 'fa-check';
+    $customizations_icon = $has_any_errors ? 'fa-warning' : 'fa-check-circle';
     $customizations_title = $has_any_errors ? tr('Personalizzazioni Rilevate') : tr('Personalizzazioni');
 
     echo '
@@ -283,9 +283,9 @@ if (function_exists('customComponents')) {
         $modified_files_count = count($checksum_errors_grouped);
         $custom_files_count = count($custom_files);
 
-        // Determina il colore in base all'avviso più grave
+        // Determina il colore in base all'avviso piu grave
         $file_card_color = 'success';
-        $file_icon = 'fa-check';
+        $file_icon = 'fa-check-circle';
         if ($modified_files_count > 0) {
             $file_card_color = 'warning';
             $file_icon = 'fa-warning';
@@ -367,7 +367,7 @@ if (function_exists('customComponents')) {
         // Card Tabelle
         $table_count = count($tables);
         $table_card_color = $table_count > 0 ? 'info' : 'success';
-        $table_icon = $table_count > 0 ? 'fa-info-circle' : 'fa-check';
+        $table_icon = $table_count > 0 ? 'fa-info-circle' : 'fa-check-circle';
 
         echo '
         <div class="card card-outline card-'.$table_card_color.' requirements-card mb-3 collapsable collapsed-card">
@@ -408,13 +408,12 @@ if (function_exists('customComponents')) {
         // Conta gli avvisi per tipo
         $view_warning_count = 0;
         $view_info_count = 0;
-        $view_dark_count = 0;
 
         if ($has_view_data_issues) {
             foreach ($custom_views_not_standard as $view) {
                 match ($view['reason']) {
                     'Vista aggiuntiva' => $view_info_count++,
-                    'Vista mancante' => $view_dark_count++,
+                    'Vista mancante' => $view_info_count++,
                     'Query modificata' => $view_warning_count++,
                     'Modulo non previsto' => $view_info_count++,
                     default => null,
@@ -422,15 +421,12 @@ if (function_exists('customComponents')) {
             }
         }
 
-        // Determina il colore della card in base all'avviso più grave
+        // Determina il colore della card in base all'avviso piu grave
         $view_card_color = 'success';
-        $view_icon = 'fa-check';
+        $view_icon = 'fa-check-circle';
         if ($view_warning_count > 0 || $views_file_missing) {
             $view_card_color = 'warning';
             $view_icon = 'fa-warning';
-        } elseif ($view_dark_count > 0) {
-            $view_card_color = 'dark';
-            $view_icon = 'fa-check';
         } elseif ($view_info_count > 0) {
             $view_card_color = 'info';
             $view_icon = 'fa-info-circle';
@@ -443,7 +439,6 @@ if (function_exists('customComponents')) {
                     <i class="fa '.$view_icon.' mr-2 requirements-icon"></i>
                     '.tr('Viste personalizzate').'
                     '.($view_warning_count > 0 ? '<span class="badge badge-warning ml-2">'.$view_warning_count.'</span>' : '').'
-                    '.($view_dark_count > 0 ? '<span class="badge badge-dark ml-2">'.$view_dark_count.'</span>' : '').'
                     '.($view_info_count > 0 ? '<span class="badge badge-info ml-2">'.$view_info_count.'</span>' : '').'
                 </h3>
                 <div class="card-tools pull-right">
@@ -472,7 +467,7 @@ if (function_exists('customComponents')) {
             foreach ($custom_views_not_standard as $index => $view) {
                 $badge_class = match ($view['reason']) {
                     'Vista aggiuntiva' => 'badge-info',
-                    'Vista mancante' => 'badge-dark',
+                    'Vista mancante' => 'badge-info',
                     'Query modificata' => 'badge-warning',
                     'Modulo non previsto' => 'badge-info',
                     default => 'badge-secondary',
@@ -528,7 +523,7 @@ if (function_exists('customComponents')) {
         } elseif ($views_file_missing) {
             echo '
                     <div class="alert alert-warning alert-database">
-                        <i class="fa fa-warning"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
+                        <i class="fa fa-exclamation-circle"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
                             '_FILE_' => '<b>views.json</b>',
                         ]).'.
                     </div>';
@@ -561,9 +556,9 @@ if (function_exists('customComponents')) {
             }
         }
 
-        // Determina il colore della card in base all'avviso più grave
+        // Determina il colore della card in base all'avviso piu grave
         $module_card_color = 'success';
-        $module_icon = 'fa-check';
+        $module_icon = 'fa-check-circle';
         if ($module_warning_count > 0 || $modules_file_missing) {
             $module_card_color = 'warning';
             $module_icon = 'fa-warning';
@@ -658,7 +653,7 @@ if (function_exists('customComponents')) {
         } elseif ($modules_file_missing) {
             echo '
                     <div class="alert alert-warning alert-database">
-                        <i class="fa fa-warning"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
+                        <i class="fa fa-exclamation-circle"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
                             '_FILE_' => '<b>modules.json</b>',
                         ]).'.
                     </div>';
@@ -798,16 +793,16 @@ if (function_exists('customComponents')) {
         // Determina il colore in base all'avviso più grave
         if ($database_danger_count > 0) {
             $database_card_color = 'danger';
-            $database_icon = 'fa-warning';
+            $database_icon = 'fa-times-circle';
         } elseif ($database_warning_count > 0 || $database_file_missing) {
             $database_card_color = 'warning';
-            $database_icon = 'fa-warning';
+            $database_icon = 'fa-exclamation-circle';
         } elseif ($database_info_count > 0) {
             $database_card_color = 'info';
             $database_icon = 'fa-info-circle';
         } else {
             $database_card_color = 'success';
-            $database_icon = 'fa-check';
+            $database_icon = 'fa-check-circle';
         }
 
 

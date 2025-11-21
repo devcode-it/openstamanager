@@ -284,13 +284,21 @@ switch (filter('op')) {
                 $user_name = $user ? $user['username'] : null;
             }
 
-            $results[] = [
+            $result_item = [
                 'id' => $key,
                 'class' => $controllo,
                 'name' => $nome_controllo,
                 'last_execution' => $operation ? $operation['created_at'] : null,
                 'last_user' => $user_name,
             ];
+
+            // Aggiungi le date di filtro per il controllo DatiFattureElettroniche
+            if ($controllo === DatiFattureElettroniche::class) {
+                $result_item['period_start'] = $_SESSION['period_start'] ?? null;
+                $result_item['period_end'] = $_SESSION['period_end'] ?? null;
+            }
+
+            $results[] = $result_item;
         }
 
         echo json_encode($results, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

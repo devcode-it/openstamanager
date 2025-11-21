@@ -496,7 +496,7 @@ foreach ($requirements as $key => $values) {
     }
 
     $card_color = $general_status ? 'success' : 'danger';
-    $card_icon = $general_status ? 'fa-check-circle' : 'fa-exclamation-circle';
+    $card_icon = $general_status ? 'fa-check-circle' : 'fa-warning';
 
     echo '
 <div class="card card-outline card-'.$card_color.' requirements-card mb-3 collapsable collapsed-card">

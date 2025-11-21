@@ -36,8 +36,14 @@ class ReaValidi extends Controllo
 
     public function getOptions($record)
     {
-        // Nessuna opzione per le singole righe - utilizzare solo la risoluzione globale
-        return [];
+        return [
+            [
+                'name' => tr('Correggi'),
+                'icon' => 'fa fa-check',
+                'color' => 'primary',
+                'params' => [],
+            ],
+        ];
     }
 
     /**
@@ -87,9 +93,11 @@ class ReaValidi extends Controllo
 
     public function execute($record, $params = [])
     {
-        // La risoluzione singola non è più supportata
-        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
-        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+        $anagrafica = Anagrafica::find($record['id']);
+        $anagrafica->codicerea = null;
+        $anagrafica->save();
+
+        return true;
     }
 
     /**

@@ -36,8 +36,14 @@ class PianoContiRagioneSociale extends Controllo
 
     public function getOptions($record)
     {
-        // Nessuna opzione per le singole righe
-        return [];
+        return [
+            [
+                'name' => tr('Correggi'),
+                'icon' => 'fa fa-check',
+                'color' => 'primary',
+                'params' => [],
+            ],
+        ];
     }
 
     /**
@@ -86,9 +92,34 @@ class PianoContiRagioneSociale extends Controllo
 
     public function execute($record, $params = [])
     {
-        // La risoluzione singola non è più supportata
-        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
-        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+        $anagrafica = Anagrafica::find($record['id']);
+        $conti_da_verificare = [];
+
+        // Raccogli i conti che potrebbero diventare vuoti
+        if (!empty($anagrafica->idconto_cliente)) {
+            $conti_da_verificare[] = $anagrafica->idconto_cliente;
+        }
+        if (!empty($anagrafica->idconto_fornitore)) {
+            $conti_da_verificare[] = $anagrafica->idconto_fornitore;
+        }
+
+        // Gestione conto cliente
+        if (!empty($anagrafica->idconto_cliente)) {
+            $this->gestisciConto($anagrafica, 'idconto_cliente');
+        }
+
+        // Gestione conto fornitore
+        if (!empty($anagrafica->idconto_fornitore)) {
+            $this->gestisciConto($anagrafica, 'idconto_fornitore');
+        }
+
+        // Elimina i conti vuoti rimasti
+        $conti_da_verificare = array_unique($conti_da_verificare);
+        foreach ($conti_da_verificare as $id_conto) {
+            $this->eliminaContoSeVuoto($id_conto);
+        }
+
+        return true;
     }
 
     /**

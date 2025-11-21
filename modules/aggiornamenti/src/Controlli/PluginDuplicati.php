@@ -31,7 +31,19 @@ class PluginDuplicati extends Controllo
 
     public function getType($record)
     {
-        return 'warning';
+        return 'danger';
+    }
+
+    public function getOptions($record)
+    {
+        return [
+            [
+                'name' => tr('Correggi'),
+                'icon' => 'fa fa-check',
+                'color' => 'primary',
+                'params' => [],
+            ],
+        ];
     }
 
     public function check()
@@ -131,9 +143,55 @@ class PluginDuplicati extends Controllo
 
     public function execute($record, $params = [])
     {
-        // La risoluzione singola non è supportata per questo controllo
-        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
-        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+        $database = database();
+        $record_id = $record['id'];
+
+        // Estrai il tipo di duplicato dal record ID
+        if (strpos($record_id, 'name_') === 0) {
+            // Duplicato nel campo 'name' della tabella zz_plugins
+            // Record ID è nel formato: name_<idmodule_to>_<name>
+            preg_match('/^name_(\d+)_(.+)$/', $record_id, $matches);
+            if (!empty($matches)) {
+                $idmodule_to = $matches[1];
+                $name = $matches[2];
+
+                // Trova tutti i plugin con questo idmodule_to e name, ordinate per ID DESC
+                // Mantieni il primo (più recente) ed elimina gli altri
+                $plugins = $database->fetchArray('
+                    SELECT `id`
+                    FROM `zz_plugins`
+                    WHERE `idmodule_to` = '.prepare($idmodule_to).' AND `name` = '.prepare($name).'
+                    ORDER BY `id` DESC
+                ');
+
+                // Elimina tutti tranne il primo
+                for ($i = 1; $i < \count($plugins); ++$i) {
+                    $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($plugins[$i]['id']));
+                }
+            }
+        } elseif (strpos($record_id, 'title_diversi_') === 0) {
+            // Duplicato nei titoli diversi - non eliminiamo nulla, solo notifichiamo
+            return true;
+        } elseif (strpos($record_id, 'record_lang_') === 0) {
+            // Duplicato in zz_plugins_lang
+            preg_match('/record_lang_(\d+)_(\d+)/', $record_id, $matches);
+            if (!empty($matches)) {
+                $id_record = $matches[1];
+                $id_lang = $matches[2];
+                // Elimina i duplicati mantenendo il primo
+                $duplicati = $database->fetchArray('
+                    SELECT `id`
+                    FROM `zz_plugins_lang`
+                    WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare($id_lang).'
+                    ORDER BY `id` DESC
+                ');
+                for ($i = 1; $i < \count($duplicati); ++$i) {
+                    $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = '.prepare($duplicati[$i]['id']));
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -167,11 +225,11 @@ class PluginDuplicati extends Controllo
             }
 
             foreach ($grouped_name as $group) {
-                if (count($group) > 1) {
+                if (\count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_plugins` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['name_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < \count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['name_'.$group[$i]['id']] = true;
                     }
                 }
             }

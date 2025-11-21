@@ -31,7 +31,19 @@ class ColonneDuplicateViste extends Controllo
 
     public function getType($record)
     {
-        return 'warning';
+        return 'danger';
+    }
+
+    public function getOptions($record)
+    {
+        return [
+            [
+                'name' => tr('Correggi'),
+                'icon' => 'fa fa-check',
+                'color' => 'primary',
+                'params' => [],
+            ],
+        ];
     }
 
     public function check()
@@ -97,11 +109,54 @@ class ColonneDuplicateViste extends Controllo
         return true;
     }
 
-    public function execute($record, $params = []): never
+    public function execute($record, $params = [])
     {
-        // La risoluzione singola non è supportata per questo controllo
-        // Utilizzare solo la risoluzione globale tramite il pulsante "Risolvi tutti i conflitti"
-        throw new \Exception(tr('La risoluzione singola non è supportata. Utilizzare la risoluzione globale.'));
+        $database = database();
+        $record_id = $record['id'];
+
+        // Estrai il tipo di duplicato dal record ID
+        if (strpos($record_id, 'name_') === 0) {
+            // Duplicato nel campo 'name' della tabella zz_views
+            // Record ID è nel formato: name_<id_module>_<name>
+            preg_match('/^name_(\d+)_(.+)$/', $record_id, $matches);
+            if (!empty($matches)) {
+                $id_module = $matches[1];
+                $name = $matches[2];
+
+                // Trova tutte le viste con questo id_module e name, ordinate per ID DESC
+                // Mantieni la prima (più recente) ed elimina le altre
+                $viste = $database->fetchArray('
+                    SELECT `id`
+                    FROM `zz_views`
+                    WHERE `id_module` = '.prepare($id_module).' AND `name` = '.prepare($name).'
+                    ORDER BY `id` DESC
+                ');
+
+                // Elimina tutte tranne la prima
+                for ($i = 1; $i < count($viste); ++$i) {
+                    $database->query('DELETE FROM `zz_views` WHERE `id` = '.prepare($viste[$i]['id']));
+                }
+            }
+        } elseif (strpos($record_id, 'record_lang_') === 0) {
+            // Duplicato in zz_views_lang
+            preg_match('/record_lang_(\d+)_(\d+)/', $record_id, $matches);
+            if (!empty($matches)) {
+                $id_record = $matches[1];
+                $id_lang = $matches[2];
+                // Elimina i duplicati mantenendo il primo
+                $duplicati = $database->fetchArray('
+                    SELECT `id`
+                    FROM `zz_views_lang`
+                    WHERE `id_record` = '.prepare($id_record).' AND `id_lang` = '.prepare($id_lang).'
+                    ORDER BY `id` DESC
+                ');
+                for ($i = 1; $i < count($duplicati); ++$i) {
+                    $database->query('DELETE FROM `zz_views_lang` WHERE `id` = '.prepare($duplicati[$i]['id']));
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

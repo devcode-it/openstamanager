@@ -27,6 +27,7 @@ use Util\XML;
 class DatiFattureElettroniche extends Controllo
 {
     // Costanti per i tipi di errore
+    public const ERROR_DANGER = 'danger';
     public const ERROR_WARNING = 'warning';
     public const ERROR_INFO = 'info';
 
@@ -119,32 +120,50 @@ class DatiFattureElettroniche extends Controllo
             return strcmp($a['data'], $b['data']);
         });
 
-        // Crea la lista delle fatture
-        $lista_fatture = [];
+        // Colori per il tipo warning
+        $colors = [
+            'warning' => ['bg' => '#fff3cd', 'border' => '#ffc107', 'text' => '#856404', 'badge_bg' => '#ffc107'],
+        ];
+        $section_color = $colors['warning'];
+
+        // Crea la descrizione HTML con lo stesso formato della sezione avvisi
+        $descrizione = '<div style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; line-height: 1.4;">';
+        $descrizione .= '<div style="border: 1px solid '.$section_color['border'].'; border-radius: 6px; overflow: hidden;">';
+
+        // Header della sezione collassabile
+        $descrizione .= '<div style="background: '.$section_color['bg'].'; padding: 6px 10px; border-bottom: 1px solid '.$section_color['border'].'; cursor: pointer;" class="avvisi-header" onclick="$(this).next().slideToggle(); $(this).find(\'.fa-chevron-right\').toggleClass(\'fa-rotate-90\');">';
+        $descrizione .= '<h5 style="margin: 0; color: '.$section_color['text'].'; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">';
+        $descrizione .= '<i class="fa fa-chevron-right" style="transition: transform 0.3s; font-size: 12px;"></i>';
+        $descrizione .= '<i class="fa fa-exclamation-circle" style="color: #ffc107;"></i> '.tr('Avvisi');
+        $descrizione .= ' <span class="badge badge-warning ml-2" data-badge-type="warning">'.$count.'</span>';
+        $descrizione .= '</h5>';
+        $descrizione .= '</div>';
+
+        // Contenuto collassabile
+        $descrizione .= '<div style="background: white; display: none;">';
+
+        // Mostra le righe con il numero fattura e il bordo warning sulla sinistra
         foreach ($this->fatture_senza_xml as $fattura) {
-            $lista_fatture[] = $fattura['numero'];
+            $descrizione .= '<div style="background: white; border-left: 3px solid #ffc107; padding: 10px 15px; margin-bottom: 0; font-size: 11px; border-bottom: 1px solid #e9ecef;">';
+            $descrizione .= '<div style="color: #000; font-weight: 700;">'.$fattura['numero'].'</div>';
+            $descrizione .= '<div style="color: #6c757d; font-size: 10px; margin-top: 4px;">'.$fattura['data'].' - '.$fattura['cliente'].'</div>';
+            $descrizione .= '</div>';
         }
 
-        // Crea la descrizione HTML
-        $descrizione = '<div style="padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">';
-        $descrizione .= '<div style="margin-bottom: 8px;">';
-        $descrizione .= '<i class="fa fa-exclamation-triangle" style="color: #ffc107; margin-right: 8px;"></i>';
-        $descrizione .= '<strong style="color: #856404;">'.tr('Fatture senza file XML').'</strong>';
-        $descrizione .= ' <span style="background: #ffc107; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: 6px;">'.$count.'</span>';
-        $descrizione .= '</div>';
-        $descrizione .= '<div style="font-size: 12px; color: #856404; margin-top: 8px;">';
-        $descrizione .= tr('Le seguenti fatture non hanno un file XML associato').': ';
-        $descrizione .= '<strong>'.implode(', ', $lista_fatture).'</strong>';
-        $descrizione .= '</div>';
-        $descrizione .= '<div style="font-size: 11px; color: #6c757d; margin-top: 8px; font-style: italic;">';
+        // Suggerimento
+        $descrizione .= '<div style="background: #f8f9fa; padding: 10px 15px; font-size: 11px; color: #6c757d; border-top: 1px solid #e9ecef;">';
         $descrizione .= '<i class="fa fa-lightbulb-o" style="margin-right: 4px;"></i>';
         $descrizione .= tr('Verificare se le fatture devono essere inviate al SdI o se sono state escluse intenzionalmente');
+        $descrizione .= '</div>';
+
+        $descrizione .= '</div>';
+
         $descrizione .= '</div>';
         $descrizione .= '</div>';
 
         $this->addResult([
             'id' => 'riepilogo_senza_xml',
-            'nome' => tr('Riepilogo fatture senza XML').' ('.$count.')',
+            'nome' => tr('Riepilogo fatture senza XML'),
             'descrizione' => $descrizione,
         ]);
     }
@@ -312,7 +331,7 @@ class DatiFattureElettroniche extends Controllo
                     $denominazione_gestionale_display = Validator::sanitizeXML2($denominazione_gestionale_display);
 
                     $errors[] = [
-                        'type' => self::ERROR_WARNING,
+                        'type' => self::ERROR_INFO,
                         'category' => self::CATEGORY_ANAGRAFICA,
                         'field' => 'denominazione',
                         'message' => tr('Denominazione/Ragione Sociale differente'),
@@ -335,23 +354,50 @@ class DatiFattureElettroniche extends Controllo
                 $comune_gestionale = $anagrafica->sedeLegale->citta ?? '';
                 $provincia_gestionale = $anagrafica->sedeLegale->provincia ?? '';
 
-                if (!empty($indirizzo_xml) && !empty($indirizzo_gestionale)) {
-                    $indirizzo_xml_clean = $this->normalizeTextForComparison($indirizzo_xml, false);
-                    $indirizzo_gestionale_clean = $this->normalizeTextForComparison($indirizzo_gestionale, true);
+                if (!empty($indirizzo_xml) || !empty($indirizzo_gestionale)) {
+                    if (!empty($indirizzo_xml) && !empty($indirizzo_gestionale)) {
+                        $indirizzo_xml_clean = $this->normalizeTextForComparison($indirizzo_xml, false);
+                        $indirizzo_gestionale_clean = $this->normalizeTextForComparison($indirizzo_gestionale, true);
 
-                    if ($indirizzo_xml_clean !== $indirizzo_gestionale_clean) {
-                        // Prepara i valori per la visualizzazione: applica sanitizeXML2 a entrambi
-                        $indirizzo_xml_display = Validator::sanitizeXML2((string) $indirizzo_xml);
+                        if ($indirizzo_xml_clean !== $indirizzo_gestionale_clean) {
+                            // Prepara i valori per la visualizzazione: applica sanitizeXML2 a entrambi
+                            $indirizzo_xml_display = Validator::sanitizeXML2((string) $indirizzo_xml);
+                            $indirizzo_gestionale_display = html_entity_decode((string) $indirizzo_gestionale, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                            $indirizzo_gestionale_display = Validator::sanitizeXML2($indirizzo_gestionale_display);
+
+                            $errors[] = [
+                                'type' => self::ERROR_INFO,
+                                'category' => self::CATEGORY_ANAGRAFICA,
+                                'field' => 'indirizzo',
+                                'message' => tr('Indirizzo differente'),
+                                'xml_value' => $indirizzo_xml_display,
+                                'gestionale_value' => $indirizzo_gestionale_display,
+                                'suggestion' => tr('Verificare l\'indirizzo nell\'anagrafica cliente'),
+                            ];
+                        }
+                    } elseif (empty($indirizzo_xml) && !empty($indirizzo_gestionale)) {
+                        // Indirizzo presente nel gestionale ma non in XML
                         $indirizzo_gestionale_display = html_entity_decode((string) $indirizzo_gestionale, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                         $indirizzo_gestionale_display = Validator::sanitizeXML2($indirizzo_gestionale_display);
-
                         $errors[] = [
                             'type' => self::ERROR_INFO,
                             'category' => self::CATEGORY_ANAGRAFICA,
                             'field' => 'indirizzo',
-                            'message' => tr('Indirizzo differente'),
-                            'xml_value' => $indirizzo_xml_display,
+                            'message' => tr('Indirizzo mancante nell\'XML'),
+                            'xml_value' => '-',
                             'gestionale_value' => $indirizzo_gestionale_display,
+                            'suggestion' => tr('Verificare l\'indirizzo nell\'anagrafica cliente'),
+                        ];
+                    } elseif (!empty($indirizzo_xml) && empty($indirizzo_gestionale)) {
+                        // Indirizzo presente in XML ma non nel gestionale
+                        $indirizzo_xml_display = Validator::sanitizeXML2((string) $indirizzo_xml);
+                        $errors[] = [
+                            'type' => self::ERROR_INFO,
+                            'category' => self::CATEGORY_ANAGRAFICA,
+                            'field' => 'indirizzo',
+                            'message' => tr('Indirizzo mancante nel gestionale'),
+                            'xml_value' => $indirizzo_xml_display,
+                            'gestionale_value' => '-',
                             'suggestion' => tr('Verificare l\'indirizzo nell\'anagrafica cliente'),
                         ];
                     }
@@ -456,10 +502,8 @@ class DatiFattureElettroniche extends Controllo
             $differenza_totale = abs($totale_gestionale - $totale_documento_xml);
 
             if ($differenza_totale > 0.01) { // Tolleranza di 1 centesimo
-                $error_type = self::ERROR_WARNING; // Tutti gli errori sono ora avvisi
-
                 $errors[] = [
-                    'type' => $error_type,
+                    'type' => self::ERROR_DANGER,
                     'category' => self::CATEGORY_TOTALI,
                     'field' => 'totale_documento',
                     'message' => tr('Totale documento non corrispondente (diff: _DIFF_€)', [
@@ -497,7 +541,7 @@ class DatiFattureElettroniche extends Controllo
                 $diff_totale_imponibile = abs($totale_imponibile_xml - $totale_imponibile_gestionale);
                 if ($diff_totale_imponibile > 0.01) {
                     $errors[] = [
-                        'type' => self::ERROR_WARNING,
+                        'type' => self::ERROR_DANGER,
                         'category' => self::CATEGORY_TOTALI,
                         'field' => 'imponibile',
                         'message' => tr('Totale imponibile non corrispondente (diff: _DIFF_€)', [
@@ -513,7 +557,7 @@ class DatiFattureElettroniche extends Controllo
                 $diff_totale_imposta = abs($totale_imposta_xml - $totale_imposta_gestionale);
                 if ($diff_totale_imposta > 0.01) {
                     $errors[] = [
-                        'type' => self::ERROR_WARNING,
+                        'type' => self::ERROR_DANGER,
                         'category' => self::CATEGORY_TOTALI,
                         'field' => 'iva',
                         'message' => tr('Totale IVA non corrispondente (diff: _DIFF_€)', [
@@ -747,7 +791,7 @@ class DatiFattureElettroniche extends Controllo
     {
         // Raggruppa gli errori per categoria e tipo
         $grouped_errors = [
-            self::ERROR_WARNING => [],
+            self::ERROR_DANGER => [],
             self::ERROR_WARNING => [],
             self::ERROR_INFO => [],
         ];
@@ -761,7 +805,7 @@ class DatiFattureElettroniche extends Controllo
 
         // Determina il tipo di risultato basato sulla gravità degli errori
         $result_type = 'info';
-        if (!empty($grouped_errors[self::ERROR_WARNING])) {
+        if (!empty($grouped_errors[self::ERROR_DANGER])) {
             $result_type = 'error';
         } elseif (!empty($grouped_errors[self::ERROR_WARNING])) {
             $result_type = 'warning';
@@ -781,46 +825,178 @@ class DatiFattureElettroniche extends Controllo
     protected function generateErrorReport($grouped_errors)
     {
         // Contatori per tipo di errore
+        $danger_count = count($grouped_errors[self::ERROR_DANGER]);
         $warning_count = count($grouped_errors[self::ERROR_WARNING]);
         $info_count = count($grouped_errors[self::ERROR_INFO]);
 
         // Container principale con stili migliorati per evitare conflitti
         $html = '<div style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; line-height: 1.4;">';
 
-        // Header con contatori compatto e migliorato
-        $total_errors = $warning_count + $info_count;
-        $status_color = $warning_count > 0 ? '#ffc107' : '#28a745';
+        // Determina il colore della sezione in base alla gravità
+        $total_errors = $danger_count + $warning_count + $info_count;
+        $section_type = $danger_count > 0 ? 'danger' : ($warning_count > 0 ? 'warning' : 'info');
+
+        // Genera una sezione unica con tutte le righe
+        if ($total_errors > 0) {
+            $all_errors = array_merge(
+                $grouped_errors[self::ERROR_DANGER] ?? [],
+                $grouped_errors[self::ERROR_WARNING] ?? [],
+                $grouped_errors[self::ERROR_INFO] ?? []
+            );
+
+            $html .= $this->generateUnifiedErrorSection($all_errors, $section_type);
+        }
 
         $html .= '</div>';
 
-        // Usa sempre la modalità compatta per migliorare la leggibilità
-        $use_compact_mode = true;
+        return $html;
+    }
 
-        // Avvisi
-        if (!empty($grouped_errors[self::ERROR_WARNING])) {
-            $html .= $this->generateErrorSection(
-                tr('Avvisi'),
-                $grouped_errors[self::ERROR_WARNING],
-                'warning',
-                $use_compact_mode
-            );
+    /**
+     * Genera una sezione unica del report con tutte le righe distinte per colore.
+     */
+    protected function generateUnifiedErrorSection($all_errors, $section_type)
+    {
+        // Colori per i diversi tipi di errore
+        $colors = [
+            'danger' => ['bg' => '#f8d7da', 'border' => '#dc3545', 'text' => '#721c24', 'badge_bg' => '#dc3545'],
+            'warning' => ['bg' => '#fff3cd', 'border' => '#ffc107', 'text' => '#856404', 'badge_bg' => '#ffc107'],
+            'info' => ['bg' => '#d1ecf1', 'border' => '#17a2b8', 'text' => '#0c5460', 'badge_bg' => '#17a2b8'],
+        ];
 
-            // Aggiungi spazio tra le sezioni se ci sono anche controlli informativi
-            if (!empty($grouped_errors[self::ERROR_INFO])) {
-                $html .= '<div style="height: 20px;"></div>';
+        $section_color = $colors[$section_type] ?? $colors['info'];
+
+        // Conta gli errori per tipo
+        $danger_count = 0;
+        $warning_count = 0;
+        $info_count = 0;
+        foreach ($all_errors as $error) {
+            if ($error['type'] === self::ERROR_DANGER) {
+                $danger_count++;
+            } elseif ($error['type'] === self::ERROR_WARNING) {
+                $warning_count++;
+            } elseif ($error['type'] === self::ERROR_INFO) {
+                $info_count++;
             }
         }
 
-        // Informativi
-        if (!empty($grouped_errors[self::ERROR_INFO])) {
-            $html .= $this->generateErrorSection(
-                tr('Controlli Informativi'),
-                $grouped_errors[self::ERROR_INFO],
-                'info',
-                $use_compact_mode
-            );
+        $html = '<div>';
+        $html .= '<div style="border: 1px solid '.$section_color['border'].'; border-radius: 6px; overflow: hidden;">';
+
+        // Header della sezione collassabile
+        $html .= '<div style="background: '.$section_color['bg'].'; padding: 6px 10px; border-bottom: 1px solid '.$section_color['border'].'; cursor: pointer;" class="avvisi-header" onclick="$(this).next().slideToggle(); $(this).find(\'.fa-chevron-right\').toggleClass(\'fa-rotate-90\');">';
+        $html .= '<h5 style="margin: 0; color: '.$section_color['text'].'; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;">';
+        $html .= '<i class="fa fa-chevron-right" style="transition: transform 0.3s; font-size: 12px;"></i>';
+        $html .= $this->getTypeIcon($section_type).' '.tr('Avvisi');
+
+        // Aggiungi badge per tipo di avviso
+        if ($danger_count > 0) {
+            $html .= ' <span class="badge badge-danger ml-2" data-badge-type="danger">'.$danger_count.'</span>';
+        }
+        if ($warning_count > 0) {
+            $html .= ' <span class="badge badge-warning ml-2" data-badge-type="warning">'.$warning_count.'</span>';
+        }
+        if ($info_count > 0) {
+            $html .= ' <span class="badge badge-info ml-2" data-badge-type="info">'.$info_count.'</span>';
         }
 
+        $html .= '</h5>';
+        $html .= '</div>';
+
+        // Contenuto collassabile
+        $html .= '<div style="background: white; display: none;">';
+
+        // Raggruppa per categoria
+        $categories = [];
+        foreach ($all_errors as $error) {
+            $categories[$error['category']][] = $error;
+        }
+
+        foreach ($categories as $category => $category_errors) {
+            $category_title = $this->getCategoryTitle($category);
+            $category_icon = $this->getCategoryIcon($category);
+
+            $html .= '<div style="border-bottom: 1px solid #e9ecef; padding: 10px 15px;">';
+            $html .= '<h6 style="margin: 0 0 8px 0; color: #495057; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">';
+            $html .= '<i class="fa fa-'.$category_icon.'" style="margin-right: 6px; color: #6c757d; font-size: 11px;"></i>'.$category_title;
+            $html .= '</h6>';
+
+            // Layout a lista con righe distinte per colore
+            $html .= '<div style="margin-top: 10px;">';
+
+            foreach ($category_errors as $error) {
+                // Determina il colore della riga in base al tipo di errore
+                if ($error['type'] === self::ERROR_DANGER) {
+                    $row_color = '#dc3545';
+                } elseif ($error['type'] === self::ERROR_WARNING) {
+                    $row_color = '#ffc107';
+                } else {
+                    $row_color = '#17a2b8';
+                }
+
+                $html .= '<div style="background: white; border-left: 3px solid '.$row_color.'; padding: 10px 15px; margin-bottom: 0; font-size: 11px; border-bottom: 1px solid #e9ecef;">';
+
+                // Determina se mostrare la colonna Diff
+                $field_name = strtolower((string) $error['field']);
+                $show_diff = in_array($field_name, ['imponibile', 'iva', 'totale_documento']);
+                $grid_cols = $show_diff ? '150px 1fr 1fr 1fr' : '150px 1fr 1fr';
+
+                // Layout con grid: nome campo + XML + Gest + (Diff se applicabile)
+                $html .= '<div style="display: grid; grid-template-columns: '.$grid_cols.'; gap: 15px; align-items: flex-start;">';
+
+                // Nome del campo
+                $html .= '<div style="color: #000; font-weight: 700; font-size: 11px;">'.htmlspecialchars((string) $error['field']).'</div>';
+
+                // Colonna XML
+                $html .= '<div>';
+                $html .= '<div style="color: #6c757d; font-weight: 600; font-size: 10px; margin-bottom: 2px; text-transform: uppercase;">XML</div>';
+                if (!empty($error['xml_value']) && $error['xml_value'] !== '-') {
+                    $xml_value = str_replace('&euro;', '€', (string) $error['xml_value']);
+                    $html .= '<div style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($xml_value).'</div>';
+                } else {
+                    $html .= '<div style="color: #adb5bd; font-style: italic;">-</div>';
+                }
+                $html .= '</div>';
+
+                // Colonna Gestionale
+                $html .= '<div>';
+                $html .= '<div style="color: #6c757d; font-weight: 600; font-size: 10px; margin-bottom: 2px; text-transform: uppercase;">Gest</div>';
+                if (!empty($error['gestionale_value']) && $error['gestionale_value'] !== '-') {
+                    $gest_value = str_replace('&euro;', '€', (string) $error['gestionale_value']);
+                    $html .= '<div style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($gest_value).'</div>';
+                } else {
+                    $html .= '<div style="color: #adb5bd; font-style: italic;">-</div>';
+                }
+                $html .= '</div>';
+
+                // Colonna Differenza (solo per totale, imponibile, iva)
+                if ($show_diff) {
+                    $html .= '<div>';
+                    $html .= '<div style="color: #6c757d; font-weight: 600; font-size: 10px; margin-bottom: 2px; text-transform: uppercase;">Diff</div>';
+
+                    if (!empty($error['xml_value']) && !empty($error['gestionale_value']) && $error['xml_value'] !== '-' && $error['gestionale_value'] !== '-') {
+                        $diff = $this->calculateDifference($error['xml_value'], $error['gestionale_value']);
+                        if ($diff !== null) {
+                            $html .= '<div style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($diff).'</div>';
+                        } else {
+                            $html .= '<div style="color: #adb5bd; font-style: italic;">-</div>';
+                        }
+                    } else {
+                        $html .= '<div style="color: #adb5bd; font-style: italic;">-</div>';
+                    }
+                    $html .= '</div>';
+                }
+
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+
+        $html .= '</div>';
+        $html .= '</div>';
         $html .= '</div>';
 
         return $html;
@@ -955,9 +1131,9 @@ class DatiFattureElettroniche extends Controllo
     protected function getTypeIcon($type)
     {
         return match ($type) {
-            'danger' => '<i class="fa fa-exclamation-triangle" style="color: #dc3545;"></i>',
+            'danger' => '<i class="fa fa-exclamation-circle" style="color: #dc3545;"></i>',
             'warning' => '<i class="fa fa-exclamation-circle" style="color: #ffc107;"></i>',
-            'info' => '<i class="fa fa-info-circle" style="color: #17a2b8;"></i>',
+            'info' => '<i class="fa fa-exclamation-circle" style="color: #17a2b8;"></i>',
             default => '<i class="fa fa-question-circle"></i>',
         };
     }
@@ -1084,9 +1260,18 @@ class DatiFattureElettroniche extends Controllo
      */
     protected function calculateDifference($value1, $value2)
     {
-        // Pulisci i valori
-        $cleaned1 = str_replace(['€', '&euro;', ' ', ','], ['', '', '', '.'], (string) $value1);
-        $cleaned2 = str_replace(['€', '&euro;', ' ', ','], ['', '', '', '.'], (string) $value2);
+        // Pulisci i valori: rimuovi €, spazi
+        $cleaned1 = trim((string) $value1);
+        $cleaned1 = str_replace(['€', '&euro;', ' '], '', $cleaned1);
+        // Converti formato italiano (1.234,56) a formato numerico (1234.56)
+        $cleaned1 = str_replace('.', '', $cleaned1);
+        $cleaned1 = str_replace(',', '.', $cleaned1);
+
+        $cleaned2 = trim((string) $value2);
+        $cleaned2 = str_replace(['€', '&euro;', ' '], '', $cleaned2);
+        // Converti formato italiano (1.234,56) a formato numerico (1234.56)
+        $cleaned2 = str_replace('.', '', $cleaned2);
+        $cleaned2 = str_replace(',', '.', $cleaned2);
 
         if (!is_numeric($cleaned1) || !is_numeric($cleaned2)) {
             return null;
@@ -1101,13 +1286,7 @@ class DatiFattureElettroniche extends Controllo
             return null;
         }
 
-        // Determina se il valore originale aveva il simbolo €
-        $hasEuro = strpos((string) $value1, '€') !== false || strpos((string) $value1, '&euro;') !== false;
-
-        if ($hasEuro) {
-            return str_replace('&euro;', '€', moneyFormat($diff, 2));
-        }
-
-        return number_format($diff, 2, ',', '.');
+        // Formatta con il simbolo €
+        return str_replace('&euro;', '€', moneyFormat($diff, 2));
     }
 }

@@ -168,10 +168,10 @@ switch (filter('op')) {
         $controlli = [
             PianoConti::class,
             PianoContiRagioneSociale::class,
+            ReaValidi::class,
             DatiFattureElettroniche::class,
             ColonneDuplicateViste::class,
             PluginDuplicati::class,
-            ReaValidi::class,
             TabelleLanguage::class,
             IntegritaFile::class,
         ];
@@ -190,7 +190,8 @@ switch (filter('op')) {
         break;
 
     case 'controlli-check':
-        $class = post('controllo');
+        $class = post('controllo', true);
+        $controllo_name = post('controllo_name', true);
 
         // Controllo sulla classe
         if (!is_subclass_of($class, Controllo::class)) {
@@ -202,12 +203,15 @@ switch (filter('op')) {
         $manager = new $class();
         $manager->check();
 
-        // Aggiunta del nome del controllo alle opzioni di log
-        OperationLog::setInfo('options', json_encode(['controllo_name' => $manager->getName()], JSON_UNESCAPED_UNICODE));
+        // Creazione del log dell'operazione
+        $nome_finale = !empty($controllo_name) ? $controllo_name : $manager->getName();
+
+        OperationLog::setInfo('id_module', $id_module);
+        OperationLog::setInfo('options', json_encode(['controllo_name' => $nome_finale], JSON_UNESCAPED_UNICODE));
 
         echo json_encode($manager->getResults());
 
-        break;
+        return;
 
     case 'controlli-action':
         $class = post('controllo');
@@ -247,6 +251,49 @@ switch (filter('op')) {
         OperationLog::setInfo('options', json_encode(['controllo_name' => $manager->getName()], JSON_UNESCAPED_UNICODE));
 
         echo json_encode($result);
+
+        break;
+
+    case 'controlli-ultima-esecuzione':
+        $controlli = [
+            PianoConti::class,
+            PianoContiRagioneSociale::class,
+            ReaValidi::class,
+            DatiFattureElettroniche::class,
+            ColonneDuplicateViste::class,
+            PluginDuplicati::class,
+            TabelleLanguage::class,
+            IntegritaFile::class,
+        ];
+
+        $results = [];
+        foreach ($controlli as $key => $controllo) {
+            $manager = new $controllo();
+            $nome_controllo = $manager->getName();
+
+            // Recupera l'ultima esecuzione da zz_operations
+            // Cerca nel campo options che contiene JSON con controllo_name
+            $query = "SELECT created_at, id_utente FROM zz_operations WHERE options LIKE ? ORDER BY created_at DESC LIMIT 1";
+            $operation = $database->fetchOne($query, ['%"controllo_name":"' . $nome_controllo . '"%']);
+
+            // Recupera il nome dell'utente se disponibile
+            $user_name = null;
+            if ($operation && $operation['id_utente']) {
+                $user_query = "SELECT username FROM zz_users WHERE id = ?";
+                $user = $database->fetchOne($user_query, [$operation['id_utente']]);
+                $user_name = $user ? $user['username'] : null;
+            }
+
+            $results[] = [
+                'id' => $key,
+                'class' => $controllo,
+                'name' => $nome_controllo,
+                'last_execution' => $operation ? $operation['created_at'] : null,
+                'last_user' => $user_name,
+            ];
+        }
+
+        echo json_encode($results, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         break;
 }

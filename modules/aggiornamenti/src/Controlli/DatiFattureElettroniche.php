@@ -1131,9 +1131,9 @@ class DatiFattureElettroniche extends Controllo
     protected function getTypeIcon($type)
     {
         return match ($type) {
-            'danger' => '<i class="fa fa-exclamation-circle" style="color: #dc3545;"></i>',
-            'warning' => '<i class="fa fa-exclamation-circle" style="color: #ffc107;"></i>',
-            'info' => '<i class="fa fa-exclamation-circle" style="color: #17a2b8;"></i>',
+            'danger' => '<i class="fa fa-exclamation-triangle text-danger"></i>',
+            'warning' => '<i class="fa fa-exclamation-triangle text-warning"></i>',
+            'info' => '<i class="fa fa-info-circle text-info"></i>',
             default => '<i class="fa fa-question-circle"></i>',
         };
     }

@@ -831,6 +831,7 @@ function initcard(controllo, success, records) {
         // Determina il colore più grave
         let hasDanger = false;
         let hasWarning = false;
+        let hasInfo = false;
 
         if (controllo["class"] === "Modules\\\\Aggiornamenti\\\\Controlli\\\\DatiFattureElettroniche") {
             // Per DatiFattureElettroniche, controlla le badge nel contenuto
@@ -842,6 +843,8 @@ function initcard(controllo, success, records) {
                         hasDanger = true;
                     } else if (type === "warning") {
                         hasWarning = true;
+                    } else if (type === "info") {
+                        hasInfo = true;
                     }
                 });
             });
@@ -849,18 +852,24 @@ function initcard(controllo, success, records) {
             // Per altri controlli, usa il campo type
             hasDanger = records.some(r => r.type === "danger");
             hasWarning = records.some(r => r.type === "warning");
+            hasInfo = records.some(r => r.type === "info");
         }
 
         if (hasDanger) {
             cardColorClass = "card-danger";
             headerColorClass = "requirements-card-header-danger";
             titleColorClass = "requirements-card-title-danger";
-            finalIcon = "times-circle";
+            finalIcon = "exclamation-triangle";
         } else if (hasWarning) {
             cardColorClass = "card-warning";
             headerColorClass = "requirements-card-header-warning";
             titleColorClass = "requirements-card-title-warning";
-            finalIcon = "warning";
+            finalIcon = "exclamation-triangle";
+        } else if (hasInfo) {
+            cardColorClass = "card-info";
+            headerColorClass = "requirements-card-header-info";
+            titleColorClass = "requirements-card-title-info";
+            finalIcon = "info-circle";
         } else {
             finalIcon = "info-circle";
         }

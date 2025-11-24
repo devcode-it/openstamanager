@@ -83,7 +83,7 @@ if (!empty($errors)) {
     echo '
 <p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello registrato nella versione ufficiale").'.</p>
 <div class="alert alert-warning">
-    <i class="fa fa-warning"></i>
+    <i class="fa fa-exclamation-triangle"></i>
     '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_', [
         '_FILE_' => '<b>checksum.json</b>',
     ]).'.

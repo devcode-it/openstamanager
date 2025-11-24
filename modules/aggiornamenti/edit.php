@@ -247,7 +247,7 @@ if (function_exists('customComponents')) {
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
     $customizations_card_class = $has_any_errors ? 'card-warning' : 'card-success';
-    $customizations_icon = $has_any_errors ? 'fa-warning' : 'fa-check-circle';
+    $customizations_icon = $has_any_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
     $customizations_title = $has_any_errors ? tr('Personalizzazioni Rilevate') : tr('Personalizzazioni');
 
     echo '
@@ -500,7 +500,7 @@ if (function_exists('customComponents')) {
         } elseif ($views_file_missing) {
             echo '
                     <div class="alert alert-warning alert-database">
-                        <i class="fa fa-exclamation-circle"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
+                        <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
                             '_FILE_' => '<b>views.json</b>',
                         ]).'.
                     </div>';
@@ -626,7 +626,7 @@ if (function_exists('customComponents')) {
         } elseif ($modules_file_missing) {
             echo '
                     <div class="alert alert-warning alert-database">
-                        <i class="fa fa-exclamation-circle"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
+                        <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
                             '_FILE_' => '<b>modules.json</b>',
                         ]).'.
                     </div>';
@@ -737,7 +737,7 @@ if (function_exists('customComponents')) {
         }
 
         $database_card_color = $database_has_errors ? 'warning' : 'success';
-        $database_icon = $database_has_errors ? 'fa-exclamation-circle' : 'fa-check-circle';
+        $database_icon = $database_has_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
 
         // Determina il colore in base all'avviso più grave
         if ($database_danger_count > 0) {
@@ -745,7 +745,7 @@ if (function_exists('customComponents')) {
             $database_icon = 'fa-exclamation-triangle';
         } elseif ($database_warning_count > 0 || $database_file_missing) {
             $database_card_color = 'warning';
-            $database_icon = 'fa-exclamation-circle';
+            $database_icon = 'fa-exclamation-triangle';
         } elseif ($database_info_count > 0) {
             $database_card_color = 'info';
             $database_icon = 'fa-info-circle';

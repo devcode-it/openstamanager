@@ -73,8 +73,20 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
+            // Validazione della risposta
+            if (empty($body) || !isset($body['status'])) {
+                logger()->error('Risposta API non valida per fattura '.$fattura->numero_esterno.': '.json_encode($body));
+
+                return [
+                    'code' => 500,
+                    'message' => tr('Risposta non valida dal server'),
+                ];
+            }
+
+            $status_code = (int) $body['status'];
+
             // Aggiornamento dello stato in base alla risposta
-            if ($body['status'] == 200 || $body['status'] == 301) {
+            if ($status_code == 200 || $status_code == 301) {
                 // Invio riuscito
                 database()->update('co_documenti', [
                     'codice_stato_fe' => 'WAIT',
@@ -91,7 +103,7 @@ class Interaction extends Services
             }
 
             return [
-                'code' => $body['status'],
+                'code' => $status_code,
                 'message' => $body['message'] ?? tr('Risposta non valida dal server'),
             ];
         } catch (\UnexpectedValueException $e) {
@@ -120,9 +132,19 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
+            // Validazione della risposta
+            if (empty($body) || !isset($body['status'])) {
+                logger()->error('Risposta API non valida per ricevute fattura ID '.$id_record.': '.json_encode($body));
+
+                return [
+                    'code' => 500,
+                    'message' => tr('Risposta non valida dal server'),
+                ];
+            }
+
             return [
-                'code' => $body['status'],
-                'results' => $body['results'],
+                'code' => (int) $body['status'],
+                'results' => $body['results'] ?? [],
             ];
         } catch (\UnexpectedValueException) {
         }

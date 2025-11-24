@@ -116,33 +116,34 @@ $status_class = !$is_enabled ? 'danger' : (isset($is_not_active) && $is_not_acti
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="alert alert-info">
-                                            <i class="fa fa-info-circle"></i> <?php echo tr('Se si seleziona l\'utente i permessi verranno ereditati da quell\'utente, in altrenativa è possibile indicare l\'accesso ad un modulo e un record con dei permessi specifici.'); ?>
+                                            <i class="fa fa-info-circle"></i> <?php echo tr('Seleziona prima il tipo di gestione permessi. "Accesso utente" per ereditare i permessi da un utente esistente, oppure "Personalizzato" per specificare modulo, record e permessi specifici.'); ?>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                {[ "type": "select", "label": "<?php echo tr('Utente'); ?>", "name": "id_utente", "ajax-source": "utenti", "value": "$id_utente$" ]}
-                                            </div>
-                                        </div>
+                                    <div class="col-md-12">
+                                        {[ "type": "select", "label": "<?php echo tr('Tipo di gestione permessi'); ?>", "name": "tipo_gestione_permessi", "required": 1, "values": "list=\"\":\"<?php echo tr('Seleziona tipo di gestione'); ?>\",\"utente\":\"<?php echo tr('Accesso utente'); ?>\",\"personalizzato\":\"<?php echo tr('Personalizzato'); ?>\"", "value": "<?php echo !empty($record['id_utente']) ? 'utente' : (!empty($record['id_module_target']) ? 'personalizzato' : ''); ?>", "extra": "onchange=\"togglePermissionFields()\"" ]}
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                {[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_target", "ajax-source": "moduli_token", "value": "$id_module_target$" ]}
-                                            </div>
+                                </div>
 
-                                            <div class="col-md-12">
-                                                {[ "type": "select", "label": "<?php echo tr('ID record'); ?>", "name": "id_record_target", "ajax-source": "record_token", "select-options": <?php echo json_encode(['id_module_target' => $record['id_module_target']]); ?>, "value": "$id_record_target$"]}
-                                            </div>
+                                <div class="row" id="utente-fields" style="display: <?php echo !empty($record['id_utente']) ? 'block' : 'none'; ?>;">
+                                    <div class="col-md-12">
+                                        {[ "type": "select", "label": "<?php echo tr('Utente'); ?>", "name": "id_utente", "ajax-source": "utenti", "value": "$id_utente$" ]}
+                                    </div>
+                                </div>
 
-                                            <div class="col-md-12">
-                                                {[ "type": "select", "label": "<?php echo tr('Permessi'); ?>", "name": "permessi", "values": "list=\"r\":\"<?php echo tr('Lettura'); ?>\",\"rw\":\"<?php echo tr('Lettura e scrittura'); ?>\",\"ra\":\"<?php echo tr('Caricamento allegati'); ?>\",\"rwa\":\"<?php echo tr('Caricamento e modifica allegati'); ?>\"", "value": "$permessi$" ]}
-                                            </div>    
-                                        </div>
+                                <div class="row" id="personalizzato-fields" style="display: <?php echo !empty($record['id_module_target']) ? 'block' : 'none'; ?>;">
+                                    <div class="col-md-12">
+                                        {[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_target", "ajax-source": "moduli_token", "value": "$id_module_target$" ]}
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        {[ "type": "select", "label": "<?php echo tr('ID record'); ?>", "name": "id_record_target", "ajax-source": "record_token", "select-options": <?php echo json_encode(['id_module_target' => $record['id_module_target']]); ?>, "value": "$id_record_target$"]}
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        {[ "type": "select", "label": "<?php echo tr('Permessi'); ?>", "name": "permessi", "values": "list=\"r\":\"<?php echo tr('Lettura'); ?>\",\"rw\":\"<?php echo tr('Lettura e scrittura'); ?>\",\"ra\":\"<?php echo tr('Caricamento allegati'); ?>\",\"rwa\":\"<?php echo tr('Caricamento e modifica allegati'); ?>\"", "value": "$permessi$" ]}
                                     </div>
                                 </div>
                                     
@@ -173,20 +174,61 @@ function toggleEmailField() {
     }
 }
 
-function togglePermissionField() {
-    var idutente = $('select[name="id_utente"]').val();
-    var idmodule = $('#id_module_target');
-    var idrecord = $('#id_record_target');
-    var permessi = $('#permessi');
+function togglePermissionFields() {
+    var tipoGestione = $('select[name="tipo_gestione_permessi"]').val();
+    var utenteFields = $('#utente-fields');
+    var personalizzatoFields = $('#personalizzato-fields');
 
-    if (idutente) {
-        idmodule.prop('required', false);
-        idrecord.prop('required', false);
-        permessi.prop('required', false);
+    if (tipoGestione === 'utente') {
+        // Mostra campi utente, nascondi campi personalizzati
+        utenteFields.show();
+        personalizzatoFields.hide();
+
+        // Imposta required per utente
+        $('select[name="id_utente"]').prop('required', true);
+
+        // Rimuovi required dai campi personalizzati
+        $('select[name="id_module_target"]').prop('required', false);
+        $('select[name="id_record_target"]').prop('required', false);
+        $('select[name="permessi"]').prop('required', false);
+
+        // Pulisci i valori dei campi personalizzati
+        $('select[name="id_module_target"]').val('').trigger('change');
+        $('select[name="id_record_target"]').val('').trigger('change');
+        $('select[name="permessi"]').val('').trigger('change');
+
+    } else if (tipoGestione === 'personalizzato') {
+        // Mostra campi personalizzati, nascondi campi utente
+        utenteFields.hide();
+        personalizzatoFields.show();
+
+        // Rimuovi required dall'utente
+        $('select[name="id_utente"]').prop('required', false);
+
+        // Imposta required per campi personalizzati
+        $('select[name="id_module_target"]').prop('required', true);
+        $('select[name="id_record_target"]').prop('required', true);
+        $('select[name="permessi"]').prop('required', true);
+
+        // Pulisci il valore dell'utente
+        $('select[name="id_utente"]').val('').trigger('change');
+
     } else {
-        idmodule.prop('required', true);
-        idrecord.prop('required', true);
-        permessi.prop('required', true);
+        // Nessuna selezione - nascondi tutti i campi
+        utenteFields.hide();
+        personalizzatoFields.hide();
+
+        // Rimuovi required da tutti i campi
+        $('select[name="id_utente"]').prop('required', false);
+        $('select[name="id_module_target"]').prop('required', false);
+        $('select[name="id_record_target"]').prop('required', false);
+        $('select[name="permessi"]').prop('required', false);
+
+        // Pulisci tutti i valori
+        $('select[name="id_utente"]').val('').trigger('change');
+        $('select[name="id_module_target"]').val('').trigger('change');
+        $('select[name="id_record_target"]').val('').trigger('change');
+        $('select[name="permessi"]').val('').trigger('change');
     }
 }
 
@@ -201,14 +243,11 @@ function copyToClipboard(elementId) {
 
 $(document).ready(function() {
     toggleEmailField();
-    togglePermissionField();
+    togglePermissionFields();
 });
 
-$('#id_utente').change(function() {
-    $('#id_module_target').val('').trigger('change');
-    $('#id_record_target').val('');
-    $('#permessi').val('').trigger('change');
-    togglePermissionField();
+$('select[name="tipo_gestione_permessi"]').change(function() {
+    togglePermissionFields();
 });
 
 $('#id_module_target').change(function() {

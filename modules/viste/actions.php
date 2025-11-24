@@ -50,8 +50,8 @@ switch (filter('op')) {
             'parent' => null,
             'default' => $module->default,
             'enabled' => $module->enabled,
-            'use_notes' => $module->use_notes,
-            'use_checklists' => $module->use_checklists,
+            'use_notes' => $module->hasFlag('use_notes'),
+            'use_checklists' => $module->hasFlag('use_checklists'),
         ];
 
         // Se c'è un modulo parent, usa il nome come riferimento
@@ -209,9 +209,20 @@ switch (filter('op')) {
                     'order' => $module_data['order'],
                     'default' => $module_data['default'],
                     'enabled' => $module_data['enabled'],
-                    'use_notes' => $module_data['use_notes'],
-                    'use_checklists' => $module_data['use_checklists'],
                 ], ['id' => $module_id]);
+
+                // Gestione dei flag use_notes e use_checklists nel nuovo sistema
+                if ($module_data['use_notes']) {
+                    $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_notes\')');
+                } else {
+                    $dbo->query('DELETE FROM `zz_modules_flags` WHERE `id_module` = '.prepare($module_id).' AND `name` = \'use_notes\'');
+                }
+
+                if ($module_data['use_checklists']) {
+                    $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_checklists\')');
+                } else {
+                    $dbo->query('DELETE FROM `zz_modules_flags` WHERE `id_module` = '.prepare($module_id).' AND `name` = \'use_checklists\'');
+                }
             } else {
                 // Crea un nuovo modulo
                 $dbo->insert('zz_modules', [
@@ -225,11 +236,18 @@ switch (filter('op')) {
                     'order' => $module_data['order'],
                     'default' => $module_data['default'],
                     'enabled' => $module_data['enabled'],
-                    'use_notes' => $module_data['use_notes'],
-                    'use_checklists' => $module_data['use_checklists'],
                 ]);
 
                 $module_id = $dbo->lastInsertedID();
+
+                // Gestione dei flag use_notes e use_checklists nel nuovo sistema
+                if ($module_data['use_notes']) {
+                    $dbo->query('INSERT INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_notes\')');
+                }
+
+                if ($module_data['use_checklists']) {
+                    $dbo->query('INSERT INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_checklists\')');
+                }
             }
 
             // Aggiorna il parent se specificato

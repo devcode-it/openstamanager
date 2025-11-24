@@ -23,10 +23,10 @@ use Models\Module;
 
 switch ($resource) {
     case 'moduli_token':
-        $query = 'SELECT zz_modules.id AS id, title AS descrizione FROM zz_modules INNER JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).' |where| ORDER BY title';
+        $query = 'SELECT zz_modules.id AS id, title AS descrizione FROM zz_modules INNER JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).' INNER JOIN zz_modules_flags ON zz_modules.id = zz_modules_flags.id_module |where| ORDER BY title';
 
         $where[] = 'enabled = 1';
-        $where[] = "name IN('Anagrafiche', 'Gestione documentale', 'Impianti')";
+        $where[] = "zz_modules_flags.name = 'enable_otp'";
         $where[] = "IF(options2 != '', options2!='menu', options!='menu')";
 
         foreach ($elements as $element) {
@@ -73,7 +73,7 @@ switch ($resource) {
                 }
             }
 
-            if ($module->name == 'Impianti') {
+            if ($module->name == 'MyImpianti') {
                 $query = 'SELECT id, nome AS descrizione FROM my_impianti |where| ORDER BY nome';
 
                 foreach ($elements as $element) {

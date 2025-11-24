@@ -187,7 +187,7 @@ if ($current_permission == 'rw') {
                     <button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                    <div class="dropdown-menu dropdown-menu-right p-3" role="menu">
                         <a class="btn dropdown-item" href="#" id="save-close">
                             <i class="fa fa-check-square-o"></i>
                             '.tr('Salva e chiudi').'

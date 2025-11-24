@@ -55,6 +55,8 @@ class Module extends Model
     protected $appends = [
         'permission',
         'option',
+        'use_notes',
+        'use_checklists',
     ];
 
     protected $hidden = [
@@ -143,6 +145,26 @@ class Module extends Model
         return !empty($this->options2) ? $this->options2 : $this->options;
     }
 
+    /**
+     * Attributo calcolato per use_notes per compatibilità.
+     *
+     * @return bool
+     */
+    public function getUseNotesAttribute()
+    {
+        return $this->hasFlag('use_notes');
+    }
+
+    /**
+     * Attributo calcolato per use_checklists per compatibilità.
+     *
+     * @return bool
+     */
+    public function getUseChecklistsAttribute()
+    {
+        return $this->hasFlag('use_checklists');
+    }
+
     /* Relazioni Eloquent */
 
     public function plugins()
@@ -221,6 +243,25 @@ class Module extends Model
     public function getModuleAttribute()
     {
         return '';
+    }
+
+    /**
+     * Verifica se il modulo ha un flag specifico attivo.
+     *
+     * @param string $flag_name Nome del flag da verificare
+     * @return bool True se il flag è presente, false altrimenti
+     */
+    public function hasFlag($flag_name)
+    {
+        static $flags_cache = [];
+
+        // Cache per evitare query ripetute
+        if (!isset($flags_cache[$this->id])) {
+            $flags = database()->fetchArray('SELECT `name` FROM `zz_modules_flags` WHERE `id_module` = '.prepare($this->id));
+            $flags_cache[$this->id] = array_column($flags, 'name');
+        }
+
+        return in_array($flag_name, $flags_cache[$this->id]);
     }
 
     public static function getTranslatedFields()

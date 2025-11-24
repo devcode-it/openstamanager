@@ -166,3 +166,35 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Descrizione aggiuntiva personalizzata in fatturazione', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Additional custom description in invoices', '');
+
+-- Creazione tabella per i flag dei moduli
+CREATE TABLE IF NOT EXISTS `zz_modules_flags` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11) NOT NULL,
+  `name` enum('use_checklists', 'use_notes', 'enable_otp') NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_module_flag` (`id_module`, `name`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Migrazione dei flag esistenti use_notes dalla tabella zz_modules
+INSERT INTO `zz_modules_flags` (`id_module`, `name`)
+SELECT `id`, 'use_notes'
+FROM `zz_modules`
+WHERE `use_notes` = 1;
+
+-- Migrazione dei flag esistenti use_checklists dalla tabella zz_modules
+INSERT INTO `zz_modules_flags` (`id_module`, `name`)
+SELECT `id`, 'use_checklists'
+FROM `zz_modules`
+WHERE `use_checklists` = 1;
+
+-- Aggiunta flag enable_otp per i moduli specificati
+INSERT INTO `zz_modules_flags` (`id_module`, `name`)
+SELECT `id`, 'enable_otp'
+FROM `zz_modules`
+WHERE `name` IN ('Anagrafiche', 'Impianti', 'Gestione documentale');
+
+-- Rimozione dei campi obsoleti dalla tabella zz_modules
+ALTER TABLE `zz_modules` DROP COLUMN `use_notes`;
+ALTER TABLE `zz_modules` DROP COLUMN `use_checklists`;

@@ -150,6 +150,13 @@ $permission_titles = [
     'rwa' => tr('Gestione Allegati'),
 ];
 
+$permission_info = [
+    'r' => tr('Hai accesso in sola lettura: puoi consultare tutte le informazioni e i dettagli presenti, ma non potrai apportare modifiche o salvare cambiamenti'),
+    'rw' => tr('Hai accesso completo ai dati: puoi visualizzare tutte le informazioni e modificarle, salvando i cambiamenti quando necessario'),
+    'ra' => tr('Hai accesso per caricare gli allegati: puoi caricare, consultare e scaricare tutti i documenti presenti'),
+    'rwa' => tr('Hai accesso completo alla gestione documenti: puoi visualizzare, caricare, modificare ed eliminare allegati'),
+];
+
 $pageTitle = tr($structure->getTranslation('title')).' - '.$permission_titles[$current_permission];
 
 // Navbar custom prima di top.php
@@ -256,7 +263,7 @@ body {
         <div class="col-md-12">
 
             <!-- Titolo del modulo -->
-            <div class="row">
+            <div class="row mb-2">
                 <div class="col-md-12">
                     <h1>
                         <i class="'.$structure['icon'].'"></i> '.$structure->getTranslation('title').'
@@ -264,8 +271,25 @@ body {
                 </div>
             </div>
 
+            <!-- Info in base al tipo di operazioni permesse -->
+            <div class="row mb-2">
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i> '.$permission_info[$current_permission].'
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-body">';
+                
+//Se abbiamo accesso solo agli allegati mostro un header informativo
+if ($current_permission == 'ra' || $current_permission == 'rwa') {
+    // Includi l'header personalizzato se il modulo lo supporta e abbiamo i dati necessari
+    if(file_exists(App::filepath('modules/'.$module['directory'].'|custom|', 'shared_header.php'))) {
+        include_once App::filepath('modules/'.$module['directory'].'|custom|', 'shared_header.php');
+    }
+}
 
 if ($current_permission == 'rw' || $current_permission == 'r') {
     $path = $structure->getEditFile();

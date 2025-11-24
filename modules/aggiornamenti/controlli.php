@@ -316,7 +316,7 @@ function avviaControllo(controllo) {
                     });
 
                     // Aggiungi le nuove classi in base al tipo di badge piu grave
-                    let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, 0);
+                    let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, infoCount > 0 ? 1 : 0);
                     applyCardColorClasses(headerElement, titleElement, cardElement, colorClasses);
 
                     // Mostra le badge per tipo di avviso
@@ -574,6 +574,10 @@ function avviaControlloSingolo(id) {
                         headerElement.addClass("requirements-card-header-warning");
                         titleElement.addClass("requirements-card-title-warning");
                         cardElement.addClass("card-warning");
+                    } else if (infoCount > 0) {
+                        headerElement.addClass("requirements-card-header-info");
+                        titleElement.addClass("requirements-card-title-info");
+                        cardElement.addClass("card-info");
                     }
 
                     // Mostra le badge per tipo di avviso

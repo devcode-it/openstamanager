@@ -1106,9 +1106,9 @@ echo '
 if ($has_any_errors) {
     $disabled = 'disabled';
     echo '                          <div class="alert alert-warning mt-1 mb-2 p-2" style="font-size: 0.85rem;">
-                                <div class="form-check mb-0">
-                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1">
-                                    <label for="aggiorna_custom" class="form-check-label">
+                                <div class="form-check mb-0" style="display: flex; align-items: center;">
+                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1" style="margin-top: 0;">
+                                    <label for="aggiorna_custom" class="form-check-label mb-0" style="margin-left: 0.5rem;">
                                         <i class="fa fa-exclamation-triangle mr-1 text-warning"></i>'.tr("Desidero comunque procedere all'aggiornamento").'
                                     </label>
                                 </div>

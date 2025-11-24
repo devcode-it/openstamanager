@@ -47,7 +47,9 @@ class DatiFattureElettroniche extends Controllo
 
     public function getType($record)
     {
-        return 'info';
+        // Se il record ha un tipo specifico (passato da processErrors), usalo
+        // Altrimenti ritorna 'info' come default
+        return $record['type'] ?? 'info';
     }
 
     public function check()
@@ -777,7 +779,7 @@ class DatiFattureElettroniche extends Controllo
         } elseif ($fattura->tipo->getTranslation('title') === 'Nota di debito') {
             return 'TD05';
         } else {
-            return 'TD01'; // Fattura standard
+        return $fattura->tipo->codice_tipo_documento_fe ?: 'TD01';
         }
     }
 

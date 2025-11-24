@@ -1,7 +1,7 @@
 <?php
 
-use Modules\Aggiornamenti\Controlli\TabelleLanguage;
 use Models\Module;
+use Modules\Aggiornamenti\Controlli\TabelleLanguage;
 
 $controllo = new TabelleLanguage();
 $controllo->check();
@@ -51,7 +51,7 @@ if (!empty($id_module)) {
     $interventi = $database->fetchArray('SELECT `id`, `firma_file`, `firma_nome`, `firma_data` FROM `in_interventi` WHERE `firma_file` IS NOT NULL');
 
     foreach ($interventi as $intervento) {
-        $data_firma = !empty($intervento['firma_data']) ? date('Y-m-d', strtotime($intervento['firma_data'])) : date('Y-m-d');
+        $data_firma = !empty($intervento['firma_data']) ? date('Y-m-d', strtotime((string) $intervento['firma_data'])) : date('Y-m-d');
         $key = 'signature_'.$intervento['firma_nome'].'_'.$data_firma;
         $file_exists = $database->selectOne('zz_files', ['id'], [
             'id_module' => $id_module,
@@ -111,4 +111,3 @@ if (!empty($id_module)) {
 
     $database->query('ALTER TABLE `my_impianti` DROP COLUMN `immagine`');
 }
-

@@ -112,7 +112,7 @@ class Upload extends Model
         $model->id_module = !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null;
         $model->id_plugin = !empty($data['id_plugin']) ? $data['id_plugin'] : null;
         $model->id_record = !empty($data['id_record']) ? $data['id_record'] : null;
-        $model->key = isset($data['key']) ? $data['key'] : null;
+        $model->key = $data['key'] ?? null;
 
         // Caricamento file con interfaccia di upload
 
@@ -268,30 +268,6 @@ class Upload extends Model
         return parent::delete();
     }
 
-    /**
-     * Elimina i thumbnails associati al file immagine.
-     *
-     * @param OSMFilesystem $filesystem
-     * @return void
-     */
-    protected function deleteThumbnails($filesystem)
-    {
-        $info = $this->info;
-        $directory = $this->attachments_directory;
-
-        // Dimensioni dei thumbnails
-        $thumbnail_sizes = ['600', '250', '100'];
-
-        foreach ($thumbnail_sizes as $size) {
-            $thumbnail_filename = $info['filename'].'_thumb'.$size.'.'.$info['extension'];
-            try {
-                $filesystem->delete($directory.'/'.$thumbnail_filename);
-            } catch (\Exception) {
-                // Se il thumbnail non esiste, continuo senza errori
-            }
-        }
-    }
-
     public function save(array $options = [], $skip_resize = false)
     {
         if ($this->isImage() && !$skip_resize) {
@@ -439,6 +415,31 @@ class Upload extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_category');
+    }
+
+    /**
+     * Elimina i thumbnails associati al file immagine.
+     *
+     * @param OSMFilesystem $filesystem
+     *
+     * @return void
+     */
+    protected function deleteThumbnails($filesystem)
+    {
+        $info = $this->info;
+        $directory = $this->attachments_directory;
+
+        // Dimensioni dei thumbnails
+        $thumbnail_sizes = ['600', '250', '100'];
+
+        foreach ($thumbnail_sizes as $size) {
+            $thumbnail_filename = $info['filename'].'_thumb'.$size.'.'.$info['extension'];
+            try {
+                $filesystem->delete($directory.'/'.$thumbnail_filename);
+            } catch (\Exception) {
+                // Se il thumbnail non esiste, continuo senza errori
+            }
+        }
     }
 
     /**

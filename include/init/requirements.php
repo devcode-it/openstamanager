@@ -491,7 +491,7 @@ foreach ($requirements as $key => $values) {
     foreach ($statuses as $status) {
         $general_status &= $status;
         if (!$status) {
-            $error_count++;
+            ++$error_count;
         }
     }
 

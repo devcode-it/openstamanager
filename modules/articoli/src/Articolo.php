@@ -23,7 +23,6 @@ namespace Modules\Articoli;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Models\Module;
 use Models\Plugin;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
@@ -258,6 +257,7 @@ class Articolo extends Model
     public function getImmagineUploadAttribute()
     {
         $module = $this->getModule();
+
         return $module->files($this->id, true)->where('key', 'cover')->first();
     }
 

@@ -885,7 +885,7 @@ switch (post('op')) {
                             $intervento->save();
                         }
                     }
-                    
+
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica'])) {
                         $template = Template::find($stato['id_email']);
@@ -922,7 +922,7 @@ switch (post('op')) {
                             }
                         }
                     }
-                } 
+                }
             } else {
                 flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota.'));
             }

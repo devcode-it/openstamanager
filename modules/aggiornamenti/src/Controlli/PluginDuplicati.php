@@ -147,10 +147,10 @@ class PluginDuplicati extends Controllo
         $record_id = $record['id'];
 
         // Estrai il tipo di duplicato dal record ID
-        if (strpos($record_id, 'name_') === 0) {
+        if (str_starts_with((string) $record_id, 'name_')) {
             // Duplicato nel campo 'name' della tabella zz_plugins
             // Record ID è nel formato: name_<idmodule_to>_<name>
-            preg_match('/^name_(\d+)_(.+)$/', $record_id, $matches);
+            preg_match('/^name_(\d+)_(.+)$/', (string) $record_id, $matches);
             if (!empty($matches)) {
                 $idmodule_to = $matches[1];
                 $name = $matches[2];
@@ -169,12 +169,12 @@ class PluginDuplicati extends Controllo
                     $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($plugins[$i]['id']));
                 }
             }
-        } elseif (strpos($record_id, 'title_diversi_') === 0) {
+        } elseif (str_starts_with((string) $record_id, 'title_diversi_')) {
             // Duplicato nei titoli diversi - non eliminiamo nulla, solo notifichiamo
             return true;
-        } elseif (strpos($record_id, 'record_lang_') === 0) {
+        } elseif (str_starts_with((string) $record_id, 'record_lang_')) {
             // Duplicato in zz_plugins_lang
-            preg_match('/record_lang_(\d+)_(\d+)/', $record_id, $matches);
+            preg_match('/record_lang_(\d+)_(\d+)/', (string) $record_id, $matches);
             if (!empty($matches)) {
                 $id_record = $matches[1];
                 $id_lang = $matches[2];

@@ -273,13 +273,13 @@ switch (filter('op')) {
 
             // Recupera l'ultima esecuzione da zz_operations
             // Cerca nel campo options che contiene JSON con controllo_name
-            $query = "SELECT created_at, id_utente FROM zz_operations WHERE options LIKE ? ORDER BY created_at DESC LIMIT 1";
-            $operation = $database->fetchOne($query, ['%"controllo_name":"' . $nome_controllo . '"%']);
+            $query = 'SELECT created_at, id_utente FROM zz_operations WHERE options LIKE ? ORDER BY created_at DESC LIMIT 1';
+            $operation = $database->fetchOne($query, ['%"controllo_name":"'.$nome_controllo.'"%']);
 
             // Recupera il nome dell'utente se disponibile
             $user_name = null;
             if ($operation && $operation['id_utente']) {
-                $user_query = "SELECT username FROM zz_users WHERE id = ?";
+                $user_query = 'SELECT username FROM zz_users WHERE id = ?';
                 $user = $database->fetchOne($user_query, [$operation['id_utente']]);
                 $user_name = $user ? $user['username'] : null;
             }

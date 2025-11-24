@@ -148,25 +148,25 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     }
                     if (array_key_exists('key', $diff)) {
                         if ($diff['key']['expected'] == '') {
-                            $info_count++;
+                            ++$info_count;
                         } else {
-                            $danger_count++;
+                            ++$danger_count;
                         }
                     } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                        $danger_count++;
+                        ++$danger_count;
                     } else {
-                        $warning_count++;
+                        ++$warning_count;
                     }
                 }
 
                 // Conta le chiavi esterne
                 foreach ($foreign_keys as $name => $diff) {
                     if (is_array($diff) && isset($diff['expected'])) {
-                        $danger_count++;
+                        ++$danger_count;
                     } elseif (is_array($diff) && isset($diff['current'])) {
-                        $info_count++;
+                        ++$info_count;
                     } else {
-                        $warning_count++;
+                        ++$warning_count;
                     }
                 }
 
@@ -206,73 +206,73 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
                 <tbody>';
                     foreach ($errors as $name => $diff) {
-                    if ($name === 'foreign_keys') {
-                        continue;
-                    }
-                    $query = '';
-                    $null = '';
-                    $badge_text = '';
-                    $badge_color = '';
-
-                    if (array_key_exists('key', $diff)) {
-                        if ($diff['key']['expected'] == '') {
-                            $query = 'Chiave non prevista';
-                            $badge_text = 'Chiave non prevista';
-                            $badge_color = 'info';
-                        } else {
-                            $query = 'Chiave mancante';
-                            $badge_text = 'Chiave mancante';
-                            $badge_color = 'danger';
+                        if ($name === 'foreign_keys') {
+                            continue;
                         }
-                    } elseif ($diff['current'] && array_key_exists('current', $diff['default']) && is_null($diff['default']['current'])) {
-                        $query = 'ALTER TABLE `'.$table.'` ADD `'.$name.'` '.$data[$table][$name]['type'];
+                        $query = '';
+                        $null = '';
+                        $badge_text = '';
+                        $badge_color = '';
 
-                        if ($data[$table][$name]['null'] == 'NO') {
-                            $query .= ' NOT NULL';
-                        } else {
-                            $query .= ' NULL';
-                        }
+                        if (array_key_exists('key', $diff)) {
+                            if ($diff['key']['expected'] == '') {
+                                $query = 'Chiave non prevista';
+                                $badge_text = 'Chiave non prevista';
+                                $badge_color = 'info';
+                            } else {
+                                $query = 'Chiave mancante';
+                                $badge_text = 'Chiave mancante';
+                                $badge_color = 'danger';
+                            }
+                        } elseif ($diff['current'] && array_key_exists('current', $diff['default']) && is_null($diff['default']['current'])) {
+                            $query = 'ALTER TABLE `'.$table.'` ADD `'.$name.'` '.$data[$table][$name]['type'];
 
-                        if ($data[$table][$name]['default']) {
-                            $query .= ' DEFAULT '.$data[$table][$name]['default'];
-                        }
+                            if ($data[$table][$name]['null'] == 'NO') {
+                                $query .= ' NOT NULL';
+                            } else {
+                                $query .= ' NULL';
+                            }
 
-                        if ($data[$table][$name]['extra']) {
-                            $query .= ' '.str_replace('DEFAULT_GENERATED', '', $data[$table][$name]['extra']);
-                        }
+                            if ($data[$table][$name]['default']) {
+                                $query .= ' DEFAULT '.$data[$table][$name]['default'];
+                            }
 
-                        $query_conflitti[] = $query.';';
-                        $badge_text = 'Campo mancante';
-                        $badge_color = 'danger';
-                    } else {
-                        $query .= 'ALTER TABLE `'.$table;
+                            if ($data[$table][$name]['extra']) {
+                                $query .= ' '.str_replace('DEFAULT_GENERATED', '', $data[$table][$name]['extra']);
+                            }
 
-                        if (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                            $query .= '` ADD `'.$name.'`';
+                            $query_conflitti[] = $query.';';
                             $badge_text = 'Campo mancante';
                             $badge_color = 'danger';
                         } else {
-                            $query .= '` CHANGE `'.$name.'` `'.$name.'` ';
-                            $badge_text = 'Campo modificato';
-                            $badge_color = 'warning';
+                            $query .= 'ALTER TABLE `'.$table;
+
+                            if (array_key_exists('current', $diff) && is_null($diff['current'])) {
+                                $query .= '` ADD `'.$name.'`';
+                                $badge_text = 'Campo mancante';
+                                $badge_color = 'danger';
+                            } else {
+                                $query .= '` CHANGE `'.$name.'` `'.$name.'` ';
+                                $badge_text = 'Campo modificato';
+                                $badge_color = 'warning';
+                            }
+
+                            $query .= $data[$table][$name]['type'];
+
+                            if ($data[$table][$name]['null'] == 'NO') {
+                                $null = 'NOT NULL';
+                            } else {
+                                $null = 'NULL';
+                            }
+                            $query .= str_replace('DEFAULT_GENERATED', ' ', $data[$table][$name]['extra']).' '.$null;
+                            if ($data[$table][$name]['default']) {
+                                $query .= ' DEFAULT '.$data[$table][$name]['default'];
+                            }
+
+                            $query_conflitti[] = $query.';';
                         }
 
-                        $query .= $data[$table][$name]['type'];
-
-                        if ($data[$table][$name]['null'] == 'NO') {
-                            $null = 'NOT NULL';
-                        } else {
-                            $null = 'NULL';
-                        }
-                        $query .= str_replace('DEFAULT_GENERATED', ' ', $data[$table][$name]['extra']).' '.$null;
-                        if ($data[$table][$name]['default']) {
-                            $query .= ' DEFAULT '.$data[$table][$name]['default'];
-                        }
-
-                        $query_conflitti[] = $query.';';
-                    }
-
-                    echo '
+                        echo '
         <tr>
             <td class="column-name">
                 '.$name.'
@@ -284,7 +284,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 '.$query.'
             </td>
         </tr>';
-                }
+                    }
 
                     foreach ($foreign_keys as $name => $diff) {
                         $query = '';
@@ -356,7 +356,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 }
 
                 $foreign_keys = $errors['foreign_keys'] ?: [];
-                $error_count = ($has_keys ? count(array_filter($errors, fn($e) => isset($e['key']))) : 0) + count($foreign_keys);
+                $error_count = ($has_keys ? count(array_filter($errors, fn ($e) => isset($e['key']))) : 0) + count($foreign_keys);
 
                 if ($table_not_expected || $has_keys || !empty($foreign_keys)) {
                     echo '
@@ -512,15 +512,15 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
         foreach ($results_settings as $key => $setting) {
             if (!$setting['current']) {
-                $settings_danger_count++;
+                ++$settings_danger_count;
             } else {
-                $settings_warning_count++;
+                ++$settings_warning_count;
             }
         }
 
         foreach ($results_settings_added as $key => $setting) {
             if ($setting['current'] == null) {
-                $settings_info_count++;
+                ++$settings_info_count;
             }
         }
 
@@ -603,8 +603,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 </div>';
     }
 
-
-
     // Visualizza i campi non previsti raggruppati per tabella
     if (!empty($campi_non_previsti)) {
         // Raggruppa per tabella
@@ -646,7 +644,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 </div>';
         }
     }
-
 } else {
     echo '
 <div class="alert alert-info alert-database">

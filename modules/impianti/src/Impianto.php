@@ -23,7 +23,6 @@ namespace Modules\Impianti;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Models\Module;
-use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Categoria;
 
@@ -61,6 +60,7 @@ class Impianto extends Model
     public function getImmagineUploadAttribute()
     {
         $module = Module::where('name', 'Impianti')->first();
+
         return $module->files($this->id, true)->where('key', 'cover')->first();
     }
 

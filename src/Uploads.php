@@ -44,7 +44,7 @@ class Uploads
             'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
-            'key' => NULL,
+            'key' => null,
         ]);
 
         return $uploads;

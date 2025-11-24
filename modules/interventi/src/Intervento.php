@@ -285,7 +285,7 @@ class Intervento extends Document
 
         // Cerca il primo file con key che inizia con 'signature_'
         foreach ($uploads as $upload) {
-            if (strpos($upload->key ?: '', 'signature_') === 0) {
+            if (str_starts_with((string) $upload->key ?: '', 'signature_')) {
                 return $upload;
             }
         }
@@ -318,7 +318,7 @@ class Intervento extends Document
         // Estrae il nome dalla chiave 'signature_nome_data'
         // Rimuove il prefisso 'signature_' e la data finale (ultimi 11 caratteri: _YYYY-MM-DD)
         $key = $upload->key;
-        $key = substr($key, strlen('signature_'));
+        $key = substr((string) $key, strlen('signature_'));
         $key = substr($key, 0, -11); // Rimuove '_YYYY-MM-DD'
 
         return $key;
@@ -335,7 +335,7 @@ class Intervento extends Document
         // Estrae la data dalla chiave 'signature_nome_data'
         // La data è negli ultimi 10 caratteri (YYYY-MM-DD)
         $key = $upload->key;
-        $data_firma = substr($key, -10);
+        $data_firma = substr((string) $key, -10);
 
         return $data_firma;
     }

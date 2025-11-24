@@ -280,9 +280,10 @@ class Validate
 
     /**
      * Parsa un indirizzo su una sola riga cercando di estrarre CAP, città e provincia.
-     * Formato tipico: "VIA ROMA 123 20100 MILANO MI"
+     * Formato tipico: "VIA ROMA 123 20100 MILANO MI".
      *
      * @param string $address
+     *
      * @return array
      */
     protected static function parseIndirizzo($address)
@@ -317,11 +318,11 @@ class Validate
                 if (preg_match('/\b([A-Z]{2})\s*$/i', $resto, $prov_matches)) {
                     $result['provincia'] = strtoupper($prov_matches[1]);
                     // Rimuovi la provincia dal resto
-                    $resto = trim(preg_replace('/\b[A-Z]{2}\s*$/i', '', $resto));
+                    $resto = trim((string) preg_replace('/\b[A-Z]{2}\s*$/i', '', $resto));
                 } elseif (preg_match('/\(([A-Z]{2})\)\s*$/i', $resto, $prov_matches)) {
                     $result['provincia'] = strtoupper($prov_matches[1]);
                     // Rimuovi la provincia dal resto
-                    $resto = trim(preg_replace('/\([A-Z]{2}\)\s*$/i', '', $resto));
+                    $resto = trim((string) preg_replace('/\([A-Z]{2}\)\s*$/i', '', $resto));
                 }
 
                 // Quello che rimane è la città

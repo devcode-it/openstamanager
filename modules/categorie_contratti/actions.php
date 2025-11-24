@@ -74,7 +74,7 @@ switch (filter('op')) {
             $categoria->name = $nome;
             $categoria->parent = $id_original;
             $categoria->save();
-            
+
             $categoria->setTranslation('note', $nota);
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',

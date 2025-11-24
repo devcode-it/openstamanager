@@ -197,7 +197,7 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-primary">'.$servizio['sottocategoria'].'</span><br><small class="text-muted">
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                '.($servizio['spazio_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
+                                '.($servizio['spazio_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato, 1).' / '.numberFormat($servizio['spazio_limite'], 1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
                             </td>
                         </tr>';
         }
@@ -247,10 +247,10 @@ if (Services::isEnabled()) {
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
                                 <span class="badge badge-'.$credits_class.' d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$crediti_display.' '.tr('Crediti').' '.$credits_warning_icon.'</span>';
-                                if ($max_size) {
-                                    echo '<br><span class="badge badge-secondary d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$max_size.' '.tr('MB').'</span>';
-                                }
-                            echo '
+            if ($max_size) {
+                echo '<br><span class="badge badge-secondary d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$max_size.' '.tr('MB').'</span>';
+            }
+            echo '
                             </td>
                         </tr>';
         }

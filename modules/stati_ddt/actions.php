@@ -63,7 +63,6 @@ switch (post('op')) {
             flash()->info(tr('Nuovo stato DDT aggiunto.'));
         }
 
-
         break;
 
     case 'delete':

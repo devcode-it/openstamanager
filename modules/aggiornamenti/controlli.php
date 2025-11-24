@@ -27,22 +27,25 @@ echo '<div class="module-aggiornamenti">';
 echo '
 <div id="controlli"></div>
 
-<div id="button-container" style="margin-top: 20px;">
-    <button class="btn btn-lg btn-block btn-primary" onclick="avviaControlli(this);">
-        <i class="fa fa-cog"></i> '.tr('Avvia controlli').'
+<div id="button-container" style="margin-top: 20px; text-align: center;">
+    <button class="btn btn-lg btn-primary" onclick="avviaControlli(this);">
+        <i class="fa fa-cog"></i> '.tr('Avvia tutti i controlli').'
     </button>
 </div>
 
 <script src="'.base_path().'/modules/aggiornamenti/src/utils.js"></script>
 
-<div id="progress" style="display:none;">
-    <div class="progress" data-percentage="0%">
-        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-            <span>0%</span>
+<div id="progress" class="mb-4" style="display: none; margin-top: 20px;">
+    <!-- Progress bar personalizzata senza classe progress -->
+    <div class="progress-container" style="height: 30px; background-color: #e9ecef; border-radius: 4px; overflow: hidden; position: relative;">
+        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 100%; width: 0%; display: flex; align-items: center; justify-content: center;">
+            <span id="progress-percentage" style="color: white; font-weight: bold; font-size: 0.9rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">0%</span>
         </div>
     </div>
-    <hr>
-    <p class="text-center">'.tr('Operazione in corso').': <span id="operazione"></span></p>
+    <div class="text-center mt-3 mb-3">
+        <span class="text-primary" id="progress-title">'.tr('Operazione in corso').'</span>
+        <div id="operazione" class="mt-1 text-muted" style="font-size: 0.9rem;"></div>
+    </div>
 </div>
 
 <div class="alert alert-success hidden" id="no-problems">
@@ -443,13 +446,18 @@ function avviaControllo(controllo) {
 * @param controlloClass
 */
 function avviaControlloSingolo(id) {
-    // Mostra il loader
-    $("#progress").show();
-
     // Recupera la card e i dati dal data attribute
     let cardElement = $("#controllo-" + id);
     let nomeControllo = cardElement.data("controllo-name");
     let controlloClass = cardElement.data("controllo-class");
+
+    // Mostra il messaggio di operazione in corso sotto il tasto
+    let operazioneDiv = $("<div class=\"mb-4\" id=\"operazione-singolo\" style=\"margin-top: 20px;\">" +
+        "<div class=\"text-center mt-3 mb-3\">" +
+        "<span class=\"text-primary\"><i class=\"fa fa-spinner fa-spin mr-2\"></i>'.tr('Operazione in corso').': <strong>" + nomeControllo + "</strong></span>" +
+        "</div>" +
+        "</div>");
+    $("#button-container").after(operazioneDiv);
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -700,12 +708,13 @@ function avviaControlloSingolo(id) {
             // Ricarica i dati dell\'ultima esecuzione
             ricaricaEsecuzione(id);
 
-            // Nascondi il loader
-            $("#progress").hide();
+            // Rimuovi il messaggio di operazione in corso
+            $("#operazione-singolo").remove();
         },
         error: function(xhr, r, error) {
-            $("#progress").hide();
             alert("'.tr('Errore').': " + error);
+            // Rimuovi il messaggio di operazione in corso anche in caso di errore
+            $("#operazione-singolo").remove();
         }
     });
 }
@@ -779,8 +788,9 @@ function eseguiAzione(controllo, records, params) {
 * @param percent
 */
 function setPercentage(percent) {
-    $("#progress .progress-bar").width(percent + "%");
-    $("#progress .progress-bar span").text(percent + "%");
+    $("#custom-progress-bar").css("width", percent + "%");
+    $("#custom-progress-bar").attr("aria-valuenow", percent);
+    $("#progress-percentage").text(percent + "%");
 }
 
 /**

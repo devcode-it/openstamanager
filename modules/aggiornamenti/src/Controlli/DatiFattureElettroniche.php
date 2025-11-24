@@ -487,7 +487,7 @@ class DatiFattureElettroniche extends Controllo
                     }
 
                     foreach ($riepiloghi as $riepilogo) {
-                        $totale_documento_xml = sum([$totale_documento_xml, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                        $totale_documento_xml = sum([$totale_documento_xml, abs(floatval($riepilogo['ImponibileImporto'])), abs(floatval($riepilogo['Imposta']))]);
                     }
 
                     $totale_documento_xml = abs($totale_documento_xml);
@@ -533,8 +533,8 @@ class DatiFattureElettroniche extends Controllo
                 $totale_imposta_xml = 0;
 
                 foreach ($riepiloghi_xml as $riepilogo_xml) {
-                    $totale_imponibile_xml += floatval($riepilogo_xml['ImponibileImporto']);
-                    $totale_imposta_xml += floatval($riepilogo_xml['Imposta']);
+                    $totale_imponibile_xml += abs(floatval($riepilogo_xml['ImponibileImporto']));
+                    $totale_imposta_xml += abs(floatval($riepilogo_xml['Imposta']));
                 }
 
                 // Controllo totale imponibile complessivo
@@ -577,18 +577,18 @@ class DatiFattureElettroniche extends Controllo
                     $sconti_xml = [$sconti_xml];
                 }
 
-                $sconto_totale_gestionale = $fattura_vendita->sconto;
+                $sconto_totale_gestionale = abs($fattura_vendita->sconto);
                 $sconto_totale_xml = 0;
 
                 foreach ($sconti_xml as $sconto_xml) {
                     if ($sconto_xml['Tipo'] === 'SC') { // Sconto
-                        $sconto_totale_xml += floatval($sconto_xml['Importo'] ?? 0);
+                        $sconto_totale_xml += abs(floatval($sconto_xml['Importo'] ?? 0));
                     } elseif ($sconto_xml['Tipo'] === 'MG') { // Maggiorazione
-                        $sconto_totale_xml -= floatval($sconto_xml['Importo'] ?? 0);
+                        $sconto_totale_xml -= abs(floatval($sconto_xml['Importo'] ?? 0));
                     }
                 }
 
-                if (numberFormat($sconto_totale_xml, 2) !== numberFormat($sconto_totale_gestionale, 2)) {
+                if (numberFormat(abs($sconto_totale_xml), 2) !== numberFormat($sconto_totale_gestionale, 2)) {
                     $errors[] = [
                         'type' => self::ERROR_WARNING,
                         'category' => self::CATEGORY_TOTALI,

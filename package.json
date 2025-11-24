@@ -85,7 +85,7 @@
         "main-bower-files": "^2.13.1",
         "md5-file": "^5.0.0",
         "sass": "^1.62.1",
-        "shelljs": "^0.8.5"
+        "shelljs": "^0.10.0"
     },
     "scripts": {
         "gulp": "gulp",

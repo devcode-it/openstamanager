@@ -25,7 +25,7 @@ if (!empty($id_module)) {
             $database->insert('zz_files', [
                 'id_module' => $id_module,
                 'id_record' => $articolo['id'],
-                'nome' => 'Immagine',
+                'name' => 'Immagine',
                 'filename' => $articolo['immagine'],
                 'original' => $articolo['immagine'],
                 'key' => 'cover',
@@ -51,6 +51,10 @@ if (!empty($id_module)) {
     $interventi = $database->fetchArray('SELECT `id`, `firma_file`, `firma_nome`, `firma_data` FROM `in_interventi` WHERE `firma_file` IS NOT NULL');
 
     foreach ($interventi as $intervento) {
+        if (empty($intervento['firma_file'])) {
+            continue;
+        }
+
         $data_firma = !empty($intervento['firma_data']) ? date('Y-m-d', strtotime((string) $intervento['firma_data'])) : date('Y-m-d');
         $key = 'signature_'.$intervento['firma_nome'].'_'.$data_firma;
         $file_exists = $database->selectOne('zz_files', ['id'], [
@@ -63,7 +67,7 @@ if (!empty($id_module)) {
             $database->insert('zz_files', [
                 'id_module' => $id_module,
                 'id_record' => $intervento['id'],
-                'nome' => 'Firma',
+                'name' => $intervento['firma_file'],
                 'filename' => $intervento['firma_file'],
                 'original' => $intervento['firma_file'],
                 'key' => $key,
@@ -93,7 +97,7 @@ if (!empty($id_module)) {
             $database->insert('zz_files', [
                 'id_module' => $id_module,
                 'id_record' => $impianto['id'],
-                'nome' => 'Immagine',
+                'name' => 'Immagine',
                 'filename' => $impianto['immagine'],
                 'original' => $impianto['immagine'],
                 'key' => 'cover',

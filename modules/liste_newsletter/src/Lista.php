@@ -21,7 +21,6 @@
 namespace Modules\ListeNewsletter;
 
 use Common\SimpleModelTrait;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
@@ -79,8 +78,8 @@ class Lista extends Model
             ]);
 
             // Ricerca nuovi record - usa subquery per limitare le colonne
-            $wrapped_query = 'SELECT '.prepare($this->id).', subq.id, subq.tipo_lista FROM (' . $query . ') AS subq';
-            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) ' . $wrapped_query);
+            $wrapped_query = 'SELECT '.prepare($this->id).', subq.id, subq.tipo_lista FROM ('.$query.') AS subq';
+            $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.$wrapped_query);
         }
 
         return $result;

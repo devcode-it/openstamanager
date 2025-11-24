@@ -94,7 +94,7 @@ abstract class Component extends Model
                     $data_fine_origine = $riga_origine->data_fine_competenza;
 
                     // Controllo se le date di competenza sono diverse
-                    if (($data_inizio_origine  || $data_fine_origine) && ($data_inizio_origine != $this->data_inizio_competenza || $data_fine_origine != $this->data_fine_competenza)) {
+                    if (($data_inizio_origine || $data_fine_origine) && ($data_inizio_origine != $this->data_inizio_competenza || $data_fine_origine != $this->data_fine_competenza)) {
                         return true;
                     }
                 }
@@ -279,7 +279,7 @@ abstract class Component extends Model
 
         // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
-        
+
         if (empty($model->idiva)) {
             if (!empty($this->idiva)) {
                 $model->idiva = $this->idiva;

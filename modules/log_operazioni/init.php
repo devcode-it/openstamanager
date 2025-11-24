@@ -24,14 +24,14 @@ include_once __DIR__.'/../../core.php';
 use Ergebnis\Json\Printer;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne("SELECT * FROM zz_operations WHERE id=".prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM zz_operations WHERE id='.prepare($id_record));
 
     $printer = new Printer\Printer();
-    if( !empty($record['context']) ){
-        $record['context'] = str_replace('"','\"',$printer->print( $record['context'], ' ' ));
+    if (!empty($record['context'])) {
+        $record['context'] = str_replace('"', '\"', $printer->print($record['context'], ' '));
     }
 
-    if( !empty($record['message']) ){
-        $record['message'] = str_replace('"','\"',$printer->print( $record['message'], ' ' ));
+    if (!empty($record['message'])) {
+        $record['message'] = str_replace('"', '\"', $printer->print($record['message'], ' '));
     }
 }

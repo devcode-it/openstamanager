@@ -21,14 +21,13 @@
 namespace Plugins\ImportFE;
 
 use Hooks\Manager;
-use Models\Module;
 use Models\Cache;
+use Models\Module;
 
 /**
  * Hook dedicato all'importazione automatica delle Fatture Elettroniche di acquisto rilevate dal sistema automatico di gestione.
  */
 class InvoiceHook extends Manager
-
 {
     public $cache_name = 'Fatture Elettroniche';
 

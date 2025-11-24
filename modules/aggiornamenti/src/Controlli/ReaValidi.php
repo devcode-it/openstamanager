@@ -47,7 +47,7 @@ class ReaValidi extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -101,7 +101,7 @@ class ReaValidi extends Controllo
     }
 
     /**
-     * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi
+     * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi.
      */
     public function solveGlobal($params = [])
     {

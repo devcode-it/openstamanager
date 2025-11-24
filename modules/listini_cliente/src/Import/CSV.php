@@ -44,6 +44,9 @@ class CSV extends CSVImporter
      */
     protected $current_row = 0;
 
+    protected static $listini_cache = [];
+    protected static $articoli_cache = [];
+
     /**
      * Inizializza l'importazione con logging e pulizia cache.
      */
@@ -58,7 +61,7 @@ class CSV extends CSVImporter
 
         logger()->info('Inizializzazione importazione listino cliente', [
             'timestamp' => date('Y-m-d H:i:s'),
-            'classe' => static::class
+            'classe' => static::class,
         ]);
     }
 
@@ -74,9 +77,10 @@ class CSV extends CSVImporter
             'record_falliti' => count($this->failed_records),
             'listini_in_cache' => count(self::$listini_cache),
             'articoli_in_cache' => count(self::$articoli_cache),
-            'righe_processate' => $this->current_row
+            'righe_processate' => $this->current_row,
         ]);
     }
+
     /**
      * Definisce i campi disponibili per l'importazione.
      *
@@ -125,7 +129,7 @@ class CSV extends CSVImporter
      */
     public function import($record, $update_record = true, $add_record = true)
     {
-        $this->current_row++;
+        ++$this->current_row;
         $logger = logger();
 
         try {
@@ -133,8 +137,9 @@ class CSV extends CSVImporter
 
             $validation_errors = $this->validateRecord($record);
             if (!empty($validation_errors)) {
-                $error_message = 'Errori di validazione: ' . implode(', ', $validation_errors);
+                $error_message = 'Errori di validazione: '.implode(', ', $validation_errors);
                 $this->logError('validation', $error_message, $record);
+
                 return false;
             }
 
@@ -142,6 +147,7 @@ class CSV extends CSVImporter
             if (empty($listino)) {
                 $error_message = "Impossibile trovare o creare il listino '{$record['nome_listino']}'";
                 $this->logError('listino_creation_failed', $error_message, $record);
+
                 return false;
             }
 
@@ -149,6 +155,7 @@ class CSV extends CSVImporter
             if (empty($articolo)) {
                 $error_message = "Articolo con codice '{$record['codice']}' non trovato";
                 $this->logError('articolo_not_found', $error_message, $record);
+
                 return false;
             }
 
@@ -159,8 +166,9 @@ class CSV extends CSVImporter
                     'codice_articolo' => $record['codice'],
                     'nome_listino' => $record['nome_listino'],
                     'riga' => $this->current_row,
-                    'motivo' => $articolo_listino ? 'record esistente, aggiornamento disabilitato' : 'nuovo record, inserimento disabilitato'
+                    'motivo' => $articolo_listino ? 'record esistente, aggiornamento disabilitato' : 'nuovo record, inserimento disabilitato',
                 ]);
+
                 return null;
             }
 
@@ -170,13 +178,14 @@ class CSV extends CSVImporter
                 'codice_articolo' => $record['codice'],
                 'nome_listino' => $record['nome_listino'],
                 'riga' => $this->current_row,
-                'operazione' => $articolo_listino ? 'aggiornamento' : 'inserimento'
+                'operazione' => $articolo_listino ? 'aggiornamento' : 'inserimento',
             ]);
 
             return true;
         } catch (\Exception $e) {
-            $error_message = 'Errore durante l\'importazione dell\'articolo nel listino: ' . $e->getMessage();
+            $error_message = 'Errore durante l\'importazione dell\'articolo nel listino: '.$e->getMessage();
             $this->logError('exception', $error_message, $record, $e);
+
             return false;
         }
     }
@@ -197,9 +206,84 @@ class CSV extends CSVImporter
     }
 
     /**
+     * Salva i record falliti con gli errori specifici in un file CSV.
+     *
+     * @param string $filepath Percorso del file in cui salvare i record falliti
+     *
+     * @return string Percorso del file salvato
+     */
+    public function saveFailedRecordsWithErrors($filepath)
+    {
+        if (empty($this->failed_rows)) {
+            return '';
+        }
+
+        $dir = dirname($filepath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $header = $this->getHeader();
+        $header[] = 'Errore';
+        fputcsv($file, $header, ';');
+
+        foreach ($this->failed_rows as $index => $row) {
+            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
+            $row[] = $error_message;
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        logger()->info('File anomalie listino cliente creato', [
+            'filepath' => $filepath,
+            'record_falliti' => count($this->failed_rows),
+            'timestamp' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $filepath;
+    }
+
+    public function getFailedErrors()
+    {
+        return $this->failed_errors;
+    }
+
+    /**
+     * Override del metodo importRows per migliorare il tracking degli errori.
+     */
+    public function importRows($offset, $length, $update_record = true, $add_record = true)
+    {
+        $this->current_row = $offset;
+        $logger = logger();
+
+        $logger->info('Inizio importazione batch listino cliente', [
+            'offset' => $offset,
+            'length' => $length,
+            'update_record' => $update_record,
+            'add_record' => $add_record,
+        ]);
+
+        $result = parent::importRows($offset, $length, $update_record, $add_record);
+
+        $logger->info('Completamento importazione batch listino cliente', [
+            'offset' => $offset,
+            'importati' => $result['imported'],
+            'falliti' => $result['failed'],
+            'totali' => $result['total'],
+        ]);
+
+        return $result;
+    }
+
+    /**
      * Valida un record prima dell'importazione.
      *
      * @param array $record Record da validare
+     *
      * @return array Array di errori di validazione
      */
     protected function validateRecord($record)
@@ -208,7 +292,7 @@ class CSV extends CSVImporter
 
         if (empty($record['nome_listino'])) {
             $errors[] = 'Nome listino mancante';
-        } elseif (strlen($record['nome_listino']) > 255) {
+        } elseif (strlen((string) $record['nome_listino']) > 255) {
             $errors[] = 'Nome listino troppo lungo (massimo 255 caratteri)';
         }
 
@@ -245,9 +329,9 @@ class CSV extends CSVImporter
     /**
      * Registra un errore con logging strutturato.
      *
-     * @param string $type Tipo di errore
-     * @param string $message Messaggio di errore
-     * @param array $record Record che ha causato l'errore
+     * @param string          $type      Tipo di errore
+     * @param string          $message   Messaggio di errore
+     * @param array           $record    Record che ha causato l'errore
      * @param \Exception|null $exception Eccezione opzionale
      */
     protected function logError($type, $message, $record, $exception = null)
@@ -260,7 +344,7 @@ class CSV extends CSVImporter
             'riga' => $this->current_row,
             'codice_articolo' => $record['codice'] ?? 'N/A',
             'nome_listino' => $record['nome_listino'] ?? 'N/A',
-            'record' => $record
+            'record' => $record,
         ];
 
         if ($exception) {
@@ -268,34 +352,21 @@ class CSV extends CSVImporter
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
-                'trace' => $exception->getTraceAsString()
+                'trace' => $exception->getTraceAsString(),
             ];
         }
 
-        switch ($type) {
-            case 'validation':
-                $logger->warning('Errore di validazione durante importazione listino cliente', $context);
-                break;
-            case 'listino_not_found':
-            case 'articolo_not_found':
-                $logger->error('Entità non trovata durante importazione listino cliente', $context);
-                break;
-            case 'listino_creation_failed':
-                $logger->error('Impossibile creare il listino durante importazione', $context);
-                break;
-            case 'exception':
-                $logger->error('Eccezione durante importazione listino cliente', $context);
-                break;
-            default:
-                $logger->error('Errore generico durante importazione listino cliente', $context);
-        }
+        match ($type) {
+            'validation' => $logger->warning('Errore di validazione durante importazione listino cliente', $context),
+            'listino_not_found', 'articolo_not_found' => $logger->error('Entità non trovata durante importazione listino cliente', $context),
+            'listino_creation_failed' => $logger->error('Impossibile creare il listino durante importazione', $context),
+            'exception' => $logger->error('Eccezione durante importazione listino cliente', $context),
+            default => $logger->error('Errore generico durante importazione listino cliente', $context),
+        };
     }
 
-    protected static $listini_cache = [];
-    protected static $articoli_cache = [];
-
     /**
-     * Trova il listino in base al nome con caching
+     * Trova il listino in base al nome con caching.
      *
      * @param array  $record   Record da importare
      * @param object $database Connessione al database
@@ -321,7 +392,7 @@ class CSV extends CSVImporter
     }
 
     /**
-     * Trova l'articolo in base al codice con caching
+     * Trova l'articolo in base al codice con caching.
      *
      * @param array  $record   Record da importare
      * @param object $database Connessione al database
@@ -380,7 +451,7 @@ class CSV extends CSVImporter
             $logger->info('Nuovo listino creato durante importazione', [
                 'nome_listino' => $nome_listino,
                 'id_listino' => $nuovo_listino->id,
-                'riga' => $this->current_row
+                'riga' => $this->current_row,
             ]);
 
             return $listino_data;
@@ -388,7 +459,7 @@ class CSV extends CSVImporter
             logger()->error('Errore durante la creazione del listino', [
                 'nome_listino' => $nome_listino,
                 'errore' => $e->getMessage(),
-                'riga' => $this->current_row
+                'riga' => $this->current_row,
             ]);
 
             return null;
@@ -414,78 +485,5 @@ class CSV extends CSVImporter
         $articolo_listino->setPrezzoUnitario($record['prezzo_unitario'] ?: $prezzo_unitario);
         $articolo_listino->sconto_percentuale = $record['sconto_percentuale'] ?: 0;
         $articolo_listino->save();
-    }
-
-    /**
-     * Salva i record falliti con gli errori specifici in un file CSV.
-     *
-     * @param string $filepath Percorso del file in cui salvare i record falliti
-     * @return string Percorso del file salvato
-     */
-    public function saveFailedRecordsWithErrors($filepath)
-    {
-        if (empty($this->failed_rows)) {
-            return '';
-        }
-
-        $dir = dirname($filepath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $file = fopen($filepath, 'w');
-        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        $header = $this->getHeader();
-        $header[] = 'Errore';
-        fputcsv($file, $header, ';');
-
-        foreach ($this->failed_rows as $index => $row) {
-            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
-            $row[] = $error_message;
-            fputcsv($file, $row, ';');
-        }
-
-        fclose($file);
-
-        logger()->info('File anomalie listino cliente creato', [
-            'filepath' => $filepath,
-            'record_falliti' => count($this->failed_rows),
-            'timestamp' => date('Y-m-d H:i:s')
-        ]);
-
-        return $filepath;
-    }
-
-    public function getFailedErrors()
-    {
-        return $this->failed_errors;
-    }
-
-    /**
-     * Override del metodo importRows per migliorare il tracking degli errori.
-     */
-    public function importRows($offset, $length, $update_record = true, $add_record = true)
-    {
-        $this->current_row = $offset;
-        $logger = logger();
-
-        $logger->info('Inizio importazione batch listino cliente', [
-            'offset' => $offset,
-            'length' => $length,
-            'update_record' => $update_record,
-            'add_record' => $add_record
-        ]);
-
-        $result = parent::importRows($offset, $length, $update_record, $add_record);
-
-        $logger->info('Completamento importazione batch listino cliente', [
-            'offset' => $offset,
-            'importati' => $result['imported'],
-            'falliti' => $result['failed'],
-            'totali' => $result['total']
-        ]);
-
-        return $result;
     }
 }

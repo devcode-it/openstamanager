@@ -585,7 +585,7 @@ if (!function_exists('adjustBrightness')) {
             $hexCode = $hexCode[0].$hexCode[0].$hexCode[1].$hexCode[1].$hexCode[2].$hexCode[2];
         }
 
-        $hexCode = array_map('hexdec', str_split($hexCode, 2));
+        $hexCode = array_map(hexdec(...), str_split($hexCode, 2));
 
         foreach ($hexCode as &$color) {
             $adjustableLimit = $adjustPercent < 0 ? $color : 255 - $color;

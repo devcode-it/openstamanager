@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -19,7 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if( !empty($record['id_record']) ){
+if (!empty($record['id_record'])) {
     echo '
     <a class="btn btn-primary" href="'.base_path().'/editor.php?id_module='.$record['id_module'].'&id_record='.$record['id_record'].($record['id_plugin'] ? '#tab_'.$record['id_plugin'] : '').'">
         <i class="fa fa-copy"></i> '.tr('Apri scheda').'

@@ -21,15 +21,16 @@
 namespace Modules\Aggiornamenti;
 
 /**
- * Classe per il controllo di integrità dei dati
+ * Classe per il controllo di integrità dei dati.
  */
 class IntegrityChecker
 {
     /**
-     * Calcola le differenze tra i dati attesi e quelli attuali (ricorsivo)
+     * Calcola le differenze tra i dati attesi e quelli attuali (ricorsivo).
      *
      * @param array $expected Dati attesi
-     * @param array $current Dati attuali
+     * @param array $current  Dati attuali
+     *
      * @return array Array delle differenze
      */
     public static function diff($expected, $current)
@@ -58,10 +59,11 @@ class IntegrityChecker
     }
 
     /**
-     * Calcola le differenze per le impostazioni
+     * Calcola le differenze per le impostazioni.
      *
      * @param array $expected Impostazioni attese
-     * @param array $current Impostazioni attuali
+     * @param array $current  Impostazioni attuali
+     *
      * @return array Array delle differenze
      */
     public static function settingsDiff($expected, $current)
@@ -95,9 +97,10 @@ class IntegrityChecker
     }
 
     /**
-     * Normalizza le opzioni del modulo per il confronto
+     * Normalizza le opzioni del modulo per il confronto.
      *
      * @param mixed $options Opzioni da normalizzare
+     *
      * @return string Opzioni normalizzate
      */
     public static function normalizeModuleOptions($options)
@@ -109,4 +112,3 @@ class IntegrityChecker
         return (string) $options;
     }
 }
-

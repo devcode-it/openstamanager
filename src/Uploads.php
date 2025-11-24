@@ -82,9 +82,9 @@ class Uploads
      */
     public static function upload($source, $data, $options = [])
     {
-        //Se è attivo il task sul controllo dello spazio disponibile allora aggiorno la cache
+        // Se è attivo il task sul controllo dello spazio disponibile allora aggiorno la cache
         $task = Tasks\Task::where('enabled', 1)->where('name', 'Hook Spazio disponibile')->first();
-        if( !empty($task) ){
+        if (!empty($task)) {
             $task->execute();
         }
 
@@ -119,11 +119,11 @@ class Uploads
                 $upload = Upload::find($file['id']);
                 $upload->delete();
 
-                //Se è attivo il task sul controllo dello spazio disponibile allora aggiorno la cache
+                // Se è attivo il task sul controllo dello spazio disponibile allora aggiorno la cache
                 $task = Tasks\Task::where('enabled', 1)->where('name', 'Hook Spazio disponibile')->first();
-                if( !empty($task) ){
+                if (!empty($task)) {
                     $task->execute();
-                };
+                }
 
                 return $name;
             } else {

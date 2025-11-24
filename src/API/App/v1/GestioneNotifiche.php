@@ -30,20 +30,21 @@ use API\Resource;
 class GestioneNotifiche extends Resource implements RetrieveInterface
 {
     /**
-     * Operazioni da monitorare per le notifiche
+     * Operazioni da monitorare per le notifiche.
      */
     private const OPERAZIONI_MONITORATE = [
         'edit_sessione',
         'update_inline_sessione',
         'delete_sessione',
         'add_sessione',
-        'cambio_stato_intervento'
+        'cambio_stato_intervento',
     ];
 
     /**
-     * Recupera le notifiche da inviare basate sui log delle operazioni
+     * Recupera le notifiche da inviare basate sui log delle operazioni.
      *
      * @param array $request Richiesta contenente updated_at
+     *
      * @return array Array di notifiche con token e messaggi
      */
     public function retrieve($request)
@@ -53,7 +54,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         if (empty($updated_at)) {
             return [
                 'notifications' => [],
-                'message' => 'Parametro updated_at richiesto'
+                'message' => 'Parametro updated_at richiesto',
             ];
         }
 
@@ -65,7 +66,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         if (empty($operazioni)) {
             return [
                 'notifications' => [],
-                'message' => 'Nessuna operazione da notificare'
+                'message' => 'Nessuna operazione da notificare',
             ];
         }
 
@@ -79,30 +80,31 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         return [
             'notifications' => $notifiche,
             'total_count' => count($notifiche),
-            'operations_processed' => count($operazioni)
+            'operations_processed' => count($operazioni),
         ];
     }
 
     /**
-     * Recupera le operazioni da notificare dalla data specificata
+     * Recupera le operazioni da notificare dalla data specificata.
      *
-     * @param object $database Connessione database
+     * @param object $database   Connessione database
      * @param string $updated_at Data di riferimento
+     *
      * @return array Array delle operazioni
      */
     private function getOperazioniDaNotificare($database, $updated_at)
     {
-        $operazioni_list = "'" . implode("','", self::OPERAZIONI_MONITORATE) . "'";
+        $operazioni_list = "'".implode("','", self::OPERAZIONI_MONITORATE)."'";
 
-        $query = "SELECT
+        $query = 'SELECT
             zz_operations.*,
             zz_modules_lang.title as module_name
         FROM zz_operations
         LEFT JOIN zz_modules ON zz_operations.id_module = zz_modules.id
         LEFT JOIN zz_modules_lang ON zz_modules.id = zz_modules_lang.id_record
-            AND zz_modules_lang.id_lang = " . prepare(\Models\Locale::getDefault()->id) . "
+            AND zz_modules_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id)."
         WHERE zz_operations.op IN ({$operazioni_list})
-            AND zz_operations.created_at > " . prepare($updated_at) . "
+            AND zz_operations.created_at > ".prepare($updated_at)."
             AND zz_modules.name = 'Interventi'
         ORDER BY zz_operations.created_at DESC";
 
@@ -110,10 +112,11 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
     }
 
     /**
-     * Genera le notifiche per una specifica operazione
+     * Genera le notifiche per una specifica operazione.
      *
-     * @param object $database Connessione database
-     * @param array $operazione Dati dell'operazione
+     * @param object $database   Connessione database
+     * @param array  $operazione Dati dell'operazione
+     *
      * @return array Array delle notifiche generate
      */
     private function generaNotifichePerOperazione($database, $operazione)
@@ -162,8 +165,8 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
                         'intervento_codice' => $intervento_info['codice'],
                         'tecnico_id' => $tecnico['idtecnico'],
                         'tecnico_nome' => $tecnico['ragione_sociale'],
-                        'timestamp' => $operazione['created_at']
-                    ]
+                        'timestamp' => $operazione['created_at'],
+                    ],
                 ];
             }
         }
@@ -172,15 +175,16 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
     }
 
     /**
-     * Recupera le informazioni complete di un intervento
+     * Recupera le informazioni complete di un intervento.
      *
-     * @param object $database Connessione database
-     * @param int $id_intervento ID dell'intervento
+     * @param object $database      Connessione database
+     * @param int    $id_intervento ID dell'intervento
+     *
      * @return array|null Informazioni dell'intervento
      */
     private function getInterventoInfo($database, $id_intervento)
     {
-        $query = "SELECT
+        $query = 'SELECT
             in_interventi.id,
             in_interventi.codice,
             in_interventi.richiesta,
@@ -192,47 +196,49 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         FROM in_interventi
         LEFT JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.id
         LEFT JOIN in_statiintervento_lang ON in_statiintervento.id = in_statiintervento_lang.id_record
-            AND in_statiintervento_lang.id_lang = " . prepare(\Models\Locale::getDefault()->id) . "
+            AND in_statiintervento_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
         LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
-        WHERE in_interventi.id = " . prepare($id_intervento);
+        WHERE in_interventi.id = '.prepare($id_intervento);
 
         return $database->fetchOne($query);
     }
 
     /**
-     * Recupera i tecnici interessati a un intervento specifico
+     * Recupera i tecnici interessati a un intervento specifico.
      *
-     * @param object $database Connessione database
-     * @param int $id_intervento ID dell'intervento
+     * @param object $database      Connessione database
+     * @param int    $id_intervento ID dell'intervento
+     *
      * @return array Array dei tecnici interessati
      */
     private function getTecniciInteressati($database, $id_intervento)
     {
-        $query = "SELECT DISTINCT
+        $query = 'SELECT DISTINCT
             in_interventi_tecnici.idtecnico,
             an_anagrafiche.ragione_sociale,
             zz_users.id as user_id
         FROM in_interventi_tecnici
         LEFT JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
         LEFT JOIN zz_users ON an_anagrafiche.idanagrafica = zz_users.idanagrafica
-        WHERE in_interventi_tecnici.idintervento = " . prepare($id_intervento) . "
-            AND zz_users.id IS NOT NULL";
+        WHERE in_interventi_tecnici.idintervento = '.prepare($id_intervento).'
+            AND zz_users.id IS NOT NULL';
 
         return $database->fetchArray($query);
     }
 
     /**
-     * Recupera i token FCM per un utente specifico
+     * Recupera i token FCM per un utente specifico.
      *
      * @param object $database Connessione database
-     * @param int $user_id ID dell'utente
+     * @param int    $user_id  ID dell'utente
+     *
      * @return array Array dei token FCM
      */
     private function getTokensFCM($database, $user_id)
     {
-        $query = "SELECT token, platform, device_info
+        $query = 'SELECT token, platform, device_info
         FROM zz_app_tokens
-        WHERE id_user = " . prepare($user_id) . "
+        WHERE id_user = '.prepare($user_id)."
             AND token IS NOT NULL
             AND token != ''";
 
@@ -240,10 +246,11 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
     }
 
     /**
-     * Genera il messaggio di notifica in base al tipo di operazione
+     * Genera il messaggio di notifica in base al tipo di operazione.
      *
-     * @param array $operazione Dati dell'operazione
+     * @param array $operazione      Dati dell'operazione
      * @param array $intervento_info Informazioni complete dell'intervento
+     *
      * @return string Messaggio di notifica
      */
     private function generaMessaggio($operazione, $intervento_info)
@@ -254,6 +261,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         switch ($operazione['op']) {
             case 'cambio_stato_intervento':
                 $stato_nuovo = $intervento_info['stato_descrizione'] ?? 'N/A';
+
                 return "L'attività {$intervento_codice} è passata nello stato: {$stato_nuovo}";
 
             case 'add_sessione':

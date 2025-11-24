@@ -61,7 +61,7 @@ switch (post('op')) {
         }
 
         $dbo->delete('in_tipiintervento_tipologie', [
-            'idtipointervento' => $id_record
+            'idtipointervento' => $id_record,
         ]);
         $tipi = (array) post('tipi');
         foreach ($tipi as $tipo) {
@@ -70,12 +70,12 @@ switch (post('op')) {
             }
             $dbo->insert('in_tipiintervento_tipologie', [
                 'idtipointervento' => $id_record,
-                'tipo' => $tipo
+                'tipo' => $tipo,
             ]);
         }
 
         $dbo->delete('in_tipiintervento_groups', [
-            'idtipointervento' => $id_record
+            'idtipointervento' => $id_record,
         ]);
         $gruppi = (array) post('gruppi');
         foreach ($gruppi as $id_gruppo) {
@@ -84,7 +84,7 @@ switch (post('op')) {
             }
             $dbo->insert('in_tipiintervento_groups', [
                 'idtipointervento' => $id_record,
-                'id_gruppo' => $id_gruppo
+                'id_gruppo' => $id_gruppo,
             ]);
         }
 

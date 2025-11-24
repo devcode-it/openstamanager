@@ -20,7 +20,6 @@
 
 namespace Plugins\ImportFE;
 
-use Modules\Fatture\Fattura;
 use Tasks\Manager;
 
 class InvoiceHookTask extends Manager
@@ -31,17 +30,17 @@ class InvoiceHookTask extends Manager
             'response' => 1,
             'message' => tr('FE passive aggiornate correttamente!'),
         ];
-        
+
         try {
             $list = Interaction::getInvoiceList();
-            if( empty($list) ){
+            if (empty($list)) {
                 $result['message'] = tr('Nessuna FE passiva da importare');
             }
         } catch (\Exception $e) {
             $result['response'] = 2;
             $result['message'] = tr('Errore durante l\'importazione delle FE passive: _ERR_', [
                 '_ERR_' => $e->getMessage(),
-            ])."<br>";
+            ]).'<br>';
         }
 
         return $result;

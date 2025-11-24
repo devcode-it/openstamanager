@@ -233,7 +233,7 @@ if (!function_exists('renderChecklistHtml')) {
 
             // Aggiunta delle note se richiesto e se presenti
             if ($show_notes && !empty($check->note)) {
-                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br($check->note).'</small>';
+                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br((string) $check->note).'</small>';
             }
 
             $result .= '
@@ -246,7 +246,7 @@ if (!function_exists('renderChecklistHtml')) {
 
             // Aggiunta delle note se richiesto e se presenti
             if ($show_notes && !empty($check->note)) {
-                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br($check->note).'</small>';
+                $result .= ' <small style="font-weight: normal; color: #666;">'.nl2br((string) $check->note).'</small>';
             }
         }
 

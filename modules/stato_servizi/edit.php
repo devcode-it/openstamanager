@@ -115,8 +115,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-danger m-3 mb-0">
                     <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione, alcuni elementi sono scaduti o hanno esaurito i crediti: _NUM_', [
-                        '_NUM_' => $totale_scaduti,
-                    ]).'
+                '_NUM_' => $totale_scaduti,
+            ]).'
                 </div>';
         }
 
@@ -124,8 +124,8 @@ if (Services::isEnabled()) {
             echo '
                 <div class="alert alert-warning m-3 mb-0">
                     <i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione, alcuni elementi sono in scadenza o stanno per esaurire i crediti: _NUM_', [
-                        '_NUM_' => $totale_in_scadenza,
-                    ]).'
+                '_NUM_' => $totale_in_scadenza,
+            ]).'
                 </div>';
         }
 
@@ -197,7 +197,7 @@ if (Services::isEnabled()) {
                             <td><span class="badge badge-primary">'.$servizio['sottocategoria'].'</span><br><small class="text-muted">
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
-                                '.($servizio['spazio_limite'] && $servizio['utenti_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato,1).' / '.numberFormat($servizio['spazio_limite'],1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
+                                '.($servizio['spazio_limite'] && $servizio['utenti_limite'] ? '<div class="mb-1"><span class="badge badge-'.$spazio_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-database" style="font-size: 0.65rem; margin-right: 4px;"></i>'.numberFormat($spazio_utilizzato, 1).' / '.numberFormat($servizio['spazio_limite'], 1).' '.tr('GB').$spazio_icon.'</span></div>' : '').'
                                 '.($servizio['utenti_limite'] ? '<div><span class="badge badge-'.$utenti_class.' d-inline-flex align-items-center" style="font-size: 0.7rem; padding: 0.25rem 0.5rem; line-height: 1.2;"><i class="fa fa-users" style="font-size: 0.65rem; margin-right: 4px;"></i>'.$utenti_attivi.' / '.$servizio['utenti_limite'].' '.tr('utenti').$utenti_icon.'</span></div>' : '').'
                             </td>
                         </tr>';
@@ -248,10 +248,10 @@ if (Services::isEnabled()) {
                             <td>'.dateFormat($scadenza).' <br><small class="text-muted">'.$scadenza->diffForHumans().'</small></td>
                             <td class="text-center">
                                 <span class="badge badge-'.$credits_class.' d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$crediti_display.' '.tr('Crediti').' '.$credits_warning_icon.'</span>';
-                                if ($max_size) {
-                                    echo '<br><span class="badge badge-secondary d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$max_size.' '.tr('MB').'</span>';
-                                }
-                            echo '
+            if ($max_size) {
+                echo '<br><span class="badge badge-secondary d-inline-flex align-items-center" style="font-size: 0.75rem;">'.$max_size.' '.tr('MB').'</span>';
+            }
+            echo '
                             </td>
                         </tr>';
         }
@@ -262,21 +262,20 @@ if (Services::isEnabled()) {
                         <tr class="table-light">
                             <td colspan="4">
                                 <strong>'.tr('Totale elementi: _NUM_ (_SERVIZI_ servizi, _RISORSE_ risorse)', [
-                                    '_NUM_' => $tutti_elementi->count(),
-                                    '_SERVIZI_' => $servizi->count(),
-                                    '_RISORSE_' => $risorse->count()
-                                ]).'</strong>
+            '_NUM_' => $tutti_elementi->count(),
+            '_SERVIZI_' => $servizi->count(),
+            '_RISORSE_' => $risorse->count(),
+        ]).'</strong>
                             </td>
                             <td class="text-right">';
-                            if ($totale_in_scadenza > 0 || $totale_scaduti > 0) {
-                                echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
-                            }
-                            echo '
+        if ($totale_in_scadenza > 0 || $totale_scaduti > 0) {
+            echo '<a href="https://marketplace.devcode.it/" target="_blank" id="btn_rinnova" class="btn btn-sm btn-warning"><i class="fa fa-shopping-cart mr-1"></i>'.tr('Rinnova').'</a>';
+        }
+        echo '
                             </td>
                         </tr>
                     </tfoot>
                 </table>';
-
     } else {
         echo '
                 <div class="alert alert-info m-3">

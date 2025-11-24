@@ -25,7 +25,6 @@ use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Contratti\Contratto;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
@@ -739,7 +738,7 @@ switch ($op) {
 
         break;
 
-    // Recupero dati righe per copia negli appunti
+        // Recupero dati righe per copia negli appunti
     case 'get_righe_data':
         $id_righe = (array) post('righe');
         $righe_data = [];
@@ -751,7 +750,7 @@ switch ($op) {
 
             if ($riga) {
                 $riga_array = [
-                    'type' => get_class($riga),
+                    'type' => $riga::class,
                     'descrizione' => $riga->descrizione,
                     'qta' => $riga->qta,
                     'um' => $riga->um,
@@ -781,7 +780,7 @@ switch ($op) {
 
         break;
 
-    // Incolla righe dagli appunti
+        // Incolla righe dagli appunti
     case 'paste_righe':
         $righe_data = json_decode(post('righe_data'), true);
 
@@ -790,7 +789,7 @@ switch ($op) {
                 $type = $riga_data['type'];
 
                 // Estrae solo il nome della classe (es. "Articolo", "Riga", "Sconto", "Descrizione")
-                $class_name = substr($type, strrpos($type, '\\') + 1);
+                $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
                 // Determino il tipo di riga da creare
                 if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
@@ -822,14 +821,13 @@ switch ($op) {
                     $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
                     $riga->tipo_sconto = $riga_data['tipo_sconto'];
                     $riga->idiva = $riga_data['idiva'];
-                    $riga->id_conto = ($riga_data['id_conto']?: setting('Conto predefinito fatture di vendita'));
+                    $riga->id_conto = ($riga_data['id_conto'] ?: setting('Conto predefinito fatture di vendita'));
                 }
 
                 $riga->note = $riga_data['note'];
 
                 // Salvo la riga
                 $riga->save();
-
             }
 
             // Ricalcolo inps, ritenuta e bollo

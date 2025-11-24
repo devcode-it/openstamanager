@@ -43,6 +43,7 @@ use Plugins\ListinoFornitori\DettaglioFornitore;
 class CSV extends CSVImporter
 {
     protected $failed_errors = [];
+
     public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $rows = $this->getRows($offset, $length);
@@ -64,7 +65,7 @@ class CSV extends CSVImporter
             if (!empty($missing_required_fields)) {
                 $this->failed_records[] = $record;
                 $this->failed_rows[] = $row;
-                $this->failed_errors[] = 'Campi obbligatori mancanti: ' . implode(', ', $missing_required_fields);
+                $this->failed_errors[] = 'Campi obbligatori mancanti: '.implode(', ', $missing_required_fields);
                 ++$failed_count;
                 continue;
             }
@@ -410,13 +411,13 @@ class CSV extends CSVImporter
                 $categoria = $this->processaCategoria($record);
                 $sottocategoria = $this->processaSottocategoria($record, $categoria);
             } catch (\Exception $e) {
-                throw new \Exception('Errore nella gestione categoria/sottocategoria: ' . $e->getMessage());
+                throw new \Exception('Errore nella gestione categoria/sottocategoria: '.$e->getMessage());
             }
 
             try {
                 $marca = $this->processaMarca($record);
             } catch (\Exception $e) {
-                throw new \Exception('Errore nella gestione marca: ' . $e->getMessage());
+                throw new \Exception('Errore nella gestione marca: '.$e->getMessage());
             }
 
             $modello = null;
@@ -424,14 +425,14 @@ class CSV extends CSVImporter
                 try {
                     $modello = $this->processaModello($record, $marca);
                 } catch (\Exception $e) {
-                    error_log("Errore nella gestione modello: " . $e->getMessage());
+                    error_log('Errore nella gestione modello: '.$e->getMessage());
                 }
             }
 
             try {
                 $this->processaUnitaMisura($record);
             } catch (\Exception $e) {
-                throw new \Exception('Errore nella gestione unità di misura: ' . $e->getMessage());
+                throw new \Exception('Errore nella gestione unità di misura: '.$e->getMessage());
             }
 
             if (empty($articolo)) {
@@ -484,7 +485,7 @@ class CSV extends CSVImporter
             $nuova_qta = 0;
             if (isset($record['qta'])) {
                 if (!is_numeric($record['qta'])) {
-                    throw new \Exception('Quantità non valida: ' . $record['qta']);
+                    throw new \Exception('Quantità non valida: '.$record['qta']);
                 }
                 $nuova_qta = (float) $record['qta'];
             }
@@ -503,7 +504,7 @@ class CSV extends CSVImporter
                                     $data_valida = true;
                                     break;
                                 }
-                            } catch (\Exception $e) {
+                            } catch (\Exception) {
                                 continue;
                             }
                         }
@@ -511,7 +512,7 @@ class CSV extends CSVImporter
                             $record['data_qta'] = Carbon::now()->format('d/m/Y');
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $record['data_qta'] = Carbon::now()->format('d/m/Y');
                 }
             }
@@ -580,9 +581,9 @@ class CSV extends CSVImporter
         } catch (\Exception $e) {
             $error_message = 'Errore durante l\'importazione dell\'articolo';
             if (!empty($record['codice'])) {
-                $error_message .= ' (Codice: ' . $record['codice'] . ')';
+                $error_message .= ' (Codice: '.$record['codice'].')';
             }
-            $error_message .= ': ' . $e->getMessage();
+            $error_message .= ': '.$e->getMessage();
 
             error_log($error_message);
 
@@ -596,8 +597,47 @@ class CSV extends CSVImporter
     {
         return [
             ['Codice', 'Immagine', 'Import immagine', 'Descrizione', 'Quantità', 'Data inventario', 'Unità misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso', 'Volume', 'Categoria', 'Sottocategoria', 'marca', 'Modello', 'Barcode', 'Fornitore predefinito', 'Partita IVA', 'Codice IVA vendita', 'Ubicazione', 'Note', 'Anagrafica listino', 'Codice fornitore', 'Barcode fornitore', 'Descrizione fornitore', 'Qta minima', 'Qta massima', 'Prezzo listino', 'Sconto listino', 'Cliente/Fornitore listino', 'Sede'],
-            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1.00', '28/11/2023', 'PZ', '90.00', '180.00', '0.50', '0.00', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '22', 'Scaffale A1', 'Nota ad uso interno', 'DevCode s.r.l.', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '1.00', '10.00', '180.00', '20.00', 'Fornitore', 'Sede']
+            ['OSM-BUDGET', 'https://openstamanager.com/moduli/budget/budget.webp', '2', 'Modulo Budget per OpenSTAManager', '1.00', '28/11/2023', 'PZ', '90.00', '180.00', '0.50', '0.00', 'Software gestionali', 'Moduli aggiuntivi', 'DevCode', 'Budget', '4006381333931', 'DevCode s.r.l.', '05024030289', '22', 'Scaffale A1', 'Nota ad uso interno', 'DevCode s.r.l.', 'DEV-BUDGET', '0123456789012', 'Strumento gestionale utilizzato per pianificare e monitorare le entrate e uscite aziendali', '1.00', '10.00', '180.00', '20.00', 'Fornitore', 'Sede'],
         ];
+    }
+
+    public function saveFailedRecordsWithErrors($filepath)
+    {
+        if (empty($this->failed_rows)) {
+            return '';
+        }
+
+        $dir = dirname((string) $filepath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $header = $this->getHeader();
+        $header[] = 'Errore';
+        fputcsv($file, $header, ';');
+
+        foreach ($this->failed_rows as $index => $row) {
+            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
+            $row[] = $error_message;
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        return $filepath;
+    }
+
+    /**
+     * Restituisce gli errori specifici per i record falliti.
+     *
+     * @return array
+     */
+    public function getFailedErrors()
+    {
+        return $this->failed_errors;
     }
 
     protected function processaCategoria($record)
@@ -626,7 +666,7 @@ class CSV extends CSVImporter
 
             return $categoria;
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella creazione/ricerca categoria "' . $record['categoria'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore nella creazione/ricerca categoria "'.$record['categoria'].'": '.$e->getMessage());
         }
     }
 
@@ -662,7 +702,7 @@ class CSV extends CSVImporter
 
             return $sottocategoria;
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella creazione/ricerca sottocategoria "' . $record['sottocategoria'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore nella creazione/ricerca sottocategoria "'.$record['sottocategoria'].'": '.$e->getMessage());
         }
     }
 
@@ -685,7 +725,7 @@ class CSV extends CSVImporter
 
             return $marca;
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella creazione/ricerca marca "' . $record['marca'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore nella creazione/ricerca marca "'.$record['marca'].'": '.$e->getMessage());
         }
     }
 
@@ -705,7 +745,7 @@ class CSV extends CSVImporter
                 }
             }
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella gestione unità di misura "' . $record['um'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore nella gestione unità di misura "'.$record['um'].'": '.$e->getMessage());
         }
     }
 
@@ -863,49 +903,10 @@ class CSV extends CSVImporter
         }
     }
 
-    public function saveFailedRecordsWithErrors($filepath)
-    {
-        if (empty($this->failed_rows)) {
-            return '';
-        }
-
-        $dir = dirname($filepath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $file = fopen($filepath, 'w');
-        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        $header = $this->getHeader();
-        $header[] = 'Errore';
-        fputcsv($file, $header, ';');
-
-        foreach ($this->failed_rows as $index => $row) {
-            $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
-            $row[] = $error_message;
-            fputcsv($file, $row, ';');
-        }
-
-        fclose($file);
-
-        return $filepath;
-    }
-
-    /**
-     * Restituisce gli errori specifici per i record falliti.
-     *
-     * @return array
-     */
-    public function getFailedErrors()
-    {
-        return $this->failed_errors;
-    }
-
     /**
      * Gestisce la creazione o ricerca di un modello.
      *
-     * @param array $record
+     * @param array      $record
      * @param Marca|null $marca
      *
      * @return Marca|null
@@ -917,7 +918,7 @@ class CSV extends CSVImporter
         }
 
         try {
-            error_log("Processando modello: " . $record['modello'] . " per marca: " . ($marca ? $marca->name : 'nessuna'));
+            error_log('Processando modello: '.$record['modello'].' per marca: '.($marca ? $marca->name : 'nessuna'));
 
             $modello = null;
 
@@ -927,7 +928,7 @@ class CSV extends CSVImporter
                     ->where('is_articolo', 1)
                     ->first();
 
-                error_log("Ricerca modello con parent {$marca->id}: " . ($modello ? 'trovato' : 'non trovato'));
+                error_log("Ricerca modello con parent {$marca->id}: ".($modello ? 'trovato' : 'non trovato'));
             }
 
             if (empty($modello)) {
@@ -938,7 +939,7 @@ class CSV extends CSVImporter
             }
 
             if (empty($modello)) {
-                error_log("Creando nuovo modello: " . $record['modello']);
+                error_log('Creando nuovo modello: '.$record['modello']);
 
                 $modello = Marca::build($record['modello']);
                 $modello->is_articolo = 1;
@@ -953,7 +954,7 @@ class CSV extends CSVImporter
                         ->first();
 
                     if (empty($marca_generica)) {
-                        error_log("Creando marca generica");
+                        error_log('Creando marca generica');
                         $marca_generica = Marca::build('Generico');
                         $marca_generica->is_articolo = 1;
                         $marca_generica->save();
@@ -969,15 +970,14 @@ class CSV extends CSVImporter
 
             return $modello;
         } catch (\Exception $e) {
-            throw new \Exception('Errore nella creazione/ricerca modello "' . $record['modello'] . '": ' . $e->getMessage());
+            throw new \Exception('Errore nella creazione/ricerca modello "'.$record['modello'].'": '.$e->getMessage());
         }
     }
 
     /**
      * Gestisce l'importazione dei barcode per un articolo.
      *
-     * @param Articolo $articolo
-     * @param string   $barcode_value
+     * @param string $barcode_value
      *
      * @throws \Exception
      */
@@ -991,7 +991,7 @@ class CSV extends CSVImporter
             $database = database();
 
             // Supporta barcode multipli separati da virgola
-            $barcodes = array_map('trim', explode(',', $barcode_value));
+            $barcodes = array_map(trim(...), explode(',', $barcode_value));
 
             foreach ($barcodes as $barcode) {
                 if (empty($barcode)) {

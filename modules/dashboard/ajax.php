@@ -21,8 +21,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
-use Modules\Interventi\Intervento;
 use Modules\Interventi\Components\Sessione;
+use Modules\Interventi\Intervento;
 
 $modulo_interventi = Module::where('name', 'Interventi')->first();
 $modulo_preventivi = Module::where('name', 'Preventivi')->first();

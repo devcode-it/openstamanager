@@ -333,7 +333,6 @@ switch (post('op')) {
             OperationLog::setInfo('id_record', $id_record);
             OperationLog::setInfo('level', 'info');
             OperationLog::build('add_sessione');
-
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -341,9 +340,7 @@ switch (post('op')) {
         if (!empty($tecnici_assegnati)) {
             // Converte in array se necessario e filtra i valori vuoti
             $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
-            $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) {
-                return !empty($value) && is_numeric($value);
-            });
+            $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
             $tecnici_assegnati = array_unique($tecnici_assegnati);
 
             if (!empty($tecnici_assegnati)) {
@@ -393,7 +390,7 @@ switch (post('op')) {
                 } else {
                     // Seconda priorità: data richiesta con orario di default
                     $data_richiesta = post('data_richiesta') ?: date('Y-m-d');
-                    $data_inizio = $data_richiesta . ' 09:00:00';
+                    $data_inizio = $data_richiesta.' 09:00:00';
                 }
             }
 
@@ -480,7 +477,6 @@ switch (post('op')) {
                     flash()->error(tr('Nessuna data di ricorrenza valida è stata generata. Verificare i parametri inseriti.'));
                     break;
                 }
-
             } catch (Exception $e) {
                 flash()->error(tr('Errore durante il calcolo delle date di ricorrenza: _ERROR_', ['_ERROR_' => $e->getMessage()]));
                 break;
@@ -503,11 +499,11 @@ switch (post('op')) {
                     $new->idstatointervento = $stato->id;
                     $new->save();
                     $idintervento = $new->id;
-                    $ricorrenze_create++;
+                    ++$ricorrenze_create;
                 } catch (Exception $e) {
                     flash()->error(tr('Errore durante la creazione della ricorrenza per la data _DATE_: _ERROR_', [
                         '_DATE_' => date('d/m/Y', strtotime($data_ricorrenza)),
-                        '_ERROR_' => $e->getMessage()
+                        '_ERROR_' => $e->getMessage(),
                     ]));
                     continue;
                 }
@@ -542,9 +538,7 @@ switch (post('op')) {
                 // Assegnazione dei tecnici all'intervento
                 $tecnici_assegnati = (array) post('tecnici_assegnati');
                 // Filtra i valori vuoti per evitare errori di foreign key
-                $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) {
-                    return !empty($value) && is_numeric($value);
-                });
+                $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
 
                 if (!empty($tecnici_assegnati)) {
                     $dbo->sync('in_interventi_tecnici_assegnati', [
@@ -561,7 +555,6 @@ switch (post('op')) {
             } else {
                 flash()->warning(tr('Nessuna ricorrenza è stata creata. Verificare i parametri inseriti.'));
             }
-
         }
 
         if (post('ref') == 'dashboard') {
@@ -651,7 +644,7 @@ switch (post('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
             if ($riga) {
                 $riga_array = [
-                    'type' => get_class($riga), 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
+                    'type' => $riga::class, 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
                     'prezzo_unitario' => $riga->prezzo_unitario, 'sconto_unitario' => $riga->sconto_unitario,
                     'sconto_percentuale' => $riga->sconto_percentuale, 'tipo_sconto' => $riga->tipo_sconto,
                     'idiva' => $riga->idiva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
@@ -672,7 +665,7 @@ switch (post('op')) {
         if (is_array($righe_data)) {
             foreach ($righe_data as $riga_data) {
                 $type = $riga_data['type'];
-                $class_name = substr($type, strrpos($type, '\\') + 1);
+                $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
                 if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
                     $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
                     if ($articolo_originale) {
@@ -976,7 +969,7 @@ switch (post('op')) {
                             $intervento->save();
                         }
                     }
-                    
+
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica'])) {
                         $template = Template::find($stato['id_email']);
@@ -1013,7 +1006,7 @@ switch (post('op')) {
                             }
                         }
                     }
-                } 
+                }
             } else {
                 flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota.'));
             }

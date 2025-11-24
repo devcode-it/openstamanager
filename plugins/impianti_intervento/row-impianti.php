@@ -87,6 +87,7 @@ if ($n_impianti > 0) {
         <h5>'.$title.'</h5>
         <p class="mb-0">'.$message.'</p>
     </div>';
+
     return;
 }
 foreach ($impianti_collegati as $impianto) {
@@ -141,15 +142,14 @@ foreach ($impianti_collegati as $impianto) {
                         <td colspan="7">
                             <table class="table">
                                 <tbody class="sort check-impianto" data-sonof="0">';
-            foreach ($checks as $check) {
-                echo renderChecklist($check);
-            }
-        echo '
+    foreach ($checks as $check) {
+        echo renderChecklist($check);
+    }
+    echo '
                                 </tbody>
                             </table>
                         </td>
                     </tr>';
-
 }
 echo '
                     </tbody>

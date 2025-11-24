@@ -37,6 +37,9 @@ class DatiFattureElettroniche extends Controllo
     public const CATEGORY_DOCUMENTO = 'documento';
     public const CATEGORY_XML_STRUCTURE = 'xml_structure';
 
+    // Array per raccogliere le fatture senza XML
+    protected $fatture_senza_xml = [];
+
     public function getName()
     {
         return tr('Corrispondenze XML FE e Documenti di vendita');
@@ -46,9 +49,6 @@ class DatiFattureElettroniche extends Controllo
     {
         return 'info';
     }
-
-    // Array per raccogliere le fatture senza XML
-    protected $fatture_senza_xml = [];
 
     public function check()
     {
@@ -92,7 +92,7 @@ class DatiFattureElettroniche extends Controllo
             if (!empty($all_errors)) {
                 $this->processErrors($fattura_vendita, $all_errors);
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Raccogli le fatture senza XML invece di aggiungerle ai risultati
             $this->fatture_senza_xml[] = [
                 'id' => $fattura_vendita->id,
@@ -116,9 +116,7 @@ class DatiFattureElettroniche extends Controllo
         $count = count($this->fatture_senza_xml);
 
         // Ordina per data
-        usort($this->fatture_senza_xml, function ($a, $b) {
-            return strcmp($a['data'], $b['data']);
-        });
+        usort($this->fatture_senza_xml, fn ($a, $b) => strcmp((string) $a['data'], (string) $b['data']));
 
         // Colori per il tipo warning
         $colors = [
@@ -568,7 +566,6 @@ class DatiFattureElettroniche extends Controllo
                         'suggestion' => tr('Verificare il totale IVA della fattura'),
                     ];
                 }
-
             }
 
             // Controllo sconti e maggiorazioni
@@ -872,11 +869,11 @@ class DatiFattureElettroniche extends Controllo
         $info_count = 0;
         foreach ($all_errors as $error) {
             if ($error['type'] === self::ERROR_DANGER) {
-                $danger_count++;
+                ++$danger_count;
             } elseif ($error['type'] === self::ERROR_WARNING) {
-                $warning_count++;
+                ++$warning_count;
             } elseif ($error['type'] === self::ERROR_INFO) {
-                $info_count++;
+                ++$info_count;
             }
         }
 
@@ -1246,11 +1243,11 @@ class DatiFattureElettroniche extends Controllo
         $normalized = preg_replace('/\s+/', ' ', $normalized);
 
         // Normalizza apici e backtick duplicati (es. '' -> ', `` -> `)
-        $normalized = preg_replace("/'+/", "'", $normalized);
-        $normalized = preg_replace('/`+/', '`', $normalized);
+        $normalized = preg_replace("/'+/", "'", (string) $normalized);
+        $normalized = preg_replace('/`+/', '`', (string) $normalized);
 
         // Converti in minuscolo e rimuovi spazi iniziali/finali
-        $normalized = strtolower(trim($normalized));
+        $normalized = strtolower(trim((string) $normalized));
 
         return $normalized;
     }

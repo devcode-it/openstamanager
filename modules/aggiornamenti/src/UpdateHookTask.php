@@ -20,10 +20,10 @@
 
 namespace Modules\Aggiornamenti;
 
-use Tasks\Manager;
-use Models\Module;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Models\Module;
+use Tasks\Manager;
 
 class UpdateHookTask extends Manager
 {
@@ -58,7 +58,7 @@ class UpdateHookTask extends Manager
 
             if (empty($update) || empty(setting('Attiva aggiornamenti'))) {
                 return $result;
-            }else{
+            } else {
                 $module = Module::where('name', 'Aggiornamenti')->first();
                 $link = !empty($module) ? base_path().'/controller.php?id_module='.$module->id : '#';
 
@@ -75,7 +75,7 @@ class UpdateHookTask extends Manager
         } catch (\Exception $e) {
             $result = [
                 'response' => 0,
-                'message' => tr('Ricerca nuovo aggiornamento fallita! _error_',[
+                'message' => tr('Ricerca nuovo aggiornamento fallita! _error_', [
                     '_error_' => $e->getMessage(),
                 ]),
             ];
@@ -103,7 +103,7 @@ class UpdateHookTask extends Manager
             $response = self::$client->request('GET', 'releases/latest');
             $body = $response->getBody();
 
-            $result = json_decode($body, true);
+            $result = json_decode((string) $body, true);
             if (!is_array($result) || empty($result)) {
                 throw new \Exception('Invalid API response: empty or malformed data');
             }
@@ -115,7 +115,7 @@ class UpdateHookTask extends Manager
         $response = self::$client->request('GET', 'releases');
         $body = $response->getBody();
 
-        $releases = json_decode($body, true);
+        $releases = json_decode((string) $body, true);
         if (!is_array($releases) || empty($releases)) {
             throw new \Exception('Invalid API response: empty or malformed data');
         }

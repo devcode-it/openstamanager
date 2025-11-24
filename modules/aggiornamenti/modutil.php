@@ -159,7 +159,7 @@ if (!function_exists('customFields')) {
         // Ottieni l'ID della lingua di default
         $default_lang = $database->fetchOne("SELECT valore FROM zz_settings WHERE nome = 'Lingua'")['valore'] ?? 1;
 
-        $query = "SELECT
+        $query = 'SELECT
             zz_fields.id,
             zz_fields.name,
             COALESCE(zz_modules_lang.title, zz_modules.name) as module_name,
@@ -168,10 +168,10 @@ if (!function_exists('customFields')) {
             zz_fields.updated_at
         FROM zz_fields
         LEFT JOIN zz_modules ON zz_fields.id_module = zz_modules.id
-        LEFT JOIN zz_modules_lang ON (zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = ".prepare($default_lang).")
+        LEFT JOIN zz_modules_lang ON (zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare($default_lang).')
         LEFT JOIN zz_plugins ON zz_fields.id_plugin = zz_plugins.id
-        LEFT JOIN zz_plugins_lang ON (zz_plugins.id = zz_plugins_lang.id_record AND zz_plugins_lang.id_lang = ".prepare($default_lang).")
-        ORDER BY module_name, plugin_name, zz_fields.name";
+        LEFT JOIN zz_plugins_lang ON (zz_plugins.id = zz_plugins_lang.id_record AND zz_plugins_lang.id_lang = '.prepare($default_lang).')
+        ORDER BY module_name, plugin_name, zz_fields.name';
 
         $results = $database->fetchArray($query);
 
@@ -192,13 +192,13 @@ if (!function_exists('customViews')) {
         // Ottieni l'ID della lingua di default
         $default_lang = $database->fetchOne("SELECT valore FROM zz_settings WHERE nome = 'Lingua'")['valore'] ?? 1;
 
-        $query = "SELECT
+        $query = 'SELECT
             zz_modules.id,
             COALESCE(zz_modules_lang.title, zz_modules.name) as module_name,
             zz_modules.directory,
             zz_modules.updated_at
         FROM zz_modules
-        LEFT JOIN zz_modules_lang ON (zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = ".prepare($default_lang).")
+        LEFT JOIN zz_modules_lang ON (zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare($default_lang).")
         WHERE zz_modules.options2 != '' AND zz_modules.options2 IS NOT NULL
         ORDER BY module_name";
 
@@ -247,7 +247,7 @@ if (!function_exists('customStructureWithFiles')) {
             foreach ($grouped_files as $path => $file_list) {
                 $results[] = [
                     'path' => $path,
-                    'files' => $file_list
+                    'files' => $file_list,
                 ];
             }
         }
@@ -267,7 +267,7 @@ if (!function_exists('customStructureWithFiles')) {
 
             $results[] = [
                 'path' => 'include',
-                'files' => $include_files
+                'files' => $include_files,
             ];
         }
 
@@ -360,12 +360,12 @@ if (!function_exists('customViewsNotStandard')) {
                     'module_id' => $view['id_module'],
                     'reason' => 'Vista mancante',
                     'current_query' => $view['query'],
-                    'expected_query' => ''
+                    'expected_query' => '',
                 ];
                 continue;
             }
 
-            $current_query = trim($view['query']);
+            $current_query = trim((string) $view['query']);
             $current_query = preg_replace('/<br\s*\/?>/i', '', $current_query);
             $current_query = preg_replace('/\s+/', ' ', (string) $current_query);
             $current_query = str_replace(['"', "'"], "'", $current_query);
@@ -379,14 +379,11 @@ if (!function_exists('customViewsNotStandard')) {
             if (!isset($standard_views[$module_name])) {
                 $is_custom = true;
                 $reason = 'Modulo non previsto';
-            }
-
-            elseif (!isset($standard_views[$module_name][$view_name])) {
+            } elseif (!isset($standard_views[$module_name][$view_name])) {
                 $is_custom = true;
                 $reason = 'Vista aggiuntiva';
-            }
-            else {
-                $expected_query = trim($standard_views[$module_name][$view_name]);
+            } else {
+                $expected_query = trim((string) $standard_views[$module_name][$view_name]);
 
                 $expected_query = preg_replace('/<br\s*\/?>/i', '', $expected_query);
                 $expected_query = preg_replace('/\s+/', ' ', (string) $expected_query);
@@ -414,7 +411,7 @@ if (!function_exists('customViewsNotStandard')) {
                     'reason' => $reason,
                     'current_query' => $view['query'],
                     'expected_query' => $expected_query,
-                    'debug_module_name' => $module_name // Per debug
+                    'debug_module_name' => $module_name, // Per debug
                 ];
             }
         }
@@ -431,7 +428,7 @@ if (!function_exists('customViewsNotStandard')) {
 
         foreach ($standard_views as $module_name => $module_views) {
             foreach ($module_views as $view_name => $expected_query) {
-                if (empty(trim($expected_query))) {
+                if (empty(trim((string) $expected_query))) {
                     continue;
                 }
 
@@ -443,7 +440,7 @@ if (!function_exists('customViewsNotStandard')) {
                         'module_id' => null,
                         'reason' => 'Vista mancante',
                         'current_query' => '',
-                        'expected_query' => $expected_query
+                        'expected_query' => $expected_query,
                     ];
                 }
             }
@@ -463,10 +460,10 @@ if (!function_exists('normalizeModuleOptions')) {
     function normalizeModuleOptions($text)
     {
         // Rimuovi tutti i tag BR (tutte le varianti)
-        $text = preg_replace('/<br\s*\/?>/i', '', (string)$text);
+        $text = preg_replace('/<br\s*\/?>/i', '', (string) $text);
 
         // Normalizza spazi multipli
-        $text = preg_replace('/\s+/', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', (string) $text);
 
         // Normalizza virgolette (mantieni i backtick per le query SQL)
         $text = str_replace(['"', "'"], "'", $text);
@@ -554,8 +551,7 @@ if (!function_exists('customModulesNotStandard')) {
             if (!isset($standard_modules[$module_name])) {
                 $is_custom = true;
                 $reason = 'Modulo non previsto';
-            }
-            else {
+            } else {
                 // Normalizza le options standard
                 $expected_options = normalizeModuleOptions($standard_modules[$module_name]['options']);
 
@@ -580,7 +576,7 @@ if (!function_exists('customModulesNotStandard')) {
                     'current_options' => $module['options'],
                     'current_options2' => $module['options2'],
                     'expected_options' => $standard_modules[$module_name]['options'] ?? '',
-                    'expected_options2' => $standard_modules[$module_name]['options2'] ?? ''
+                    'expected_options2' => $standard_modules[$module_name]['options2'] ?? '',
                 ];
             }
         }

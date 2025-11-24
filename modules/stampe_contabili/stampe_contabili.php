@@ -165,7 +165,7 @@ echo '
 
 $where_conditions = [
     'date_end BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']),
-    'id_print='.prepare($id_print)
+    'id_print='.prepare($id_print),
 ];
 
 if (!empty($dir)) {

@@ -259,18 +259,18 @@ echo '
                     {[ "type": "date", "label": "'.tr('Data fine competenza').'", "name": "data_fine_competenza", "value": "'.$result['data_fine_competenza'].'" ]}
                 </div>';
 
-                if (isset($result['type']) && isset($result['id'])) {
-                    $riga = $result['type']::find($result['id']);
-                    if ($riga->hasDifferentOriginalDateCompetenza()) {
-                        echo '
+if (isset($result['type']) && isset($result['id'])) {
+    $riga = $result['type']::find($result['id']);
+    if ($riga->hasDifferentOriginalDateCompetenza()) {
+        echo '
                         <div class="col-md-4">
                             <div class="alert alert-danger">
                                 <i class="fa fa-warning"></i> '.tr('Attenzione! Le date di competenza non coincidono con le date della riga di origine.').'
                             </div>
                         </div>';
-                    }
-                }
-            echo '
+    }
+}
+echo '
             </div>';
 
 // Data prevista evasione (per ordini)

@@ -33,20 +33,19 @@ function serverError()
 }
 
 // Gestione degli errori
-set_error_handler('serverError');
-register_shutdown_function('serverError');
+set_error_handler(serverError(...));
+register_shutdown_function(serverError(...));
 
 include_once __DIR__.'/../core.php';
 
 // Rate limiting per API (se abilitato)
-if (($config['rate_limiting']['enabled'] ?? false)) {
-    [$ok] = \Security\LaravelRateLimiter::enforce('api', $config);
+if ($config['rate_limiting']['enabled'] ?? false) {
+    [$ok] = Security\LaravelRateLimiter::enforce('api', $config);
     if (!$ok) {
         http_response_code(429);
         exit('Too Many Requests');
     }
 }
-
 
 // Permesso di accesso all'API da ogni dispositivo
 header('Access-Control-Allow-Origin: *');
@@ -70,20 +69,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 $result = json_decode((string) $response, true);
 $level = ($result['status'] == '200' ? 'info' : 'error');
-$type = [ 'GET' => 'retrieve', 'POST' => 'create', 'PUT' => 'update', 'DELETE' => 'delete', ];
+$type = ['GET' => 'retrieve', 'POST' => 'create', 'PUT' => 'update', 'DELETE' => 'delete'];
 
-//Ricavo l'id della richiesta API
+// Ricavo l'id della richiesta API
 $api = $dbo->table('zz_api_resources')
     ->where('resource', $info['resource'])
     ->where('type', $type[$_SERVER['REQUEST_METHOD']])
     ->first();
 
-//Salvataggio del log dell'operazione
+// Salvataggio del log dell'operazione
 OperationLog::setInfo('id_module', $info['id_module']);
 OperationLog::setInfo('id_api', $api->id);
 OperationLog::setInfo('level', $level);
 
-//Aggiungo il contenuto della richiesta
+// Aggiungo il contenuto della richiesta
 $context = [
     'token' => get('token'),
     'resource' => get('resource'),
@@ -92,19 +91,19 @@ $context = [
 ];
 OperationLog::setInfo('context', json_encode($context));
 
-//Aggiungo al log il messaggio completo di risposta
-if( ($result['status']=='200' && setting('Log risposte API')=='debug') || $result['status']!='200' ){
+// Aggiungo al log il messaggio completo di risposta
+if (($result['status'] == '200' && setting('Log risposte API') == 'debug') || $result['status'] != '200') {
     $message = json_encode($result);
     OperationLog::setInfo('message', $message);
 }
 
-//Salvo l'id_record se presente nella risposta
-if( !empty($result['id']) ){
+// Salvo l'id_record se presente nella risposta
+if (!empty($result['id'])) {
     OperationLog::setInfo('id_record', $result['id']);
 }
 
 $op = ($result['op'] ?: $type[$_SERVER['REQUEST_METHOD']]);
-$result['op'] = ($op=='create' ? 'add' : ($op=='retrieve' ? 'read' : $op));
+$result['op'] = ($op == 'create' ? 'add' : ($op == 'retrieve' ? 'read' : $op));
 OperationLog::build($result['op']);
 
 json_decode((string) $response);

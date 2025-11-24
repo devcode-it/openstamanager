@@ -20,9 +20,9 @@
 
 namespace Modules\StatoServizi;
 
+use Models\Cache;
 use Tasks\Manager;
 use Util\FileSystem;
-use Models\Cache;
 
 class SpaceHookTask extends Manager
 {
@@ -33,8 +33,8 @@ class SpaceHookTask extends Manager
         $result = [
             'response' => 1,
             'message' => tr('Calcolo spazio disponibile completato!'),
-        ];      
-        
+        ];
+
         try {
             if (!empty(setting('Soft quota'))) {
                 $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
@@ -44,15 +44,15 @@ class SpaceHookTask extends Manager
             $soft_quota = $soft_quota * (1024 ** 3); // Trasformazione in GB
 
             $cache = Cache::where('name', $this->cache_name)->first();
-            $cache->set($osm_size);        
+            $cache->set($osm_size);
         } catch (\Exception $e) {
             $result = [
                 'response' => 0,
-                'message' => tr('Errore nel calcolo dello spazio disponibile! _error_',[
+                'message' => tr('Errore nel calcolo dello spazio disponibile! _error_', [
                     '_error_' => $e->getMessage(),
                 ]),
             ];
-        }     
+        }
 
         return $result;
     }

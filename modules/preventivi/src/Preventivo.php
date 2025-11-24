@@ -363,6 +363,7 @@ class Preventivo extends Document
     {
         return $this->numero;
     }
+
     public function getReferenceSecondaryNumber()
     {
         return null;

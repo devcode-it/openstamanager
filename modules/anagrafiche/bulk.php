@@ -100,7 +100,7 @@ switch (post('op')) {
 
     case 'export_newsletter_csv':
         $tipo_esportazione = post('tipo_esportazione');
-        $id_records_list = implode(',', array_map('intval', $id_records));
+        $id_records_list = implode(',', array_map(intval(...), $id_records));
 
         if ($tipo_esportazione == 'anagrafiche') {
             // Esportazione email e ragione sociale dalle anagrafiche selezionate
@@ -170,7 +170,7 @@ switch (post('op')) {
                 $row['email'],
                 $row['ragione_sociale'],
                 $row['fonte'],
-                $row['sede_referente']
+                $row['sede_referente'],
             ], ';');
         }
         fclose($handle);
@@ -180,7 +180,7 @@ switch (post('op')) {
             'anagrafiche' => 'newsletter_anagrafiche.csv',
             'sedi' => 'newsletter_sedi.csv',
             'referenti' => 'newsletter_referenti.csv',
-            'tutti' => 'newsletter_tutti.csv'
+            'tutti' => 'newsletter_tutti.csv',
         ];
         $filename = $filename_map[$tipo_esportazione] ?? 'newsletter_export.csv';
 
@@ -205,7 +205,7 @@ switch (post('op')) {
                 }
             }
             $query = Query::getQuery($structure, $where);
-            $pos = strpos($query, 'SELECT');
+            $pos = strpos((string) $query, 'SELECT');
             if ($pos !== false) {
                 $query = substr_replace($query, "SELECT 'Modules\\\\\\Anagrafiche\\\\\\Anagrafica' AS tipo_lista, ", $pos, 6);
             }
@@ -216,7 +216,7 @@ switch (post('op')) {
             }
 
             if (check_query($query)) {
-                $lista->query = html_entity_decode($query);
+                $lista->query = html_entity_decode((string) $query);
             }
         } else {
             foreach ($id_records as $id) {
@@ -224,7 +224,7 @@ switch (post('op')) {
                 if (!$includi_disiscritti && !$anagrafica->enable_newsletter) {
                     continue;
                 }
-                $dbo->insert("em_list_receiver", [
+                $dbo->insert('em_list_receiver', [
                     'id_list' => $lista->id,
                     'record_type' => Anagrafica::class,
                     'record_id' => $id,

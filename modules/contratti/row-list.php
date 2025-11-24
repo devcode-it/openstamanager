@@ -128,9 +128,9 @@ foreach ($righe as $riga) {
         $has_alert = $riga->hasDifferentOriginalDateCompetenza();
         echo '
                     <br><span class="text-xs text-muted">'.tr('Competenza (_START_ - _END_)', [
-                            '_START_' => Translator::dateToLocale($riga->data_inizio_competenza),
-                            '_END_' => Translator::dateToLocale($riga->data_fine_competenza),
-                        ]).'
+            '_START_' => Translator::dateToLocale($riga->data_inizio_competenza),
+            '_END_' => Translator::dateToLocale($riga->data_fine_competenza),
+        ]).'
                         '.($has_alert ? '<i class="fa fa-warning text-danger"></i>' : '').'
                     </span>';
     }
@@ -632,30 +632,30 @@ $(".check").on("change", function() {
         $("#copia_righe").removeClass("disabled");
 
         // Pulsanti attivi solo se documento non bloccato';
-        if (!$block_edit) {
-echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
         $("#modifica_iva_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");';
-        }
+}
 echo '
     } else {
         // Pulsanti sempre disabilitati quando nessuna riga è selezionata
         $("#copia_righe").addClass("disabled");
 
         // Pulsanti disabilitati solo se documento non bloccato';
-        if (!$block_edit) {
-echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
         $("#modifica_iva_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");';
-        }
+}
 echo '
     }
 });

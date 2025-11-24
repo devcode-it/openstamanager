@@ -299,7 +299,7 @@ switch (filter('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ddt->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
+            $ddt->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
 
             $ddt->id_documento_fe = $documento->id_documento_fe;
             $ddt->codice_cup = $documento->codice_cup;
@@ -446,7 +446,7 @@ switch (filter('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
             if ($riga) {
                 $riga_array = [
-                    'type' => get_class($riga), 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
+                    'type' => $riga::class, 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
                     'prezzo_unitario' => $riga->prezzo_unitario, 'sconto_unitario' => $riga->sconto_unitario,
                     'sconto_percentuale' => $riga->sconto_percentuale, 'tipo_sconto' => $riga->tipo_sconto,
                     'idiva' => $riga->idiva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
@@ -467,7 +467,7 @@ switch (filter('op')) {
         if (is_array($righe_data)) {
             foreach ($righe_data as $riga_data) {
                 $type = $riga_data['type'];
-                $class_name = substr($type, strrpos($type, '\\') + 1);
+                $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
                 if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
                     $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
                     if ($articolo_originale) {
@@ -566,7 +566,7 @@ switch (filter('op')) {
         $copia->idcausalet = $ddt->idcausalet;
         $copia->idspedizione = $ddt->idspedizione;
         $copia->n_colli = $ddt->n_colli;
-        $copia->idpagamento = $ddt->idpagamento?:setting('Tipo di pagamento predefinito');
+        $copia->idpagamento = $ddt->idpagamento ?: setting('Tipo di pagamento predefinito');
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;
@@ -655,7 +655,7 @@ switch (filter('op')) {
 
                     // Aggiungi ogni barcode per il numero di volte pari alla quantità
                     foreach ($barcodes as $barcode_record) {
-                        for ($i = 0; $i < $riga->qta; $i++) {
+                        for ($i = 0; $i < $riga->qta; ++$i) {
                             $articoli_barcode[] = $barcode_record;
                         }
                     }

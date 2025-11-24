@@ -380,7 +380,7 @@ switch (post('op')) {
 
         break;
 
-    // Recupero dati righe per copia negli appunti
+        // Recupero dati righe per copia negli appunti
     case 'get_righe_data':
         $id_righe = (array) post('righe');
         $righe_data = [];
@@ -392,7 +392,7 @@ switch (post('op')) {
 
             if ($riga) {
                 $riga_array = [
-                    'type' => get_class($riga),
+                    'type' => $riga::class,
                     'descrizione' => $riga->descrizione,
                     'qta' => $riga->qta,
                     'um' => $riga->um,
@@ -422,14 +422,14 @@ switch (post('op')) {
 
         break;
 
-    // Incolla righe dagli appunti
+        // Incolla righe dagli appunti
     case 'paste_righe':
         $righe_data = json_decode(post('righe_data'), true);
 
         if (is_array($righe_data)) {
             foreach ($righe_data as $riga_data) {
                 $type = $riga_data['type'];
-                $class_name = substr($type, strrpos($type, '\\') + 1);
+                $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
                 // Determino il tipo di riga da creare
                 if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
@@ -537,7 +537,7 @@ switch (post('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ordine->idpagamento = $documento->idpagamento?:setting('Tipo di pagamento predefinito');
+            $ordine->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
             $ordine->idsede_partenza = $idsede_partenza;
             $ordine->idsede_destinazione = $idsede_destinazione;
 

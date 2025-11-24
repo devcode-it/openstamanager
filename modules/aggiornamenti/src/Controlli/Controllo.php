@@ -43,7 +43,7 @@ abstract class Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -51,7 +51,7 @@ abstract class Controllo
     }
 
     /**
-     * Restituisce le azioni globali disponibili per questo controllo
+     * Restituisce le azioni globali disponibili per questo controllo.
      */
     public function getGlobalActions()
     {
@@ -79,7 +79,7 @@ abstract class Controllo
     }
 
     /**
-     * Esegue un'azione globale su tutti i record del controllo
+     * Esegue un'azione globale su tutti i record del controllo.
      */
     public function solveGlobal($params = [])
     {

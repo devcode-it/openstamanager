@@ -262,17 +262,8 @@ class Response
         return version_compare($database->getMySQLVersion(), '5.6.5') >= 0;
     }
 
-    protected static function getResources($type, $version)
-    {
-        $resources = Resource::where('version', $version)->where('type', $type)->get();
-
-        return $resources;
-    }
-
     /**
      * Restituisce le informazioni della richiesta.
-     *
-     * @param bool $raw
      *
      * @return array
      */
@@ -309,5 +300,12 @@ class Response
         $request['id_module'] = Module::where('name', $modules[$request['resource']])->first()->id;
 
         return $request;
+    }
+
+    protected static function getResources($type, $version)
+    {
+        $resources = Resource::where('version', $version)->where('type', $type)->get();
+
+        return $resources;
     }
 }

@@ -63,19 +63,19 @@ switch (post('op')) {
         $anagrafica->idsede_fatturazione = post('idsede_fatturazione');
         $anagrafica->note = post('note');
         $anagrafica->codiceri = post('codiceri');
-        $anagrafica->codicerea = strtoupper(post('codicerea'))?:null;
+        $anagrafica->codicerea = strtoupper(post('codicerea')) ?: null;
         $anagrafica->appoggiobancario = post('appoggiobancario');
         $anagrafica->filiale = post('filiale');
         $anagrafica->codiceiban = post('codiceiban');
         $anagrafica->bic = post('bic');
         $anagrafica->diciturafissafattura = post('diciturafissafattura');
-        $anagrafica->idpagamento_acquisti = post('idpagamento_acquisti')?:null;
-        $anagrafica->idpagamento_vendite = post('idpagamento_vendite')?:null;
-        $anagrafica->id_piano_sconto_acquisti = post('id_piano_sconto_acquisti')?:null;
-        $anagrafica->id_piano_sconto_vendite = post('id_piano_sconto_vendite')?:null;
-        $anagrafica->idiva_acquisti = post('idiva_acquisti')?:null;
-        $anagrafica->idiva_vendite = post('idiva_vendite')?:null;
-        $anagrafica->idbanca_acquisti = post('idbanca_acquisti')?:null;
+        $anagrafica->idpagamento_acquisti = post('idpagamento_acquisti') ?: null;
+        $anagrafica->idpagamento_vendite = post('idpagamento_vendite') ?: null;
+        $anagrafica->id_piano_sconto_acquisti = post('id_piano_sconto_acquisti') ?: null;
+        $anagrafica->id_piano_sconto_vendite = post('id_piano_sconto_vendite') ?: null;
+        $anagrafica->idiva_acquisti = post('idiva_acquisti') ?: null;
+        $anagrafica->idiva_vendite = post('idiva_vendite') ?: null;
+        $anagrafica->idbanca_acquisti = post('idbanca_acquisti') ?: null;
         $anagrafica->idbanca_vendite = post('idbanca_vendite') ?: null;
         $anagrafica->id_settore = post('id_settore');
         $anagrafica->marche = post('marche');
@@ -88,7 +88,7 @@ switch (post('op')) {
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
         $anagrafica->n_alboartigiani = post('n_alboartigiani') ?: null;
         $anagrafica->foro_competenza = post('foro_competenza');
-        $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione')?:null;
+        $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione') ?: null;
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
         $anagrafica->id_dichiarazione_intento_default = post('id_dichiarazione_intento_default') ?: null;
@@ -107,9 +107,7 @@ switch (post('op')) {
         // Aggiorno gli agenti collegati
         $idagenti = (array) post('idagenti');
         // Rimuovo eventuali valori vuoti dall'array
-        $idagenti = array_filter($idagenti, function($value) {
-            return !empty($value) && $value !== '' && $value !== '0';
-        });
+        $idagenti = array_filter($idagenti, fn ($value) => !empty($value) && $value !== '' && $value !== '0');
         $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => $idagenti]);
 
         flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [

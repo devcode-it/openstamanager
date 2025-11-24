@@ -64,12 +64,13 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
      * Verifica se ci sono record modificati per tutte le risorse principali.
      *
      * @param array $request Richiesta contenente last_sync_at
+     *
      * @return array Risultato con informazioni sui record modificati disponibili
      */
     public function retrieve($request)
     {
-        $last_sync_at = $request['last_sync_at'] && $request['last_sync_at'] != 'undefined' 
-            ? new Carbon($request['last_sync_at']) 
+        $last_sync_at = $request['last_sync_at'] && $request['last_sync_at'] != 'undefined'
+            ? new Carbon($request['last_sync_at'])
             : null;
 
         $aggiornamenti_disponibili = false;
@@ -102,21 +103,18 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
                     'numero_modifiche' => count($record_modificati),
                     'richiede_sincronizzazione' => $ha_modifiche,
                 ];
-
             } catch (\Exception $e) {
                 // Log dell'errore e continua con le altre risorse
-                $errori[] = "Errore nel controllare {$nome_risorsa}: " . $e->getMessage();
-                
+                $errori[] = "Errore nel controllare {$nome_risorsa}: ".$e->getMessage();
+
                 // Log dell'errore per debugging
                 $logger = logger();
-                $logger->addRecord(\Monolog\Level::Error, "Errore in VerificaAggiornamenti per {$nome_risorsa}: " . $e->getMessage());
+                $logger->addRecord(\Monolog\Level::Error, "Errore in VerificaAggiornamenti per {$nome_risorsa}: ".$e->getMessage());
             }
         }
 
         // Calcola statistiche generali
-        $risorse_con_aggiornamenti = array_filter($dettagli_risorse, function($dettagli) {
-            return $dettagli['richiede_sincronizzazione'];
-        });
+        $risorse_con_aggiornamenti = array_filter($dettagli_risorse, fn ($dettagli) => $dettagli['richiede_sincronizzazione']);
 
         $totale_modifiche = array_sum(array_column($dettagli_risorse, 'numero_modifiche'));
 

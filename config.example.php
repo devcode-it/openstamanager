@@ -71,7 +71,6 @@ $assets = [
 // Configura il limite di tempo di esecuzione del file cron.php
 $php_time_limit = '';
 
-
 // Integrazione con Laravel per Rate limiting
 $rate_limiting = [
     'enabled' => false,

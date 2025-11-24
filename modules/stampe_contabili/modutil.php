@@ -25,10 +25,11 @@ use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
 /**
- * Verifica la presenza di sbilanci nel libro giornale per un determinato periodo
+ * Verifica la presenza di sbilanci nel libro giornale per un determinato periodo.
  *
  * @param string $date_start Data inizio periodo
- * @param string $date_end Data fine periodo
+ * @param string $date_end   Data fine periodo
+ *
  * @return array Array con informazioni sugli sbilanci trovati
  */
 function verificaSbilanciLibroGiornale($date_start, $date_end)
@@ -69,10 +70,11 @@ function verificaSbilanciLibroGiornale($date_start, $date_end)
 }
 
 /**
- * Calcola gli importi della liquidazione IVA per un determinato periodo
+ * Calcola gli importi della liquidazione IVA per un determinato periodo.
  *
  * @param string $date_start Data inizio periodo
- * @param string $date_end Data fine periodo
+ * @param string $date_end   Data fine periodo
+ *
  * @return array Array con tutti i dati calcolati per stampa e movimento
  */
 function calcolaImportiLiquidazioneIva($date_start, $date_end)
@@ -670,15 +672,16 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         'periodo_precedente_start' => $periodo_precedente_start,
         'periodo_precedente_end' => $periodo_precedente_end,
         'anno_precedente_start' => $anno_precedente_start,
-        'anno_precedente_end' => $anno_precedente_end
+        'anno_precedente_end' => $anno_precedente_end,
     ];
 }
 
 /**
- * Crea il movimento in prima nota per la liquidazione IVA
+ * Crea il movimento in prima nota per la liquidazione IVA.
  *
  * @param string $date_start Data inizio periodo
- * @param string $date_end Data fine periodo
+ * @param string $date_end   Data fine periodo
+ *
  * @return int|null ID del mastrino creato o null in caso di errore
  */
 function creaMovimentoLiquidazioneIva($date_start, $date_end)
@@ -729,10 +732,10 @@ function creaMovimentoLiquidazioneIva($date_start, $date_end)
         }
 
         return $mastrino->idmastrino;
-
     } catch (Exception $e) {
         // Log dell'errore
-        error_log('Errore nella creazione del movimento di liquidazione IVA: ' . $e->getMessage());
+        error_log('Errore nella creazione del movimento di liquidazione IVA: '.$e->getMessage());
+
         return null;
     }
 }

@@ -61,8 +61,8 @@ class PluginDuplicati extends Controllo
             $modulo = Module::find($plugin['idmodule_to']);
 
             $this->addResult([
-                'id' => 'name_' . $plugin['idmodule_to'] . '_' . $plugin['name'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin['name'] . ' (name)',
+                'id' => 'name_'.$plugin['idmodule_to'].'_'.$plugin['name'],
+                'nome' => $modulo->getTranslation('title').': '.$plugin['name'].' (name)',
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste _COUNT_ volte nella tabella zz_plugins (campo name)', [
                     '_NAME_' => $plugin['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -88,11 +88,11 @@ class PluginDuplicati extends Controllo
             $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($plugin['id_lang']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
+            $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'title_diversi_' . $plugin['idmodule_to'] . '_' . $plugin['id_lang'] . '_' . md5($plugin['title']),
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin['title'] . ' (' . $nome_lingua . ')',
+                'id' => 'title_diversi_'.$plugin['idmodule_to'].'_'.$plugin['id_lang'].'_'.md5((string) $plugin['title']),
+                'nome' => $modulo->getTranslation('title').': '.$plugin['title'].' ('.$nome_lingua.')',
                 'descrizione' => tr('Il titolo "_TITLE_" del modulo _MODULE_ è usato da _COUNT_ plugin diversi (_PLUGINS_) nella lingua _LANG_', [
                     '_TITLE_' => $plugin['title'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -118,11 +118,11 @@ class PluginDuplicati extends Controllo
             $plugin_record = database()->fetchOne('SELECT `name` FROM `zz_plugins` WHERE `id` = '.prepare($plugin['id_record']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
-            $nome_lingua = explode(' (', $lingua['name'])[0];
+            $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'record_lang_' . $plugin['id_record'] . '_' . $plugin['id_lang'],
-                'nome' => $modulo->getTranslation('title') . ': ' . $plugin_record['name'] . ' (' . $nome_lingua . ')',
+                'id' => 'record_lang_'.$plugin['id_record'].'_'.$plugin['id_lang'],
+                'nome' => $modulo->getTranslation('title').': '.$plugin_record['name'].' ('.$nome_lingua.')',
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ ha _COUNT_ traduzioni duplicate per la lingua _LANG_', [
                     '_NAME_' => $plugin_record['name'],
                     '_MODULE_' => $modulo->getTranslation('title'),
@@ -134,7 +134,7 @@ class PluginDuplicati extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -147,10 +147,10 @@ class PluginDuplicati extends Controllo
         $record_id = $record['id'];
 
         // Estrai il tipo di duplicato dal record ID
-        if (strpos($record_id, 'name_') === 0) {
+        if (str_starts_with((string) $record_id, 'name_')) {
             // Duplicato nel campo 'name' della tabella zz_plugins
             // Record ID è nel formato: name_<idmodule_to>_<name>
-            preg_match('/^name_(\d+)_(.+)$/', $record_id, $matches);
+            preg_match('/^name_(\d+)_(.+)$/', (string) $record_id, $matches);
             if (!empty($matches)) {
                 $idmodule_to = $matches[1];
                 $name = $matches[2];
@@ -169,12 +169,12 @@ class PluginDuplicati extends Controllo
                     $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($plugins[$i]['id']));
                 }
             }
-        } elseif (strpos($record_id, 'title_diversi_') === 0) {
+        } elseif (str_starts_with((string) $record_id, 'title_diversi_')) {
             // Duplicato nei titoli diversi - non eliminiamo nulla, solo notifichiamo
             return true;
-        } elseif (strpos($record_id, 'record_lang_') === 0) {
+        } elseif (str_starts_with((string) $record_id, 'record_lang_')) {
             // Duplicato in zz_plugins_lang
-            preg_match('/record_lang_(\d+)_(\d+)/', $record_id, $matches);
+            preg_match('/record_lang_(\d+)_(\d+)/', (string) $record_id, $matches);
             if (!empty($matches)) {
                 $id_record = $matches[1];
                 $id_lang = $matches[2];
@@ -195,7 +195,7 @@ class PluginDuplicati extends Controllo
     }
 
     /**
-     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente
+     * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente.
      */
     public function solveGlobal($params = [])
     {
@@ -220,7 +220,7 @@ class PluginDuplicati extends Controllo
 
             $grouped_name = [];
             foreach ($duplicati_name as $record) {
-                $key = $record['idmodule_to'] . '_' . $record['name'];
+                $key = $record['idmodule_to'].'_'.$record['name'];
                 $grouped_name[$key][] = $record;
             }
 
@@ -249,26 +249,23 @@ class PluginDuplicati extends Controllo
 
             $grouped_record_lang = [];
             foreach ($duplicati_record_lang as $record) {
-                $key = $record['id_record'] . '_' . $record['id_lang'];
+                $key = $record['id_record'].'_'.$record['id_lang'];
                 $grouped_record_lang[$key][] = $record;
             }
 
             foreach ($grouped_record_lang as $group) {
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
-                    for ($i = 1; $i < count($group); $i++) {
-                        $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = ' . prepare($group[$i]['id']));
-                        $results['record_lang_' . $group[$i]['id']] = true;
+                    for ($i = 1; $i < count($group); ++$i) {
+                        $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = '.prepare($group[$i]['id']));
+                        $results['record_lang_'.$group[$i]['id']] = true;
                     }
                 }
             }
 
             return $results;
-
         } catch (\Exception $e) {
-            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', [
-                '_ERROR_' => $e->getMessage(),
-            ]));
+            throw new \Exception(tr('Errore durante la risoluzione dei conflitti: _ERROR_', ['_ERROR_' => $e->getMessage()]));
         }
     }
 }

@@ -19,7 +19,7 @@ switch (filter('op')) {
                 $combinazione = Combinazione::build();
                 $id_record = $dbo->lastInsertedID();
             }
-            
+
             $combinazione->codice = post('codice');
             $combinazione->id_categoria = post('id_categoria') ?: null;
             $combinazione->id_sottocategoria = post('id_sottocategoria') ?: null;

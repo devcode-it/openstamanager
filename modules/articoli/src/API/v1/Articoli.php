@@ -153,7 +153,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         // Gestione sotto-categoria
         $sottocategoria = (new Categoria())->getByField('title', $nome_sottocategoria);
         $sottocategoria = Categoria::find($sottocategoria);
-        if ( (empty($sottocategoria) && !empty($nome_sottocategoria)) || (!empty($nome_sottocategoria) && $sottocategoria->parent != $categoria->id) ){
+        if ((empty($sottocategoria) && !empty($nome_sottocategoria)) || (!empty($nome_sottocategoria) && $sottocategoria->parent != $categoria->id)) {
             $sottocategoria = Categoria::build();
             $sottocategoria->setTranslation('title', $nome_sottocategoria);
             $sottocategoria->parent = $categoria->id;

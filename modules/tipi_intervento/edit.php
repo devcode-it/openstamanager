@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 $id_tipi = $dbo->select('in_tipiintervento_tipologie', '*', [], ['idtipointervento' => $id_record]);
-$id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
+$id_tipi = implode(',', array_column($id_tipi, 'tipo'));
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -58,10 +58,10 @@ $id_tipi = implode(',' ,array_column($id_tipi, 'tipo'));
         <?php
         echo '
             {[ "type": "select", "label": "'.tr('Gruppi utenti').'", "name": "gruppi[]", "multiple": "1", "icon-before": "<i class=\'fa fa-users\'></i>", "placeholder": "'.tr('Tutti').'", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `zz_groups`.`id` ASC", "value": "';
-            $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `in_tipiintervento_groups` WHERE `idtipointervento`='.prepare($id_record));
-            echo $results[0]['gruppi'].'"';
-            echo ', "help": "'.tr('Seleziona i gruppi utenti a cui questo tipo di attività si applica, se non viene selezionata alcun gruppo, il tipo di attività si applica a tutti i gruppi').'" ]}';
-        ?>
+$results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `in_tipiintervento_groups` WHERE `idtipointervento`='.prepare($id_record));
+echo $results[0]['gruppi'].'"';
+echo ', "help": "'.tr('Seleziona i gruppi utenti a cui questo tipo di attività si applica, se non viene selezionata alcun gruppo, il tipo di attività si applica a tutti i gruppi').'" ]}';
+?>
 		</div>
 	</div>
 

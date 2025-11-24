@@ -30,9 +30,10 @@ if (!$group || !$record) {
     <div class="alert alert-danger">
         <i class="fa fa-exclamation-triangle"></i> '.tr('Gruppo non trovato o non valido').'.
     </div>';
+
     return;
 } else {
-$record = $group->toArray();
+    $record = $group->toArray();
 }
 
 // Lettura gruppi

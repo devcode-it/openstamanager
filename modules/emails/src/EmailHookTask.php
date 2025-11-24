@@ -22,8 +22,8 @@ namespace Modules\Emails;
 
 use Carbon\Carbon;
 use Notifications\EmailNotification;
-use PHPMailer\PHPMailer\Exception;
 use Tasks\Manager;
+
 class EmailHookTask extends Manager
 {
     public function execute()
@@ -47,13 +47,12 @@ class EmailHookTask extends Manager
             ->whereIn('id_account', $accounts->pluck('id'))
             ->count();
 
-        if( empty($remaining) ){
+        if (empty($remaining)) {
             $result = [
                 'response' => 1,
                 'message' => tr('Nessuna email da inviare'),
             ];
-        }else{
-
+        } else {
             // Parametri per l'invio
             $numero_tentativi = setting('Numero massimo di tentativi');
             $numero_email = setting('Numero email da inviare in contemporanea per account');
@@ -99,7 +98,7 @@ class EmailHookTask extends Manager
                     $result['response'] = 2;
                     $result['message'] = tr('Errore durante l\'invio delle email: _ERR_', [
                         '_ERR_' => $e->getMessage(),
-                    ])."<br>";
+                    ]).'<br>';
                 }
             }
         }

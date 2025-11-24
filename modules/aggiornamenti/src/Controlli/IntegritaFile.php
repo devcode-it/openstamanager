@@ -324,8 +324,9 @@ class IntegritaFile extends Controllo
     /**
      * Verifica se un file deve essere escluso dal controllo.
      *
-     * @param string $item Nome del file
+     * @param string $item          Nome del file
      * @param string $relative_path Percorso relativo del file
+     *
      * @return bool True se il file deve essere escluso
      */
     protected function shouldExcludeFile($item, $relative_path)

@@ -21,16 +21,17 @@
 namespace Modules\Aggiornamenti;
 
 /**
- * Classe di utilità per il modulo aggiornamenti
+ * Classe di utilità per il modulo aggiornamenti.
  */
 class Utils
 {
     /**
-     * Determina il colore della card in base ai conteggi di errori
+     * Determina il colore della card in base ai conteggi di errori.
      *
-     * @param int $danger_count Numero di errori danger
+     * @param int $danger_count  Numero di errori danger
      * @param int $warning_count Numero di errori warning
-     * @param int $info_count Numero di errori info
+     * @param int $info_count    Numero di errori info
+     *
      * @return array Array con chiavi: color, icon, header_class, title_class
      */
     public static function determineCardColor($danger_count = 0, $warning_count = 0, $info_count = 0)
@@ -71,11 +72,12 @@ class Utils
     }
 
     /**
-     * Genera HTML per le badge di errore
+     * Genera HTML per le badge di errore.
      *
-     * @param int $danger_count Numero di errori danger
+     * @param int $danger_count  Numero di errori danger
      * @param int $warning_count Numero di errori warning
-     * @param int $info_count Numero di errori info
+     * @param int $info_count    Numero di errori info
+     *
      * @return string HTML delle badge
      */
     public static function generateBadgeHtml($danger_count = 0, $warning_count = 0, $info_count = 0)
@@ -96,10 +98,11 @@ class Utils
     }
 
     /**
-     * Determina il colore del bordo in base ai conteggi
+     * Determina il colore del bordo in base ai conteggi.
      *
-     * @param int $danger_count Numero di errori danger
+     * @param int $danger_count  Numero di errori danger
      * @param int $warning_count Numero di errori warning
+     *
      * @return string Colore hex del bordo
      */
     public static function determineBorderColor($danger_count = 0, $warning_count = 0)
@@ -114,10 +117,11 @@ class Utils
     }
 
     /**
-     * Conta gli errori per tipo da un array di risultati
+     * Conta gli errori per tipo da un array di risultati.
      *
-     * @param array $errors Array di errori
+     * @param array $errors       Array di errori
      * @param array $foreign_keys Array di chiavi esterne
+     *
      * @return array Array con chiavi: danger, warning, info
      */
     public static function countErrorsByType($errors, $foreign_keys = [])
@@ -132,24 +136,24 @@ class Utils
             }
             if (array_key_exists('key', $diff)) {
                 if ($diff['key']['expected'] == '') {
-                    $info_count++;
+                    ++$info_count;
                 } else {
-                    $danger_count++;
+                    ++$danger_count;
                 }
             } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                $danger_count++;
+                ++$danger_count;
             } else {
-                $warning_count++;
+                ++$warning_count;
             }
         }
 
         foreach ($foreign_keys as $name => $diff) {
             if (is_array($diff) && isset($diff['expected'])) {
-                $danger_count++;
+                ++$danger_count;
             } elseif (is_array($diff) && isset($diff['current'])) {
-                $info_count++;
+                ++$info_count;
             } else {
-                $warning_count++;
+                ++$warning_count;
             }
         }
 
@@ -160,4 +164,3 @@ class Utils
         ];
     }
 }
-

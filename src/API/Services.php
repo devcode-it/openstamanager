@@ -84,7 +84,7 @@ class Services
         } catch (\Exception $e) {
             // Log dell'errore per debug
             if (function_exists('logger')) {
-                logger()->error('Errore nel recupero informazioni Services: ' . $e->getMessage());
+                logger()->error('Errore nel recupero informazioni Services: '.$e->getMessage());
             }
 
             // Restituisce un array vuoto in caso di errore
@@ -249,7 +249,7 @@ class Services
             }
 
             return $osm_size;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // In caso di errore, restituisce 0
             return 0;
         }
@@ -266,7 +266,7 @@ class Services
             $result = User::where('enabled', 1)->count();
 
             return (int) $result;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // In caso di errore, restituisce 0
             return 0;
         }

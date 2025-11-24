@@ -56,7 +56,7 @@ switch ($operazione) {
                     if (!$riga->codice_cespite) {
                         $maschera = setting('Formato codice cespite');
                         $ultimo = Generator::getPreviousFrom($maschera, 'co_righe_documenti', 'codice_cespite', [
-                            "codice_cespite IS NOT NULL"
+                            'codice_cespite IS NOT NULL',
                         ]);
                         $codice = Generator::generate($maschera, $ultimo);
                         $riga->codice_cespite = $codice;
@@ -71,7 +71,7 @@ switch ($operazione) {
                     $tipo_conto = $is_cespite ? tr('conto cespite') : tr('conto');
                     $errori[] = tr('Riga _ID_: selezionare un _TIPO_', [
                         '_ID_' => $id_riga,
-                        '_TIPO_' => $tipo_conto
+                        '_TIPO_' => $tipo_conto,
                     ]);
                     continue;
                 }
@@ -88,7 +88,7 @@ switch ($operazione) {
                 $riga->is_cespite = $is_cespite ? 1 : 0;
                 $riga->save();
 
-                $righe_aggiornate++;
+                ++$righe_aggiornate;
             }
 
             if (!empty($errori)) {

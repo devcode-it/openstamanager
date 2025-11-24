@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -64,7 +65,7 @@ class CronStatusHook extends Manager
                     $message = tr('Il cron è attivo e funzionante');
                     $show = false;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // Se il contenuto non è una data valida
                 $message = tr('Il formato della data dell\'ultima esecuzione del cron non è valido.', []);
                 $show = true;
@@ -73,7 +74,7 @@ class CronStatusHook extends Manager
 
         // Ottiene il link al modulo aggiornamenti
         $aggiornamenti_module = Module::where('name', 'Aggiornamenti')->first();
-        $link = $aggiornamenti_module ? base_path().'/controller.php?id_module=' . $aggiornamenti_module->id : base_path().'/controller.php?id_module=' . $this->getModuleId();
+        $link = $aggiornamenti_module ? base_path().'/controller.php?id_module='.$aggiornamenti_module->id : base_path().'/controller.php?id_module='.$this->getModuleId();
 
         return [
             'icon' => 'fa fa-clock-o text-danger',
@@ -96,11 +97,12 @@ class CronStatusHook extends Manager
     }
 
     /**
-     * Ottiene l'ID del modulo "Stato servizi"
+     * Ottiene l'ID del modulo "Stato servizi".
      */
     private function getModuleId()
     {
-        $module = \Models\Module::where('name', 'Stato servizi')->first();
+        $module = Module::where('name', 'Stato servizi')->first();
+
         return $module?->id;
     }
 }

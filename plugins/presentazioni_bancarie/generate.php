@@ -94,9 +94,7 @@ foreach ($scadenze as $scadenza) {
                 $importo_da_stornare = $importo_nota;
 
                 // Distribuiamo lo storno proporzionalmente tra le scadenze della fattura originale
-                $totale_scadenze_originale = $scadenze_fattura_originale->sum(function($s) {
-                    return abs($s->da_pagare - $s->pagato);
-                });
+                $totale_scadenze_originale = $scadenze_fattura_originale->sum(fn ($s) => abs($s->da_pagare - $s->pagato));
 
                 if ($totale_scadenze_originale > 0) {
                     foreach ($scadenze_fattura_originale as $scad_orig) {
@@ -122,7 +120,7 @@ foreach ($scadenze as $scadenza) {
                     $storni_parziali->push([
                         'nota_credito' => $documento,
                         'fattura_originale' => $fattura_originale,
-                        'importo_stornato' => $importo_da_stornare
+                        'importo_stornato' => $importo_da_stornare,
                     ]);
                 }
             }
@@ -157,9 +155,7 @@ foreach ($scadenze as $scadenza) {
 }
 
 // Rimuoviamo le scadenze da escludere dalla collezione filtrata
-$scadenze = $scadenze_filtrate->filter(function ($scadenza) use ($scadenze_da_escludere) {
-    return !$scadenze_da_escludere->contains($scadenza->id);
-});
+$scadenze = $scadenze_filtrate->filter(fn ($scadenza) => !$scadenze_da_escludere->contains($scadenza->id));
 
 $id_scadenze = $scadenze->pluck('id');
 
@@ -179,7 +175,7 @@ if ($note_credito_escluse->isNotEmpty()) {
         echo '<li>'.tr('Nota di credito n. _NUM_ del _DATE_ - Importo: _AMOUNT_', [
             '_NUM_' => $numero_nota,
             '_DATE_' => dateFormat($nota->data),
-            '_AMOUNT_' => moneyFormat(abs($nota->netto))
+            '_AMOUNT_' => moneyFormat(abs($nota->netto)),
         ]).'</li>';
     }
     echo '</ul>';
@@ -192,7 +188,7 @@ if ($note_credito_escluse->isNotEmpty()) {
             echo '<li>'.tr('Fattura n. _NUM_ del _DATE_ - Importo: _AMOUNT_', [
                 '_NUM_' => $numero_fattura,
                 '_DATE_' => dateFormat($fattura->data),
-                '_AMOUNT_' => moneyFormat(abs($fattura->netto))
+                '_AMOUNT_' => moneyFormat(abs($fattura->netto)),
             ]).'</li>';
         }
         echo '</ul>';
@@ -212,7 +208,7 @@ if ($note_credito_escluse->isNotEmpty()) {
                 '_IMPORTO_FATTURA_' => moneyFormat($importo_fattura_originale),
                 '_IMPORTO_STORNO_' => moneyFormat($storno['importo_stornato']),
                 '_NOTA_' => $numero_nota,
-                '_RESIDUO_' => moneyFormat($importo_residuo)
+                '_RESIDUO_' => moneyFormat($importo_residuo),
             ]).'</li>';
         }
         echo '</ul>';

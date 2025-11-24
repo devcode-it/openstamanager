@@ -214,7 +214,7 @@ switch ($op) {
 
         break;
 
-    // Creazione token OTP per l'impianto
+        // Creazione token OTP per l'impianto
     case 'create_otp_token':
         $id_module = post('id_module');
         $id_record = post('id_record');
@@ -226,19 +226,19 @@ switch ($op) {
 
         try {
             // Debug: log dei dati ricevuti
-            error_log("OTP Token Creation - Dati ricevuti: " . json_encode([
+            error_log('OTP Token Creation - Dati ricevuti: '.json_encode([
                 'id_module' => $id_module,
                 'id_record' => $id_record,
                 'descrizione' => $descrizione,
                 'tipo_accesso' => $tipo_accesso,
                 'email' => $email,
                 'valido_dal' => $valido_dal,
-                'valido_al' => $valido_al
+                'valido_al' => $valido_al,
             ]));
-            
+
             // Genera token sicuro
             $token = bin2hex(random_bytes(32));
-            
+
             // Prepara i dati per l'inserimento
             $data = [
                 'token' => $token,
@@ -251,7 +251,7 @@ switch ($op) {
                 'enabled' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
             ];
-            
+
             // Aggiungi date di validità se specificate
             if (!empty($valido_dal)) {
                 $data['valido_dal'] = date('Y-m-d H:i:s', strtotime($valido_dal));
@@ -259,16 +259,16 @@ switch ($op) {
             if (!empty($valido_al)) {
                 $data['valido_al'] = date('Y-m-d H:i:s', strtotime($valido_al));
             }
-            
+
             // Inserisci il token nel database
-            error_log("OTP Token Creation - Dati da inserire: " . json_encode($data));
+            error_log('OTP Token Creation - Dati da inserire: '.json_encode($data));
             $dbo->insert('zz_otp_tokens', $data);
             $token_id = $dbo->lastInsertedID();
-            error_log("OTP Token Creation - Token inserito con ID: " . $token_id);
-            
+            error_log('OTP Token Creation - Token inserito con ID: '.$token_id);
+
             // Prepara la risposta
             $otp_url = base_url().'/?token='.$token;
-            
+
             $response = [
                 'success' => true,
                 'message' => tr('Token OTP creato con successo'),
@@ -279,22 +279,21 @@ switch ($op) {
                     'url' => $otp_url,
                     'tipo_accesso' => $tipo_accesso,
                     'valido_dal' => !empty($valido_dal) ? date('d/m/Y', strtotime($valido_dal)) : tr('Nessuna scadenza'),
-                    'valido_al' => !empty($valido_al) ? date('d/m/Y', strtotime($valido_al)) : tr('Nessuna scadenza')
-                ]
+                    'valido_al' => !empty($valido_al) ? date('d/m/Y', strtotime($valido_al)) : tr('Nessuna scadenza'),
+                ],
             ];
-            
+
             echo json_encode($response);
-            
         } catch (Exception $e) {
             $response = [
                 'success' => false,
-                'message' => tr('Errore durante la creazione del token: ').$e->getMessage()
+                'message' => tr('Errore durante la creazione del token: ').$e->getMessage(),
             ];
-            
+
             echo json_encode($response);
         }
-        
-        $dbo->query("COMMIT");
+
+        $dbo->query('COMMIT');
         exit;
         break;
 }

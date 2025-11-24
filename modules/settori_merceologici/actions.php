@@ -55,7 +55,7 @@ switch (filter('op')) {
                 $settore->save();
 
                 $id_record = $settore->id;
-                
+
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }

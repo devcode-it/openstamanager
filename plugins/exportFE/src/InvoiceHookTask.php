@@ -18,10 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- namespace Plugins\ExportFE;
+namespace Plugins\ExportFE;
 
- use Modules\Fatture\Fattura;
- use Tasks\Manager;
+use Modules\Fatture\Fattura;
+use Tasks\Manager;
 
 class InvoiceHookTask extends Manager
 {
@@ -42,8 +42,9 @@ class InvoiceHookTask extends Manager
                 ->limit(25)
                 ->get();
 
-            if( $fatture->isEmpty() ){
+            if ($fatture->isEmpty()) {
                 $result['message'] = tr('Nessuna fattura da inviare');
+
                 return $result;
             }
 
@@ -66,16 +67,16 @@ class InvoiceHookTask extends Manager
                         // Invio riuscito
                         $fattura->hook_send = false;
                         $fattura->save();
-                        $inviate++;
+                        ++$inviate;
                     } else {
                         // Qualsiasi errore, rimuovi dalla coda e imposta errore
                         $fattura->hook_send = false;
                         $fattura->codice_stato_fe = 'ERR';
                         $fattura->save();
-                        $errori++;
+                        ++$errori;
                         $fatture_errore[] = $fattura->numero_esterno.' ('.$response_invio['message'].')';
                     }
-                } catch (\UnexpectedValueException $e) {
+                } catch (\UnexpectedValueException) {
                     // Fattura elettronica non valida, rimuovi dalla coda
                     $fattura->hook_send = false;
                     $fattura->codice_stato_fe = 'GEN';
@@ -85,7 +86,7 @@ class InvoiceHookTask extends Manager
                     $fattura->hook_send = false;
                     $fattura->codice_stato_fe = 'ERR';
                     $fattura->save();
-                    $errori++;
+                    ++$errori;
                     $fatture_errore[] = $fattura->numero_esterno.' (errore: '.$e->getMessage().')';
 
                     // Log dell'errore per debugging
@@ -101,21 +102,20 @@ class InvoiceHookTask extends Manager
                 $result['message'] = tr('_SENT_ fatture inviate, _ERR_ con errori: _LIST_', [
                     '_SENT_' => $inviate,
                     '_ERR_' => $errori,
-                    '_LIST_' => implode(', ', $fatture_errore)
+                    '_LIST_' => implode(', ', $fatture_errore),
                 ]);
             } elseif ($errori > 0) {
                 $result['response'] = 2;
                 $result['message'] = tr('Errori nell\'invio di _ERR_ fatture: _LIST_', [
                     '_ERR_' => $errori,
-                    '_LIST_' => implode(', ', $fatture_errore)
+                    '_LIST_' => implode(', ', $fatture_errore),
                 ]);
             }
-
         } catch (\Exception $e) {
             $result['response'] = 2;
             $result['message'] = tr('Errore durante l\'invio delle fatture elettroniche: _ERR_', [
                 '_ERR_' => $e->getMessage(),
-            ])."<br>";
+            ]).'<br>';
 
             // Log dell'errore critico
             logger()->error('Errore critico nel task invio FE: '.$e->getMessage());

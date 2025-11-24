@@ -398,7 +398,7 @@ switch (post('op')) {
             $riga = $riga ?: Sconto::find($id_riga);
             if ($riga) {
                 $riga_array = [
-                    'type' => get_class($riga), 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
+                    'type' => $riga::class, 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
                     'prezzo_unitario' => $riga->prezzo_unitario, 'sconto_unitario' => $riga->sconto_unitario,
                     'sconto_percentuale' => $riga->sconto_percentuale, 'tipo_sconto' => $riga->tipo_sconto,
                     'idiva' => $riga->idiva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
@@ -419,7 +419,7 @@ switch (post('op')) {
         if (is_array($righe_data)) {
             foreach ($righe_data as $riga_data) {
                 $type = $riga_data['type'];
-                $class_name = substr($type, strrpos($type, '\\') + 1);
+                $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
                 if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
                     $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
                     if ($articolo_originale) {

@@ -804,6 +804,100 @@ class Auth extends Util\Singleton
     }
 
     /**
+     * Memorizza l'URL di destinazione nella sessione per il redirect post-login.
+     *
+     * @param string $url URL di destinazione
+     */
+    public function setIntendedUrl($url)
+    {
+        if ($this->isValidInternalUrl($url)) {
+            $_SESSION['intended_url'] = $url;
+        }
+    }
+
+    /**
+     * Recupera l'URL di destinazione dalla sessione.
+     *
+     * @return string|null
+     */
+    public function getIntendedUrl()
+    {
+        return $_SESSION['intended_url'] ?? null;
+    }
+
+    /**
+     * Verifica se esiste un URL di destinazione memorizzato.
+     *
+     * @return bool
+     */
+    public function hasIntendedUrl()
+    {
+        return !empty($_SESSION['intended_url']);
+    }
+
+    /**
+     * Pulisce l'URL di destinazione dalla sessione.
+     */
+    public function clearIntendedUrl()
+    {
+        unset($_SESSION['intended_url']);
+    }
+
+    /**
+     * Verifica se l'utente ha i permessi per accedere all'URL intended.
+     *
+     * @return bool
+     */
+    public function canAccessIntendedUrl()
+    {
+        if (!$this->hasIntendedUrl()) {
+            return false;
+        }
+
+        $url = $this->getIntendedUrl();
+
+        // Estrae l'id_module dall'URL
+        if (preg_match('/[?&]id_module=(\d+)/', (string) $url, $matches)) {
+            $id_module = $matches[1];
+
+            // Verifica i permessi per il modulo
+            $permission = Modules::getPermission($id_module);
+
+            return in_array($permission, ['r', 'rw']);
+        }
+
+        return true; // Per URL senza modulo specifico
+    }
+
+    /**
+     * Metodi statici per l'accesso ai metodi di intended URL.
+     */
+    public static function setIntended($url)
+    {
+        return self::getInstance()->setIntendedUrl($url);
+    }
+
+    public static function getIntended()
+    {
+        return self::getInstance()->getIntendedUrl();
+    }
+
+    public static function hasIntended()
+    {
+        return self::getInstance()->hasIntendedUrl();
+    }
+
+    public static function clearIntended()
+    {
+        return self::getInstance()->clearIntendedUrl();
+    }
+
+    public static function canAccessIntended()
+    {
+        return self::getInstance()->canAccessIntendedUrl();
+    }
+
+    /**
      * Controlla la corrispondenza delle password ed eventualmente effettua un rehashing.
      *
      * @param string $password
@@ -998,71 +1092,6 @@ class Auth extends Util\Singleton
     }
 
     /**
-     * Memorizza l'URL di destinazione nella sessione per il redirect post-login.
-     *
-     * @param string $url URL di destinazione
-     */
-    public function setIntendedUrl($url)
-    {
-        if ($this->isValidInternalUrl($url)) {
-            $_SESSION['intended_url'] = $url;
-        }
-    }
-
-    /**
-     * Recupera l'URL di destinazione dalla sessione.
-     *
-     * @return string|null
-     */
-    public function getIntendedUrl()
-    {
-        return $_SESSION['intended_url'] ?? null;
-    }
-
-    /**
-     * Verifica se esiste un URL di destinazione memorizzato.
-     *
-     * @return bool
-     */
-    public function hasIntendedUrl()
-    {
-        return !empty($_SESSION['intended_url']);
-    }
-
-    /**
-     * Pulisce l'URL di destinazione dalla sessione.
-     */
-    public function clearIntendedUrl()
-    {
-        unset($_SESSION['intended_url']);
-    }
-
-    /**
-     * Verifica se l'utente ha i permessi per accedere all'URL intended.
-     *
-     * @return bool
-     */
-    public function canAccessIntendedUrl()
-    {
-        if (!$this->hasIntendedUrl()) {
-            return false;
-        }
-
-        $url = $this->getIntendedUrl();
-
-        // Estrae l'id_module dall'URL
-        if (preg_match('/[?&]id_module=(\d+)/', $url, $matches)) {
-            $id_module = $matches[1];
-
-            // Verifica i permessi per il modulo
-            $permission = \Modules::getPermission($id_module);
-            return in_array($permission, ['r', 'rw']);
-        }
-
-        return true; // Per URL senza modulo specifico
-    }
-
-    /**
      * Valida che l'URL sia interno al sistema e sicuro.
      *
      * @param string $url URL da validare
@@ -1076,25 +1105,25 @@ class Auth extends Util\Singleton
         }
 
         // Verifica che non contenga protocolli pericolosi
-        if (strpos($url, 'javascript:') !== false || strpos($url, 'data:') !== false) {
+        if (str_contains($url, 'javascript:') || str_contains($url, 'data:')) {
             return false;
         }
 
         // Verifica che non sia un URL esterno (con protocollo http/https)
-        if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0) {
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
             return false;
         }
 
         $base_path = base_path();
 
         // L'URL deve iniziare con il base_path del sistema o essere relativo
-        if (strpos($url, $base_path) === 0 || strpos($url, '/') === 0) {
+        if (str_starts_with($url, $base_path) || str_starts_with($url, '/')) {
             // Verifica che non sia un URL di actions.php senza parametri necessari
             $parsed_url = parse_url($url);
             $path = $parsed_url['path'] ?? '';
 
             // Esclude actions.php se chiamato direttamente senza id_module
-            if (strpos($path, 'actions.php') !== false) {
+            if (str_contains($path, 'actions.php')) {
                 $query = $parsed_url['query'] ?? '';
                 parse_str($query, $params);
 
@@ -1108,33 +1137,5 @@ class Auth extends Util\Singleton
         }
 
         return false;
-    }
-
-    /**
-     * Metodi statici per l'accesso ai metodi di intended URL.
-     */
-    public static function setIntended($url)
-    {
-        return self::getInstance()->setIntendedUrl($url);
-    }
-
-    public static function getIntended()
-    {
-        return self::getInstance()->getIntendedUrl();
-    }
-
-    public static function hasIntended()
-    {
-        return self::getInstance()->hasIntendedUrl();
-    }
-
-    public static function clearIntended()
-    {
-        return self::getInstance()->clearIntendedUrl();
-    }
-
-    public static function canAccessIntended()
-    {
-        return self::getInstance()->canAccessIntendedUrl();
     }
 }

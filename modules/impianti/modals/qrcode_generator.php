@@ -53,11 +53,10 @@ try {
 
     // Imposta gli header per immagine PNG
     header('Content-Type: image/png');
-    
+
     // Output diretto dell'immagine PNG
     echo $result->getString();
-    
 } catch (Exception $e) {
     http_response_code(500);
-    echo 'Errore nella generazione del QR code: ' . $e->getMessage();
+    echo 'Errore nella generazione del QR code: '.$e->getMessage();
 }

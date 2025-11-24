@@ -57,20 +57,21 @@ $module = Module::find($id_module);
 // Aggiunta della classe per il modulo
 echo '<div class="module-aggiornamenti">';
 
-
-function createCollapsibleQuery($query_content, $row_id, $column_type) {
+function createCollapsibleQuery($query_content, $row_id, $column_type)
+{
     if (empty($query_content) || $query_content === '<span class="text-muted">-</span>') {
         return $query_content;
     }
 
     // Decodifica le entità HTML e rimuovi i tag HTML per calcolare la lunghezza del testo puro
-    $text_content = html_entity_decode(strip_tags($query_content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text_content = html_entity_decode(strip_tags((string) $query_content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
     // Se il contenuto è breve (meno di 300 caratteri), mostra tutto
     if (strlen($text_content) <= 300) {
         // Decodifica anche il contenuto completo per la visualizzazione
-        $decoded_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return '<code style="white-space: pre-wrap; word-break: break-all;">' . $decoded_content . '</code>';
+        $decoded_content = html_entity_decode((string) $query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return '<code style="white-space: pre-wrap; word-break: break-all;">'.$decoded_content.'</code>';
     }
 
     // Tronca il contenuto a 300 caratteri per l'anteprima
@@ -82,40 +83,41 @@ function createCollapsibleQuery($query_content, $row_id, $column_type) {
         $preview_content = substr($preview_content, 0, $last_space);
     }
 
-    $preview_content = htmlspecialchars($preview_content) . '...';
+    $preview_content = htmlspecialchars($preview_content).'...';
 
     // Decodifica il contenuto completo per la visualizzazione
-    $decoded_full_content = html_entity_decode($query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $decoded_full_content = html_entity_decode((string) $query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
     return '
         <div class="query-container">
-            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_' . $row_id . '_' . $column_type . '">' .
-                $preview_content . '
+            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_'.$row_id.'_'.$column_type.'">'.
+                $preview_content.'
             </code>
-            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_' . $row_id . '_' . $column_type . '">' .
-                $decoded_full_content . '
+            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_'.$row_id.'_'.$column_type.'">'.
+                $decoded_full_content.'
             </code>
         </div>';
 }
 
-function highlightDifferences($current, $expected) {
+function highlightDifferences($current, $expected)
+{
     if (empty($expected)) {
         return [
-            'current' => htmlspecialchars($current),
-            'expected' => '<span class="text-muted">-</span>'
+            'current' => htmlspecialchars((string) $current),
+            'expected' => '<span class="text-muted">-</span>',
         ];
     }
 
     $current_normalized = normalizeModuleOptions($current);
     $expected_normalized = normalizeModuleOptions($expected);
 
-    $current_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $current_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-    $expected_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', $expected_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $current_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', (string) $current_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $expected_words = preg_split('/(\s+|[(),\'"`]|<[^>]*>)/', (string) $expected_normalized, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
     if ($current_normalized === $expected_normalized) {
         return [
-            'current' => htmlspecialchars($current),
-            'expected' => htmlspecialchars($expected)
+            'current' => htmlspecialchars((string) $current),
+            'expected' => htmlspecialchars((string) $expected),
         ];
     }
 
@@ -184,7 +186,7 @@ function highlightDifferences($current, $expected) {
 
     return [
         'current' => $current_highlighted,
-        'expected' => $expected_highlighted
+        'expected' => $expected_highlighted,
     ];
 }
 
@@ -208,7 +210,7 @@ if (function_exists('customComponents')) {
                     $checksum_errors[] = $file;
 
                     // Raggruppa per cartella
-                    $path_parts = explode('/', $file);
+                    $path_parts = explode('/', (string) $file);
                     $file_name = array_pop($path_parts);
                     $folder_path = implode('/', $path_parts);
 
@@ -265,18 +267,18 @@ if (function_exists('customComponents')) {
                     </div>
                     <div class="card-body">';
 
-        // Card File
-        $modified_files_count = count($checksum_errors_grouped);
-        $custom_files_count = count($custom_files);
+    // Card File
+    $modified_files_count = count($checksum_errors_grouped);
+    $custom_files_count = count($custom_files);
 
-        // Determina il colore in base all'avviso piu grave
-        // File modificati e personalizzati sono entrambi warning
-        $file_warning = ($modified_files_count > 0 || $custom_files_count > 0) ? 1 : 0;
-        $file_colors = Utils::determineCardColor(0, $file_warning, 0);
-        $file_card_color = $file_colors['color'];
-        $file_icon = $file_colors['icon'];
+    // Determina il colore in base all'avviso piu grave
+    // File modificati e personalizzati sono entrambi warning
+    $file_warning = ($modified_files_count > 0 || $custom_files_count > 0) ? 1 : 0;
+    $file_colors = Utils::determineCardColor(0, $file_warning, 0);
+    $file_card_color = $file_colors['color'];
+    $file_icon = $file_colors['icon'];
 
-        echo '
+    echo '
         <div class="card card-outline card-'.$file_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$file_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$file_card_color.'">
@@ -293,8 +295,8 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_file_errors) {
-            echo '
+    if ($has_file_errors) {
+        echo '
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-sm">
                             <thead class="thead-light">
@@ -306,54 +308,52 @@ if (function_exists('customComponents')) {
                             </thead>
                             <tbody>';
 
-            // Mostra file con checksum diverso raggruppati per cartella in warning
-            foreach ($checksum_errors_grouped as $folder => $files) {
-                $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $files));
+        // Mostra file con checksum diverso raggruppati per cartella in warning
+        foreach ($checksum_errors_grouped as $folder => $files) {
+            $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $files));
 
-                echo '
+            echo '
                                 <tr>
                                     <td><strong>'.$folder.'</strong></td>
                                     <td><span class="badge badge-warning badge-lg">'.tr('File modificato').'</span></td>
                                     <td>'.$files_list.'</td>
                                 </tr>';
-            }
+        }
 
-            // Mostra file personalizzati in warning
-            foreach ($custom_files as $element) {
-                $files_list = implode(', ', array_map(function($file) {
-                    return '<code>'.$file.'</code>';
-                }, $element['files']));
+        // Mostra file personalizzati in warning
+        foreach ($custom_files as $element) {
+            $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $element['files']));
 
-                echo '
+            echo '
                                 <tr>
                                     <td><strong>'.$element['path'].'/custom</strong></td>
                                     <td><span class="badge badge-warning badge-lg">'.tr('Cartella custom').'</span></td>
                                     <td>'.$files_list.'</td>
                                 </tr>';
-            }
-
-            echo '
-                            </tbody>
-                        </table>
-                    </div>';
-        } else {
-            echo '
-                    <p class="text-success mb-0">
-                        <i class="fa fa-check-circle"></i> '.tr('Nessun file personalizzato rilevato').'
-                    </p>';
         }
 
         echo '
+                            </tbody>
+                        </table>
+                    </div>';
+    } else {
+        echo '
+                    <p class="text-success mb-0">
+                        <i class="fa fa-check-circle"></i> '.tr('Nessun file personalizzato rilevato').'
+                    </p>';
+    }
+
+    echo '
                 </div>
         </div>';
 
-        // Card Tabelle
-        $table_count = count($tables);
-        $table_colors = Utils::determineCardColor(0, 0, $table_count > 0 ? 1 : 0);
-        $table_card_color = $table_colors['color'];
-        $table_icon = $table_colors['icon'];
+    // Card Tabelle
+    $table_count = count($tables);
+    $table_colors = Utils::determineCardColor(0, 0, $table_count > 0 ? 1 : 0);
+    $table_card_color = $table_colors['color'];
+    $table_icon = $table_colors['icon'];
 
-        echo '
+    echo '
         <div class="card card-outline card-'.$table_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$table_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$table_card_color.'">
@@ -369,50 +369,50 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_table_errors) {
-            $tables_list = implode(', ', array_map(fn ($table) => '<code style="color: black;">'.$table.'</code>', $tables));
-            echo '
+    if ($has_table_errors) {
+        $tables_list = implode(', ', array_map(fn ($table) => '<code style="color: black;">'.$table.'</code>', $tables));
+        echo '
                     <p class="mb-0">
                         '.$tables_list.'
                     </p>';
-        } else {
-            echo '
+    } else {
+        echo '
                     <p class="text-success mb-0">
                         <i class="fa fa-check-circle"></i> '.tr('Nessuna tabella non prevista rilevata').'
                     </p>';
-        }
+    }
 
-        echo '
+    echo '
                 </div>
         </div>';
 
-        // Card Viste
-        $has_view_data_issues = !empty($custom_views_not_standard) && !$views_file_missing;
+    // Card Viste
+    $has_view_data_issues = !empty($custom_views_not_standard) && !$views_file_missing;
 
-        // Conta gli avvisi per tipo
-        $view_warning_count = 0;
-        $view_info_count = 0;
+    // Conta gli avvisi per tipo
+    $view_warning_count = 0;
+    $view_info_count = 0;
 
-        if ($has_view_data_issues) {
-            foreach ($custom_views_not_standard as $view) {
-                match ($view['reason']) {
-                    'Vista aggiuntiva' => $view_info_count++,
-                    'Vista mancante' => $view_info_count++,
-                    'Query modificata' => $view_warning_count++,
-                    'Modulo non previsto' => $view_info_count++,
-                    default => null,
-                };
-            }
+    if ($has_view_data_issues) {
+        foreach ($custom_views_not_standard as $view) {
+            match ($view['reason']) {
+                'Vista aggiuntiva' => $view_info_count++,
+                'Vista mancante' => $view_info_count++,
+                'Query modificata' => $view_warning_count++,
+                'Modulo non previsto' => $view_info_count++,
+                default => null,
+            };
         }
+    }
 
-        // Determina il colore della card in base all'avviso piu grave
-        $view_danger = ($views_file_missing && $view_warning_count > 0) ? 1 : 0;
-        $view_warning = ($view_warning_count > 0 || $views_file_missing) ? 1 : 0;
-        $view_colors = Utils::determineCardColor($view_danger, $view_warning, $view_info_count > 0 ? 1 : 0);
-        $view_card_color = $view_colors['color'];
-        $view_icon = $view_colors['icon'];
+    // Determina il colore della card in base all'avviso piu grave
+    $view_danger = ($views_file_missing && $view_warning_count > 0) ? 1 : 0;
+    $view_warning = ($view_warning_count > 0 || $views_file_missing) ? 1 : 0;
+    $view_colors = Utils::determineCardColor($view_danger, $view_warning, $view_info_count > 0 ? 1 : 0);
+    $view_card_color = $view_colors['color'];
+    $view_icon = $view_colors['icon'];
 
-        echo '
+    echo '
         <div class="card card-outline card-'.$view_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$view_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$view_card_color.'">
@@ -429,8 +429,8 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_view_data_issues) {
-            echo '
+    if ($has_view_data_issues) {
+        echo '
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-sm">
                             <thead class="thead-light">
@@ -444,106 +444,106 @@ if (function_exists('customComponents')) {
                             </thead>
                             <tbody>';
 
-            foreach ($custom_views_not_standard as $index => $view) {
-                $badge_class = match ($view['reason']) {
-                    'Vista aggiuntiva' => 'badge-info',
-                    'Vista mancante' => 'badge-info',
-                    'Query modificata' => 'badge-warning',
-                    'Modulo non previsto' => 'badge-info',
-                    default => 'badge-secondary',
-                };
+        foreach ($custom_views_not_standard as $index => $view) {
+            $badge_class = match ($view['reason']) {
+                'Vista aggiuntiva' => 'badge-info',
+                'Vista mancante' => 'badge-info',
+                'Query modificata' => 'badge-warning',
+                'Modulo non previsto' => 'badge-info',
+                default => 'badge-secondary',
+            };
 
-                $row_id = 'view_' . $index;
-                $has_long_content = false;
+            $row_id = 'view_'.$index;
+            $has_long_content = false;
 
-                if (empty($view['current_query'])) {
-                    $current_query_display = '<span class="text-muted">-</span>';
-                    if (!empty($view['expected_query'])) {
-                        $expected_query_display = createCollapsibleQuery(htmlspecialchars($view['expected_query']), $row_id, 'expected');
-                        $has_long_content = strlen(strip_tags(htmlspecialchars($view['expected_query']))) > 300;
-                    } else {
-                        $expected_query_display = '<span class="text-muted">-</span>';
-                    }
+            if (empty($view['current_query'])) {
+                $current_query_display = '<span class="text-muted">-</span>';
+                if (!empty($view['expected_query'])) {
+                    $expected_query_display = createCollapsibleQuery(htmlspecialchars((string) $view['expected_query']), $row_id, 'expected');
+                    $has_long_content = strlen(strip_tags(htmlspecialchars((string) $view['expected_query']))) > 300;
                 } else {
-                    $diff_result = highlightDifferences($view['current_query'], $view['expected_query']);
-                    $current_query_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
-                    $expected_query_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
-                    $has_long_content = strlen(strip_tags($view['current_query'])) > 300 || strlen(strip_tags($view['expected_query'])) > 300;
+                    $expected_query_display = '<span class="text-muted">-</span>';
                 }
+            } else {
+                $diff_result = highlightDifferences($view['current_query'], $view['expected_query']);
+                $current_query_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
+                $expected_query_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
+                $has_long_content = strlen(strip_tags((string) $view['current_query'])) > 300 || strlen(strip_tags((string) $view['expected_query'])) > 300;
+            }
 
-                $module_id_display = $view['module_id'] ? 'ID: '.$view['module_id'] : 'Mancante';
-                $module_display = $view['module_name'] . ' <small class="text-muted">('.$module_id_display.')</small>';
+            $module_id_display = $view['module_id'] ? 'ID: '.$view['module_id'] : 'Mancante';
+            $module_display = $view['module_name'].' <small class="text-muted">('.$module_id_display.')</small>';
 
-                $view_name_display = !empty($view['name']) ?
-                    $view['name'] :
-                    '(Assente)';
+            $view_name_display = !empty($view['name']) ?
+                $view['name'] :
+                '(Assente)';
 
-                // Crea il pulsante espandi solo se c'è contenuto lungo
-                $expand_button = '';
-                if ($has_long_content) {
-                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
-                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+            // Crea il pulsante espandi solo se c'è contenuto lungo
+            $expand_button = '';
+            if ($has_long_content) {
+                $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\''.$row_id.'\')">
+                        <i class="fa fa-expand" id="icon_'.$row_id.'"></i> <span id="text_'.$row_id.'">Espandi</span>
                     </button>';
-                }
+            }
 
-                echo '
-                                <tr id="row_' . $row_id . '">
-                                    <td><code>'.$view_name_display.'</code>' . $expand_button . '</td>
+            echo '
+                                <tr id="row_'.$row_id.'">
+                                    <td><code>'.$view_name_display.'</code>'.$expand_button.'</td>
                                     <td>'.$module_display.'</td>
                                     <td><span class="badge '.$badge_class.'">'.$view['reason'].'</span></td>
                                     <td class="query-cell">'.$current_query_display.'</td>
                                     <td class="query-cell">'.$expected_query_display.'</td>
                                 </tr>';
-            }
+        }
 
-            echo '
+        echo '
                             </tbody>
                         </table>
                     </div>';
-        } elseif ($views_file_missing) {
-            echo '
+    } elseif ($views_file_missing) {
+        echo '
                     <div class="alert alert-warning alert-database">
                         <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo delle viste in assenza del file _FILE_', [
-                            '_FILE_' => '<b>views.json</b>',
-                        ]).'.
+            '_FILE_' => '<b>views.json</b>',
+        ]).'.
                     </div>';
-        } else {
-            echo '
+    } else {
+        echo '
                     <p class="text-success mb-0">
                         <i class="fa fa-check-circle"></i> '.tr('Nessuna vista personalizzata rilevata').'
                     </p>';
-        }
+    }
 
-        echo '
+    echo '
                 </div>
         </div>';
 
-        // Card Moduli
-        $has_module_data_issues = !empty($custom_modules_not_standard) && !$modules_file_missing;
+    // Card Moduli
+    $has_module_data_issues = !empty($custom_modules_not_standard) && !$modules_file_missing;
 
-        // Conta gli avvisi per tipo
-        $module_warning_count = 0;
-        $module_info_count = 0;
+    // Conta gli avvisi per tipo
+    $module_warning_count = 0;
+    $module_info_count = 0;
 
-        if ($has_module_data_issues) {
-            foreach ($custom_modules_not_standard as $modulo) {
-                match ($modulo['reason']) {
-                    'Options modificato' => $module_warning_count++,
-                    'Modulo non previsto' => $module_warning_count++,
-                    'Options2 valorizzato' => $module_info_count++,
-                    default => null,
-                };
-            }
+    if ($has_module_data_issues) {
+        foreach ($custom_modules_not_standard as $modulo) {
+            match ($modulo['reason']) {
+                'Options modificato' => $module_warning_count++,
+                'Modulo non previsto' => $module_warning_count++,
+                'Options2 valorizzato' => $module_info_count++,
+                default => null,
+            };
         }
+    }
 
-        // Determina il colore della card in base all'avviso piu grave
-        $module_danger = ($modules_file_missing && $module_warning_count > 0) ? 1 : 0;
-        $module_warning = ($module_warning_count > 0 || $modules_file_missing) ? 1 : 0;
-        $module_colors = Utils::determineCardColor($module_danger, $module_warning, $module_info_count > 0 ? 1 : 0);
-        $module_card_color = $module_colors['color'];
-        $module_icon = $module_colors['icon'];
+    // Determina il colore della card in base all'avviso piu grave
+    $module_danger = ($modules_file_missing && $module_warning_count > 0) ? 1 : 0;
+    $module_warning = ($module_warning_count > 0 || $modules_file_missing) ? 1 : 0;
+    $module_colors = Utils::determineCardColor($module_danger, $module_warning, $module_info_count > 0 ? 1 : 0);
+    $module_card_color = $module_colors['color'];
+    $module_icon = $module_colors['icon'];
 
-        echo '
+    echo '
         <div class="card card-outline card-'.$module_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$module_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$module_card_color.'">
@@ -560,8 +560,8 @@ if (function_exists('customComponents')) {
             </div>
             <div class="card-body">';
 
-        if ($has_module_data_issues) {
-            echo '
+    if ($has_module_data_issues) {
+        echo '
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-sm">
                             <thead class="thead-light">
@@ -574,184 +574,183 @@ if (function_exists('customComponents')) {
                             </thead>
                             <tbody>';
 
-            foreach ($custom_modules_not_standard as $index => $modulo) {
-                $badge_class = match ($modulo['reason']) {
-                    'Options2 valorizzato' => 'badge-info',
-                    'Options modificato' => 'badge-warning',
-                    'Modulo non previsto' => 'badge-warning',
-                    default => 'badge-secondary',
-                };
+        foreach ($custom_modules_not_standard as $index => $modulo) {
+            $badge_class = match ($modulo['reason']) {
+                'Options2 valorizzato' => 'badge-info',
+                'Options modificato' => 'badge-warning',
+                'Modulo non previsto' => 'badge-warning',
+                default => 'badge-secondary',
+            };
 
-                // Determina quale options mostrare: se options2 è valorizzato, mostra quello, altrimenti options
-                $current_to_show = !empty($modulo['current_options2']) ? $modulo['current_options2'] : $modulo['current_options'];
-                $expected_to_show = $modulo['expected_options'];
+            // Determina quale options mostrare: se options2 è valorizzato, mostra quello, altrimenti options
+            $current_to_show = !empty($modulo['current_options2']) ? $modulo['current_options2'] : $modulo['current_options'];
+            $expected_to_show = $modulo['expected_options'];
 
-                $row_id = 'module_' . $index;
-                $has_long_content = false;
+            $row_id = 'module_'.$index;
+            $has_long_content = false;
 
-                // Applica l'evidenziazione delle differenze come per le viste
-                if (empty($current_to_show)) {
-                    $current_options_display = '<span class="text-muted">-</span>';
-                    if (!empty($expected_to_show)) {
-                        $expected_options_display = createCollapsibleQuery(htmlspecialchars($expected_to_show), $row_id, 'expected');
-                        $has_long_content = strlen(strip_tags(htmlspecialchars($expected_to_show))) > 300;
-                    } else {
-                        $expected_options_display = '<span class="text-muted">-</span>';
-                    }
+            // Applica l'evidenziazione delle differenze come per le viste
+            if (empty($current_to_show)) {
+                $current_options_display = '<span class="text-muted">-</span>';
+                if (!empty($expected_to_show)) {
+                    $expected_options_display = createCollapsibleQuery(htmlspecialchars((string) $expected_to_show), $row_id, 'expected');
+                    $has_long_content = strlen(strip_tags(htmlspecialchars((string) $expected_to_show))) > 300;
                 } else {
-                    $diff_result = highlightDifferences($current_to_show, $expected_to_show);
-                    $current_options_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
-                    $expected_options_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
-                    $has_long_content = strlen(strip_tags($current_to_show)) > 300 || strlen(strip_tags($expected_to_show)) > 300;
+                    $expected_options_display = '<span class="text-muted">-</span>';
                 }
+            } else {
+                $diff_result = highlightDifferences($current_to_show, $expected_to_show);
+                $current_options_display = createCollapsibleQuery($diff_result['current'], $row_id, 'current');
+                $expected_options_display = createCollapsibleQuery($diff_result['expected'], $row_id, 'expected');
+                $has_long_content = strlen(strip_tags((string) $current_to_show)) > 300 || strlen(strip_tags((string) $expected_to_show)) > 300;
+            }
 
-                // Crea il pulsante espandi solo se c'è contenuto lungo
-                $expand_button = '';
-                if ($has_long_content) {
-                    $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\'' . $row_id . '\')">
-                        <i class="fa fa-expand" id="icon_' . $row_id . '"></i> <span id="text_' . $row_id . '">Espandi</span>
+            // Crea il pulsante espandi solo se c'è contenuto lungo
+            $expand_button = '';
+            if ($has_long_content) {
+                $expand_button = '<br><button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="toggleModuleRow(\''.$row_id.'\')">
+                        <i class="fa fa-expand" id="icon_'.$row_id.'"></i> <span id="text_'.$row_id.'">Espandi</span>
                     </button>';
-                }
+            }
 
-                echo '
-                                <tr id="row_' . $row_id . '">
-                                    <td><strong>'.$modulo['module_display_name'].'</strong><br><small class="text-muted">ID: '.$modulo['id'].'</small>' . $expand_button . '</td>
+            echo '
+                                <tr id="row_'.$row_id.'">
+                                    <td><strong>'.$modulo['module_display_name'].'</strong><br><small class="text-muted">ID: '.$modulo['id'].'</small>'.$expand_button.'</td>
                                     <td><span class="badge '.$badge_class.'">'.$modulo['reason'].'</span></td>
                                     <td class="query-cell">'.$current_options_display.'</td>
                                     <td class="query-cell">'.$expected_options_display.'</td>
                                 </tr>';
-            }
+        }
 
-            echo '
+        echo '
                             </tbody>
                         </table>
                     </div>';
-        } elseif ($modules_file_missing) {
-            echo '
+    } elseif ($modules_file_missing) {
+        echo '
                     <div class="alert alert-warning alert-database">
                         <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo dei moduli in assenza del file _FILE_', [
-                            '_FILE_' => '<b>modules.json</b>',
-                        ]).'.
+            '_FILE_' => '<b>modules.json</b>',
+        ]).'.
                     </div>';
-        } else {
-            echo '
+    } else {
+        echo '
                     <p class="text-success mb-0">
                         <i class="fa fa-check-circle"></i> '.tr('Nessun modulo personalizzato rilevato').'
                     </p>';
-        }
+    }
 
     echo '
                 </div>
             </div>';
 
-        // Card Campi personalizzati (Controllo Database)
-        // Conta gli errori del database
-        $database_error_count = 0;
-        $database_has_errors = false;
-        $database_danger_count = 0;
-        $database_warning_count = 0;
-        $database_info_count = 0;
+    // Card Campi personalizzati (Controllo Database)
+    // Conta gli errori del database
+    $database_error_count = 0;
+    $database_has_errors = false;
+    $database_danger_count = 0;
+    $database_warning_count = 0;
+    $database_info_count = 0;
 
-        try {
-            if (!$database_file_missing) {
-                $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
-                $data = json_decode($contents, true);
+    try {
+        if (!$database_file_missing) {
+            $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
+            $data = json_decode($contents, true);
 
-                if (!empty($data)) {
-                    $info = Update::getDatabaseStructure();
-                    $results = integrity_diff($data, $info);
-                    $results_added = integrity_diff($info, $data);
+            if (!empty($data)) {
+                $info = Update::getDatabaseStructure();
+                $results = integrity_diff($data, $info);
+                $results_added = integrity_diff($info, $data);
 
-                    $contents_settings = file_get_contents(base_dir().'/settings.json');
-                    $data_settings = json_decode($contents_settings, true);
+                $contents_settings = file_get_contents(base_dir().'/settings.json');
+                $data_settings = json_decode($contents_settings, true);
 
-                    $settings = Update::getSettings();
-                    $results_settings = settings_diff($data_settings, $settings);
-                    $results_settings_added = settings_diff($settings, $data_settings);
+                $settings = Update::getSettings();
+                $results_settings = settings_diff($data_settings, $settings);
+                $results_settings_added = settings_diff($settings, $data_settings);
 
-                    if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
-                        $database_has_errors = true;
+                if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
+                    $database_has_errors = true;
 
-                        // Conta i tipi di errori nei risultati (campi mancanti/modificati)
-                        foreach ($results as $table => $errors) {
-                            $foreign_keys = $errors['foreign_keys'] ?: [];
-                            unset($errors['foreign_keys']);
+                    // Conta i tipi di errori nei risultati (campi mancanti/modificati)
+                    foreach ($results as $table => $errors) {
+                        $foreign_keys = $errors['foreign_keys'] ?: [];
+                        unset($errors['foreign_keys']);
 
-                            // Usa la funzione di utilità per contare gli errori
-                            $error_counts = Utils::countErrorsByType($errors, $foreign_keys);
-                            $database_danger_count += $error_counts['danger'];
-                            $database_warning_count += $error_counts['warning'];
-                            $database_info_count += $error_counts['info'];
-                        }
+                        // Usa la funzione di utilità per contare gli errori
+                        $error_counts = Utils::countErrorsByType($errors, $foreign_keys);
+                        $database_danger_count += $error_counts['danger'];
+                        $database_warning_count += $error_counts['warning'];
+                        $database_info_count += $error_counts['info'];
+                    }
 
-                        // Conta i tipi di errori nei risultati aggiunti (campi non previsti)
-                        foreach ($results_added as $table => $errors) {
-                            $foreign_keys = $errors['foreign_keys'] ?: [];
-                            unset($errors['foreign_keys']);
+                    // Conta i tipi di errori nei risultati aggiunti (campi non previsti)
+                    foreach ($results_added as $table => $errors) {
+                        $foreign_keys = $errors['foreign_keys'] ?: [];
+                        unset($errors['foreign_keys']);
 
-                            // Conta i campi non previsti
-                            foreach ($errors as $name => $diff) {
-                                if (!isset($results[$table][$name])) {
-                                    if (isset($diff['key'])) {
-                                        $database_info_count++; // Chiave non prevista
-                                    } else {
-                                        $database_info_count++; // Campo non previsto
-                                    }
+                        // Conta i campi non previsti
+                        foreach ($errors as $name => $diff) {
+                            if (!isset($results[$table][$name])) {
+                                if (isset($diff['key'])) {
+                                    ++$database_info_count; // Chiave non prevista
+                                } else {
+                                    ++$database_info_count; // Campo non previsto
                                 }
                             }
-
-                            // Conta le chiavi esterne non previste
-                            foreach ($foreign_keys as $name => $diff) {
-                                $database_info_count++; // Chiave esterna non prevista
-                            }
                         }
 
-                        // Conta i tipi di errori nelle impostazioni
-                        foreach ($results_settings as $key => $setting) {
-                            if (!$setting['current']) {
-                                $database_danger_count++; // Impostazione mancante
-                            } else {
-                                $database_warning_count++; // Impostazione modificata
-                            }
+                        // Conta le chiavi esterne non previste
+                        foreach ($foreign_keys as $name => $diff) {
+                            ++$database_info_count; // Chiave esterna non prevista
                         }
-
-                        // Conta le impostazioni non previste
-                        foreach ($results_settings_added as $key => $setting) {
-                            if ($setting['current'] == null) {
-                                $database_info_count++; // Impostazione non prevista
-                            }
-                        }
-
-                        $database_error_count = $database_danger_count + $database_warning_count + $database_info_count;
                     }
+
+                    // Conta i tipi di errori nelle impostazioni
+                    foreach ($results_settings as $key => $setting) {
+                        if (!$setting['current']) {
+                            ++$database_danger_count; // Impostazione mancante
+                        } else {
+                            ++$database_warning_count; // Impostazione modificata
+                        }
+                    }
+
+                    // Conta le impostazioni non previste
+                    foreach ($results_settings_added as $key => $setting) {
+                        if ($setting['current'] == null) {
+                            ++$database_info_count; // Impostazione non prevista
+                        }
+                    }
+
+                    $database_error_count = $database_danger_count + $database_warning_count + $database_info_count;
                 }
             }
-        } catch (Exception $e) {
-            // Silenzio gli errori
         }
+    } catch (Exception $e) {
+        // Silenzio gli errori
+    }
 
-        $database_card_color = $database_has_errors ? 'warning' : 'success';
-        $database_icon = $database_has_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
+    $database_card_color = $database_has_errors ? 'warning' : 'success';
+    $database_icon = $database_has_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
 
-        // Determina il colore in base all'avviso più grave
-        if ($database_danger_count > 0) {
-            $database_card_color = 'danger';
-            $database_icon = 'fa-exclamation-triangle';
-        } elseif ($database_warning_count > 0 || $database_file_missing) {
-            $database_card_color = 'warning';
-            $database_icon = 'fa-exclamation-triangle';
-        } elseif ($database_info_count > 0) {
-            $database_card_color = 'info';
-            $database_icon = 'fa-info-circle';
-        } else {
-            $database_card_color = 'success';
-            $database_icon = 'fa-check-circle';
-        }
+    // Determina il colore in base all'avviso più grave
+    if ($database_danger_count > 0) {
+        $database_card_color = 'danger';
+        $database_icon = 'fa-exclamation-triangle';
+    } elseif ($database_warning_count > 0 || $database_file_missing) {
+        $database_card_color = 'warning';
+        $database_icon = 'fa-exclamation-triangle';
+    } elseif ($database_info_count > 0) {
+        $database_card_color = 'info';
+        $database_icon = 'fa-info-circle';
+    } else {
+        $database_card_color = 'success';
+        $database_icon = 'fa-check-circle';
+    }
 
+    $database_badge_html = Utils::generateBadgeHtml($database_danger_count, $database_warning_count, $database_info_count);
 
-        $database_badge_html = Utils::generateBadgeHtml($database_danger_count, $database_warning_count, $database_info_count);
-
-            echo '
+    echo '
             <div class="card card-outline card-'.$database_card_color.' requirements-card mb-2 collapsable collapsed-card">
                 <div class="card-header with-border requirements-card-header requirements-card-header-'.$database_card_color.'">
                     <h3 class="card-title requirements-card-title requirements-card-title-'.$database_card_color.'">
@@ -770,9 +769,9 @@ if (function_exists('customComponents')) {
                 </div>
                 <div class="card-body">';
 
-        include __DIR__.'/database.php';
+    include __DIR__.'/database.php';
 
-            echo '
+    echo '
                 </div>
             </div>
         </div>
@@ -911,8 +910,6 @@ $(document).ready(function() {
 </script>';
 }
 
-
-
 $alerts = [];
 
 if (!extension_loaded('zip')) {
@@ -1004,7 +1001,7 @@ function search(button) {
                 $("#update-search").html("<div class=\"alert alert-success mb-0\"><i class=\"fa fa-check-circle\"></i> '.tr('Nessun aggiornamento disponibile').'</div>");
             } else {
                 let beta_warning = data.includes("beta") ? "<div class=\"alert alert-warning mt-2 mb-0\"><i class=\"fa fa-exclamation-triangle\"></i> <strong>'.tr('Attenzione').':</strong> '.tr('La versione individuata è in fase sperimentale e potrebbe presentare malfunzionamenti. Se ne sconsiglia l\'aggiornamento in installazioni di produzione').'</div>" : "";
-                $("#update-search").html("<div class=\"alert alert-info mb-0\"><i class=\"fa fa-download\"></i> <strong>'.tr("Nuovo aggiornamento disponibile").':</strong> " + data + "</div>" + beta_warning + "<div class=\"mt-2\"><a href=\"https://github.com/devcode-it/openstamanager/releases\" target=\"_blank\" class=\"btn btn-sm btn-primary\"><i class=\"fa fa-external-link\"></i> '.tr('Scarica da GitHub').'</a></div>");
+                $("#update-search").html("<div class=\"alert alert-info mb-0\"><i class=\"fa fa-download\"></i> <strong>'.tr('Nuovo aggiornamento disponibile').':</strong> " + data + "</div>" + beta_warning + "<div class=\"mt-2\"><a href=\"https://github.com/devcode-it/openstamanager/releases\" target=\"_blank\" class=\"btn btn-sm btn-primary\"><i class=\"fa fa-external-link\"></i> '.tr('Scarica da GitHub').'</a></div>");
             }
         },
         error: function(xhr, textStatus, errorThrown) {

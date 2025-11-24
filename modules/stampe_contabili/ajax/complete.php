@@ -31,7 +31,7 @@ switch ($resource) {
         $where_conditions = [
             'id_print='.prepare($id_print),
             'date_start='.prepare($date_start),
-            'date_end='.prepare($date_end)
+            'date_end='.prepare($date_end),
         ];
 
         if (!empty($id_sezionale)) {

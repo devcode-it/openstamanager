@@ -26,8 +26,6 @@ use Modules\Checklists\Check;
 $operazione = filter('op');
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 
-
-
 switch ($operazione) {
     case 'add_impianto':
         if (post('id_impianto')) {
@@ -158,7 +156,6 @@ switch ($operazione) {
         break;
 
     case 'check_impianto':
-
         try {
             $checked = (post('checked') ? 1 : 0);
             $idcheck = post('id');

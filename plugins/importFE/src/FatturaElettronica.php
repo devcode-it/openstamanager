@@ -567,6 +567,7 @@ class FatturaElettronica
      * Fa la conversione inversa di exportFE.
      *
      * @param array $dati_xml Array dei dati dal XML
+     *
      * @return array Array convertito nel formato interno
      */
     protected function convertDatiAggiuntiviFE($dati_xml)

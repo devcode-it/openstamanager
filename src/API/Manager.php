@@ -244,7 +244,8 @@ class Manager
             throw new InternalError();
         }
         $response['module'] = $module;
-        //$response['op'] = "retrieve";
+
+        // $response['op'] = "retrieve";
         return $response;
     }
 

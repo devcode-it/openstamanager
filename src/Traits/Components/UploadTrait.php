@@ -46,7 +46,7 @@ trait UploadTrait
         $query = $this->hasMany(Upload::class, $this->component_identifier)->where('id_record', $id_record);
 
         if (!$include_images) {
-            $query->where('key', NULL);
+            $query->where('key', null);
         }
 
         return $query->get();

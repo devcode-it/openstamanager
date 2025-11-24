@@ -108,12 +108,14 @@ class Interaction extends Services
             ];
         } catch (\UnexpectedValueException $e) {
             logger()->error('Fattura elettronica non valida per ID '.$id_record.': '.$e->getMessage());
+
             return [
                 'code' => 400,
                 'message' => tr('Fattura elettronica non valida'),
             ];
         } catch (\Exception $e) {
             logger()->error('Errore durante invio fattura elettronica ID '.$id_record.': '.$e->getMessage());
+
             return [
                 'code' => 500,
                 'message' => tr('Errore interno durante l\'invio: _ERR_', ['_ERR_' => $e->getMessage()]),

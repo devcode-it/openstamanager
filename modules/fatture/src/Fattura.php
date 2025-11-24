@@ -646,7 +646,6 @@ class Fattura extends Document
             $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
             $this->refresh();
 
-
             // Generazione automatica della Fattura Elettronica
             $checks = FatturaElettronica::controllaFattura($this);
             $fattura_elettronica = new FatturaElettronica($this->id);
@@ -658,7 +657,7 @@ class Fattura extends Document
                     // Gestione errori tramite flash message invece di array di ritorno
                     if (is_array($errors) && !empty($errors)) {
                         flash()->error(tr('Errori nella generazione della fattura elettronica: _ERRORS_', [
-                            '_ERRORS_' => implode(', ', $errors)
+                            '_ERRORS_' => implode(', ', $errors),
                         ]));
                     } else {
                         flash()->error(tr('Errori nella generazione della fattura elettronica'));
@@ -675,14 +674,14 @@ class Fattura extends Document
                     if (!empty($check['errors'])) {
                         foreach ($check['errors'] as $error) {
                             if (!empty($error)) {
-                                $error_messages[] = strip_tags($error);
+                                $error_messages[] = strip_tags((string) $error);
                             }
                         }
                     }
                 }
                 if (!empty($error_messages)) {
                     flash()->warning(tr('Controlli fattura elettronica falliti: _ERRORS_', [
-                        '_ERRORS_' => implode(', ', $error_messages)
+                        '_ERRORS_' => implode(', ', $error_messages),
                     ]));
                 }
             }
@@ -983,13 +982,6 @@ class Fattura extends Document
 
     /**
      * Determina la banca dell'azienda da utilizzare per il documento.
-     *
-     * @param Anagrafica $azienda
-     * @param int $id_pagamento
-     * @param string $conto
-     * @param string $direzione
-     * @param Anagrafica $anagrafica_controparte
-     * @return int|null
      */
     private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
     {

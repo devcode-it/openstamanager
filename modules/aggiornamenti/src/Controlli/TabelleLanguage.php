@@ -47,7 +47,7 @@ class TabelleLanguage extends Controllo
     }
 
     /**
-     * Indica se questo controllo supporta azioni globali
+     * Indica se questo controllo supporta azioni globali.
      */
     public function hasGlobalActions()
     {
@@ -55,7 +55,7 @@ class TabelleLanguage extends Controllo
     }
 
     /**
-     * Restituisce le azioni globali disponibili per questo controllo
+     * Restituisce le azioni globali disponibili per questo controllo.
      */
     public function getGlobalActions()
     {
@@ -83,7 +83,7 @@ class TabelleLanguage extends Controllo
 
         // Ottieni tutte le tabelle del database
         $tables = $database->fetchArray('SHOW TABLES');
-        $table_column = 'Tables_in_' . $database->getDatabaseName();
+        $table_column = 'Tables_in_'.$database->getDatabaseName();
 
         $main_tables = [];
         $lang_tables = [];
@@ -91,7 +91,7 @@ class TabelleLanguage extends Controllo
         // Separa le tabelle principali da quelle _lang
         foreach ($tables as $table) {
             $table_name = $table[$table_column];
-            if (substr($table_name, -5) === '_lang') {
+            if (str_ends_with((string) $table_name, '_lang')) {
                 $lang_tables[] = $table_name;
             } else {
                 $main_tables[] = $table_name;
@@ -171,12 +171,12 @@ class TabelleLanguage extends Controllo
                     'main_table' => $main_table,
                     'lang_table' => $lang_table,
                     'total_missing' => count($missing_records),
-                    'records' => []
+                    'records' => [],
                 ];
 
                 foreach ($missing_records as $record) {
                     $lingue_mancanti = [];
-                    $lingue_presenti = !empty($record['id_lingue_presenti']) ? explode(',', $record['id_lingue_presenti']) : [];
+                    $lingue_presenti = !empty($record['id_lingue_presenti']) ? explode(',', (string) $record['id_lingue_presenti']) : [];
 
                     foreach ($languages as $language) {
                         if (!in_array($language->id, $lingue_presenti)) {
@@ -186,7 +186,7 @@ class TabelleLanguage extends Controllo
 
                     $results_by_table[$main_table]['records'][] = [
                         'id' => $record['id'],
-                        'record_name' => $record['record_name'] ?: 'ID: ' . $record['id'],
+                        'record_name' => $record['record_name'] ?: 'ID: '.$record['id'],
                         'lingue_presenti' => $record['lingue_presenti'],
                         'lingue_totali' => $record['lingue_totali'],
                         'lingue_mancanti' => $lingue_mancanti,
@@ -202,7 +202,7 @@ class TabelleLanguage extends Controllo
             $record_names = array_column($table_data['records'], 'record_name');
 
             $this->addResult([
-                'id' => 'table_' . $table_data['main_table'],
+                'id' => 'table_'.$table_data['main_table'],
                 'main_table' => $table_data['main_table'],
                 'lang_table' => $table_data['lang_table'],
                 'total_missing' => $table_data['total_missing'],
@@ -210,29 +210,10 @@ class TabelleLanguage extends Controllo
                 'nome' => tr('Tabella: _TABLE_', ['_TABLE_' => $table_data['main_table']]),
                 'descrizione' => tr('_COUNT_ record con traduzioni mancanti: _NAMES_', [
                     '_COUNT_' => $table_data['total_missing'],
-                    '_NAMES_' => implode(', ', array_slice($record_names, 0, 5)) . (count($record_names) > 5 ? '...' : '')
+                    '_NAMES_' => implode(', ', array_slice($record_names, 0, 5)).(count($record_names) > 5 ? '...' : ''),
                 ]),
             ]);
         }
-    }
-
-    /**
-     * Determina il campo da usare per il nome del record
-     */
-    private function getNameField($table_name, $columns)
-    {
-        // Campi comuni per i nomi
-        $name_fields = ['name', 'nome', 'title', 'descrizione', 'ragione_sociale', 'codice'];
-
-        $available_fields = array_column($columns, 'Field');
-
-        foreach ($name_fields as $field) {
-            if (in_array($field, $available_fields)) {
-                return $field;
-            }
-        }
-
-        return null;
     }
 
     public function execute($record, $params = [])
@@ -271,19 +252,19 @@ class TabelleLanguage extends Controllo
             foreach ($languages as $language) {
                 $existing = $database->fetchOne("
                     SELECT id FROM `{$lang_table}`
-                    WHERE id_record = " . prepare($record_id) . "
-                    AND id_lang = " . prepare($language->id)
+                    WHERE id_record = ".prepare($record_id).'
+                    AND id_lang = '.prepare($language->id)
                 );
 
                 if (!$existing) {
                     // Prepara i dati per l'inserimento
                     $insert_data = [
                         'id_record' => $record_id,
-                        'id_lang' => $language->id
+                        'id_lang' => $language->id,
                     ];
 
                     // Cerca di ottenere valori di default dalla tabella principale
-                    $main_record = $database->fetchOne("SELECT * FROM `{$main_table}` WHERE id = " . prepare($record_id));
+                    $main_record = $database->fetchOne("SELECT * FROM `{$main_table}` WHERE id = ".prepare($record_id));
 
                     if ($main_record) {
                         foreach ($fields_to_populate as $field) {
@@ -294,7 +275,7 @@ class TabelleLanguage extends Controllo
                             $field_mappings = [
                                 'name' => ['nome', 'name', 'descrizione', 'title'],
                                 'title' => ['title', 'nome', 'name', 'descrizione'],
-                                'description' => ['descrizione', 'description', 'nome', 'name']
+                                'description' => ['descrizione', 'description', 'nome', 'name'],
                             ];
 
                             if (isset($field_mappings[$field])) {
@@ -314,7 +295,7 @@ class TabelleLanguage extends Controllo
 
                     // Inserisci il record
                     $database->table($lang_table)->insert($insert_data);
-                    $corrected_count++;
+                    ++$corrected_count;
                 }
             }
         }
@@ -323,7 +304,7 @@ class TabelleLanguage extends Controllo
     }
 
     /**
-     * Esegue la correzione globale per tutti i record trovati
+     * Esegue la correzione globale per tutti i record trovati.
      */
     public function solveGlobal($params = [])
     {
@@ -333,5 +314,24 @@ class TabelleLanguage extends Controllo
         }
 
         return $results;
+    }
+
+    /**
+     * Determina il campo da usare per il nome del record.
+     */
+    private function getNameField($table_name, $columns)
+    {
+        // Campi comuni per i nomi
+        $name_fields = ['name', 'nome', 'title', 'descrizione', 'ragione_sociale', 'codice'];
+
+        $available_fields = array_column($columns, 'Field');
+
+        foreach ($name_fields as $field) {
+            if (in_array($field, $available_fields)) {
+                return $field;
+            }
+        }
+
+        return null;
     }
 }

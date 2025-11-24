@@ -34,7 +34,7 @@ $qrcode_print = $qrcode_print_info['id'];
 // Recupera le dimensioni dell'etichetta QR Code
 $qrcode_size = '';
 if (!empty($qrcode_print_info['options'])) {
-    $options = json_decode($qrcode_print_info['options'], true);
+    $options = json_decode((string) $qrcode_print_info['options'], true);
     if (is_array($options)) {
         if (isset($options['width']) && isset($options['height'])) {
             $qrcode_size = ' ('.$options['width'].'x'.$options['height'].'mm)';
@@ -45,7 +45,7 @@ if (!empty($qrcode_print_info['options'])) {
 }
 ?>
 
-<?php if ($existing_token): ?>
+<?php if ($existing_token) { ?>
     <!-- Token esistente -->
     <div class="container-fluid">        
         <div class="row">
@@ -111,7 +111,7 @@ if (!empty($qrcode_print_info['options'])) {
         </div>
     </div>
     
-<?php else: ?>
+<?php } else { ?>
     <!-- Wizard per nuovo token -->
     
     <!-- Progress Steps -->
@@ -264,10 +264,10 @@ if (!empty($qrcode_print_info['options'])) {
         </div>
     </form>
     
-<?php endif; ?>
+<?php } ?>
 
 <div class="modal-footer">
-    <?php if (!$existing_token): ?>
+    <?php if (!$existing_token) { ?>
         <div id="wizard-navigation">
             <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;" onclick="prevStep()">
                 <i class="fa fa-arrow-left"></i> <?php echo tr('Precedente'); ?>
@@ -282,11 +282,11 @@ if (!empty($qrcode_print_info['options'])) {
                 <?php echo tr('Chiudi'); ?>
             </button>
         </div>
-    <?php else: ?>
+    <?php } else { ?>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
             <?php echo tr('Chiudi'); ?>
         </button>
-    <?php endif; ?>
+    <?php } ?>
 </div>
 
 <script>
@@ -463,13 +463,13 @@ function showTokenResult(tokenInfo) {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
-        toastr.success('<?php echo tr("Copiato negli appunti"); ?>');
+        toastr.success('<?php echo tr('Copiato negli appunti'); ?>');
     });
 }
 
 function printQRCode(url, tokenId) {
 
-    printId = <?=$qrcode_print?>
+    printId = <?php echo $qrcode_print; ?>
 
     try {
         var data = JSON.parse(response);
@@ -495,11 +495,11 @@ function editToken(tokenId) {
             window.open('<?php echo base_url(); ?>/controller.php?id_module=' + response.id + '&id_record=' + tokenId, '_blank');
         } else {
             // Fallback: prova con il nome del modulo direttamente
-            window.open('<?php echo base_url(); ?>/controller.php?id_module=<?php echo $dbo->fetchOne("SELECT id FROM zz_modules WHERE name = ?", ["Accesso con Token/OTP"])["id"] ?? ""; ?>&id_record=' + tokenId, '_blank');
+            window.open('<?php echo base_url(); ?>/controller.php?id_module=<?php echo $dbo->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Accesso con Token/OTP'])['id'] ?? ''; ?>&id_record=' + tokenId, '_blank');
         }
     }).fail(function() {
         // Fallback in caso di errore AJAX
-        window.open('<?php echo base_url(); ?>/controller.php?id_module=<?php echo $dbo->fetchOne("SELECT id FROM zz_modules WHERE name = ?", ["Accesso con Token/OTP"])["id"] ?? ""; ?>&id_record=' + tokenId, '_blank');
+        window.open('<?php echo base_url(); ?>/controller.php?id_module=<?php echo $dbo->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Accesso con Token/OTP'])['id'] ?? ''; ?>&id_record=' + tokenId, '_blank');
     });
 }
 

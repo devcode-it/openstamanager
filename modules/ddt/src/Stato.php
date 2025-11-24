@@ -34,7 +34,7 @@ class Stato extends Model
         'title',
     ];
 
-    public static function build($descrizione = null,$icona = null, $colore = null, $is_bloccato = null, $is_fatturabile = null)
+    public static function build($descrizione = null, $icona = null, $colore = null, $is_bloccato = null, $is_fatturabile = null)
     {
         $model = new static();
         $model->name = $descrizione;

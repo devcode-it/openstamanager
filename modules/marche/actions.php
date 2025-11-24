@@ -151,11 +151,11 @@ switch (post('op')) {
 
             if (empty($id_original)) {
                 redirect(base_path().'/controller.php?id_module='.$id_module);
-                exit();
+                exit;
             }
 
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
-            exit();
+            exit;
         } else {
             $marca = Marca::build($nome);
             $marca->parent = $id_original;
@@ -176,7 +176,7 @@ switch (post('op')) {
             // Redirect alla marca se si sta aggiungendo una modello
             $database->commitTransaction();
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
-            exit();
+            exit;
         }
 
         break;

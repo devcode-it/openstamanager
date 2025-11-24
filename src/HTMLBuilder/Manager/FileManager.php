@@ -57,7 +57,7 @@ class FileManager implements ManagerInterface
         $id_categoria = $options['category'] ? Categoria::where('name', $options['category'])->first()->id : null;
 
         // ID del form
-        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'].($id_categoria ? '_'.$id_categoria : '').($options['key'] ? '_'.md5($options['key']) : '');
+        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'].($id_categoria ? '_'.$id_categoria : '').($options['key'] ? '_'.md5((string) $options['key']) : '');
 
         if (ini_get('upload_max_filesize') < ini_get('post_max_size')) {
             $upload_max_filesize = ini_get('upload_max_filesize');

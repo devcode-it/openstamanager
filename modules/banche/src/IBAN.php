@@ -412,7 +412,7 @@ class IBAN
         }
 
         preg_match_all('/^'.$regex.'/', $iban, $matches);
-        $matches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        $matches = array_filter($matches, is_string(...), ARRAY_FILTER_USE_KEY);
         foreach ($matches as $key => $value) {
             if (!isset($value[0])) {
                 throw new \UnexpectedValueException('Invalid '.$key.' for format '.$regex);

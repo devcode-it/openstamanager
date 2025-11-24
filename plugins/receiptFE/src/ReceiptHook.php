@@ -20,9 +20,9 @@
 
 namespace Plugins\ReceiptFE;
 
+use Hooks\CachedManager;
 use Models\Cache;
 use Models\Module;
-use Hooks\CachedManager;
 
 /**
  * Hook per l'importazione e il conteggio delle ricevute rilevate come da importare.

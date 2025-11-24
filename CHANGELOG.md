@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.6 (2025-11-25)](#296-2025-11-25)
 - [2.9.5 (2025-11-12)](#295-2025-11-12)
 - [2.9.4 (2025-10-28)](#294-2025-10-28)
 - [2.9.3 (2025-10-14)](#293-2025-10-14)
@@ -64,6 +65,30 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
+## 2.9.6 (2025-11-25)
+### Modificato (Changed)
+- Miglioria grafica controlli gestionale in Aggiornamenti
+- Miglioria log caricamento file aggiornamento 
+- Miglioria gestione immagini impianto, articolo e firme allegati
+- Gestione indirizzo apilayer con solo indirizzo valorizzato
+- Rimozione blocco generazione autofatture a 0
+
+### Fixed
+- Corretto log invio fatture da bulk
+- Corretto calcolo spazio occupato
+- Corretta lettura informazioni su services
+- Corretta stampa inventario con filtri
+- Corretta visualizzazione highlight righe documenti alla modifica
+- Corretta selezione seriali
+- Corretta gestione assenza file modules.json e views.json
+- Corretta aggiunta record multilingua mancanti a database
+- Corretta lettura cache Informazioni su services
+- Corretta visualizzazione servizi
+- Corretta segnalazione compatibilità
+- Corretto background red widget contratti in scadenza
+- Corretta aggiunta stato ddt
+- Corretta salvataggio categorie contratti
+- Corretto title stampa bilancio
 
 ## 2.9.5 (2025-11-12)
 ### Modificato (Changed)

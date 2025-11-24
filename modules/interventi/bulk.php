@@ -255,8 +255,6 @@ switch (post('op')) {
 
             // Calcolo del nuovo codice sulla base della data di richiesta
             $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
-            $new->firma_file = '';
-            $new->firma_data = '';
             $new->save();
 
             $id_record = $new->id;

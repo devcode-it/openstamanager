@@ -1275,9 +1275,6 @@ switch (post('op')) {
                     $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
                     $new->data_richiesta = $data_richiesta;
                     $new->data_scadenza = post('ora_scadenza') ? $date->format('Y-m-d').' '.post('ora_scadenza') : null;
-                    $new->firma_file = '';
-                    $new->firma_data = null;
-                    $new->firma_nome = '';
 
                     $new->save();
 

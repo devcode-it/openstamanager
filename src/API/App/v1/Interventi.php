@@ -274,10 +274,7 @@ class Interventi extends AppResource
             idstatointervento AS id_stato_intervento,
             idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,
-            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
-            firma_file,
-            IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
-            firma_nome
+            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 
@@ -336,15 +333,6 @@ class Interventi extends AppResource
         $record->idsede_destinazione = $data['id_sede'] ?: 0;
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
-        // Salvataggio firma eventuale
-        if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
-            $record->firma_nome = $data['firma_nome'];
-            $record->firma_data = $data['firma_data'];
-
-            // Salvataggio fisico
-            $firma_file = $this->salvaFirma($data['firma_contenuto']);
-            $record->firma_file = $firma_file;
-        }
 
         // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
@@ -371,19 +359,4 @@ class Interventi extends AppResource
         }
     }
 
-    protected function salvaFirma($firma_base64)
-    {
-        // Salvataggio firma
-        $firma_file = 'firma_'.time().'.png';
-
-        $data = explode(',', (string) $firma_base64);
-
-        $manager = ImageManager::gd();
-        $img = $manager->read(base64_decode($data[1]));
-        $img->scale(680, 202);
-
-        $img->save(base_dir().'/files/interventi/'.$firma_file);
-
-        return $firma_file;
-    }
 }

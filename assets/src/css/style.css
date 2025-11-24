@@ -706,7 +706,6 @@ span.form-control {
 
 .card-outline.card-primary {
     border-top: 3px solid #007bff;
-    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -2372,10 +2371,8 @@ kbd {
     z-index: 10;
 }
 
-/* Stili per le icone di stato nella card centrale dell'header */
 .status-item {
     transition: all 0.3s ease;
-    border-radius: 6px;
 }
 
 .status-icon {
@@ -3627,9 +3624,7 @@ section.content, .main-footer {
     display: block;
 }
 
-/* Requirements cards styling */
 .requirements-card {
-    border-radius: 6px !important;
     margin-bottom: 8px !important;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
 }
@@ -3637,6 +3632,10 @@ section.content, .main-footer {
 .requirements-card-header {
     padding: 10px 12px !important;
     min-height: 50px !important;
+}
+
+.card {
+    border-radius: 6px 6px 0 0 !important;
 }
 
 .requirements-card-header-success {

@@ -57,8 +57,8 @@ class Interaction extends Services
             $response = static::request('POST', 'notifiche_da_importare');
             $body = static::responseBody($response);
 
-            if ($body['status'] == '200') {
-                $results = $body['results'];
+            if (!empty($body) && isset($body['status']) && (int) $body['status'] == 200) {
+                $results = $body['results'] ?? [];
 
                 foreach ($results as $result) {
                     $list[] = [
@@ -124,8 +124,10 @@ class Interaction extends Services
         $body = static::responseBody($response);
 
         $result = true;
-        if ($body['status'] != '200') {
-            $result = $body['status'].' - '.$body['message'];
+        if (empty($body) || !isset($body['status']) || (int) $body['status'] != 200) {
+            $status = $body['status'] ?? 'unknown';
+            $msg = $body['message'] ?? 'Errore sconosciuto';
+            $result = $status.' - '.$msg;
         }
 
         return $result;

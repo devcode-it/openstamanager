@@ -168,8 +168,8 @@ switch (post('op')) {
                 $fattura_elettronica = new FatturaElettronica($fattura->id);
 
                 // Verifica che la fattura sia in stato corretto per l'invio
-                // Accetta sia 'GEN' che NULL/vuoto (fatture appena generate)
-                if (!empty($fattura->codice_stato_fe) && $fattura->codice_stato_fe != 'GEN') {
+                // Accetta 'GEN' (generata), NULL/vuoto (appena generate), 'ERR' (trasmissione fallita)
+                if (!empty($fattura->codice_stato_fe) && $fattura->codice_stato_fe != 'GEN' && $fattura->codice_stato_fe != 'ERR') {
                     $skipped[] = $fattura->numero_esterno.' (stato: '.$fattura->codice_stato_fe.')';
                     continue;
                 }

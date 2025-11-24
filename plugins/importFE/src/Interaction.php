@@ -57,8 +57,8 @@ class Interaction extends Services
             $response = static::request('POST', 'fatture_da_importare');
             $body = static::responseBody($response);
 
-            if ($body['status'] == '200') {
-                $list = $body['results'];
+            if (!empty($body) && isset($body['status']) && (int) $body['status'] == 200) {
+                $list = $body['results'] ?? [];
             }
         }
 
@@ -119,8 +119,10 @@ class Interaction extends Services
         $body = static::responseBody($response);
 
         $message = '';
-        if ($body['status'] != '200') {
-            $message = $body['status'].' - '.$body['message'];
+        if (empty($body) || !isset($body['status']) || (int) $body['status'] != 200) {
+            $status = $body['status'] ?? 'unknown';
+            $msg = $body['message'] ?? 'Errore sconosciuto';
+            $message = $status.' - '.$msg;
         }
 
         return $message;

@@ -146,7 +146,8 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 
     <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="0">';
+    <input type="hidden" name="id_record" value="0">
+    <input type="hidden" name="idzona" id="idzona_hidden" value="'.$id_zona.'">';
 
 if (!empty($id_promemoria_contratto)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';
@@ -339,6 +340,10 @@ echo '
 
                         <h5 class="text-primary border-bottom pb-2 mb-4"><i class="fa fa-clock-o"></i> '.tr('Sessioni di lavoro').'</h5>
                         <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointervento", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
+                            </div>
+
                             <div class="col-md-2">
                                 {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
                             </div>
@@ -348,11 +353,22 @@ echo '
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
+                                {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
                             </div>
+                        </div>
 
+                        <div id="sessioni-aggiuntive"></div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> '.tr('Al clic su "Aggiungi sessione", verrà creata una nuova sessione che inizierà automaticamente alla fine della sessione precedente, utilizzando la durata prevista dal tipo di attività selezionato.').'
+                                </div>
+                            </div>
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
+                                <button type="button" class="btn btn-success btn-block" onclick="aggiungiNuovaSessione()">
+                                    <i class="fa fa-plus"></i> '.tr('Aggiungi sessione').'
+                                </button>
                             </div>
                         </div>
 
@@ -424,7 +440,6 @@ if (!empty($id_intervento)) {
        input("componenti").disable();
        input("idanagrafica").disable();
        input("idclientefinale").disable();
-       input("idzona").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
        input("data_richiesta").disable();
@@ -439,7 +454,6 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $(document).ready(function() {
        input("idanagrafica").disable();
        input("idclientefinale").disable();
-       input("idzona").disable();
        input("idtipointervento").disable();
     });
 </script>';
@@ -563,7 +577,7 @@ echo '
 
         let data = anagrafica.getData();
 		if (data) {
-		    input("idzona").set(data.idzona ? data.idzona : "");
+		    $("#idzona_hidden").val(data.idzona ? data.idzona : "");
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
             // Impostazione del tipo intervento da anagrafica
@@ -632,7 +646,7 @@ echo '
 
         let data = sede.getData();
 		if (data) {
-		    input("idzona").set(data.idzona ? data.idzona : "");
+		    $("#idzona_hidden").val(data.idzona ? data.idzona : "");
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
             caricaMappa(data.lat, data.lng);
@@ -707,9 +721,24 @@ echo '
         let data = $("#idtipointervento").selectData();
         if (data && data.tempo_standard > 0) {
             let orario_inizio = input("orario_inizio").get();
-            let tempo_standard = data.tempo_standard * 60;
-            let nuovo_orario_fine = moment(orario_inizio, "DD/MM/YYYY HH:mm").add(tempo_standard, "m").format("DD/MM/YYYY HH:mm");
-            input("orario_fine").set(nuovo_orario_fine);
+            if (orario_inizio) {
+                let tempo_standard = data.tempo_standard * 60;
+                let nuovo_orario_fine = moment(orario_inizio, "DD/MM/YYYY HH:mm").add(tempo_standard, "m").format("DD/MM/YYYY HH:mm");
+                input("orario_fine").set(nuovo_orario_fine);
+            }
+        }
+    });
+
+    // Automatismo per calcolare orario di fine quando cambia l\'orario di inizio
+    input("orario_inizio").change(function() {
+        let data = $("#idtipointervento").selectData();
+        if (data && data.tempo_standard > 0) {
+            let orario_inizio = input("orario_inizio").get();
+            if (orario_inizio) {
+                let tempo_standard = data.tempo_standard * 60;
+                let nuovo_orario_fine = moment(orario_inizio, "DD/MM/YYYY HH:mm").add(tempo_standard, "m").format("DD/MM/YYYY HH:mm");
+                input("orario_fine").set(nuovo_orario_fine);
+            }
         }
     });';
 
@@ -793,14 +822,18 @@ echo '
     }
 
     function calcolaConflittiTecnici() {
-        let tecnici = input("idtecnico").get();
+        let tecnico = input("idtecnico").get();
 
-        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
-            "id_module": globals.id_module,
-            "tecnici[]": tecnici,
-            "inizio": input("orario_inizio").get(),
-            "fine": input("orario_fine").get(),
-        });
+        if (tecnico) {
+            return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+                "id_module": globals.id_module,
+                "tecnici[]": [tecnico],
+                "inizio": input("orario_inizio").get(),
+                "fine": input("orario_fine").get(),
+            });
+        } else {
+            $("#info-conflitti-add").html("");
+        }
     }
 
     function assegnaTuttiTecnici() {
@@ -821,6 +854,142 @@ echo '
 
     function deassegnaTuttiTecnici() {
         input("tecnici_assegnati").getElement().selectReset();
+    }
+
+    var sessioneCounter = 1;
+    function aggiungiNuovaSessione() {
+        sessioneCounter++;
+
+        // Calcola l\'orario di inizio della nuova sessione (fine dell\'ultima sessione)
+        let ultimoOrarioFine = calcolaUltimoOrarioFine();
+
+        let nuovoOrarioFine = ""; // Sarà calcolato quando si seleziona il tipo attività
+
+        // Crea il HTML per la nuova sessione con le classi corrette
+        let sessioneHtml = `
+            <div class="row mt-3" id="sessione-${sessioneCounter}">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "sessioni[${sessioneCounter}][idtipointervento]", "ajax-source": "tipiintervento", "extra": "onchange=\\"calcolaOrarioFineSessione(${sessioneCounter})\\"" ]}
+                </div>
+                <div class="col-md-2">
+                    {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "sessioni[${sessioneCounter}][orario_inizio]", "value": "", "class": "text-center", "extra": "onchange=\\"calcolaOrarioFineSessione(${sessioneCounter})\\"" ]}
+                </div>
+                <div class="col-md-2">
+                    {[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "sessioni[${sessioneCounter}][orario_fine]", "value": "${nuovoOrarioFine}", "class": "text-center" ]}
+                </div>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "sessioni[${sessioneCounter}][idtecnico]", "ajax-source": "tecnici", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-block" onclick="rimuoviSessione(${sessioneCounter})" style="margin-top: 27px;">
+                        <i class="fa fa-trash"></i> '.tr('Elimina').'
+                    </button>
+                </div>
+            </div>
+        `;
+
+        $("#sessioni-aggiuntive").append(sessioneHtml);
+
+        // Reinizializza i componenti della nuova sessione
+        init();
+
+        // Aggiungi gli eventi specifici per il calcolo automatico e sistema lo styling
+        setTimeout(function() {
+            let sessioneSelector = `#sessione-${sessioneCounter}`;
+            let tipoSelect = $(`${sessioneSelector} select[name="sessioni[${sessioneCounter}][idtipointervento]"]`);
+            let inizioInput = $(`${sessioneSelector} input[name="sessioni[${sessioneCounter}][orario_inizio]"]`);
+
+            // Imposta il valore dell\'orario di inizio dopo l\'inizializzazione
+            if (inizioInput.length > 0) {
+                inizioInput.val(ultimoOrarioFine);
+                inizioInput.trigger("change");
+            }
+
+            // Collega gli eventi con selettori più specifici
+            if (tipoSelect.length > 0) {
+                tipoSelect.on("change", function() {
+                    calcolaOrarioFineSessione(sessioneCounter);
+                });
+            }
+
+            if (inizioInput.length > 0) {
+                inizioInput.on("dp.change change", function() {
+                    calcolaOrarioFineSessione(sessioneCounter);
+                });
+            }
+
+            // Sistema lo styling dei componenti
+            $(`${sessioneSelector} .select2-container`).css("width", "100%");
+            $(`${sessioneSelector} .timestamp-picker`).css("text-align", "center");
+        }, 1000);
+    }
+
+    function rimuoviSessione(id) {
+        $("#sessione-" + id).remove();
+
+        // Aggiorna gli orari delle sessioni rimanenti se necessario
+        aggiornaOrariSessioni();
+    }
+
+    function calcolaOrarioFineSessione(sessioneId) {
+        let tipoSelect = $(`select[name="sessioni[${sessioneId}][idtipointervento]"]`);
+        let inizioInput = $(`input[name="sessioni[${sessioneId}][orario_inizio]"]`);
+        let fineInput = $(`input[name="sessioni[${sessioneId}][orario_fine]"]`);
+
+        let tipoId = tipoSelect.val();
+        let orarioInizio = inizioInput.val();
+
+        if (tipoId && orarioInizio) {
+            // Ottieni i dati del tipo attività selezionato
+            $.ajax({
+                url: "'.base_path().'/ajax_select.php",
+                type: "GET",
+                dataType: "json",
+                data: {
+                    op: "tipiintervento",
+                    search: "",
+                    id: tipoId
+                },
+                success: function(response) {
+                if (response && response.results && response.results.length > 0) {
+                    // Trova l\'elemento con l\'ID corrispondente
+                    let tipoData = response.results.find(item => item.id == tipoId);
+
+                    if (tipoData && tipoData.tempo_standard && tipoData.tempo_standard > 0) {
+                        let tempoStandard = parseFloat(tipoData.tempo_standard) * 60; // Converti ore in minuti
+                        let nuovoOrarioFine = moment(orarioInizio, "DD/MM/YYYY HH:mm").add(tempoStandard, "m").format("DD/MM/YYYY HH:mm");
+
+                        fineInput.val(nuovoOrarioFine);
+                        fineInput.trigger("change");
+                        fineInput.trigger("dp.change");
+                    }
+                }
+                },
+                error: function(xhr, status, error) {
+                    // Gestione errori silenziosa
+                }
+            });
+        }
+    }
+
+    function calcolaUltimoOrarioFine() {
+        // Inizia con l\'orario di fine della prima sessione
+        let ultimoOrario = input("orario_fine").get();
+
+        // Se non c\'è un orario di fine nella prima sessione, usa l\'orario corrente
+        if (!ultimoOrario) {
+            ultimoOrario = moment().format("DD/MM/YYYY HH:mm");
+        }
+
+        // Controlla tutte le sessioni aggiuntive
+        $("#sessioni-aggiuntive input[name*=\'orario_fine\']").each(function() {
+            let orario = $(this).val();
+            if (orario && moment(orario, "DD/MM/YYYY HH:mm").isAfter(moment(ultimoOrario, "DD/MM/YYYY HH:mm"))) {
+                ultimoOrario = orario;
+            }
+        });
+
+        return ultimoOrario;
     }
 
     // Gestione ricorrenza

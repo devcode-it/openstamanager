@@ -323,16 +323,58 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
-            $idtecnici = post('idtecnico') ?: null;
-            foreach ($idtecnici as $idtecnico) {
+            $idtecnico = post('idtecnico');
+            if (!empty($idtecnico)) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
-            }
 
-            OperationLog::setInfo('id_module', $id_module);
-            OperationLog::setInfo('id_plugin', $id_plugin);
-            OperationLog::setInfo('id_record', $id_record);
-            OperationLog::setInfo('level', 'info');
-            OperationLog::build('add_sessione');
+                OperationLog::setInfo('id_module', $id_module);
+                OperationLog::setInfo('id_plugin', $id_plugin);
+                OperationLog::setInfo('id_record', $id_record);
+                OperationLog::setInfo('level', 'info');
+                OperationLog::build('add_sessione');
+            }
+        }
+
+        // Gestione sessioni aggiuntive
+        $sessioni_aggiuntive = post('sessioni');
+        if (!empty($sessioni_aggiuntive) && is_array($sessioni_aggiuntive)) {
+            foreach ($sessioni_aggiuntive as $sessione) {
+                if (!empty($sessione['orario_inizio']) && !empty($sessione['orario_fine']) && !empty($sessione['idtecnico'])) {
+                    // Crea la sessione manualmente per poter specificare un tipo attività diverso
+                    $intervento = Modules\Interventi\Intervento::find($id_record);
+                    $anagrafica = Modules\Anagrafiche\Anagrafica::find($sessione['idtecnico']);
+
+                    $sessione_obj = new Modules\Interventi\Components\Sessione();
+                    $sessione_obj->document()->associate($intervento);
+                    $sessione_obj->anagrafica()->associate($anagrafica);
+
+                    // Usa il tipo attività specificato per questa sessione, o quello dell'intervento come fallback
+                    $tipo_sessione_id = !empty($sessione['idtipointervento']) ? $sessione['idtipointervento'] : $idtipointervento;
+                    $tipo_sessione = Modules\TipiIntervento\Tipo::find($tipo_sessione_id);
+                    $sessione_obj->tipo()->associate($tipo_sessione);
+
+                    $sessione_obj->orario_inizio = $sessione['orario_inizio'];
+                    $sessione_obj->orario_fine = $sessione['orario_fine'];
+
+                    // Calcola i km se necessario
+                    if ($tipo_sessione->calcola_km) {
+                        if (!empty($intervento['idsede_destinazione'])) {
+                            $sede = $dbo->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+                            $km = $sede['km'];
+                        } else {
+                            $km = $intervento->anagrafica->sedeLegale->km;
+                        }
+                        $sessione_obj->km = empty($km) ? 0 : $km;
+                    }
+
+                    $sessione_obj->tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+                    $sessione_obj->tipo_scontokm = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+
+                    $sessione_obj->save();
+                    $sessione_obj->setTipo($tipo_sessione_id, true);
+                    $sessione_obj->save();
+                }
+            }
         }
 
         // Assegnazione dei tecnici all'intervento
@@ -340,7 +382,7 @@ switch (post('op')) {
         if (!empty($tecnici_assegnati)) {
             // Converte in array se necessario e filtra i valori vuoti
             $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
-            $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
+            $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
             $tecnici_assegnati = array_unique($tecnici_assegnati);
 
             if (!empty($tecnici_assegnati)) {
@@ -538,7 +580,7 @@ switch (post('op')) {
                 // Assegnazione dei tecnici all'intervento
                 $tecnici_assegnati = (array) post('tecnici_assegnati');
                 // Filtra i valori vuoti per evitare errori di foreign key
-                $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
+                $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
 
                 if (!empty($tecnici_assegnati)) {
                     $dbo->sync('in_interventi_tecnici_assegnati', [

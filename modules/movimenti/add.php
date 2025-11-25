@@ -178,6 +178,25 @@ echo '
             }
         });
 
+        // Gestione invio (Enter) direttamente nel campo barcode:
+        // evita il submit del form e avvia la ricerca barcode, così l\'articolo viene caricato prima della validazione.
+        $("#barcode").on("keydown", function (event) {
+            let key = window.event ? event.keyCode : event.which;
+
+            if (key === 13) {
+                event.preventDefault();
+
+                $("#articolo-missing").addClass("hidden");
+
+                let value = $(this).val() || "";
+                let search = value.replace(/[^a-z0-9\s\-\.\/\\|]+/gmi, "");
+
+                if (search !== "") {
+                    ricercaBarcode(search);
+                }
+            }
+        });
+
         // Reload pagina appena chiudo il modal
         $("#modals > div").on("hidden.bs.modal", function () {
             location.reload();

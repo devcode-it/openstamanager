@@ -71,7 +71,7 @@ function createCollapsibleQuery($query_content, $row_id, $column_type)
         // Decodifica anche il contenuto completo per la visualizzazione
         $decoded_content = html_entity_decode((string) $query_content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        return '<code style="white-space: pre-wrap; word-break: break-all;">'.$decoded_content.'</code>';
+        return '<code class="text-break" style="white-space: pre-wrap;">'.$decoded_content.'</code>';
     }
 
     // Tronca il contenuto a 300 caratteri per l'anteprima
@@ -90,10 +90,10 @@ function createCollapsibleQuery($query_content, $row_id, $column_type)
 
     return '
         <div class="query-container">
-            <code class="query-preview" style="white-space: pre-wrap; word-break: break-all;" id="preview_'.$row_id.'_'.$column_type.'">'.
+            <code class="query-preview text-break" style="white-space: pre-wrap;" id="preview_'.$row_id.'_'.$column_type.'">'.
                 $preview_content.'
             </code>
-            <code class="query-full" style="display: none; white-space: pre-wrap; word-break: break-all;" id="full_'.$row_id.'_'.$column_type.'">'.
+            <code class="query-full text-break" style="white-space: pre-wrap; display: none;" id="full_'.$row_id.'_'.$column_type.'">'.
                 $decoded_full_content.'
             </code>
         </div>';
@@ -245,8 +245,10 @@ if (function_exists('customComponents')) {
     $has_field_errors = !empty($custom_fields);
     $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
 
-    $customizations_card_class = $has_any_errors ? 'card-warning' : 'card-success';
-    $customizations_icon = $has_any_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
+    // Determina il colore in base all'avviso piu grave
+    $customizations_colors = Utils::determineCardColor(0, $has_any_errors ? 1 : 0, 0);
+    $customizations_card_class = 'card-'.$customizations_colors['color'];
+    $customizations_icon = $customizations_colors['icon'];
     $customizations_title = $has_any_errors ? tr('Personalizzazioni Rilevate') : tr('Personalizzazioni');
 
     echo '
@@ -366,7 +368,7 @@ if (function_exists('customComponents')) {
             <div class="card-body">';
 
     if ($has_table_errors) {
-        $tables_list = implode(', ', array_map(fn ($table) => '<code style="color: black;">'.$table.'</code>', $tables));
+        $tables_list = implode(', ', array_map(fn ($table) => '<code class="module-aggiornamenti table-code">'.$table.'</code>', $tables));
         echo '
                     <p class="mb-0">
                         '.$tables_list.'
@@ -735,23 +737,10 @@ if (function_exists('customComponents')) {
         // Silenzio gli errori
     }
 
-    $database_card_color = $database_has_errors ? 'warning' : 'success';
-    $database_icon = $database_has_errors ? 'fa-exclamation-triangle' : 'fa-check-circle';
-
     // Determina il colore in base all'avviso più grave
-    if ($database_danger_count > 0) {
-        $database_card_color = 'danger';
-        $database_icon = 'fa-exclamation-triangle';
-    } elseif ($database_warning_count > 0 || $database_file_missing) {
-        $database_card_color = 'warning';
-        $database_icon = 'fa-exclamation-triangle';
-    } elseif ($database_info_count > 0) {
-        $database_card_color = 'info';
-        $database_icon = 'fa-info-circle';
-    } else {
-        $database_card_color = 'success';
-        $database_icon = 'fa-check-circle';
-    }
+    $database_colors = Utils::determineCardColor($database_danger_count, $database_warning_count || $database_file_missing ? 1 : 0, $database_info_count > 0 ? 1 : 0);
+    $database_card_color = $database_colors['color'];
+    $database_icon = $database_colors['icon'];
 
     $database_badge_html = Utils::generateBadgeHtml($database_danger_count, $database_warning_count, $database_info_count);
 
@@ -789,52 +778,52 @@ $(document).ready(function() {
         var button = $(this);
 
         var operazioniHtml = `
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Aggiungerà i campi mancanti nel database').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Correggerà i campi con struttura diversa').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Aggiungerà le chiavi mancanti').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Correggerà le chiavi esterne modificate').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Aggiungerà le impostazioni mancanti').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-check text-success mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-check text-success mr-2"></i>
                 <span>'.tr('Correggerà le impostazioni modificate').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-times text-danger mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-times text-danger mr-2"></i>
                 <span><strong>'.tr('NON rimuoverà i campi, le chiavi o le impostazioni in più').'</strong></span>
             </div>
-            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                <i class="fa fa-exclamation-triangle text-warning mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-exclamation-triangle text-warning mr-2"></i>
                 <span>'.tr('Si consiglia di effettuare un backup prima di procedere').'</span>
             </div>
-            <div style="display: flex; align-items: flex-start;">
-                <i class="fa fa-ban text-danger mr-2" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <div class="d-flex align-items-flex-start mb-2">
+                <i class="fa fa-ban text-danger mr-2"></i>
                 <span><strong>'.tr('Non può essere annullata').'</strong></span>
             </div>
         `;
 
         var htmlContent = `
-            <p style="text-align: left; margin-bottom: 15px;">'.tr('Sei sicuro di voler risolvere tutti i conflitti del database?').'</p>
-            <div class="alert alert-warning" style="text-align: left; margin-bottom: 0;">
-                <div style="margin-bottom: 10px;">
+            <p class="text-start mb-3">'.tr('Sei sicuro di voler risolvere tutti i conflitti del database?').'</p>
+            <div class="alert alert-warning text-start mb-0">
+                <div class="mb-2">
                     <i class="fa fa-info-circle"></i>
                     <strong>'.tr('Questa operazione:').'</strong>
                 </div>
-                <div style="margin-left: 0;">
+                <div class="ms-0">
                     ${operazioniHtml}
                 </div>
             </div>
@@ -1039,7 +1028,7 @@ function search(button) {
 <div class="row mb-4">
     <!-- Card Ricerca Aggiornamenti -->
     <div class="col-lg-4 mb-3">
-        <div class="card card-info card-outline h-100" style="border-radius: 0.5rem;">
+        <div class="card card-info card-outline h-100 rounded">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-search"></i> '.tr('Ricerca Aggiornamenti').'
@@ -1047,10 +1036,10 @@ function search(button) {
             </div>
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-2">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background-color: rgba(23, 162, 184, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto;">
-                        <i class="fa fa-search" style="color: #17a2b8;"></i>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(23, 162, 184, 0.1);">
+                        <i class="fa fa-search" style="font-size: 1.5rem; color: #17a2b8;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 0.9rem;">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
+                    <p class="text-muted mb-0 small">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
                 </div>
                 <div id="update-search" class="mt-auto">';
 if (extension_loaded('curl')) {
@@ -1061,7 +1050,7 @@ if (extension_loaded('curl')) {
                                 <i class="fa fa-search mr-2"></i>'.tr('Verifica Aggiornamenti').'
                             </button>';
 } else {
-    echo '                  <div class="alert alert-warning mb-0 p-2" style="font-size: 0.85rem;">
+    echo '                  <div class="alert alert-warning mb-0 p-2 small">
                                 <i class="fa fa-exclamation-triangle"></i>
                                 <strong>'.tr('Funzione non disponibile').'</strong><br>
                                 <small>'.tr('L\'estensione cURL di PHP non è installata').'</small>
@@ -1075,7 +1064,7 @@ echo '              </div>
 
     <!-- Card Caricamento Aggiornamenti -->
     <div class="col-lg-4 mb-3">
-        <div class="card card-success card-outline h-100" style="border-radius: 0.5rem;">
+        <div class="card card-success card-outline h-100 rounded">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-upload"></i> '.tr('Installa Aggiornamenti').'
@@ -1083,16 +1072,16 @@ echo '              </div>
             </div>
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-2">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background-color: rgba(40, 167, 69, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto;">
-                        <i class="fa fa-upload" style="color: #28a745;"></i>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(40, 167, 69, 0.1);">
+                        <i class="fa fa-upload" style="font-size: 1.5rem; color: #28a745;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 0.9rem;">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
+                    <p class="text-muted mb-0 small">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
                 </div>';
 
 // Avviso personalizzazioni nella card di caricamento
 if ($has_any_errors) {
     echo '
-                <div class="alert alert-warning mb-1 p-2" role="alert" style="font-size: 0.85rem;">
+                <div class="alert alert-warning mb-1 p-2 small" role="alert">
                     <i class="fa fa-exclamation-triangle mr-1"></i>
                     <strong>'.tr('Attenzione!').'</strong>
                     '.tr("Il gestionale presenta delle personalizzazioni:<br> si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'
@@ -1110,10 +1099,10 @@ echo '
 
 if ($has_any_errors) {
     $disabled = 'disabled';
-    echo '                          <div class="alert alert-warning mt-1 mb-2 p-2" style="font-size: 0.85rem;">
-                                <div class="form-check mb-0" style="display: flex; align-items: center;">
-                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input" value="1" style="margin-top: 0;">
-                                    <label for="aggiorna_custom" class="form-check-label mb-0" style="margin-left: 0.5rem;">
+    echo '                          <div class="alert alert-warning mt-1 mb-2 p-2 small">
+                                <div class="form-check mb-0 d-flex align-items-center">
+                                    <input type="checkbox" id="aggiorna_custom" class="form-check-input mt-0" value="1">
+                                    <label for="aggiorna_custom" class="form-check-label mb-0 ms-2">
                                         <i class="fa fa-exclamation-triangle mr-1 text-warning"></i>'.tr("Desidero comunque procedere all'aggiornamento").'
                                     </label>
                                 </div>
@@ -1142,7 +1131,7 @@ echo '
 
     <!-- Card Controlli di Integrità -->
     <div class="col-lg-4 mb-3">
-        <div class="card card-primary card-outline h-100" style="border-radius: 0.5rem;">
+        <div class="card card-primary card-outline h-100 rounded">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-shield"></i> '.tr('Controlli di Integrità').'
@@ -1150,10 +1139,10 @@ echo '
             </div>
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-2">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background-color: rgba(0, 123, 255, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto;">
-                        <i class="fa fa-shield" style="color: #007bff;"></i>
+                    <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(0, 123, 255, 0.1);">
+                        <i class="fa fa-shield" style="font-size: 1.5rem; color: #007bff;"></i>
                     </div>
-                    <p class="text-muted mb-0" style="font-size: 0.9rem;">'.tr('Verifica l\'integrità del gestionale').'</p>
+                    <p class="text-muted mb-0 small">'.tr('Verifica l\'integrità del gestionale').'</p>
                 </div>
                 <div class="mt-auto">
                     <button type="button" class="btn btn-primary btn-block" onclick="controlli(this)">

@@ -178,14 +178,14 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
             echo '
 <div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2" style="background-color: #f8f9fa; border-left: 3px solid '.$border_color.'; cursor: pointer;" onclick="$(this).next().slideToggle();">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header" style="border-left-color: '.$border_color.';" onclick="$(this).next().slideToggle();">
         <div>
             <strong>'.$table.'</strong>
             '.$badge_html.'
         </div>
         <i class="fa fa-chevron-down"></i>
     </div>
-    <div style="display: none;">';
+    <div class="module-aggiornamenti db-section-content" style="display: none;">';
 
             if (array_key_exists('current', $errors) && $errors['current'] == null) {
                 echo '
@@ -199,7 +199,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Campo').'</th>
-                        <th style="width: 150px; text-align: center;">'.tr('Tipo').'</th>
+                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
                         <th>'.tr('Soluzione').'</th>
                     </tr>
                 </thead>
@@ -277,7 +277,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
             <td class="column-name">
                 '.$name.'
             </td>
-            <td style="text-align: center;">
+            <td class="text-center">
                 <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
             </td>
             <td class="column-conflict">
@@ -318,7 +318,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
             <td class="column-name">
                 '.$fk_name.'
             </td>
-            <td style="text-align: center;">
+            <td class="text-center">
                 <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
             </td>
             <td class="column-conflict">
@@ -361,14 +361,14 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 if ($table_not_expected || $has_keys || !empty($foreign_keys)) {
                     echo '
 <div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2" style="background-color: #f8f9fa; border-left: 3px solid #17a2b8; cursor: pointer;" onclick="$(this).next().slideToggle();">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" onclick="$(this).next().slideToggle();">
         <div>
             <strong>'.$table.'</strong>
             <span class="badge badge-info ml-2">'.$error_count.'</span>
         </div>
         <i class="fa fa-chevron-down"></i>
     </div>
-    <div style="display: none;">';
+    <div class="module-aggiornamenti db-section-content">';
 
                     if ($table_not_expected) {
                         echo '
@@ -384,7 +384,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Campo').'</th>
-                        <th style="width: 150px; text-align: center;">'.tr('Tipo').'</th>
+                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
                         <th>'.tr('Soluzione').'</th>
                     </tr>
                 </thead>
@@ -406,7 +406,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     <td class="column-name">
                         '.$name.'
                     </td>
-                    <td style="text-align: center;">
+                    <td class="text-center">
                         <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                     </td>
                     <td class="column-conflict">
@@ -422,7 +422,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     <td class="column-name">
                         '.$name.'
                     </td>
-                    <td style="text-align: center;">
+                    <td class="text-center">
                         <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                     </td>
                     <td class="column-conflict">
@@ -463,7 +463,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     <td class="column-name">
                         '.$fk_name.'
                     </td>
-                    <td style="text-align: center;">
+                    <td class="text-center">
                         <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                     </td>
                     <td class="column-conflict">
@@ -529,20 +529,20 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 
         echo '
 <div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2" style="background-color: #f8f9fa; border-left: 3px solid '.$settings_border_color.'; cursor: pointer;" onclick="$(this).next().slideToggle();">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: '.$settings_border_color.';" onclick="$(this).next().slideToggle();">
         <div>
             <strong>zz_settings</strong>
             '.$settings_badge_html.'
         </div>
         <i class="fa fa-chevron-down"></i>
     </div>
-    <div style="display: none;">
+    <div class="module-aggiornamenti db-section-content">
         <div class="table-responsive">
             <table class="table table-hover table-striped table-sm">
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Nome').'</th>
-                        <th style="width: 150px; text-align: center;">'.tr('Tipo').'</th>
+                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
                         <th>'.tr('Soluzione').'</th>
                     </tr>
                 </thead>
@@ -567,7 +567,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         <td class="column-name">
                             '.$key.'
                         </td>
-                        <td style="text-align: center;">
+                        <td class="text-center">
                             <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                         </td>
                         <td class="column-conflict">
@@ -585,7 +585,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         <td class="column-name">
                             '.$key.'
                         </td>
-                        <td style="text-align: center;">
+                        <td class="text-center">
                             <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                         </td>
                         <td class="column-conflict">
@@ -614,14 +614,14 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
         foreach ($campi_per_tabella as $tabella => $campi) {
             echo '
 <div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2" style="background-color: #f8f9fa; border-left: 3px solid #17a2b8; cursor: pointer;" onclick="$(this).next().slideToggle();">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" onclick="$(this).next().slideToggle();">
         <div>
             <strong>'.$tabella.'</strong>
             <span class="badge badge-info ml-2">'.count($campi).'</span>
         </div>
         <i class="fa fa-chevron-down"></i>
     </div>
-    <div style="display: none;">
+    <div class="module-aggiornamenti db-section-content">
         <div class="table-responsive">
             <table class="table table-hover table-striped table-sm mb-2">
                 <thead class="thead-light">

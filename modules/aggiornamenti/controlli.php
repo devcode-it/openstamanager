@@ -27,7 +27,7 @@ echo '<div class="module-aggiornamenti">';
 echo '
 <div id="controlli"></div>
 
-<div id="button-container" style="margin-top: 20px; text-align: center;">
+<div id="button-container" class="mt-5 text-center">
     <button class="btn btn-lg btn-primary" onclick="avviaControlli(this);">
         <i class="fa fa-cog"></i> '.tr('Avvia tutti i controlli').'
     </button>
@@ -35,16 +35,13 @@ echo '
 
 <script src="'.base_path().'/modules/aggiornamenti/src/utils.js"></script>
 
-<div id="progress" class="mb-4" style="display: none; margin-top: 20px;">
-    <!-- Progress bar personalizzata senza classe progress -->
-    <div class="progress-container" style="height: 30px; background-color: #e9ecef; border-radius: 4px; overflow: hidden; position: relative;">
-        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 100%; width: 0%; display: flex; align-items: center; justify-content: center;">
-            <span id="progress-percentage" style="color: white; font-weight: bold; font-size: 0.9rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">0%</span>
-        </div>
+<div id="progress" class="mb-4" style="display: none;">
+    <div class="progress-container" data-percentage="0%">
+        <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <div class="text-center mt-3 mb-3">
         <span class="text-primary" id="progress-title">'.tr('Operazione in corso').'</span>
-        <div id="operazione" class="mt-1 text-muted" style="font-size: 0.9rem;"></div>
+        <div id="operazione" class="mt-1 text-muted"></div>
     </div>
 </div>
 
@@ -111,12 +108,12 @@ function ricaricaEsecuzione(id) {
                 let cardElement = $("#controllo-" + id);
                 let cardToolsDiv = cardElement.find(".card-tools");
 
-                // Rimuovi tutte le informazioni di ultima esecuzione precedenti (div con stile font-size)
-                cardToolsDiv.find("div[style*=\"font-size\"]").remove();
+                // Rimuovi tutte le informazioni di ultima esecuzione precedenti
+                cardToolsDiv.find(".last-execution-info-data").remove();
 
                 // Aggiungi le nuove informazioni di ultima esecuzione
                 if (controlloData["last_execution"] || controlloData["last_user"]) {
-                    let infoDiv = `<div style="font-size: 0.85rem; color: #666;">`;
+                    let infoDiv = `<div class="small text-muted last-execution-info-data">`;
                     if (controlloData["last_execution"]) {
                         let dataOra = new Date(controlloData["last_execution"]);
                         let dataFormattata = dataOra.toLocaleDateString("it-IT") + " " + dataOra.toLocaleTimeString("it-IT", {hour: "2-digit", minute: "2-digit"});
@@ -337,24 +334,9 @@ function avviaControllo(controllo) {
                     let hasDanger = records.some(r => r.type === "danger");
                     let hasWarning = records.some(r => r.type === "warning");
 
-                    // Aggiungi le nuove classi in base al tipo di badge
-                    let iconElement = titleElement.find(".requirements-icon");
-                    iconElement.removeClass("fa-info-circle fa-exclamation-circle fa-warning fa-times-circle fa-exclamation-triangle");
-
-                    if (hasDanger) {
-                        headerElement.addClass("requirements-card-header-danger");
-                        titleElement.addClass("requirements-card-title-danger");
-                        cardElement.addClass("card-danger");
-                        iconElement.addClass("fa-exclamation-triangle");
-                        iconElement.css("color", "#dc3545");
-                    } else if (hasWarning) {
-                        headerElement.addClass("requirements-card-header-warning");
-                        titleElement.addClass("requirements-card-title-warning");
-                        cardElement.addClass("card-warning");
-                        iconElement.addClass("fa-exclamation-triangle");
-                    } else {
-                        iconElement.addClass("fa-info-circle");
-                    }
+                    // Applica le classi di colore in base al tipo di badge
+                    let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, 0);
+                    applyCardColorClasses(headerElement, titleElement, cardElement, colorClasses);
 
                     // Per altri controlli, mostra il contatore di errori
                     let badgeClass = hasDanger ? "badge-danger" : (hasWarning ? "badge-warning" : "badge-info");
@@ -418,7 +400,13 @@ function avviaControllo(controllo) {
                 // Mostra il pulsante "Risolvi tutti i conflitti" se il controllo lo supporta
                 let risolviBtnHTML = cardTools.find(".risolvi-btn");
                 if (risolviBtnHTML.length > 0) {
-                    risolviBtnHTML.show();
+                    risolviBtnHTML.removeClass("d-none").addClass("d-inline-block");
+                } else if (hasGlobalActions(controllo)) {
+                    // Se il pulsante non esiste, crealo
+                    let risolviBtnHTML = `<button type="button" class="btn btn-primary btn-sm risolvi-btn d-inline-block" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
+                        <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+                    </button>`;
+                    cardTools.append(risolviBtnHTML);
                 }
             } else {
                 // Se nessun problema, mantieni il colore info
@@ -431,7 +419,7 @@ function avviaControllo(controllo) {
 
                 // Nascondi il pulsante "Risolvi tutti i conflitti" se presente
                 let risolviBtnHTML = cardTools.find(".risolvi-btn");
-                risolviBtnHTML.hide();
+                risolviBtnHTML.removeClass("d-inline-block").addClass("d-none");
             }
         },
         error: function(xhr, r, error) {
@@ -452,7 +440,7 @@ function avviaControlloSingolo(id) {
     let controlloClass = cardElement.data("controllo-class");
 
     // Mostra il messaggio di operazione in corso sotto il tasto
-    let operazioneDiv = $("<div class=\"mb-4\" id=\"operazione-singolo\" style=\"margin-top: 20px;\">" +
+    let operazioneDiv = $("<div class=\"mb-4 mt-5\" id=\"operazione-singolo\">" +
         "<div class=\"text-center mt-3 mb-3\">" +
         "<span class=\"text-primary\"><i class=\"fa fa-spinner fa-spin mr-2\"></i>'.tr('Operazione in corso').': <strong>" + nomeControllo + "</strong></span>" +
         "</div>" +
@@ -492,9 +480,8 @@ function avviaControlloSingolo(id) {
 
             if (success) {
                 // Se il test è positivo (nessun avviso), colore success
-                headerElement.addClass("requirements-card-header-success");
-                titleElement.addClass("requirements-card-title-success");
-                cardElement.addClass("card-success");
+                let successClasses = determineCardClasses(0, 0, 0);
+                applyCardColorClasses(headerElement, titleElement, cardElement, successClasses);
 
                 // Pulisci il body e mostra il messaggio di successo
                 bodyElement.html(`<p class="text-muted">'.tr('Nessun problema rilevato').'</p>`);
@@ -507,7 +494,7 @@ function avviaControlloSingolo(id) {
 
                 // Nascondi il pulsante "Risolvi tutti i conflitti" se presente
                 let risolviBtnHTML = cardTools.find(".risolvi-btn");
-                risolviBtnHTML.hide();
+                risolviBtnHTML.removeClass("d-inline-block").addClass("d-none");
             } else if (records.length > 0) {
                 // Rimuovi la badge vecchia se presente
                 titleElement.find(".badge").remove();
@@ -517,20 +504,8 @@ function avviaControlloSingolo(id) {
                     let orphanFiles = records.filter(r => r.tipo === "file_orfano");
                     let orphanRecords = records.filter(r => r.tipo === "file_mancante");
 
-                    let headerColorCls = "requirements-card-header-info";
-                    let titleColorCls = "requirements-card-title-info";
-                    let cardColorCls = "card-info";
-
-                    if (orphanRecords.length > 0) {
-                        headerColorCls = "requirements-card-header-warning";
-                        titleColorCls = "requirements-card-title-warning";
-                        cardColorCls = "card-warning";
-                    }
-
-                    // Aggiungi le nuove classi in base al tipo di badge
-                    headerElement.addClass(headerColorCls);
-                    titleElement.addClass(titleColorCls);
-                    cardElement.addClass(cardColorCls);
+                    let colorClasses = determineCardClasses(0, orphanRecords.length > 0 ? 1 : 0, orphanFiles.length > 0 ? 1 : 0);
+                    applyCardColorClasses(headerElement, titleElement, cardElement, colorClasses);
 
                     // Ordina per gravità: warning prima di info
                     if (orphanRecords.length > 0) {
@@ -573,20 +548,9 @@ function avviaControlloSingolo(id) {
                         });
                     });
 
-                    // Aggiungi le nuove classi in base al tipo di badge più grave
-                    if (hasDanger) {
-                        headerElement.addClass("requirements-card-header-danger");
-                        titleElement.addClass("requirements-card-title-danger");
-                        cardElement.addClass("card-danger");
-                    } else if (hasWarning) {
-                        headerElement.addClass("requirements-card-header-warning");
-                        titleElement.addClass("requirements-card-title-warning");
-                        cardElement.addClass("card-warning");
-                    } else if (infoCount > 0) {
-                        headerElement.addClass("requirements-card-header-info");
-                        titleElement.addClass("requirements-card-title-info");
-                        cardElement.addClass("card-info");
-                    }
+                    // Applica le classi di colore in base al tipo di badge più grave
+                    let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, infoCount > 0 ? 1 : 0);
+                    applyCardColorClasses(headerElement, titleElement, cardElement, colorClasses);
 
                     // Mostra le badge per tipo di avviso
                     if (dangerCount > 0) {
@@ -603,16 +567,9 @@ function avviaControlloSingolo(id) {
                     let hasDanger = records.some(r => r.type === "danger");
                     let hasWarning = records.some(r => r.type === "warning");
 
-                    // Aggiungi le nuove classi in base al tipo di badge
-                    if (hasDanger) {
-                        headerElement.addClass("requirements-card-header-danger");
-                        titleElement.addClass("requirements-card-title-danger");
-                        cardElement.addClass("card-danger");
-                    } else if (hasWarning) {
-                        headerElement.addClass("requirements-card-header-warning");
-                        titleElement.addClass("requirements-card-title-warning");
-                        cardElement.addClass("card-warning");
-                    }
+                    // Applica le classi di colore in base al tipo di badge
+                    let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, 0);
+                    applyCardColorClasses(headerElement, titleElement, cardElement, colorClasses);
 
                     // Per altri controlli, mostra il contatore di errori
                     let badgeClass = hasDanger ? "badge-danger" : (hasWarning ? "badge-warning" : "badge-info");
@@ -689,7 +646,13 @@ function avviaControlloSingolo(id) {
                 // Mostra il pulsante "Risolvi tutti i conflitti" se il controllo lo supporta
                 let risolviBtnHTML = cardTools.find(".risolvi-btn");
                 if (risolviBtnHTML.length > 0) {
-                    risolviBtnHTML.show();
+                    risolviBtnHTML.removeClass("d-none").addClass("d-inline-block");
+                } else if (hasGlobalActions(controllo)) {
+                    // Se il pulsante non esiste, crealo
+                    let risolviBtnHTML = `<button type="button" class="btn btn-primary btn-sm risolvi-btn d-inline-block" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
+                        <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
+                    </button>`;
+                    cardTools.append(risolviBtnHTML);
                 }
             } else {
                 // Se nessun problema, mantieni il colore info
@@ -702,7 +665,7 @@ function avviaControlloSingolo(id) {
 
                 // Nascondi il pulsante "Risolvi tutti i conflitti" se presente
                 let risolviBtnHTML = cardTools.find(".risolvi-btn");
-                risolviBtnHTML.hide();
+                risolviBtnHTML.removeClass("d-inline-block").addClass("d-none");
             }
 
             // Ricarica i dati dell\'ultima esecuzione
@@ -770,7 +733,7 @@ function eseguiAzione(controllo, records, params) {
 
                 // Nascondi il pulsante "Risolvi tutti i conflitti" se presente
                 let risolviBtnHTML = cardElement.find(".risolvi-btn");
-                risolviBtnHTML.hide();
+                risolviBtnHTML.removeClass("d-inline-block").addClass("d-none");
 
                 // Collassa la card
                 cardElement.addClass("collapsed-card");
@@ -790,7 +753,7 @@ function eseguiAzione(controllo, records, params) {
 function setPercentage(percent) {
     $("#custom-progress-bar").css("width", percent + "%");
     $("#custom-progress-bar").attr("aria-valuenow", percent);
-    $("#progress-percentage").text(percent + "%");
+    $(".progress-container").attr("data-percentage", percent + "%");
 }
 
 /**
@@ -869,24 +832,12 @@ function initcard(controllo, success, records) {
             hasInfo = records.some(r => r.type === "info");
         }
 
-        if (hasDanger) {
-            cardColorClass = "card-danger";
-            headerColorClass = "requirements-card-header-danger";
-            titleColorClass = "requirements-card-title-danger";
-            finalIcon = "exclamation-triangle";
-        } else if (hasWarning) {
-            cardColorClass = "card-warning";
-            headerColorClass = "requirements-card-header-warning";
-            titleColorClass = "requirements-card-title-warning";
-            finalIcon = "exclamation-triangle";
-        } else if (hasInfo) {
-            cardColorClass = "card-info";
-            headerColorClass = "requirements-card-header-info";
-            titleColorClass = "requirements-card-title-info";
-            finalIcon = "info-circle";
-        } else {
-            finalIcon = "info-circle";
-        }
+        // Usa determineCardClasses per coerenza
+        let colorClasses = determineCardClasses(hasDanger ? 1 : 0, hasWarning ? 1 : 0, hasInfo ? 1 : 0);
+        cardColorClass = colorClasses.cardClass;
+        headerColorClass = colorClasses.headerClass;
+        titleColorClass = colorClasses.titleClass;
+        finalIcon = colorClasses.icon.replace("fa-", "");
     }
 
     if (records.length > 0) {
@@ -933,15 +884,15 @@ function initcard(controllo, success, records) {
         let dataFine = new Date(controllo["period_end"]);
         let dataInizioFormattata = dataInizio.toLocaleDateString("it-IT");
         let dataFineFormattata = dataFine.toLocaleDateString("it-IT");
-        card += ` <span style="color: #999; font-size: 0.9rem; margin-left: 10px;">${dataInizioFormattata} - ${dataFineFormattata}</span>`;
+        card += ` <span class="small text-muted ms-2">${dataInizioFormattata} - ${dataFineFormattata}</span>`;
     }
 
     card += `</h3>
-        <div class="card-tools pull-right" style="display: flex; align-items: center; gap: 10px;">`;
+        <div class="card-tools pull-right d-flex align-items-center" style="gap: 10px;">`;
 
     // Aggiungi informazioni di ultima esecuzione se disponibili
     if (controllo["last_execution"] || controllo["last_user"]) {
-        card += `<div style="font-size: 0.85rem; color: #666;">`;
+        card += `<div class="small text-muted last-execution-info-data flex-grow-1">`;
         if (controllo["last_execution"]) {
             // Formatta la data e ora
             let dataOra = new Date(controllo["last_execution"]);
@@ -963,9 +914,9 @@ function initcard(controllo, success, records) {
     if (hasGlobalActions(controllo)) {
         // Usa la stessa funzione per tutti i controlli, incluso IntegritaFile
         // Nascondi il pulsante se success è true (nessun problema rilevato)
-        let displayStyle = (!success && records.length > 0) ? "inline-block" : "none";
+        let displayClass = (!success && records.length > 0) ? "d-inline-block" : "d-none";
         card += `
-            <button type="button" class="btn btn-primary btn-sm risolvi-btn" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)" style="display: ` + displayStyle + `;">
+            <button type="button" class="btn btn-primary btn-sm risolvi-btn ` + displayClass + `" data-controllo-id="` + controllo["id"] + `" data-controllo-class="` + controllo["class"] + `" onclick="eseguiAzioneGlobale(this)">
                 <i class="fa fa-check-circle"></i> '.tr('Risolvi tutti i conflitti').'
             </button>`;
     }
@@ -982,7 +933,7 @@ function initcard(controllo, success, records) {
         let hasRowOptions = records.length > 0 && records[0].options && records[0].options.length > 0;
 
         card += `
-    <div class="card-body" style="padding: 10px 12px;">
+    <div class="card-body p-3">
         <div class="table-responsive">
             <table class="table table-sm">
                 <thead>
@@ -1004,7 +955,7 @@ function initcard(controllo, success, records) {
     } else {
         // Aggiungi un body vuoto per le card di tipo info (collassate)
         card += `
-    <div class="card-body" style="padding: 10px 12px;">
+    <div class="card-body p-3">
         <p class="text-muted">'.tr('Nessun problema rilevato').'</p>
     </div>`
     }
@@ -1062,9 +1013,9 @@ function addRiga(controllo, card, record) {
         });
 
         // Riga principale collassabile
-        let riga = `<tr class="` + record.type + `" id="` + rowId + `" style="cursor: pointer;">
+        let riga = `<tr class="` + record.type + ` module-aggiornamenti collapsible-row" id="` + rowId + `">
     <td>
-        <i class="fa fa-chevron-right" style="margin-right: 8px; transition: transform 0.2s;"></i>
+        <i class="fa fa-chevron-right"></i>
         ` + record.nome;
 
         // Aggiungi badge per gli avvisi
@@ -1099,9 +1050,9 @@ function addRiga(controllo, card, record) {
 
                 if (detailsRow.length === 0) {
                     // Crea la riga di dettagli
-                    let detailsHtml = `<tr id="` + detailsId + `" style="display: none;">
+                    let detailsHtml = `<tr id="` + detailsId + `" class="module-aggiornamenti collapsible-details">
         <td colspan="` + (hasOptions ? 3 : 2) + `">
-            <div style="padding: 15px; background: #f8f9fa; border-radius: 4px;">
+            <div class="module-aggiornamenti collapsible-details-content">
                 ` + record.descrizione + `
             </div>
         </td>
@@ -1312,13 +1263,13 @@ function eseguiAzioneGlobale(buttonElement) {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" style="float: left;">
+                        <button type="button" class="btn btn-default float-start" data-dismiss="modal">
                             <i class="fa fa-times"></i> '.tr('Annulla').'
                         </button>
-                        <button type="button" class="btn btn-primary" id="conferma-risoluzione" style="float: right;">
+                        <button type="button" class="btn btn-primary float-end" id="conferma-risoluzione">
                             <i class="fa fa-check"></i> '.tr('Procedi').'
                         </button>
-                        <div style="clear: both;"></div>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             </div>
@@ -1391,26 +1342,25 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
             let headerElement = cardElement.find(".card-header");
             let titleElement = cardElement.find(".card-title");
             let bodyElement = cardElement.find(".card-body");
+            let cardTools = cardElement.find(".card-tools");
 
             // Rimuovi tutte le righe del controllo
             cardElement.find("tbody tr").remove();
 
-            // Nascondi il pulsante di azione globale
-            button.hide();
+            // Rimuovi la badge dal titolo
+            titleElement.find(".badge").remove();
 
-            // Aggiorna i colori della card a success
-            headerElement.removeClass("requirements-card-header-success requirements-card-header-info requirements-card-header-warning requirements-card-header-danger");
-            titleElement.removeClass("requirements-card-title-success requirements-card-title-info requirements-card-title-warning requirements-card-title-danger");
-            cardElement.removeClass("card-success card-info card-warning card-danger");
-
-            headerElement.addClass("requirements-card-header-success");
-            titleElement.addClass("requirements-card-title-success");
-            cardElement.addClass("card-success");
+            // Aggiorna i colori della card a success con icona corretta
+            let successClasses = determineCardClasses(0, 0, 0);
+            applyCardColorClasses(headerElement, titleElement, cardElement, successClasses);
 
             // Mostra messaggio "Nessun conflitto rilevato"
             bodyElement.html(`<p class="text-muted">'.tr('Nessun problema rilevato').'</p>`);
 
             buttonRestore(button, restore);
+
+            // Nascondi il pulsante di azione globale dopo il restore
+            button.removeClass("d-inline-block").addClass("d-none");
 
             // Chiama il callback di successo
             if (typeof successCallback === "function") {
@@ -1422,7 +1372,7 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
 
             let errorHtml = `
                 <div class="alert alert-danger">
-                    <h4><i class="fa fa-exclamation-triangle" style="color: #dc3545;"></i> '.tr('Errore durante la risoluzione').'</h4>
+                    <h4><i class="fa fa-exclamation-triangle text-danger"></i> '.tr('Errore durante la risoluzione').'</h4>
                     <p>'.tr('Si è verificato un errore').': ${errorMessage}</p>
                 </div>
             `;

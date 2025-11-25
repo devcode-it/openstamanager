@@ -2340,6 +2340,25 @@ table.dataTable {
     color: #155724;
 }
 
+.module-aggiornamenti code.table-code {
+    color: black;
+}
+
+#progress {
+    display: none;
+}
+
+.module-aggiornamenti .db-section-header,
+.module-aggiornamenti .db-section-header-dynamic {
+    background-color: #f8f9fa;
+    cursor: pointer;
+    border-left: 3px solid #17a2b8;
+}
+
+.module-aggiornamenti .table-col-type {
+    width: 150px;
+}
+
 kbd {
     background: #ccc;
     color: #333;

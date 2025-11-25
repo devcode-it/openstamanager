@@ -1039,7 +1039,7 @@ function search(button) {
                     <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(23, 162, 184, 0.1);">
                         <i class="fa fa-search" style="font-size: 1.5rem; color: #17a2b8;"></i>
                     </div>
-                    <p class="text-muted mb-0 small">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
+                    <p class="text-muted mb-0">'.tr('Verifica la disponibilità di nuove versioni del gestionale').'</p>
                 </div>
                 <div id="update-search" class="mt-auto">';
 if (extension_loaded('curl')) {
@@ -1075,7 +1075,7 @@ echo '              </div>
                     <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(40, 167, 69, 0.1);">
                         <i class="fa fa-upload" style="font-size: 1.5rem; color: #28a745;"></i>
                     </div>
-                    <p class="text-muted mb-0 small">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
+                    <p class="text-muted mb-0">'.tr('Carica e installa aggiornamenti o nuovi moduli').'</p>
                 </div>';
 
 // Avviso personalizzazioni nella card di caricamento
@@ -1142,7 +1142,7 @@ echo '
                     <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; background-color: rgba(0, 123, 255, 0.1);">
                         <i class="fa fa-shield" style="font-size: 1.5rem; color: #007bff;"></i>
                     </div>
-                    <p class="text-muted mb-0 small">'.tr('Verifica l\'integrità del gestionale').'</p>
+                    <p class="text-muted mb-0">'.tr('Verifica l\'integrità del gestionale').'</p>
                 </div>
                 <div class="mt-auto">
                     <button type="button" class="btn btn-primary btn-block" onclick="controlli(this)">

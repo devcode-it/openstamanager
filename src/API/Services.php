@@ -66,6 +66,10 @@ class Services
                 // Recupero ultimi 100 accessi
                 $ultimi_accessi = self::getUltimiAccessi();
 
+                // Recupero numero di custom
+                $custom_files = function_exists('customStructureWithFiles') ? customStructureWithFiles() : [];
+                $custom_tables = function_exists('customTables') ? customTables() : [];
+
                 $response = self::request('GET', 'info', [
                     'spazio_occupato' => $spazio_occupato,
                     'utenti_attivi' => $utenti_attivi,
@@ -73,6 +77,8 @@ class Services
                     'ultimi_accessi' => $ultimi_accessi,
                     'sync_at' => Carbon::now()->toDateTimeString(),
                     'url_installazione' => setting('Base URL'),
+                    'file_custom' => count($custom_files),
+                    'db_custom' => count($custom_tables)
                 ]);
                 $content = self::responseBody($response);
                 $cache->set($content);

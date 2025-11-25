@@ -198,3 +198,6 @@ WHERE `name` IN ('Anagrafiche', 'Impianti', 'Gestione documentale');
 -- Rimozione dei campi obsoleti dalla tabella zz_modules
 ALTER TABLE `zz_modules` DROP COLUMN `use_notes`;
 ALTER TABLE `zz_modules` DROP COLUMN `use_checklists`;
+
+-- Aggiunta colonna session_token per gestione sessione singola
+ALTER TABLE `zz_users` ADD `session_token` VARCHAR(64) NULL DEFAULT NULL AFTER `password`;

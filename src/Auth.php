@@ -148,16 +148,21 @@ class Auth extends Util\Singleton
                     $log['id_utente'] = $this->user->id;
                     $status = 'success';
 
+                    // Genera e salva il token di sessione
+                    $this->generateSessionToken($this->user->id);
+
                     // Salvataggio nella sessione
                     $this->saveToSession();
                 } elseif (
-                    $this->isAuthenticated()
-                    && $this->password_check($password, $user['password'], $user['id'])
+                    $this->password_check($password, $user['password'], $user['id'])
                     && !empty($module)
                 ) {
                     // Accesso completato
                     $log['id_utente'] = $this->user->id;
                     $status = 'success';
+
+                    // Genera e salva il token di sessione
+                    $this->generateSessionToken($this->user->id);
 
                     // Salvataggio nella sessione
                     $this->saveToSession();
@@ -194,6 +199,10 @@ class Auth extends Util\Singleton
     {
         // Controllo autenticazione normale
         if (!empty($this->user)) {
+            // Verifica il token di sessione
+            if (!$this->checkSessionToken()) {
+                return false;
+            }
             return true;
         }
 
@@ -296,11 +305,11 @@ class Auth extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = ' . Group::where('nome', $group)->first()->id . " AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();
-            $results = $database->fetchArray($query." AND `options` != '' AND `options` != 'menu' AND `options` IS NOT NULL ORDER BY `order` ASC", $parameters);
+            $results = $database->fetchArray($query . " AND `options` != '' AND `options` != 'menu' AND `options` IS NOT NULL ORDER BY `order` ASC", $parameters);
 
             if (!empty($results)) {
                 $module = null;
@@ -430,7 +439,7 @@ class Auth extends Util\Singleton
 
         $database = database();
 
-        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
+        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL ' . self::$brute_options['timeout'] . ' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
             ':ip' => get_client_ip(),
             ':state' => self::getStatus()['failed']['code'],
             ':timeout' => self::$brute_options['timeout'],
@@ -545,7 +554,7 @@ class Auth extends Util\Singleton
         }
 
         // Verifica token e OTP nel database
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = ' . prepare($token) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             return [
@@ -647,13 +656,13 @@ class Auth extends Util\Singleton
         }
 
         // Pulisci l'OTP utilizzato
-        $database->query('UPDATE `zz_otp_tokens` SET `last_otp` = "" WHERE `id` = '.prepare($token_record['id']));
+        $database->query('UPDATE `zz_otp_tokens` SET `last_otp` = "" WHERE `id` = ' . prepare($token_record['id']));
 
         // Pulisci le sessioni OTP
-        unset($_SESSION['otp_last_sent_'.$token_record['id']]);
+        unset($_SESSION['otp_last_sent_' . $token_record['id']]);
 
         // Log del login
-        $username = $utente ? $utente->username : 'token_'.$token_record['id'];
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
         $user_id = $utente ? $utente->id : null;
 
         $database->insert('zz_logs', [
@@ -688,7 +697,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         // Verifica token nel database
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = ' . prepare($token) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             return [
@@ -783,7 +792,7 @@ class Auth extends Util\Singleton
         }
 
         // Log del login
-        $username = $utente ? $utente->username : 'token_'.$token_record['id'];
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
         $user_id = $utente ? $utente->id : null;
 
         $database->insert('zz_logs', [
@@ -937,14 +946,19 @@ class Auth extends Util\Singleton
      */
     protected function saveToSession()
     {
-        if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
+        if (session_status() == PHP_SESSION_ACTIVE && !empty($this->user)) {
             // Retrocompatibilità
             foreach ($this->user as $key => $value) {
                 $_SESSION[$key] = $value;
             }
             $_SESSION['id_utente'] = $this->user->id;
 
-            $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
+            // Salva il token di autenticazione nella sessione
+            if (!empty($this->user->session_token) && empty($_SESSION['auth_token'])) {
+                $_SESSION['auth_token'] = $this->user->session_token;
+            }
+
+            $identifier = md5($_SESSION['id_utente'] . $_SERVER['HTTP_USER_AGENT']);
             if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
                 $_SESSION['last_active'] = time();
                 $_SESSION['identifier'] = $identifier;
@@ -962,7 +976,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`=' . prepare(Models\Locale::getDefault()->id) . ' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 
@@ -990,7 +1004,7 @@ class Auth extends Util\Singleton
         // Crea un utente virtuale per la sessione
         $this->user = (object) [
             'id' => 0,
-            'username' => 'token_'.$token_record['id'],
+            'username' => 'token_' . $token_record['id'],
             'nome' => 'Token Access',
             'cognome' => '',
             'email' => '',
@@ -1029,7 +1043,7 @@ class Auth extends Util\Singleton
         $database = database();
 
         // Recupera il token dal database per verificare lo stato attuale
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `id` = '.prepare($this->token_user['token_id']).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `id` = ' . prepare($this->token_user['token_id']) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             // Token non trovato o disabilitato
@@ -1137,5 +1151,61 @@ class Auth extends Util\Singleton
         }
 
         return false;
+    }
+
+    /**
+     * Genera un token di sessione sicuro e lo salva nel database.
+     * Invalida automaticamente le sessioni precedenti.
+     *
+     * @param int $user_id ID dell'utente
+     */
+    protected function generateSessionToken($user_id)
+    {
+        // Genera un token sicuro di 64 caratteri esadecimali
+        $token = bin2hex(random_bytes(32));
+
+        $database = database();
+
+        // Salva il token nel database (invalida automaticamente le sessioni precedenti)
+        $database->update('zz_users', [
+            'session_token' => $token,
+        ], [
+            'id' => $user_id,
+        ]);
+
+        // Salva il token nella sessione
+        $_SESSION['auth_token'] = $token;
+
+        // Aggiorna anche l'oggetto user se già caricato
+        if (!empty($this->user) && $this->user->id == $user_id) {
+            $this->user->session_token = $token;
+        }
+    }
+
+    /**
+     * Verifica che il token di sessione corrisponda a quello nel database.
+     * Permette il login per utenti senza token (periodo di transizione).
+     *
+     * @return bool True se il token è valido o non presente, false altrimenti
+     */
+    protected function checkSessionToken()
+    {
+        // Se l'utente non è caricato, non possiamo verificare
+        if (empty($this->user)) {
+            return false;
+        }
+
+        // Periodo di transizione: se l'utente non ha ancora un token nel DB, permetti l'accesso
+        if (empty($this->user->session_token)) {
+            return true;
+        }
+
+        // Se c'è un token nel DB ma non in sessione, invalida la sessione
+        if (empty($_SESSION['auth_token'])) {
+            return false;
+        }
+
+        // Confronta i token in modo sicuro contro timing attacks
+        return hash_equals($this->user->session_token, $_SESSION['auth_token']);
     }
 }

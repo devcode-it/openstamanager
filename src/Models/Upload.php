@@ -84,6 +84,11 @@ class Upload extends Model
      */
     public static function build($source = null, $data = null, $name = null, $category = null)
     {
+        // Verifica permessi prima del caricamento
+        if (!self::checkUploadPermissions($data)) {
+            return false;
+        }
+
         $model = new static();
 
         // Informazioni di base
@@ -251,6 +256,18 @@ class Upload extends Model
 
     public function delete()
     {
+        // Verifica permessi prima dell'eliminazione
+        $data = [
+            'id_module' => $this->id_module,
+            'id_plugin' => $this->id_plugin,
+            'id_record' => $this->id_record,
+            'key' => $this->key,
+        ];
+
+        if (!self::checkDeletePermissions($data)) {
+            return false;
+        }
+
         $adapter_config = FileAdapter::find($this->id_adapter);
         $class = $adapter_config->class;
 
@@ -439,6 +456,112 @@ class Upload extends Model
             } catch (\Exception) {
                 // Se il thumbnail non esiste, continuo senza errori
             }
+        }
+    }
+
+    /**
+     * Verifica i permessi per il caricamento degli allegati.
+     *
+     * @param array $data Dati del file da caricare
+     * @return bool True se l'utente ha i permessi, false altrimenti
+     */
+    protected static function checkUploadPermissions($data)
+    {
+        // Se non ci sono dati del modulo, permetti il caricamento (per compatibilità)
+        if (empty($data['id_module']) && empty($data['id_plugin'])) {
+            return true;
+        }
+
+        $id_module = $data['id_module'] ?? null;
+        if (!empty($data['id_plugin'])) {
+            $plugin = \Models\Plugin::find($data['id_plugin']);
+            $id_module = $plugin ? $plugin->idmodule_to : null;
+        }
+
+        if (!$id_module) {
+            return true; // Se non riusciamo a determinare il modulo, permetti per compatibilità
+        }
+
+        // Verifica permessi in base al tipo di accesso
+        if (\Permissions::isTokenAccess()) {
+            // Per accesso tramite token, verifica i permessi del token
+            $token_info = $_SESSION['token_access'];
+            $token_permission = $token_info['permessi'] ?? 'r';
+
+            // Caricamento allegati: permessi 'ra', 'rwa' o 'rw'
+            $has_permission = in_array($token_permission, ['ra', 'rwa', 'rw']);
+
+            if (!$has_permission) {
+                flash()->error(tr('Non hai permessi di caricamento per il modulo _MODULE_', [
+                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                ]));
+            }
+
+            return $has_permission;
+        } else {
+            // Per accesso normale, usa i permessi standard del modulo
+            $has_permission = (\Modules::getPermission($id_module) == 'rw');
+
+            if (!$has_permission) {
+                flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                ]));
+            }
+
+            return $has_permission;
+        }
+    }
+
+    /**
+     * Verifica i permessi per l'eliminazione degli allegati.
+     *
+     * @param array $data Dati del file da eliminare
+     * @return bool True se l'utente ha i permessi, false altrimenti
+     */
+    protected static function checkDeletePermissions($data)
+    {
+        // Se non ci sono dati del modulo, permetti l'eliminazione (per compatibilità)
+        if (empty($data['id_module']) && empty($data['id_plugin'])) {
+            return true;
+        }
+
+        $id_module = $data['id_module'] ?? null;
+        if (!empty($data['id_plugin'])) {
+            $plugin = \Models\Plugin::find($data['id_plugin']);
+            $id_module = $plugin ? $plugin->idmodule_to : null;
+        }
+
+        if (!$id_module) {
+            return true; // Se non riusciamo a determinare il modulo, permetti per compatibilità
+        }
+
+        // Verifica permessi in base al tipo di accesso
+        if (\Permissions::isTokenAccess()) {
+            // Per accesso tramite token, verifica i permessi del token
+            $token_info = $_SESSION['token_access'];
+            $token_permission = $token_info['permessi'] ?? 'r';
+
+            // Rimozione allegati: solo permessi 'rwa' o 'rw'
+            $has_permission = in_array($token_permission, ['rwa', 'rw']);
+
+            if (!$has_permission) {
+                flash()->error(tr('Non hai permessi di eliminazione per il modulo _MODULE_', [
+                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                ]));
+            }
+
+            return $has_permission;
+        } else {
+            // Per accesso normale, usa i permessi standard del modulo
+            $has_permission = (\Modules::getPermission($id_module) == 'rw');
+
+            if (!$has_permission) {
+                flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                ]));
+            }
+
+            return $has_permission;
         }
     }
 

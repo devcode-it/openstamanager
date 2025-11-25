@@ -40,156 +40,125 @@ $database->beginTransaction();
 
 // Upload allegati e rimozione
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
-    // Controllo sui permessi di scrittura per il modulo
-    $has_write_permission = false;
+    // UPLOAD PER CKEDITOR
+    if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
+        $CKEditor = get('CKEditor');
+        $funcNum = get('CKEditorFuncNum');
 
-    // Verifica permessi in base al tipo di accesso
-    if (Permissions::isTokenAccess()) {
-        // Per accesso tramite token, verifica i permessi del token
-        $token_info = $_SESSION['token_access'];
-        $token_permission = $token_info['permessi'] ?? 'r';
+        $allowed_extension = [
+            'png', 'jpg', 'jpeg',
+        ];
 
-        // Per gli allegati, verifica i permessi specifici del token
-        if (filter('op') == 'aggiungi-allegato') {
-            // Caricamento allegati: permessi 'ra', 'rwa' o 'rw'
-            $has_write_permission = in_array($token_permission, ['ra', 'rwa', 'rw']);
-        } elseif (filter('op') == 'rimuovi-allegato') {
-            // Rimozione allegati: solo permessi 'rwa' o 'rw'
-            $has_write_permission = in_array($token_permission, ['rwa', 'rw']);
-        }
-    } else {
-        // Per accesso normale, usa i permessi standard del modulo
-        $has_write_permission = (Modules::getPermission($id_module) == 'rw');
-    }
+        // Maximum file limit (unit: byte)
+        $max_size = '2097152'; // 2MB
 
-    if (!$has_write_permission) {
-        flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
-        ]));
-    }
+        // Get image file extension
+        $file_extension = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
 
-    // Gestione delle operazioni
-    else {
-        // UPLOAD PER CKEDITOR
-        if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['upload']['name'])) {
-            $CKEditor = get('CKEditor');
-            $funcNum = get('CKEditorFuncNum');
+        if (in_array(strtolower($file_extension), $allowed_extension) && $_FILES['upload']['size'] < $max_size) {
+            $upload = Uploads::upload($_FILES['upload'], [
+                'name' => filter('nome_allegato'),
+                'id_category' => filter('id_category') ?: null,
+                'id_module' => Module::where('name', 'Gestione documentale')->first()->id,
+                'id_record' => $id_record,
+            ]);
 
-            $allowed_extension = [
-                'png', 'jpg', 'jpeg',
-            ];
+            // Upload da form
+            if (!empty($funcNum)) {
+                echo '
+                <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />
+                <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
+            }
 
-            // Maximum file limit (unit: byte)
-            $max_size = '2097152'; // 2MB
+            // Creazione file fisico
+            if (!empty($upload)) {
+                // flash()->info(tr('File caricato correttamente!'));
 
-            // Get image file extension
-            $file_extension = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
+                $id_allegato = $dbo->lastInsertedID();
+                $upload = Upload::find($id_allegato);
 
-            if (in_array(strtolower($file_extension), $allowed_extension) && $_FILES['upload']['size'] < $max_size) {
-                $upload = Uploads::upload($_FILES['upload'], [
-                    'name' => filter('nome_allegato'),
-                    'id_category' => filter('id_category') ?: null,
-                    'id_module' => Module::where('name', 'Gestione documentale')->first()->id,
-                    'id_record' => $id_record,
-                ]);
+                $response = [
+                    'fileName' => base_path().'/files/gestione_documentale/'.basename($upload->filename),
+                    'uploaded' => 1,
+                    'url' => base_path().'/files/gestione_documentale/'.$upload->filename,
+                ];
 
                 // Upload da form
                 if (!empty($funcNum)) {
                     echo '
-                    <link rel="stylesheet" type="text/css" href="'.$baseurl.'/assets/dist/css/app.min.css" />
-                    <script src="'.$baseurl.'/assets/dist/js/app.min.js"></script>';
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            window.parent.toastr.success("'.tr('Caricamento riuscito').'");
+                            window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/files/gestione_documentale/'.$upload->filename.'");
+                        });
+                    </script>';
                 }
 
-                // Creazione file fisico
-                if (!empty($upload)) {
-                    // flash()->info(tr('File caricato correttamente!'));
-
-                    $id_allegato = $dbo->lastInsertedID();
-                    $upload = Upload::find($id_allegato);
-
-                    $response = [
-                        'fileName' => base_path().'/files/gestione_documentale/'.basename($upload->filename),
-                        'uploaded' => 1,
-                        'url' => base_path().'/files/gestione_documentale/'.$upload->filename,
-                    ];
-
-                    // Upload da form
-                    if (!empty($funcNum)) {
-                        echo '
-                        <script type="text/javascript">
-                            $(document).ready(function() {
-                                window.parent.toastr.success("'.tr('Caricamento riuscito').'");
-                                window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/files/gestione_documentale/'.$upload->filename.'");
-                            });
-                        </script>';
-                    }
-
-                    // Copia-incolla
-                    else {
-                        echo json_encode($response);
-                    }
-                } else {
-                    // flash()->error(tr('Errore durante il caricamento del file!'));
-                    echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Errore durante il caricamento del file!').'"); </script>';
+                // Copia-incolla
+                else {
+                    echo json_encode($response);
                 }
             } else {
-                // flash()->error(tr('Estensione non permessa!'));
-                echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Estensione non permessa').'"); </script>';
+                // flash()->error(tr('Errore durante il caricamento del file!'));
+                echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Errore durante il caricamento del file!').'"); </script>';
             }
-
-            exit;
-        }
-
-        // UPLOAD
-        if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
-            $upload = Uploads::upload($_FILES['file'], [
-                'name' => filter('nome_allegato'),
-                'id_category' => filter('id_category') ?: null,
-                'id_module' => $id_module,
-                'id_plugin' => $id_plugin,
-                'id_record' => $id_record,
-                'key' => filter('key') ?: null,
-            ]);
-
-            // Creazione file fisico
-            if (!empty($upload)) {
-                flash()->info(tr('File caricato correttamente!'));
-            } else {
-                flash()->error(tr('Errore durante il caricamento del file!'));
-            }
-        }
-
-        // DELETE
-        elseif (filter('op') == 'rimuovi-allegato' && filter('filename') !== null) {
-            $name = Uploads::delete(filter('filename'), [
-                'id_module' => $id_module,
-                'id_plugin' => $id_plugin,
-                'id_record' => $id_record,
-                'key' => filter('key') ?: null,
-            ]);
-
-            if (!empty($name)) {
-                flash()->info(tr('File _FILE_ eliminato!', [
-                    '_FILE_' => '"'.$name.'"',
-                ]));
-            } else {
-                flash()->error(tr("Errore durante l'eliminazione del file!"));
-            }
-        }
-
-        // Determina il redirect appropriato in base al tipo di accesso
-        if (Permissions::isTokenAccess() && !empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
-            // Per accesso tramite token, redirect a shared_editor.php
-            redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
         } else {
-            // Per accesso normale, redirect a editor.php
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
+            // flash()->error(tr('Estensione non permessa!'));
+            echo '<script type="text/javascript">  window.parent.toastr.error("'.tr('Estensione non permessa').'"); </script>';
         }
+
+        exit;
+    }
+
+    // UPLOAD
+    if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
+        $upload = Uploads::upload($_FILES['file'], [
+            'name' => filter('nome_allegato'),
+            'id_category' => filter('id_category') ?: null,
+            'id_module' => $id_module,
+            'id_plugin' => $id_plugin,
+            'id_record' => $id_record,
+            'key' => filter('key') ?: null,
+        ]);
+
+        // Creazione file fisico
+        if (!empty($upload)) {
+            flash()->info(tr('File caricato correttamente!'));
+        } else {
+            flash()->error(tr('Errore durante il caricamento del file!'));
+        }
+    }
+
+    // DELETE
+    if (filter('op') == 'rimuovi-allegato' && filter('filename') !== null) {
+        $name = Uploads::delete(filter('filename'), [
+            'id_module' => $id_module,
+            'id_plugin' => $id_plugin,
+            'id_record' => $id_record,
+            'key' => filter('key') ?: null,
+        ]);
+
+        if (!empty($name)) {
+            flash()->info(tr('File _FILE_ eliminato!', [
+                '_FILE_' => '"'.$name.'"',
+            ]));
+        } else {
+            flash()->error(tr("Errore durante l'eliminazione del file!"));
+        }
+    }
+
+    // Determina il redirect appropriato in base al tipo di accesso
+    if (Permissions::isTokenAccess() && !empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
+        // Per accesso tramite token, redirect a shared_editor.php
+        redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
+    } else {
+        // Per accesso normale, redirect a editor.php
+        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
 }
 
 // Download allegati
-elseif (filter('op') == 'download-allegato') {
+if (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     // download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);

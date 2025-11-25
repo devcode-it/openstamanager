@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.9.6 (2025-11-25)](#296-2025-11-25)
+- [2.9.6 (2025-11-26)](#296-2025-11-26)
 - [2.9.5 (2025-11-12)](#295-2025-11-12)
 - [2.9.4 (2025-10-28)](#294-2025-10-28)
 - [2.9.3 (2025-10-14)](#293-2025-10-14)
@@ -65,7 +65,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
-## 2.9.6 (2025-11-25)
+## 2.9.6 (2025-11-26)
 ### Modificato (Changed)
 - Miglioria grafica controlli gestionale in Aggiornamenti
 - Miglioria log caricamento file aggiornamento 

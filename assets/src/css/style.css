@@ -327,7 +327,7 @@ input[type=file] {
 }
 
 .search-result-text small {
-    font-size: 9px;
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.6);
     display: block;
     word-wrap: break-word;

@@ -99,7 +99,7 @@ $settings = [
     ],
     'xsl' => [
         'type' => 'ext',
-        'description' => tr('Permette di visualizzazione grafica della Fattura Elettronica'),
+        'description' => tr('Permette la visualizzazione grafica della Fattura Elettronica'),
     ],
     'openssl' => [
         'type' => 'ext',

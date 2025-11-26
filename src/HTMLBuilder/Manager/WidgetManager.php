@@ -168,7 +168,7 @@ class WidgetManager implements ManagerInterface
 
                     '.(!empty($widget['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
                     <button type="button" class="btn close pull-right" onclick="if(confirm(\'Disabilitare questo widget?\')) {
-                        $.post(\''.base_path().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disabilita-widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); }">
+                        $.post(\''.base_path_osm().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disabilita-widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); }">
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only">'.tr('Chiudi').'</span>
                     </button>

@@ -219,7 +219,7 @@ if (!empty($elementi)) {
         $movimento_button = '';
         if (!empty($elemento['idmastrino']) && $nome_stampa === 'Liquidazione IVA') {
             $movimento_button = '
-                            <a class="btn btn-sm btn-primary" href="'.base_path().'/controller.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_record='.$elemento['idmastrino'].'" target="_blank">
+                            <a class="btn btn-sm btn-primary" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_record='.$elemento['idmastrino'].'" target="_blank">
                                 <i class="fa fa-book"></i> '.tr('Prima nota').'
                             </a>';
         }
@@ -230,7 +230,7 @@ if (!empty($elementi)) {
                         <td>'.($sezionale_stampa ?: tr('Tutti i sezionali')).'</td>
                         <td>'.$elemento['first_page'].' - '.$elemento['last_page'].'</td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-info" href="'.base_path().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
+                            <a class="btn btn-sm btn-info" href="'.base_path_osm().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
                                 <i class="fa fa-download"></i> '.tr('Scarica').'
                             </a>
                             '.$movimento_button.'

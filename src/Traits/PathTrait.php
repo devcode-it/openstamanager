@@ -51,7 +51,7 @@ trait PathTrait
     {
         $filepath = $this->filepath($file);
 
-        $result = str_replace(base_dir(), base_path(), $filepath);
+        $result = str_replace(base_dir(), base_path_osm(), $filepath);
         $result = str_replace('\\', '/', $result);
 
         return $result;

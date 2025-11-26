@@ -122,7 +122,7 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect_url(base_path(), 'js');
+    redirect_url(base_path_osm(), 'js');
     exit;
 }
 

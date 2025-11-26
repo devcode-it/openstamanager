@@ -125,7 +125,7 @@ foreach ($prints as $print) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$print->id.'" target="_blank">'.$print->original.'</a>
+                        <a href="'.base_path_osm().'/view.php?file_id='.$print->id.'" target="_blank">'.$print->original.'</a>
                     </td>
                 </tr>';
 }
@@ -154,7 +154,7 @@ foreach ($uploads_old as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
+                        <a href="'.base_path_osm().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
                     </td>
                 </tr>';
 }
@@ -162,7 +162,7 @@ foreach ($uploads as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
+                        <a href="'.base_path_osm().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->original.'</a>
                     </td>
                 </tr>';
 }

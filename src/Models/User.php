@@ -149,7 +149,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path().'/files/'.$image->module->directory.'/'.$image->filename;
+        return base_path_osm().'/files/'.$image->module->directory.'/'.$image->filename;
     }
 
     public function setPhotoAttribute($value)

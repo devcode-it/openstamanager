@@ -79,7 +79,7 @@ if (empty($file)) {
         }
     </style>';
 
-        $link = base_path().'/'.$file->filepath;
+        $link = base_path_osm().'/'.$file->filepath;
 
         if ($file->isImage()) {
             echo '

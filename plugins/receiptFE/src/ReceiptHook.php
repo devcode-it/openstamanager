@@ -72,7 +72,7 @@ class ReceiptHook extends CachedManager
             'icon' => 'fa fa-ticket text-'.$color,
             'message' => $message,
             'show' => $notify,
-            'link' => base_path().'/controller.php?id_module='.$id_module,
+            'link' => base_path_osm().'/controller.php?id_module='.$id_module,
         ];
     }
 }

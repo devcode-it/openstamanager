@@ -75,7 +75,7 @@ if ($final_module->id == $id_module_interventi) {
     $righe_evase = $righe_totali->where('qta_rimanente', '=', 0);
 }
 
-$link = !empty($documento_finale) ? base_path().'/editor.php?id_module='.$final_module->id.'&id_record='.$documento_finale->id : base_path().'/controller.php?id_module='.$final_module->id;
+$link = !empty($documento_finale) ? base_path_osm().'/editor.php?id_module='.$final_module->id.'&id_record='.$documento_finale->id : base_path_osm().'/controller.php?id_module='.$final_module->id;
 
 echo '
 <form action="'.$link.'" method="post">

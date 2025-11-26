@@ -180,7 +180,7 @@ switch (post('op')) {
             $id_print = Prints::getPrints()['Barcode bulk'];
         }
 
-        redirect_url(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id.'&qta='.$qta);
+        redirect_url(base_path_osm().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id.'&qta='.$qta);
         exit;
 
     case 'change_quantity':
@@ -243,7 +243,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect_url(base_path().'/editor.php?id_module='.$id_preventivi.'&id_record='.$id_preventivo);
+        redirect_url(base_path_osm().'/editor.php?id_module='.$id_preventivi.'&id_record='.$id_preventivo);
         exit;
 
     case 'export_csv':

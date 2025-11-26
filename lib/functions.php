@@ -325,9 +325,9 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect_url(base_path().'/controller.php?id_module='.$id_module.$hash);
+            redirect_url(base_path_osm().'/controller.php?id_module='.$id_module.$hash);
         }
 
         exit;
@@ -375,7 +375,7 @@ function getURLPath()
     if (str_starts_with((string) $path, $prefix)) {
         $path = substr((string) $path, strlen($prefix));
     } else {
-        $path = str_replace(base_dir(), base_path(), $path);
+        $path = str_replace(base_dir(), base_path_osm(), $path);
     }
 
     return slashes($path);
@@ -491,7 +491,7 @@ function base_url()
  *
  * @return string
  */
-function base_path()
+function base_path_osm()
 {
     return App::$rootdir;
 }

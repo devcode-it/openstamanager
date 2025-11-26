@@ -59,7 +59,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['idarticolo'];
+    $result['link'] = base_path_osm().'/editor.php?id_module='.$link_id.'&id_record='.$r['idarticolo'];
     $result['title'] = $r['codice'].' - '.$r['descrizione'].'<br>
         <small>'.
             ($show_prezzi ? '<strong>'.tr('Prezzo di vendita').':</strong> '.moneyFormat($prezzi_ivati ? $r['prezzo_vendita_ivato'] : $r['prezzo_vendita']).'<br>' : '').'

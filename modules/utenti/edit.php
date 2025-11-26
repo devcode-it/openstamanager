@@ -196,12 +196,12 @@ if (!empty($utenti)) {
 
         if ($is_otp_enabled) {
             echo '
-                <a title="'.tr('Gestione login tramite OTP').'" class="btn btn-xs btn-success tip" onclick="launch_modal(\''.tr('Gestione login tramite OTP').'\', \''.base_path().'/modules/utenti/components/gestione_otp.php?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'\')">
+                <a title="'.tr('Gestione login tramite OTP').'" class="btn btn-xs btn-success tip" onclick="launch_modal(\''.tr('Gestione login tramite OTP').'\', \''.base_path_osm().'/modules/utenti/components/gestione_otp.php?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'\')">
                     <i class="fa fa-link"></i>
                 </a>';
         } else {
             echo '
-                <a title="'.tr('Abilita login tramite OTP').'" class="btn btn-xs btn-primary tip" onclick="launch_modal(\''.tr('Gestione login tramite OTP').'\', \''.base_path().'/modules/utenti/components/gestione_otp.php?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'\')">
+                <a title="'.tr('Abilita login tramite OTP').'" class="btn btn-xs btn-primary tip" onclick="launch_modal(\''.tr('Gestione login tramite OTP').'\', \''.base_path_osm().'/modules/utenti/components/gestione_otp.php?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'\')">
                     <i class="fa fa-link"></i>
                 </a>';
         }

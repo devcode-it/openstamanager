@@ -81,7 +81,7 @@ switch (filter('op')) {
         // Redirect alla categoria se si sta modificando una sottocategoria
         if (!empty($id_original)) {
             $database->commitTransaction();
-            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
             exit;
         }
 
@@ -131,7 +131,7 @@ switch (filter('op')) {
         } else {
             // Redirect alla categoria se si sta aggiungendo una sottocategoria
             $database->commitTransaction();
-            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
             exit;
         }
 

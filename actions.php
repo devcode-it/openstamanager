@@ -78,9 +78,9 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Upload::find($id_allegato);
 
                 $response = [
-                    'fileName' => base_path().'/files/gestione_documentale/'.basename($upload->filename),
+                    'fileName' => base_path_osm().'/files/gestione_documentale/'.basename($upload->filename),
                     'uploaded' => 1,
-                    'url' => base_path().'/files/gestione_documentale/'.$upload->filename,
+                    'url' => base_path_osm().'/files/gestione_documentale/'.$upload->filename,
                 ];
 
                 // Upload da form
@@ -150,10 +150,10 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Determina il redirect appropriato in base al tipo di accesso
     if (Permissions::isTokenAccess() && !empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
         // Per accesso tramite token, redirect a shared_editor.php
-        redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
+        redirect_url(base_path_osm().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     } else {
         // Per accesso normale, redirect a editor.php
-        redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
+        redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
 }
 
@@ -494,7 +494,7 @@ if ($structure->permission == 'rw') {
     $bulk = empty($bulk) ? [] : $bulk;
 
     if (in_array(post('op'), array_keys($bulk))) {
-        redirect_url(base_path().'/controller.php?id_module='.$id_module, 'js');
+        redirect_url(base_path_osm().'/controller.php?id_module='.$id_module, 'js');
     } else {
         // Esecuzione delle operazioni del modulo
         ($include_file = $structure->filepath('actions.php')) ? include $include_file : null;

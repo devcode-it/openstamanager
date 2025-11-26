@@ -60,7 +60,7 @@ class UpdateHookTask extends Manager
                 return $result;
             } else {
                 $module = Module::where('name', 'Aggiornamenti')->first();
-                $link = !empty($module) ? base_path().'/controller.php?id_module='.$module->id : '#';
+                $link = !empty($module) ? base_path_osm().'/controller.php?id_module='.$module->id : '#';
 
                 $result = [
                     'response' => 2,

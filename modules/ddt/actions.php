@@ -673,7 +673,7 @@ switch (filter('op')) {
 
         // Restituisce l'URL per la stampa
         $id_print = Prints::getPrints()['Barcode'];
-        $url = base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.ArticoloOriginale::where('codice', '!=', '')->first()->id.'&from_ddt=1';
+        $url = base_path_osm().'/pdfgen.php?id_print='.$id_print.'&id_record='.ArticoloOriginale::where('codice', '!=', '')->first()->id.'&from_ddt=1';
 
         echo $url;
         break;

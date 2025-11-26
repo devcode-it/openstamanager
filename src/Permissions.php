@@ -105,8 +105,8 @@ class Permissions
             }
             // Gestione accesso normale
             else {
-                if (!Auth::check() && getURLPath() == slashes(base_path().'/index.php')) {
-                    redirect_url(base_path().'/index.php');
+                if (!Auth::check() && getURLPath() == slashes(base_path_osm().'/index.php')) {
+                    redirect_url(base_path_osm().'/index.php');
                     $result = false;
                     exit;
                 } else {
@@ -222,7 +222,7 @@ class Permissions
 
         // Se il token ha un modulo target specifico
         if (!empty($token_info['id_module_target']) && $token_info['id_module_target'] > 0) {
-            $base_url = base_path();
+            $base_url = base_path_osm();
 
             // Se ha anche un record target specifico, redirect a editor.php
             if (!empty($token_info['id_record_target']) && $token_info['id_record_target'] > 0) {

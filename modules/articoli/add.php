@@ -187,7 +187,7 @@ $(document).ready(function () {
 
         if($(this).val()){
             modello.parent().find(".input-group-append button").removeClass("hide");
-            modello.parent().find(".input-group-append button").attr("onclick", originalModello ? originalModello.replace(/id_original=\d*/, "id_original=" + $(this).val()) : "openModal('<?php echo tr('Aggiungi modello'); ?>', '<?php echo base_path(); ?>/add.php?id_module=<?php echo Module::where('name', 'Marche')->first()->id; ?>&id_original=" + $(this).val() + "')");
+            modello.parent().find(".input-group-append button").attr("onclick", originalModello ? originalModello.replace(/id_original=\d*/, "id_original=" + $(this).val()) : "openModal('<?php echo tr('Aggiungi modello'); ?>', '<?php echo base_path_osm(); ?>/add.php?id_module=<?php echo Module::where('name', 'Marche')->first()->id; ?>&id_original=" + $(this).val() + "')");
         }
         else {
             modello.parent().find(".input-group-append button").addClass("hide");

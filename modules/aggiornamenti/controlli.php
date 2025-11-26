@@ -33,7 +33,7 @@ echo '
     </button>
 </div>
 
-<script src="'.base_path().'/modules/aggiornamenti/src/utils.js"></script>
+<script src="'.base_path_osm().'/modules/aggiornamenti/src/utils.js"></script>
 
 <div id="progress" class="mb-4" style="display: none;">
     <div class="progress-container" data-percentage="0%">

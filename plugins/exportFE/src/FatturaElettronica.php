@@ -1724,11 +1724,12 @@ class FatturaElettronica implements \Stringable
 
         // Inclusione
         foreach ($allegati as $allegato) {
-            if ($allegato['category'] == 'Allegati Fattura Elettronica') {
+            $categoria = database()->fetchOne('SELECT `name` FROM `zz_files_categories` WHERE `id` = '.prepare($allegato['id_category']))['name'];
+            if ($categoria == 'Allegati Fattura Elettronica') {
                 $file = base_dir().'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [
-                    'NomeAttachment' => $allegato['name'],
+                    'NomeAttachment' => $allegato['name'].'.'.\Uploads::fileInfo($file)['extension'],
                     'FormatoAttachment' => \Uploads::fileInfo($file)['extension'],
                     'Attachment' => base64_encode(file_get_contents($file)),
                 ];

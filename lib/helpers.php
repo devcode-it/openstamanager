@@ -158,7 +158,7 @@ function auth_osm()
  *
  * @return Translator
  */
-function trans()
+function trans_osm()
 {
     return Translator::getInstance();
 }

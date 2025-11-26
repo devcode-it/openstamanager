@@ -200,7 +200,7 @@ class App
 
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = trans()->getCurrentLocale();
+        $lang = trans_osm()->getCurrentLocale();
 
         // Sezioni: nome - percorso
         $sections = [

@@ -378,6 +378,6 @@ class Translator extends Util\Singleton
             ] : $options['number']
         );
 
-        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+        self::$formatter->setPrecision(auth_osm()->check() ? setting('Cifre decimali per importi') : 2);
     }
 }

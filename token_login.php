@@ -50,7 +50,7 @@ switch ($op) {
         $otp_code = post('otp_code');
 
         // Utilizza il metodo della classe Auth per gestire il login OTP
-        $result = auth()->attemptOTPLogin($token_param, $otp_code);
+        $result = auth_osm()->attemptOTPLogin($token_param, $otp_code);
 
         if ($result['success']) {
             // Imposta variabili di sessione per il calendario
@@ -103,7 +103,7 @@ switch ($op) {
 
         if (!empty($token_param)) {
             // Utilizza il metodo della classe Auth per gestire il login tramite token
-            $result = auth()->attemptTokenLogin($token_param);
+            $result = auth_osm()->attemptTokenLogin($token_param);
 
             if ($result['success']) {
                 // Imposta variabili di sessione per il calendario
@@ -242,7 +242,7 @@ if ($tipo_accesso == 'token') {
 
     if ($confirm_access == '1') {
         // L'utente ha confermato, procedi con il login
-        $result = auth()->attemptTokenLogin($token);
+        $result = auth_osm()->attemptTokenLogin($token);
 
         if ($result['success']) {
             // Imposta variabili di sessione per il calendario
@@ -295,7 +295,7 @@ if ($tipo_accesso == 'otp') {
     // Controlla se è stata richiesta la generazione dell'OTP
     if ($otp_requested) {
         // Genera nuovo codice OTP sicuro
-        $otp_code = auth()->getOTP();
+        $otp_code = auth_osm()->getOTP();
 
         // Salva l'OTP nel database
         $dbo->query('UPDATE `zz_otp_tokens` SET `last_otp` = '.prepare($otp_code).' WHERE `id` = '.prepare($token_record['id']));

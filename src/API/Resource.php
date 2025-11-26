@@ -39,6 +39,6 @@ class Resource
 
     public function getUser()
     {
-        return auth()->getUser();
+        return auth_osm()->getUser();
     }
 }

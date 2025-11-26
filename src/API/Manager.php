@@ -238,7 +238,7 @@ class Manager
             }
         } catch (\PDOException $e) {
             // Log dell'errore
-            $logger = logger();
+            $logger = logger_osm();
             $logger->addRecord(\Monolog\Logger::ERROR, $e);
 
             throw new InternalError();

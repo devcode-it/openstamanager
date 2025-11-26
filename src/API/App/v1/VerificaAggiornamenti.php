@@ -108,7 +108,7 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
                 $errori[] = "Errore nel controllare {$nome_risorsa}: ".$e->getMessage();
 
                 // Log dell'errore per debugging
-                $logger = logger();
+                $logger = logger_osm();
                 $logger->addRecord(\Monolog\Level::Error, "Errore in VerificaAggiornamenti per {$nome_risorsa}: ".$e->getMessage());
             }
         }

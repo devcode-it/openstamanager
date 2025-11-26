@@ -90,7 +90,7 @@ class Services
         } catch (\Exception $e) {
             // Log dell'errore per debug
             if (function_exists('logger')) {
-                logger()->error('Errore nel recupero informazioni Services: '.$e->getMessage());
+                logger_osm()->error('Errore nel recupero informazioni Services: '.$e->getMessage());
             }
 
             // Restituisce un array vuoto in caso di errore

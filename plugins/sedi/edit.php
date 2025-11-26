@@ -364,7 +364,7 @@ function rimuoviSede(button) {
     let hash = window.location.href.split("#")[1];
 
     confirmDelete(button).then(function () {
-        redirect(globals.rootdir + "/editor.php", {
+        redirect_url(globals.rootdir + "/editor.php", {
             backto: "record-edit",
             hash: hash,
             op: "deletesede",

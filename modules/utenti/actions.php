@@ -145,7 +145,7 @@ switch (filter('op')) {
 
         $utente->save();
 
-        redirect(base_path().'/modules/utenti/info.php');
+        redirect_url(base_path().'/modules/utenti/info.php');
 
         break;
 

@@ -87,7 +87,7 @@ class Query
         }
 
         $lang = \Models\Locale::getDefault()->id;
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         // Sostituzione periodi temporali
         $date_query = $date_filter = null;
@@ -776,7 +776,7 @@ class Query
     {
         $database = database();
 
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         $views = $database->fetchArray('SELECT `zz_views`.*, `zz_views_lang`.*
         FROM 

@@ -629,7 +629,7 @@ switch (post('op')) {
 
     case 'send-invoices':
         $list = [];
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
         $fatture = Fattura::vendita()
             ->whereIn('id', $id_records)
             ->orderBy('data')

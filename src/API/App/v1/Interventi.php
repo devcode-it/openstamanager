@@ -56,9 +56,9 @@ class Interventi extends AppResource
         $remove_start = $remove_end->copy()->subMonths(2);
 
         // Informazioni sull'utente
-        $id_tecnico = \Auth::user()->id_anagrafica;
+        $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
-        if (\Auth::user()->is_admin) {
+        if (auth_osm()->getUser()->is_admin) {
             $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
             OR (
@@ -122,10 +122,10 @@ class Interventi extends AppResource
         $end = $date['end'];
 
         // Informazioni sull'utente
-        $id_tecnico = \Auth::user()->id_anagrafica;
+        $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            if (\Auth::user()->is_admin) {
+            if (auth_osm()->getUser()->is_admin) {
                 $query = '
                 SELECT
                     `in_interventi`.`id`,
@@ -165,7 +165,7 @@ class Interventi extends AppResource
                     )';
             }
         } else {
-            if (\Auth::user()->is_admin) {
+            if (auth_osm()->getUser()->is_admin) {
                 $query = '
                     SELECT
                         `in_interventi`.`id`,
@@ -225,7 +225,7 @@ class Interventi extends AppResource
         }
 
         if (setting('Visualizza solo promemoria assegnati') == 1) {
-            if (\Auth::user()->is_admin) {
+            if (auth_osm()->getUser()->is_admin) {
                 $records = database()->fetchArray($query, [
                     ':period_start' => $start,
                     ':period_end' => $end,
@@ -239,7 +239,7 @@ class Interventi extends AppResource
                 ]);
             }
         } else {
-            if (\Auth::user()->is_admin) {
+            if (auth_osm()->getUser()->is_admin) {
                 $records = database()->fetchArray($query, [
                     ':period_start' => $start,
                     ':period_end' => $end,

@@ -26,7 +26,7 @@ $intervento = Intervento::find($id_record);
 $sessioni = $intervento->sessioni;
 $righe = $intervento->getRighe();
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getUser()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 if ($show_prezzi) {
     $rss = $dbo->fetchArray('SELECT `in_statiintervento`.`is_bloccato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id`=`in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));

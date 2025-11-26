@@ -23,7 +23,7 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getUser()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 // Impostazioni per la gestione
 $options = [

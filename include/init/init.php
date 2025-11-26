@@ -97,7 +97,7 @@ if (post('action') == 'init') {
         // Creazione utente Amministratore
         $dbo->insert('zz_users', [
             'username' => post('admin_username'),
-            'password' => Auth::hashPassword(post('admin_password')),
+            'password' => AuthOSM::hashPassword(post('admin_password')),
             'email' => post('admin_email'),
             'idgruppo' => $admin['id'],
             'idanagrafica' => $id_record ?? 0,

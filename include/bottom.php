@@ -20,7 +20,7 @@
 
 include_once __DIR__.'/../core.php';
 
-if (Auth::check()) {
+if (AuthOSM::check()) {
     echo '
                 </section><!-- /.content -->
             </div><!-- /.content-wrapper -->
@@ -39,7 +39,7 @@ if (Auth::check()) {
 echo '
         </div><!-- ./wrapper -->';
 
-if (Auth::check()) {
+if (AuthOSM::check()) {
     if (!empty($_SESSION['keep_alive'])) {
         echo '
 		<script> setInterval("session_keep_alive()", 5*60*1000); </script>';

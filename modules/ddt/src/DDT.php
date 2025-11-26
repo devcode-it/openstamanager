@@ -59,7 +59,7 @@ class DDT extends Document
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
     {
         $model = new static();
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 

@@ -27,7 +27,7 @@ use Models\User;
  *
  * @since 2.3
  */
-class Auth extends Util\Singleton
+class AuthOSM extends Util\Singleton
 {
     /** @var array Stati previsti dal sistema di autenticazione */
     protected static $status = [

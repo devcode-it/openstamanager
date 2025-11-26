@@ -74,7 +74,7 @@ class Intervento extends Document
         // Set idclientefinale to the same as idanagrafica by default to avoid foreign key constraint violation
         $model->idclientefinale = $anagrafica->idanagrafica;
 
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
         $id_sede = null;
         foreach ($user->sedi as $sede) {
             if ($sede != 0 || count($user->sedi) == 1) {

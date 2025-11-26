@@ -36,7 +36,7 @@ class Checklists extends AppResource
         $end = $today->copy()->addMonth();
 
         // Informazioni sull'utente
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         // Elenco di interventi di interesse
         $risorsa_interventi = $this->getRisorsaInterventi();
@@ -124,7 +124,7 @@ class Checklists extends AppResource
             return [];
         }
 
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         $id_interventi = array_keys($interventi);
         if ($user->is_admin) {

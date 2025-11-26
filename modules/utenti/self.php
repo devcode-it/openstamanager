@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 $resource = filter('resource');
 
-$user = Auth::user();
+$user = auth_osm()->getUser();
 $utente = $user->toArray();
 
 echo '

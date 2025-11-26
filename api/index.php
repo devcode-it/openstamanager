@@ -118,4 +118,4 @@ if (json_last_error() == JSON_ERROR_NONE) {
 // Stampa dei risultati
 echo $response;
 
-Auth::logout();
+AuthOSM::logout();

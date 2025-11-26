@@ -48,17 +48,17 @@ echo '
 /*
     LEGGO DALLA TABELLA ZZ_LOG
 */
-if (Auth::admin()) {
+if (AuthOSM::admin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
-    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(Auth::user()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
+    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(auth_osm()->getUser()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
 $logs = $dbo->fetchArray($q);
 
 foreach ($logs as $log) {
     $timestamp = Translator::timestampToLocale($log['created_at']);
 
-    $status = Auth::getStatus();
+    $status = AuthOSM::getStatus();
     if ($log['stato'] == $status['success']['code']) {
         $type = 'success';
         $stato = $status['success']['message'];

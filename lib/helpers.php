@@ -109,7 +109,7 @@ function setting($name)
     /** @var Models\Setting $setting */
     $setting = Settings::get($name);
 
-    $user = Auth::user();
+    $user = auth_osm()->getUser();
     $user_options = [];
 
     if ($user) {
@@ -148,7 +148,7 @@ function flash()
  */
 function auth_osm()
 {
-    return Auth::getInstance();
+    return AuthOSM::getInstance();
 }
 
 /**

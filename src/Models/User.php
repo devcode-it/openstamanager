@@ -138,7 +138,7 @@ class User extends Model
 
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = \Auth::hashPassword($value);
+        $this->attributes['password'] = \AuthOSM::hashPassword($value);
     }
 
     public function getPhotoAttribute()

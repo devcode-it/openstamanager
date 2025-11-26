@@ -25,7 +25,7 @@ use Util\FileSystem;
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();
-$user = Auth::user();
+$user = auth_osm()->getUser();
 
 if (empty($pageTitle)) {
     if ($structure instanceof Module) {
@@ -76,7 +76,7 @@ foreach (App::getAssets()['print'] as $style) {
         <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
 }
 
-if (Auth::check()) {
+if (AuthOSM::check()) {
     if ($id_record) {
         $position = 'tab';
     } else {
@@ -88,7 +88,7 @@ if (Auth::check()) {
     // Determina se mostrare la barra dei plugin
     // Include il tab Info per gli admin quando siamo in editor.php
     $in_editor = string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php');
-    $has_info_tab = $in_editor && Auth::admin();
+    $has_info_tab = $in_editor && AuthOSM::admin();
     $show_plugin_bar = $has_plugins > 0 || $has_info_tab;
 
     echo '
@@ -344,7 +344,7 @@ echo '
             });
         </script>';
 
-if (Auth::check()) {
+if (AuthOSM::check()) {
     if (setting('Abilita esportazione Excel e PDF')) {
         echo '
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -397,16 +397,16 @@ if ($theme == 'default') {
 }
 
 $settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
-$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
+$hide_sidebar = AuthOSM::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
     </head>
 
-	<body class="sidebar-mini layout-fixed '.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
+	<body class="sidebar-mini layout-fixed '.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!AuthOSM::check() ? ' hold-transition login-page' : '').'">
+		<div class="'.(!AuthOSM::check() ? '' : 'wrapper').'">';
 
 $isInstallation = (!$dbo->isInstalled() || !$dbo->isConnected() || Update::isUpdateAvailable());
 
-if (Auth::check()) {
+if (AuthOSM::check()) {
     $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'secondary';
 
     echo '
@@ -630,7 +630,7 @@ if (Auth::check()) {
             }
 
             // Tab per le informazioni sulle operazioni
-            if (Auth::admin()) {
+            if (AuthOSM::admin()) {
                 echo '
                             <li data-toggle="control-sidebar" class="btn-default nav-item plugin-tab-item">
                                 <a class="bg-info nav-link plugin-tab-link" data-toggle="tab" href="#tab_info" id="link-tab_info">
@@ -746,9 +746,9 @@ if (!empty($messages['info'])) {
 }
 
 // Errori - non mostrare nella pagina di login
-if (!empty($messages['error']) && (Auth::check() || $pageTitle != tr('Login'))) {
+if (!empty($messages['error']) && (AuthOSM::check() || $pageTitle != tr('Login'))) {
     // Verifica se l'utente è un amministratore
-    $is_admin = Auth::check() && Auth::admin();
+    $is_admin = AuthOSM::check() && AuthOSM::admin();
 
     foreach ($messages['error'] as $value) {
         // Rimuovi il codice errore dal messaggio
@@ -799,7 +799,7 @@ if (!empty($messages['warning'])) {
 }
 
 // Chiusura della card informazioni - non mostrare nella pagina di login quando ci sono solo errori
-if (!Auth::check()
+if (!AuthOSM::check()
     && (!empty($messages['info']) || !empty($messages['warning'])
      || (!empty($messages['error']) && $pageTitle != tr('Login')))) {
     echo '

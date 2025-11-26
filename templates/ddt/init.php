@@ -151,6 +151,6 @@ $custom = [
 // - cliente se è impostato l'idanagrafica di un Cliente
 // - utente qualsiasi con permessi almeno in lettura sul modulo
 // - admin
-if ((Auth::user()['gruppo'] == 'Clienti' && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($documento->module) == '-') {
+if ((auth_osm()->getUser()['gruppo'] == 'Clienti' && $id_cliente != auth_osm()->getUser()['idanagrafica'] && !AuthOSM::admin()) || Modules::getPermission($documento->module) == '-') {
     exit(tr('Non hai i permessi per questa stampa!'));
 }

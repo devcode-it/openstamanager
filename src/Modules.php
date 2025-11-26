@@ -136,7 +136,7 @@ class Modules
     public static function getAdditionals($module, $include_segments = true)
     {
         $module = self::get($module);
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         if (!isset(self::$additionals[$module['id']])) {
             $database = database();
@@ -198,7 +198,7 @@ class Modules
         }
 
         $module = self::get($module)['id'];
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         if (!isset(self::$segments[$module])) {
             $database = database();

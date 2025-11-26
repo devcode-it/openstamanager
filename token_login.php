@@ -178,7 +178,7 @@ if (empty($token_record)) {
     $dbo->insert('zz_logs', [
         'username' => $token_record['token'],
         'ip' => get_client_ip(),
-        'stato' => Auth::getStatus()['failed']['code'],
+        'stato' => AuthOSM::getStatus()['failed']['code'],
         'id_utente' => null,
         'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
@@ -204,7 +204,7 @@ if ($is_not_active) {
     $dbo->insert('zz_logs', [
         'username' => $token_record['token'],
         'ip' => get_client_ip(),
-        'stato' => Auth::getStatus()['failed']['code'],
+        'stato' => AuthOSM::getStatus()['failed']['code'],
         'id_utente' => $token_record['id_utente'] ?: null,
         'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
@@ -222,7 +222,7 @@ if (!empty($token_record['id_utente'])) {
         $dbo->insert('zz_logs', [
             'username' => $utente->username,
             'ip' => get_client_ip(),
-            'stato' => Auth::getStatus()['failed']['code'],
+            'stato' => AuthOSM::getStatus()['failed']['code'],
             'id_utente' => $token_record['id_utente'] ?: null,
             'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
         ]);
@@ -353,8 +353,8 @@ if ($tipo_accesso == 'otp') {
 }
 
 // Controllo se l'utente è già autenticato
-if (Auth::check()) {
-    $module = Auth::firstModule();
+if (AuthOSM::check()) {
+    $module = AuthOSM::firstModule();
 
     if (!empty($module)) {
         redirect_url(base_path_osm().'/controller.php?id_module='.$module);
@@ -379,7 +379,7 @@ if (Update::isBeta()) {
 }
 
 // Controllo brute force
-if (Auth::isBrute()) {
+if (AuthOSM::isBrute()) {
     echo '
     <div class="card card-danger shadow-lg col-md-6 offset-md-3 mt-5" id="brute">
         <div class="card-header text-center">
@@ -389,7 +389,7 @@ if (Auth::isBrute()) {
             <p class="lead">'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
             <div class="alert alert-warning">
                 <p>'.tr('Tempo rimanente').':</p>
-                <h3><span id="brute-timeout" class="badge badge-danger">'.(Auth::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+                <h3><span id="brute-timeout" class="badge badge-danger">'.(AuthOSM::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
             </div>
         </div>
     </div>

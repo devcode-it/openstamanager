@@ -165,7 +165,7 @@ class Settings
         }
 
         // Definizione icona per evidenziare le impostazioni personalizzate e personalizzabili
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
         $user_options = [];
         $user_setting_icon = '';
         $tooltip = $setting->getTranslation('help');

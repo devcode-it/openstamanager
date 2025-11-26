@@ -36,7 +36,7 @@ switch (post('op')) {
         $database->insert('zz_logs', [
             'username' => $username,
             'ip' => get_client_ip(),
-            'stato' => Auth::getStatus()['failed']['code'],
+            'stato' => AuthOSM::getStatus()['failed']['code'],
         ]);
 
         try {
@@ -136,7 +136,7 @@ echo '
 </style>';
 
 // Controllo se è una beta e in caso mostro un warning
-if (Auth::isBrute()) {
+if (AuthOSM::isBrute()) {
     echo '
     <div class="card card-danger shadow-lg card-center-large" id="brute">
         <div class="card-header text-center">
@@ -148,7 +148,7 @@ if (Auth::isBrute()) {
             <p>'.tr('Per motivi di sicurezza, sono stati rilevati troppi tentativi di accesso consecutivi.').'</p>
             <div class="alert alert-warning">
                 <p>'.tr('Potrai riprovare tra').':</p>
-                <h3><span id="brute-timeout" class="badge badge-danger">'.(Auth::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+                <h3><span id="brute-timeout" class="badge badge-danger">'.(AuthOSM::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
             </div>
         </div>
     </div>

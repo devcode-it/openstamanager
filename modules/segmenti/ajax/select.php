@@ -23,7 +23,7 @@ use Modules\Segmenti\Segmento;
 
 switch ($resource) {
     case 'segmenti':
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
         $id_module = $superselect['id_module'];
         $is_fiscale = $superselect['is_fiscale'];
         $is_sezionale = $superselect['is_sezionale'];

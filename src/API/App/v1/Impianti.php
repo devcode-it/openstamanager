@@ -58,8 +58,8 @@ class Impianti extends AppResource
         // Limite impianti visualizzabili dal tecnico
         $limite_impianti = setting('Limita la visualizzazione degli impianti a quelli gestiti dal tecnico');
 
-        if ($limite_impianti == 1 && !\Auth::user()->is_admin) {
-            $id_tecnico = \Auth::user()->id_anagrafica;
+        if ($limite_impianti == 1 && !auth_osm()->getUser()->is_admin) {
+            $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
             $statement->where('idtecnico', $id_tecnico);
         }

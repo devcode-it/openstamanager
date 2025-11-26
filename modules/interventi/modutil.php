@@ -111,7 +111,7 @@ if (!function_exists('add_tecnico')) {
                 $template = Template::where('name', 'Notifica intervento')->first();
 
                 if (!empty($template)) {
-                    $mail = Mail::build(auth()->getUser(), $template, $id_intervento);
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_intervento);
                     $mail->addReceiver($anagrafica['email']);
                     $mail->save();
                     flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));

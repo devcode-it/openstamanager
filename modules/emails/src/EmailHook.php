@@ -57,7 +57,7 @@ class EmailHook extends Manager
     public function response()
     {
         $yesterday = date('Y-m-d', strtotime('-1 days'));
-        $user = auth()->getUser();
+        $user = auth_osm()->getUser();
 
         // Numero di email inviate
         $current = Mail::whereDate('sent_at', '>', $yesterday)

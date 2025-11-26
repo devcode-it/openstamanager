@@ -42,7 +42,7 @@ switch ($op) {
         $username = post('username');
         $password = $_POST['password'];
 
-        if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
+        if ($dbo->isConnected() && $dbo->isInstalled() && auth_osm()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = true;
 
             if (intval(setting('Inizio periodo calendario'))) {
@@ -60,7 +60,7 @@ switch ($op) {
         // Rimozione log vecchi
         // $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
-            $status = auth()->getCurrentStatus();
+            $status = auth_osm()->getCurrentStatus();
 
             flash()->error(Auth::getStatus()[$status]['message']);
 

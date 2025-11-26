@@ -146,7 +146,7 @@ function flash()
  *
  * @return Auth
  */
-function auth()
+function auth_osm()
 {
     return Auth::getInstance();
 }

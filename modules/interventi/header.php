@@ -137,7 +137,7 @@ echo '
     </div>';
 
 // Panoramica
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getUser()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $stato = Modules\Interventi\Stato::find($intervento->stato->id);

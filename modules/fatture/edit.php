@@ -1069,7 +1069,7 @@ echo '
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
 $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
-if (in_array($record[$field_name], $user->sedi) || Auth::admin()) {
+if (in_array($record[$field_name], $user->sedi) || AuthOSM::admin()) {
     $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT']);
 
     echo '

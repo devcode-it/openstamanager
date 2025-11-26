@@ -96,7 +96,7 @@ class Response
         $version = $request['version'];
 
         // Controllo sull'accesso
-        if (!\Auth::check() && $request['resource'] != 'login') {
+        if (!\AuthOSM::check() && $request['resource'] != 'login') {
             return self::response([
                 'status' => self::$status['unauthorized']['code'],
             ]);

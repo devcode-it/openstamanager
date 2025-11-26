@@ -88,7 +88,7 @@ class LaravelRateLimiter
         $userId = null;
         if (class_exists('Auth')) {
             try {
-                $u = \Auth::user();
+                $u = auth_osm()->getUser();
                 if ($u && isset($u->id)) {
                     $userId = (int) $u->id;
                 }

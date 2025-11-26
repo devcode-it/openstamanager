@@ -90,7 +90,7 @@ class Fattura extends Document
     {
         $model = new static();
 
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
         $database = database();
 
         // Individuazione dello stato predefinito per il documento

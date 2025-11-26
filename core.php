@@ -172,23 +172,23 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest()) && (empty($config['maintenance_ip']) || $config['maintenance_ip'] == $_SERVER['REMOTE_ADDR']);
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (AuthOSM::check() || API\Response::isAPIRequest()) && (empty($config['maintenance_ip']) || $config['maintenance_ip'] == $_SERVER['REMOTE_ADDR']);
 
 if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
 if (!$continue && getURLPath() != slashes(base_path_osm().'/index.php') && !Permissions::getSkip()) {
-    if (Auth::check()) {
-        Auth::logout();
+    if (AuthOSM::check()) {
+        AuthOSM::logout();
     }
 
     // Memorizza l'URL corrente per il redirect post-login
-    if (!Auth::check() && !API\Response::isAPIRequest()) {
+    if (!AuthOSM::check() && !API\Response::isAPIRequest()) {
         $current_url = $_SERVER['REQUEST_URI'] ?? '';
         // Evita di memorizzare URL di logout o login per prevenire loop
         if (!empty($current_url) && strpos($current_url, 'op=logout') === false && strpos($current_url, 'op=login') === false) {
-            Auth::setIntended($current_url);
+            AuthOSM::setIntended($current_url);
         }
     }
 
@@ -261,7 +261,7 @@ if (!API\Response::isAPIRequest()) {
         $id_module = $module ? $module->id : null;
         $id_plugin = $plugin ? $plugin->id : null;
 
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         if (!empty($id_module)) {
             // Segmenti

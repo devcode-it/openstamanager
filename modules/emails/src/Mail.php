@@ -302,7 +302,7 @@ class Mail extends Model
             if ($template['tipo_reply_to'] == 'email_fissa') {
                 $reply_to = $template['reply_to'];
             } else {
-                $user = \Auth::user();
+                $user = auth_osm()->getUser();
                 $reply_to = $user->email;
             }
 

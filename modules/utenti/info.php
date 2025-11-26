@@ -32,7 +32,7 @@ if (post('op') == 'self_update') {
     include_once __DIR__.'/actions.php';
 }
 
-$user = Auth::user();
+$user = auth_osm()->getUser();
 $token = auth_osm()->getToken();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));

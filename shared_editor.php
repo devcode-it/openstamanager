@@ -23,7 +23,7 @@ include_once __DIR__.'/core.php';
 use Permissions;
 
 // Controllo accesso tramite token
-if (!Auth::check() && empty($_SESSION['token_user'])) {
+if (!AuthOSM::check() && empty($_SESSION['token_user'])) {
     redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }

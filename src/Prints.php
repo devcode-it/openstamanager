@@ -377,7 +377,7 @@ class Prints
 
         $dbo = $database = database();
 
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         $_GET[$infos['previous']] = $id_record;
         ${$infos['previous']} = $id_record;
@@ -488,7 +488,7 @@ class Prints
 
         $dbo = $database = database();
 
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         // Generazione a singoli pezzi
         $single_pieces = self::filepath($id_print, 'piece.php');
@@ -765,7 +765,7 @@ class Prints
         $options = self::readOptions($infos['options']);
 
         $dbo = $database = database();
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
 
         $file = null;
 

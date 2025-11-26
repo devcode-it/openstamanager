@@ -26,7 +26,7 @@ $block_edit = $record['flag_completato'];
 $righe = $intervento->getRighe();
 $colspan = '7';
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getUser()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $evasione_bar = [
     'Fatture di vendita' => 'success',

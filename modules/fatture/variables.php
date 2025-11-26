@@ -49,7 +49,7 @@ if (!empty(setting('Logo stampe'))) {
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 
-$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(Auth::user()['idanagrafica']));
+$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(auth_osm()->getUser()['idanagrafica']));
 $r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
 
 // Variabili da sostituire

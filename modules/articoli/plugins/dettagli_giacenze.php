@@ -89,7 +89,7 @@ if (!empty($movimenti)) {
         echo '
                 <td class="text-center">';
 
-        if (Auth::admin() && $movimento->isManuale()) {
+        if (AuthOSM::admin() && $movimento->isManuale()) {
             echo '
                     <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['id'].'">
                         <i class="fa fa-trash"></i>

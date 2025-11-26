@@ -49,7 +49,7 @@ class OperationLog extends Model
      */
     public static function build($operation = null)
     {
-        if (!\Auth::check()) {
+        if (!\AuthOSM::check()) {
             return null;
         }
 
@@ -60,7 +60,7 @@ class OperationLog extends Model
         }
 
         $model->op = $operation;
-        $model->id_utente = \Auth::user()->id;
+        $model->id_utente = auth_osm()->getUser()->id;
 
         $model->save();
 

@@ -89,9 +89,9 @@ if (empty($record) || !$has_access) {
 
     $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
     if (!empty($advanced_sessions)) {
-        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(auth_osm()->getUser()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
 
-        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
+        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(auth_osm()->getUser()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
         echo '
 		<div class="card card-warning card-solid text-center info-active hide">
@@ -370,7 +370,7 @@ if (empty($record) || !$has_access) {
     }
 
     // Informazioni sulle operazioni
-    if (Auth::admin()) {
+    if (AuthOSM::admin()) {
         echo '
             <div id="tab_info" class="tab-pane">';
 

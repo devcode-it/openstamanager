@@ -60,7 +60,7 @@ switch (filter('op')) {
                 // Crea un record nella tabella zz_files senza usare la colonna id_category
                 $database = database();
                 $database->query('INSERT INTO `zz_files` (`name`, `original`, `id_module`, `id_plugin`, `id_record`, `size`, `id_adapter`, `filename`, `created_by`, `created_at`)
-                    VALUES ("example-'.strtolower((string) $import->getTranslation('title')).'", "example-'.strtolower((string) $import->getTranslation('title')).'.csv", '.$id_module.', NULL, '.$id_import.', '.filesize($filepath).', 1, "'.basename($filepath).'", '.Auth::user()->id.', NOW())');
+                    VALUES ("example-'.strtolower((string) $import->getTranslation('title')).'", "example-'.strtolower((string) $import->getTranslation('title')).'.csv", '.$id_module.', NULL, '.$id_import.', '.filesize($filepath).', 1, "'.basename($filepath).'", '.auth_osm()->getUser()->id.', NOW())');
 
                 echo base_path_osm().'/'.$file;
             } catch (Exception $e) {

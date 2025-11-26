@@ -34,7 +34,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
     public function retrieve($request)
     {
         // Periodo per selezionare interventi
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         $table = 'in_interventi';
 

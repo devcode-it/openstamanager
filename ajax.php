@@ -88,7 +88,7 @@ switch (filter('op')) {
             $posizione .= ', '.get('id_record');
         }
 
-        $user = Auth::user();
+        $user = auth_osm()->getUser();
         $interval = setting('Timeout notifica di presenza (minuti)') * 60;
 
         $dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = :user_id AND posizione = :position', [

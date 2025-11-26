@@ -135,7 +135,7 @@ switch (filter('op')) {
     case 'self_update':
         $password = filter('password', null, true);
 
-        $utente = Auth::user();
+        $utente = auth_osm()->getUser();
 
         if (!empty($password)) {
             $utente->password = $password;
@@ -154,7 +154,7 @@ switch (filter('op')) {
         $utente = User::find($id_utente);
 
         /* Controlla che non posso auto eliminarmi */
-        if (Auth::user()->id != $utente->id) {
+        if (auth_osm()->getUser()->id != $utente->id) {
             /* Controlla che l'utente che voglio eliminare non presenti logs associati */
             if (count($utente->logs) == 0) {
                 if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {

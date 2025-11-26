@@ -105,7 +105,7 @@ class Permissions
             }
             // Gestione accesso normale
             else {
-                if (!Auth::check() && getURLPath() == slashes(base_path_osm().'/index.php')) {
+                if (!AuthOSM::check() && getURLPath() == slashes(base_path_osm().'/index.php')) {
                     redirect_url(base_path_osm().'/index.php');
                     $result = false;
                     exit;
@@ -135,7 +135,7 @@ class Permissions
      */
     public static function isTokenAccess()
     {
-        return Auth::check() && !empty($_SESSION['token_access']);
+        return AuthOSM::check() && !empty($_SESSION['token_access']);
     }
 
     /**

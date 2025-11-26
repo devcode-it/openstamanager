@@ -103,11 +103,11 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        if (\Auth::user()->is_admin) {
+        if (auth_osm()->getUser()->is_admin) {
             return 'rw';
         }
 
-        $group = \Auth::user()->group->id;
+        $group = auth_osm()->getUser()->group->id;
 
         $pivot = $this->pivot ?: $this->groups->first(fn ($item) => $item->id == $group)->pivot;
 
@@ -121,7 +121,7 @@ class Module extends Model
      */
     public function getViewsAttribute()
     {
-        $user = \Auth::user();
+        $user = auth_osm()->getUser();
 
         $views = database()->fetchArray('SELECT 
             `zz_views`.*, 

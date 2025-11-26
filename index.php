@@ -62,7 +62,7 @@ switch ($op) {
         } else {
             $status = auth_osm()->getCurrentStatus();
 
-            flash()->error(Auth::getStatus()[$status]['message']);
+            flash()->error(AuthOSM::getStatus()[$status]['message']);
 
             redirect_url(base_path_osm().'/index.php');
             exit;
@@ -71,15 +71,15 @@ switch ($op) {
         break;
 
     case 'logout':
-        Auth::logout();
+        AuthOSM::logout();
         // Pulisce anche l'intended URL al logout
-        Auth::clearIntended();
+        AuthOSM::clearIntended();
 
         redirect_url(base_path_osm().'/index.php');
         exit;
 }
 
-if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
+if (AuthOSM::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
     // Priorità 1: Token access (sistema esistente)
     if (Permissions::isTokenAccess()) {
         if (!empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
@@ -89,23 +89,23 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     }
 
     // Priorità 2: Intended URL (nuovo sistema di redirect post-login)
-    if (Auth::hasIntended()) {
-        $intended_url = Auth::getIntended();
+    if (AuthOSM::hasIntended()) {
+        $intended_url = AuthOSM::getIntended();
 
         // Verifica i permessi per l'URL intended
-        if (Auth::canAccessIntended()) {
-            Auth::clearIntended();
+        if (AuthOSM::canAccessIntended()) {
+            AuthOSM::clearIntended();
             redirect_url($intended_url);
             exit;
         } else {
             // L'utente non ha i permessi per accedere alla pagina richiesta
-            Auth::clearIntended();
+            AuthOSM::clearIntended();
             flash()->warning(tr('Non hai i permessi necessari per accedere alla pagina richiesta.'));
         }
     }
 
     // Priorità 3: Primo modulo (sistema esistente come fallback)
-    $module = Auth::firstModule();
+    $module = AuthOSM::firstModule();
 
     if (!empty($module)) {
         redirect_url(base_path_osm().'/controller.php?id_module='.$module);
@@ -150,7 +150,7 @@ if (Update::isBeta()) {
 }
 
 // Controllo se è una beta e in caso mostro un warning
-if (Auth::isBrute()) {
+if (AuthOSM::isBrute()) {
     echo '
     <div class="card card-danger shadow-lg col-md-6 offset-md-3 mt-5" id="brute">
         <div class="card-header text-center">
@@ -160,7 +160,7 @@ if (Auth::isBrute()) {
             <p class="lead">'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
             <div class="alert alert-warning">
                 <p>'.tr('Tempo rimanente').':</p>
-                <h3><span id="brute-timeout" class="badge badge-danger">'.(Auth::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+                <h3><span id="brute-timeout" class="badge badge-danger">'.(AuthOSM::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
             </div>
         </div>
     </div>

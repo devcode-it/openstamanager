@@ -392,7 +392,7 @@ switch (post('op')) {
         $_SESSION['superselect']['interventi'] = $id_records;
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
+        redirect_url(base_path().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
         exit;
 
     case 'send_mail':

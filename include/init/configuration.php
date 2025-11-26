@@ -183,7 +183,7 @@ if (!empty(post('db_host'))) {
         else {
             // Creazione manifest.json
             include_once App::filepath('include/init', 'manifest.php');
-            redirect(base_path().'/index.php');
+            redirect_url(base_path().'/index.php');
             exit;
         }
     }
@@ -425,7 +425,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 var parameters = getUrlVars();
                                 parameters.lang = $(this).val();
 
-                                redirect(url, parameters);
+                                redirect_url(url, parameters);
                             }
                         });
                     }

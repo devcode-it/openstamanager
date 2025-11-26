@@ -108,7 +108,7 @@ function rimuoviValore(button) {
     let id = riga.data("id");
 
     // Redirect
-    redirect(globals.rootdir + "/editor.php", {
+    redirect_url(globals.rootdir + "/editor.php", {
        id_module: globals.id_module,
        id_record: globals.id_record,
        id_valore: id,

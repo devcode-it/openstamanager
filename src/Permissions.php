@@ -106,7 +106,7 @@ class Permissions
             // Gestione accesso normale
             else {
                 if (!Auth::check() && getURLPath() == slashes(base_path().'/index.php')) {
-                    redirect(base_path().'/index.php');
+                    redirect_url(base_path().'/index.php');
                     $result = false;
                     exit;
                 } else {

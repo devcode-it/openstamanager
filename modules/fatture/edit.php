@@ -1050,7 +1050,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
-            redirect(globals.rootdir + "/editor.php", {
+            redirect_url(globals.rootdir + "/editor.php", {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
                 op: "ricalcola_scadenze",

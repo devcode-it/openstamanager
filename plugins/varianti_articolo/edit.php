@@ -65,7 +65,7 @@ echo '
 <script>
 function visualizzaCombinazione(button) {
     // Redirect
-    redirect(globals.rootdir + "/editor.php", {
+    redirect_url(globals.rootdir + "/editor.php", {
        id_module: "'.$combinazione->getModule()->id.'",
        id_record: "'.$combinazione->id.'",
    });

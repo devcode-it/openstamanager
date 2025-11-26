@@ -39,7 +39,7 @@ use Util\FileSystem;
  *
  * @return bool
  */
-function redirect($url, $type = 'php')
+function redirect_url($url, $type = 'php')
 {
     switch ($type) {
         case 'php':
@@ -325,9 +325,9 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect(base_path().'/controller.php?id_module='.$id_module.$hash);
+            redirect_url(base_path().'/controller.php?id_module='.$id_module.$hash);
         }
 
         exit;

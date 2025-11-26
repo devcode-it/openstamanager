@@ -58,7 +58,7 @@ if (empty($response['authorization_url'])) {
 }
 
 if (empty($_GET['error'])) {
-    redirect($redirect);
+    redirect_url($redirect);
     exit;
 } else {
     echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'

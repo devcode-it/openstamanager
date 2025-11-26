@@ -64,7 +64,7 @@ switch ($op) {
 
             flash()->error(Auth::getStatus()[$status]['message']);
 
-            redirect(base_path().'/index.php');
+            redirect_url(base_path().'/index.php');
             exit;
         }
 
@@ -75,7 +75,7 @@ switch ($op) {
         // Pulisce anche l'intended URL al logout
         Auth::clearIntended();
 
-        redirect(base_path().'/index.php');
+        redirect_url(base_path().'/index.php');
         exit;
 }
 
@@ -83,7 +83,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     // Priorità 1: Token access (sistema esistente)
     if (Permissions::isTokenAccess()) {
         if (!empty($_SESSION['token_access']['id_module_target']) && !empty($_SESSION['token_access']['id_record_target'])) {
-            redirect(base_path().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
+            redirect_url(base_path().'/shared_editor.php?id_module='.$_SESSION['token_access']['id_module_target'].'&id_record='.$_SESSION['token_access']['id_record_target']);
             exit;
         }
     }
@@ -95,7 +95,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
         // Verifica i permessi per l'URL intended
         if (Auth::canAccessIntended()) {
             Auth::clearIntended();
-            redirect($intended_url);
+            redirect_url($intended_url);
             exit;
         } else {
             // L'utente non ha i permessi per accedere alla pagina richiesta
@@ -108,16 +108,16 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(base_path().'/controller.php?id_module='.$module);
+        redirect_url(base_path().'/controller.php?id_module='.$module);
     } else {
-        redirect(base_path().'/index.php?op=logout');
+        redirect_url(base_path().'/index.php?op=logout');
     }
     exit;
 }
 
 // Gestione accesso tramite token OTP
 if (!empty($token) && $dbo->isConnected() && $dbo->isInstalled()) {
-    redirect(base_path().'/token_login.php?token='.urlencode($token));
+    redirect_url(base_path().'/token_login.php?token='.urlencode($token));
     exit;
 }
 

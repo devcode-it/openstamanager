@@ -24,13 +24,13 @@ use Permissions;
 
 // Controllo accesso tramite token
 if (!Auth::check() && empty($_SESSION['token_user'])) {
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
 // Verifica che sia un accesso tramite token
 if (!Permissions::isTokenAccess()) {
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
@@ -38,9 +38,9 @@ if (!Permissions::isTokenAccess()) {
 if (!empty($_SESSION['id_utente'])) {
     $token_info = $_SESSION['token_access'];
     if (!empty($token_info['id_module_target']) && !empty($token_info['id_record_target'])) {
-        redirect(base_path().'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
+        redirect_url(base_path().'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
     } else {
-        redirect(base_path().'/index.php?op=logout');
+        redirect_url(base_path().'/index.php?op=logout');
     }
     exit;
 }
@@ -49,7 +49,7 @@ if (!empty($_SESSION['id_utente'])) {
 $token_info = $_SESSION['token_access'];
 if (empty($token_info['id_module_target']) || empty($token_info['id_record_target'])) {
     flash()->error(tr('Token non configurato correttamente per l\'accesso diretto'));
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
@@ -62,13 +62,13 @@ $requested_record = filter('id_record');
 
 if (!empty($requested_module) && $requested_module != $id_module) {
     // Redirect al modulo autorizzato
-    redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
     exit;
 }
 
 if (!empty($requested_record) && $requested_record != $id_record) {
     // Redirect al record autorizzato
-    redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
     exit;
 }
 
@@ -76,21 +76,21 @@ if (!empty($requested_record) && $requested_record != $id_record) {
 $module = Modules::get($id_module);
 if (empty($module) || !$module['enabled']) {
     flash()->error(tr('Modulo non disponibile'));
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
 // Verifica permessi del token per questo modulo
 if (!Permissions::checkTokenPermissions()) {
     flash()->error(tr('Accesso negato'));
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
 // Verifica permessi del token per questo record
 if (!Permissions::checkTokenRecordAccess($id_record)) {
     flash()->error(tr('Accesso al record negato'));
-    redirect(base_path().'/index.php?op=logout');
+    redirect_url(base_path().'/index.php?op=logout');
     exit;
 }
 
@@ -132,10 +132,10 @@ if ($load_module_content) {
             $backto = filter('backto');
             if ($backto == 'shared-editor-close') {
                 // Redirect alla pagina di logout per chiudere la sessione token
-                redirect(base_path().'/index.php?op=logout');
+                redirect_url(base_path().'/index.php?op=logout');
             } else {
                 // Redirect normale per evitare re-submit
-                redirect(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+                redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
             }
             exit;
         }

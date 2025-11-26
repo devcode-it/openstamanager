@@ -192,7 +192,7 @@ if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissi
         }
     }
 
-    redirect(base_path().'/index.php');
+    redirect_url(base_path().'/index.php');
     exit;
 }
 

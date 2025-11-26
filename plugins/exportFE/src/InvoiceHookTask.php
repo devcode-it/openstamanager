@@ -90,7 +90,7 @@ class InvoiceHookTask extends Manager
                     $fatture_errore[] = $fattura->numero_esterno.' (errore: '.$e->getMessage().')';
 
                     // Log dell'errore per debugging
-                    logger()->error('Errore invio FE per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
+                    logger_osm()->error('Errore invio FE per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
                 }
             }
 
@@ -118,7 +118,7 @@ class InvoiceHookTask extends Manager
             ]).'<br>';
 
             // Log dell'errore critico
-            logger()->error('Errore critico nel task invio FE: '.$e->getMessage());
+            logger_osm()->error('Errore critico nel task invio FE: '.$e->getMessage());
         }
 
         return $result;

@@ -206,7 +206,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
         // Segnalazione degli errori
         if (!$result) {
-            $logger = logger();
+            $logger = logger_osm();
             foreach ($this->infos as $info) {
                 $logger->addRecord(\Monolog\Logger::ERROR, $info);
             }

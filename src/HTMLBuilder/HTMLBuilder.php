@@ -129,7 +129,7 @@ class HTMLBuilder
             try {
                 $result = !empty($class) ? $class->manage($json) : '';
             } catch (\Exception $exception) {
-                logger()->error($exception->getMessage(), [
+                logger_osm()->error($exception->getMessage(), [
                     'code' => $exception->getCode(),
                     'message' => $exception->getMessage(),
                     'file' => $exception->getFile(),
@@ -156,7 +156,7 @@ class HTMLBuilder
             try {
                 $result = self::generate($json);
             } catch (\Exception $exception) {
-                logger()->error($exception->getMessage(), [
+                logger_osm()->error($exception->getMessage(), [
                     'code' => $exception->getCode(),
                     'message' => $exception->getMessage(),
                     'file' => $exception->getFile(),
@@ -187,7 +187,7 @@ class HTMLBuilder
         try {
             $result = self::generate($json);
         } catch (\Exception $exception) {
-            logger()->error($exception->getMessage(), [
+            logger_osm()->error($exception->getMessage(), [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
                 'file' => $exception->getFile(),

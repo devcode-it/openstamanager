@@ -352,7 +352,7 @@ class Update
 
                 return true;
             } catch (Exception $e) {
-                $logger = logger();
+                $logger = logger_osm();
                 $logger->addRecord(Monolog\Logger::EMERGENCY, $e->getMessage());
 
                 if (!isset($_SESSION['update_error'])) {

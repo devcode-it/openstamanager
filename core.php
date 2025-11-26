@@ -162,7 +162,7 @@ $dbo = $database = database();
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
-$translator = trans();
+$translator = trans_osm();
 $translator->addLocalePath(base_dir().'/locale');
 $translator->addLocalePath(base_dir().'/modules/*/locale');
 

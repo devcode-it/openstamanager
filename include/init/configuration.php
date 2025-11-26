@@ -366,7 +366,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         ],
     ];
 
-    $current = trans()->getCurrentLocale();
+    $current = trans_osm()->getCurrentLocale();
     foreach ($languages as $code => $language) {
         echo '
                         <option data-country="'.$language['flag'].'" value="'.$code.'" '.($code == $current ? 'selected' : '').'>'.$language['title'].'</option>';
@@ -522,7 +522,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // Form dei parametri
     echo '
                         <form action="?action=updateconfig&firstuse=true" method="post" id="config-form">
-                            <input type="hidden" name="lang" value="'.trans()->getCurrentLocale().'">
+                            <input type="hidden" name="lang" value="'.trans_osm()->getCurrentLocale().'">
 
                             <div class="config-section-content">
                                 <h4 class="config-section-header">'.tr('Formato date').'</h4>

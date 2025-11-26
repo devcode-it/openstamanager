@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 if (!empty($record['id_record'])) {
     echo '
-    <a class="btn btn-primary" href="'.base_path().'/editor.php?id_module='.$record['id_module'].'&id_record='.$record['id_record'].($record['id_plugin'] ? '#tab_'.$record['id_plugin'] : '').'">
+    <a class="btn btn-primary" href="'.base_path_osm().'/editor.php?id_module='.$record['id_module'].'&id_record='.$record['id_record'].($record['id_plugin'] ? '#tab_'.$record['id_plugin'] : '').'">
         <i class="fa fa-copy"></i> '.tr('Apri scheda').'
     </a>';
 }

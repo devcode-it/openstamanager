@@ -56,7 +56,7 @@ class InvoiceHook extends Manager
 
             $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == 'Fatturazione Elettronica');
 
-            $link = base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
+            $link = base_path_osm().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
         }
 
         $message = tr('_NUM_ fattur_A_ passiv_A_ da importare', [

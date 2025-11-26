@@ -309,7 +309,7 @@ class Intervento extends Document
         $directory = '/'.$this->getModule()->upload_directory.'/';
         $image = $directory.$upload->filename;
 
-        return base_path().$image;
+        return base_path_osm().$image;
     }
 
     public function getSignatureNameAttribute()

@@ -38,7 +38,7 @@ if (empty(get('id'))) {
 }
 
 echo '
-<form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
+<form id="add_form" action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="manage_articolo">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_articolo" value="'.get('id_articolo').'">

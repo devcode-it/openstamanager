@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 // Ottimizzazione: mantieni il parametro total nel link di navigazione
 $total_param = get('total') ? '&total='.get('total') : '';
-$skip_link = $has_next ? base_path().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence').$total_param : base_path().'/editor.php?id_module='.$id_module;
+$skip_link = $has_next ? base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence').$total_param : base_path_osm().'/editor.php?id_module='.$id_module;
 
 if (empty($fattura)) {
     if (!empty($error)) {
@@ -623,7 +623,7 @@ if (!empty($righe)) {
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">
-                                {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.tr('Crea articolo').'|'.base_path().'/add.php?id_module='.Modules::get('Articoli')['id'].'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
+                                {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.tr('Crea articolo').'|'.base_path_osm().'/add.php?id_module='.Modules::get('Articoli')['id'].'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
                             </div>
 
                             <div class="col-md-3">

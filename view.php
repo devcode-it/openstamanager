@@ -104,18 +104,18 @@ if ($file->isFatturaElettronica()) {
 
     if ($file->isImage()) {
         echo '
-    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
-        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_path_osm().'/view.php?file_id='.$file_id.'&preview=1">
+        <a src="'.base_path_osm().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
     } elseif ($file->isPDF()) {
         echo '
-    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&preview=1">
-        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_path_osm().'/view.php?file_id='.$file_id.'&preview=1">
+        <a src="'.base_path_osm().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
     } else {
         echo '
-    <iframe src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">
-        <a src="'.base_path().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
+    <iframe src="'.base_path_osm().'/view.php?file_id='.$file_id.'&download=1">
+        <a src="'.base_path_osm().'/view.php?file_id='.$file_id.'&download=1">'.tr('Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file originale').'</a>
     </iframe>';
     }
 }

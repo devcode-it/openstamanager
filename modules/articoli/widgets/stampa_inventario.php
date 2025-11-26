@@ -32,7 +32,7 @@ $id_print = $dbo->fetchOne('SELECT
 			`zz_modules`.`name`="Articoli" AND `zz_prints`.`name`="Inventario magazzino"')['id'];
 
 echo '
-<form action="'.base_path().'/pdfgen.php?id_print='.$id_print.'" method="post" target="_blank">
+<form action="'.base_path_osm().'/pdfgen.php?id_print='.$id_print.'" method="post" target="_blank">
 
 	<div class="row">
 

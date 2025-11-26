@@ -24,13 +24,13 @@ use Permissions;
 
 // Controllo accesso tramite token
 if (!Auth::check() && empty($_SESSION['token_user'])) {
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
 // Verifica che sia un accesso tramite token
 if (!Permissions::isTokenAccess()) {
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
@@ -38,9 +38,9 @@ if (!Permissions::isTokenAccess()) {
 if (!empty($_SESSION['id_utente'])) {
     $token_info = $_SESSION['token_access'];
     if (!empty($token_info['id_module_target']) && !empty($token_info['id_record_target'])) {
-        redirect_url(base_path().'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
+        redirect_url(base_path_osm().'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target']);
     } else {
-        redirect_url(base_path().'/index.php?op=logout');
+        redirect_url(base_path_osm().'/index.php?op=logout');
     }
     exit;
 }
@@ -49,7 +49,7 @@ if (!empty($_SESSION['id_utente'])) {
 $token_info = $_SESSION['token_access'];
 if (empty($token_info['id_module_target']) || empty($token_info['id_record_target'])) {
     flash()->error(tr('Token non configurato correttamente per l\'accesso diretto'));
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
@@ -62,13 +62,13 @@ $requested_record = filter('id_record');
 
 if (!empty($requested_module) && $requested_module != $id_module) {
     // Redirect al modulo autorizzato
-    redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path_osm().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
     exit;
 }
 
 if (!empty($requested_record) && $requested_record != $id_record) {
     // Redirect al record autorizzato
-    redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path_osm().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
     exit;
 }
 
@@ -76,21 +76,21 @@ if (!empty($requested_record) && $requested_record != $id_record) {
 $module = Modules::get($id_module);
 if (empty($module) || !$module['enabled']) {
     flash()->error(tr('Modulo non disponibile'));
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
 // Verifica permessi del token per questo modulo
 if (!Permissions::checkTokenPermissions()) {
     flash()->error(tr('Accesso negato'));
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
 // Verifica permessi del token per questo record
 if (!Permissions::checkTokenRecordAccess($id_record)) {
     flash()->error(tr('Accesso al record negato'));
-    redirect_url(base_path().'/index.php?op=logout');
+    redirect_url(base_path_osm().'/index.php?op=logout');
     exit;
 }
 
@@ -118,7 +118,7 @@ $load_module_content = !in_array($current_permission, ['ra', 'rwa']);
 $read_only = ($current_permission == 'r');
 
 // Altre variabili necessarie per la compatibilità
-$rootdir = base_path();
+$rootdir = base_path_osm();
 $docroot = base_dir();
 
 if ($load_module_content) {
@@ -132,10 +132,10 @@ if ($load_module_content) {
             $backto = filter('backto');
             if ($backto == 'shared-editor-close') {
                 // Redirect alla pagina di logout per chiudere la sessione token
-                redirect_url(base_path().'/index.php?op=logout');
+                redirect_url(base_path_osm().'/index.php?op=logout');
             } else {
                 // Redirect normale per evitare re-submit
-                redirect_url(base_path().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
+                redirect_url(base_path_osm().'/shared_editor.php?id_module='.$id_module.'&id_record='.$id_record);
             }
             exit;
         }
@@ -198,7 +198,7 @@ if ($current_permission == 'rw') {
 }
 echo '
             <li class="nav-item">
-                <a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="btn btn-danger logout-btn" style="padding: 8px;" title="Esci">
+                <a href="'.base_path_osm().'/index.php?op=logout" onclick="sessionStorage.clear()" class="btn btn-danger logout-btn" style="padding: 8px;" title="Esci">
                     <i class="fa fa-power-off nav-icon"></i>
                 </a>
             </li>

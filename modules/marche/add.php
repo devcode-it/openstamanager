@@ -28,7 +28,7 @@ if (!empty($id_record)) {
 }
 
 ?><form action="<?php
-echo base_path().'/controller.php?id_module='.$id_module;
+echo base_path_osm().'/controller.php?id_module='.$id_module;
 
 if (!empty($id_record)) {
     echo '&id_record='.$id_record;

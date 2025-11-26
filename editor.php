@@ -27,9 +27,9 @@ $read_only = $structure->permission == 'r';
 $module_header_html = '';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
-    redirect_url(base_path().'/controller.php?id_module='.$id_module);
+    redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect_url(base_path().'/index.php');
+    redirect_url(base_path_osm().'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');
@@ -79,7 +79,7 @@ if (empty($record) || !$has_access) {
             </h3>
             <br>
 
-            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_path_osm().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>
         </div>';
@@ -168,7 +168,7 @@ if (empty($record) || !$has_access) {
     echo '
 
                 <div id="pulsanti">
-                    <a class="btn btn-default" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+                    <a class="btn btn-default" id="back" href="'.base_path_osm().'/controller.php?id_module='.$id_module.'">
                         <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                     </a>';
 
@@ -197,11 +197,11 @@ if (empty($record) || !$has_access) {
 
         echo '
                     <div class="btn-group">
-                        <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
+                        <a class="btn btn-default'.($prev ? '' : ' disabled').'" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$prev.'">
                             <i class="fa fa-arrow-circle-left"></i>
                         </a>
                         <span class="btn btn-default disabled">'.($key + 1).'/'.count($posizioni).'</span>
-                        <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
+                        <a class="btn btn-default'.($next ? '' : ' disabled').'" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$next.'">
                             <i class="fa fa-arrow-circle-right"></i>
                         </a>
                     </div>
@@ -535,7 +535,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 if (!empty($record)) {
     echo '
         <hr>
-        <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+        <a class="btn btn-default" href="'.base_path_osm().'/controller.php?id_module='.$id_module.'">
             <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
         </a>';
 }
@@ -608,7 +608,7 @@ if (!empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){
-                $.getJSON('<?php echo base_path(); ?>/ajax.php?op=active_users', {
+                $.getJSON('<?php echo base_path_osm(); ?>/ajax.php?op=active_users', {
                     id_module: <?php echo $id_module; ?>,
                     id_record: <?php echo $id_record; ?>
                 },

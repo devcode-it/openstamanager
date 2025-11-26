@@ -49,7 +49,7 @@ $r = $dbo->fetchOne('SELECT
         `co_scadenziario`.`da_pagare` > `co_scadenziario`.`pagato` AND `co_scadenziario`.`iddocumento` = (SELECT `iddocumento` FROM `co_scadenziario` s WHERE `id`='.prepare($id_record).')
     GROUP BY iddocumento');
 
-$logo_azienda = str_replace(base_dir(), base_path(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
+$logo_azienda = str_replace(base_dir(), base_path_osm(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
 
 // Variabili da sostituire
 return [

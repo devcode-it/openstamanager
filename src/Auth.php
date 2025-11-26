@@ -1128,7 +1128,7 @@ class Auth extends Util\Singleton
             return false;
         }
 
-        $base_path = base_path();
+        $base_path = base_path_osm();
 
         // L'URL deve iniziare con il base_path del sistema o essere relativo
         if (str_starts_with($url, $base_path) || str_starts_with($url, '/')) {

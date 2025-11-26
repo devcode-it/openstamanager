@@ -74,7 +74,7 @@ class CronStatusHook extends Manager
 
         // Ottiene il link al modulo aggiornamenti
         $aggiornamenti_module = Module::where('name', 'Aggiornamenti')->first();
-        $link = $aggiornamenti_module ? base_path().'/controller.php?id_module='.$aggiornamenti_module->id : base_path().'/controller.php?id_module='.$this->getModuleId();
+        $link = $aggiornamenti_module ? base_path_osm().'/controller.php?id_module='.$aggiornamenti_module->id : base_path_osm().'/controller.php?id_module='.$this->getModuleId();
 
         return [
             'icon' => 'fa fa-clock-o text-danger',

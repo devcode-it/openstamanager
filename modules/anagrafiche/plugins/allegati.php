@@ -35,7 +35,7 @@ if (empty($_GET['visualizza_allegati'])) {
     echo '
         <div class="row">
             <div class="col-md-12 text-center">
-                <a class="btn btn-info btn-lg" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&visualizza_allegati=1#tab_'.$id_plugin.'">
+                <a class="btn btn-info btn-lg" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&visualizza_allegati=1#tab_'.$id_plugin.'">
                     <i class="fa fa-eye"></i>
                     '.tr('Visualizza tutti gli allegati').'
                 </a>
@@ -129,14 +129,14 @@ if (empty($_GET['visualizza_allegati'])) {
                 echo '
                     <tr>
                         <td class="text-center">
-                            <a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$file->id_module.'&op=download-allegato&id='.$file->id.'&filename='.$file->filename.'" target="_blank">
+                            <a class="btn btn-xs btn-primary" href="'.base_path_osm().'/actions.php?id_module='.$file->id_module.'&op=download-allegato&id='.$file->id.'&filename='.$file->filename.'" target="_blank">
                                 <i class="fa fa-download"></i>
                             </a>';
 
                 // Anteprime supportate dal browser
                 if ($file->hasPreview()) {
                     echo '
-                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->name).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
+                            <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->name).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path_osm().'/view.php?file_id='.$file->id.'">
                                 <i class="fa fa-eye"></i>
                             </button>';
                 } else {
@@ -149,7 +149,7 @@ if (empty($_GET['visualizza_allegati'])) {
                 echo '
                         </td>
                         <td>
-                            <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
+                            <a href="'.base_path_osm().'/view.php?file_id='.$file->id.'" target="_blank">
                                 <i class="fa fa-external-link"></i> '.$file->name.'
                             </a>
                         </td>

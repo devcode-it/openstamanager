@@ -23,7 +23,7 @@ include_once __DIR__.'/modutil.php';
 
 // Definizioni di fallback per le funzioni base
 if (!function_exists('base_path')) {
-    function base_path()
+    function base_path_osm()
     {
         return ROOTDIR;
     }
@@ -1085,7 +1085,7 @@ if ($has_any_errors) {
 
 echo '
                 <div class="mt-auto">
-                    <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
+                    <form action="'.base_path_osm().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                         <input type="hidden" name="op" value="upload">
                         <div class="mb-2">
                             {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip", "disabled": '.(setting('Attiva aggiornamenti') ? 0 : 1).' ]}

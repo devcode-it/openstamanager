@@ -163,7 +163,7 @@ class FileManager implements ManagerInterface
 
                     $result .= '
 
-                <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
+                <a href="'.base_path_osm().'/view.php?file_id='.$file->id.'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$file->name.'
                 </a>
 

@@ -24,5 +24,5 @@ use Models\Module;
 
 if (!empty($id_record)) {
     $id_module = Module::where('name', 'Articoli')->first()->id;
-    redirect_url(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 }

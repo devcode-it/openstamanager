@@ -57,7 +57,7 @@ class ServicesHook extends Manager
         return [
             'icon' => 'fa fa-clock-o text-warning',
             'message' => $message,
-            'link' => base_path().'/controller.php?id_module='.Module::where('name', 'Stato dei servizi')->first()->id,
+            'link' => base_path_osm().'/controller.php?id_module='.Module::where('name', 'Stato dei servizi')->first()->id,
             'show' => Services::isEnabled() && !empty($message),
         ];
     }

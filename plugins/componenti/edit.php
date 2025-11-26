@@ -139,7 +139,7 @@ foreach ($elenchi as $elenco) {
                             </div>
 
                             <div class="card-body">
-                                <form action="'.base_path().'/editor.php" method="post" role="form">
+                                <form action="'.base_path_osm().'/editor.php" method="post" role="form">
                                     <input type="hidden" name="id_module" value="'.$module->id.'">
                                     <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">
                                     <input type="hidden" name="id_plugin" value="'.$plugin->id.'">
@@ -265,7 +265,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {
-            redirect_url("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }).catch(swal.noop);
             
     }
@@ -280,7 +280,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {
-            redirect_url("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
         }).catch(swal.noop);
     }
 

@@ -29,7 +29,7 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "api-platform/laravel": "^4.1",
-        "davidepastore/codice-fiscale": "^0.9.1",
+        "davidepastore/codice-fiscale": "^0.10.0",
         "devcode-it/ical-easy-reader": "dev-main",
         "devcode-it/sdd_ita": "dev-master",
         "digitick/sepa-xml": "^2.1",

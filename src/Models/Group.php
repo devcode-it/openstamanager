@@ -76,6 +76,7 @@ class Group extends Model
      * Sincronizza i permessi delle viste e dei segmenti per un modulo specifico.
      * Se il gruppo non ha permessi sul modulo, rimuove i permessi sulle viste e segmenti.
      * Se il gruppo ha permessi sul modulo, aggiunge i permessi alle viste predefinite e al segmento predefinito.
+     * Se non ci sono viste o segmenti predefiniti, aggiunge il gruppo ad almeno uno di essi.
      * Gli Amministratori mantengono sempre accesso completo.
      *
      * @param int    $id_module ID del modulo
@@ -109,6 +110,22 @@ class Group extends Model
                 }
             }
 
+            // Se non ci sono viste predefinite, aggiungi il gruppo ad almeno una vista (la prima disponibile)
+            if (empty($default_views)) {
+                $first_view = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC LIMIT 1');
+
+                if (!empty($first_view)) {
+                    $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($first_view[0]['id']))['cont'];
+
+                    if ($has_view_access == 0) {
+                        $database->insert('zz_group_view', [
+                            'id_gruppo' => $this->id,
+                            'id_vista' => $first_view[0]['id'],
+                        ]);
+                    }
+                }
+            }
+
             // Aggiungi accesso ai segmenti predefiniti se non ce l'ha già
             $default_segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).' AND `predefined` = 1');
 
@@ -121,6 +138,22 @@ class Group extends Model
                         'id_gruppo' => $this->id,
                         'id_segment' => $segment['id'],
                     ]);
+                }
+            }
+
+            // Se non ci sono segmenti predefiniti, aggiungi il gruppo ad almeno un segmento (il primo disponibile)
+            if (empty($default_segments)) {
+                $first_segment = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).' ORDER BY `id` ASC LIMIT 1');
+
+                if (!empty($first_segment)) {
+                    $has_segment_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($first_segment[0]['id']))['cont'];
+
+                    if ($has_segment_access == 0) {
+                        $database->insert('zz_group_segment', [
+                            'id_gruppo' => $this->id,
+                            'id_segment' => $first_segment[0]['id'],
+                        ]);
+                    }
                 }
             }
         } else {

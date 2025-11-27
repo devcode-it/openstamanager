@@ -47,6 +47,9 @@ switch (filter('op')) {
                     'idmodule' => $id_module_start,
                     'permessi' => 'r',
                 ]);
+
+                // Sincronizza i permessi delle viste e dei segmenti per il modulo di partenza
+                $group->syncModulePermissions($id_module_start, 'r');
             }
 
             flash()->info(tr('Gruppo aggiunto!'));

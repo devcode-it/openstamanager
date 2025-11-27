@@ -31,34 +31,63 @@ class TipiIntervento extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT `in_tipiintervento`.`id`, `in_tipiintervento`.`updated_at` FROM `in_tipiintervento`';
+        $user = $this->getUser();
+        $database = database();
+
+        $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, `in_tipiintervento`.`updated_at`
+                  FROM `in_tipiintervento`
+                  LEFT JOIN `in_tipiintervento_groups` ON `in_tipiintervento_groups`.`idtipointervento` = `in_tipiintervento`.`id`';
+        $where = [];
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' WHERE `in_tipiintervento`.`updated_at` > '.prepare($last_sync_at);
+            $where[] = '`in_tipiintervento`.`updated_at` > '.prepare($last_sync_at);
         }
 
-        $records = database()->fetchArray($query);
+        // Filtro per gruppo utente: sincronizza solo i tipi intervento che hanno il gruppo utente dell'utente loggato
+        // oppure che non hanno nessun gruppo utente associato
+        $id_gruppo = $user['idgruppo'];
+        $where[] = '(`in_tipiintervento_groups`.`id_gruppo` = '.prepare($id_gruppo).' OR `in_tipiintervento_groups`.`id_gruppo` IS NULL)';
+
+        if (!empty($where)) {
+            $query .= ' WHERE '.implode(' AND ', $where);
+        }
+
+        $records = $database->fetchArray($query);
 
         return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)
     {
+        $database = database();
+
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT 
+        $query = 'SELECT
             `in_tipiintervento`.`id`,
             `in_tipiintervento_lang`.`title` AS `descrizione`,
             `costo_orario` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
             `costo_diritto_chiamata` AS prezzo_diritto_chiamata
-        FROM 
+        FROM
             `in_tipiintervento`
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-        WHERE 
+        WHERE
             `in_tipiintervento`.`id` = '.prepare($id);
 
-        $record = database()->fetchOne($query);
+        $record = $database->fetchOne($query);
+
+        // Recupero i tipi anagrafiche collegati al tipo intervento
+        $tipi_anagrafiche = $database->fetchArray('SELECT `tipo` FROM `in_tipiintervento_tipologie` WHERE `idtipointervento` = '.prepare($id));
+
+        // Costruisce un array con indici numerici sequenziali per garantire la serializzazione come array JSON
+        $tipi = [];
+        foreach ($tipi_anagrafiche as $row) {
+            $tipi[] = $row['tipo'];
+        }
+
+        // Assicura che venga sempre restituito un array JSON, non un oggetto
+        $record['tipi_anagrafiche'] = $tipi;
 
         return $record;
     }

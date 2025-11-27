@@ -23,6 +23,7 @@ namespace API\App\v1;
 use API\App\AppResource;
 use Carbon\Carbon;
 use Intervention\Image\ImageManager;
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
@@ -333,6 +334,35 @@ class Interventi extends AppResource
         $record->idsede_destinazione = $data['id_sede'] ?: 0;
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
+        // Salvataggio firma eventuale
+        if (!empty($data['firma_contenuto'])) {
+            $id_module = Module::where('name', 'Interventi')->first()->id;
+
+            // Verifica se esiste già un file di firma in zz_files per questa attività
+            $file_exists = $database->selectOne('zz_files', ['id'], [
+                'id_module' => $id_module,
+                'id_record' => $record->id,
+                'key' => ['LIKE', 'signature_%'],
+            ]);
+
+            // Se il file non esiste in zz_files, salva il file fisico e registra in zz_files
+            if (empty($file_exists)) {
+                $data_firma = !empty($data['firma_data']) ? date('Y-m-d', strtotime((string) $data['firma_data'])) : date('Y-m-d');
+                $key = 'signature_'.$data['firma_nome'].'_'.$data_firma;
+
+                $firma_file = $this->salvaFirma($data['firma_contenuto']);
+
+                // Registra il file in zz_files
+                $database->insert('zz_files', [
+                    'id_module' => $id_module,
+                    'id_record' => $record->id,
+                    'name' => $firma_file,
+                    'filename' => $firma_file,
+                    'original' => $firma_file,
+                    'key' => $key,
+                ]);
+            }
+        }
 
         // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
@@ -359,4 +389,19 @@ class Interventi extends AppResource
         }
     }
 
+    protected function salvaFirma($firma_base64)
+    {
+        // Salvataggio firma
+        $firma_file = 'firma_'.time().'.png';
+
+        $data = explode(',', (string) $firma_base64);
+
+        $manager = ImageManager::gd();
+        $img = $manager->read(base64_decode($data[1]));
+        $img->scale(680, 202);
+
+        $img->save(base_dir().'/files/interventi/'.$firma_file);
+
+        return $firma_file;
+    }
 }

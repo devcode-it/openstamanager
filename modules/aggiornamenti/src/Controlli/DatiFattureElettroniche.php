@@ -959,7 +959,7 @@ class DatiFattureElettroniche extends Controllo
 
                 // Colonna Gestionale
                 $html .= '<div>';
-                $html .= '<div style="color: #6c757d; font-weight: 600; font-size: 10px; margin-bottom: 2px; text-transform: uppercase;">Gest</div>';
+                $html .= '<div style="color: #6c757d; font-weight: 600; font-size: 10px; margin-bottom: 2px; text-transform: uppercase;">Documento di vendita</div>';
                 if (!empty($error['gestionale_value']) && $error['gestionale_value'] !== '-') {
                     $gest_value = str_replace('&euro;', '€', (string) $error['gestionale_value']);
                     $html .= '<div style="color: #495057; word-wrap: break-word; overflow-wrap: break-word;">'.htmlspecialchars($gest_value).'</div>';

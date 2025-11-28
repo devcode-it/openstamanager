@@ -22,11 +22,12 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Carbon\Carbon;
-use Intervention\Image\ImageManager;
+use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Uploads;
 
 class Interventi extends AppResource
 {
@@ -274,7 +275,9 @@ class Interventi extends AppResource
             idstatointervento AS id_stato_intervento,
             idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,
-            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede
+            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
+            IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
+            firma_nome
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 
@@ -333,6 +336,13 @@ class Interventi extends AppResource
         $record->idsede_destinazione = $data['id_sede'] ?: 0;
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
+         // Salvataggio firma eventuale
+        if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
+            $record->firma_nome = $data['firma_nome'];
+            $record->firma_data = $data['firma_data'];
+
+            $this->salvaFirma($data['firma_contenuto'], $record->id);
+        }
 
         // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
@@ -359,4 +369,28 @@ class Interventi extends AppResource
         }
     }
 
+    protected function salvaFirma($firma_base64, $id_intervento)
+    {
+        $data = explode(',', (string) $firma_base64);
+        $img = getImageManager()->read(base64_decode($data[1]));
+        $img->resize(680, 202, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        if (setting('Sistema di firma') == 'Tavoletta Wacom') {
+            $img->brightness((float) setting('Luminosità firma Wacom'));
+            $img->contrast((float) setting('Contrasto firma Wacom'));
+        }
+        $encoded_image = $img->toJpeg();
+        $file_content = $encoded_image->toString();
+
+        // Upload del file in zz_files
+        Uploads::upload($file_content, [
+            'name' => 'firma.jpg',
+            'category' => 'Firme',
+            'id_module' => Module::where('name', 'Interventi')->first()->id,
+            'id_record' => $id_intervento,
+            'key' => 'signature',
+        ]);
+    }
 }

@@ -477,8 +477,8 @@ if (!$block_edit) {
             echo '
 	    <img src="'.$intervento->signature.'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 offset-md-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ da _PERSON_', [
-                '_DATE_' => Translator::dateToLocale($intervento->signature_date),
-                '_PERSON_' => (!empty($intervento->signature_name) ? $intervento->signature_name : $intervento->anagrafica->ragione_sociale),
+                '_DATE_' => Translator::dateToLocale($intervento->firma_data),
+                '_PERSON_' => (!empty($intervento->firma_nome) ? $intervento->firma_nome : $intervento->anagrafica->ragione_sociale),
             ]).'</div>';
         }
 

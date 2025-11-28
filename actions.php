@@ -233,18 +233,6 @@ elseif (filter('op') == 'modifica-allegato') {
     }
 }
 
-// Modifica nome della categoria degli allegati
-elseif (filter('op') == 'modifica-categoria-allegato') {
-    $category = post('category');
-    $name = post('name');
-
-    $uploads = $structure->uploads($id_record)->where('category', $category);
-    foreach ($uploads as $upload) {
-        $upload->category = $name;
-        $upload->save();
-    }
-}
-
 // Validazione dati
 elseif (filter('op') == 'validate') {
     // Lettura informazioni di base

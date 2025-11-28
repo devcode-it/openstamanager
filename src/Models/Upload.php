@@ -102,6 +102,14 @@ class Upload extends Model
             $id_category = Categoria::where('name', '=', $category)->first()->id;
         }
 
+        // Se presente category ma non id_category la creo
+        if ($category && !$id_category) {
+            $categoria = Categoria::build();
+            $categoria->name = $category;
+            $categoria->save();
+            $id_category = $categoria->id;
+        }
+
         $original_name = $source['name'] ?? $name;
         $id_category = $data['id_category'] ?? $id_category;
 

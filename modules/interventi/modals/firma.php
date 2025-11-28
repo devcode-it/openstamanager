@@ -35,7 +35,7 @@ foreach ($id_records as $id) {
 
     if ($intervento->stato->is_bloccato) {
         $interventi_completati[] = $id;
-    } elseif ($intervento->signature_upload) {
+    } elseif ($intervento->signature) {
         $interventi_firmati[] = $id;
         $records[] = $id;
     } else {

@@ -283,65 +283,19 @@ class Intervento extends Document
         return self::$translated_fields;
     }
 
-    public function getSignatureUploadAttribute()
+    public function getSignatureAttribute()
     {
         $module = $this->getModule();
         $uploads = $module->files($this->id, true);
 
         // Cerca il primo file con key che inizia con 'signature_'
         foreach ($uploads as $upload) {
-            if (str_starts_with((string) $upload->key ?: '', 'signature_')) {
-                return $upload;
+            if ($upload->key == 'signature') {
+                $directory = '/files/'.$module->attachments_directory.'/';
+                $image = $directory.$upload->filename;
             }
         }
 
-        return null;
-    }
-
-    public function getSignatureAttribute()
-    {
-        $upload = $this->signature_upload;
-
-        if (empty($upload)) {
-            return null;
-        }
-
-        $directory = '/'.$this->getModule()->upload_directory.'/';
-        $image = $directory.$upload->filename;
-
-        return base_path_osm().$image;
-    }
-
-    public function getSignatureNameAttribute()
-    {
-        $upload = $this->signature_upload;
-
-        if (empty($upload)) {
-            return null;
-        }
-
-        // Estrae il nome dalla chiave 'signature_nome_data'
-        // Rimuove il prefisso 'signature_' e la data finale (ultimi 11 caratteri: _YYYY-MM-DD)
-        $key = $upload->key;
-        $key = substr((string) $key, strlen('signature_'));
-        $key = substr($key, 0, -11); // Rimuove '_YYYY-MM-DD'
-
-        return $key;
-    }
-
-    public function getSignatureDateAttribute()
-    {
-        $upload = $this->signature_upload;
-
-        if (empty($upload)) {
-            return null;
-        }
-
-        // Estrae la data dalla chiave 'signature_nome_data'
-        // La data è negli ultimi 10 caratteri (YYYY-MM-DD)
-        $key = $upload->key;
-        $data_firma = substr((string) $key, -10);
-
-        return $data_firma;
+        return $image ? base_path_osm().$image : null;
     }
 }

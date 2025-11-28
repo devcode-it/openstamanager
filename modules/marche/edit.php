@@ -19,16 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Articoli\Marca;
 
-if (!empty($record['immagine'])) {
-    $fileinfo = Uploads::fileInfo($record['immagine']);
-
-    $directory = '/'.$module->upload_directory.'/';
-    $image = $directory.$record['immagine'];
-    $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
-
-    $url = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
-}
+$marca = Marca::find($id_record);
+$img = !empty($marca) ? $marca->image : null;
 ?>
 
 <form action="" method="post" id="edit-form" enctype="multipart/form-data">
@@ -44,7 +38,7 @@ if (!empty($record['immagine'])) {
 		<div class="card-body">
 			<div class="row">
                 <div class="col-md-2">
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $url; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $img; ?>" ]}
 				</div>
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value":"$name$", "required": 1 ]}
@@ -62,6 +56,9 @@ if (!empty($record['immagine'])) {
 		</div>
 	</div>
 </form>
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
 <div class="card card-primary">
 	<div class="card-header">
 		<h3 class="card-title"><?php echo tr('Modelli'); ?></h3>

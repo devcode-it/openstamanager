@@ -22,6 +22,7 @@ namespace Modules\Articoli;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Models\Module;
 use Traits\HierarchyTrait;
 use Traits\RecordTrait;
 
@@ -45,6 +46,35 @@ class Marca extends Model
     public function articoli()
     {
         return $this->hasMany(Articolo::class, 'id_marca');
+    }
+
+    public function getImmagineUploadAttribute()
+    {
+        $module = Module::where('name', 'Marche')->first();
+
+        return $module->files($this->id, true)->where('key', 'cover')->first();
+    }
+
+    public function getImageAttribute()
+    {
+        $module = Module::where('name', 'Marche')->first();
+        $upload = $module->files($this->id, true)
+            ->where('key', 'cover')
+            ->first();
+
+        if (empty($upload)) {
+            return null;
+        }
+
+        $fileinfo = \Uploads::fileInfo($upload->filename);
+
+        $directory = '/files/'.$module->attachments_directory.'/';
+        $image = $directory.$upload->filename;
+        $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+        $url = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
+
+        return $url;
     }
 
     public function getModuleAttribute()

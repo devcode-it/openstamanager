@@ -1043,8 +1043,13 @@ function search(button) {
                 </div>
                 <div id="update-search" class="mt-auto">';
 if (extension_loaded('curl')) {
+    // Recupera la data dell'ultimo upload nel modulo aggiornamenti
+    $last_upload_query = 'SELECT created_at FROM zz_operations WHERE id_module = ? AND op = ? ORDER BY created_at DESC LIMIT 1';
+    $last_upload = $database->fetchOne($last_upload_query, [$id_module, 'upload']);
+    $last_upload_date = $last_upload ? date('d/m/Y H:i', strtotime($last_upload['created_at'])) : tr('Mai');
+
     echo '                  <div class="mb-2">
-                                <small class="text-muted">'.tr('Controlla automaticamente su GitHub').'</small>
+                                <small class="text-muted">'.tr('Controlla automaticamente su GitHub. Data ultimo aggiornamento:').' '.$last_upload_date.'</small>
                             </div>
                             <button type="button" class="btn btn-info btn-block" onclick="search(this)">
                                 <i class="fa fa-search mr-2"></i>'.tr('Verifica Aggiornamenti').'

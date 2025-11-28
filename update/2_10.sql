@@ -201,3 +201,6 @@ ALTER TABLE `zz_modules` DROP COLUMN `use_checklists`;
 
 -- Aggiunta colonna session_token per gestione sessione singola
 ALTER TABLE `zz_users` ADD `session_token` VARCHAR(64) NULL DEFAULT NULL AFTER `password`;
+
+-- Aggiunta risorsa API per la gestione dei movimenti manuali
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`, `created_at`, `updated_at`) VALUES (NULL, 'app-v1', 'retrieve', 'movimento-manuale', 'API\\App\\v1\\MovimentiManuali', '1', NULL, NULL)

@@ -28,28 +28,86 @@ class MovimentiManuali extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return [];
+        // Recupera l'ID utente loggato
+        $user = auth_osm()->getUser();
+        $id_utente = $user->id;
+
+        // Restituisce i movimenti eliminati o non più appartenenti all'utente
+        $query = 'SELECT `mg_movimenti`.`id`
+            FROM `mg_movimenti`
+            WHERE `mg_movimenti`.`idutente` = '.prepare($id_utente);
+
+        if ($last_sync_at) {
+            $query .= ' AND `mg_movimenti`.`updated_at` > '.prepare($last_sync_at);
+        }
+
+        $records = database()->fetchArray($query);
+        $ids = array_column($records, 'id');
+
+        return $this->getMissingIDs('mg_movimenti', 'id', $last_sync_at, $ids);
     }
 
     public function getModifiedRecords($last_sync_at)
     {
-        return [];
+        // Recupera l'ID utente loggato
+        $user = auth_osm()->getUser();
+        $id_utente = $user->id;
+
+        // Calcola le date dell'ultimo giorno (00:00 - 23:59)
+        $oggi = Carbon::now();
+        $inizio_giorno = $oggi->copy()->startOfDay()->format('Y-m-d H:i:s');
+        $fine_giorno = $oggi->copy()->endOfDay()->format('Y-m-d H:i:s');
+
+        // Query per recuperare i movimenti dell'utente loggato nell'ultimo giorno
+        $query = 'SELECT `mg_movimenti`.`id`, `mg_movimenti`.`updated_at`
+            FROM `mg_movimenti`
+            WHERE `mg_movimenti`.`idutente` = '.prepare($id_utente).'
+            AND `mg_movimenti`.`data` BETWEEN '.prepare($inizio_giorno).' AND '.prepare($fine_giorno);
+
+        $records = database()->fetchArray($query);
+
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)
     {
-        return [];
+        // Recupera l'ID utente loggato per sicurezza
+        $user = auth_osm()->getUser();
+        $id_utente = $user->id;
+
+        // Query per recuperare il dettaglio del movimento
+        $query = 'SELECT
+            `mg_movimenti`.`id`,
+            `mg_movimenti`.`idarticolo` AS id_articolo,
+            `mg_movimenti`.`qta`,
+            `mg_movimenti`.`movimento` AS descrizione,
+            `mg_movimenti`.`data`,
+            `mg_movimenti`.`idsede` AS id_sede_azienda,
+            `mg_movimenti`.`idutente` AS id_utente,
+            `mg_movimenti`.`manuale`
+        FROM
+            `mg_movimenti`
+            LEFT JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
+            LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        WHERE
+            `mg_movimenti`.`id` = '.prepare($id).'
+            AND `mg_movimenti`.`idutente` = '.prepare($id_utente);
+
+        $record = database()->fetchOne($query);
+
+        return $record;
     }
 
     public function createRecord($data)
     {
         $articolo = Articolo::find($data['id_articolo']);
-        $data_movimento = new Carbon($data['created_at']);
+        $data_movimento = new Carbon($data['data']);
 
         $id_sede = isset($data['id_sede_azienda']) && $data['id_sede_azienda'] !== null ? $data['id_sede_azienda'] : 0;
 
         $id_movimento = $articolo->movimenta($data['qta'], $data['descrizione'], $data_movimento, true, [
             'idsede' => $id_sede,
+            'idutente' => auth_osm()->getUser()->id,
         ]);
 
         return [

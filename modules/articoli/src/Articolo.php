@@ -168,14 +168,15 @@ class Articolo extends Model
         // Movimento il magazzino solo se l'articolo non è un servizio
         if (empty($this->servizio)) {
             // Registrazione della movimentazione
-            database()->insert('mg_movimenti', array_merge($array, [
+            // I valori in $array hanno priorità (es. idutente passato dall'API)
+            database()->insert('mg_movimenti', array_merge([
                 'idarticolo' => $this->id,
                 'qta' => $qta,
                 'movimento' => $descrizone,
                 'data' => $data,
                 'manuale' => $manuale,
                 'idutente' => $user->id,
-            ]));
+            ], $array));
         }
         $id = database()->lastInsertedID();
 

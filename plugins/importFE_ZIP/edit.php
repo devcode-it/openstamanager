@@ -214,15 +214,15 @@ echo '
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-            <button type="button" class="btn btn-primary" onclick="searchInvoicesZip(this)">
-                <i class="fa fa-refresh mr-1"></i> '.tr('Ricerca fatture').'
-            </button>';
+                <button type="button" class="btn btn-primary" onclick="searchInvoicesZip(this)">
+                    <i class="fa fa-refresh mr-1"></i> '.tr('Ricerca fatture').'
+                </button>';
 }
 
 echo '
+            </div>
         </div>
     </div>
-    <br>
     <div class="card-body" id="list-importfe-zip">';
 
 if (Interaction::isEnabled()) {
@@ -260,48 +260,71 @@ $(document).ready(function() {
     });
 });';
 
-if (Interaction::isEnabled()) {
-    echo '
+echo '
 function importAllZip(btn) {
-    swal({
-        title: "'.tr('Importare tutte le fatture?').'",
-        html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
-        showCancelButton: true,
-        confirmButtonText: "'.tr('Procedi').'",
-        type: "info",
-    }).then(function (result) {
-        var restore = buttonLoading(btn);
-        $("#main_loading").show();
+    // Controlla se ci sono fatture caricate nella datatable
+    var invoiceRows = $("table tbody tr:not(#no-results-message)").length;
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            data: {
-                op: "list",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-            },
-            type: "post",
-            success: function(data){
-                try {
-                    // Verifica se la risposta è vuota
-                    if (!data || data.trim() === "") {
-                        console.error("Risposta vuota dal server");
-                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
-                        buttonRestore(btn, restore);
-                        $("#main_loading").fadeOut();
-                        return;
-                    }
+    if (invoiceRows === 0) {
+        swal({
+            title: "'.tr('Nessuna fattura da importare').'",
+            type: "info",
+        });
+        return;
+    }
 
-                    data = JSON.parse(data);
-                } catch (e) {
-                    console.error("Errore parsing JSON:", e);
-                    console.error("Dati ricevuti:", data);
-                    swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+    var restore = buttonLoading(btn);
+    $("#main_loading").show();
+
+    // Prima verifica se ci sono documenti da importare
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        data: {
+            op: "list",
+            id_module: "'.$id_module.'",
+            id_plugin: "'.$id_plugin.'",
+        },
+        type: "post",
+        success: function(data){
+            try {
+                // Verifica se la risposta è vuota
+                if (!data || data.trim() === "") {
+                    console.error("Risposta vuota dal server");
+                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                     buttonRestore(btn, restore);
                     $("#main_loading").fadeOut();
                     return;
                 }
 
+                data = JSON.parse(data);
+            } catch (e) {
+                console.error("Errore parsing JSON:", e);
+                console.error("Dati ricevuti:", data);
+                swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                buttonRestore(btn, restore);
+                $("#main_loading").fadeOut();
+                return;
+            }
+
+            // Controlla se ci sono documenti da importare
+            if (!data || data.length === 0) {
+                swal({
+                    title: "'.tr('Nessuna fattura da importare').'",
+                    type: "info",
+                });
+                buttonRestore(btn, restore);
+                $("#main_loading").fadeOut();
+                return;
+            }
+
+            // Se ci sono documenti, mostra il dialogo di conferma
+            swal({
+                title: "'.tr('Importare tutte le fatture?').'",
+                html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
+                showCancelButton: true,
+                confirmButtonText: "'.tr('Procedi').'",
+                type: "info",
+            }).then(function (result) {
                 count = data.length;
                 counter = 0;
                 data.forEach(function(element) {
@@ -328,14 +351,14 @@ function importAllZip(btn) {
                 });
 
                 importComplete(count, counter, btn, restore);
-            },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
+            });
+        },
+        error: function(data) {
+            alert("'.tr('Errore').': " + data);
 
-				$("#main_loading").fadeOut();
-                buttonRestore(btn, restore);
-            }
-        });
+			$("#main_loading").fadeOut();
+            buttonRestore(btn, restore);
+        }
     });
 }
 
@@ -347,12 +370,6 @@ function importComplete(count, counter, btn, restore) {
         redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
     }
 }';
-} else {
-    echo '
-function importAllZip(btn) {
-    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
-}';
-}
 echo '
 
 function searchInvoicesZip(btn) {

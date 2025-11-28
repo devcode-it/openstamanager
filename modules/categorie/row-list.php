@@ -25,35 +25,35 @@ $subcategorie = Categoria::where('parent', '=', $id_record)->get();
 
 foreach ($subcategorie as $sub) {
     $n_articoli = Articolo::where('id_sottocategoria', '=', $sub['id'])->count();
+    $n_impianti = database()->table('my_impianti')->where('id_sottocategoria', '=', $sub['id'])->count();
 
     echo '
-<tr>
-<td class="align-middle">
-    <strong>'.$sub->getTranslation('title').'</strong>
-    '.($n_articoli > 0 ? '<span class="badge badge-info ml-2" title="'.tr('Articoli collegati').'">'.$n_articoli.'</span>' : '<span class="badge badge-secondary ml-2" title="'.tr('Nessun articolo collegato').'">0</span>').'
-</td>
-<td class="text-center align-middle">
-<span class="badge" style="background-color: '.$sub->colore.'; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span>
-<span class="text-muted">'.$sub->colore.'</span>
-</td>
-<td class="text-center align-middle">
-'.($sub->is_articolo ? '<span class="badge badge-success"><i class="fa fa-check"></i></span>' : '<span class="badge badge-secondary"><i class="fa fa-times"></i></span>').'
-</td>
-<td class="text-center align-middle">
-'.($sub->is_impianto ? '<span class="badge badge-primary"><i class="fa fa-check"></i></span>' : '<span class="badge badge-secondary"><i class="fa fa-times"></i></span>').'
-</td>
-<td class="align-middle">
-<small>'.nl2br(htmlentities(substr((string) $sub->getTranslation('note'), 0, 100))).(strlen((string) $sub->getTranslation('note')) > 100 ? '...' : '').'</small>
-</td>
-<td class="text-center align-middle">
-<div class="btn-group">
-<button type="button" class="btn btn-warning btn-sm" title="'.tr('Modifica').'" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$sub->id.'&id_original='.$id_record.'\');">
-<i class="fa fa-edit"></i>
-</button>
-<button type="button" class="btn btn-sm btn-danger ask '.(($n_articoli > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub['id'].'" title="'.(($n_articoli > 0) ? 'Sottocategoria collegata a '.$n_articoli.' articoli' : tr('Elimina')).'">
-<i class="fa fa-trash"></i>
-</button>
-</div>
-</td>
-</tr>';
+    <tr>
+        <td class="align-middle">
+            <strong>' . $sub->getTranslation('title') . '</strong>
+        </td>
+        <td class="text-center align-middle">
+            <span class="badge" style="background-color: ' . $sub->colore . '; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span>
+            <span class="text-muted">' . $sub->colore . '</span>
+        </td>
+        <td class="text-center align-middle">
+            ' . ($n_articoli > 0 ? '<span class="badge badge-info">' . $n_articoli . '</span>' : '<span class="badge badge-secondary">0</span>') . '
+        </td>
+        <td class="text-center align-middle">
+            ' . ($n_impianti > 0 ? '<span class="badge badge-primary">' . $n_impianti . '</span>' : '<span class="badge badge-secondary">0</span>') . '
+        </td>
+        <td class="align-middle">
+            <small>' . nl2br(htmlentities(substr((string) $sub->getTranslation('note'), 0, 100))) . (strlen((string) $sub->getTranslation('note')) > 100 ? '...' : '') . '</small>
+        </td>
+        <td class="text-center align-middle">
+            <div class="btn-group">
+                <button type="button" class="btn btn-warning btn-sm" title="' . tr('Modifica') . '" onclick="launch_modal(\'' . tr('Modifica sottocategoria') . '\', \'' . base_path() . '/add.php?id_module=' . $id_module . '&id_record=' . $sub->id . '&id_original=' . $id_record . '\');">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-danger ask ' . (($n_articoli > 0 || $n_impianti > 0) ? 'disabled tip' : '') . '" data-backto="record-edit" data-id="' . $sub['id'] . '" title="' . (($n_articoli > 0 || $n_impianti > 0) ? 'Sottocategoria collegata a ' . $n_articoli . ' articoli e ' . $n_impianti . ' impianti' : tr('Elimina')) . '">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>';
 }

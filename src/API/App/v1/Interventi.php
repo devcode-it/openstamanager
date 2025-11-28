@@ -22,12 +22,12 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use Carbon\Carbon;
-use Intervention\Image\ImageManager;
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Uploads;
 
 class Interventi extends AppResource
 {
@@ -275,7 +275,9 @@ class Interventi extends AppResource
             idstatointervento AS id_stato_intervento,
             idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,
-            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede
+            IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
+            IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
+            firma_nome
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 
@@ -334,34 +336,12 @@ class Interventi extends AppResource
         $record->idsede_destinazione = $data['id_sede'] ?: 0;
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
-        // Salvataggio firma eventuale
-        if (!empty($data['firma_contenuto'])) {
-            $id_module = Module::where('name', 'Interventi')->first()->id;
+         // Salvataggio firma eventuale
+        if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
+            $record->firma_nome = $data['firma_nome'];
+            $record->firma_data = $data['firma_data'];
 
-            // Verifica se esiste già un file di firma in zz_files per questa attività
-            $file_exists = $database->selectOne('zz_files', ['id'], [
-                'id_module' => $id_module,
-                'id_record' => $record->id,
-                'key' => ['LIKE', 'signature_%'],
-            ]);
-
-            // Se il file non esiste in zz_files, salva il file fisico e registra in zz_files
-            if (empty($file_exists)) {
-                $data_firma = !empty($data['firma_data']) ? date('Y-m-d', strtotime((string) $data['firma_data'])) : date('Y-m-d');
-                $key = 'signature_'.$data['firma_nome'].'_'.$data_firma;
-
-                $firma_file = $this->salvaFirma($data['firma_contenuto']);
-
-                // Registra il file in zz_files
-                $database->insert('zz_files', [
-                    'id_module' => $id_module,
-                    'id_record' => $record->id,
-                    'name' => $firma_file,
-                    'filename' => $firma_file,
-                    'original' => $firma_file,
-                    'key' => $key,
-                ]);
-            }
+            $this->salvaFirma($data['firma_contenuto'], $record->id);
         }
 
         // Aggiornamento degli impianti collegati
@@ -389,7 +369,7 @@ class Interventi extends AppResource
         }
     }
 
-    protected function salvaFirma($firma_base64)
+protected function salvaFirma($firma_base64, $id_intervento)
     {
         // Salvataggio firma
         $firma_file = 'firma_'.time().'.png';
@@ -401,6 +381,18 @@ class Interventi extends AppResource
         $img->scale(680, 202);
 
         $img->save(base_dir().'/files/interventi/'.$firma_file);
+
+        $encoded_image = $img->toJpeg();
+        $file_content = $encoded_image->toString();
+
+        // Upload del file in zz_files
+        Uploads::upload($file_content, [
+            'name' => 'firma.jpg',
+            'category' => 'Firme',
+            'id_module' => Module::where('name', 'Interventi')->first()->id,
+            'id_record' => $id_intervento,
+            'key' => 'signature',
+        ]);
 
         return $firma_file;
     }

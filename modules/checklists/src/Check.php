@@ -189,7 +189,7 @@ class Check extends Model
         $module = Module::where('id', $file->id_module)->first();
         $fileinfo = \Uploads::fileInfo($file->filename);
 
-        $directory = '/'.$module->upload_directory.'/';
+        $directory = '/files/'.$module->attachments_directory.'/';
         $image = $directory.$file->filename;
         $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 

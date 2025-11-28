@@ -28,8 +28,12 @@ class Firma extends Resource implements UpdateInterface
     // TODO: Da rivedere con upload in base64
     public function update($request)
     {
-        // Le firme sono ora gestite tramite la tabella zz_files
-        // Non è necessario aggiornare firma_nome, firma_data, firma_file direttamente
-        // Questo metodo è mantenuto per compatibilità ma non esegue operazioni
+        $database = database();
+        $data = $request['data'];
+
+        $database->update('in_interventi', [
+            'firma_data' => $data['firma_data'],
+            'firma_nome' => $data['firma_nome'],
+        ], ['id' => $data['id']]);
     }
 }

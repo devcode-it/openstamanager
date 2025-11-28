@@ -425,7 +425,7 @@ if (count($sessioni) > 0) {
             if (empty($documento->signature)) {
                 echo '      <i>('.tr('Timbro e firma leggibile').')</i>';
             } else {
-                echo '      <i>'.$documento->signature_name.'</i>';
+                echo '      <i>'.$documento->firma_nome.'</i>';
             }
 
             echo '
@@ -479,7 +479,7 @@ if (count($sessioni) == 1) {
     if (empty($documento->signature)) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
-        echo '      <i>'.$documento->signature_name.'</i>';
+        echo '      <i>'.$documento->firma_nome.'</i>';
     }
 
     echo '
@@ -526,7 +526,7 @@ if (count($sessioni) == 0) {
     if (empty($documento->signature)) {
         echo '      <br><br><br><i>('.tr('Timbro e firma leggibile').')</i>';
     } else {
-        echo '      <i>'.$documento->signature_name.'</i>';
+        echo '      <i>'.$documento->firma_nome.'</i>';
     }
 
     echo '

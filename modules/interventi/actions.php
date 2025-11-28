@@ -839,13 +839,11 @@ switch (post('op')) {
         break;
 
     case 'firma':
+        $intervento = Intervento::find($id_record);
         if (is_writable(Uploads::getDirectory($id_module))) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
-                $firma_nome = post('firma_nome');
-
                 $data = explode(',', post('firma_base64'));
-
                 $img = getImageManager()->read(base64_decode($data[1]));
                 $img->resize(680, 202, function ($constraint) {
                     $constraint->aspectRatio();
@@ -855,69 +853,66 @@ switch (post('op')) {
                     $img->brightness((float) setting('Luminosità firma Wacom'));
                     $img->contrast((float) setting('Contrasto firma Wacom'));
                 }
+                $encoded_image = $img->toJpeg();
+                $file_content = $encoded_image->toString();
 
-                // Salva temporaneamente il file per l'upload
-                $temp_file = base_dir().'/files/interventi/firma_temp_'.time().'.jpg';
-                if (!$img->save($temp_file)) {
-                    flash()->error(tr('Impossibile creare il file.'));
+                // Upload del file in zz_files
+                $upload = Uploads::upload($file_content, [
+                    'name' => 'firma.jpg',
+                    'category' => 'Firme',
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                    'key' => 'signature',
+                ]);
+
+                if (empty($upload)) {
+                    flash()->error(tr('Errore durante il caricamento della firma!'));
                 } else {
-                    // Upload del file in zz_files con key='signature_nome_data'
-                    $data_firma = date('Y-m-d');
-                    $upload = Uploads::upload($temp_file, [
-                        'name' => 'Firma',
-                        'category' => 'Firme',
-                        'id_module' => $id_module,
-                        'id_record' => $id_record,
-                        'key' => 'signature_'.$firma_nome.'_'.$data_firma,
-                    ]);
+                    flash()->info(tr('Firma salvata correttamente.'));
 
-                    if (empty($upload)) {
-                        flash()->error(tr('Errore durante il caricamento della firma!'));
-                    } else {
-                        flash()->info(tr('Firma salvata correttamente.'));
+                    $intervento->firma_data = date('Y-m-d H:i:s');
+                    $intervento->firma_nome = post('firma_nome');
+                    $intervento->save();
 
-                        $id_stato = setting("Stato dell'attività dopo la firma");
-                        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
-                        $intervento = Intervento::find($id_record);
-                        if (!empty($stato)) {
-                            $intervento = Intervento::find($id_record);
-                            $intervento->idstatointervento = $stato['id'];
-                            $intervento->save();
+                    $id_stato = setting("Stato dell'attività dopo la firma");
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
+                    if (!empty($stato)) {
+                        $intervento->idstatointervento = $stato['id'];
+                        $intervento->save();
+                    }
+                }
+
+                // Notifica chiusura intervento
+                if (!empty($stato['notifica'])) {
+                    $template = Template::find($stato['id_email']);
+
+                    if (!empty($stato['destinatari'])) {
+                        $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                        $mail->addReceiver($stato['destinatari']);
+                        $mail->save();
+                    }
+
+                    if (!empty($stato['notifica_cliente'])) {
+                        if (!empty($intervento->anagrafica->email)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                            $mail->addReceiver($intervento->anagrafica->email);
+                            $mail->save();
                         }
                     }
 
-                    // Notifica chiusura intervento
-                    if (!empty($stato['notifica'])) {
-                        $template = Template::find($stato['id_email']);
+                    if (!empty($stato['notifica_tecnici'])) {
+                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                        $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                        $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
-                        if (!empty($stato['destinatari'])) {
-                            $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                            $mail->addReceiver($stato['destinatari']);
-                            $mail->save();
-                        }
-
-                        if (!empty($stato['notifica_cliente'])) {
-                            if (!empty($intervento->anagrafica->email)) {
-                                $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                $mail->addReceiver($intervento->anagrafica->email);
-                                $mail->save();
-                            }
-                        }
-
-                        if (!empty($stato['notifica_tecnici'])) {
-                            $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
-                            $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
-                            $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
-
-                            foreach ($tecnici as $tecnico) {
-                                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
-                                if (!empty($mail_tecnico['email'])) {
-                                    if (!empty($template)) {
-                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                        $mail->addReceiver($mail_tecnico['email']);
-                                        $mail->save();
-                                        flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
-                                    }
+                        foreach ($tecnici as $tecnico) {
+                            $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                            if (!empty($mail_tecnico['email'])) {
+                                if (!empty($template)) {
+                                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                    $mail->addReceiver($mail_tecnico['email']);
+                                    $mail->save();
+                                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                                 }
                             }
                         }
@@ -942,79 +937,75 @@ switch (post('op')) {
 
             if (post('firma_base64') != '') {
                 foreach ($id_records as $id_record) {
+                    $intervento = Intervento::find($id_record);
+
                     // Salvataggio firma
-                    $firma_nome = post('firma_nome');
-
                     $data = explode(',', post('firma_base64'));
-
                     $img = getImageManager()->read(base64_decode($data[1]));
                     $img->resize(680, 202, function ($constraint) {
                         $constraint->aspectRatio();
                     });
+                    $encoded_image = $img->toJpeg();
+                    $file_content = $encoded_image->toString();
 
-                    // Salva temporaneamente il file per l'upload
-                    $temp_file = base_dir().'/files/interventi/firma_temp_'.time().'.jpg';
-                    if (!$img->save($temp_file)) {
-                        flash()->error(tr('Impossibile creare il file!'));
-                    } else {
-                        // Upload del file in zz_files con key='signature_nome_data'
-                        $data_firma = date('Y-m-d');
-                        $upload = Uploads::upload($temp_file, [
-                            'name' => 'Firma',
-                            'category' => 'Firme',
-                            'id_module' => $id_module,
-                            'id_record' => $id_record,
-                            'key' => 'signature_'.$firma_nome.'_'.$data_firma,
-                        ]);
+                    // Upload del file in zz_files
+                    $upload = Uploads::upload($file_content, [
+                        'name' => 'firma.jpg',
+                        'category' => 'Firme',
+                        'id_module' => $id_module,
+                        'id_record' => $id_record,
+                        'key' => 'signature',
+                    ]);
 
-                        if (!empty($upload)) {
-                            ++$firmati;
+                    if (!empty($upload)) {
+                        ++$firmati;
 
-                            $id_stato = setting("Stato dell'attività dopo la firma");
-                            $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
-                            $intervento = Intervento::find($id_record);
-                            if (!empty($stato)) {
-                                $intervento = Intervento::find($id_record);
-                                $intervento->idstatointervento = $stato['id'];
-                                $intervento->save();
+                        $intervento->firma_data = date('Y-m-d H:i:s');
+                        $intervento->firma_nome = post('firma_nome');
+                        $intervento->save();
+
+                        $id_stato = setting("Stato dell'attività dopo la firma");
+                        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
+                        if (!empty($stato)) {
+                            $intervento->idstatointervento = $stato['id'];
+                            $intervento->save();
+                        }
+
+                        // Notifica chiusura intervento
+                        if (!empty($stato['notifica'])) {
+                            $template = Template::find($stato['id_email']);
+
+                            if (!empty($stato['destinatari'])) {
+                                $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                $mail->addReceiver($stato['destinatari']);
+                                $mail->save();
                             }
 
-                            // Notifica chiusura intervento
-                            if (!empty($stato['notifica'])) {
-                                $template = Template::find($stato['id_email']);
-
-                                if (!empty($stato['destinatari'])) {
-                                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                    $mail->addReceiver($stato['destinatari']);
+                            if (!empty($stato['notifica_cliente'])) {
+                                if (!empty($intervento->anagrafica->email)) {
+                                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                    $mail->addReceiver($intervento->anagrafica->email);
                                     $mail->save();
                                 }
+                            }
 
-                                if (!empty($stato['notifica_cliente'])) {
-                                    if (!empty($intervento->anagrafica->email)) {
-                                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                        $mail->addReceiver($intervento->anagrafica->email);
+                            if (!empty($stato['notifica_tecnici'])) {
+                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                                $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+
+                                foreach ($tecnici as $tecnico) {
+                                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                                    if (!empty($mail_tecnico['email'])) {
+                                        $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                        $mail->addReceiver($mail_tecnico['email']);
                                         $mail->save();
                                     }
                                 }
-
-                                if (!empty($stato['notifica_tecnici'])) {
-                                    $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
-                                    $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
-                                    $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
-
-                                    foreach ($tecnici as $tecnico) {
-                                        $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
-                                        if (!empty($mail_tecnico['email'])) {
-                                            $mail = Mail::build(auth()->getUser(), $template, $id_record);
-                                            $mail->addReceiver($mail_tecnico['email']);
-                                            $mail->save();
-                                        }
-                                    }
-                                }
                             }
-                        } else {
-                            ++$non_firmati;
                         }
+                    } else {
+                        ++$non_firmati;
                     }
                 }
             }
@@ -1200,6 +1191,8 @@ switch (post('op')) {
                     $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);
                     $new->data_richiesta = $data_richiesta;
                     $new->data_scadenza = post('ora_scadenza') ? $date->format('Y-m-d').' '.post('ora_scadenza') : null;
+                    $new->firma_data = null;
+                    $new->firma_nome = '';
 
                     $new->save();
 

@@ -77,7 +77,7 @@ class Impianto extends Model
 
         $fileinfo = \Uploads::fileInfo($upload->filename);
 
-        $directory = '/'.$module->upload_directory.'/';
+        $directory = '/files/'.$module->attachments_directory.'/';
         $image = $directory.$upload->filename;
         $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 

@@ -119,23 +119,23 @@ echo '
                     <span class="input-group-text"><i class="fa fa-search"></i></span>
                 </div>
                 <input type="text" class="form-control" id="search_invoice" placeholder="'.tr('Cerca fattura').'">
-            </div>
-
-            <div class="btn-group btn-group-sm d-inline-flex">
-                <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                    <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
-                </button>';
+            </div>';
 
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
+
+        <div class="btn-group btn-group-sm d-inline-flex">
+            <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
+            </button>
             <button type="button" class="btn btn-primary" onclick="searchInvoices(this)">
                 <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
-            </button>';
+            </button>
+        </div>';
 }
 
 echo '
-            </div>
         </div>
     </div>
     <div class="card-body" id="list">';
@@ -178,6 +178,17 @@ $(document).ready(function() {
 if (Interaction::isEnabled()) {
     echo '
 function importAll(btn) {
+    // Controlla se ci sono fatture caricate nella datatable
+    var invoiceRows = $("table tbody tr:not(#no-results-message)").length;
+
+    if (invoiceRows === 0) {
+        swal({
+            title: "'.tr('Nessuna fattura da importare').'",
+            type: "info",
+        });
+        return;
+    }
+
     swal({
         title: "'.tr('Importare tutte le fatture in sequenza?').'",
         html: "'.tr('Verranno importate manualmente tutte le fatture presenti. Continuare?').'",

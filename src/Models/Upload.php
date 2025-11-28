@@ -589,9 +589,7 @@ class Upload extends Model
 
         $img = getImageManager()->read($filepath);
 
-        $img->resize(600, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $img->scaleDown(600, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb600.'.$info['extension']));
 
         $img->scale(250, null);

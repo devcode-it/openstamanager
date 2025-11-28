@@ -373,14 +373,7 @@ class Interventi extends AppResource
     {
         $data = explode(',', (string) $firma_base64);
         $img = getImageManager()->read(base64_decode($data[1]));
-        $img->resize(680, 202, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-
-        if (setting('Sistema di firma') == 'Tavoletta Wacom') {
-            $img->brightness((float) setting('Luminosità firma Wacom'));
-            $img->contrast((float) setting('Contrasto firma Wacom'));
-        }
+        $img->scaleDown(680, 202);
         $encoded_image = $img->toJpeg();
         $file_content = $encoded_image->toString();
 

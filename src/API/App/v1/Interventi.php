@@ -375,13 +375,8 @@ protected function salvaFirma($firma_base64, $id_intervento)
         $firma_file = 'firma_'.time().'.png';
 
         $data = explode(',', (string) $firma_base64);
-
-        $manager = ImageManager::gd();
-        $img = $manager->read(base64_decode($data[1]));
-        $img->scale(680, 202);
-
-        $img->save(base_dir().'/files/interventi/'.$firma_file);
-
+        $img = getImageManager()->read(base64_decode($data[1]));
+        $img->scaleDown(680, 202);
         $encoded_image = $img->toJpeg();
         $file_content = $encoded_image->toString();
 

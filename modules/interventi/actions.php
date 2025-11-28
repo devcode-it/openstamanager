@@ -845,9 +845,7 @@ switch (post('op')) {
                 // Salvataggio firma
                 $data = explode(',', post('firma_base64'));
                 $img = getImageManager()->read(base64_decode($data[1]));
-                $img->resize(680, 202, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
+                $img->scaleDown(680, 202);
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
                     $img->brightness((float) setting('Luminosità firma Wacom'));
@@ -942,9 +940,7 @@ switch (post('op')) {
                     // Salvataggio firma
                     $data = explode(',', post('firma_base64'));
                     $img = getImageManager()->read(base64_decode($data[1]));
-                    $img->resize(680, 202, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
+                    $img->scaleDown(680, 202);
                     $encoded_image = $img->toJpeg();
                     $file_content = $encoded_image->toString();
 

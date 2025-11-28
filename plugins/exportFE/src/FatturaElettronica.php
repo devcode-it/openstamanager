@@ -1002,7 +1002,7 @@ class FatturaElettronica implements \Stringable
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
                 'ImportoContributoCassa' => $totale_rivalsainps,
-                'ImponibileCassa' => $documento->imponibile,
+                'ImponibileCassa' => $documento->imponibile - $documento->sconto,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 

@@ -80,8 +80,8 @@ use Models\Module;
 							<tr>
 								<th width="25%" class="text-left"><?php echo tr('Nome'); ?></th>
 								<th width="15%" class="text-center"><?php echo tr('Colore'); ?></th>
-								<th width="10%" class="text-center"><?php echo tr('Articolo'); ?></th>
-								<th width="10%" class="text-center"><?php echo tr('Impianto'); ?></th>
+								<th width="10%" class="text-center"><?php echo tr('Articoli'); ?></th>
+								<th width="10%" class="text-center"><?php echo tr('Impianti'); ?></th>
 								<th class="text-left"><?php echo tr('Nota'); ?></th>
 								<th width="10%" class="text-center"><?php echo tr('Azioni'); ?></th>
 							</tr>
@@ -110,7 +110,7 @@ use Models\Module;
 $articoli = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode`, `sottocategorie_lang`.`title` AS sottocategoria FROM `mg_articoli` LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id` LEFT JOIN `zz_categorie_lang` AS `sottocategorie_lang` ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).' OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).')) AND `deleted_at` IS NULL');
 
 // Impianti collegati alla categoria
-$impianti = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome` FROM `my_impianti` WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).'))');
+$impianti = $dbo->fetchArray('SELECT `my_impianti`.`id`, `my_impianti`.`matricola`, `my_impianti`.`nome`, `sottocategorie_lang`.`title` AS sottocategoria FROM `my_impianti` LEFT JOIN `zz_categorie` AS `sottocategorie` ON `my_impianti`.`id_sottocategoria` = `sottocategorie`.`id` LEFT JOIN `zz_categorie_lang` AS `sottocategorie_lang` ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE (`id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id_record).'))');
 
 // Visualizzazione degli articoli collegati
 if (!empty($articoli)) {
@@ -178,6 +178,12 @@ if (!empty($impianti)) {
         $descrizione = tr('Impianto _MATRICOLA_', [
             '_MATRICOLA_' => !empty($elemento['matricola']) ? $elemento['matricola'].' - '.$elemento['nome'] : $elemento['nome'],
         ]);
+
+        // Aggiunge la sottocategoria se presente
+        if (!empty($elemento['sottocategoria'])) {
+            $descrizione .= ' <small class="text-primary">('.$elemento['sottocategoria'].')</small>';
+        }
+
         $modulo = 'Impianti';
         $id = $elemento['id'];
 

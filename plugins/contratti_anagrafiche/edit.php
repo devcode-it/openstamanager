@@ -30,7 +30,6 @@ echo '
 
 	<div class="row">
         <div class="col-md-6">
-            '.Modules::link('Contratti', $record['id'], null, null, 'class="pull-right"').'
             {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "$id_record$", "ajax-source": "contratti", "disabled": "1" ]}
         </div>
         <div class="col-md-6">

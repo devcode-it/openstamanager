@@ -291,6 +291,6 @@ class Intervento extends Document
             }
         }
 
-        return $image ? base_path_osm().$image : null;
+        return $image ? base_path().$image : null;
     }
 }

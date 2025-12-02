@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
 "POT-Creation-Date: 2025-08-27 16:30+0200\n"
-"PO-Revision-Date: 2025-08-27 16:30+0200\n"
+"PO-Revision-Date: 2025-12-02 14:16+0100\n"
 "Last-Translator: \n"
 "Language-Team: https://www.devcode.it/\n"
 "Language: en\n"
@@ -102,8 +102,7 @@ msgstr "Error sending email! Check the parameters of the SMTP account used."
 msgid ""
 "Questo gruppo di utenti non ha i permessi per visualizzare nessun segmento di "
 "questo modulo"
-msgstr ""
-"This user group does not have permission to view any segment of this module"
+msgstr "This user group does not have permission to view any segment of this module"
 
 #: controller.php:62 editor.php:121 include/common/form.php:35
 #: include/manager.php:54 modules/adattatori_archiviazione/add.php:40
@@ -134,9 +133,8 @@ msgstr ""
 #: modules/gestione_documentale/add.php:45 modules/impianti/add.php:75
 #: modules/import/add.php:44 modules/interventi/add_contratto.php:37
 #: modules/interventi/add_ddt.php:37 modules/interventi/add_preventivo.php:36
-#: modules/interventi/ajax_tecnici.php:286
-#: modules/interventi/crea_documento.php:54 modules/interventi/edit.php:403
-#: modules/interventi/modals/add_sessioni.php:27
+#: modules/interventi/ajax_tecnici.php:286 modules/interventi/crea_documento.php:54
+#: modules/interventi/edit.php:403 modules/interventi/modals/add_sessioni.php:27
 #: modules/interventi/modals/copy_sessione.php:27 modules/iva/add.php:82
 #: modules/liste_newsletter/add.php:37 modules/liste_newsletter/edit.php:117
 #: modules/listini_cliente/add.php:62 modules/mansioni/add.php:35
@@ -163,9 +161,8 @@ msgstr ""
 #: modules/utenti/user.php:139 modules/zone/add.php:39
 #: plugins/assicurazione_crediti/add.php:49 plugins/barcode_articoli/add.php:42
 #: plugins/componenti/add.php:39 plugins/consuntivo/edit.php:555
-#: plugins/dichiarazioni_intento/add.php:73
-#: plugins/impianti_intervento/edit.php:68 plugins/notes.php:116
-#: plugins/pagamenti_anagrafiche/add.php:75
+#: plugins/dichiarazioni_intento/add.php:73 plugins/impianti_intervento/edit.php:68
+#: plugins/notes.php:116 plugins/pagamenti_anagrafiche/add.php:75
 #: plugins/pianificazione_fatturazione/crea_fattura.php:152
 #: plugins/pianificazione_fatturazione/crea_fattura_multipla.php:96
 #: plugins/provvigioni/add.php:50 plugins/referenti/add.php:66
@@ -331,22 +328,22 @@ msgstr "On development"
 
 #: include/colonne.php:28
 msgid ""
-"Trascina le colonne per ordinare la struttura della tabella principale, "
-"seleziona e deseleziona le colonne per renderle visibili o meno"
+"Trascina le colonne per ordinare la struttura della tabella principale, seleziona "
+"e deseleziona le colonne per renderle visibili o meno"
 msgstr ""
-"Drag the columns to sort the structure of the main table, select and deselect "
-"the columns to make them visible or not"
+"Drag the columns to sort the structure of the main table, select and deselect the "
+"columns to make them visible or not"
 
 #: include/common/articolo.php:42 include/common/importa.php:512
 #: modules/articoli/edit.php:32 modules/articoli/header.php:32
 #: modules/articoli/modals/add_movimento.php:32
 #: modules/articoli/widgets/articoli.dashboard.php:34
-#: modules/automezzi/add_articolo.php:28
-#: modules/automezzi/row-list-articoli.php:33 modules/categorie/add.php:56
-#: modules/categorie/edit.php:44 modules/categorie/edit.php:83
-#: modules/combinazioni_articoli/edit.php:74 modules/contratti/edit.php:407
-#: modules/ddt/edit.php:443 modules/fatture/add_serial.php:95
-#: modules/fatture/edit.php:877 modules/interventi/edit.php:398
+#: modules/automezzi/add_articolo.php:28 modules/automezzi/row-list-articoli.php:33
+#: modules/categorie/add.php:56 modules/categorie/edit.php:44
+#: modules/categorie/edit.php:83 modules/combinazioni_articoli/edit.php:74
+#: modules/contratti/edit.php:407 modules/ddt/edit.php:443
+#: modules/fatture/add_serial.php:95 modules/fatture/edit.php:877
+#: modules/interventi/edit.php:398
 #: modules/listini_cliente/modals/manage_articolo.php:49 modules/marche/add.php:53
 #: modules/marche/edit.php:56 modules/marche/edit.php:85
 #: modules/movimenti/add.php:45 modules/ordini/edit.php:359
@@ -369,8 +366,8 @@ msgid ""
 "La selezione di un Impianto in questo campo provocherà l'installazione di un "
 "nuovo Componente basato sull'Articolo corrente"
 msgstr ""
-"Selecting a plant in this field will cause a new component to be installed "
-"based on the current item"
+"Selecting a plant in this field will cause a new component to be installed based "
+"on the current item"
 
 #: include/common/articolo.php:83
 msgid "Ultimi prezzi di acquisto"
@@ -444,8 +441,7 @@ msgstr "Visible price list "
 msgid "Sconto suggerito"
 msgstr "Suggested discount"
 
-#: include/common/articolo.php:601
-#: plugins/listino_clienti/dettaglio_prezzi.php:132
+#: include/common/articolo.php:601 plugins/listino_clienti/dettaglio_prezzi.php:132
 #: plugins/listino_fornitori/dettaglio_prezzi_fornitore.php:195
 msgid "Quantità minima"
 msgstr "Manual quantity"
@@ -502,8 +498,8 @@ msgstr "Default shipment"
 #: modules/aggiornamenti/controlli.php:223 modules/articoli/add.php:46
 #: modules/articoli/edit.php:85 modules/articoli/modals/add_movimento.php:215
 #: modules/articoli/plugins/articoli.giacenze.php:70
-#: modules/articoli/plugins/articoli.giacenze.php:137
-#: modules/automezzi/edit.php:31 modules/beni/add.php:28 modules/beni/edit.php:37
+#: modules/articoli/plugins/articoli.giacenze.php:137 modules/automezzi/edit.php:31
+#: modules/beni/add.php:28 modules/beni/edit.php:37
 #: modules/categorie_documenti/add.php:29 modules/categorie_documenti/edit.php:36
 #: modules/categorie_files/add.php:28 modules/categorie_files/edit.php:34
 #: modules/causali/add.php:28 modules/causali/edit.php:31
@@ -520,18 +516,17 @@ msgstr "Default shipment"
 #: modules/interventi/add.php:233 modules/interventi/edit.php:234
 #: modules/interventi/modals/confronta_righe.php:49
 #: modules/interventi/plugins/my_impianti.interventi.php:41
-#: modules/interventi/row-list.php:47 modules/iva/add.php:51
-#: modules/iva/edit.php:67 modules/liste_newsletter/edit.php:47
-#: modules/listini_cliente/edit.php:100 modules/movimenti/add.php:320
-#: modules/ordini/edit.php:379 modules/ordini/modals/confronta_righe.php:49
-#: modules/ordini/row-list.php:55 modules/otp_tokens/add.php:38
-#: modules/otp_tokens/edit.php:62 modules/pagamenti/add.php:28
-#: modules/pagamenti/edit.php:35 modules/partitario/add_conto.php:40
-#: modules/partitario/edit.php:83 modules/partitario/edit_conto.php:75
-#: modules/partitario/edit_conto.php:78 modules/porti/add.php:28
-#: modules/porti/edit.php:35 modules/preventivi/crea_revisione.php:33
-#: modules/preventivi/edit.php:157 modules/preventivi/edit.php:285
-#: modules/preventivi/modals/confronta_righe.php:48
+#: modules/interventi/row-list.php:47 modules/iva/add.php:51 modules/iva/edit.php:67
+#: modules/liste_newsletter/edit.php:47 modules/listini_cliente/edit.php:100
+#: modules/movimenti/add.php:320 modules/ordini/edit.php:379
+#: modules/ordini/modals/confronta_righe.php:49 modules/ordini/row-list.php:55
+#: modules/otp_tokens/add.php:38 modules/otp_tokens/edit.php:62
+#: modules/pagamenti/add.php:28 modules/pagamenti/edit.php:35
+#: modules/partitario/add_conto.php:40 modules/partitario/edit.php:83
+#: modules/partitario/edit_conto.php:75 modules/partitario/edit_conto.php:78
+#: modules/porti/add.php:28 modules/porti/edit.php:35
+#: modules/preventivi/crea_revisione.php:33 modules/preventivi/edit.php:157
+#: modules/preventivi/edit.php:285 modules/preventivi/modals/confronta_righe.php:48
 #: modules/preventivi/row-list.php:43 modules/provenienze/add.php:28
 #: modules/provenienze/edit.php:35 modules/relazioni_anagrafiche/add.php:28
 #: modules/relazioni_anagrafiche/edit.php:35 modules/ritenute/add.php:28
@@ -577,8 +572,7 @@ msgstr "Description"
 #: modules/contratti/edit.php:202 modules/dashboard/widgets/notifiche.php:27
 #: modules/emails/edit.php:153 modules/fatture/edit.php:581
 #: modules/interventi/edit.php:247 modules/liste_newsletter/widgets/opt-out.php:31
-#: modules/ordini/edit.php:274 modules/preventivi/edit.php:183
-#: plugins/notes.php:27
+#: modules/ordini/edit.php:274 modules/preventivi/edit.php:183 plugins/notes.php:27
 msgid "Note interne"
 msgstr "Internal note"
 
@@ -614,11 +608,11 @@ msgstr "Document date"
 #: modules/interventi/edit.php:184 modules/interventi/edit.php:188
 #: modules/interventi/modals/duplicazione.php:53 modules/newsletter/edit.php:73
 #: modules/ordini/bulk.php:218 modules/ordini/bulk.php:250
-#: modules/ordini/edit.php:64 modules/ordini/edit.php:68
-#: modules/ordini/edit.php:73 modules/ordini/modals/duplicazione.php:34
-#: modules/preventivi/add.php:66 modules/preventivi/bulk.php:172
-#: modules/preventivi/edit.php:45 modules/stato_servizi/edit.php:51
-#: modules/stato_servizi/edit.php:158 modules/stato_servizi/elenco-hooks.php:30
+#: modules/ordini/edit.php:64 modules/ordini/edit.php:68 modules/ordini/edit.php:73
+#: modules/ordini/modals/duplicazione.php:34 modules/preventivi/add.php:66
+#: modules/preventivi/bulk.php:172 modules/preventivi/edit.php:45
+#: modules/stato_servizi/edit.php:51 modules/stato_servizi/edit.php:158
+#: modules/stato_servizi/elenco-hooks.php:30
 #: modules/stato_servizi/elenco-moduli.php:29
 #: modules/stato_servizi/elenco-widget.php:30 plugins/consuntivo/edit.php:379
 #: templates/riepilogo_interventi/piece.php:89
@@ -666,8 +660,7 @@ msgstr "Transportation cause"
 #: modules/interventi/widgets/interventi_da_programmare.php:33
 #: modules/ordini/edit.php:99 modules/preventivi/add.php:43
 #: modules/preventivi/edit.php:66 modules/scadenzario/edit.php:74
-#: plugins/importFE_ZIP/list.php:35
-#: plugins/listino_clienti/dettaglio_prezzi.php:60
+#: plugins/importFE_ZIP/list.php:35 plugins/listino_clienti/dettaglio_prezzi.php:60
 #: plugins/listino_clienti/edit.php:38 plugins/listino_clienti/edit.php:61
 #: plugins/listino_fornitori/dettaglio_prezzi_fornitore.php:91
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:131
@@ -782,8 +775,7 @@ msgstr "Supplier code "
 msgid "_NUM_ serial mancanti"
 msgstr "_NUM_ serial missing"
 
-#: include/common/importa.php:463
-#: modules/articoli/plugins/articoli.giacenze.php:100
+#: include/common/importa.php:463 modules/articoli/plugins/articoli.giacenze.php:100
 #: modules/articoli/plugins/articoli.giacenze.php:167
 #: modules/articoli/plugins/dettagli_giacenze.php:109
 #: modules/interventi/plugins/my_impianti.interventi.php:61
@@ -795,10 +787,8 @@ msgstr "_NUM_ serial missing"
 #: plugins/rinnovi_contratti/edit.php:35 templates/fatturato/body.php:46
 #: templates/fatturato/body.php:83 templates/interventi/body.php:340
 #: templates/interventi/body.php:603 templates/magazzino_cespiti/body.php:78
-#: templates/magazzino_inventario/body.php:122
-#: templates/registro_iva/bottom.php:70
-#: templates/riepilogo_interventi/bottom.php:43
-#: templates/scadenzario/bottom.php:29
+#: templates/magazzino_inventario/body.php:122 templates/registro_iva/bottom.php:70
+#: templates/riepilogo_interventi/bottom.php:43 templates/scadenzario/bottom.php:29
 msgid "Totale"
 msgstr "Total"
 
@@ -843,9 +833,9 @@ msgid ""
 "allo stato di evasione dell'elemento nel documento di origine (quantità "
 "dell'elemento / quantità massima ammessa)"
 msgstr ""
-"The item is linked to a document: the maximum quantity allowed is related to "
-"the fulfillment status of the item in the source document (quantity of the "
-"item / maximum quantity allowed)"
+"The item is linked to a document: the maximum quantity allowed is related to the "
+"fulfillment status of the item in the source document (quantity of the item / "
+"maximum quantity allowed)"
 
 #: include/common/riga.php:49 modules/articoli/add.php:114
 #: modules/articoli/bulk.php:615 modules/articoli/edit.php:105
@@ -923,8 +913,8 @@ msgstr "Unique discount"
 
 #: include/common/riga.php:214
 msgid ""
-"Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire "
-"un valore negativo."
+"Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un "
+"valore negativo."
 msgstr ""
 "Positive value indicate an discount: to apply a surcharge enter negative value."
 
@@ -1008,8 +998,8 @@ msgstr "Discount/surcharge percentage"
 #: include/common/sconto.php:36 include/common/sconto.php:43
 #: modules/piano_sconto/add.php:36 modules/piano_sconto/edit.php:36
 msgid ""
-"Il valore positivo indica uno sconto: per applicare una maggiorazione inserire "
-"un valore negativo"
+"Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un "
+"valore negativo"
 msgstr ""
 "Positive value indicate an discount: to apply a surcharge enter negative value"
 
@@ -1041,8 +1031,8 @@ msgstr "Write permission missing"
 
 #: include/init/configuration.php:151
 msgid ""
-"Non è possibile creare il file di configurazione _FILE_ per mancanza di "
-"permessi di scrittura"
+"Non è possibile creare il file di configurazione _FILE_ per mancanza di permessi "
+"di scrittura"
 msgstr ""
 
 #: include/init/configuration.php:162 include/init/configuration.php:202
@@ -1086,8 +1076,7 @@ msgstr ""
 
 #: include/init/configuration.php:219
 msgid ""
-"Verifica che il file _FILE_ contenga tutti i parametri di connessione al "
-"database"
+"Verifica che il file _FILE_ contenga tutti i parametri di connessione al database"
 msgstr ""
 
 #: include/init/configuration.php:222
@@ -1104,8 +1093,8 @@ msgstr "Next"
 msgid "Precedente"
 msgstr "Previous"
 
-#: include/init/configuration.php:289 include/top.php:139
-#: modules/utenti/add.php:66 modules/utenti/user.php:159
+#: include/init/configuration.php:289 include/top.php:139 modules/utenti/add.php:66
+#: modules/utenti/user.php:159
 msgid "Impossibile procedere"
 msgstr "Unable to proceed"
 
@@ -1166,8 +1155,8 @@ msgstr "Note saved successfully!"
 #: modules/articoli/bulk.php:694 modules/articoli/bulk.php:707
 #: modules/articoli/bulk.php:720 modules/contratti/bulk.php:301
 #: modules/contratti/bulk.php:312 modules/contratti/bulk.php:326
-#: modules/contratti/bulk.php:337 modules/ddt/bulk.php:188
-#: modules/ddt/bulk.php:198 modules/ddt/bulk.php:211 modules/fatture/bulk.php:751
+#: modules/contratti/bulk.php:337 modules/ddt/bulk.php:188 modules/ddt/bulk.php:198
+#: modules/ddt/bulk.php:211 modules/fatture/bulk.php:751
 #: modules/fatture/bulk.php:763 modules/fatture/bulk.php:775
 #: modules/fatture/bulk.php:787 modules/fatture/bulk.php:798
 #: modules/fatture/bulk.php:813 modules/fatture/bulk.php:823
@@ -1202,9 +1191,8 @@ msgstr "Proceed with the installation?"
 #: modules/aggiornamenti/controlli.php:113 modules/aggiornamenti/controlli.php:150
 #: modules/aggiornamenti/controlli.php:177 modules/anagrafiche/edit.php:404
 #: modules/articoli/plugins/articoli.lotti.php:508 modules/backups/edit.php:112
-#: modules/banche/add.php:189 modules/banche/add.php:205
-#: modules/banche/add.php:216 modules/banche/add.php:321
-#: modules/banche/add.php:326 modules/banche/edit.php:264
+#: modules/banche/add.php:189 modules/banche/add.php:205 modules/banche/add.php:216
+#: modules/banche/add.php:321 modules/banche/add.php:326 modules/banche/edit.php:264
 #: modules/banche/edit.php:280 modules/banche/edit.php:291
 #: modules/banche/edit.php:396 modules/banche/edit.php:401
 #: modules/checklists/components/add-check.php:130
@@ -1214,14 +1202,14 @@ msgstr "Proceed with the installation?"
 #: modules/import/edit.php:298 modules/import/edit.php:390
 #: modules/impostazioni/edit.php:268 modules/interventi/edit.php:731
 #: modules/interventi/modals/anteprima_firma.php:148
-#: modules/interventi/modals/anteprima_firma.php:157
-#: modules/newsletter/edit.php:291 modules/ordini/edit.php:533
-#: modules/preventivi/edit.php:438 modules/smtp/buttons.php:51
-#: modules/stato_servizi/elenco-widget.php:279 modules/utenti/edit.php:368
-#: modules/utenti/edit.php:401 modules/utenti/edit.php:415
-#: modules/utenti/info.php:222 modules/viste/edit.php:166
-#: plugins/exportFE/edit.php:248 plugins/exportFE/edit.php:289
-#: plugins/exportFE/edit.php:328 plugins/exportFE/notifiche.php:209
+#: modules/interventi/modals/anteprima_firma.php:157 modules/newsletter/edit.php:291
+#: modules/ordini/edit.php:533 modules/preventivi/edit.php:438
+#: modules/smtp/buttons.php:51 modules/stato_servizi/elenco-widget.php:279
+#: modules/utenti/edit.php:368 modules/utenti/edit.php:401
+#: modules/utenti/edit.php:415 modules/utenti/info.php:222
+#: modules/viste/edit.php:166 plugins/exportFE/edit.php:248
+#: plugins/exportFE/edit.php:289 plugins/exportFE/edit.php:328
+#: plugins/exportFE/notifiche.php:209
 #: plugins/exportFE/src/FatturaElettronica.php:521 plugins/importFE/buttons.php:81
 #: plugins/importFE/buttons.php:119 plugins/importFE/edit.php:68
 #: plugins/importFE/edit.php:230 plugins/importFE/list.php:162
@@ -1454,8 +1442,7 @@ msgid "Imposta la password dell'amministratore"
 msgstr "Set administrator password"
 
 #: include/init/init.php:165 modules/anagrafiche/add.php:123
-#: modules/anagrafiche/edit.php:221
-#: modules/liste_newsletter/widgets/opt-out.php:95
+#: modules/anagrafiche/edit.php:221 modules/liste_newsletter/widgets/opt-out.php:95
 #: modules/utenti/components/base.php:50 modules/utenti/edit.php:95
 #: modules/utenti/user.php:88 reset.php:204 templates/anagrafiche/body.php:50
 #: templates/azienda/body.php:59 templates/base/header.php:43
@@ -1487,11 +1474,11 @@ msgstr "File"
 #| "Per impostare il logo delle stampe, caricare un file \".jpg\". Risoluzione "
 #| "consigliata 302x111 pixel"
 msgid ""
-"Per impostare il logo delle stampe, caricare un file con estensione \".jpg\", "
-"\".jpeg\" o \".png\". Risoluzione consigliata 302x111 pixel"
+"Per impostare il logo delle stampe, caricare un file con estensione \".jpg\", \"."
+"jpeg\" o \".png\". Risoluzione consigliata 302x111 pixel"
 msgstr ""
-"To set up printings logo, upload a \".jpg\" file. Recommended resolution "
-"302x111 pixel"
+"To set up printings logo, upload a \".jpg\" file. Recommended resolution 302x111 "
+"pixel"
 
 #: include/init/init.php:225
 msgid "Impostazioni di base"
@@ -1510,8 +1497,8 @@ msgid ""
 "Il software si trova attualmente in modalità manutenzione, siete pregati di "
 "attendere sino alla conclusione dell'intervento"
 msgstr ""
-"The software is currently in maintenance mode, please wait until the "
-"maintenance is completed"
+"The software is currently in maintenance mode, please wait until the maintenance "
+"is completed"
 
 #: include/init/manifest.php:55
 msgid "Sembra che non ci siano i permessi di scrittura sul file _FILE_"
@@ -1536,8 +1523,7 @@ msgstr "Module"
 
 #: include/init/requirements.php:86
 msgid ""
-"Permette di leggere e scrivere gli archivi compressi ZIP e i file al loro "
-"interno"
+"Permette di leggere e scrivere gli archivi compressi ZIP e i file al loro interno"
 msgstr "It allows read and write pressed archived ZIP and the files inside them"
 
 #: include/init/requirements.php:90
@@ -1573,16 +1559,14 @@ msgid ""
 "Permette la comunicazione con servizi esterni, quali il database europeo delle "
 "Partite IVA (facoltativo)"
 msgstr ""
-"It allows the communication with external service, which european database of "
-"VAT"
+"It allows the communication with external service, which european database of VAT"
 
 #: include/init/requirements.php:122 include/init/requirements.php:126
 msgid ""
 "Permette la creazione dell'immagine della firma per il rapportino d'intervento "
 "(facoltativo)"
 msgstr ""
-"Allows the creation of the signature image for the intervention report "
-"(optional)"
+"Allows the creation of the signature image for the intervention report (optional)"
 
 #: include/init/requirements.php:156
 msgid "Permette di importare file con estensione .p7m"
@@ -1642,10 +1626,9 @@ msgstr "Folder"
 
 #: include/init/requirements.php:341
 msgid ""
-"Necessario per l'aggiunta a schermata home da terminale (creato al termine "
-"della configurazione)"
-msgstr ""
-"Needed for addition to home screen from terminal (created at end of setup)"
+"Necessario per l'aggiunta a schermata home da terminale (creato al termine della "
+"configurazione)"
+msgstr "Needed for addition to home screen from terminal (created at end of setup)"
 
 #: include/init/requirements.php:342
 msgid "Necessario per il controllo integrità con database MariaDB 10.x"
@@ -1708,13 +1691,12 @@ msgstr "Configurations"
 #: modules/anagrafiche/add.php:57 modules/anagrafiche/edit.php:115
 #: modules/automezzi/add.php:10 modules/automezzi/edit.php:22
 #: modules/backups/edit.php:317 modules/backups/edit.php:396
-#: modules/banche/add.php:37 modules/banche/edit.php:47
-#: modules/categorie/add.php:48 modules/categorie/edit.php:36
-#: modules/categorie/edit.php:81 modules/categorie_contratti/add.php:43
-#: modules/categorie_contratti/edit.php:36 modules/categorie_contratti/edit.php:70
-#: modules/causali_movimenti/add.php:28 modules/causali_movimenti/edit.php:35
-#: modules/checklists/add.php:30 modules/checklists/edit.php:37
-#: modules/combinazioni_articoli/add.php:19
+#: modules/banche/add.php:37 modules/banche/edit.php:47 modules/categorie/add.php:48
+#: modules/categorie/edit.php:36 modules/categorie/edit.php:81
+#: modules/categorie_contratti/add.php:43 modules/categorie_contratti/edit.php:36
+#: modules/categorie_contratti/edit.php:70 modules/causali_movimenti/add.php:28
+#: modules/causali_movimenti/edit.php:35 modules/checklists/add.php:30
+#: modules/checklists/edit.php:37 modules/combinazioni_articoli/add.php:19
 #: modules/combinazioni_articoli/edit.php:25 modules/contratti/add.php:41
 #: modules/custom_fields/add.php:38 modules/custom_fields/content-info.php:35
 #: modules/custom_fields/edit.php:40 modules/descrizioni_predefinite/add.php:28
@@ -1725,24 +1707,22 @@ msgstr "Configurations"
 #: modules/impianti/add.php:37 modules/impianti/edit.php:59
 #: modules/liste_newsletter/add.php:30 modules/liste_newsletter/edit.php:41
 #: modules/listini_cliente/add.php:30 modules/listini_cliente/edit.php:38
-#: modules/mansioni/edit.php:37 modules/marche/add.php:47
-#: modules/marche/edit.php:50 modules/marche/edit.php:83
-#: modules/modelli_primanota/add.php:63 modules/modelli_primanota/edit.php:67
-#: modules/newsletter/add.php:34 modules/newsletter/edit.php:67
-#: modules/oauth/edit.php:35 modules/piano_sconto/add.php:28
-#: modules/piano_sconto/edit.php:28 modules/preventivi/add.php:39
-#: modules/segmenti/add.php:28 modules/segmenti/edit.php:37
-#: modules/stato_email/edit.php:109 modules/stato_email/edit.php:147
-#: modules/stato_servizi/edit.php:52 modules/stato_servizi/edit.php:159
-#: modules/stato_servizi/elenco-hooks.php:28
+#: modules/mansioni/edit.php:37 modules/marche/add.php:47 modules/marche/edit.php:50
+#: modules/marche/edit.php:83 modules/modelli_primanota/add.php:63
+#: modules/modelli_primanota/edit.php:67 modules/newsletter/add.php:34
+#: modules/newsletter/edit.php:67 modules/oauth/edit.php:35
+#: modules/piano_sconto/add.php:28 modules/piano_sconto/edit.php:28
+#: modules/preventivi/add.php:39 modules/segmenti/add.php:28
+#: modules/segmenti/edit.php:37 modules/stato_email/edit.php:109
+#: modules/stato_email/edit.php:147 modules/stato_servizi/edit.php:52
+#: modules/stato_servizi/edit.php:159 modules/stato_servizi/elenco-hooks.php:28
 #: modules/stato_servizi/elenco-moduli.php:27
 #: modules/stato_servizi/elenco-widget.php:27 modules/tags/add.php:29
 #: modules/tags/edit.php:28 modules/tipi_scadenze/add.php:28
 #: modules/tipi_scadenze/edit.php:46 modules/viste/fields.php:63
 #: modules/viste/fields.php:224 modules/viste/filters.php:137
-#: plugins/exportFE/notifiche.php:47
-#: plugins/impianti_intervento/row-impianti.php:92 plugins/receiptFE/list.php:36
-#: plugins/sedi/add.php:121 plugins/sedi/edit.php:249
+#: plugins/exportFE/notifiche.php:47 plugins/impianti_intervento/row-impianti.php:92
+#: plugins/receiptFE/list.php:36 plugins/sedi/add.php:121 plugins/sedi/edit.php:249
 #: src/HTMLBuilder/Manager/FileManager.php:124 templates/anagrafiche/body.php:122
 msgid "Nome"
 msgstr "First name"
@@ -1978,18 +1958,16 @@ msgid ""
 "Le operazioni di esportazione, copia e stampa sono limitate alle righe "
 "selezionate e visibili della tabella"
 msgstr ""
-"Export, copy and print operations are limited to selected and visible rows of "
-"the table"
+"Export, copy and print operations are limited to selected and visible rows of the "
+"table"
 
 #: include/manager.php:225
-msgid ""
-"Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo"
+msgid "Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo"
 msgstr "For actions on all selected content, use Group Actions"
 
-#: include/manager.php:231 include/manager.php:246
-#: modules/anagrafiche/bulk.php:121 modules/articoli/bulk.php:654
-#: modules/fatture/bulk.php:820 modules/impianti/bulk.php:99
-#: plugins/presentazioni_bancarie/generate.php:206
+#: include/manager.php:231 include/manager.php:246 modules/anagrafiche/bulk.php:121
+#: modules/articoli/bulk.php:654 modules/fatture/bulk.php:820
+#: modules/impianti/bulk.php:99 plugins/presentazioni_bancarie/generate.php:206
 msgid "Esporta"
 msgstr "Export"
 
@@ -2080,8 +2058,7 @@ msgstr "Orders "
 
 #: include/riferimenti/riferimenti.php:98 modules/contratti/row-list.php:441
 #: modules/ddt/row-list.php:466 modules/fatture/edit.php:909
-#: modules/interventi/header.php:150
-#: modules/interventi/occupazione_tecnici.php:110
+#: modules/interventi/header.php:150 modules/interventi/occupazione_tecnici.php:110
 #: modules/interventi/widgets/interventi_confermati.php:32
 #: modules/ordini/buttons.php:50 modules/ordini/row-list.php:566
 #: modules/preventivi/buttons.php:77 modules/preventivi/row-list.php:539
@@ -2120,8 +2097,8 @@ msgid ""
 "OpenSTAManager, il software gestionale open source per assistenza tecnica e "
 "fatturazione elettronica."
 msgstr ""
-"OpenSTAManager, the open source management software for technical assistance "
-"and electronic invoicing."
+"OpenSTAManager, the open source management software for technical assistance and "
+"electronic invoicing."
 
 #: include/top.php:106 modules/gestione_task/edit.php:168
 #: modules/pagamenti/edit.php:175 modules/pagamenti/edit.php:242
@@ -2342,9 +2319,9 @@ msgstr "No items found"
 msgid "Firma mancante."
 msgstr "Signature missing."
 
-#: include/top.php:149 modules/dashboard/ajax.php:357
-#: modules/dashboard/ajax.php:364 modules/dashboard/ajax.php:437
-#: modules/dashboard/ajax.php:586 modules/dashboard/ajax.php:604
+#: include/top.php:149 modules/dashboard/ajax.php:357 modules/dashboard/ajax.php:364
+#: modules/dashboard/ajax.php:437 modules/dashboard/ajax.php:586
+#: modules/dashboard/ajax.php:604
 msgid "Mostra tutto"
 msgstr "Show all movements"
 
@@ -2439,7 +2416,7 @@ msgstr "The password contains sequences"
 #: plugins/listino_fornitori/edit.php:230 plugins/receiptFE/edit.php:56
 #: reset.php:135 token_login.php:386
 msgid "Attenzione"
-msgstr "Attention"
+msgstr "Warning"
 
 #: include/top.php:189 include/top.php:305
 msgid "Molto debole"
@@ -2615,8 +2592,7 @@ msgid ""
 "archiviazione possono causare malfunzionamenti imprevisti"
 msgstr ""
 "This can be a serious problem for the continuity of software operation, as more "
-"expansive operations that require storage space can cause unexpected "
-"malfunctions"
+"expansive operations that require storage space can cause unexpected malfunctions"
 
 #: include/top.php:817
 msgid ""
@@ -2624,8 +2600,8 @@ msgid ""
 "normale del gestionale potrebbero rendere i dati inaffidabili, provocando "
 "pertanto una perdita delle informazioni salvate"
 msgstr ""
-"For example, backup activities, uploading attachments, or even normal use of "
-"the software could render the data unreliable, thus causing a loss of saved "
+"For example, backup activities, uploading attachments, or even normal use of the "
+"software could render the data unreliable, thus causing a loss of saved "
 "information"
 
 #: include/top.php:818
@@ -2665,8 +2641,8 @@ msgid ""
 "OpenSTAManager, il software gestionale open source per assistenza tecnica e "
 "fatturazione elettronica"
 msgstr ""
-"OpenSTAManager, the open source management software for technical assistance "
-"and electronic invoicing"
+"OpenSTAManager, the open source management software for technical assistance and "
+"electronic invoicing"
 
 #: index.php:203
 msgid "Accedi con le tue credenziali"
@@ -2698,21 +2674,21 @@ msgstr "Authentication"
 
 #: info.php:46
 msgid ""
-"<b>OpenSTAManager</b> è un <b>software libero</b> mantenuto da <a "
-"href=\"https://www.devcode.it\" target=\"_blank\">Devcode Srl</a>"
-msgstr ""
-"<b>OpenSTAManager</b> is <b>free software</b> maintained by <a href=\"https://"
+"<b>OpenSTAManager</b> è un <b>software libero</b> mantenuto da <a href=\"https://"
 "www.devcode.it\" target=\"_blank\">Devcode Srl</a>"
+msgstr ""
+"<b>OpenSTAManager</b> is <b>free software</b> maintained by <a href=\"https://www."
+"devcode.it\" target=\"_blank\">Devcode Srl</a>"
 
 #: info.php:48
 msgid ""
-"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) "
-"aperto\" ed è stato creato per gestire e archiviare l'assistenza tecnica "
-"fornita ai propri clienti"
+"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) aperto\" "
+"ed è stato creato per gestire e archiviare l'assistenza tecnica fornita ai propri "
+"clienti"
 msgstr ""
-"The name means \"Manager of STA (<b>Technical Assistance Service</b>) open\" "
-"and it was created for handle and archive the technical assistance provided to "
-"its customers"
+"The name means \"Manager of STA (<b>Technical Assistance Service</b>) open\" and "
+"it was created for handle and archive the technical assistance provided to its "
+"customers"
 
 #: info.php:52 modules/anagrafiche/edit.php:169
 msgid "Sito web"
@@ -2732,16 +2708,16 @@ msgstr "Why free software"
 
 #: info.php:70
 msgid ""
-"Il progetto è software libero perchè permette a tutti di conoscere come "
-"funziona avendo il codice sorgente del programma e fornisce così la possibilità "
-"di studiare come funziona, modificarlo, adattarlo alle proprie esigenze e, in "
-"ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso "
-"fornitore di assistenza"
+"Il progetto è software libero perchè permette a tutti di conoscere come funziona "
+"avendo il codice sorgente del programma e fornisce così la possibilità di "
+"studiare come funziona, modificarlo, adattarlo alle proprie esigenze e, in ambito "
+"commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di "
+"assistenza"
 msgstr ""
-"The project is free software because allow to all to know how it works having "
-"the source code of the program and it provides the possibility to study how it "
-"works, edit it, fit it to your needs and, on commercial sphere, does not oblige "
-"the user to be tied up to the same supplier of assistance"
+"The project is free software because allow to all to know how it works having the "
+"source code of the program and it provides the possibility to study how it works, "
+"edit it, fit it to your needs and, on commercial sphere, does not oblige the user "
+"to be tied up to the same supplier of assistance"
 
 #: info.php:72
 msgid ""
@@ -2753,8 +2729,8 @@ msgstr ""
 
 #: info.php:74
 msgid ""
-"OpenSTAManager è inoltre stato progettato utilizzando altro software libero, "
-"tra cui principalmente"
+"OpenSTAManager è inoltre stato progettato utilizzando altro software libero, tra "
+"cui principalmente"
 msgstr ""
 "OpenSTAManager is also was projected using other free software, including mainly"
 
@@ -2775,8 +2751,8 @@ msgid ""
 "La guida all'utilizzo di <strong>OpenSTAManager</strong> e la documentazione "
 "tecnica sono consultabili all'indirizzo"
 msgstr ""
-"The <strong>OpenSTAManager</strong> user guide and technical documentation can "
-"be found at"
+"The <strong>OpenSTAManager</strong> user guide and technical documentation can be "
+"found at"
 
 #: info.php:115
 msgid "Community"
@@ -2833,8 +2809,8 @@ msgstr ""
 #: info.php:176
 msgid ""
 "E' disponibile anche un <b>servizio cloud</b> su cui poter installare "
-"OpenSTAManager, in modo da non doverti più preoccupare di backup, aggiornamenti "
-"e gestione dei dati"
+"OpenSTAManager, in modo da non doverti più preoccupare di backup, aggiornamenti e "
+"gestione dei dati"
 msgstr ""
 "There is also a <b>cloud service</b> available where you can install "
 "OpenSTAManager, so you no longer have to worry about backups, updates and data "
@@ -3003,13 +2979,12 @@ msgstr "Last 100 accesses"
 #: modules/ddt/edit.php:178 modules/eventi/add.php:32 modules/eventi/edit.php:43
 #: modules/fasce_orarie/edit.php:119 modules/fatture/add.php:62
 #: modules/fatture/buttons.php:67 modules/movimenti/add.php:53
-#: modules/ordini/add.php:49 modules/ordini/bulk.php:251
-#: modules/ordini/edit.php:175 modules/ordini/modals/duplicazione.php:30
+#: modules/ordini/add.php:49 modules/ordini/bulk.php:251 modules/ordini/edit.php:175
+#: modules/ordini/modals/duplicazione.php:30
 #: modules/partitario/dettagli_conto3.php:51 modules/primanota/dettagli.php:54
 #: modules/scadenzario/edit.php:94 modules/scadenzario/edit.php:198
-#: plugins/impianti_intervento/row-impianti.php:93
-#: plugins/importFE/generate.php:216 plugins/importFE_ZIP/generate.php:218
-#: plugins/movimenti_contabili/edit.php:59
+#: plugins/impianti_intervento/row-impianti.php:93 plugins/importFE/generate.php:216
+#: plugins/importFE_ZIP/generate.php:218 plugins/movimenti_contabili/edit.php:59
 #: plugins/pianificazione_fatturazione/crea_fattura.php:57
 #: plugins/pianificazione_fatturazione/crea_fattura_multipla.php:67
 #: plugins/pianificazione_interventi/edit.php:68
@@ -3136,16 +3111,15 @@ msgid "Archiviazione FTP"
 msgstr "FTP storage"
 
 #: modules/adattatori_archiviazione/edit.php:37 modules/banche/edit.php:43
-#: modules/segmenti/edit.php:47 modules/utenti/add.php:39
-#: modules/utenti/edit.php:83 plugins/contratti_anagrafiche/edit.php:37
+#: modules/segmenti/edit.php:47 modules/utenti/add.php:39 modules/utenti/edit.php:83
+#: plugins/contratti_anagrafiche/edit.php:37
 msgid "Predefinito"
 msgstr "Default"
 
 #: modules/adattatori_archiviazione/edit.php:43
 #: modules/aggiornamenti/controlli.php:224 modules/categorie_contratti/edit.php:73
-#: modules/stampe/edit.php:97 modules/stampe/edit.php:118
-#: modules/utenti/edit.php:99 plugins/exportFE/notifiche.php:49
-#: plugins/pianificazione_interventi/edit.php:76
+#: modules/stampe/edit.php:97 modules/stampe/edit.php:118 modules/utenti/edit.php:99
+#: plugins/exportFE/notifiche.php:49 plugins/pianificazione_interventi/edit.php:76
 msgid "Opzioni"
 msgstr "Option"
 
@@ -3185,8 +3159,7 @@ msgstr "Resultant query"
 
 #: modules/aggiornamenti/actions.php:93
 msgid ""
-"Si sono verificati errori durante l'esecuzione di alcune query (_NUM_ su "
-"_TOTAL_)."
+"Si sono verificati errori durante l'esecuzione di alcune query (_NUM_ su _TOTAL_)."
 msgstr ""
 
 #: modules/aggiornamenti/actions.php:102
@@ -3211,8 +3184,8 @@ msgstr ""
 
 #: modules/aggiornamenti/checksum.php:88
 msgid ""
-"Attenzione: questa funzionalità può presentare dei risultati falsamente "
-"positivi, sulla base del contenuto del file _FILE_"
+"Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, "
+"sulla base del contenuto del file _FILE_"
 msgstr ""
 "Warning: this feature may present false positive results, based on the contents "
 "of the _FILE_ file"
@@ -3264,13 +3237,13 @@ msgstr "View all movements"
 #| "positivi, sulla base del contenuto del file _FILE_ e la versione di "
 #| "_MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema"
 msgid ""
-"Attenzione: questa funzionalità può presentare dei risultati falsamente "
-"positivi, sulla base del contenuto del file _FILE_ e la versione "
-"_MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema"
+"Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, "
+"sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di "
+"_DBMS_TYPE_ rilevata a sistema"
 msgstr ""
 "Warning: This feature may present false positive results, based on the contents "
-"of the _FILE_ file and the _MYSQL_VERSION_ version of _DBMS_TYPE_ detected in "
-"the system"
+"of the _FILE_ file and the _MYSQL_VERSION_ version of _DBMS_TYPE_ detected in the "
+"system"
 
 #: modules/aggiornamenti/database.php:180
 msgid "Tabella assente"
@@ -3367,8 +3340,7 @@ msgstr "There are not custom facilities"
 
 #: modules/aggiornamenti/edit.php:71
 msgid ""
-"Ci sono delle tabelle non previste nella versione standard del gestionale: "
-"_LIST_"
+"Ci sono delle tabelle non previste nella versione standard del gestionale: _LIST_"
 msgstr ""
 "There are some tables not included in the standard version of the management "
 "system: _LIST_"
@@ -3383,11 +3355,11 @@ msgstr "to enable"
 
 #: modules/aggiornamenti/edit.php:122
 msgid ""
-"Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) "
-"per poter caricare gli aggiornamenti"
+"Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) per "
+"poter caricare gli aggiornamenti"
 msgstr ""
-"You have to edit the following parameters of the PHP configuration file "
-"(_FILE_) to upload updates"
+"You have to edit the following parameters of the PHP configuration file (_FILE_) "
+"to upload updates"
 
 #: modules/aggiornamenti/edit.php:139 modules/backups/edit.php:59
 #: plugins/importFE/edit.php:36 plugins/importFE_ZIP/edit.php:13
@@ -3516,8 +3488,8 @@ msgstr "By the"
 
 #: modules/aggiornamenti/edit.php:292
 msgid ""
-"Verifica l'integrità della tua installazione attraverso un controllo sui "
-"checksum dei file e sulla struttura del database"
+"Verifica l'integrità della tua installazione attraverso un controllo sui checksum "
+"dei file e sulla struttura del database"
 msgstr ""
 "Verify the integrity of your installation by checking the file checksums and "
 "database structure"
@@ -3586,8 +3558,8 @@ msgstr ""
 
 #: modules/aggiornamenti/src/Controlli/PianoContiRagioneSociale.php:72
 msgid ""
-"Il conto collegato all'anagrafica corrente (_NOME_) non corrisponde alla "
-"ragione sociale dell'anagrafica"
+"Il conto collegato all'anagrafica corrente (_NOME_) non corrisponde alla ragione "
+"sociale dell'anagrafica"
 msgstr ""
 
 #: modules/aggiornamenti/src/Controlli/PluginDuplicati.php:30
@@ -3793,7 +3765,7 @@ msgstr "Added new registry of type _TYPE_"
 
 #: modules/anagrafiche/actions.php:255
 msgid "Attenzione: il codice fiscale _COD_ è già stato censito"
-msgstr "Attention: fiscal code_COD_could not be valid"
+msgstr "Warning: tax code _COD_ could not be valid"
 
 #: modules/anagrafiche/actions.php:275
 msgid "La partita IVA _IVA_ è già stata censita"
@@ -3828,14 +3800,13 @@ msgstr "Personal data"
 #: modules/anagrafiche/add.php:75 modules/anagrafiche/edit.php:100
 #: modules/interventi/ajax/complete.php:28
 #: plugins/exportFE/src/FatturaElettronica.php:518
-#: plugins/exportFE/src/FatturaElettronica.php:554
-#: plugins/importFE/generate.php:194 plugins/importFE_ZIP/generate.php:196
-#: plugins/sedi/edit.php:100 templates/anagrafiche/body.php:45
-#: templates/azienda/body.php:49 templates/contratti/header.php:87
-#: templates/contratti_cons/top.php:47 templates/ddt/header.php:92
-#: templates/fatture/header.php:97 templates/ordini/header.php:122
-#: templates/ordini_cons/top.php:47 templates/preventivi/header.php:89
-#: templates/preventivi_cons/top.php:47
+#: plugins/exportFE/src/FatturaElettronica.php:554 plugins/importFE/generate.php:194
+#: plugins/importFE_ZIP/generate.php:196 plugins/sedi/edit.php:100
+#: templates/anagrafiche/body.php:45 templates/azienda/body.php:49
+#: templates/contratti/header.php:87 templates/contratti_cons/top.php:47
+#: templates/ddt/header.php:92 templates/fatture/header.php:97
+#: templates/ordini/header.php:122 templates/ordini_cons/top.php:47
+#: templates/preventivi/header.php:89 templates/preventivi_cons/top.php:47
 msgid "Partita IVA"
 msgstr "VAT number"
 
@@ -3847,7 +3818,7 @@ msgstr "VAT number"
 #: templates/ordini/header.php:131 templates/ordini_cons/top.php:56
 #: templates/preventivi/header.php:98 templates/preventivi_cons/top.php:56
 msgid "Codice fiscale"
-msgstr "Fiscal code"
+msgstr "Tax code"
 
 #: modules/anagrafiche/add.php:83 modules/anagrafiche/edit.php:104
 #: modules/liste_newsletter/edit.php:60 modules/liste_newsletter/edit.php:147
@@ -3879,12 +3850,12 @@ msgstr "Not specified"
 #: modules/banche/edit.php:341 modules/dashboard/ajax.php:384
 #: modules/mappa/edit.php:67 modules/stato_email/edit.php:81
 #: plugins/exportFE/src/FatturaElettronica.php:510
-#: plugins/exportFE/src/FatturaElettronica.php:546
-#: plugins/importFE/generate.php:195 plugins/importFE_ZIP/generate.php:197
-#: plugins/sedi/add.php:46 plugins/sedi/edit.php:57
-#: templates/anagrafiche/body.php:37 templates/anagrafiche/body.php:80
-#: templates/azienda/body.php:41 templates/interventi/body.php:54
-#: templates/interventi/body.php:63 templates/riepilogo_interventi/piece.php:88
+#: plugins/exportFE/src/FatturaElettronica.php:546 plugins/importFE/generate.php:195
+#: plugins/importFE_ZIP/generate.php:197 plugins/sedi/add.php:46
+#: plugins/sedi/edit.php:57 templates/anagrafiche/body.php:37
+#: templates/anagrafiche/body.php:80 templates/azienda/body.php:41
+#: templates/interventi/body.php:54 templates/interventi/body.php:63
+#: templates/riepilogo_interventi/piece.php:88
 msgid "Indirizzo"
 msgstr "Address"
 
@@ -3953,15 +3924,13 @@ msgstr "Company (B2B) - Recipient code, 7 characters"
 
 #: modules/anagrafiche/add.php:130 modules/anagrafiche/edit.php:152
 msgid ""
-"Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 "
-"caratteri"
+"Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri"
 msgstr ""
-"Public authority (B2G/PA) - Unique office code (www.indicepa.gov.it), 6 "
-"characters"
+"Public authority (B2G/PA) - Unique office code (www.indicepa.gov.it), 6 characters"
 
 #: modules/anagrafiche/add.php:130 modules/anagrafiche/edit.php:153
 msgid "Privato (B2C) - viene utilizzato il Codice Fiscale"
-msgstr "Private (B2C) - the fiscal code is used"
+msgstr "Private (B2C) - the tax code is used"
 
 #: modules/anagrafiche/add.php:134 modules/anagrafiche/edit.php:161
 #: plugins/sedi/add.php:90 plugins/sedi/edit.php:92 templates/azienda/body.php:55
@@ -3983,8 +3952,8 @@ msgstr "voice eliminated"
 #: modules/anagrafiche/ajax/select.php:383 modules/anagrafiche/ajax/select.php:416
 #: modules/anagrafiche/edit.php:179
 #: modules/articoli/plugins/articoli.giacenze.php:233
-#: modules/articoli/plugins/articoli.movimenti.php:138
-#: modules/impianti/edit.php:73 modules/interventi/edit.php:212
+#: modules/articoli/plugins/articoli.movimenti.php:138 modules/impianti/edit.php:73
+#: modules/interventi/edit.php:212
 #: modules/interventi/widgets/interventi_da_pianificare.php:85
 #: modules/interventi/widgets/interventi_da_programmare.php:52
 #: plugins/pianificazione_interventi/edit.php:87
@@ -4218,16 +4187,15 @@ msgstr ""
 
 #: modules/anagrafiche/edit.php:157
 msgid ""
-"Non è necessario comunicare il proprio codice destinatario ai fornitori in "
-"quanto è sufficiente che questo sia registrato all'interno portale del Sistema "
-"Di Interscambio dell'Agenzia Entrate (SDI) (ivaservizi.agenziaentrate.gov.it)"
+"Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto "
+"è sufficiente che questo sia registrato all'interno portale del Sistema Di "
+"Interscambio dell'Agenzia Entrate (SDI) (ivaservizi.agenziaentrate.gov.it)"
 msgstr ""
 "It is not necessary to communicate your recipient code to suppliers as it is "
 "sufficient that it is registered within the portal of the Revenue Agency "
 "Interchange System (SDI) (ivaservizi.agenziaentrate.gov.it)"
 
-#: modules/anagrafiche/edit.php:161 plugins/sedi/add.php:90
-#: plugins/sedi/edit.php:92
+#: modules/anagrafiche/edit.php:161 plugins/sedi/add.php:90 plugins/sedi/edit.php:92
 msgid "Codice unico ufficio"
 msgstr "Unique office code"
 
@@ -4244,14 +4212,12 @@ msgid "Fax"
 msgstr "Fax"
 
 #: modules/anagrafiche/edit.php:231 modules/interventi/add.php:343
-#: modules/interventi/edit.php:81 plugins/sedi/add.php:68
-#: plugins/sedi/edit.php:112
+#: modules/interventi/edit.php:81 plugins/sedi/add.php:68 plugins/sedi/edit.php:112
 msgid "Zona"
 msgstr "Zone"
 
 #: modules/anagrafiche/edit.php:231 modules/interventi/add.php:343
-#: modules/interventi/edit.php:81 plugins/sedi/add.php:68
-#: plugins/sedi/edit.php:112
+#: modules/interventi/edit.php:81 plugins/sedi/add.php:68 plugins/sedi/edit.php:112
 msgid "Nessuna zona"
 msgstr "No zone"
 
@@ -4344,25 +4310,25 @@ msgstr "Enable split payment"
 
 #: modules/anagrafiche/edit.php:500
 msgid ""
-"Lo split payment è disponibile per le anagrafiche di tipologia \\\"Ente "
-"pubblico\\\" o \\\"Azienda\\\" (iscritta al Dipartimento Finanze - Scissione "
-"dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</"
-"li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</"
-"li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</"
-"li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli "
-"enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente "
-"carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</"
-"li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>"
+"Lo split payment è disponibile per le anagrafiche di tipologia \\\"Ente pubblico\\"
+"\" o \\\"Azienda\\\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) "
+"ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi "
+"statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti "
+"pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di "
+"Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</"
+"li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</"
+"li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</"
+"li><li>consorzi tra questi costituiti.</li></ul>"
 msgstr ""
 "Split payment is available for the \\\"Public body\\\" or \\\"Company\\\" type "
 "(registered with the Department of Finance - Split payments) and is "
-"<strong>mandatory</strong> for: <ul><li>State;</li><li>state bodies even if "
-"they have legal personality;</li><li>territorial public bodies and consortia "
-"formed between them;</li><li>Chambers of Commerce;</li><li>University "
-"institutes;</li><li>ASL and hospital bodies;</li><li>public hospitalisation and "
-"care bodies with a predominantly scientific nature;</li><li>public assistance "
-"and charity bodies;</li><li>social security bodies;</li><li>consortia formed "
-"between them.</li></ul>"
+"<strong>mandatory</strong> for: <ul><li>State;</li><li>state bodies even if they "
+"have legal personality;</li><li>territorial public bodies and consortia formed "
+"between them;</li><li>Chambers of Commerce;</li><li>University institutes;</"
+"li><li>ASL and hospital bodies;</li><li>public hospitalisation and care bodies "
+"with a predominantly scientific nature;</li><li>public assistance and charity "
+"bodies;</li><li>social security bodies;</li><li>consortia formed between them.</"
+"li></ul>"
 
 #: modules/anagrafiche/edit.php:500 modules/fatture/edit.php:446
 msgid "Split payment"
@@ -4488,8 +4454,8 @@ msgid ""
 "Il numero registro imprese è il numero di iscrizione attribuito dal Registro "
 "Imprese della Camera di Commercio."
 msgstr ""
-"The business register number is the registration number assigned by the "
-"Business Register of the Chamber of Commerce."
+"The business register number is the registration number assigned by the Business "
+"Register of the Chamber of Commerce."
 
 #: modules/anagrafiche/edit.php:688
 msgid "Codice R.E.A."
@@ -4566,15 +4532,14 @@ msgstr "Notes"
 
 #: modules/anagrafiche/edit.php:768
 msgid ""
-"Per impostare il <b>logo nelle stampe</b>, caricare un'immagine specificando "
-"come nome \"<b>Logo stampe</b>\" (Risoluzione consigliata 302x111 pixel)."
-"<br>Per impostare una <b>filigrana nelle stampe</b>, caricare un'immagine "
-"specificando come nome \"<b>Filigrana stampe</b>\""
+"Per impostare il <b>logo nelle stampe</b>, caricare un'immagine specificando come "
+"nome \"<b>Logo stampe</b>\" (Risoluzione consigliata 302x111 pixel).<br>Per "
+"impostare una <b>filigrana nelle stampe</b>, caricare un'immagine specificando "
+"come nome \"<b>Filigrana stampe</b>\""
 msgstr ""
-"To set the <b>logo on prints</b>, upload an image specifying the name "
-"\"<b>Print Logo</b>\" (Recommended resolution 302x111 pixels).<br>To set a "
-"<b>watermark on prints</b>, upload an image specifying the name \"<b>Print "
-"Watermark</b>\""
+"To set the <b>logo on prints</b>, upload an image specifying the name \"<b>Print "
+"Logo</b>\" (Recommended resolution 302x111 pixels).<br>To set a <b>watermark on "
+"prints</b>, upload an image specifying the name \"<b>Print Watermark</b>\""
 
 #: modules/anagrafiche/edit.php:799 modules/articoli/edit.php:413
 #: modules/contratti/edit.php:616 modules/ddt/edit.php:646
@@ -4600,8 +4565,8 @@ msgstr "_DOC_  _NUM_of_DATE_"
 #: modules/interventi/edit.php:796 modules/ordini/edit.php:604
 #: modules/preventivi/edit.php:495
 msgid ""
-"Eliminando questo documento si potrebbero verificare problemi nelle altre "
-"sezioni del gestionale"
+"Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni "
+"del gestionale"
 msgstr ""
 "Deleting this document could cause problems in other sections of the management "
 "software"
@@ -4616,11 +4581,11 @@ msgstr "This registry has been deleted"
 
 #: modules/anagrafiche/liquida_provvigioni.php:40
 msgid ""
-"Non è possibile creare la stampa definitiva nel periodo selezionato, è "
-"necessario prima impostare un periodo!"
+"Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario "
+"prima impostare un periodo!"
 msgstr ""
-"You cannot create the final document in the selected period, you must first set "
-"a range of date!"
+"You cannot create the final document in the selected period, you must first set a "
+"range of date!"
 
 #: modules/anagrafiche/liquida_provvigioni.php:47
 #: modules/contratti/widgets/contratti_scadenza.dashboard.php:52
@@ -4808,7 +4773,7 @@ msgstr "Item successfully restored!"
 
 #: modules/articoli/actions.php:51 modules/articoli/actions.php:172
 msgid "Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta"
-msgstr "Attention: fiscal code_COD_could not be valid"
+msgstr "Warning: tax code _COD_ has been already used _N_ times"
 
 #: modules/articoli/actions.php:89 modules/articoli/actions.php:493
 msgid "Carico manuale"
@@ -4854,8 +4819,7 @@ msgstr "Added_NUM_products!"
 
 #: modules/articoli/actions.php:370
 msgid ""
-"Nessun seriale è stato aggiunto. Verifica che i seriali inseriti non esistano "
-"già."
+"Nessun seriale è stato aggiunto. Verifica che i seriali inseriti non esistano già."
 msgstr ""
 
 #: modules/articoli/actions.php:385
@@ -4896,9 +4860,9 @@ msgstr "Updated line!"
 #: modules/articoli/modals/duplicazione.php:30
 #: modules/combinazioni_articoli/add.php:15
 #: modules/combinazioni_articoli/edit.php:21
-#: modules/contratti/modals/confronta_righe.php:47
-#: modules/custom_fields/add.php:47 modules/custom_fields/content-info.php:26
-#: modules/custom_fields/edit.php:63 modules/ddt/modals/confronta_righe.php:48
+#: modules/contratti/modals/confronta_righe.php:47 modules/custom_fields/add.php:47
+#: modules/custom_fields/content-info.php:26 modules/custom_fields/edit.php:63
+#: modules/ddt/modals/confronta_righe.php:48
 #: modules/fatture/modals/confronta_righe.php:48
 #: modules/interventi/modals/confronta_righe.php:48
 #: modules/interventi/widgets/interventi_da_pianificare.php:61
@@ -4936,8 +4900,7 @@ msgstr "Bar code"
 
 #: modules/articoli/add.php:54 modules/articoli/bulk.php:532
 #: modules/articoli/edit.php:68 modules/categorie/edit.php:70
-#: modules/categorie_contratti/edit.php:61
-#: modules/combinazioni_articoli/add.php:29
+#: modules/categorie_contratti/edit.php:61 modules/combinazioni_articoli/add.php:29
 #: modules/combinazioni_articoli/edit.php:40 modules/contratti/add.php:65
 #: modules/contratti/edit.php:167 modules/impianti/add.php:60
 #: modules/impianti/edit.php:99
@@ -4959,8 +4922,7 @@ msgstr "Model"
 #: modules/articoli/plugins/articoli.lotti.php:159
 #: modules/articoli/widgets/stampa_inventario.php:44
 #: modules/tipi_intervento/ajax_righe.php:16 plugins/consuntivo/edit.php:158
-#: plugins/consuntivo/edit.php:192
-#: plugins/pianificazione_interventi/row-list.php:37
+#: plugins/consuntivo/edit.php:192 plugins/pianificazione_interventi/row-list.php:37
 #: templates/magazzino_cespiti/body.php:45
 #: templates/magazzino_inventario/body.php:87
 msgid "Prezzo di acquisto"
@@ -4973,8 +4935,8 @@ msgstr "Sales coefficient"
 
 #: modules/articoli/add.php:82 modules/articoli/edit.php:216
 msgid ""
-"Imposta un coefficiente per calcolare automaticamente il prezzo di vendita "
-"quando cambia il prezzo di acquisto"
+"Imposta un coefficiente per calcolare automaticamente il prezzo di vendita quando "
+"cambia il prezzo di acquisto"
 msgstr ""
 "Set a coefficient to automatically calculate the selling price when the buying "
 "price changes"
@@ -4987,8 +4949,7 @@ msgstr "Deduct VAT from the selling price."
 #: modules/articoli/edit.php:231 modules/articoli/plugins/articoli.lotti.php:161
 #: modules/automezzi/row-list-articoli.php:35
 #: modules/tipi_intervento/ajax_righe.php:17 plugins/consuntivo/edit.php:159
-#: plugins/consuntivo/edit.php:193
-#: plugins/pianificazione_interventi/row-list.php:41
+#: plugins/consuntivo/edit.php:193 plugins/pianificazione_interventi/row-list.php:41
 #: templates/magazzino_cespiti/body.php:43
 #: templates/magazzino_inventario/body.php:85
 msgid "Prezzo di vendita"
@@ -5042,8 +5003,8 @@ msgstr "Multiplicative factor"
 
 #: modules/articoli/add.php:121 modules/articoli/edit.php:128
 msgid ""
-"Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di "
-"Ordini fornitori"
+"Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini "
+"fornitori"
 msgstr ""
 "Multiplicative factor for unit of measure to be used in Supplier Order prints"
 
@@ -5200,8 +5161,8 @@ msgstr "Update sales coefficient for selected items?"
 
 #: modules/articoli/bulk.php:542
 msgid ""
-"Per ciascun articolo selezionato, verrà modificato il coefficiente e il "
-"relativo prezzo di vendita"
+"Per ciascun articolo selezionato, verrà modificato il coefficiente e il relativo "
+"prezzo di vendita"
 msgstr ""
 "For each selected item, the coefficient and its selling price will be changed"
 
@@ -5233,8 +5194,7 @@ msgstr "Change default sales account?"
 
 #: modules/articoli/bulk.php:564
 msgid ""
-"Per ciascun articolo selezionato, verrà modificato il conto predefinito di "
-"vendita"
+"Per ciascun articolo selezionato, verrà modificato il conto predefinito di vendita"
 msgstr "For each selected item, the default sales account will be changed"
 
 #: modules/articoli/bulk.php:565
@@ -5255,8 +5215,8 @@ msgid ""
 "Per indicare uno sconto inserire la percentuale con il segno meno, al contrario "
 "per un rincaro inserire la percentuale senza segno."
 msgstr ""
-"To indicate a discount enter the percentage with a minus sign, while for a "
-"price increase enter the percentage without a sign."
+"To indicate a discount enter the percentage with a minus sign, while for a price "
+"increase enter the percentage without a sign."
 
 #: modules/articoli/bulk.php:575 modules/articoli/bulk.php:588
 #: modules/listini/bulk.php:138
@@ -5569,8 +5529,8 @@ msgid ""
 "Fornitore predefinito selezionabile tra i fornitori presenti nel plugin \\"
 "\"Listino fornitori\\\""
 msgstr ""
-"Default supplier selectable among the suppliers present in the \\\"Supplier "
-"List\\\" plugin"
+"Default supplier selectable among the suppliers present in the \\\"Supplier List\\"
+"\" plugin"
 
 #: modules/articoli/edit.php:206 modules/tipi_documento/edit.php:43
 msgid "Vendita"
@@ -5604,8 +5564,7 @@ msgstr "_DOC_ num. _NUM_ of _DATE_ [_STATE_]"
 msgid "Disattivato"
 msgstr "Disabled"
 
-#: modules/articoli/header.php:95
-#: modules/articoli/plugins/articoli.giacenze.php:241
+#: modules/articoli/header.php:95 modules/articoli/plugins/articoli.giacenze.php:241
 msgid "Giacenze"
 msgstr "License"
 
@@ -5671,14 +5630,13 @@ msgstr "New attach"
 msgid "Duplica"
 msgstr "Apply"
 
-#: modules/articoli/plugins/articoli.giacenze.php:58
-#: modules/stati_ordine/add.php:42 modules/stati_ordine/edit.php:56
+#: modules/articoli/plugins/articoli.giacenze.php:58 modules/stati_ordine/add.php:42
+#: modules/stati_ordine/edit.php:56
 msgid "Impegnato"
 msgstr "Committed"
 
 #: modules/articoli/plugins/articoli.giacenze.php:58
-msgid ""
-"Quantità impegnate in ordini cliente che non siano già completamente evasi."
+msgid "Quantità impegnate in ordini cliente che non siano già completamente evasi."
 msgstr ""
 "Quantities committed to customer orders that have not already been fully "
 "fulfilled."
@@ -5714,8 +5672,7 @@ msgstr "Create order"
 
 #: modules/articoli/plugins/articoli.giacenze.php:196
 msgid "Quantità richieste dal cliente meno le quantità già ordinate."
-msgstr ""
-"Quantities requested by the customer minus the quantities already ordered."
+msgstr "Quantities requested by the customer minus the quantities already ordered."
 
 #: modules/articoli/plugins/articoli.giacenze.php:217
 msgid "Disponibile"
@@ -6025,11 +5982,10 @@ msgid "Articoli da stampare"
 msgstr "Articles to print"
 
 #: modules/articoli/widgets/stampa_cespiti.php:41
-#: modules/articoli/widgets/stampa_inventario.php:40
-#: modules/dashboard/edit.php:123 modules/dashboard/edit.php:160
-#: modules/dashboard/edit.php:197 modules/dashboard/edit.php:234
-#: modules/dashboard/edit.php:348 modules/emails/edit.php:71
-#: modules/interventi/add.php:320
+#: modules/articoli/widgets/stampa_inventario.php:40 modules/dashboard/edit.php:123
+#: modules/dashboard/edit.php:160 modules/dashboard/edit.php:197
+#: modules/dashboard/edit.php:234 modules/dashboard/edit.php:348
+#: modules/emails/edit.php:71 modules/interventi/add.php:320
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:83
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:276
 msgid "Tutti"
@@ -6133,9 +6089,8 @@ msgid "Aggiungi valore"
 msgstr "Add value"
 
 #: modules/attributi_combinazioni/edit.php:56
-#: modules/attributi_combinazioni/gestione-valore.php:40
-#: modules/import/edit.php:208 modules/misure/add.php:28
-#: modules/misure/edit.php:35
+#: modules/attributi_combinazioni/gestione-valore.php:40 modules/import/edit.php:208
+#: modules/misure/add.php:28 modules/misure/edit.php:35
 msgid "Valore"
 msgstr "Value"
 
@@ -6303,8 +6258,8 @@ msgid ""
 "Il backup verrà eseguito, ma non in formato ZIP. Sarà quindi scaricabile solo "
 "tramite FTP o con copia-incolla"
 msgstr ""
-"Backup will be performed, but not in ZIP format.It will then be downloadable "
-"only via FTP or copy-paste"
+"Backup will be performed, but not in ZIP format.It will then be downloadable only "
+"via FTP or copy-paste"
 
 #: modules/backups/edit.php:35
 msgid "Il percorso di backup è attualmente in: _PATH_"
@@ -6388,12 +6343,12 @@ msgstr "New backup"
 #: modules/backups/edit.php:190
 #, fuzzy
 #| msgid ""
-#| "Per motivi di sicurezza si consiglia di modificare il percorso della "
-#| "cartella di backup al di fuori della cartella di OSM, possibilmente in una "
-#| "unità esterna. Puoi modificare il percorso di backup dal tuo file _FILE_"
+#| "Per motivi di sicurezza si consiglia di modificare il percorso della cartella "
+#| "di backup al di fuori della cartella di OSM, possibilmente in una unità "
+#| "esterna. Puoi modificare il percorso di backup dal tuo file _FILE_"
 msgid ""
-"Per motivi di sicurezza si consiglia di modificare il percorso della cartella "
-"di backup al di fuori della cartella di OSM, possibilmente in una unità esterna."
+"Per motivi di sicurezza si consiglia di modificare il percorso della cartella di "
+"backup al di fuori della cartella di OSM, possibilmente in una unità esterna."
 msgstr ""
 "For security reasons, it is recommended to change the path of the backup folder "
 "outside of the OSM folder, possibly to an external drive. You can change the "
@@ -6558,9 +6513,9 @@ msgstr "National Bank Code (ABI)"
 msgid "Codice filiale (CAB)"
 msgstr "Branch code (CAB)"
 
-#: modules/banche/add.php:138 modules/banche/add.php:170
-#: modules/banche/add.php:317 modules/banche/edit.php:211
-#: modules/banche/edit.php:245 modules/banche/edit.php:392
+#: modules/banche/add.php:138 modules/banche/add.php:170 modules/banche/add.php:317
+#: modules/banche/edit.php:211 modules/banche/edit.php:245
+#: modules/banche/edit.php:392
 msgid "Formato IBAN non valido"
 msgstr "Invalid IBAN format"
 
@@ -6679,10 +6634,10 @@ msgstr "SEPA Creditor ID"
 
 #: modules/banche/edit.php:73
 msgid ""
-"Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende "
-"aderenti alla procedura Allineamento Elettronico Archivio per le quali non "
-"risulta reperibile in CF/PIVA viene generato un codice identificativo non "
-"significativo (NOTPROVIDEDXXXXXXXXXXXX)."
+"Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti "
+"alla procedura Allineamento Elettronico Archivio per le quali non risulta "
+"reperibile in CF/PIVA viene generato un codice identificativo non significativo "
+"(NOTPROVIDEDXXXXXXXXXXXX)."
 msgstr ""
 "Identification code for the company in the SEPA area. In the case of companies "
 "adhering to the Electronic Archive Alignment procedure for which it cannot be "
@@ -6698,8 +6653,8 @@ msgid ""
 "Società Interbancaria per l'Automazione. Questo campo è necessario per la "
 "generazione delle Ri.Ba.<br>E' composto da 5 caratteri alfanumerici."
 msgstr ""
-"Interbank Automation Company. This field is required for generating Ri.Ba."
-"<br>It consists of 5 alphanumeric characters."
+"Interbank Automation Company. This field is required for generating Ri.Ba.<br>It "
+"consists of 5 alphanumeric characters."
 
 #: modules/banche/edit.php:93
 msgid "Composizione IBAN"
@@ -6717,10 +6672,9 @@ msgstr "Control digits (European CIN)"
 msgid "Cifre di verifica nazionale (CIN nazionale)"
 msgstr "National Verification Numbers (National CIN)"
 
-#: modules/banche/edit.php:136 modules/beni/edit.php:53
-#: modules/causali/edit.php:72 modules/porti/edit.php:56
-#: modules/spedizioni/edit.php:59 modules/stati_fattura/edit.php:51
-#: modules/tipi_documento/edit.php:78
+#: modules/banche/edit.php:136 modules/beni/edit.php:53 modules/causali/edit.php:72
+#: modules/porti/edit.php:56 modules/spedizioni/edit.php:59
+#: modules/stati_fattura/edit.php:51 modules/tipi_documento/edit.php:78
 msgid "Ci sono _NUM_ documenti collegati"
 msgstr "There are _NUM_ documents connected"
 
@@ -6791,8 +6745,7 @@ msgstr "There are some documents related to this aspect of assets."
 
 #: modules/categorie/actions.php:35 modules/categorie/actions.php:100
 #: modules/marche/actions.php:36 modules/marche/actions.php:135
-msgid ""
-"È necessario selezionare almeno una delle due opzioni: Articolo o Impianto."
+msgid "È necessario selezionare almeno una delle due opzioni: Articolo o Impianto."
 msgstr ""
 
 #: modules/categorie/actions.php:44 modules/categorie/actions.php:109
@@ -6852,8 +6805,7 @@ msgstr "Typology of _TYPE_ successfully eliminated!"
 #: modules/categorie/actions.php:154
 msgid ""
 "Esistono alcuni articoli collegati a questa categoria. Impossibile eliminarla."
-msgstr ""
-"There are some products related to this category. Impossible to delete it."
+msgstr "There are some products related to this category. Impossible to delete it."
 
 #: modules/categorie/add.php:60 modules/categorie/edit.php:48
 #: modules/categorie/edit.php:84 modules/interventi/add.php:180
@@ -6909,8 +6861,7 @@ msgstr "This name has already been used for another category."
 #: modules/categorie_contratti/actions.php:105
 #, fuzzy
 #| msgid ""
-#| "Esistono alcuni impianti collegati a questa categoria. Impossibile "
-#| "eliminarla."
+#| "Esistono alcuni impianti collegati a questa categoria. Impossibile eliminarla."
 msgid ""
 "Esistono alcuni contratti collegati a questa categoria. Impossibile eliminarla."
 msgstr ""
@@ -6929,8 +6880,8 @@ msgid "Contratto _NUMERO_"
 msgstr "Contract n. _NUM_"
 
 #: modules/categorie_documenti/actions.php:31
-#: modules/categorie_documenti/actions.php:53
-#: modules/categorie_files/actions.php:31 modules/categorie_files/actions.php:48
+#: modules/categorie_documenti/actions.php:53 modules/categorie_files/actions.php:31
+#: modules/categorie_files/actions.php:48
 msgid "Categoria _NAME_ già esistente!"
 msgstr "Category _NAME_already exist!"
 
@@ -7001,8 +6952,8 @@ msgid ""
 "I documenti associati a questa causale possono essere importati a livello "
 "contabile in altri documenti (per esempio, in Fatture)"
 msgstr ""
-"The documents associated with this reason can be imported at the accounting "
-"level in other documents (for example, in Invoices)"
+"The documents associated with this reason can be imported at the accounting level "
+"in other documents (for example, in Invoices)"
 
 #: modules/causali/edit.php:48
 msgid "Importabile"
@@ -7028,8 +6979,8 @@ msgstr "Returnable?"
 
 #: modules/causali/edit.php:54
 msgid ""
-"I documenti associati a questa causale possono registrare i serial degli "
-"articoli anche se già utilizzati"
+"I documenti associati a questa causale possono registrare i serial degli articoli "
+"anche se già utilizzati"
 msgstr ""
 "The documents associated with this reason can record the serial numbers of the "
 "items even if they have already been used"
@@ -7038,8 +6989,7 @@ msgstr ""
 msgid "Rientrabile"
 msgstr "Retractable"
 
-#: modules/causali_movimenti/actions.php:38
-#: modules/causali_movimenti/actions.php:67
+#: modules/causali_movimenti/actions.php:38 modules/causali_movimenti/actions.php:67
 msgid "E' già presente una causale con nome _NAME_."
 msgstr "A reason with the name _NAME_ already exists."
 
@@ -7175,8 +7125,8 @@ msgid ""
 "Completa le informazioni dei diversi Attributi per generare una variante della "
 "Combinazione"
 msgstr ""
-"Complete the information of the different Attributes to generate a variant of "
-"the Combination"
+"Complete the information of the different Attributes to generate a variant of the "
+"Combination"
 
 #: modules/combinazioni_articoli/add-variante.php:42
 msgid "Collega articolo esistente"
@@ -7194,11 +7144,11 @@ msgstr "The indicated variant is already present for the current combination"
 #: modules/combinazioni_articoli/add.php:15
 #: modules/combinazioni_articoli/edit.php:21
 msgid ""
-"Codice di base per la combinazione: alla generazione variante vengono aggiunti "
-"i valore degli Attributi relativi"
+"Codice di base per la combinazione: alla generazione variante vengono aggiunti i "
+"valore degli Attributi relativi"
 msgstr ""
-"Base code for combination: the values ​​of the related Attributes are added to "
-"the variant generation"
+"Base code for combination: the values ​​of the related Attributes are added to the "
+"variant generation"
 
 #: modules/combinazioni_articoli/add.php:19
 #: modules/combinazioni_articoli/edit.php:25
@@ -7361,8 +7311,7 @@ msgstr "Contract canceled!"
 #: modules/ordini/actions.php:385 modules/preventivi/actions.php:185
 msgid ""
 "Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!"
-msgstr ""
-"Some serial numbers have been used in the document: impossible to proceed!"
+msgstr "Some serial numbers have been used in the document: impossible to proceed!"
 
 #: modules/contratti/actions.php:484
 msgid "Contratto rinnovato!"
@@ -7500,8 +7449,7 @@ msgstr "Tacit renewal"
 #: modules/contratti/add.php:101
 msgid "Il contratto è da rinnovare automaticamente alla scadenza"
 msgstr ""
-"The contract is renewable?The contract is to be automatically renewed upon "
-"expiry"
+"The contract is renewable?The contract is to be automatically renewed upon expiry"
 
 #: modules/contratti/add.php:105 modules/contratti/edit.php:181
 msgid "Preavviso per rinnovo"
@@ -7624,9 +7572,9 @@ msgstr "Renew selected contracts?"
 
 #: modules/contratti/bulk.php:336
 msgid ""
-"Un contratto è rinnovabile se presenta una data di accettazione e conclusione, "
-"se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi "
-"stati: _STATE_LIST_"
+"Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se "
+"il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: "
+"_STATE_LIST_"
 msgstr ""
 "A contract is renewable if it has an acceptance and conclusion date, if the "
 "renewal is enabled by the Renewals plugin and if it is in one of these states: "
@@ -7637,8 +7585,7 @@ msgstr ""
 #| msgid ""
 #| "Per creare una nuova revisione lo stato del preventivo deve essere tra: "
 #| "_STATE_LIST_"
-msgid ""
-"Per creare un documento lo stato del contratto deve essere tra: _STATE_LIST_"
+msgid "Per creare un documento lo stato del contratto deve essere tra: _STATE_LIST_"
 msgstr ""
 "To create a new revision the status of the quote must be between: _STATE_LIST_"
 
@@ -7653,11 +7600,11 @@ msgstr "Create invoice"
 
 #: modules/contratti/buttons.php:42
 msgid ""
-"Il contratto è rinnovabile se sono definite le date di accettazione e "
-"conclusione e si trova in uno di questi stati: _STATE_LIST_"
+"Il contratto è rinnovabile se sono definite le date di accettazione e conclusione "
+"e si trova in uno di questi stati: _STATE_LIST_"
 msgstr ""
-"The contract is renewable if the acceptance and conclusion dates are defined "
-"and it is in one of these states: _STATE_LIST_"
+"The contract is renewable if the acceptance and conclusion dates are defined and "
+"it is in one of these states: _STATE_LIST_"
 
 #: modules/contratti/buttons.php:45
 msgid "Rinnovare questo contratto?"
@@ -7684,8 +7631,8 @@ msgstr "Duplicate contract"
 
 #: modules/contratti/edit.php:30
 msgid ""
-"Attenzione! La data di accettazione supera la data di conclusione del "
-"contratto. Verificare le informazioni inserite."
+"Attenzione! La data di accettazione supera la data di conclusione del contratto. "
+"Verificare le informazioni inserite."
 msgstr ""
 "Warning! The acceptance date exceeds the contract conclusion date. Please check "
 "the information you entered."
@@ -7745,9 +7692,9 @@ msgstr "Contract Name"
 
 #: modules/contratti/edit.php:144 modules/dashboard/ajax.php:347
 #: plugins/impianti_intervento/row-impianti.php:68
-#: plugins/pianificazione_interventi/edit.php:73
-#: templates/anagrafiche/body.php:112 templates/contratti/header.php:67
-#: templates/interventi/body.php:165 templates/preventivi/header.php:70
+#: plugins/pianificazione_interventi/edit.php:73 templates/anagrafiche/body.php:112
+#: templates/contratti/header.php:67 templates/interventi/body.php:165
+#: templates/preventivi/header.php:70
 msgid "Impianti"
 msgstr "Installations"
 
@@ -7763,11 +7710,10 @@ msgstr ""
 #: modules/contratti/edit.php:154 modules/ddt/edit.php:209
 #: modules/fatture/edit.php:419 modules/interventi/edit.php:104
 #: modules/ordini/edit.php:179 modules/preventivi/edit.php:142
-#: plugins/exportFE/src/FatturaElettronica.php:501
-#: plugins/importFE/generate.php:230 plugins/importFE/generate.php:370
-#: plugins/importFE_ZIP/generate.php:232 plugins/importFE_ZIP/generate.php:372
-#: templates/contratti/body.php:391 templates/ordini/header.php:59
-#: templates/preventivi/body.php:441
+#: plugins/exportFE/src/FatturaElettronica.php:501 plugins/importFE/generate.php:230
+#: plugins/importFE/generate.php:370 plugins/importFE_ZIP/generate.php:232
+#: plugins/importFE_ZIP/generate.php:372 templates/contratti/body.php:391
+#: templates/ordini/header.php:59 templates/preventivi/body.php:441
 msgid "Pagamento"
 msgstr "Payment"
 
@@ -7832,8 +7778,7 @@ msgid "Costi unitari"
 msgstr "Unique costs"
 
 #: modules/contratti/edit.php:288 modules/contratti/edit.php:340
-#: modules/interventi/edit.php:173
-#: modules/interventi/modals/manage_sessione.php:59
+#: modules/interventi/edit.php:173 modules/interventi/modals/manage_sessione.php:59
 #: plugins/consuntivo/edit.php:105
 #: plugins/pianificazione_interventi/widgets/promemoria_da_pianificare.php:74
 msgid "Tipo attività"
@@ -8074,8 +8019,7 @@ msgstr "Unitary cost"
 
 #: modules/contratti/row-list.php:115 modules/ddt/row-list.php:120
 #: modules/fatture/row-list.php:179 modules/interventi/row-list.php:98
-#: modules/ordini/row-list.php:143
-#: plugins/pianificazione_interventi/row-list.php:80
+#: modules/ordini/row-list.php:143 plugins/pianificazione_interventi/row-list.php:80
 #: templates/contratti/body.php:198 templates/ddt/body.php:164
 #: templates/fatture/body.php:161 templates/interventi/body.php:294
 #: templates/ordini/body.php:224
@@ -8279,8 +8223,8 @@ msgid ""
 "all'anagrafica."
 msgstr ""
 "By confirming, the prices of the lines will be updated according to the price "
-"lists and default prices linked to the item and the discount plans linked to "
-"the master data."
+"lists and default prices linked to the item and the discount plans linked to the "
+"master data."
 
 #: modules/contratti/row-list.php:510 modules/ddt/row-list.php:534
 #: modules/fatture/row-list.php:627 modules/interventi/row-list.php:412
@@ -8616,9 +8560,9 @@ msgid ""
 "trasporto interno di merce: il movimento tra sedi distinte è necessario "
 "completato tramite un DDT in direzione opposta"
 msgstr ""
-"This DDT is set on the Company master data, and therefore represents an "
-"internal transport of goods: the movement between separate locations must be "
-"completed via a DDT in the opposite direction"
+"This DDT is set on the Company master data, and therefore represents an internal "
+"transport of goods: the movement between separate locations must be completed via "
+"a DDT in the opposite direction"
 
 #: modules/ddt/buttons.php:32
 msgid "DDT di completamento trasporto"
@@ -8627,14 +8571,14 @@ msgstr "Transport completion DDT"
 #: modules/ddt/buttons.php:37
 msgid ""
 "Questo ddt è impostato sull'anagrafica Azienda, e pertanto rappresenta un "
-"trasferimento interno di merci tra sedi distinte dell'Azienda: per completare "
-"la movimentazione, è necessario generare un DDT in direzione opposta tramite "
-"questo pulsante"
+"trasferimento interno di merci tra sedi distinte dell'Azienda: per completare la "
+"movimentazione, è necessario generare un DDT in direzione opposta tramite questo "
+"pulsante"
 msgstr ""
-"This DDT is set on the Company master data, and therefore represents an "
-"internal transfer of goods between separate locations of the Company: to "
-"complete the movement, it is necessary to generate a DDT in the opposite "
-"direction using this button"
+"This DDT is set on the Company master data, and therefore represents an internal "
+"transfer of goods between separate locations of the Company: to complete the "
+"movement, it is necessary to generate a DDT in the opposite direction using this "
+"button"
 
 #: modules/ddt/buttons.php:39
 msgid "Completa trasferimento tra sedi "
@@ -8695,9 +8639,9 @@ msgstr "Go to the registry card"
 #: modules/ddt/edit.php:78
 msgid "Nel ddt sono presenti delle righe con quantità a 0."
 msgstr ""
-"A _TYPE_ number _NUM_ is missing on a date preceding or corresponding to "
-"_DATE_: problems may arise with the current numbering of the DDTs. There are "
-"lines in the DDT with quantities of 0."
+"A _TYPE_ number _NUM_ is missing on a date preceding or corresponding to _DATE_: "
+"problems may arise with the current numbering of the DDTs. There are lines in the "
+"DDT with quantities of 0."
 
 #: modules/ddt/edit.php:126
 msgid "Dati destinatario"
@@ -8715,18 +8659,15 @@ msgstr "Ddt number"
 msgid "Numero secondario"
 msgstr "Secondary number"
 
-#: modules/ddt/edit.php:193 modules/fatture/edit.php:394
-#: modules/ordini/edit.php:116
+#: modules/ddt/edit.php:193 modules/fatture/edit.php:394 modules/ordini/edit.php:116
 msgid "Sedi del destinatario"
 msgstr "Recipient code"
 
-#: modules/ddt/edit.php:198 modules/fatture/edit.php:399
-#: modules/ordini/edit.php:121
+#: modules/ddt/edit.php:198 modules/fatture/edit.php:399 modules/ordini/edit.php:121
 msgid "Sedi del mittente"
 msgstr "Sender email"
 
-#: modules/ddt/edit.php:202 modules/fatture/edit.php:403
-#: modules/ordini/edit.php:125
+#: modules/ddt/edit.php:202 modules/fatture/edit.php:403 modules/ordini/edit.php:125
 msgid "Sedi di arrivo dell'azienda"
 msgstr "Company arrival locations"
 
@@ -8739,9 +8680,9 @@ msgstr "DDT data"
 msgid "Aspetto beni"
 msgstr "Goods appearance"
 
-#: modules/ddt/edit.php:242 modules/fatture/edit.php:616
-#: modules/ordini/edit.php:185 templates/ddt/footer.php:194
-#: templates/fatture/footer.php:568 templates/ordini/header.php:78
+#: modules/ddt/edit.php:242 modules/fatture/edit.php:616 modules/ordini/edit.php:185
+#: templates/ddt/footer.php:194 templates/fatture/footer.php:568
+#: templates/ordini/header.php:78
 msgid "Tipo di spedizione"
 msgstr "Type of shipment"
 
@@ -8750,19 +8691,19 @@ msgstr "Type of shipment"
 msgid "Num. colli"
 msgstr "N. packages"
 
-#: modules/ddt/edit.php:253 modules/fatture/edit.php:606
-#: modules/ordini/edit.php:189 templates/ddt/footer.php:154
-#: templates/fatture/footer.php:532 templates/ordini/header.php:71
+#: modules/ddt/edit.php:253 modules/fatture/edit.php:606 modules/ordini/edit.php:189
+#: templates/ddt/footer.php:154 templates/fatture/footer.php:532
+#: templates/ordini/header.php:71
 msgid "Porto"
 msgstr "Freight"
 
 #: modules/ddt/edit.php:253 modules/ordini/edit.php:189
 msgid ""
-"<ul><li>Franco: pagamento del trasporto a carico del mittente</li> "
-"<li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>"
+"<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: "
+"pagamento del trasporto a carico del destinatario</li> </ul>"
 msgstr ""
-"<ul><li>Free: shipping costs paid by the sender</li> <li>Assigned: shipping "
-"costs paid by the recipient</li> </ul>"
+"<ul><li>Free: shipping costs paid by the sender</li> <li>Assigned: shipping costs "
+"paid by the recipient</li> </ul>"
 
 #: modules/ddt/edit.php:262 modules/ddt/edit.php:275 modules/ddt/edit.php:282
 #: modules/ddt/edit.php:290 modules/fatture/edit.php:624
@@ -8794,9 +8735,9 @@ msgstr "Weight"
 
 #: modules/ddt/edit.php:312 modules/fatture/edit.php:729
 msgid ""
-"Il valore del campo Peso viene calcolato in automatico sulla base degli "
-"articoli inseriti nel documento, a meno dell'impostazione di un valore manuale "
-"in questo punto"
+"Il valore del campo Peso viene calcolato in automatico sulla base degli articoli "
+"inseriti nel documento, a meno dell'impostazione di un valore manuale in questo "
+"punto"
 msgstr ""
 "The value of the Weight field is calculated automatically on the basis of the "
 "items inserted in the document, unless a manual value is set here"
@@ -8812,8 +8753,8 @@ msgstr "Select to manually change the quantity"
 #: modules/ddt/edit.php:321
 msgid ""
 "Il valore del campo volume viene calcolato in automatico sulla base degli "
-"articoli inseriti nel documento, a meno dell'impostazione di un valore manuale "
-"in questo punto"
+"articoli inseriti nel documento, a meno dell'impostazione di un valore manuale in "
+"questo punto"
 msgstr ""
 "The value of the volume field is calculated automatically based on the items "
 "entered in the document, unless a manual value is set here"
@@ -8883,9 +8824,8 @@ msgstr "Template of the email eliminated!"
 msgid "Template duplicato correttamente!"
 msgstr "Template duplicated successfully!"
 
-#: modules/emails/add.php:45 modules/emails/edit.php:58
-#: plugins/referenti/add.php:49 plugins/referenti/edit.php:48
-#: plugins/sedi/add.php:82 plugins/sedi/edit.php:84
+#: modules/emails/add.php:45 modules/emails/edit.php:58 plugins/referenti/add.php:49
+#: plugins/referenti/edit.php:48 plugins/sedi/add.php:82 plugins/sedi/edit.php:84
 msgid "Indirizzo email"
 msgstr "Email address"
 
@@ -8954,8 +8894,7 @@ msgstr "Disable"
 #: modules/emails/edit.php:174
 msgid "Puoi utilizzare le seguenti variabili nell'oggetto e nel corpo della mail"
 msgstr ""
-"You can use the follows text sequences in the object and on the body of the "
-"email"
+"You can use the follows text sequences in the object and on the body of the email"
 
 #: modules/emails/edit.php:186 modules/modelli_primanota/add.php:121
 #: modules/modelli_primanota/edit.php:208 modules/stampe/edit.php:178
@@ -8964,8 +8903,8 @@ msgstr "Are not been defined variables to use on template"
 
 #: modules/emails/edit.php:205
 msgid ""
-"Questo template non può essere rimosso dal sistema perchè collegato alle "
-"seguenti newsletter:"
+"Questo template non può essere rimosso dal sistema perchè collegato alle seguenti "
+"newsletter:"
 msgstr ""
 "This template cannot be removed from the system because it is linked to the "
 "following newsletters:"
@@ -9147,8 +9086,8 @@ msgstr "Competence date changed successfully."
 
 #: modules/fatture/actions.php:70
 msgid ""
-"La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile "
-"effettuare modifiche."
+"La fattura numero _NUM_ è già stata inviata allo SDI, non è possibile effettuare "
+"modifiche."
 msgstr ""
 "Invoice number _NUM_ has already been sent to the SDI, changes cannot be made."
 
@@ -9165,8 +9104,8 @@ msgid ""
 "L'anagrafica selezionata è del tipo \"Privato\", correggere la tipologia dalla "
 "scheda anagrafica!"
 msgstr ""
-"The selected personal data is of the \"Private\" type, correct the type from "
-"the personal data sheet!"
+"The selected personal data is of the \"Private\" type, correct the type from the "
+"personal data sheet!"
 
 #: modules/fatture/actions.php:204
 msgid "Fattura modificata correttamente!"
@@ -9194,8 +9133,8 @@ msgid ""
 "Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica "
 "collegata!"
 msgstr ""
-"There is already an invoice with the same secondary number and the same "
-"connected registry!"
+"There is already an invoice with the same secondary number and the same connected "
+"registry!"
 
 #: modules/fatture/actions.php:273
 msgid "Esiste già una fattura con lo stesso numero!"
@@ -9258,11 +9197,11 @@ msgstr "There is no invoice in Draft status for the selected customer"
 
 #: modules/fatture/add.php:187
 msgid ""
-"Attenzione: per il cliente selezionato sono presenti le seguenti fatture in "
-"stato Bozza"
+"Attenzione: per il cliente selezionato sono presenti le seguenti fatture in stato "
+"Bozza"
 msgstr ""
-"Attention: for the selected customer the following invoices are present in "
-"Draft status"
+"Warning: for the selected customer the following invoices are present in Draft "
+"status"
 
 #: modules/fatture/add.php:208
 msgid "Per il cliente selezionato non è presente alcuna fattura Scaduta"
@@ -9273,7 +9212,7 @@ msgid ""
 "Attenzione: per il cliente selezionato le seguenti fatture presentamento una o "
 "più rate scadute"
 msgstr ""
-"Attention: for the selected customer the following invoices present one or more "
+"Warning: for the selected customer the following invoices present one or more "
 "expired installments"
 
 #: modules/fatture/add_intervento.php:60
@@ -9304,8 +9243,7 @@ msgstr "View sale"
 msgid ""
 "Il Serial su questo articolo è già stato utilizzato in un altro documento di "
 "acquisto"
-msgstr ""
-"The Serial on this item has already been used in another purchase document"
+msgstr "The Serial on this item has already been used in another purchase document"
 
 #: modules/fatture/add_serial.php:278
 msgid "Aggiungi serial"
@@ -9326,8 +9264,8 @@ msgstr ""
 
 #: modules/fatture/bulk.php:249
 msgid ""
-"Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora "
-"generate o non presenti sul server"
+"Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate "
+"o non presenti sul server"
 msgstr ""
 "Electronica invoices _LIST_ are not been including inasmuch as not generated yet"
 
@@ -9403,8 +9341,8 @@ msgstr "Email sent for Invoices _LIST_ !"
 
 #: modules/fatture/bulk.php:695
 msgid ""
-"Verificare che gli indirizzi email dei destinatari siano corretti e che i "
-"domini esistano."
+"Verificare che gli indirizzi email dei destinatari siano corretti e che i domini "
+"esistano."
 msgstr ""
 
 #: modules/fatture/bulk.php:731
@@ -9449,8 +9387,7 @@ msgid ""
 "Scegli il sezionale _TIPOLOGIA_ in cui spostare le fatture in stato \"Bozza\" "
 "selezionate"
 msgstr ""
-"Select the _TYPE_ section in which to move the selected \"Draft\" status "
-"invoices"
+"Select the _TYPE_ section in which to move the selected \"Draft\" status invoices"
 
 #: modules/fatture/bulk.php:771
 #, fuzzy
@@ -9475,8 +9412,8 @@ msgid ""
 "Controllare corrispondenza tra XML e fattura di vendita?<br><small>(le fatture "
 "dovranno essere state generate)</small>"
 msgstr ""
-"Check correspondence between XML and sales invoice?<br><small>(invoices must "
-"have been generated)</small>"
+"Check correspondence between XML and sales invoice?<br><small>(invoices must have "
+"been generated)</small>"
 
 #: modules/fatture/bulk.php:797
 msgid "Vuoi davvero duplicare le righe selezionate?"
@@ -9541,8 +9478,8 @@ msgid ""
 "Vuoi davvero esportare i PDF delle fatture elettroniche selezionate in un "
 "archivio ZIP?"
 msgstr ""
-"Do you really want to export the PDFs of the selected electronic invoices into "
-"a ZIP archive?"
+"Do you really want to export the PDFs of the selected electronic invoices into a "
+"ZIP archive?"
 
 #: modules/fatture/bulk.php:853
 msgid "Esporta ricevute"
@@ -9572,8 +9509,8 @@ msgid ""
 "title=\"Emessa\"></i> <small>Emessa</small> e non essere mai state generate)</"
 "small>"
 msgstr ""
-"Generate electronic invoices for selected documents?<br><small>(invoices must "
-"be in the <i class=\"fa fa-clock-o text-info\" title=\"Emitted\"></i> "
+"Generate electronic invoices for selected documents?<br><small>(invoices must be "
+"in the <i class=\"fa fa-clock-o text-info\" title=\"Emitted\"></i> "
 "<small>Emitted</small> status and must never have been generated)</small>"
 
 #: modules/fatture/bulk.php:888 modules/fatture/bulk.php:890
@@ -9597,10 +9534,8 @@ msgid "Verifica ricevute"
 msgstr "Check receipts"
 
 #: modules/fatture/bulk.php:912
-msgid ""
-"Vuoi verificare ed importare automaticamente le ricevute di queste fatture?"
-msgstr ""
-"Do you want to automatically check and import receipts for these invoices?"
+msgid "Vuoi verificare ed importare automaticamente le ricevute di queste fatture?"
+msgstr "Do you want to automatically check and import receipts for these invoices?"
 
 #: modules/fatture/buttons.php:28 modules/fatture/row-list.php:708
 msgid "Dati Fattura Elettronica"
@@ -9682,13 +9617,13 @@ msgstr "_ICON_ Invoice number _NUM_ of _DATE_ : <b>_STATUS_</b> _ANTICIPATED_"
 
 #: modules/fatture/controller_before.php:98
 msgid "<b>ATTENZIONE:</b> le seguenti fatture riscontrano problemi"
-msgstr "<b>ATTENTION:</b> The following invoices are experiencing problems"
+msgstr "<b>WARNING:</b> the following invoices are experiencing problems"
 
 #: modules/fatture/controller_before.php:106
 msgid ""
-"Cosa fare in caso di fattura elettronica scartata? Dovrai correggere la fattura "
-"e inviarla di nuovo al SdI <b>entro 5 giorni dalla data di notifica dello "
-"scarto</b>, mantenendo lo stesso numero e data del documento."
+"Cosa fare in caso di fattura elettronica scartata? Dovrai correggere la fattura e "
+"inviarla di nuovo al SdI <b>entro 5 giorni dalla data di notifica dello scarto</"
+"b>, mantenendo lo stesso numero e data del documento."
 msgstr ""
 "What to do in case of rejected electronic invoice? You will have to correct the "
 "invoice and send it again to the SdI <b>within 5 days from the date of "
@@ -9732,7 +9667,7 @@ msgstr "Select it from the settings"
 #: modules/fatture/edit.php:94
 msgid ""
 "Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_"
-msgstr "Attention no VAT defined for the declaration of intent. _SETTING_"
+msgstr "Warning no VAT defined for the declaration of intent. _SETTING_"
 
 #: modules/fatture/edit.php:105
 msgid "Questa è un'autofattura generata da una fattura di acquisto"
@@ -9747,8 +9682,8 @@ msgstr "Invoice n. _NUM_ of _DATE_"
 
 #: modules/fatture/edit.php:116
 msgid ""
-"Per questa fattura è prevista la generazione di un'autofattura tramite <b>Crea "
-"» Autofattura</b>"
+"Per questa fattura è prevista la generazione di un'autofattura tramite <b>Crea » "
+"Autofattura</b>"
 msgstr ""
 "This is a self-invoice generated from a purchase invoice. For this invoice, a "
 "self-invoice is expected to be generated via <b>Create » Self-invoice</b>"
@@ -9775,13 +9710,13 @@ msgstr "This is a _TYPE_ generated from the following invoice"
 
 #: modules/fatture/edit.php:175
 msgid ""
-"Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica "
-"sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come "
-"cedente/prestatore"
+"Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà "
+"indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/"
+"prestatore"
 msgstr ""
-"This is an invoice on behalf of a third party. In the Electronic Invoice XML, "
-"the supplier _SUPPLIER_ will be indicated as the transferee and the customer as "
-"the transferor/provider"
+"This is an invoice on behalf of a third party. In the Electronic Invoice XML, the "
+"supplier _SUPPLIER_ will be indicated as the transferee and the customer as the "
+"transferor/provider"
 
 #: modules/fatture/edit.php:184
 msgid "Attenzione! Il fido assicurato per questo cliente è stato superato!"
@@ -9790,8 +9725,8 @@ msgstr "Warning! The credit limit for this customer has been exceeded!"
 #: modules/fatture/edit.php:206
 msgid ""
 "E' assente una fattura di vendita di numero _NUM_ in data precedente o "
-"corrispondente a _DATE_: si potrebbero verificare dei problemi con la "
-"numerazione corrente delle fatture"
+"corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione "
+"corrente delle fatture"
 msgstr ""
 "There is no sales invoice with number _NUM_ on a previous date or corresponding "
 "to _DATE_: problems may occur with the current invoice numbering"
@@ -9801,8 +9736,8 @@ msgid ""
 "Questa fattura è stata scartata e sono trascorsi i termini di reinvio, è "
 "necessario invalidare il documento."
 msgstr ""
-"This invoice has been rejected and the resubmission deadline has passed, you "
-"need to invalidate the document."
+"This invoice has been rejected and the resubmission deadline has passed, you need "
+"to invalidate the document."
 
 #: modules/fatture/edit.php:221
 msgid "Invalida il documento"
@@ -9841,8 +9776,7 @@ msgid "Numero fattura"
 msgstr "Invoice number"
 
 #: modules/fatture/edit.php:367
-msgid ""
-"Il numero della fattura sarà generato automaticamente in fase di emissione."
+msgid "Il numero della fattura sarà generato automaticamente in fase di emissione."
 msgstr "The invoice number will be automatically generated during the issue."
 
 #: modules/fatture/edit.php:371 plugins/dichiarazioni_intento/edit.php:65
@@ -9907,18 +9841,17 @@ msgstr ""
 msgid ""
 "Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il "
 "tipo di dato in ''Attributi avanzati'' -> ''Altri Dati Gestionali'' -> "
-"''TipoDato'' e il testo di descrizione in ''Attributi avanzati'' -> ''Altri "
-"Dati Gestionali'' -> ''RiferimentoTesto'' della specifica riga"
+"''TipoDato'' e il testo di descrizione in ''Attributi avanzati'' -> ''Altri Dati "
+"Gestionali'' -> ''RiferimentoTesto'' della specifica riga"
 msgstr ""
-"To use it in relation to a line of the Electronic Invoice, enter the data type "
-"in ''Advanced Attributes'' -> ''Other Management Data'' -> ''DataType'' and the "
+"To use it in relation to a line of the Electronic Invoice, enter the data type in "
+"''Advanced Attributes'' -> ''Other Management Data'' -> ''DataType'' and the "
 "description text in ''Advanced Attributes'' -> ''Other Management Data'' -> "
 "''TextReference'' of the specific line"
 
 #: modules/fatture/edit.php:460
 msgid "Nota: lo sconto in fattura non influenza i movimenti contabili"
-msgstr ""
-"Note: the discount on the invoice does not affect the accounting movements"
+msgstr "Note: the discount on the invoice does not affect the accounting movements"
 
 #: modules/fatture/edit.php:478 templates/scadenzario/top.php:58
 msgid "Scadenze"
@@ -9939,12 +9872,12 @@ msgstr "Recalculation of expiries"
 #: modules/fatture/edit.php:486
 msgid ""
 "Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello "
-"stato ''Bozza'' e correggi il documento come desiderato, poi re-imposta lo "
-"stato ''Emessa'' e utilizza questa funzione"
+"stato ''Bozza'' e correggi il documento come desiderato, poi re-imposta lo stato "
+"''Emessa'' e utilizza questa funzione"
 msgstr ""
 "To correctly recalculate expiries, tax the invoice in \"draft copy\" state and "
-"correct the method of  such as wanted, then re-sets the \"emitted\" state and "
-"use this function"
+"correct the method of  such as wanted, then re-sets the \"emitted\" state and use "
+"this function"
 
 #: modules/fatture/edit.php:530
 msgid "Ritenuta previdenziale da applicare alle righe della fattura."
@@ -9966,16 +9899,16 @@ msgstr "Stamp"
 
 #: modules/fatture/edit.php:559
 msgid ""
-"Se abilitata, questa impostazione addebita automaticamente l'importo della "
-"marca da bollo quando la fattura soddisfa i requisiti per la sua applicazione. "
-"In particolare, la marca da bollo si applica se la fattura contiene righe con "
-"aliquote IVA con natura N2.1, N2.2, N3.5, N3.6, N4, e se il totale della "
-"fattura supera i _MONEY_"
+"Se abilitata, questa impostazione addebita automaticamente l'importo della marca "
+"da bollo quando la fattura soddisfa i requisiti per la sua applicazione. In "
+"particolare, la marca da bollo si applica se la fattura contiene righe con "
+"aliquote IVA con natura N2.1, N2.2, N3.5, N3.6, N4, e se il totale della fattura "
+"supera i _MONEY_"
 msgstr ""
 "If enabled, this setting automatically charges the stamp duty amount when the "
-"invoice meets the requirements for its application. In particular, the stamp "
-"duty is applied if the invoice contains lines with VAT rates with nature N2.1, "
-"N2.2, N3.5, N3.6, N4, and if the invoice total exceeds _MONEY_"
+"invoice meets the requirements for its application. In particular, the stamp duty "
+"is applied if the invoice contains lines with VAT rates with nature N2.1, N2.2, "
+"N3.5, N3.6, N4, and if the invoice total exceeds _MONEY_"
 
 #: modules/fatture/edit.php:561
 msgid "Bollo automatico"
@@ -10004,8 +9937,8 @@ msgstr "Yield type"
 #: modules/fatture/edit.php:738
 msgid ""
 "Il valore del campo Volume viene calcolato in automatico sulla base degli "
-"articoli inseriti nel documento, a meno dell'impostazione di un valore manuale "
-"in questo punto"
+"articoli inseriti nel documento, a meno dell'impostazione di un valore manuale in "
+"questo punto"
 msgstr ""
 "The value of the Volume field is calculated automatically on the basis of the "
 "items inserted in the document, unless a manual value is set here"
@@ -10027,8 +9960,7 @@ msgstr ""
 msgid ""
 "Per collegare una riga alla dichiarazione è sufficiente specificare come IVA "
 "<ul>_IVA_</ul>"
-msgstr ""
-"To connect a line to the declaration, simply specify <ul>_IVA_</ul> as VAT"
+msgstr "To connect a line to the declaration, simply specify <ul>_IVA_</ul> as VAT"
 
 #: modules/fatture/edit.php:908
 msgid "Aggiungi Attività"
@@ -10064,8 +9996,8 @@ msgid ""
 "Per allegare un documento alla fattura elettronica caricare il file PDF "
 "specificando come categoria \"Allegati Fattura Elettronica\""
 msgstr ""
-"For attach a document to the electronic invoice, load the PDF file specifying "
-"as category \"Electronic invoice\""
+"For attach a document to the electronic invoice, load the PDF file specifying as "
+"category \"Electronic invoice\""
 
 #: modules/fatture/edit.php:1039
 msgid "Desideri ricalcolare le scadenze?"
@@ -10073,8 +10005,8 @@ msgstr "Do you want to recalculate the expiried?"
 
 #: modules/fatture/edit.php:1152
 msgid ""
-"Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere "
-"il movimento in prima nota?"
+"Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il "
+"movimento in prima nota?"
 msgstr ""
 "Are you wanting to manually set the invoice as paid without add the movement in "
 "petty cash book?"
@@ -10377,8 +10309,7 @@ msgstr "Plants and related components removed!"
 #: modules/impianti/bulk.php:59
 msgid "_NUM_ impianti non eliminati perchè collegati ad interventi o a contratti!"
 msgstr ""
-"_NUM_ plants not eliminated because they are linked to interventions or "
-"contracts!"
+"_NUM_ plants not eliminated because they are linked to interventions or contracts!"
 
 #: modules/impianti/bulk.php:74
 #, fuzzy
@@ -10563,17 +10494,16 @@ msgstr "Installations"
 
 #: modules/import/edit.php:115
 msgid ""
-"Per procedere all'importazione di attività collegate ad impianti è necessario "
-"che la matricola indicata sia già censita in impianti. Procedere quindi prima "
+"Per procedere all'importazione di attività collegate ad impianti è necessario che "
+"la matricola indicata sia già censita in impianti. Procedere quindi prima "
 "all'importazione degli impianti e successivamente delle attività."
 msgstr ""
 
 #: modules/import/edit.php:116
 msgid ""
 "È presente in fase di importazione un automatismo che genera automaticamente i "
-"valori dei seguenti campi se mappati: la sessione del tecnico se mappato "
-"l'orario di inizio attività, lo stato attività se non è già presente a "
-"gestionale."
+"valori dei seguenti campi se mappati: la sessione del tecnico se mappato l'orario "
+"di inizio attività, lo stato attività se non è già presente a gestionale."
 msgstr ""
 
 #: modules/import/edit.php:122
@@ -10592,8 +10522,8 @@ msgstr ""
 
 #: modules/import/edit.php:124
 msgid ""
-"Le categorie e sottocategorie vengono create automaticamente se non esistenti. "
-"Le marche vengono create automaticamente se non esistenti."
+"Le categorie e sottocategorie vengono create automaticamente se non esistenti. Le "
+"marche vengono create automaticamente se non esistenti."
 msgstr ""
 
 #: modules/import/edit.php:130
@@ -10771,8 +10701,8 @@ msgstr "The signature appears blank."
 
 #: modules/interventi/actions.php:815 modules/interventi/actions.php:896
 msgid ""
-"Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine "
-"della firma."
+"Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della "
+"firma."
 msgstr "Unable to create the _DIRECTORY_ folder to save the signature image."
 
 #: modules/interventi/actions.php:842 src/Models/Upload.php:136
@@ -10839,8 +10769,7 @@ msgstr "Add plant to activity"
 msgid "Posizione"
 msgstr "Position"
 
-#: modules/interventi/add.php:259 plugins/sedi/add.php:110
-#: plugins/sedi/edit.php:238
+#: modules/interventi/add.php:259 plugins/sedi/add.php:110 plugins/sedi/edit.php:238
 msgid "Dettagli aggiuntivi"
 msgstr "Additional fields"
 
@@ -11049,9 +10978,8 @@ msgstr ""
 
 #: modules/interventi/ajax_costi.php:128
 msgid ""
-"Il valore dell'IVA totale è esclusivamente indicativo e basato sulle "
-"impostazioni di default del gestionale se non è impostata l'iva predefinita "
-"nell'anagrafica"
+"Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni "
+"di default del gestionale se non è impostata l'iva predefinita nell'anagrafica"
 msgstr ""
 "The total VAT value is indicative only and based on the default settings of the "
 "management system if the default VAT is not set in the master data"
@@ -11178,8 +11106,8 @@ msgstr "Allow invoicing of activities linked to orders"
 
 #: modules/interventi/bulk.php:122
 msgid ""
-"_NUM_ interventi collegati a ordini non sono stati fatturati. Puoi procedere "
-"alla fatturazione abilitando la relativa impostazione: _SETTING_"
+"_NUM_ interventi collegati a ordini non sono stati fatturati. Puoi procedere alla "
+"fatturazione abilitando la relativa impostazione: _SETTING_"
 msgstr ""
 "_NUM_ interventions related to orders have not been invoiced. You can proceed "
 "with invoicing by enabling the relevant setting: _SETTING_"
@@ -11190,8 +11118,8 @@ msgstr "Allow invoicing of activities linked to estimates"
 
 #: modules/interventi/bulk.php:134
 msgid ""
-"_NUM_ interventi collegati a preventivi non sono stati fatturati. Puoi "
-"procedere alla fatturazione abilitando la relativa impostazione: _SETTING_"
+"_NUM_ interventi collegati a preventivi non sono stati fatturati. Puoi procedere "
+"alla fatturazione abilitando la relativa impostazione: _SETTING_"
 msgstr ""
 "_NUM_ interventions linked to estimates have not been invoiced. You can proceed "
 "with invoicing by enabling the relevant setting: _SETTING_"
@@ -11230,11 +11158,9 @@ msgstr "Posts deleted!"
 #, fuzzy
 #| msgid ""
 #| "_NUM_ impianti non eliminati perchè collegati ad interventi o a contratti!"
-msgid ""
-"_NUM_ Interventi non eliminati perchè sono collegati ad almeno un documento!"
+msgid "_NUM_ Interventi non eliminati perchè sono collegati ad almeno un documento!"
 msgstr ""
-"_NUM_ plants not eliminated because they are linked to interventions or "
-"contracts!"
+"_NUM_ plants not eliminated because they are linked to interventions or contracts!"
 
 #: modules/interventi/bulk.php:435
 msgid "Mail inviata per le attività _LIST_ !"
@@ -11288,8 +11214,7 @@ msgstr "Add existing invoices not issued yet?"
 msgid "Firma interventi"
 msgstr "Firma interventi"
 
-#: modules/interventi/bulk.php:505
-#: modules/interventi/modals/anteprima_firma.php:40
+#: modules/interventi/bulk.php:505 modules/interventi/modals/anteprima_firma.php:40
 #: modules/interventi/modals/firma.php:184
 #: modules/interventi/modals/firma_tavoletta.php:95
 #: modules/interventi/modals/firma_tavoletta.php:108
@@ -11346,8 +11271,8 @@ msgstr ""
 #| "Per creare una nuova revisione lo stato del preventivo deve essere tra: "
 #| "_STATE_LIST_"
 msgid ""
-"Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell'attività deve "
-"essere tra: _STATE_LIST_"
+"Per creare un documento _CONTROLLO_DOCUMENTI_ lo stato dell'attività deve essere "
+"tra: _STATE_LIST_"
 msgstr ""
 "To create a new revision the status of the quote must be between: _STATE_LIST_"
 
@@ -11398,8 +11323,7 @@ msgstr ""
 #: modules/interventi/edit.php:435
 #, fuzzy
 #| msgid ""
-#| "Gli ordini che si trovano in questo stato verranno considerati come "
-#| "completati"
+#| "Gli ordini che si trovano in questo stato verranno considerati come completati"
 msgid "Ordini che si trovano nello stato Accettato"
 msgstr "Orders in this status will be considered completed"
 
@@ -11649,8 +11573,7 @@ msgstr "Combination of VAT nature _TYPE_ and chargeability not compatible"
 
 #: modules/iva/actions.php:59 modules/iva/actions.php:88
 msgid "E' già presente una tipologia di _TYPE_ con lo stesso codice e descrizione"
-msgstr ""
-"Is already exist one typology of _TYPE_ with the same code and description"
+msgstr "Is already exist one typology of _TYPE_ with the same code and description"
 
 #: modules/iva/actions.php:99
 msgid "Tipologia di _TYPE_ eliminata con successo"
@@ -11756,8 +11679,8 @@ msgid ""
 "La query SQL deve restituire gli identificativi delle anagrafiche da inserire "
 "nella lista, sotto un campo di nome ''id''"
 msgstr ""
-"The SQL query must return the identifiers of the personal data to be included "
-"in the list, under a field called ''id''"
+"The SQL query must return the identifiers of the personal data to be included in "
+"the list, under a field called ''id''"
 
 #: modules/liste_newsletter/edit.php:79
 msgid "Per esempio: _SQL_"
@@ -11805,11 +11728,11 @@ msgstr "Service not enabled"
 
 #: modules/liste_newsletter/widgets/opt-out.php:52
 msgid ""
-"Servizio non abilitato: contatta gli sviluppatori ufficiali per la gestione "
-"delle Newsletter tramite servizio esterno"
+"Servizio non abilitato: contatta gli sviluppatori ufficiali per la gestione delle "
+"Newsletter tramite servizio esterno"
 msgstr ""
-"Service not enabled: contact the official developers for managing Newsletters "
-"via external service"
+"Service not enabled: contact the official developers for managing Newsletters via "
+"external service"
 
 #: modules/liste_newsletter/widgets/opt-out.php:84
 msgid "Non ci sono nuovi utenti disiscritti dal servizio di newsletter"
@@ -11893,11 +11816,11 @@ msgstr "Always visible"
 
 #: modules/listini_cliente/add.php:44 modules/listini_cliente/edit.php:52
 msgid ""
-"Se impostato il valore sarà sempre visibile sull'articolo se il listino è "
-"attivo e la data di scadenza è ancora valida"
+"Se impostato il valore sarà sempre visibile sull'articolo se il listino è attivo "
+"e la data di scadenza è ancora valida"
 msgstr ""
-"If set, the value will always be visible on the item if the price list is "
-"active and the expiration date is still valid"
+"If set, the value will always be visible on the item if the price list is active "
+"and the expiration date is still valid"
 
 #: modules/listini_cliente/ajax/table.php:33
 msgid "Modifica articolo"
@@ -12055,11 +11978,9 @@ msgstr ""
 #: modules/marche/actions.php:189
 #, fuzzy
 #| msgid ""
-#| "Esistono alcuni articoli collegati a questa categoria. Impossibile "
-#| "eliminarla."
+#| "Esistono alcuni articoli collegati a questa categoria. Impossibile eliminarla."
 msgid "Esistono alcuni articoli collegati a questa marca. Impossibile eliminarla."
-msgstr ""
-"There are some products related to this category. Impossible to delete it."
+msgstr "There are some products related to this category. Impossible to delete it."
 
 #: modules/marche/add.php:50 modules/marche/edit.php:53 modules/marche/edit.php:84
 msgid "Link produttore"
@@ -12228,11 +12149,10 @@ msgstr "Duplicate newsletter"
 
 #: modules/newsletter/edit.php:28
 msgid ""
-"ATTENZIONE! Questa newsletter risulta collegata ad un template non più presente "
-"a sistema"
+"ATTENZIONE! Questa newsletter risulta collegata ad un template non più presente a "
+"sistema"
 msgstr ""
-"ATTENTION! This newsletter is linked to a template no longer present in the "
-"system"
+"WARNING! This newsletter is linked to a template no longer present in the system"
 
 #: modules/newsletter/edit.php:77
 msgid "Data di completamento"
@@ -12373,13 +12293,13 @@ msgstr "Merge selected orders?"
 
 #: modules/ordini/bulk.php:248
 msgid ""
-"Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In "
-"attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno "
-"eliminati e verrà creato un nuovo ordine unificato per fornitore."
+"Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa "
+"di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà "
+"creato un nuovo ordine unificato per fornitore."
 msgstr ""
-"Orders will be processed only if in one of the following statuses: Draft, "
-"Pending Confirmation, Accepted.<br>All processed orders will be deleted and a "
-"new consolidated order will be created for the supplier."
+"Orders will be processed only if in one of the following statuses: Draft, Pending "
+"Confirmation, Accepted.<br>All processed orders will be deleted and a new "
+"consolidated order will be created for the supplier."
 
 #: modules/ordini/buttons.php:26 modules/ordini/buttons.php:31
 msgid "Duplica ordine"
@@ -12719,8 +12639,8 @@ msgid ""
 "Impostando il codice MP12 il pagamento viene considerato di tipo Ri.Ba.: nelle "
 "fatture verrà visualizzata la banca della controparte"
 msgstr ""
-"By setting the MP12 code, the payment is considered to be of the Ri.Ba. type: "
-"the counterparty's bank will be displayed in the invoices"
+"By setting the MP12 code, the payment is considered to be of the Ri.Ba. type: the "
+"counterparty's bank will be displayed in the invoices"
 
 #: modules/pagamenti/edit.php:45
 msgid "Conto predefinito per le vendite"
@@ -12852,11 +12772,11 @@ msgstr "View schedule"
 
 #: modules/partitario/aggiorna_reddito.php:30
 msgid ""
-"Seleziona il periodo temporale per il quale desideri aggiornare la percentuale "
-"di deducibilità del conto \"_DESC_\". La nuova percentuale è: _PERC_%"
+"Seleziona il periodo temporale per il quale desideri aggiornare la percentuale di "
+"deducibilità del conto \"_DESC_\". La nuova percentuale è: _PERC_%"
 msgstr ""
-"Select the time period for which you want to update the deductibility "
-"percentage of the \"_ DESC_ \" account. The new percentage is: _PERC_%"
+"Select the time period for which you want to update the deductibility percentage "
+"of the \"_ DESC_ \" account. The new percentage is: _PERC_%"
 
 #: modules/partitario/aggiorna_reddito.php:41
 msgid "Inizio del periodo"
@@ -12983,8 +12903,8 @@ msgstr "Recalculate the deductible amount"
 
 #: modules/partitario/edit_conto.php:75
 msgid ""
-"Questo è un conto speciale utilizzato dal sistema. La descrizione non può "
-"essere modificata."
+"Questo è un conto speciale utilizzato dal sistema. La descrizione non può essere "
+"modificata."
 msgstr ""
 
 #: modules/partitario/edit_conto.php:96
@@ -13004,11 +12924,11 @@ msgstr "Inflation/discount"
 
 #: modules/piano_sconto/add.php:32 modules/piano_sconto/edit.php:32
 msgid ""
-"Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul "
-"totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)"
+"Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale "
+"scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)"
 msgstr ""
-"Example: 50 + 10-20 is converted into 50% discount with an additional 10% on "
-"the discounted total and 20% increase on the final total (54% final discount)"
+"Example: 50 + 10-20 is converted into 50% discount with an additional 10% on the "
+"discounted total and 20% increase on the final total (54% final discount)"
 
 #: modules/piano_sconto/add.php:32 modules/piano_sconto/edit.php:32
 msgid "Sono ammessi i segni + e -"
@@ -13154,9 +13074,9 @@ msgstr "Validity\t"
 #| "impostato secondo l'opzione manuale, mentre viene utilizzato per il calcolo "
 #| "della Data di conclusione del documento in caso alternativo"
 msgid ""
-"Il campo Validità viene utilizzato in modo esclusivamente indicativo se "
-"impostato secondo l'opzione manuale, mentre viene utilizzato per il calcolo "
-"della Data di fine validità del documento in caso alternativo"
+"Il campo Validità viene utilizzato in modo esclusivamente indicativo se impostato "
+"secondo l'opzione manuale, mentre viene utilizzato per il calcolo della Data di "
+"fine validità del documento in caso alternativo"
 msgstr ""
 "The Validity field is used only as an indication if set according to the manual "
 "option, while it is used for the calculation of the End date of the document in "
@@ -13176,8 +13096,7 @@ msgstr "Plan end date"
 msgid ""
 "La data di fine validità è calcolata in automatico in base al valore del campo "
 "Validità"
-msgstr ""
-"The End Date is automatically calculated based on the Validity field value"
+msgstr "The End Date is automatically calculated based on the Validity field value"
 
 #: modules/preventivi/edit.php:152
 #: plugins/listino_fornitori/dettaglio_fornitore.php:77
@@ -13279,8 +13198,7 @@ msgstr "Warning: an amount of _TOTAL_ has been advanced to the supplier"
 
 #: modules/primanota/add.php:324
 msgid "Attenzione: è stato ricevuto un anticipo dal cliente di _TOTALE_"
-msgstr ""
-"Attention: an advance payment of _TOTAL_ has been received from the customer"
+msgstr "Warning: an advance payment of _TOTAL_ has been received from the customer"
 
 #: modules/primanota/add.php:340
 msgid "Forza chiusura scadenza"
@@ -13486,8 +13404,8 @@ msgstr "Edit BOM information?"
 
 #: modules/scadenzario/bulk.php:201
 msgid ""
-"Per ciascuna scadenza selezionata verrà modificata l'informazione della "
-"distinta associata"
+"Per ciascuna scadenza selezionata verrà modificata l'informazione della distinta "
+"associata"
 msgstr ""
 "For each selected deadline, the information in the associated bill will be "
 "modified"
@@ -13502,13 +13420,13 @@ msgstr "Send reminder email?"
 
 #: modules/scadenzario/bulk.php:213
 msgid ""
-"Per ciascuna rata scaduta selezionata collegata ad una fattura di vendita, "
-"verrà inviata una mail con allegata la fattura di vendita corrispondente."
-"<br>(Template utilizzato: Sollecito di pagamento raggruppato per anagrafica)"
+"Per ciascuna rata scaduta selezionata collegata ad una fattura di vendita, verrà "
+"inviata una mail con allegata la fattura di vendita corrispondente.<br>(Template "
+"utilizzato: Sollecito di pagamento raggruppato per anagrafica)"
 msgstr ""
-"For each selected expired installment linked to a sales invoice, an email will "
-"be sent with the corresponding sales invoice attached.<br>(Template used: "
-"Payment reminder grouped by customer details)"
+"For each selected expired installment linked to a sales invoice, an email will be "
+"sent with the corresponding sales invoice attached.<br>(Template used: Payment "
+"reminder grouped by customer details)"
 
 #: modules/scadenzario/buttons.php:27
 msgid "Allegare la stampa della fattura?"
@@ -13586,9 +13504,8 @@ msgid ""
 "documento, in caso contrario è consigliato creare più scadenze con la stessa "
 "descrizione"
 msgstr ""
-"It is possible to add deadlines only if there is a link to a document, "
-"otherwise it is recommended to create multiple deadlines with the same "
-"description"
+"It is possible to add deadlines only if there is a link to a document, otherwise "
+"it is recommended to create multiple deadlines with the same description"
 
 #: modules/scadenzario/edit.php:184
 msgid "Aggiungi scadenza"
@@ -13792,8 +13709,7 @@ msgid "Utilizzabile per fatture elettroniche"
 msgstr "Usable for electronic invoices"
 
 #: modules/segmenti/edit.php:239
-msgid ""
-"Seleziona per rendere utilizzabile il sezionale per le fatture elettroniche"
+msgid "Seleziona per rendere utilizzabile il sezionale per le fatture elettroniche"
 msgstr "Select to make the section usable for electronic invoices"
 
 #: modules/segmenti/edit.php:256
@@ -13827,12 +13743,12 @@ msgstr ""
 #: modules/segmenti/edit.php:285
 msgid ""
 "Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando "
-"elimina è stato disattivato, eliminare le righe per attivare il comando "
-"'Elimina segmento'."
+"elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina "
+"segmento'."
 msgstr ""
 "There are _TOT_ related rows at the segment for the module '_MODULO_'. The "
-"command delete has been disabled, delete the rows for active the command "
-"'Delete segment'."
+"command delete has been disabled, delete the rows for active the command 'Delete "
+"segment'."
 
 #: modules/segmenti/edit.php:294
 msgid ""
@@ -13876,7 +13792,7 @@ msgstr "Email syntax verified"
 
 #: modules/smtp/actions.php:106
 msgid "Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido"
-msgstr "Attention: the email address _EMAIL_ seems to be invalid"
+msgstr "Warning: the email address _EMAIL_ seems to be invalid"
 
 #: modules/smtp/actions.php:113
 msgid "SMTP email verificato"
@@ -13987,8 +13903,7 @@ msgstr "Repeat configuration"
 msgid ""
 "Durante la procedura di configurazione verrà effettuato il logout dal gestionale"
 msgstr ""
-"During the configuration procedure you will be logged out of the management "
-"system"
+"During the configuration procedure you will be logged out of the management system"
 
 #: modules/smtp/edit.php:203
 msgid "Istruzioni di configurazione"
@@ -14028,8 +13943,7 @@ msgstr "Make carrier mandatory"
 
 #: modules/spedizioni/edit.php:43
 msgid ""
-"Impostare per rendere obbligatorio il campo vettore in fase di modifica "
-"documento"
+"Impostare per rendere obbligatorio il campo vettore in fase di modifica documento"
 msgstr "Set to make the vector field mandatory when editing a document"
 
 #: modules/stampe/edit.php:35
@@ -14073,16 +13987,15 @@ msgstr "You can use the following options to generate the print"
 #: modules/stampe/edit.php:166
 msgid "Puoi utilizzare le seguenti variabili per generare il nome del file"
 msgstr ""
-"You can use the follows text sequences in the object and on the body of the "
-"email"
+"You can use the follows text sequences in the object and on the body of the email"
 
 #: modules/stampe_contabili/edit.php:34
 #, fuzzy
 #| msgid ""
-#| "le seguenti stampe contabili possono essere utilizzate per fini fiscali "
-#| "previa verifica delle informazioni inserite nel gestionale.<br/> Rimane "
-#| "esclusiva responsabilità dell'utente controllare la correttezza dei "
-#| "documenti qui prodotti"
+#| "le seguenti stampe contabili possono essere utilizzate per fini fiscali previa "
+#| "verifica delle informazioni inserite nel gestionale.<br/> Rimane esclusiva "
+#| "responsabilità dell'utente controllare la correttezza dei documenti qui "
+#| "prodotti"
 msgid ""
 "Le seguenti stampe contabili possono essere utilizzate per fini fiscali previa "
 "verifica delle informazioni inserite nel gestionale."
@@ -14246,8 +14159,8 @@ msgstr "Include only Supplier deadlines"
 
 #: modules/stampe_contabili/stampe_contabili.php:77
 msgid ""
-"Non è possibile creare la stampa definitiva nel periodo selezionato, è "
-"necessario prima impostare un trimestre o un singolo mese!"
+"Non è possibile creare la stampa definitiva nel periodo selezionato, è necessario "
+"prima impostare un trimestre o un singolo mese!"
 msgstr ""
 "It is not possible to create the final print in the selected period, you must "
 "first set a quarter or a single month!"
@@ -14269,12 +14182,12 @@ msgstr "Definitive"
 #: modules/stampe_contabili/stampe_contabili.php:136
 msgid ""
 "Per abilitare il pulsante è necessario impostare nei campi Data inizio e Data "
-"fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata "
-"la stampa definitiva del periodo selezionato"
+"fine uno dei 4 trimestri o un singolo mese e non deve essere già stata creata la "
+"stampa definitiva del periodo selezionato"
 msgstr ""
-"To enable the button, you must set one of the 4 quarters or a single month in "
-"the Start date and End date fields and the final printout of the selected "
-"period must not have already been created"
+"To enable the button, you must set one of the 4 quarters or a single month in the "
+"Start date and End date fields and the final printout of the selected period must "
+"not have already been created"
 
 #: modules/stampe_contabili/stampe_contabili.php:154
 #, fuzzy
@@ -14330,8 +14243,7 @@ msgstr "Plannable"
 
 #: modules/stati_contratto/add.php:42 modules/stati_contratto/edit.php:56
 msgid ""
-"I contratti che si trovano in questo stato verranno considerati come "
-"pianificabili"
+"I contratti che si trovano in questo stato verranno considerati come pianificabili"
 msgstr "The contracts that are in this state will be considerate like manageable"
 
 #: modules/stati_contratto/add.php:46 modules/stati_contratto/edit.php:57
@@ -14393,8 +14305,7 @@ msgstr "Order status deleted."
 #: modules/stati_ddt/add.php:38 modules/stati_ddt/edit.php:55
 #, fuzzy
 #| msgid ""
-#| "I contratti che si trovano in questo stato verranno considerati come "
-#| "completati"
+#| "I contratti che si trovano in questo stato verranno considerati come completati"
 msgid "I DDT che si trovano in questo stato verranno considerati come completati"
 msgstr "The contracts that are in this state will be considerate like completed"
 
@@ -14430,8 +14341,7 @@ msgid "Stato attività eliminato."
 msgstr "Contract state deleted."
 
 #: modules/stati_intervento/edit.php:30
-msgid ""
-"Alcune impostazioni non possono essere modificate per questo stato attività."
+msgid "Alcune impostazioni non possono essere modificate per questo stato attività."
 msgstr "Some setting can't be modified for this intervention state."
 
 #: modules/stati_intervento/edit.php:57
@@ -14440,8 +14350,8 @@ msgstr "Enable notifications"
 
 #: modules/stati_intervento/edit.php:57
 msgid ""
-"Quando l'attività passa in questo stato viene inviata una notifica ai "
-"destinatari designati."
+"Quando l'attività passa in questo stato viene inviata una notifica ai destinatari "
+"designati."
 msgstr ""
 "When the activity enters this state, a notification is sent to the designated "
 "recipients."
@@ -14481,8 +14391,7 @@ msgid ""
 "Quando l'attività passa in questo stato viene inviata una notifica ai tecnici "
 "delle sessioni."
 msgstr ""
-"When the activity enters this state, a notification is sent to session "
-"engineers."
+"When the activity enters this state, a notification is sent to session engineers."
 
 #: modules/stati_intervento/edit.php:98
 msgid ""
@@ -14491,8 +14400,7 @@ msgstr "Activities in this status will be considered completed."
 
 #: modules/stati_intervento/edit.php:99
 msgid ""
-"Le attività che si trovano in questo stato verranno considerate come "
-"fatturabili."
+"Le attività che si trovano in questo stato verranno considerate come fatturabili."
 msgstr "Activities in this status will be considered billable."
 
 #: modules/stati_ordine/actions.php:60
@@ -14514,8 +14422,7 @@ msgstr "Orders in this status will be considered completed"
 
 #: modules/stati_ordine/add.php:42
 msgid ""
-"Gli ordini che si trovano in questo stato verranno considerati come "
-"pianificabili"
+"Gli ordini che si trovano in questo stato verranno considerati come pianificabili"
 msgstr "Orders in this status will be considered as schedulable"
 
 #: modules/stati_ordine/add.php:46 modules/stati_ordine/edit.php:57
@@ -14561,8 +14468,7 @@ msgstr "The preventive that are in this state will be considered like planned"
 
 #: modules/stati_preventivo/add.php:46 modules/stati_preventivo/edit.php:56
 msgid ""
-"I preventivi che si trovano in questo stato verranno considerati come "
-"fatturabili"
+"I preventivi che si trovano in questo stato verranno considerati come fatturabili"
 msgstr "The preventives that are in this state will be considered like billable"
 
 #: modules/stati_preventivo/edit.php:58
@@ -14873,8 +14779,7 @@ msgid "Attenzione, alcune risorse sono scadute o hanno esaurito i crediti:"
 msgstr "Warning, some resources have expired or run out of credits:"
 
 #: modules/stato_servizi/edit.php:147
-msgid ""
-"Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:"
+msgid "Attenzione, alcune risorse sono in scadenza o stanno per esaurire i crediti:"
 msgstr "Warning, some resources are expiring or are about to run out of credits:"
 
 #: modules/stato_servizi/edit.php:160
@@ -14902,7 +14807,7 @@ msgid ""
 "Attenzione, spazio per fatture elettroniche _TEXT_: _NUM_ utilizzati su _TOT_ "
 "disponibili"
 msgstr ""
-"Attention, space for electronic invoices _TEXT_: _NUM_ used on _TOT_ available"
+"Warning, space for electronic invoices _TEXT_: _NUM_ used on _TOT_ available"
 
 #: modules/stato_servizi/edit.php:237 modules/stato_servizi/edit.php:245
 msgid "Contattare l'assistenza per risolvere il problema"
@@ -15152,8 +15057,8 @@ msgstr "Permanence"
 #: modules/stato_servizi/elenco-sessioni.php:101
 #, fuzzy
 #| msgid ""
-#| "Non è possibile monitorare la presenta degli utenti, attiva l'impostazione "
-#| "di notifica di presenza utenti sul record"
+#| "Non è possibile monitorare la presenta degli utenti, attiva l'impostazione di "
+#| "notifica di presenza utenti sul record"
 msgid ""
 "Non è possibile monitorare la presenza degli utenti, attiva l'impostazione di "
 "notifica di presenza utenti sul record"
@@ -15223,7 +15128,7 @@ msgstr ""
 
 #: modules/stato_servizi/src/SpaceHook.php:45
 msgid "Attenzione: occupati _TOT_ dei _QUOTA_ previsti"
-msgstr "Attention: occupied _TOT_ of the expected _QUOTA_"
+msgstr "Warning: _TOT_ use of the expected _QUOTA_"
 
 #: modules/stato_servizi/src/SpaceHookTask.php:35
 #, fuzzy
@@ -15387,8 +15292,8 @@ msgid ""
 "small>"
 msgstr ""
 "Including value between 0,25 - 24 hours. <br><small>Examples: <em><ul><li> 60 "
-"minutes = 1 hour </li><li>30 minutes = 0,5 hours </li><li>15 minutes = 0,25 "
-"hours </li></ul></em></small>"
+"minutes = 1 hour </li><li>30 minutes = 0,5 hours </li><li>15 minutes = 0,25 hours "
+"</li></ul></em></small>"
 
 #: modules/tipi_intervento/add.php:46 modules/tipi_intervento/edit.php:57
 msgid "Addebiti unitari al cliente"
@@ -15466,8 +15371,7 @@ msgstr ""
 msgid ""
 "Valore compreso tra 0,25 - 24 ore. <br><small>Esempi: <em><ul><li>60 minuti = 1 "
 "ora</li><li>30 minuti = 0,5 ore</li><li>15 minuti = 0,25 ore</li></ul></em></"
-"small> Suggerisce il tempo solitamente impiegato per questa tipologia di "
-"attivita"
+"small> Suggerisce il tempo solitamente impiegato per questa tipologia di attivita"
 msgstr ""
 "Value between 0.25 - 24 hours. <br><small>Examples: <em><ul><li>60 minutes = 1 "
 "hour</li><li>30 minutes = 0.5 hours</li><li>15 minutes = 0.25 hours</li></ul></"
@@ -15679,8 +15583,8 @@ msgid ""
 "Sede Azienda abilitata per la movimentazione degli articoli. L'impostazione non "
 "viene considerata per gli utenti del gruppo 'Amministratori'."
 msgstr ""
-"Company Headquarters enabled for item movement. The setting is not considered "
-"for users in the 'Administrators' group."
+"Company Headquarters enabled for item movement. The setting is not considered for "
+"users in the 'Administrators' group."
 
 #: modules/utenti/components/gestione_otp.php:29
 #, fuzzy
@@ -15705,8 +15609,7 @@ msgid ""
 msgstr ""
 
 #: modules/utenti/components/gestione_otp.php:108
-msgid ""
-"Data e ora di inizio validità del token. Lasciare vuoto per token permanente"
+msgid "Data e ora di inizio validità del token. Lasciare vuoto per token permanente"
 msgstr ""
 
 #: modules/utenti/components/gestione_otp.php:111
@@ -15733,8 +15636,8 @@ msgstr "Active"
 
 #: modules/utenti/components/gestione_otp.php:147
 msgid ""
-"Per attivare l'OTP è necessario configurare un indirizzo email valido per "
-"questo utente."
+"Per attivare l'OTP è necessario configurare un indirizzo email valido per questo "
+"utente."
 msgstr ""
 
 #: modules/utenti/components/gestione_otp.php:148
@@ -15940,8 +15843,7 @@ msgstr "Associated business"
 msgid "Cambia foto utente"
 msgstr "Change user photo"
 
-#: modules/utenti/info.php:79 modules/utenti/info.php:80
-#: modules/utenti/user.php:105
+#: modules/utenti/info.php:79 modules/utenti/info.php:80 modules/utenti/user.php:105
 msgid "Cambia password"
 msgstr "Change password"
 
@@ -15983,11 +15885,9 @@ msgstr "Apple"
 
 #: modules/utenti/info.php:121
 msgid ""
-"Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del "
-"calendario"
+"Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario"
 msgstr ""
-"For _APPLE_, you can configure a new calendar of the standard app of the "
-"calendar"
+"For _APPLE_, you can configure a new calendar of the standard app of the calendar"
 
 #: modules/utenti/info.php:126
 msgid "PC"
@@ -16012,10 +15912,8 @@ msgid "Calendario interventi"
 msgstr "Interventions calendar"
 
 #: modules/utenti/info.php:175
-msgid ""
-"Per accedere al calendario eventi attraverso l'API, accedi al seguente link"
-msgstr ""
-"For enter at the events calendar through the API, log into the follow link"
+msgid "Per accedere al calendario eventi attraverso l'API, accedi al seguente link"
+msgstr "For enter at the events calendar through the API, log into the follow link"
 
 #: modules/utenti/init.php:34
 #, fuzzy
@@ -16202,7 +16100,7 @@ msgstr ""
 #: modules/viste/fields.php:81 modules/viste/fields.php:121
 #: modules/viste/fields.php:144
 msgid "ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!"
-msgstr "ATTENTION: Always use the characters < or > followed by space!"
+msgstr "WARNING: always use the characters < or > followed by space!"
 
 #: modules/viste/fields.php:89 modules/viste/fields.php:242
 #, fuzzy
@@ -16250,8 +16148,8 @@ msgstr "Low search"
 
 #: modules/viste/fields.php:117
 msgid ""
-"Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di "
-"evidenti rallentamenti, mostra solo un avviso all'utente"
+"Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti "
+"rallentamenti, mostra solo un avviso all'utente"
 msgstr ""
 "Indicate if the search for this field is slow (to use in case to evident "
 "slowdowns, show only a notice to the user"
@@ -16301,8 +16199,8 @@ msgstr "Use HTML"
 
 #: modules/viste/fields.php:140 modules/viste/fields.php:302
 msgid ""
-"Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per "
-"i campi di testo con editor."
+"Indica se il campo deve mantenere la formattazione HTML. Impostazione utile per i "
+"campi di testo con editor."
 msgstr ""
 "Indicates whether the field should retain HTML formatting. Useful setting for "
 "text fields with editors."
@@ -16451,8 +16349,7 @@ msgstr "Error adding location"
 msgid "Barcode eliminato!"
 msgstr "Order eliminated!"
 
-#: plugins/barcode_articoli/actions.php:120
-#: plugins/barcode_articoli/actions.php:131
+#: plugins/barcode_articoli/actions.php:120 plugins/barcode_articoli/actions.php:131
 #, fuzzy
 #| msgid "Liste aggiornate!"
 msgid "Pulsante aggiornato!"
@@ -16601,8 +16498,7 @@ msgid ""
 "Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "
 "\"ore\""
 msgstr ""
-"To monitor hours consumption, add at least one row with unit of measure "
-"\"hours\""
+"To monitor hours consumption, add at least one row with unit of measure \"hours\""
 
 #: plugins/consuntivo/edit.php:318 plugins/consuntivo/edit.php:349
 #: plugins/consuntivo/edit.php:382 plugins/consuntivo/edit.php:412
@@ -16644,8 +16540,8 @@ msgid ""
 "Il contratto predefinito, se lavorabile, verrà selezionato automaticamente in "
 "fase di apertura attività per il cliente"
 msgstr ""
-"The default contract, if workable, will be automatically selected when opening "
-"a business for the customer"
+"The default contract, if workable, will be automatically selected when opening a "
+"business for the customer"
 
 #: plugins/contratti_anagrafiche/edit.php:37
 msgid "Contratto impostato come predefinito,Contratto non predefinito"
@@ -16671,9 +16567,9 @@ msgstr "Invoice number/protocol"
 #: plugins/dichiarazioni_intento/add.php:35
 #: plugins/dichiarazioni_intento/edit.php:34
 msgid ""
-"Il numero di protocollo della dichiarazione d'intento, rilevabile dalla "
-"ricevuta telematica rilasciata dall'Agenzia delle entrate, è composto di due "
-"parti:<br><ul><li>la prima, formata da 17 cifre (es. 08060120341234567), che "
+"Il numero di protocollo della dichiarazione d'intento, rilevabile dalla ricevuta "
+"telematica rilasciata dall'Agenzia delle entrate, è composto di due parti:"
+"<br><ul><li>la prima, formata da 17 cifre (es. 08060120341234567), che "
 "rappresenta il protocollo di ricezione;</li><li>la seconda, di 6 cifre (es. "
 "000001), che rappresenta il progressivo e deve essere separata dalla prima dal "
 "segno '-' oppure dal segno '/'</li></ul>"
@@ -16741,13 +16637,13 @@ msgid ""
 "Per effettuare la generazione dell'XML della fattura elettronica clicca sul "
 "pulsante _BTN_"
 msgstr ""
-"For carry out the generation of the XML of the electronic invoice click on "
-"button _BTN_"
+"For carry out the generation of the XML of the electronic invoice click on button "
+"_BTN_"
 
 #: plugins/exportFE/edit.php:70
 msgid ""
-"Successivamente sarà possibile procedere alla visualizzazione e al download "
-"della fattura generata attraverso i pulsanti dedicati"
+"Successivamente sarà possibile procedere alla visualizzazione e al download della "
+"fattura generata attraverso i pulsanti dedicati"
 msgstr ""
 "Subsequently will possible proceed at the view and at download of the generated "
 "invoice through the dedicated buttons"
@@ -16757,8 +16653,8 @@ msgid ""
 "Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura "
 "Elettronica\" saranno inclusi nell'XML"
 msgstr ""
-"All the PDF attachment insert inside the category \"Electronic invoice\" will "
-"be included like attachment of the XLM"
+"All the PDF attachment insert inside the category \"Electronic invoice\" will be "
+"included like attachment of the XLM"
 
 #: plugins/exportFE/edit.php:139
 msgid "Visualizza ricevuta"
@@ -16806,8 +16702,8 @@ msgstr "Verification completed successfully!"
 
 #: plugins/exportFE/edit.php:280
 msgid ""
-"Lo stato della Fattura Elettronica è stato aggiornato in base all'ultima "
-"notifica disponibile nel sistema!"
+"Lo stato della Fattura Elettronica è stato aggiornato in base all'ultima notifica "
+"disponibile nel sistema!"
 msgstr ""
 "The status of the Electronic Invoice has been updated based on the latest "
 "notification available in the system!"
@@ -16826,7 +16722,7 @@ msgstr "Are you sure you want to regenerate the invoice?"
 
 #: plugins/exportFE/edit.php:306
 msgid "Attenzione: sarà generato un nuovo progressivo invio"
-msgstr "Attention: a new progressive sending will be generated"
+msgstr "Warning: a new progressive sending will be generated"
 
 #: plugins/exportFE/notifiche.php:17
 msgid "Il documento non ha notifiche disponibili"
@@ -16843,8 +16739,7 @@ msgstr ""
 "notifications"
 
 #: plugins/exportFE/notifiche.php:21
-msgid ""
-"L'importazione delle notifiche in questione procedere comunque regolarmente"
+msgid "L'importazione delle notifiche in questione procedere comunque regolarmente"
 msgstr "The import of the notifications in question will still proceed regularly"
 
 #: plugins/exportFE/notifiche.php:30
@@ -16852,8 +16747,8 @@ msgid ""
 "Segue l'elenco completo delle notifiche/ricevute relative alla fatture "
 "elettronica di questo documento"
 msgstr ""
-"The complete list of notifications/receipts related to the electronic invoices "
-"of this document follows"
+"The complete list of notifications/receipts related to the electronic invoices of "
+"this document follows"
 
 #: plugins/exportFE/notifiche.php:31
 msgid ""
@@ -16878,8 +16773,8 @@ msgid ""
 "Nota: in caso di fattura scartata per duplicazione, se non sono disponibili "
 "notifiche contattare i fornitori del servizio"
 msgstr ""
-"Note: In case of invoice rejected for duplication, if there are no "
-"notifications available contact the service providers"
+"Note: In case of invoice rejected for duplication, if there are no notifications "
+"available contact the service providers"
 
 #: plugins/exportFE/notifiche.php:39 plugins/receiptFE/edit.php:156
 #, fuzzy
@@ -16891,8 +16786,7 @@ msgstr "Requested date"
 msgid "Scaricata"
 msgstr "Downloaded"
 
-#: plugins/exportFE/notifiche.php:75
-#: plugins/listino_clienti/dettaglio_prezzi.php:55
+#: plugins/exportFE/notifiche.php:75 plugins/listino_clienti/dettaglio_prezzi.php:55
 #: plugins/listino_fornitori/dettaglio_prezzi_fornitore.php:56
 msgid "No"
 msgstr "No"
@@ -16932,10 +16826,10 @@ msgid "Tipologia (Azienda o Ente pubblico)"
 msgstr "Type (Company or Public Entity)"
 
 #: plugins/exportFE/src/FatturaElettronica.php:518
-#: plugins/exportFE/src/FatturaElettronica.php:554
-#: plugins/importFE/generate.php:193 plugins/importFE_ZIP/generate.php:195
+#: plugins/exportFE/src/FatturaElettronica.php:554 plugins/importFE/generate.php:193
+#: plugins/importFE_ZIP/generate.php:195
 msgid "Codice Fiscale"
-msgstr "Fiscal code"
+msgstr "Tax code"
 
 #: plugins/exportFE/src/FatturaElettronica.php:521
 msgid "L'Anagrafica Azienda non può avere tipologia \"Privato\""
@@ -17037,8 +16931,7 @@ msgstr "Are you sure you want to remove this implant from the document?"
 
 #: plugins/importFE/actions.php:206 plugins/importFE_ZIP/actions.php:405
 msgid ""
-"La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata "
-"correttamente"
+"La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente"
 msgstr "Invoice number _NUM_ of _DATE_ (_ANAGRAFICA_) has been imported correctly"
 
 #: plugins/importFE/actions.php:212 plugins/importFE/init.php:61
@@ -17061,8 +16954,7 @@ msgstr "Stamp"
 #: plugins/importFE/buttons.php:28 plugins/importFE_ZIP/buttons.php:28
 msgid ""
 "Tenta il completamento automatico dei riferimenti per le righe delle fattura "
-"elettronica sulla base di Ordini e DDT registrati nel gestionale per il "
-"Fornitore"
+"elettronica sulla base di Ordini e DDT registrati nel gestionale per il Fornitore"
 msgstr ""
 "Attempts to automatically complete the references for the electronic invoice "
 "lines based on the Orders and DDT recorded in the management system for the "
@@ -17077,8 +16969,7 @@ msgid "La compilazione automatica dei campi non è andata a buon fine"
 msgstr "The automatic filling of the fields was not successful"
 
 #: plugins/importFE/buttons.php:119 plugins/importFE_ZIP/buttons.php:119
-msgid ""
-"La ricerca automatica dei riferimenti per le righe non è andata a buon fine"
+msgid "La ricerca automatica dei riferimenti per le righe non è andata a buon fine"
 msgstr "The automatic search for references for rows was unsuccessful"
 
 #: plugins/importFE/edit.php:58 plugins/importFE_ZIP/actions.php:256
@@ -17185,8 +17076,7 @@ msgstr ""
 #| "scadenze"
 msgid "La fattura presenta _NUM_ rat_E_ di pagamento"
 msgstr ""
-"The imported invoice presents _NUM_ rat _ E_ of payment with the follows "
-"deadlines"
+"The imported invoice presents _NUM_ rat _ E_ of payment with the follows deadlines"
 
 #: plugins/importFE/generate.php:274 plugins/importFE_ZIP/generate.php:276
 #, fuzzy
@@ -17229,8 +17119,8 @@ msgstr "Manual creation"
 
 #: plugins/importFE/generate.php:380 plugins/importFE_ZIP/generate.php:379
 msgid ""
-"Nel caso di righe con almeno un nodo 'CodiceArticolo', il gestionale procede "
-"alla creazione dell'articolo se la riga non risulta assegnata manualmente"
+"Nel caso di righe con almeno un nodo 'CodiceArticolo', il gestionale procede alla "
+"creazione dell'articolo se la riga non risulta assegnata manualmente"
 msgstr ""
 "In the case of rows with at least one 'ItemCode' node, the management system "
 "proceeds to create the article if the row is not manually assigned"
@@ -17245,9 +17135,9 @@ msgid ""
 "registrazione. Controllare che l'XML della fattura di acquisto contenga il nodo "
 "'CodiceTipo' valorizzato con 'serial' o 'Serial' "
 msgstr ""
-"In the case of lines containing serial numbers, the management system proceeds "
-"to register them. Check that the purchase invoice XML contains the 'CodiceTipo' "
-"node valued with 'serial' or 'Serial' "
+"In the case of lines containing serial numbers, the management system proceeds to "
+"register them. Check that the purchase invoice XML contains the 'CodiceTipo' node "
+"valued with 'serial' or 'Serial' "
 
 #: plugins/importFE/generate.php:392
 msgid "Attivare se la ritenuta è stata pagata dal fornitore"
@@ -17322,8 +17212,8 @@ msgid ""
 "Creazione automatica articolo deve essere attiva o l'articolo deve essere "
 "selezionato affinché questa impostazione abbia effetto"
 msgstr ""
-"Auto-Create Item must be enabled or the item must be selected for this setting "
-"to take effect"
+"Auto-Create Item must be enabled or the item must be selected for this setting to "
+"take effect"
 
 #: plugins/importFE/generate.php:765 plugins/importFE_ZIP/generate.php:745
 msgid "Non ci sono righe nella fattura"
@@ -17414,8 +17304,7 @@ msgstr "Remove the invoice saved locally?"
 
 #: plugins/importFE/list.php:200 plugins/importFE_ZIP/list.php:242
 #: plugins/receiptFE/list.php:124
-msgid ""
-"Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento"
+msgid "Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento"
 msgstr ""
 "It will be possible to insert it again in the management system by uploading"
 
@@ -17451,13 +17340,11 @@ msgid "Selezione riferimenti completata"
 msgstr "Reference agent"
 
 #: plugins/importFE/riferimento.php:164 plugins/importFE_ZIP/riferimento.php:164
-msgid ""
-"Suggerimento: verifica che esistano ordini o DDT aperti per questo fornitore"
+msgid "Suggerimento: verifica che esistano ordini o DDT aperti per questo fornitore"
 msgstr ""
 
 #: plugins/importFE/src/FatturaElettronica.php:354
-msgid ""
-"Errore durante la creazione della banca: verificare la correttezza dei dati"
+msgid "Errore durante la creazione della banca: verificare la correttezza dei dati"
 msgstr "Error creating bank: please check the correctness of the data"
 
 #: plugins/importFE/src/FatturaOrdinaria.php:167
@@ -17488,13 +17375,11 @@ msgstr "There are"
 msgid "C'è"
 msgstr "There is"
 
-#: plugins/importFE/src/InvoiceHook.php:65
-#: plugins/receiptFE/src/ReceiptHook.php:61
+#: plugins/importFE/src/InvoiceHook.php:65 plugins/receiptFE/src/ReceiptHook.php:61
 msgid "e"
 msgstr "and"
 
-#: plugins/importFE/src/InvoiceHook.php:65
-#: plugins/receiptFE/src/ReceiptHook.php:61
+#: plugins/importFE/src/InvoiceHook.php:65 plugins/receiptFE/src/ReceiptHook.php:61
 msgid "a"
 msgstr "in"
 
@@ -17540,8 +17425,7 @@ msgstr "Error creating backup"
 
 #: plugins/importFE_ZIP/actions.php:116 plugins/importFE_ZIP/actions.php:233
 msgid ""
-"È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP "
-"valido."
+"È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP valido."
 msgstr ""
 
 #: plugins/importFE_ZIP/actions.php:251
@@ -17673,9 +17557,9 @@ msgid ""
 "visualizzare altre informazioni oltre al nome per le fatture che non verranno "
 "importate completamente. Continuare?"
 msgstr ""
-"All invoices to be imported will be downloaded, and you will no longer be able "
-"to view other information besides the name for invoices that will not be "
-"imported completely. To continue?"
+"All invoices to be imported will be downloaded, and you will no longer be able to "
+"view other information besides the name for invoices that will not be imported "
+"completely. To continue?"
 
 #: plugins/importFE_ZIP/generate.php:383
 #, fuzzy
@@ -17688,9 +17572,9 @@ msgid ""
 "registrazione. Controllare che l'XML della fattura di vendita contenga il nodo "
 "'CodiceTipo' valorizzato con 'serial' o 'Serial' "
 msgstr ""
-"In the case of lines containing serial numbers, the management system proceeds "
-"to register them. Check that the purchase invoice XML contains the 'CodiceTipo' "
-"node valued with 'serial' or 'Serial' "
+"In the case of lines containing serial numbers, the management system proceeds to "
+"register them. Check that the purchase invoice XML contains the 'CodiceTipo' node "
+"valued with 'serial' or 'Serial' "
 
 #: plugins/importFE_ZIP/generate.php:391
 #, fuzzy
@@ -17797,8 +17681,8 @@ msgid ""
 "Per impostare un prezzo generale per quantità non incluse in questi limiti, "
 "utilizzare il campo sopra indicato"
 msgstr ""
-"To set a general price for quantities not included in these limits, use the "
-"above field"
+"To set a general price for quantities not included in these limits, use the above "
+"field"
 
 #: plugins/listino_clienti/dettaglio_prezzi.php:133
 #: plugins/listino_fornitori/dettaglio_prezzi_fornitore.php:196
@@ -18046,12 +17930,12 @@ msgstr "Billing day"
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:60
 msgid ""
 "Specificare per la pianificazione fatturazione se si desidera creare le fatture "
-"ad inizio o alla fine del mese. Se non specificata alcuna opzione saranno "
-"create di default a fine mese."
+"ad inizio o alla fine del mese. Se non specificata alcuna opzione saranno create "
+"di default a fine mese."
 msgstr ""
 "Specify for the billing schedule whether you want to create invoices at the "
-"beginning or end of the month. If no option is specified, they will be created "
-"by default at the end of the month."
+"beginning or end of the month. If no option is specified, they will be created by "
+"default at the end of the month."
 
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:63
 msgid "Giorno fisso fatturazione"
@@ -18079,21 +17963,17 @@ msgstr "on _TOT_ totals"
 
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:143
 msgid "Attenzione, sono previste _RATE_ rate su _TOT_ quantità totali"
-msgstr "Attention, _RATE_ installments are expected on _TOT_ total quantities"
+msgstr "Warning, _RATE_ installments are expected on _TOT_ total quantities"
 
 #: plugins/pianificazione_fatturazione/ajax_rate.php:61
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:205
-#, fuzzy
-#| msgid "Rata _NUMBER_"
 msgid "Rata _IND_/_NUM_"
-msgstr "Rate _NUMBER_"
+msgstr "Rate _IND_/_NUM_"
 
 #: plugins/pianificazione_fatturazione/ajax_rate.php:64
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:209
-#, fuzzy
-#| msgid "totale: _TOT_"
 msgid "Totale: _TOT_"
-msgstr "total: _TOT_"
+msgstr "Total: _TOT_"
 
 #: plugins/pianificazione_fatturazione/crea_fattura.php:63
 #: plugins/pianificazione_fatturazione/crea_fattura_multipla.php:73
@@ -18121,8 +18001,8 @@ msgid ""
 "Qui puoi pianificare la suddivisione del budget del contratto in rate uguali "
 "fatturabili in modo separato"
 msgstr ""
-"Here you can plan for splitting the contract budget into equal installments "
-"that can be billed separately"
+"Here you can plan for splitting the contract budget into equal installments that "
+"can be billed separately"
 
 #: plugins/pianificazione_fatturazione/edit.php:37
 msgid ""
@@ -18137,14 +18017,14 @@ msgid ""
 "Per poter procedere, il contratto deve avere <b>data accettazione</b> e <b>data "
 "conclusione</b> definita ed essere in uno dei seguenti stati: _LINK_"
 msgstr ""
-"In order to proceed, the contract must have a defined <b>acceptance date</b> "
-"and <b>completion date</b> and be in one of the following states: _LINK_"
+"In order to proceed, the contract must have a defined <b>acceptance date</b> and "
+"<b>completion date</b> and be in one of the following states: _LINK_"
 
 #: plugins/pianificazione_fatturazione/edit.php:43
 msgid ""
 "Tutte le righe del contratto vengono convertite in righe generiche, rendendo "
-"impossibile risalire ad eventuali articoli utilizzati all'interno del contratto "
-"e pertanto non movimentando il magazzino"
+"impossibile risalire ad eventuali articoli utilizzati all'interno del contratto e "
+"pertanto non movimentando il magazzino"
 msgstr ""
 "All the lines of the contract are converted into generic lines, making it "
 "impossible to trace any items used within the contract and therefore not moving "
@@ -18184,44 +18064,32 @@ msgid "Pianifica"
 msgstr "Plan"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:55
-#, fuzzy
-#| msgid "Seleziona un componente"
 msgid "Seleziona mese"
-msgstr "Select a component"
+msgstr "Select month"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:105
 msgid "Cerca per ragione sociale, contratto o importo..."
-msgstr ""
+msgstr "Search by company name, contract or amount..."
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:186
-#, fuzzy
-#| msgid "tra _DAYS_ giorni"
 msgid "Scade tra _DAYS_ giorni"
-msgstr "in _DAYS_ days"
+msgstr "Expire in _DAYS_ days"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:272
-#, fuzzy
-#| msgid "Elimina selezionati"
 msgid "elementi selezionati"
-msgstr "Delete selected"
+msgstr "items selected"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:286
-#, fuzzy
-#| msgid "Crea fatture"
 msgid "Crea fatture selezionate"
-msgstr "Create invoices"
+msgstr "Create selected invoices"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:488
-#, fuzzy
-#| msgid "Scaduta"
 msgid "Scade tra"
-msgstr "Expired"
+msgstr "Expired in"
 
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:488
-#, fuzzy
-#| msgid "giorno/i"
 msgid "giorni"
-msgstr "day(s)"
+msgstr "days"
 
 #: plugins/pianificazione_interventi/actions.php:58
 msgid "Promemoria inserito!"
@@ -18270,22 +18138,21 @@ msgstr ""
 
 #: plugins/pianificazione_interventi/edit.php:39
 msgid ""
-"Per poter pianificare i promemoria, il contratto deve avere <b>data "
-"accettazione</b> e <b>data conclusione</b> definita ed essere in uno dei "
-"seguenti stati: _LINK_"
+"Per poter pianificare i promemoria, il contratto deve avere <b>data accettazione</"
+"b> e <b>data conclusione</b> definita ed essere in uno dei seguenti stati: _LINK_"
 msgstr ""
-"In order to schedule reminders, the contract must have <b>acceptance date</b> "
-"and <b>completion date</b> defined and be in one of the following states: _LINK_"
+"In order to schedule reminders, the contract must have <b>acceptance date</b> and "
+"<b>completion date</b> defined and be in one of the following states: _LINK_"
 
 #: plugins/pianificazione_interventi/edit.php:43
 msgid ""
 "I promemoria verranno visualizzati sulla 'Dashboard' e serviranno per "
-"semplificare la pianificazione del giorno dell'intervento, ad esempio nel caso "
-"di interventi con cadenza mensile"
+"semplificare la pianificazione del giorno dell'intervento, ad esempio nel caso di "
+"interventi con cadenza mensile"
 msgstr ""
 "The reminder  will be visualized on the 'Dashboard' and will serve for simplify "
-"the planning of the day of the intervention, for example in case of "
-"interventions with monthly cadence"
+"the planning of the day of the intervention, for example in case of interventions "
+"with monthly cadence"
 
 #: plugins/pianificazione_interventi/edit.php:51
 msgid "Tipo di promemoria"
@@ -18432,8 +18299,7 @@ msgstr "page _NUM_/_TOT_"
 #: plugins/presentazioni_bancarie/edit.php:22
 #: plugins/presentazioni_bancarie/generate.php:39
 msgid ""
-"La banca dell'azienda non è definita o non ha impostati i campi Codice IBAN e "
-"BIC"
+"La banca dell'azienda non è definita o non ha impostati i campi Codice IBAN e BIC"
 msgstr ""
 "The company bank is not defined or does not have the IBAN and BIC fields set"
 
@@ -18457,8 +18323,8 @@ msgstr "Export already processed"
 
 #: plugins/presentazioni_bancarie/edit.php:37
 msgid ""
-"Seleziona per esportare nuovamente le scadenze esportate in precedenze tra "
-"quelle selezionate"
+"Seleziona per esportare nuovamente le scadenze esportate in precedenze tra quelle "
+"selezionate"
 msgstr "Select to re-export previously exported due dates from the selected ones"
 
 #: plugins/presentazioni_bancarie/edit.php:60
@@ -18522,9 +18388,8 @@ msgid ""
 "Le ricevute delle Fatture Elettroniche permettono di individuare se una "
 "determinata fattura trasmessa è stata accettata dal Sistema Di Interscambio"
 msgstr ""
-"The receipts of the electronic invoice allow to detect if a determinate "
-"released invoice is been accepted from Interchange system and the associated "
-"customer"
+"The receipts of the electronic invoice allow to detect if a determinate released "
+"invoice is been accepted from Interchange system and the associated customer"
 
 #: plugins/receiptFE/edit.php:37 plugins/receiptFE/edit.php:165
 #: plugins/receiptFE/edit.php:179
@@ -18534,8 +18399,7 @@ msgstr "Search by"
 #: plugins/receiptFE/edit.php:36
 msgid ""
 "Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, "
-"aggiornando automaticamente lo stato delle relative fatture e allegandole ad "
-"esse"
+"aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse"
 msgstr ""
 "Using the _BTN_ button, it is possible to retrieve the receipts, automatically "
 "updating the status of the related invoices and attaching them to them"
@@ -18605,8 +18469,8 @@ msgstr "Import completed!"
 
 #: plugins/receiptFE/edit.php:314 plugins/receiptFE/edit.php:353
 msgid ""
-"Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura "
-"di vendita corrispondente caricata a gestionale."
+"Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di "
+"vendita corrispondente caricata a gestionale."
 msgstr ""
 "Invoice related to receipt not detected. Check that there is a corresponding "
 "sales invoice uploaded to management."
@@ -18633,8 +18497,8 @@ msgstr "The follows received are been elaborated:"
 
 #: plugins/receiptFE/edit.php:361
 msgid ""
-"Se si sono verificati degli errori durante la procedura e il problema continua "
-"a verificarsi, contatta l'assistenza ufficiale"
+"Se si sono verificati degli errori durante la procedura e il problema continua a "
+"verificarsi, contatta l'assistenza ufficiale"
 msgstr ""
 "If there have been verified some errors during the procedure and the problem "
 "continues to occur, contact the official assistance"
@@ -18686,9 +18550,8 @@ msgstr "There are present"
 
 #: plugins/receiptFE/src/NotificheRicevuteHook.php:56
 msgid ""
-"_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di "
-"trasmissione, _WAIT_ fattur_D_ elettronic_C_ in attesa di ricevut_D_ da più di "
-"7 giorni"
+"_ERR_ fattur_B_ elettronic_A_ con ricevut_B_ di scarto o errori di trasmissione, "
+"_WAIT_ fattur_D_ elettronic_C_ in attesa di ricevut_D_ da più di 7 giorni"
 msgstr ""
 "_ERR_ electronic invoice with rejected receipt or transmission errors, _WAIT_ "
 "electronic invoice waiting for receipt for more than 7 days"
@@ -18765,8 +18628,7 @@ msgid "Revisione eliminata!"
 msgstr "Revision deleted!"
 
 #: plugins/revisioni/edit.php:36
-msgid ""
-"Seleziona la spunta e clicca salva per cambiare la revisione del preventivo"
+msgid "Seleziona la spunta e clicca salva per cambiare la revisione del preventivo"
 msgstr "Select the checkbox and click save to change the quote revision"
 
 #: plugins/revisioni/edit.php:65
@@ -18817,13 +18679,13 @@ msgid ""
 "<b>Attenzione</b>: per impostare il codice specificare prima 'Tipologia' e "
 "'Nazione' dell'anagrafica:<br><ul><li>Azienda (B2B) - Codice Destinatario, 7 "
 "caratteri</li><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa."
-"gov.it), 6 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice "
-"Fiscale</li></ul>"
+"gov.it), 6 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</"
+"li></ul>"
 msgstr ""
-"<b>Attention</b>: to set the code, first specify the 'Type' and 'Country' of "
-"the personal data:<br><ul><li>Company (B2B) - Recipient Code, 7 characters</"
+"<b>Warning</b>: to set the code, first specify the 'Type' and 'Country' of the "
+"personal data:<br><ul><li>Company (B2B) - Recipient Code, 7 characters</"
 "li><li>Public body (B2G/PA) - Unique Office Code (www.indicepa.gov.it), 6 "
-"characters</li><li>Private (B2C) - the Fiscal Code is used</li></ul>"
+"characters</li><li>Private (B2C) - the Tax Code is used</li></ul>"
 
 #: plugins/sedi/add.php:93 plugins/sedi/edit.php:108
 msgid "Seleziona se questa sede rappresenta un automezzo."
@@ -18835,8 +18697,7 @@ msgstr "Tax Representative"
 
 #: plugins/sedi/add.php:96 plugins/sedi/edit.php:96
 msgid "Utilizza questa sede come rappresentante fiscale per l'anagrafica."
-msgstr ""
-"Use this location as your tax representative for your personal information."
+msgstr "Use this location as your tax representative for your personal information."
 
 #: plugins/sedi/add.php:101 plugins/sedi/edit.php:120
 msgid "Referenti"
@@ -18921,34 +18782,28 @@ msgstr "The statistics considers the purchase invoices in the defined time perio
 msgid "Prezzo medio acquisto"
 msgstr "Purchase price"
 
-#: plugins/statistiche_articoli/edit.php:61
-#: plugins/statistiche_articoli/edit.php:90
+#: plugins/statistiche_articoli/edit.php:61 plugins/statistiche_articoli/edit.php:90
 msgid "Prezzo medio"
 msgstr "Hourly price"
 
-#: plugins/statistiche_articoli/edit.php:62
-#: plugins/statistiche_articoli/edit.php:91
+#: plugins/statistiche_articoli/edit.php:62 plugins/statistiche_articoli/edit.php:91
 msgid "Prezzo massimo"
 msgstr "Hourly price"
 
-#: plugins/statistiche_articoli/edit.php:63
-#: plugins/statistiche_articoli/edit.php:92
+#: plugins/statistiche_articoli/edit.php:63 plugins/statistiche_articoli/edit.php:92
 msgid "Oscillazione"
 msgstr "Installation"
 
-#: plugins/statistiche_articoli/edit.php:64
-#: plugins/statistiche_articoli/edit.php:93
+#: plugins/statistiche_articoli/edit.php:64 plugins/statistiche_articoli/edit.php:93
 msgid "Oscillazione in %"
 msgstr "Oscillation in %"
 
-#: plugins/statistiche_articoli/edit.php:65
-#: plugins/statistiche_articoli/edit.php:94
+#: plugins/statistiche_articoli/edit.php:65 plugins/statistiche_articoli/edit.php:94
 msgid "Andamento prezzo"
 msgstr "Update completed"
 
 #: plugins/statistiche_articoli/edit.php:78
-msgid ""
-"La statistica considera le fatture di vendita nel periodo temporale definito"
+msgid "La statistica considera le fatture di vendita nel periodo temporale definito"
 msgstr "The statistics considers the sales invoices in the defined time period"
 
 #: plugins/statistiche_articoli/edit.php:79
@@ -18977,8 +18832,8 @@ msgstr "Current Article"
 
 #: reset.php:58
 msgid ""
-"Se le informazioni inserite corrispondono ai dati di un utente, riceverai a "
-"breve un'email all'indirizzo collegato"
+"Se le informazioni inserite corrispondono ai dati di un utente, riceverai a breve "
+"un'email all'indirizzo collegato"
 msgstr ""
 "If the information entered matches the data of a user, you will shortly receive "
 "an email at the linked address"
@@ -19036,14 +18891,14 @@ msgstr "Set the administrator email address"
 #: reset.php:191
 #, fuzzy
 #| msgid ""
-#| "Se i dati inseriti risulteranno corretti riceverai un'email dove sarà "
-#| "indicato il link da cui potrai reimpostare la tua password"
+#| "Se i dati inseriti risulteranno corretti riceverai un'email dove sarà indicato "
+#| "il link da cui potrai reimpostare la tua password"
 msgid ""
 "Se le informazioni inserite sono corrette, riceverai un'email con un link per "
 "reimpostare la tua password."
 msgstr ""
-"If the data entered is correct you will receive an email indicating the link "
-"from which you can reset your password"
+"If the data entered is correct you will receive an email indicating the link from "
+"which you can reset your password"
 
 #: reset.php:192
 msgid ""
@@ -19169,8 +19024,7 @@ msgid "Le scorciatoie da tastiera sono attive"
 msgstr "Keyboard shortcuts are active"
 
 #: shortcuts.php:50
-msgid ""
-"Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>"
+msgid "Strumenti » Impostazioni » Generali » <b>Abilita scorciatoie da tastiera</b>"
 msgstr "Tools » Settings » General » <b>Enable keyboard shortcuts</b>"
 
 #: shortcuts.php:48
@@ -19594,8 +19448,7 @@ msgstr "Print with OpenSTAManager"
 #: templates/base/header.php:39 templates/dashboard/header.php:27
 #: templates/dashboard_settimanale/header.php:27 templates/interventi/body.php:74
 #: templates/magazzino_cespiti/header.php:36
-#: templates/magazzino_inventario/header.php:36
-#: templates/scadenzario/header.php:32
+#: templates/magazzino_inventario/header.php:36 templates/scadenzario/header.php:32
 msgid "P.Iva"
 msgstr "Vat number"
 
@@ -19653,8 +19506,8 @@ msgstr "Everything S.E. & O."
 
 #: templates/contratti/body.php:458 templates/preventivi/body.php:535
 msgid ""
-"In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere "
-"Cordiali Saluti"
+"In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali "
+"Saluti"
 msgstr ""
 "Waiting for your kind reply, I take this opportunity to extend cordial greetings"
 
@@ -19808,8 +19661,7 @@ msgstr "Proforma invoice"
 msgid "Questo documento non possiede una fattura elettronica associata"
 msgstr "This document does not have an associated electronic invoice"
 
-#: templates/fatture_elettroniche/body.php:94 view.php:108 view.php:113
-#: view.php:118
+#: templates/fatture_elettroniche/body.php:94 view.php:108 view.php:113 view.php:118
 msgid ""
 "Il browser non supporta i contenuti iframe: clicca qui per raggiungere il file "
 "originale"
@@ -19819,9 +19671,9 @@ msgstr ""
 
 #: templates/info.php:158
 msgid ""
-"Documento privo di valenza fiscale ai sensi dell’art. 21 Dpr 633/72. "
-"L’originale è disponibile all’indirizzo telematico da Lei fornito oppure nella "
-"Sua area riservata dell’Agenzia delle Entrate"
+"Documento privo di valenza fiscale ai sensi dell’art. 21 Dpr 633/72. L’originale "
+"è disponibile all’indirizzo telematico da Lei fornito oppure nella Sua area "
+"riservata dell’Agenzia delle Entrate"
 msgstr ""
 "Document without fiscal value pursuant to art. 21 Dpr 633/72. The original is "
 "available at the electronic address provided by you or in your reserved area of ​​"
@@ -19829,8 +19681,8 @@ msgstr ""
 
 #: templates/info.php:158
 msgid ""
-"Copia della fattura elettronica disponibile nella Sua area riservata "
-"dell’Agenzia delle Entrate"
+"Copia della fattura elettronica disponibile nella Sua area riservata dell’Agenzia "
+"delle Entrate"
 msgstr ""
 "Copy of the electronic invoice available in your reserved area of ​​the Revenue "
 "Agency"
@@ -19861,8 +19713,8 @@ msgstr "End time"
 
 #: templates/interventi/body.php:372
 msgid ""
-"I dati del ricevente verrano trattati in base alla normativa europea UE "
-"2016/679 del 27 aprile 2016 (GDPR)"
+"I dati del ricevente verrano trattati in base alla normativa europea UE 2016/679 "
+"del 27 aprile 2016 (GDPR)"
 msgstr ""
 "Recipient's data will be processed according to the European regulation UE "
 "2016/679 of the 27 April 2016 (GDPR)"
@@ -20182,8 +20034,7 @@ msgid ""
 msgstr ""
 
 #~ msgid "Il gestionale open source per l'assistenza tecnica e la fatturazione"
-#~ msgstr ""
-#~ "The open source management software for technical assistance and billing"
+#~ msgstr "The open source management software for technical assistance and billing"
 
 #~ msgid "Non ci sono elementi da evadere"
 #~ msgstr "There are not elements to be dispatched"
@@ -20205,11 +20056,10 @@ msgstr ""
 #~ msgstr "Not enough parameters!"
 
 #~ msgid ""
-#~ "L'avvio del software è fallito a causa dell'assenza di alcuni parametri "
-#~ "nella configurazione di base"
+#~ "L'avvio del software è fallito a causa dell'assenza di alcuni parametri nella "
+#~ "configurazione di base"
 #~ msgstr ""
-#~ "The software launch failed due to missing parameters in the basic "
-#~ "configuration"
+#~ "The software launch failed due to missing parameters in the basic configuration"
 
 #~ msgid ""
 #~ "Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti "
@@ -20217,8 +20067,8 @@ msgstr ""
 #~ "email amministrativi)"
 #~ msgstr ""
 #~ "Please check that the file _FILE_ contains all the data inserted during the "
-#~ "initial configuration (with the exception of password and administrative "
-#~ "email address)"
+#~ "initial configuration (with the exception of password and administrative email "
+#~ "address)"
 
 #~ msgid "La configurazione non è corretta"
 #~ msgstr "The configuration is not correct"
@@ -20234,13 +20084,13 @@ msgstr ""
 #~ msgstr "Install"
 
 #~ msgid ""
-#~ "Prima di procedere alla configurazione e all'installazione del software, "
-#~ "sono necessari alcuni accorgimenti per garantire il corretto funzionamento "
-#~ "del gestionale"
+#~ "Prima di procedere alla configurazione e all'installazione del software, sono "
+#~ "necessari alcuni accorgimenti per garantire il corretto funzionamento del "
+#~ "gestionale"
 #~ msgstr ""
-#~ "Before proceeding to the configuration and installation of the software, "
-#~ "some precautions are needed to guarantee the correct operating of the "
-#~ "management software"
+#~ "Before proceeding to the configuration and installation of the software, some "
+#~ "precautions are needed to guarantee the correct operating of the management "
+#~ "software"
 
 #~ msgid ""
 #~ "Le estensioni e impostazioni PHP possono essere personalizzate nel file di "
@@ -20268,15 +20118,14 @@ msgstr ""
 
 #~ msgid ""
 #~ "Il software si trova attualmente nella fase di aggiornamento, potrebbero "
-#~ "volerci fino a 10 minuti, siete pregati di attendere sino alla sua "
-#~ "conclusione"
+#~ "volerci fino a 10 minuti, siete pregati di attendere sino alla sua conclusione"
 #~ msgstr ""
 #~ "The software is currently in the update phase, it may take up to 10 minutes, "
 #~ "please wait until it is finished"
 
 #~ msgid ""
-#~ "In caso di problemi rivolgersi all'amministratore di sistema o "
-#~ "all'assistenza del gestionale"
+#~ "In caso di problemi rivolgersi all'amministratore di sistema o all'assistenza "
+#~ "del gestionale"
 #~ msgstr ""
 #~ "In case of problems, contact your system administrator or management support"
 
@@ -20851,8 +20700,8 @@ msgstr ""
 #~ "elettronica non sarà possibile corrispondere la ricevuta una volta emessa"
 #~ msgstr ""
 #~ "If you are waiting for a receipt from the ES system, by regenerating the "
-#~ "electronic invoice it will not be possible to pay the receipt once it has "
-#~ "been issued"
+#~ "electronic invoice it will not be possible to pay the receipt once it has been "
+#~ "issued"
 
 #~ msgid "Copia dati contabili dalla prima riga valorizzata"
 #~ msgstr "Copy the accounting data from first row"
@@ -20883,11 +20732,11 @@ msgstr ""
 #~ msgstr "Send request"
 
 #~ msgid ""
-#~ "Se il problema persiste siete pregati di chiedere assistenza tramite il "
-#~ "forum apposito (_LINK_FORUM_)"
+#~ "Se il problema persiste siete pregati di chiedere assistenza tramite il forum "
+#~ "apposito (_LINK_FORUM_)"
 #~ msgstr ""
-#~ "If the problem persists, please ask for assistance through the dedicated "
-#~ "forum (_LINK_FORUM_)"
+#~ "If the problem persists, please ask for assistance through the dedicated forum "
+#~ "(_LINK_FORUM_)"
 
 #~ msgid "COD. _COD_"
 #~ msgstr "COD. _COD_"
@@ -20938,18 +20787,17 @@ msgstr ""
 #~ msgstr "Manual quantity"
 
 #~ msgid ""
-#~ "Le modifiche alle quantità in questa schermata prevedono la generazione di "
-#~ "un movimento relativo alla sede legale"
+#~ "Le modifiche alle quantità in questa schermata prevedono la generazione di un "
+#~ "movimento relativo alla sede legale"
 #~ msgstr ""
-#~ "Changes to quantities in this screen will generate a stock movement related "
-#~ "to the warehouse of registered office"
+#~ "Changes to quantities in this screen will generate a stock movement related to "
+#~ "the warehouse of registered office"
 
 #~ msgid ""
 #~ "Se si desidera effettuare movimenti per altre sedi, utilizzare il modulo "
 #~ "_MODULO_ "
 #~ msgstr ""
-#~ "If you want to make stock movements for other venues, use the module "
-#~ "_MODULO_ "
+#~ "If you want to make stock movements for other venues, use the module _MODULO_ "
 
 #, fuzzy
 #~| msgid "Bollo automatico"
@@ -20967,8 +20815,8 @@ msgstr ""
 #~| "Verranno fatturati gli interventi completati non inseriti in preventivi e "
 #~| "contratti"
 #~ msgid ""
-#~ "Verranno fatturati solo gli interventi completati non collegati a contratti "
-#~ "o preventivi"
+#~ "Verranno fatturati solo gli interventi completati non collegati a contratti o "
+#~ "preventivi"
 #~ msgstr ""
 #~ "Will be invoice the completed interventions not insert in preventives and "
 #~ "contracts"
@@ -21092,8 +20940,8 @@ msgstr ""
 #~ msgstr "After which specific operations you have noticed the malfunction"
 
 #~ msgid ""
-#~ "Assicurati inoltre di controllare che il checkbox relativo ai file di log "
-#~ "sia contrassegnato, oppure riporta qui l'errore visualizzato"
+#~ "Assicurati inoltre di controllare che il checkbox relativo ai file di log sia "
+#~ "contrassegnato, oppure riporta qui l'errore visualizzato"
 #~ msgstr ""
 #~ "Make sure also of check that the checkbox concerning to the logs file is "
 #~ "marked, or report here the error displayed"
@@ -21141,23 +20989,21 @@ msgstr ""
 #~ "gratuitousness"
 
 #~ msgid ""
-#~ "Offriamo supporto a pagamento professionale a chi fosse interessato, ma a "
-#~ "chi non interessa il supporto a pagamento e sta comunque utilizzando il "
-#~ "software chiediamo una donazione per il lavoro svolto finora e per la "
-#~ "possibilità di continuare questo progetto con lo stesso spirito con cui è "
-#~ "nato"
+#~ "Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi "
+#~ "non interessa il supporto a pagamento e sta comunque utilizzando il software "
+#~ "chiediamo una donazione per il lavoro svolto finora e per la possibilità di "
+#~ "continuare questo progetto con lo stesso spirito con cui è nato"
 #~ msgstr ""
-#~ "We offer professional payment support to those interested, but to those who "
-#~ "do not matter about the payment support and is still using the software we "
-#~ "ask a donation for the work done so fare and for the possibility to continue "
-#~ "with this project with the same spirit which he was born"
+#~ "We offer professional payment support to those interested, but to those who do "
+#~ "not matter about the payment support and is still using the software we ask a "
+#~ "donation for the work done so fare and for the possibility to continue with "
+#~ "this project with the same spirit which he was born"
 
 #~ msgid ""
 #~ "Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di "
 #~ "apprezzamento</b>"
 #~ msgstr ""
-#~ "Donations do not make us rich, but they are a<b>big symbol of appreciation</"
-#~ "b>"
+#~ "Donations do not make us rich, but they are a<b>big symbol of appreciation</b>"
 
 #~ msgid "Supporta questo progetto"
 #~ msgstr "Support this project"
@@ -21187,8 +21033,8 @@ msgstr ""
 #~ "Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la "
 #~ "Google Maps API Key nella scheda Impostazioni"
 #~ msgstr ""
-#~ "To enable the display of the businesses in the map, enter the Google Maps "
-#~ "API Key in the Settings card"
+#~ "To enable the display of the businesses in the map, enter the Google Maps API "
+#~ "Key in the Settings card"
 
 #~ msgid "Appoggio bancario"
 #~ msgstr "Bank support"
@@ -21282,11 +21128,11 @@ msgstr ""
 #~ msgstr "Invoice number of supplier "
 
 #~ msgid ""
-#~ "Attività completate non collegate a preventivi o contratti e che non siano "
-#~ "già state fatturate."
+#~ "Attività completate non collegate a preventivi o contratti e che non siano già "
+#~ "state fatturate."
 #~ msgstr ""
-#~ "Interventions completed not connected to quotes or contracts and that have "
-#~ "not already been invoiced."
+#~ "Interventions completed not connected to quotes or contracts and that have not "
+#~ "already been invoiced."
 
 #~ msgid "Il totale del file XML corrisponde a quello calcolato dal gestionale"
 #~ msgstr ""
@@ -21423,8 +21269,8 @@ msgstr ""
 
 #~ msgid "Comunicazione dati fatture (ex-spesometro)<br> dal _START_ al _END_"
 #~ msgstr ""
-#~ "|||UNTRANSLATED_CONTENT_START|||Comunicazione dati fatture (ex-"
-#~ "spesometro)<br> dal _START_ al _END_|||UNTRANSLATED_CONTENT_END|||"
+#~ "|||UNTRANSLATED_CONTENT_START|||Comunicazione dati fatture (ex-spesometro)<br> "
+#~ "dal _START_ al _END_|||UNTRANSLATED_CONTENT_END|||"
 
 #~ msgid "Stampa dati fatture"
 #~ msgstr "Invoice data"
@@ -21588,8 +21434,7 @@ msgstr ""
 #~ msgid "Ci sono _NUM_ attività scadute"
 #~ msgstr "The are _NUM_ contracts linked"
 
-#~ msgid ""
-#~ "Sono presenti le seguenti fatture in stato Bozza per il cliente corrente"
+#~ msgid "Sono presenti le seguenti fatture in stato Bozza per il cliente corrente"
 #~ msgstr ""
 #~ "There are the following invoices in Draft status for the current customer"
 
@@ -21630,11 +21475,11 @@ msgstr ""
 #~ msgstr "Unit sales price"
 
 #~ msgid ""
-#~ "In questa sezione è possibile definire dei dettagli aggiuntivi per "
-#~ "l'articolo in relazione ad una specifica anagrafica del gestionale"
+#~ "In questa sezione è possibile definire dei dettagli aggiuntivi per l'articolo "
+#~ "in relazione ad una specifica anagrafica del gestionale"
 #~ msgstr ""
-#~ "In this section it is possible to define additional details for the article "
-#~ "in relation to a specific data management system"
+#~ "In this section it is possible to define additional details for the article in "
+#~ "relation to a specific data management system"
 
 #~ msgid ""
 #~ "Per i Clienti è possibile definire un prezzo personalizzato per la vendita "
@@ -21662,20 +21507,19 @@ msgstr ""
 #~ "dell'articolo in relazione fornitore di origine, come codice e prezzo di "
 #~ "acquisto predefinito"
 #~ msgstr ""
-#~ "In this section it is possible to define the basic characteristics of the "
-#~ "item in relation to supplier of origin, such as code and default purchase "
-#~ "price"
+#~ "In this section it is possible to define the basic characteristics of the item "
+#~ "in relation to supplier of origin, such as code and default purchase price"
 
 #~ msgid ""
 #~ "Queste informazioni saranno utilizzate in automatico per la compilazione "
-#~ "dell'articolo al momento dell'inserimento in un documento di acquisto "
-#~ "relativo al fornitore indicato, sovrascrivendo le impostazioni predefinite "
-#~ "della sezione Acquisto per l'articolo"
+#~ "dell'articolo al momento dell'inserimento in un documento di acquisto relativo "
+#~ "al fornitore indicato, sovrascrivendo le impostazioni predefinite della "
+#~ "sezione Acquisto per l'articolo"
 #~ msgstr ""
-#~ "This information will be used automatically for the compilation of the "
-#~ "article at the time of insertion in a purchase document relating to the "
-#~ "indicated supplier, overwriting the default settings of the Purchase section "
-#~ "for the article"
+#~ "This information will be used automatically for the compilation of the article "
+#~ "at the time of insertion in a purchase document relating to the indicated "
+#~ "supplier, overwriting the default settings of the Purchase section for the "
+#~ "article"
 
 #~ msgid ""
 #~ "Attenzione: la fattura _NUM_ del _DATA_ è in attesa di una ricevuta dal "
@@ -21822,8 +21666,8 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "Il valore positivo indica uno sconto: per applicare una percentuale di "
-#~ "rincaro inserire un valore negativo"
+#~ "Il valore positivo indica uno sconto: per applicare una percentuale di rincaro "
+#~ "inserire un valore negativo"
 #~ msgstr ""
 #~ "The positive value indicate a discount: for apply an percentage of inflation "
 #~ "insert a negative value"
@@ -21856,11 +21700,11 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "Nessuna data di conclusione del contratto oppure quest'ultima è già "
-#~ "trascorsa, impossibile pianificare nuovi promemoria"
+#~ "Nessuna data di conclusione del contratto oppure quest'ultima è già trascorsa, "
+#~ "impossibile pianificare nuovi promemoria"
 #~ msgstr ""
-#~ "None end date of contract or the last one has already passed, impossible "
-#~ "plan new reminders"
+#~ "None end date of contract or the last one has already passed, impossible plan "
+#~ "new reminders"
 
 #~ msgid "Elimina materiale"
 #~ msgstr "Delete material"
@@ -21967,8 +21811,8 @@ msgstr ""
 #~ msgstr "Attention: the SMTP email _EMAIL_ seems to be invalid"
 
 #~ msgid ""
-#~ "Alcune impostazioni non possono essere modificate per questo stato perché "
-#~ "già utilizzato in alcuni contratti."
+#~ "Alcune impostazioni non possono essere modificate per questo stato perché già "
+#~ "utilizzato in alcuni contratti."
 #~ msgstr ""
 #~ "Some setting can't be modified for this state because already use in some "
 #~ "contracts"
@@ -21983,8 +21827,8 @@ msgstr ""
 #~ msgstr "This is a billable state"
 
 #~ msgid ""
-#~ "Alcune impostazioni non possono essere modificate per questo stato perché "
-#~ "già utilizzato in alcuni preventivi."
+#~ "Alcune impostazioni non possono essere modificate per questo stato perché già "
+#~ "utilizzato in alcuni preventivi."
 #~ msgstr ""
 #~ "Some setting can't be modified for this state because already used in some "
 #~ "preventives."
@@ -22164,8 +22008,8 @@ msgstr ""
 #~ msgid ""
 #~ "Vuoi aggiungere un movimento contabile per le fatture selezionate?"
 #~ "<br><small>(le fatture dovranno essere nello stato <i class=\"fa fa-clock-o "
-#~ "text-info\" title=\"Emessa\"></i> <small>Emessa</small> altrimenti non "
-#~ "saranno processate)</small>"
+#~ "text-info\" title=\"Emessa\"></i> <small>Emessa</small> altrimenti non saranno "
+#~ "processate)</small>"
 #~ msgstr ""
 #~ "Do you want to add an accounting movement for the selected invoices?(the "
 #~ "invoices must be on \"emitted\" state otherwise they will not be processed)"
@@ -22276,21 +22120,19 @@ msgstr ""
 #~ msgstr "Do you really want export all the electronic invoices in an archive?"
 
 #, fuzzy
-#~ msgid ""
-#~ "Rivalsa per spese bollo fattura. Esclusa IVA articolo 15 d.p.r. 633/1972"
-#~ msgstr ""
-#~ "Payback for invoice stamp feed. Excluding TAV article 15 d.p.r. 633/1972"
+#~ msgid "Rivalsa per spese bollo fattura. Esclusa IVA articolo 15 d.p.r. 633/1972"
+#~ msgstr "Payback for invoice stamp feed. Excluding TAV article 15 d.p.r. 633/1972"
 
 #~ msgid "-Seleziona un\\'opzione-"
 #~ msgstr "-Select an\\'option-"
 
 #, fuzzy
 #~ msgid ""
-#~ "Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi "
-#~ "dal magazzino centrale."
+#~ "Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal "
+#~ "magazzino centrale."
 #~ msgstr ""
-#~ "If selected the materials will be taken first of motor vehicle and after "
-#~ "from central warehouse"
+#~ "If selected the materials will be taken first of motor vehicle and after from "
+#~ "central warehouse"
 
 #~ msgid "Aggiungi prima nota..."
 #~ msgstr "Add petty cash book"

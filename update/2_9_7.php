@@ -20,6 +20,7 @@ if (!empty($id_module)) {
             $database->insert('zz_files', [
                 'id_module' => $id_module,
                 'id_record' => $marca['id'],
+                'id_adapter' => 1,
                 'name' => 'Immagine',
                 'filename' => $marca['immagine'],
                 'original' => $marca['immagine'],
@@ -70,3 +71,6 @@ if (!empty($id_module)) {
         }
     }
 }
+
+// Fix per i record migrati con 2_9_6.php che hanno id_adapter = 0
+$database->query('UPDATE `zz_files` SET `id_adapter` = 1 WHERE `id_adapter` = 0');

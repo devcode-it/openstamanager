@@ -7,7 +7,7 @@ $database = database();
 $id_module = Module::where('name', 'Marche')->first()->id;
 
 if (!empty($id_module)) {
-    $marche = $database->fetchArray('SELECT `id`, `immagine` FROM `zz_marche` WHERE `immagine` IS NOT NULL');
+    $marche = $database->fetchArray('SELECT `id`, `immagine` FROM `zz_marche` WHERE `immagine` IS NOT NULL AND `immagine` != ""');
 
     foreach ($marche as $marca) {
         $file_exists = $database->selectOne('zz_files', ['id'], [

@@ -232,6 +232,11 @@ class Contratto extends Document
         parent::triggerEvasione($trigger);
 
         if (setting('Cambia automaticamente stato contratti fatturati')) {
+            // Non modificare lo stato se il contratto è già in uno stato bloccato, non fatturabile e non pianificabile
+            if ($this->stato && $this->stato->is_bloccato && !$this->stato->is_fatturabile && !$this->stato->is_pianificabile) {
+                return;
+            }
+
             $righe = $this->getRighe();
             $qta_evasa = $righe->sum('qta_evasa');
             $qta = $righe->sum('qta');

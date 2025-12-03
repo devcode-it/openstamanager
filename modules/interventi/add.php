@@ -341,7 +341,7 @@ echo '
                         <h5 class="text-primary border-bottom pb-2 mb-4"><i class="fa fa-clock-o"></i> '.tr('Sessioni di lavoro').'</h5>
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointervento", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
+                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtiposessione", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
                             </div>
 
                             <div class="col-md-2">

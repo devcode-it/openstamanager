@@ -349,7 +349,7 @@ switch (post('op')) {
                     $sessione_obj->anagrafica()->associate($anagrafica);
 
                     // Usa il tipo attività specificato per questa sessione, o quello dell'intervento come fallback
-                    $tipo_sessione_id = !empty($sessione['idtipointervento']) ? $sessione['idtipointervento'] : $idtipointervento;
+                    $tipo_sessione_id = !empty($sessione['idtiposessione']) ? $sessione['idtiposessione'] : $idtipointervento;
                     $tipo_sessione = Modules\TipiIntervento\Tipo::find($tipo_sessione_id);
                     $sessione_obj->tipo()->associate($tipo_sessione);
 

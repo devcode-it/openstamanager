@@ -61,4 +61,47 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'salva_inventario':
+        $idsede = post('idsede');
+        $data = post('data') ?: date('Y-m-d');
+        $righe = post('righe');
+
+        if (empty($righe) || !is_array($righe)) {
+            echo json_encode(['success' => false, 'message' => tr('Nessuna riga da salvare')]);
+            break;
+        }
+
+        try {
+            foreach ($righe as $riga) {
+                $id_articolo = $riga['id_articolo'];
+                $giacenza_attuale = floatval($riga['giacenza_attuale']);
+                $nuova_giacenza = floatval($riga['nuova_giacenza']);
+                $ubicazione = $riga['ubicazione'] ?: '';
+
+                // Calcola la differenza
+                $differenza = $nuova_giacenza - $giacenza_attuale;
+
+                if ($differenza != 0) {
+                    $articolo = Articolo::find($id_articolo);
+
+                    if ($articolo) {
+                        $descrizione = tr('Inventario - Rettifica giacenza');
+
+                        // Registra il movimento
+                        $articolo->movimenta($differenza, $descrizione, $data, 1, [
+                            'idsede' => $idsede,
+                        ]);
+
+                        $articolo->ubicazione = $ubicazione;
+                        $articolo->save();
+                    }
+                }
+            }
+            echo json_encode(['success' => true, 'message' => tr('Inventario salvato correttamente')]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => tr('Errore durante il salvataggio: ') . $e->getMessage()]);
+        }
+
+        break;
 }

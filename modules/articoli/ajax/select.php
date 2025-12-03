@@ -91,6 +91,7 @@ switch ($resource) {
             `mg_articoli`.`fattore_um_secondaria`,
             `mg_articoli`.`servizio`,
             `mg_articoli`.`abilita_serial`,
+            `mg_articoli`.`ubicazione`,
             `mg_articoli`.`idconto_vendita`,
             `mg_articoli`.`idconto_acquisto`,
             `categoria_lang`.`title` AS categoria,

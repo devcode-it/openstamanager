@@ -44,7 +44,7 @@ echo '
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('BIC').'", "name": "bic", "required": "1", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "'.$help_codice_bic.'" ]}
+			{[ "type": "text", "label": "'.tr('BIC').'", "name": "bic", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "'.$help_codice_bic.'" ]}
 		</div>
 	</div>
 

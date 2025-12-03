@@ -399,7 +399,7 @@ class IBAN
 
         $length = strlen($this->iban);
         $current = strlen($nation);
-        while ($current <= $length) {
+        while ($current < $length) {
             $char = $structure[$current];
             if (in_array($char, $keys)) {
                 $count = substr_count($structure, $char);
@@ -435,7 +435,7 @@ class IBAN
         $length = strlen($structure);
         $current = strlen((string) $nation);
         $result = $nation;
-        while ($current <= $length) {
+        while ($current < $length) {
             $char = $structure[$current];
             if (in_array($char, $keys)) {
                 $count = substr_count($structure, $char);

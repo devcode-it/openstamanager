@@ -451,6 +451,13 @@ if (!empty($righe)) {
                 'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }
+
+        if (!$dato['RiferimentoNumeroLinea']) {
+            $dati_ordini_documento[] = [
+                'numero' => $dato['IdDocumento'],
+                'data' => ( new Carbon($dato['Data']) )->format('d/m/Y'),
+            ];
+        }
     }
 
     // Riorganizzazione dati ordini per numero di riga
@@ -460,6 +467,13 @@ if (!empty($righe)) {
             $dati_ddt[(int) $linea] = [
                 'numero' => $dato['NumeroDDT'],
                 'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
+            ];
+        }
+
+        if (!$dato['RiferimentoNumeroLinea']) {
+            $dati_ddt_documento[] = [
+                'numero' => $dato['NumeroDDT'],
+                'data' => ( new Carbon($dato['DataDDT']) )->format('d/m/Y'),
             ];
         }
     }
@@ -568,25 +582,50 @@ if (!empty($righe)) {
             }
         }
 
-        $riferimento_fe = '';
-
+        $riferimento_fe = [];
+        if ($dati_ordini[(int) $riga['NumeroLinea']]) {
+            $riferimento_fe[] = tr('Ordine _NUMERO_ del _DATA_',
+                [
+                    '_NUMERO_' => $dati_ordini[(int) $riga['NumeroLinea']]['numero'],
+                    '_DATA_' => $dati_ordini[(int) $riga['NumeroLinea']]['data'],
+                ]);
+        }
+        if ($dati_ordini_documento) {
+            foreach ($dati_ordini_documento as $ordine) {
+                $riferimento_fe[] = tr('Ordine _NUMERO_ del _DATA_',
+                [
+                    '_NUMERO_' => $ordine['numero'],
+                    '_DATA_' => $ordine['data'],
+                ]);
+            }
+        }
         if ($dati_ddt[(int) $riga['NumeroLinea']]) {
-            $riferimento_fe = tr('DDT _NUMERO_ del _DATA_',
+            $riferimento_fe[] = tr('DDT _NUMERO_ del _DATA_',
                 [
                     '_NUMERO_' => $dati_ddt[(int) $riga['NumeroLinea']]['numero'],
                     '_DATA_' => $dati_ddt[(int) $riga['NumeroLinea']]['data'],
                 ]);
         }
+        if ($dati_ddt_documento) {
+            foreach ($dati_ddt_documento as $ddt) {
+                $riferimento_fe[] = tr('DDT _NUMERO_ del _DATA_',
+                [
+                    '_NUMERO_' => $ddt['numero'],
+                    '_DATA_' => $ddt['data'],
+                ]);
+            }
+        }
 
         echo '
-        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
+        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'" data-sconto_unitario="'.$sconto_unitario.'">
             <td>
                 '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
-                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
-                <small class="pull-right text-muted">'.$riferimento_fe.'</small>
+                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>';
+                if (!empty($riferimento_fe)) {
+                    echo '<small class="pull-right text-muted">'.implode('<br>', $riferimento_fe).'</small>';
+                }
 
-
-                '.$riga['Descrizione'].'<br>
+                echo $riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
 
@@ -903,7 +942,7 @@ function impostaRiferimento(id_riga, documento, riga) {
     impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta", true);
 
     // Informazioni visibili sul prezzo unitario
-    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo", true);
+    impostaContenuto(riga_fe.data("prezzo_unitario")-riga_fe.data("sconto_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo", true);
 
     // Informazioni visibili sull\'aliquota IVA
     impostaContenuto(riga_fe.data("iva_percentuale"), parseInt(riga.iva_percentuale), "%", "#riferimento_" + id_riga + "_iva", false);

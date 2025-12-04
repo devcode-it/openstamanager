@@ -27,7 +27,6 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Uploads;
 
 class Interventi extends AppResource
 {
@@ -336,7 +335,7 @@ class Interventi extends AppResource
         $record->idsede_destinazione = $data['id_sede'] ?: 0;
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
-         // Salvataggio firma eventuale
+        // Salvataggio firma eventuale
         if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
             $record->firma_nome = $data['firma_nome'];
             $record->firma_data = $data['firma_data'];
@@ -369,7 +368,7 @@ class Interventi extends AppResource
         }
     }
 
-protected function salvaFirma($firma_base64, $id_intervento)
+    protected function salvaFirma($firma_base64, $id_intervento)
     {
         // Salvataggio firma
         $firma_file = 'firma_'.time().'.png';
@@ -381,7 +380,7 @@ protected function salvaFirma($firma_base64, $id_intervento)
         $file_content = $encoded_image->toString();
 
         // Upload del file in zz_files
-        Uploads::upload($file_content, [
+        \Uploads::upload($file_content, [
             'name' => 'firma.jpg',
             'category' => 'Firme',
             'id_module' => Module::where('name', 'Interventi')->first()->id,

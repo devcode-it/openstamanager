@@ -78,7 +78,7 @@ class Services
                     'sync_at' => Carbon::now()->toDateTimeString(),
                     'url_installazione' => setting('Base URL'),
                     'file_custom' => count($custom_files),
-                    'db_custom' => count($custom_tables)
+                    'db_custom' => count($custom_tables),
                 ]);
                 $content = self::responseBody($response);
                 $cache->set($content);

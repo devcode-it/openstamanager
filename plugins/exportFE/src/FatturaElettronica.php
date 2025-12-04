@@ -1725,7 +1725,7 @@ class FatturaElettronica implements \Stringable
         // Inclusione
         foreach ($allegati as $allegato) {
             $categoria = database()->fetchOne('SELECT `name` FROM `zz_files_categories` WHERE `id` = '.prepare($allegato['id_category']))['name'];
-            if (strcasecmp($categoria, 'Allegati Fattura Elettronica') === 0) {
+            if (strcasecmp((string) $categoria, 'Allegati Fattura Elettronica') === 0) {
                 $file = base_dir().'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [

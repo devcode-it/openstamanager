@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.7 (2025-12-09)](#297-2025-12-09)
 - [2.9.6 (2025-11-26)](#296-2025-11-26)
 - [2.9.5 (2025-11-12)](#295-2025-11-12)
 - [2.9.4 (2025-10-28)](#294-2025-10-28)
@@ -64,6 +65,28 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+
+## 2.9.7 (2025-12-09)
+### Modificato (Changed)
+- Miglioria avviso allegati anagrafiche
+
+### Fixed
+- Corretti riferimenti in registrazione contabile da bulk
+- Corretta visualizzazione riferimenti import FE
+- Corretta aggiunta ordini in attività
+- Corretto cambio stato contratti
+- Corretto controllo su iban
+- Corretta migrazione immagini marche
+- Corretto caricamento allegati
+- Corretta sottocategoria in vista contratti
+- Corretto salvataggio allegati
+- Corretta rivalsa in FE
+- Corretta associazione sottocategoria a impianto
+- Corretta Importazione fatture da zip
+- Corretto avviso tasto importa in sequenza
+- Corretto salvataggio firma da app
+- Corretti allegati fatture elettroniche
 
 ## 2.9.6 (2025-11-26)
 ### Modificato (Changed)

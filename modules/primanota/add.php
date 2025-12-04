@@ -216,7 +216,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
             '_LIST_' => implode(', ', $numeri_fatture),
         ]);
     } else {
-        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
+        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture num. _LIST_') : tr('Pag. fatture num. _LIST_');
         $descrizione = replace($descrizione, [
             '_LIST_' => implode(', ', $numeri_fatture),
         ]);

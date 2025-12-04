@@ -160,9 +160,9 @@ class SessioniInterventi extends AppResource
         $id_tipo = $data['id_tipo_intervento'];
         $sessione->setTipo($id_tipo);
 
-        // Campi di base
-        $sessione->orario_inizio = $data['orario_inizio'];
-        $sessione->orario_fine = $data['orario_fine'];
+        // conversione delle date dal fuso orario dell'app al fuso orario locale
+        $sessione->orario_inizio = $this->convertToLocalTimezone($data['orario_inizio']);
+        $sessione->orario_fine = $this->convertToLocalTimezone($data['orario_fine']);
         $sessione->km = $data['km'];
 
         // Prezzi
@@ -179,5 +179,32 @@ class SessioniInterventi extends AppResource
         $sessione->tipo_scontokm = $data['tipo_sconto_chilometrico'];
 
         return [];
+    }
+
+    /**
+     * Converte una data dal formato ISO con timezone al fuso orario locale del server.
+     *
+     * @param string $isoDateTime Data in formato ISO (es: "2025-11-11T08:00:00.000+01:00")
+     * @return string Data convertita nel fuso orario locale in formato Y-m-d H:i:s
+     */
+    protected function convertToLocalTimezone($isoDateTime)
+    {
+        if (empty($isoDateTime)) {
+            return null;
+        }
+
+        try {
+            // Crea un oggetto Carbon dalla data ISO con timezone
+            $carbonDate = Carbon::parse($isoDateTime);
+
+            // Converte al fuso orario locale del server (Europe/Rome)
+            $localDate = $carbonDate->setTimezone('Europe/Rome');
+
+            // Restituisce la data nel formato standard del database
+            return $localDate->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            // In caso di errore, restituisce la data originale
+            return $isoDateTime;
+        }
     }
 }

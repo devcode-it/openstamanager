@@ -1,13 +1,10 @@
 <?php
 
-use Illuminate\Support\Str;
-
 App::definePaths(__DIR__.'/..');
 
 $config = App::getConfig();
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -34,7 +31,6 @@ return [
     */
 
     'connections' => [
-
         'mysql' => [
             'driver' => 'mysql',
             'host' => $config['db_host'],

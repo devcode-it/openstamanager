@@ -181,8 +181,8 @@ if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-# Verifica di autenticazione
-# Per i componenti Laravel, l'autenticazione viene gestita internamente
+// Verifica di autenticazione
+// Per i componenti Laravel, l'autenticazione viene gestita internamente
 if (!$continue && !$is_laravel && getURLPath() != slashes(base_path_osm().'/index.php') && !Permissions::getSkip()) {
     if (AuthOSM::check()) {
         AuthOSM::logout();
@@ -284,7 +284,6 @@ if (!API\Response::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
-
 
 // Inclusione dei file modutil.php
 // TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}

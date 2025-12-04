@@ -49,7 +49,7 @@ if (!empty($id_module)) {
 
     foreach ($files_firma as $file) {
         // Estrae nome e data dalla key (formato: signature_nome_data)
-        $key_parts = explode('_', $file['key']);
+        $key_parts = explode('_', (string) $file['key']);
         if (count($key_parts) >= 3) {
             // Rimuove 'signature' dall'inizio
             array_shift($key_parts);

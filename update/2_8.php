@@ -158,7 +158,7 @@ try {
 // Rimozione delle tabelle my_impianti_marche_lang e my_impianti_marche
 try {
     $dbo->query('DROP TABLE `my_impianti_marche_lang`');
-} catch (Exception $e) {
+} catch (Exception) {
     // Errore durante la rimozione della tabella, continua l'esecuzione
 }
 try {

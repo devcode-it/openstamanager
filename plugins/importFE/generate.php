@@ -455,7 +455,7 @@ if (!empty($righe)) {
         if (!$dato['RiferimentoNumeroLinea']) {
             $dati_ordini_documento[] = [
                 'numero' => $dato['IdDocumento'],
-                'data' => ( new Carbon($dato['Data']) )->format('d/m/Y'),
+                'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }
     }
@@ -473,7 +473,7 @@ if (!empty($righe)) {
         if (!$dato['RiferimentoNumeroLinea']) {
             $dati_ddt_documento[] = [
                 'numero' => $dato['NumeroDDT'],
-                'data' => ( new Carbon($dato['DataDDT']) )->format('d/m/Y'),
+                'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
             ];
         }
     }
@@ -593,10 +593,10 @@ if (!empty($righe)) {
         if ($dati_ordini_documento) {
             foreach ($dati_ordini_documento as $ordine) {
                 $riferimento_fe[] = tr('Ordine _NUMERO_ del _DATA_',
-                [
-                    '_NUMERO_' => $ordine['numero'],
-                    '_DATA_' => $ordine['data'],
-                ]);
+                    [
+                        '_NUMERO_' => $ordine['numero'],
+                        '_DATA_' => $ordine['data'],
+                    ]);
             }
         }
         if ($dati_ddt[(int) $riga['NumeroLinea']]) {
@@ -609,10 +609,10 @@ if (!empty($righe)) {
         if ($dati_ddt_documento) {
             foreach ($dati_ddt_documento as $ddt) {
                 $riferimento_fe[] = tr('DDT _NUMERO_ del _DATA_',
-                [
-                    '_NUMERO_' => $ddt['numero'],
-                    '_DATA_' => $ddt['data'],
-                ]);
+                    [
+                        '_NUMERO_' => $ddt['numero'],
+                        '_DATA_' => $ddt['data'],
+                    ]);
             }
         }
 
@@ -621,11 +621,11 @@ if (!empty($righe)) {
             <td>
                 '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>';
-                if (!empty($riferimento_fe)) {
-                    echo '<small class="pull-right text-muted">'.implode('<br>', $riferimento_fe).'</small>';
-                }
+        if (!empty($riferimento_fe)) {
+            echo '<small class="pull-right text-muted">'.implode('<br>', $riferimento_fe).'</small>';
+        }
 
-                echo $riga['Descrizione'].'<br>
+        echo $riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
 

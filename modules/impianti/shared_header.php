@@ -130,7 +130,7 @@ if (!empty($sede['telefono']) || !empty($sede['email']) || !empty($anagrafica->t
     } elseif (!empty($anagrafica->telefono)) {
         echo '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$anagrafica->telefono.'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$anagrafica->telefono.'</a>';
     }
-    
+
     if (!empty($sede['email'])) {
         echo '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-primary"></i> '.$sede['email'].'</a>';
     } elseif (!empty($anagrafica->email)) {

@@ -26,7 +26,7 @@ return [
         'domain' => null,
         // Global middleware applied to every API Platform routes
         'middleware' => [
-            \Middlewares\APIAuthMiddleware::class,
+            Middlewares\APIAuthMiddleware::class,
         ],
     ],
 

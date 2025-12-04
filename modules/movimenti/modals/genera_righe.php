@@ -46,22 +46,22 @@ foreach ($righe as $riga) {
     $giacenza_attuale = floatval($riga['giacenza_attuale']);
     $nuova_giacenza = floatval($riga['nuova_giacenza']);
     $ubicazione = $riga['ubicazione'];
-    
+
     echo '<tr data-id="'.$id.'">
         <td>'.$codice.'</td>
         <td>'.$descrizione.'</td>
         <td class="text-right">'.Translator::numberToLocale($giacenza_attuale).'</td>
         <td>';
-    
+
     // Input giacenza con struttura OpenSTAManager
     echo '{[ "type": "number", "name": "giacenza_'.$id.'", "value": "'.$nuova_giacenza.'", "decimals": "qta", "class": "text-right", "onchange": "aggiornaGiacenza('.$id.', this.value)" ]}';
-    
+
     echo '</td>
         <td>';
-    
+
     // Input ubicazione con struttura OpenSTAManager
     echo '{[ "type": "text", "name": "ubicazione_'.$id.'", "value": "'.$ubicazione.'", "placeholder": "'.tr('Ubicazione').'", "onchange": "aggiornaUbicazione('.$id.', this.value)" ]}';
-    
+
     echo '</td>
         <td class="text-center">
             <button type="button" class="btn btn-danger" 

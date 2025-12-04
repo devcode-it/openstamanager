@@ -84,7 +84,7 @@ echo '
                                     '.(!empty($anagrafica->cellulare) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$anagrafica->cellulare.'" target="_blank"><i class="fa fa-mobile text-primary"></i> '.$anagrafica->cellulare.'</a>' : '').'
                                     '.(!empty($anagrafica->email) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$anagrafica->email.'"><i class="fa fa-envelope text-primary"></i> '.$anagrafica->email.'</a>' : '').'
                                     '.(!empty($anagrafica->pec) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$anagrafica->pec.'"><i class="fa fa-envelope-o text-primary"></i> PEC</a>' : '').'
-                                    '.(!empty($anagrafica->sitoweb) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="'.(strpos($anagrafica->sitoweb, 'http') === 0 ? $anagrafica->sitoweb : 'http://'.$anagrafica->sitoweb).'" target="_blank"><i class="fa fa-globe text-primary"></i> '.tr('Sito web').'</a>' : '').'
+                                    '.(!empty($anagrafica->sitoweb) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="'.(str_starts_with((string) $anagrafica->sitoweb, 'http') ? $anagrafica->sitoweb : 'http://'.$anagrafica->sitoweb).'" target="_blank"><i class="fa fa-globe text-primary"></i> '.tr('Sito web').'</a>' : '').'
                                 </div>';
 
 // Mostra informazioni su sedi aggiuntive
@@ -103,7 +103,7 @@ if (!empty($referenti)) {
     echo '
                                 <div class="mt-3">
                                     <h6><i class="fa fa-users text-muted mr-1"></i> <strong>'.tr('Referenti').':</strong></h6>';
-    
+
     foreach ($referenti as $referente) {
         echo '
                                     <div class="mb-2">
@@ -112,7 +112,7 @@ if (!empty($referenti)) {
                                         '.(!empty($referente['email']) ? '<a class="btn btn-light btn-xs ml-1" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-primary"></i> '.$referente['email'].'</a>' : '').'
                                     </div>';
     }
-    
+
     echo '
                                 </div>';
 }

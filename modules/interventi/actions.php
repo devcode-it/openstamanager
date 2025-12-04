@@ -341,16 +341,16 @@ switch (post('op')) {
             foreach ($sessioni_aggiuntive as $sessione) {
                 if (!empty($sessione['orario_inizio']) && !empty($sessione['orario_fine']) && !empty($sessione['idtecnico'])) {
                     // Crea la sessione manualmente per poter specificare un tipo attività diverso
-                    $intervento = Modules\Interventi\Intervento::find($id_record);
-                    $anagrafica = Modules\Anagrafiche\Anagrafica::find($sessione['idtecnico']);
+                    $intervento = Intervento::find($id_record);
+                    $anagrafica = Anagrafica::find($sessione['idtecnico']);
 
-                    $sessione_obj = new Modules\Interventi\Components\Sessione();
+                    $sessione_obj = new Sessione();
                     $sessione_obj->document()->associate($intervento);
                     $sessione_obj->anagrafica()->associate($anagrafica);
 
                     // Usa il tipo attività specificato per questa sessione, o quello dell'intervento come fallback
                     $tipo_sessione_id = !empty($sessione['idtiposessione']) ? $sessione['idtiposessione'] : $idtipointervento;
-                    $tipo_sessione = Modules\TipiIntervento\Tipo::find($tipo_sessione_id);
+                    $tipo_sessione = TipoSessione::find($tipo_sessione_id);
                     $sessione_obj->tipo()->associate($tipo_sessione);
 
                     $sessione_obj->orario_inizio = $sessione['orario_inizio'];
@@ -382,7 +382,7 @@ switch (post('op')) {
         if (!empty($tecnici_assegnati)) {
             // Converte in array se necessario e filtra i valori vuoti
             $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
-            $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
+            $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
             $tecnici_assegnati = array_unique($tecnici_assegnati);
 
             if (!empty($tecnici_assegnati)) {
@@ -580,7 +580,7 @@ switch (post('op')) {
                 // Assegnazione dei tecnici all'intervento
                 $tecnici_assegnati = (array) post('tecnici_assegnati');
                 // Filtra i valori vuoti per evitare errori di foreign key
-                $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
+                $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
 
                 if (!empty($tecnici_assegnati)) {
                     $dbo->sync('in_interventi_tecnici_assegnati', [

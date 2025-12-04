@@ -12,10 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
     })->create()
-    ->useAppPath(realpath(__DIR__ . '/../src'))
-    ->useStoragePath(realpath(__DIR__ . '/../files/temp'));
+    ->useAppPath(realpath(__DIR__.'/../src'))
+    ->useStoragePath(realpath(__DIR__.'/../files/temp'));

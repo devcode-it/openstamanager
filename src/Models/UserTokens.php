@@ -22,8 +22,6 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Anagrafiche\Anagrafica;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class UserTokens extends Model
 {

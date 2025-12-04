@@ -100,7 +100,7 @@ switch (post('op')) {
             }
             echo json_encode(['success' => true, 'message' => tr('Inventario salvato correttamente')]);
         } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => tr('Errore durante il salvataggio: ') . $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => tr('Errore durante il salvataggio: ').$e->getMessage()]);
         }
 
         break;

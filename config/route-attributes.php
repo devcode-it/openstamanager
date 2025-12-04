@@ -13,16 +13,16 @@ return [
      * Optionally, you can specify group configuration by using key/values
      */
     'directories' => [
-        realpath(__DIR__ . '/../src/Controllers'),
+        realpath(__DIR__.'/../src/Controllers'),
     ],
 
     /*
      * This middleware will be applied to all routes.
      */
     'middleware' => [
-        \Middlewares\OSMAuthMiddleware::class,
-        \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'auth:sanctum'
+        Middlewares\OSMAuthMiddleware::class,
+        Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'auth:sanctum',
     ],
 
     /*

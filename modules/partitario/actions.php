@@ -31,6 +31,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $lvl = post('lvl');
         $percentuale = post('percentuale_deducibile') ?: 0;
+        $dir = post('dir');
 
         if (post('id_conto') !== null) {
             if ($lvl == '2') {
@@ -39,7 +40,7 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray($query);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).')';
+                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1, dir) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', '.prepare($dir).')';
                 }
             } else {
                 // Controllo che non sia stato usato un numero non valido del conto

@@ -22,6 +22,7 @@ use Models\Module;
 
 $id_conto = get('id');
 $lvl = get('lvl');
+$info = ['dir' => ''];
 
 ?><form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Module::where('name', 'Piano dei conti')->first()->id; ?>" method="post">
     <input type="hidden" name="op" value="add">
@@ -39,12 +40,16 @@ $lvl = get('lvl');
         <div class="col-md-8">
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
         </div>
-            <div class="col-md-4 <?php echo intval($lvl != 3) ? 'hidden' : ''; ?>">
-                {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class='fa fa-percent'></i>", "max-value": "100", "min-value": "0" ]}
-            </div>
-            <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden' : ''; ?>">
-                {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "value": "<?php echo $info['dir']; ?>", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"entrata/uscita\":\"Ricavo e Costo\", \"\": \"Non usare\"" ]}
-            </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 <?php echo $lvl != 3 ? 'hidden' : ''; ?>">
+            {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "100", "icon-after": "%", "max-value": "100", "min-value": "0" ]}
+        </div>
+
+        <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden' : ''; ?>">
+            {[ "type": "select", "label": "<?php echo tr('Utilizza come'); ?>", "name": "dir", "values": "list=\"entrata\":\"Ricavo\", \"uscita\":\"Costo\", \"entrata/uscita\":\"Ricavo e Costo\", \"\": \"Non usare\"" ]}
+        </div>
     </div>
     <br>
 

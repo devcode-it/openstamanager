@@ -185,6 +185,7 @@ class SessioniInterventi extends AppResource
      * Converte una data dal formato ISO con timezone al fuso orario locale del server.
      *
      * @param string $isoDateTime Data in formato ISO (es: "2025-11-11T08:00:00.000+01:00")
+     *
      * @return string Data convertita nel fuso orario locale in formato Y-m-d H:i:s
      */
     protected function convertToLocalTimezone($isoDateTime)
@@ -202,7 +203,7 @@ class SessioniInterventi extends AppResource
 
             // Restituisce la data nel formato standard del database
             return $localDate->format('Y-m-d H:i:s');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // In caso di errore, restituisce la data originale
             return $isoDateTime;
         }

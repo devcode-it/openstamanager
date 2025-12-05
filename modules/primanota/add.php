@@ -224,7 +224,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
 
         // Estrai l'ID anagrafica dalla chiave (formato: direzione_idanagrafica)
         $chiave_unica = array_key_first($fatture_per_anagrafica);
-        $id_anagrafica_unica = (int) substr($chiave_unica, strpos($chiave_unica, '_') + 1);
+        $id_anagrafica_unica = (int) substr((string) $chiave_unica, strpos((string) $chiave_unica, '_') + 1);
         $anagrafica_movimenti = Anagrafica::find($id_anagrafica_unica);
 
         $numeri_ordinati = $dati_unica['numeri'];

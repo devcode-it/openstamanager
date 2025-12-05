@@ -48,6 +48,12 @@ if ($destinazione) {
     $c += $codice_destinatario ? 2 : 1;
 }
 
+// Aggiungo righe per le rate superiori alla quarta
+$numero_rate = $dbo->fetchOne('SELECT COUNT(*) as count FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($id_record))['count'];
+if ($numero_rate > 4) {
+    $c += $numero_rate - 4;
+}
+
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, 35 - $c);
 

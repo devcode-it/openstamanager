@@ -29,6 +29,8 @@ if ($module->name == 'Fatture di vendita') {
     $dir = 'uscita';
 }
 
+$superselect['dir'] = $dir;
+
 if (!empty($id_record)) {
     $fattura = Fattura::with('tipo', 'stato')->find($id_record);
     $dir = $fattura->direzione;
@@ -101,6 +103,7 @@ if (!empty($id_record)) {
     }
 
     $superselect['idtipodocumento'] = $record['idtipodocumento'];
+    $superselect['id_banca_controparte'] = $record['id_banca_controparte'];
 
     $is_anagrafica_deleted = !$fattura->anagrafica;
 }

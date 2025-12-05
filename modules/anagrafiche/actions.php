@@ -107,7 +107,8 @@ switch (post('op')) {
         $anagrafica->save();
 
         // Aggiorno gli agenti collegati
-        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) post('idagenti')]);
+        $idagenti = array_filter((array) post('idagenti'), fn ($value) => $value !== '' && $value !== null);
+        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => $idagenti]);
 
         flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [
             '_NAME_' => $anagrafica->ragione_sociale,

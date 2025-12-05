@@ -36,8 +36,7 @@ switch ($resource) {
             `banca_vendite`.`id` AS id_banca_vendite,
             CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite,
             `banca_acquisti`.`id` AS id_banca_acquisti,
-            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti,
-            `banca_cliente`.`id` AS id_banca_cliente
+            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti
         FROM `co_pagamenti`
             LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `co_banche` banca_cliente ON `banca_cliente`.`id_anagrafica` = '.prepare($superselect['idanagrafica']).' AND `banca_cliente`.`deleted_at` IS NULL
@@ -66,6 +65,18 @@ switch ($resource) {
             $custom
         );
         $rs = $data['results'];
+
+        // Controllo metodi di pagamento con Ri.Ba. per le fatture di vendita
+        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
+            $id_banca_controparte = $superselect['id_banca_controparte'] ?? '';
+            $banca_mancante = empty($id_banca_controparte) || $id_banca_controparte == 'null';
+
+            foreach ($rs as $k => $r) {
+                if ($r['codice_modalita_pagamento_fe'] == 'MP12' && $banca_mancante) {
+                    $rs[$k]['text'] = $r['descrizione'].' '.tr('(Nessuna banca di addebito selezionata)');
+                }
+            }
+        }
 
         $results = [
             'results' => $rs,

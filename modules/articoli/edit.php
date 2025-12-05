@@ -61,7 +61,7 @@ use Modules\Iva\Aliquota;
                         <div class="col-md-3">
                             <?php echo (!empty($record['id_categoria'])) ?
                                 Modules::link('Categorie', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria_edit", "id": "categoria_edit", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria_edit", "id": "categoria_edit", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|is_articolo=1" ]}
                         </div>
 
                         <div class="col-md-3">

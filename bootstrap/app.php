@@ -15,5 +15,4 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
     })->create()
-    ->useAppPath(realpath(__DIR__.'/../src'))
-    ->useStoragePath(realpath(__DIR__.'/../files/temp'));
+    ->useAppPath(realpath(__DIR__.'/../src'));

@@ -1713,8 +1713,9 @@ class FatturaElettronica implements \Stringable
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
-        $directory = \Uploads::getDirectory($id_module);
+        $module = Module::where('name', 'Fatture di vendita')->first();
+        $id_module = $module->id;
+        $directory = 'files/'.$module->attachments_directory;
 
         // Allegati
         $allegati = \Uploads::get([

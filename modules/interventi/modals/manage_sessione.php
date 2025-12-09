@@ -21,7 +21,7 @@
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../../../../core.php';
 
-use Modules\Interventi\Intervento;
+use Models\Module;
 
 $show_prezzi = true;
 // Limitazione delle azioni dei tecnici
@@ -33,30 +33,21 @@ $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragio
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
-
-$intervento = Intervento::find($id_record);
-
-if (!empty($intervento->id_contratto)) {
-    $query = 'SELECT `in_tipiintervento`.`id`, `title` as `descrizione`, `co_contratti_tipiintervento`.`costo_ore` AS prezzo_ore_unitario, `co_contratti_tipiintervento`.`costo_km` AS prezzo_km_unitario, `co_contratti_tipiintervento`.`costo_dirittochiamata` AS prezzo_dirittochiamata FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` WHERE `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).' AND `in_tipiintervento`.`deleted_at` IS NULL ORDER BY `title`';
-} else {
-    $query = 'SELECT `in_tipiintervento`.`id`, `title` as `descrizione`, `in_tariffe`.`costo_ore` AS prezzo_ore_unitario, `in_tariffe`.`costo_km` AS prezzo_km_unitario, `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` WHERE `in_tariffe`.`idtecnico` = '.prepare($sessione['idtecnico']).' AND `in_tipiintervento`.`deleted_at` IS NULL ORDER BY `title`';
-}
 echo '
 <form id="add_form" action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">
-	<input type="hidden" name="idtecnico" value="'.$sessione['idtecnico'].'">';
+    <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">';
 
 // Tecnico
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "span", "label": "'.tr('Tecnico').'", "name": "tecnico", "required": 0, "value": "'.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "value": "'.$sessione['idtecnico'].'", "required": 1, "ajax-source": "tecnici", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['idtecnico' => $sessione['idtecnico'], 'id_intervento' => $id_record]).' ]}
         </div>
     </div>';
 
@@ -141,12 +132,31 @@ $(document).ready(function () {
         }
     });
 
-    $("#idtipointerventot").change(function() {
-        data = $(this).selectData();
+    // Quando cambio il tecnico, aggiorno le select-options del tipo attività
+    $("#idtecnico").change(function() {
+        var idtecnico = $(this).val();
 
-        $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
-        $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
-        $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
+        if (!idtecnico) {
+            return;
+        }
+
+        // Aggiorno le select-options per ricaricare i tipi di intervento del nuovo tecnico
+        $("#idtipointerventot").setSelectOption("idtecnico", idtecnico);
+        $("#idtipointerventot").setSelectOption("id_intervento", globals.id_record);
+
+        // Resetto e ricarico il select dei tipi di intervento
+        $("#idtipointerventot").selectReset();
+    });
+
+    // Quando cambio il tipo di intervento, aggiorno i prezzi
+    $("#idtipointerventot").change(function() {
+        var data = $(this).selectData();
+
+        if (data) {
+            $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
+            $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
+            $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
+        }
     });
 });
 

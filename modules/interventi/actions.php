@@ -1226,6 +1226,12 @@ switch (post('op')) {
         $sessione->orario_fine = post('orario_fine');
         $sessione->km = post('km');
 
+        // Modifica del tecnico (se cambiato)
+        $id_tecnico = post('idtecnico');
+        if (!empty($id_tecnico) && $id_tecnico != $sessione->idtecnico) {
+            $sessione->setTecnico($id_tecnico);
+        }
+
         $id_tipo = post('idtipointerventot');
         $sessione->setTipo($id_tipo);
 
@@ -1265,18 +1271,6 @@ switch (post('op')) {
         $sessione->tipo_sconto = post('tipo_sconto');
         $sessione->scontokm_unitario = post('scontokm_unitario');
         $sessione->tipo_scontokm = post('tipo_sconto_km');
-
-        // Gestione cambio tecnico
-        $id_tecnico = post('id_tecnico');
-        if (!empty($id_tecnico) && $id_tecnico != $sessione->idtecnico) {
-            $anagrafica = Anagrafica::find($id_tecnico);
-            $sessione->anagrafica()->associate($anagrafica);
-
-            // Aggiorna i prezzi in base al nuovo tecnico
-            $id_tipo = $sessione->idtipointervento;
-            $sessione->setTipo($id_tipo, true);
-        }
-
         $sessione->save();
 
         // Trigger aggiornamento intervento

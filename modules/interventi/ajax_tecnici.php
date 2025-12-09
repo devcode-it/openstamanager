@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Models\User;
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
@@ -68,10 +69,21 @@ if (!empty($sessioni)) {
             echo '
 <div class="table-responsive">
     <table class="table table-striped table-hover table-sm">
-        <tr><th width="16%">'.tr('Tecnico').'</th>
-            <th width="12%">'.tr('Tipologia').'</th>
-            <th width="12%">'.tr('Orario inizio').'</th>
-            <th width="12%">'.tr('Orario fine').'</th>
+        <tr><th>';
+
+            if ($sessione['id_user']) {
+                $user = User::where('idanagrafica', $sessione['idtecnico'])->orderByRaw('CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END')->first();
+                echo '
+                <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
+            } else {
+                echo '
+                <i class="fa fa-user-circle-o attachment-img tip" title="'.$sessione['ragione_sociale'].'"></i>';
+            }
+
+            echo '
+            '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
+            <th width="15%">'.tr('Orario inizio').'</th>
+            <th width="15%">'.tr('Orario fine').'</th>
             <th width="2%"> </th>
             <th width="8%">'.tr('Ore').'</th>
             <th width="8%">'.tr('Km').'</th>';
@@ -84,7 +96,7 @@ if (!empty($sessioni)) {
 
             if (!$is_bloccato) {
                 echo '
-            <th width="10%" class="text-center">&nbsp;</th>';
+            <th width="100" class="text-center">&nbsp;</th>';
             }
 
             echo '
@@ -111,12 +123,9 @@ if (!empty($sessioni)) {
         $ore = $sessione['ore'];
         $km = $sessione['km'];
 
-        // Tecnico e Tipologia
+        // Tipologia
         echo '
-        <tr data-id="'.$sessione['id'].'" data-idtecnico="'.$sessione['idtecnico'].'" data-idtipointervento="'.$sessione['idtipointervento'].'">
-            <td>
-                {[ "type": "select", "name": "tecnico_'.$sessione['id'].'", "value": "'.$sessione['idtecnico'].'", "ajax-source": "tecnici", "class": "tecnico-sessione", "disabled": "'.$block_edit.'" ]}
-            </td>
+        <tr data-id="'.$sessione['id'].'">
             <td>
                 '.$sessione['descrizione_tipo'].' '.(($sessione['tipo_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '');
 
@@ -346,17 +355,6 @@ echo '
             data_inizio.data("DateTimePicker").date(e.date);
         }
     });
-
-    // Event handler per il cambio tecnico
-    $(document).on("change", ".tecnico-sessione", function() {
-        let riga = $(this).closest("tr");
-        let id_sessione = riga.data("id");
-        let id_tecnico = $(this).val();
-        let id_tipo_intervento = riga.data("idtipointervento");
-
-        // Salva automaticamente con il nuovo tecnico
-        aggiornaSessioneInline(id_sessione, id_tecnico);
-    });
 });
 
 /*
@@ -462,7 +460,7 @@ function caricaTecnici() {
     });
 }
 
-function aggiornaSessioneInline(id, id_tecnico) {
+function aggiornaSessioneInline(id) {
     var id_sessione = id;
     var data_inizio = $("#data_inizio_" + id_sessione).val();
     var data_fine = $("#data_fine_" + id_sessione).val();
@@ -472,29 +470,22 @@ function aggiornaSessioneInline(id, id_tecnico) {
     var scontokm_unitario = $("#scontokm_unitario_" + id_sessione).val();
     var tipo_sconto_km =$("[id^=tipo_scontokm_unitario_" + id_sessione + "]").val()
 
-    var data = {
-        id_module: globals.id_module,
-        id_record: globals.id_record,
-        op: "update_inline_sessione",
-        id_sessione: id_sessione,
-        data_inizio: data_inizio,
-        data_fine: data_fine,
-        km: km,
-        sconto_unitario: sconto_unitario,
-        tipo_sconto: tipo_sconto,
-        scontokm_unitario: scontokm_unitario,
-        tipo_sconto_km: tipo_sconto_km,
-    };
-
-    // Aggiungi id_tecnico se fornito
-    if (id_tecnico !== undefined) {
-        data.id_tecnico = id_tecnico;
-    }
-
     $.ajax({
         url: globals.rootdir + "/actions.php",
         type: "POST",
-        data: data,
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "update_inline_sessione",
+            id_sessione: id_sessione,
+            data_inizio: data_inizio,
+            data_fine: data_fine,
+            km: km,
+            sconto_unitario: sconto_unitario,
+            tipo_sconto: tipo_sconto,
+            scontokm_unitario: scontokm_unitario,
+            tipo_sconto_km: tipo_sconto_km,
+        },
         success: function(response) {
             caricaTecnici();
             caricaCosti();

@@ -130,6 +130,19 @@ class Sessione extends Model
         }
     }
 
+    public function setTecnico($id_tecnico)
+    {
+        $previous = $this->idtecnico;
+
+        $anagrafica = Anagrafica::find($id_tecnico);
+        $this->anagrafica()->associate($anagrafica);
+
+        // Se il tecnico è cambiato, ricarico le tariffe per il tipo di intervento corrente
+        if ($previous != $id_tecnico && !empty($this->idtipointervento)) {
+            $this->setTipo($this->idtipointervento, false);
+        }
+    }
+
     public function getOreCalcolateAttribute()
     {
         $inizio = new \DateTime($this->orario_inizio);

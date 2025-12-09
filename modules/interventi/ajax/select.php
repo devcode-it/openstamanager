@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+use Modules\Interventi\Intervento;
+
 switch ($resource) {
     case 'tipiintervento':
         $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN  CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard` 
@@ -84,6 +86,67 @@ switch ($resource) {
             $rs[$k] = array_merge($r, [
                 'text' => $r['descrizione'],
                 'disabled' => $disabled,
+            ]);
+        }
+
+        $results = [
+            'results' => $rs,
+            'recordsFiltered' => $data['recordsFiltered'],
+        ];
+
+        break;
+
+    case 'tipiintervento-tecnico':
+        $idtecnico = $superselect['idtecnico'];
+        $id_intervento = $superselect['id_intervento'];
+
+        if (empty($idtecnico)) {
+            $results = [
+                'results' => [],
+                'recordsFiltered' => 0,
+            ];
+            break;
+        }
+
+        $intervento = Intervento::find($id_intervento);
+
+        // Query per i tipi di intervento in base al contratto o al tecnico
+        if (!empty($intervento->id_contratto)) {
+            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione, `co_contratti_tipiintervento`.`costo_ore` AS prezzo_ore_unitario, `co_contratti_tipiintervento`.`costo_km` AS prezzo_km_unitario, `co_contratti_tipiintervento`.`costo_dirittochiamata` AS prezzo_dirittochiamata
+            FROM `in_tipiintervento`
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento`
+            |where|
+            ORDER BY `title`';
+
+            $where[] = '`co_contratti_tipiintervento`.`idtecnico` = '.prepare($idtecnico);
+
+        } else {
+            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione, `in_tariffe`.`costo_ore` AS prezzo_ore_unitario, `in_tariffe`.`costo_km` AS prezzo_km_unitario, `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata
+            FROM `in_tipiintervento`
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento`
+            |where|
+            ORDER BY `title`';
+
+            $where[] = '`in_tariffe`.`idtecnico` = '.prepare($idtecnico);
+            
+        }
+
+        foreach ($elements as $element) {
+            $filter[] = '`in_tipiintervento`.`id`='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+        }
+
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
+
+        foreach ($rs as $k => $r) {
+            $rs[$k] = array_merge($r, [
+                'text' => $r['descrizione'],
             ]);
         }
 

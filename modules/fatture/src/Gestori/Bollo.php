@@ -101,7 +101,15 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = $righe_bollo->idiva ?: database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
+
+        // Nel caso di fatture con dichiarazione d'intento (righe con N3.5), la marca da bollo
+        // deve avere aliquota "Escluso art. 15" (N1), non quella delle righe
+        if (!empty($righe_bollo) && $righe_bollo->aliquota->codice_natura_fe == 'N3.5') {
+            $riga->id_iva = database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
+        } else {
+            $riga->id_iva = $righe_bollo->idiva ?? database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
+        }
+
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
         $riga->iddocumento = $this->fattura->id;
 

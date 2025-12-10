@@ -547,6 +547,9 @@ class Fattura extends Document
      */
     public function registraScadenze($is_pagato = false, $ignora_fe = false)
     {
+        // Reset delle relazioni per ricaricare le righe aggiornate (incluso bollo con IVA corretta)
+        $this->setRelations([]);
+
         $this->gestoreScadenze->registra($is_pagato, $ignora_fe);
     }
 

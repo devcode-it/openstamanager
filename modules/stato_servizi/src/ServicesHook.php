@@ -23,7 +23,6 @@ namespace Modules\StatoServizi;
 use API\Services;
 use Carbon\Carbon;
 use Hooks\Manager;
-use Models\Cache;
 use Models\Module;
 
 class ServicesHook extends Manager
@@ -36,20 +35,24 @@ class ServicesHook extends Manager
             $limite_scadenze = (new Carbon())->addDays(60);
             $message = '';
 
-            $cache = Cache::where('name', 'Informazioni su Services')->first();
+            // Recupera le risorse attive una sola volta dalla cache
+            $risorse = Services::getRisorseAttive();
 
-            if (empty($cache->content)) {
-                $services = Services::getInformazioni(true);
-            } else {
-                $services = $cache->content;
+            // Risorse scadute (expiration_at nel passato o credits < 0)
+            $risorse_scadute = $risorse->filter(fn ($item) => is_array($item) && ((isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->lessThan(Carbon::now())) || (isset($item['credits']) && $item['credits'] < 0)));
+
+            if ($risorse_scadute->isNotEmpty()) {
+                $message .= tr('I seguenti servizi sono scaduti:<ul><li> _LIST_', [
+                    '_LIST_' => implode('</li><li>', $risorse_scadute->pluck('name')->toArray()),
+                ]).'</ul>';
             }
 
-            // Filtra i risultati che hanno expiration_at fra oggi e $limite_scadenze
-            $servizi_in_scadenza = array_filter($services, fn ($service) => is_array($service) && isset($service['expiration_at']) && Carbon::parse($service['expiration_at'])->between(Carbon::now(), $limite_scadenze));
+            // Risorse in scadenza nei prossimi 60 giorni (o credits < 100)
+            $risorse_in_scadenza = $risorse->filter(fn ($item) => is_array($item) && ((isset($item['expiration_at']) && Carbon::parse($item['expiration_at'])->greaterThan(Carbon::now()) && Carbon::parse($item['expiration_at'])->lessThan($limite_scadenze)) || (isset($item['credits']) && $item['credits'] >= 0 && $item['credits'] < 100)));
 
-            if (!empty($servizi_in_scadenza)) {
+            if ($risorse_in_scadenza->isNotEmpty()) {
                 $message .= tr('I seguenti servizi sono in scadenza:<ul><li> _LIST_', [
-                    '_LIST_' => implode('</li><li>', array_column($servizi_in_scadenza, 'name')),
+                    '_LIST_' => implode('</li><li>', $risorse_in_scadenza->pluck('name')->toArray()),
                 ]).'</ul>';
             }
         }

@@ -214,3 +214,10 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_views_lang` (`id_record`, `id_lang`, `name`, `help`) VALUES
 ((SELECT `zz_views`.`id` FROM `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Sede destinazione'), '1', 'Sede destinazione', ''),
 ((SELECT `zz_views`.`id` FROM `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Preventivi' AND `zz_views`.`name` = 'Sede destinazione'), '2', 'Destination address', '');
+
+-- #1706 - Pre-selezione barcode automatico
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Genera barcode automaticamente', '0', 'boolean', '1', 'o');
+
+INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES
+(NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Genera barcode automaticamente'), 'Genera barcode automaticamente', ''),
+(NULL, '2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Genera barcode automaticamente'), 'Generate barcode automatically', '');

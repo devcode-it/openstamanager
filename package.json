@@ -104,5 +104,5 @@
         "fix-openapi-js": "node -e \"require('fs').writeFileSync('assets/api/src/main.js', \\\"import * as API from './index';global.window.API = API;\\\");\"",
         "update-openapi-client": "npm run-script export-openapi && npx @openapitools/openapi-generator-cli generate -i openapi.json -g javascript -o assets/api --skip-validate-spec && npm run-script fix-openapi-js && npm install --no-save ./assets/api && cd ./assets/api && npx babel src -d dist && cd ../.. && npx browserify ./assets/api/dist/main.js -o ./assets/dist/js/api.js"
     },
-    "packageManager": "yarn@4.6.0"
+    "packageManager": "yarn@4.12.0"
 }

@@ -173,7 +173,8 @@ switch ($resource) {
                 ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
-                `co_documenti`.`data` AS data_documento
+                `co_documenti`.`data` AS data_documento,
+                `co_documenti`.`idanagrafica` AS idanagrafica
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
@@ -189,7 +190,8 @@ switch ($resource) {
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,
-                `dt_ddt`.`data` AS data_documento
+                `dt_ddt`.`data` AS data_documento,
+                `dt_ddt`.`idanagrafica` AS idanagrafica
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`

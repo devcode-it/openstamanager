@@ -22,7 +22,6 @@ namespace Modules\StatoServizi;
 
 use API\Services;
 use Tasks\Manager;
-use Tasks\Manager;
 
 class ServicesHookTask extends Manager
 {

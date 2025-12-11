@@ -53,6 +53,7 @@ $utenti = $dbo->fetchArray('
         LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
         `zz_users`.`idgruppo` = '.prepare($record['id']).'
+        AND `zz_users`.`deleted_at` IS NULL
     GROUP BY
         `zz_users`.`id`');
 

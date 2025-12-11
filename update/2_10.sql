@@ -221,3 +221,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 INSERT INTO `zz_settings_lang` (`id`, `id_lang`, `id_record`, `title`, `help`) VALUES
 (NULL, '1', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Genera barcode automaticamente'), 'Genera barcode automaticamente', ''),
 (NULL, '2', (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Genera barcode automaticamente'), 'Generate barcode automatically', '');
+
+-- #1533 - Gestione eliminazione utenti
+ALTER TABLE `zz_users` 
+  ADD `deleted_at` DATE NULL DEFAULT NULL;

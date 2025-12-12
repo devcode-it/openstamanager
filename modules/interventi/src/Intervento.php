@@ -69,7 +69,7 @@ class Intervento extends Document
         $model->data_richiesta = $data_richiesta;
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
-        $model->idpagamento = setting('Tipo di pagamento predefinito');
+        $model->idpagamento = $anagrafica->idpagamento_vendite ?: setting('Tipo di pagamento predefinito');
 
         // Set idclientefinale to the same as idanagrafica by default to avoid foreign key constraint violation
         $model->idclientefinale = $anagrafica->idanagrafica;

@@ -28,9 +28,9 @@ Per tabelle non presenti all'interno della lista ufficiale di OpenSTAManager (fi
 Con l'introduzione delle traduzioni, in fase di aggiunta di nuovi moduli, è necessario definire le traduzioni per le due lingue disponibili.
 
 Note:
-- id: viene incrementato automaticamente, non valorizzare
-- created_at e updated_at: si valorizzano automaticamente (se la tabella è in tables.php)
-- LAST_INSERT_ID() funziona solo per inserimenti singoli, per inserimenti multipli usare SELECT MAX(`id`)
+- `id`: viene incrementato automaticamente, non valorizzare
+- `created_at` e `updated_at`: si valorizzano automaticamente durante le operazioni di normalizzazione database in fase di aggiornamento database (se la tabella è in tables.php)
+- `LAST_INSERT_ID()` funziona solo per inserimenti singoli, per inserimenti multipli usare SELECT MAX(`id`)
 
 Questo è un esempio di query per l'aggiunta di un modulo:
 
@@ -59,8 +59,8 @@ Questo è un esempio di query per l'aggiunta di una vista:
 
 ```sql
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'NOME MODULO'), 'id', '`NOME_TABELLA`.`id`', 1, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'NOME MODULO'), 'Nome', '`NOME_TABELLA`.`name`', 2, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'NOME MODULO'), 'id', 'id', 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'NOME MODULO'), 'Nome', 'name', 2, 1);
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`)-1 FROM `zz_views`), 'id'),

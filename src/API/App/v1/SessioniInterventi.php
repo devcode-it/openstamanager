@@ -32,14 +32,14 @@ class SessioniInterventi extends AppResource
     {
         return database()
             ->table('zz_operations')
-            ->select('zz_operations.id_record')
+            ->select('zz_operations.options')
             ->distinct()
             ->join('zz_modules', 'zz_modules.id', '=', 'zz_operations.id_module')
             ->where('zz_modules.name', '=', 'Interventi')
             ->where('zz_operations.op', '=', 'delete_sessione')
             ->whereNotNull('zz_operations.options')
             ->where('zz_operations.created_at', '>', $last_sync_at)
-            ->pluck('zz_operations.id_record')
+            ->pluck('zz_operations.options')
             ->toArray();
     }
 

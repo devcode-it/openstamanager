@@ -272,10 +272,15 @@ foreach ($righe as $riga) {
             </td>';
 
         // Iva
+        // Controllo aliquota esente senza codice natura
+        $iva_esente_senza_natura = $riga->aliquota && $riga->aliquota->esente && empty($riga->aliquota->codice_natura_fe);
+        $iva_class = ($riga->aliquota->deleted_at || $iva_esente_senza_natura) ? 'text-danger' : 'text-muted';
+        $iva_tooltip = $iva_esente_senza_natura ? ' title="'.tr('Attenzione: aliquota esente senza codice natura IVA. Correggere prima di emettere fattura elettronica.').'" style="cursor: help;"' : '';
+
         echo '
             <td class="text-right">
                 '.moneyFormat($riga->iva_unitaria_scontata).'
-                <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.($riga->aliquota ? $riga->aliquota->getTranslation('title') : '').' ('.$riga->aliquota->esigibilita.') '.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                <br><small class="'.$iva_class.'"'.$iva_tooltip.'>'.($iva_esente_senza_natura ? '<i class="fa fa-exclamation-triangle"></i> ' : '').($riga->aliquota ? $riga->aliquota->getTranslation('title') : '').' ('.$riga->aliquota->esigibilita.') '.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
             </td>';
 
         // Importo

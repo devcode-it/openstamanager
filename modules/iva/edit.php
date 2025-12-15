@@ -46,6 +46,14 @@ if ($res) {
     $is_readonly = '1';
 }
 
+// Alert per aliquota esente senza codice natura
+if ($record['esente'] && empty($record['codice_natura_fe'])) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Attenzione').':</strong> '.tr('Questa aliquota è marcata come esente ma non ha un codice natura IVA impostato. Per la fatturazione elettronica è obbligatorio specificare il codice natura per le aliquote esenti.').'
+    </div>';
+}
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">

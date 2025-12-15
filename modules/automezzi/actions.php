@@ -44,78 +44,6 @@ switch (post('op')) {
         }
         break;
 
-        // Aggiunta tecnico
-    case 'addtech':
-        $idtecnico = post('idtecnico');
-        $data_inizio = post('data_inizio');
-        $data_fine = post('data_fine');
-
-        // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-        if (!empty($data_fine)) {
-            if (new DateTime(post('data_fine')) >= new DateTime($data_inizio)) {
-                $data_fine = post('data_fine');
-            }
-        }
-        $data_fine ??= '0000-00-00';
-
-        // Inserisco il tecnico
-        $dbo->insert('an_sedi_tecnici', [
-            'idtecnico' => $idtecnico,
-            'idsede' => $id_record,
-            'data_inizio' => $data_inizio,
-            'data_fine' => $data_fine,
-        ]);
-
-        flash()->info(tr('Collegato un nuovo tecnico!'));
-        break;
-
-        // Salvataggio tecnici collegati
-    case 'savetech':
-        $errors = 0;
-
-        foreach (post('data_inizio') as $idautomezzotecnico => $data) {
-            $idtecnico = post('idtecnico')[$idautomezzotecnico];
-            $data_inizio = post('data_inizio')[$idautomezzotecnico];
-            $data_fine = post('data_fine')[$idautomezzotecnico];
-
-            // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-            if (!empty($data_fine)) {
-                if (new DateTime($data_fine) < new DateTime($data_inizio)) {
-                    $data_fine = null;
-                }
-            }
-            $data_fine ??= '0000-00-00';
-
-            $dbo->update('an_sedi_tecnici', [
-                'idtecnico' => $idtecnico,
-                'idsede' => $id_record,
-                'data_inizio' => $data_inizio,
-                'data_fine' => $data_fine,
-            ], ['id' => $idautomezzotecnico]);
-
-            if (!$dbo->query($query)) {
-                ++$errors;
-            }
-        }
-
-        if ($errors == 0) {
-            flash()->info(tr('Informazioni salvate correttamente!'));
-        } else {
-            flash()->error(tr('Errore durante il salvataggio del tecnico!'));
-        }
-        break;
-
-        // Eliminazione associazione con tecnico
-    case 'deltech':
-        $idautomezzotecnico = post('id');
-
-        $query = 'DELETE FROM an_sedi_tecnici WHERE id='.prepare($idautomezzotecnico);
-
-        if ($dbo->query($query)) {
-            flash()->info(tr('Tecnico rimosso!'));
-        }
-        break;
-
         // Aggiunta quantità nell'automezzo
     case 'addrow':
         $idarticolo = post('idarticolo');
@@ -179,6 +107,189 @@ switch (post('op')) {
         $articolo->registra(-$qta, $descrizione, Carbon::now(), 1, [
             'idsede' => $idautomezzotecnico,
         ]);
+
+        break;
+
+    // Aggiunta viaggio
+    case 'addviaggio':
+        $idtecnico = post('idtecnico');
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine') ?: null;
+        $km_inizio = post('km_inizio');
+        $km_fine = post('km_fine');
+        $destinazione = post('destinazione');
+        $motivazione = post('motivazione');
+
+        // Inserisco il viaggio
+        $dbo->insert('an_automezzi_viaggi', [
+            'idsede' => $id_record,
+            'idtecnico' => $idtecnico,
+            'data_inizio' => $data_inizio,
+            'data_fine' => $data_fine,
+            'km_inizio' => $km_inizio,
+            'km_fine' => $km_fine,
+            'destinazione' => $destinazione,
+            'motivazione' => $motivazione,
+        ]);
+
+        flash()->info(tr('Viaggio aggiunto al registro!'));
+        break;
+
+    // Modifica viaggio
+    case 'editviaggio':
+        $idviaggio = post('idviaggio');
+        $idtecnico = post('idtecnico');
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine') ?: null;
+        $km_inizio = post('km_inizio');
+        $km_fine = post('km_fine');
+        $destinazione = post('destinazione');
+        $motivazione = post('motivazione');
+
+        // Aggiorno il viaggio
+        $dbo->update('an_automezzi_viaggi', [
+            'idtecnico' => $idtecnico,
+            'data_inizio' => $data_inizio,
+            'data_fine' => $data_fine,
+            'km_inizio' => $km_inizio,
+            'km_fine' => $km_fine,
+            'destinazione' => $destinazione,
+            'motivazione' => $motivazione,
+        ], ['id' => $idviaggio]);
+
+        flash()->info(tr('Viaggio aggiornato!'));
+        break;
+
+    // Eliminazione viaggio
+    case 'delviaggio':
+        $idviaggio = post('id');
+
+        $query = 'DELETE FROM an_automezzi_viaggi WHERE id='.prepare($idviaggio);
+
+        if ($dbo->query($query)) {
+            flash()->info(tr('Viaggio rimosso dal registro!'));
+        }
+        break;
+
+    // Aggiunta rifornimento
+    case 'addrifornimento':
+        $idviaggio = post('idviaggio');
+        $data = post('data');
+        $luogo = post('luogo');
+        $id_carburante = post('id_carburante');
+        $quantita = post('quantita');
+        $costo = post('costo');
+        $id_gestore = post('id_gestore');
+        $codice_carta = post('codice_carta');
+        $km = post('km');
+
+        // Inserisco il rifornimento
+        $dbo->insert('an_automezzi_rifornimenti', [
+            'idviaggio' => $idviaggio,
+            'data' => $data,
+            'luogo' => $luogo,
+            'id_carburante' => $id_carburante,
+            'quantita' => $quantita,
+            'costo' => $costo,
+            'id_gestore' => $id_gestore,
+            'codice_carta' => $codice_carta,
+            'km' => $km,
+        ]);
+
+        flash()->info(tr('Rifornimento aggiunto!'));
+        break;
+
+    // Modifica rifornimento
+    case 'editrifornimento':
+        $idrifornimento = post('idrifornimento');
+        $data = post('data');
+        $luogo = post('luogo');
+        $id_carburante = post('id_carburante');
+        $quantita = post('quantita');
+        $costo = post('costo');
+        $id_gestore = post('id_gestore');
+        $codice_carta = post('codice_carta');
+        $km = post('km');
+
+        // Aggiorno il rifornimento
+        $dbo->update('an_automezzi_rifornimenti', [
+            'data' => $data,
+            'luogo' => $luogo,
+            'id_carburante' => $id_carburante,
+            'quantita' => $quantita,
+            'costo' => $costo,
+            'id_gestore' => $id_gestore,
+            'codice_carta' => $codice_carta,
+            'km' => $km,
+        ], ['id' => $idrifornimento]);
+
+        flash()->info(tr('Rifornimento aggiornato!'));
+        break;
+
+    // Eliminazione rifornimento
+    case 'delrifornimento':
+        $idrifornimento = post('id');
+
+        $query = 'DELETE FROM an_automezzi_rifornimenti WHERE id='.prepare($idrifornimento);
+
+        if ($dbo->query($query)) {
+            flash()->info(tr('Rifornimento rimosso!'));
+        }
+        break;
+
+    // Firma viaggio
+    case 'firma_viaggio':
+        $idviaggio = post('idviaggio');
+        $firma_base64 = post('firma_base64');
+
+        if (empty($firma_base64)) {
+            flash()->error(tr('Firma mancante!'));
+            break;
+        }
+
+        if (is_writable(Uploads::getDirectory($id_module))) {
+            if (post('firma_base64') != '') {
+                // Salvataggio firma
+                $data = explode(',', post('firma_base64'));
+                $img = getImageManager()->read(base64_decode($data[1]));
+                $img->resize(680, 202, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+
+                if (setting('Sistema di firma') == 'Tavoletta Wacom') {
+                    $img->brightness((float) setting('Luminosità firma Wacom'));
+                    $img->contrast((float) setting('Contrasto firma Wacom'));
+                }
+                $encoded_image = $img->toJpeg();
+                $file_content = $encoded_image->toString();
+
+                // Upload del file in zz_files
+                $upload = Uploads::upload($file_content, [
+                    'name' => 'firma.jpg',
+                    'category' => 'Firme',
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                    'key' => 'signature_viaggio:'.$idviaggio,
+                ]);
+
+                if (empty($upload)) {
+                    flash()->error(tr('Errore durante il caricamento della firma!'));
+                } else {
+                    flash()->info(tr('Firma salvata correttamente.'));
+
+                    $dbo->update('an_automezzi_viaggi', [
+                        'firma_data' => date('Y-m-d H:i:s'),
+                        'firma_nome' => post('firma_nome'),
+                    ], ['id' => $idviaggio]);
+                }
+            } else {
+                flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota.'));
+            }
+        } else {
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma.", [
+                '_DIRECTORY_' => '<b>'.Uploads::getDirectory($id_module).'</b>',
+            ]));
+        }
 
         break;
 

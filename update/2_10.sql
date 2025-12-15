@@ -247,3 +247,156 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 
 -- #1533 - Gestione eliminazione utenti
 ALTER TABLE `zz_users` ADD `deleted_at` DATE NULL DEFAULT NULL;
+
+-- Creazione tabella per registri viaggio automezzi
+CREATE TABLE IF NOT EXISTS `an_automezzi_viaggi` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `idtecnico` INT NOT NULL,
+    `idsede` INT NOT NULL,
+    `data_inizio` DATETIME NULL,
+    `data_fine` DATETIME NULL,
+    `km_inizio` INT NOT NULL,
+    `km_fine` INT NOT NULL,
+    `destinazione` VARCHAR(255) NOT NULL,
+    `motivazione` VARCHAR(255) DEFAULT NULL,
+    `firma_data` DATETIME DEFAULT NULL,
+    `firma_nome` VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX(`idsede`)
+);
+
+-- Aggiunta foreign key
+ALTER TABLE `an_automezzi_viaggi` ADD CONSTRAINT `an_automezzi_viaggi_ibfk_1` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Creazione tabella per rifornimenti automezzi
+CREATE TABLE IF NOT EXISTS `an_automezzi_rifornimenti` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `idviaggio` INT NOT NULL,
+    `data` DATETIME NOT NULL,
+    `luogo` VARCHAR(255) NOT NULL,
+    `id_carburante` INT NULL,
+    `quantita` DECIMAL(15,2) NOT NULL,
+    `costo` DECIMAL(15,2) NOT NULL,
+    `id_gestore` INT NULL,
+    `codice_carta` VARCHAR(100) DEFAULT NULL,
+    `km` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX(`idviaggio`)
+);
+
+-- Aggiunta foreign key per rifornimenti
+ALTER TABLE `an_automezzi_rifornimenti` ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_1` FOREIGN KEY (`idviaggio`) REFERENCES `an_automezzi_viaggi`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Aggiunta stampa registro viaggio
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 1, 'Registro viaggio', 'registro_viaggio', 'id', '', 'fa fa-print', '', '', 0, 0, 1);
+
+-- Aggiunta traduzione stampa registro viaggio
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
+(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Registro viaggio'), 'Registro viaggio', 'Registro viaggio'),
+(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Registro viaggio'), 'Travel register', 'Travel register');
+
+-- Creazione tabella per manutenzioni/scadenze automezzi
+CREATE TABLE IF NOT EXISTS `an_automezzi_scadenze` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `idsede` INT NOT NULL,
+    `descrizione` VARCHAR(255) NOT NULL,
+    `data_inizio` DATE NOT NULL,
+    `data_fine` DATE DEFAULT NULL,
+    `km` INT DEFAULT NULL,
+    `codice` VARCHAR(100) DEFAULT NULL,
+    `is_manutenzione` TINYINT(1) NOT NULL DEFAULT 0,
+    `is_completato` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    INDEX(`idsede`)
+);
+
+-- Aggiunta foreign key per scadenze
+ALTER TABLE `an_automezzi_scadenze` ADD CONSTRAINT `an_automezzi_scadenze_ibfk_1` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Manutenzioni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'tab', '', '1', '0', '0', '2.*', '2.10', 'custom', 'automezzi_manutenzioni', '');
+INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
+VALUES
+  (1, LAST_INSERT_ID(), 'Manutenzioni'),
+  (2, LAST_INSERT_ID(), 'Maintenance');
+
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Scadenze', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'tab', '', '1', '0', '0', '2.*', '2.10', 'custom', 'automezzi_scadenze', '');
+INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
+VALUES
+  (1, LAST_INSERT_ID(), 'Scadenze'),
+  (2, LAST_INSERT_ID(), 'Deadlines');
+
+-- Creazione tabella per tipi di carburante
+CREATE TABLE IF NOT EXISTS `an_automezzi_tipi_carburante` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `descrizione` VARCHAR(100) NOT NULL,
+    `um` VARCHAR(20) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+-- Inserimento tipi di carburante predefiniti
+INSERT INTO `an_automezzi_tipi_carburante` (`descrizione`, `um`) VALUES
+('Benzina', 'litri'),
+('Diesel', 'litri'),
+('GPL', 'litri'),
+('Metano', 'kg');
+
+-- Creazione tabella per gestori carburante
+CREATE TABLE IF NOT EXISTS `an_automezzi_gestori` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `descrizione` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+-- Aggiunta foreign key per tipo carburante
+ALTER TABLE `an_automezzi_rifornimenti`
+    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_2`
+    FOREIGN KEY (`id_carburante`) REFERENCES `an_automezzi_tipi_carburante`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+
+-- Aggiunta foreign key per gestore
+ALTER TABLE `an_automezzi_rifornimenti`
+    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_3`
+    FOREIGN KEY (`id_gestore`) REFERENCES `an_automezzi_gestori`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+
+-- Inserimento modulo Tipi carburante
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`)
+VALUES ('Tipi carburante', 'tipi_carburante', 'SELECT |select| FROM `an_automezzi_tipi_carburante` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.8', '2.5.8', '3', (SELECT `id` FROM `zz_modules` `m` WHERE `name`='Automezzi'), '1', '1');
+
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', (SELECT MAX(id) FROM `zz_modules`), 'Tipi carburante', 'Tipi carburante'),
+('2', (SELECT MAX(id) FROM `zz_modules`), 'Fuel types', 'Fuel types');
+
+-- Inserimento viste per modulo Tipi carburante
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Tipi carburante'), 'id', 'an_automezzi_tipi_carburante.id', 1, 1, 0, 0, '', '', 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name`='Tipi carburante'), 'Descrizione', 'an_automezzi_tipi_carburante.descrizione', 2, 1, 0, 0, '', '', 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name`='Tipi carburante'), 'Unità di misura', 'an_automezzi_tipi_carburante.um', 3, 1, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT MAX(id)-2 FROM `zz_views`), 'id'),
+('1', (SELECT MAX(id)-1 FROM `zz_views`), 'Descrizione'),
+('1', (SELECT MAX(id) FROM `zz_views`), 'Unità di misura'),
+('2', (SELECT MAX(id)-2 FROM `zz_views`), 'id'),
+('2', (SELECT MAX(id)-1 FROM `zz_views`), 'Description'),
+('2', (SELECT MAX(id) FROM `zz_views`), 'Unit of measure');
+
+-- Inserimento modulo Gestori carburante
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`)
+VALUES ('Gestori carburante', 'gestori_carburante', 'SELECT |select| FROM `an_automezzi_gestori` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.5.8', '2.5.8', '4', (SELECT `id` FROM `zz_modules` `m` WHERE `name`='Automezzi'), '1', '1');
+
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+('1', (SELECT MAX(id) FROM `zz_modules`), 'Gestori carburante', 'Gestori carburante'),
+('2', (SELECT MAX(id) FROM `zz_modules`), 'Fuel suppliers', 'Fuel suppliers');
+
+-- Inserimento viste per modulo Gestori carburante
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Gestori carburante'), 'id', 'an_automezzi_gestori.id', 1, 1, 0, 0, '', '', 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name`='Gestori carburante'), 'Descrizione', 'an_automezzi_gestori.descrizione', 2, 1, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+('1', (SELECT MAX(id)-1 FROM `zz_views`), 'id'),
+('1', (SELECT MAX(id) FROM `zz_views`), 'Descrizione'),
+('2', (SELECT MAX(id)-1 FROM `zz_views`), 'id'),
+('2', (SELECT MAX(id) FROM `zz_views`), 'Description');
+
+DROP TABLE IF EXISTS `an_sedi_tecnici`;

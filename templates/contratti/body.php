@@ -187,8 +187,11 @@ foreach ($righe as $riga) {
     }
 
     if ($riga->isArticolo()) {
-        echo nl2br('<br><small>'.$riga->codice.'</small>');
-        $autofill->count($riga->codice, true);
+
+        if (!$options['hide-item-number']) {
+            echo nl2br('<br><small>'.$riga->codice.'</small>');
+            $autofill->count($riga->codice, true);
+        }
     }
 
     if ($riga->isArticolo()) {

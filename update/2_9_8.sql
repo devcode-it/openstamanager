@@ -1,0 +1,1 @@
+ALTER TABLE `zz_oauth2` CHANGE `nome` `name` VARCHAR(255) NOT NULL; 

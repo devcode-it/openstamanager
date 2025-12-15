@@ -31,7 +31,7 @@ $microsoft = null;
 
 if ($dbo->isConnected()) {
     try {
-        $microsoft = $dbo->selectOne('zz_oauth2', '*', ['nome' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
+        $microsoft = $dbo->selectOne('zz_oauth2', '*', ['name' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
     } catch (QueryException $e) {
     }
 }

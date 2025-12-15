@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "value": "$nome$", "disabled": "1" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "disabled": "1" ]}
 				</div>
 
 				<div class="col-md-6">

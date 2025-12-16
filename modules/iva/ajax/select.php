@@ -41,8 +41,8 @@ switch ($resource) {
         if (empty($filter)) {
             $where[] = '`deleted_at` IS NULL';
 
-            // Escludo le aliquote esenti senza codice natura iva
-            $where[] = '(`esente` = 0 OR (`esente` = 1 AND `codice_natura_fe` IS NOT NULL))';
+            // Escludo le aliquote esenti senza codice natura iva o con codice natura obsoleto (N2, N3, N6 senza sottocodice)
+            $where[] = '(`esente` = 0 OR (`esente` = 1 AND `codice_natura_fe` IS NOT NULL AND `codice_natura_fe` NOT IN ("N2", "N3", "N6")))';
 
             // se sto valorizzando un documento con lo split payment impedisco la selezione delle aliquote iva con natura N6.X (reverse charge)
             if (isset($superselect['split_payment']) and !empty($superselect['split_payment'])) {

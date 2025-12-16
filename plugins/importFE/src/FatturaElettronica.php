@@ -70,14 +70,32 @@ class FatturaElettronica
         $numero = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
-        $fattura = Fattura::where([
-            'progressivo_invio' => $progressivo_invio,
-            'numero_esterno' => $numero,
-            'data' => $data,
-        ])->first();
+        // Estrazione partita IVA e codice fiscale del cedente dal file XML
+        $cedente = $this->getHeader()['CedentePrestatore']['DatiAnagrafici'];
+        $partita_iva = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
+        $codice_fiscale = $cedente['CodiceFiscale'] ?? null;
 
-        if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
-            throw new \UnexpectedValueException();
+        // Ricerca anagrafica corrispondente per partita IVA o codice fiscale
+        $anagrafica = null;
+        if (!empty($partita_iva)) {
+            $anagrafica = Anagrafica::where('piva', $partita_iva)->first();
+        }
+        if (empty($anagrafica) && !empty($codice_fiscale)) {
+            $anagrafica = Anagrafica::where('codice_fiscale', $codice_fiscale)->first();
+        }
+
+        // Verifica fattura pre-esistente solo se l'anagrafica corrisponde
+        if (!empty($anagrafica)) {
+            $fattura = Fattura::where([
+                'progressivo_invio' => $progressivo_invio,
+                'numero_esterno' => $numero,
+                'data' => $data,
+                'idanagrafica' => $anagrafica->id,
+            ])->first();
+
+            if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
+                throw new \UnexpectedValueException();
+            }
         }
     }
 

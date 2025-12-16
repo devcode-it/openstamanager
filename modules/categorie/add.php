@@ -21,9 +21,10 @@ include_once __DIR__.'/../../core.php';
 use Modules\Articoli\Categoria;
 
 $id_original = filter('id_original');
-$is_impianto_default = filter('is_impianto') !== null ? filter('is_impianto') : 0;
-$is_articolo_default = filter('is_articolo') !== null ? filter('is_articolo') : 1;
+$is_impianto_default = filter('is_impianto') !== '' ? filter('is_impianto') : 0;
+$is_articolo_default = filter('is_articolo') !== '' ? filter('is_articolo') : 1;
 
+$categoria = null;
 if (!empty($id_record)) {
     include __DIR__.'/init.php';
 }
@@ -51,11 +52,11 @@ if (isset($id_original)) {
         </div>
 
         <div class="col-md-3">
-            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore_add", "id": "colore", "class": "colorpicker text-center", "value": "<?php echo $categoria->colore; ?>", "extra": "maxlength=\"7\"", "icon-after": "<div class='img-circle square'></div>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore_add", "id": "colore", "class": "colorpicker text-center", "value": "<?php echo $categoria ? $categoria->colore : ''; ?>", "extra": "maxlength=\"7\"", "icon-after": "<div class='img-circle square'></div>" ]}
         </div>
 
         <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Articolo'); ?>", "name": "is_articolo_add", "value": "<?php echo $categoria ? $categoria->is_articolo : ($id_original ? Categoria::find($id_original)->is_articolo : $is_articolo_default); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Articolo'); ?>", "name": "is_articolo_add", "value": "<?php echo $categoria ? $categoria->is_articolo : ($id_original ? Categoria::find($id_original)->is_articolo : 1); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
         </div>
 
         <div class="col-md-2">

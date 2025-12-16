@@ -110,17 +110,17 @@ class Group extends Model
                 }
             }
 
-            // Se non ci sono viste predefinite, aggiungi il gruppo ad almeno una vista (la prima disponibile)
+            // Se non ci sono viste predefinite, aggiungi il gruppo a tutte le viste del modulo
             if (empty($default_views)) {
-                $first_view = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC LIMIT 1');
+                $all_views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
 
-                if (!empty($first_view)) {
-                    $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($first_view[0]['id']))['cont'];
+                foreach ($all_views as $view) {
+                    $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
 
                     if ($has_view_access == 0) {
                         $database->insert('zz_group_view', [
                             'id_gruppo' => $this->id,
-                            'id_vista' => $first_view[0]['id'],
+                            'id_vista' => $view['id'],
                         ]);
                     }
                 }

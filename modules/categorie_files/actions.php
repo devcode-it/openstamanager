@@ -41,7 +41,7 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $name = post('name');
+        $name = post('name_add');
         $categoria_new = Categoria::where('name', '=', $name)->where('deleted_at', '=', null)->first();
 
         if (!empty($categoria_new)) {

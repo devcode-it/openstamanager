@@ -483,6 +483,11 @@ function session_set($name, mixed $value)
  */
 function base_url()
 {
+    // In modalità CLI, App::$baseurl è vuoto, quindi usiamo setting('Base URL')
+    if (empty(App::$baseurl) && function_exists('setting')) {
+        return rtrim(setting('Base URL'), '/');
+    }
+
     return App::$baseurl;
 }
 

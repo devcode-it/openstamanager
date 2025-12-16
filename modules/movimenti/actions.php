@@ -64,7 +64,7 @@ switch (post('op')) {
 
     case 'salva_inventario':
         $idsede = post('idsede');
-        $data = post('data') ?: date('Y-m-d');
+        $data = post('data');
         $righe = post('righe');
 
         if (empty($righe) || !is_array($righe)) {

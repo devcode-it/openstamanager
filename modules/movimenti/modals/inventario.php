@@ -29,6 +29,10 @@ include_once __DIR__.'/../../../core.php';
         <div class="col-md-5">
             {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "id": "sede-inventario" ]}
         </div>
+
+        <div class="col-md-5">
+            {[ "type": "text", "label": "<?php echo tr('Data'); ?>", "name": "data", "value": "-now-", "required": 1 ]}
+        </div>
     </div>
 
     <div class="row">

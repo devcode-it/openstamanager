@@ -381,7 +381,7 @@ switch ($resource) {
             SELECT
                 *
             FROM
-                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
+                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, NULL AS deleted_at, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
 
             UNION
 
@@ -390,6 +390,7 @@ switch ($resource) {
                 `lat`,
                 `lng`,
                 `idzona`,
+                `deleted_at`,
                 CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab
             HAVING
                 `descrizione` LIKE ".prepare('%'.$search.'%').'
@@ -398,6 +399,10 @@ switch ($resource) {
 
             foreach ($elements as $element) {
                 $filter[] = '`id`='.prepare($element);
+            }
+
+            if (empty($filter)) {
+                $where[] = 'an_sedi.deleted_at IS NULL';
             }
 
             $where[] = '`idanagrafica`='.prepare($superselect['idanagrafica']);

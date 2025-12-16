@@ -226,8 +226,6 @@ if (!empty($elementi)) {
 			</ul>
 		</div>
 	</div>';
-
-    $disabled = 'disabled';
 }
 
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
@@ -265,7 +263,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="modal-footer">
 		<div class="col-md-12">
-            <button type="button" class="btn btn-danger '.$disabled.'" onclick="rimuoviSede(this)">
+            <button type="button" class="btn btn-danger" onclick="rimuoviSede(this)">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </button>
 

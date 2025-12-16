@@ -132,7 +132,7 @@ switch ($operazione) {
 
     case 'deletesede':
         $id = filter('id');
-        $dbo->query('DELETE FROM `an_sedi` WHERE `id` = '.prepare($id).'');
+        $dbo->query('UPDATE `an_sedi` SET deleted_at = NOW() WHERE `id` = '.prepare($id));
 
         flash()->info(tr('Sede eliminata!'));
 

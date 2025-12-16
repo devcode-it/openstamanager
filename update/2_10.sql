@@ -400,3 +400,6 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ('2', (SELECT MAX(id) FROM `zz_views`), 'Description');
 
 DROP TABLE IF EXISTS `an_sedi_tecnici`;
+
+-- Aggiunta campo deleted_at per gestire eliminazione sedi
+ALTER TABLE `an_sedi` ADD `deleted_at` TIMESTAMP NULL AFTER `enable_newsletter`; 

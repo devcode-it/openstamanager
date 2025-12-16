@@ -283,15 +283,25 @@ foreach ($righe as $riga) {
             </td>';
 
         // Iva
-        // Controllo aliquota esente senza codice natura
+        // Controllo aliquota esente senza codice natura o con codice natura obsoleto (N2, N3, N6 senza sottocodice)
+        $codici_natura_obsoleti = ['N2', 'N3', 'N6'];
         $iva_esente_senza_natura = $riga->aliquota && $riga->aliquota->esente && empty($riga->aliquota->codice_natura_fe);
-        $iva_class = ($riga->aliquota->deleted_at || $iva_esente_senza_natura) ? 'text-danger' : 'text-muted';
-        $iva_tooltip = $iva_esente_senza_natura ? ' title="'.tr('Attenzione: aliquota esente senza codice natura IVA. Correggere prima di emettere fattura elettronica.').'" style="cursor: help;"' : '';
+        $iva_natura_obsoleta = $riga->aliquota && $riga->aliquota->esente && in_array($riga->aliquota->codice_natura_fe, $codici_natura_obsoleti);
+        $iva_errore = $iva_esente_senza_natura || $iva_natura_obsoleta;
+        $iva_class = ($riga->aliquota->deleted_at || $iva_errore) ? 'text-danger' : 'text-muted';
+
+        if ($iva_esente_senza_natura) {
+            $iva_tooltip = ' title="'.tr('Attenzione: aliquota esente senza codice natura IVA. Correggere prima di emettere fattura elettronica.').'" style="cursor: help;"';
+        } elseif ($iva_natura_obsoleta) {
+            $iva_tooltip = ' title="'.tr('Attenzione: il codice natura "_NATURA_" non è più valido dal 1° gennaio 2021. Utilizzare un sottocodice specifico.', ['_NATURA_' => $riga->aliquota->codice_natura_fe]).'" style="cursor: help;"';
+        } else {
+            $iva_tooltip = '';
+        }
 
         echo '
             <td class="text-right">
                 '.moneyFormat($riga->iva_unitaria_scontata).'
-                <br><small class="'.$iva_class.'"'.$iva_tooltip.'>'.($iva_esente_senza_natura ? '<i class="fa fa-exclamation-triangle"></i> ' : '').($riga->aliquota ? $riga->aliquota->getTranslation('title') : '').' ('.$riga->aliquota->esigibilita.') '.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                <br><small class="'.$iva_class.'"'.$iva_tooltip.'>'.($iva_errore ? '<i class="fa fa-exclamation-triangle"></i> ' : '').($riga->aliquota ? $riga->aliquota->getTranslation('title') : '').' ('.$riga->aliquota->esigibilita.') '.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
             </td>';
 
         // Importo

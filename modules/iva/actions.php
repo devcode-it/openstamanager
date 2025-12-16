@@ -68,7 +68,7 @@ switch (filter('op')) {
         $codice = post('codice');
         $esente = post('esente_add');
         $percentuale = empty($esente) ? post('percentuale') : 0;
-        $codice_natura = post('codice_natura_fe') ?: '';
+        $codice_natura = post('codice_natura_fe') ?: null;
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 

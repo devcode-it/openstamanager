@@ -99,7 +99,7 @@ if (!empty($options['create_document'])) {
             <div class="row">
                 <input type="hidden" name="create_document" value="on" />
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
                 </div>';
 
@@ -124,15 +124,15 @@ if (!empty($options['create_document'])) {
         $id_bozza = StatoFattura::where('name', 'Bozza')->first()->id;
         $id_emessa = StatoFattura::where('name', 'Emessa')->first()->id;
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statidocumento`.`id` as id, `co_statidocumento_lang`.`title` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`id` IN ('.$id_bozza.', '.$id_emessa.')", "value": "'.$stato_predefinito.'"]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` = '.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Ritenuta previdenziale').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
             </div>';
     }
@@ -140,11 +140,11 @@ if (!empty($options['create_document'])) {
     // Opzioni aggiuntive per gli Interventi
     elseif ($final_module->name == 'Interventi') {
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento" ]}
             </div>';
     }
@@ -154,7 +154,7 @@ if (!empty($options['create_document'])) {
         $stato_predefinito = StatoContratto::where('name', 'Bozza')->first()->id;
 
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `co_staticontratti_lang`.`title` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')", "value": "'.$stato_predefinito.'" ]}
             </div>';
     }
@@ -164,11 +164,11 @@ if (!empty($options['create_document'])) {
         $stato_predefinito = Stato::where('name', 'Bozza')->first()->id;
 
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` AS descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')", "value": "'.$stato_predefinito.'" ]}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.Module::where('name', 'Causali')->first()->id.'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
             </div>';
     }
@@ -178,10 +178,14 @@ if (!empty($options['create_document'])) {
         $stato_predefinito = StatoOrdine::where('name', 'Bozza')->first()->id;
 
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * ,`or_statiordine`.`id`, `or_statiordine_lang`.`title` AS descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito.'" ]}
             </div>';
     }
+    echo'
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
+                </div>';
 
     // Selezione fornitore per Ordine fornitore
     if ($options['op'] == 'add_ordine_cliente' || $options['op'] == 'add_intervento' || $options['op'] == 'add_ordine_fornitore') {
@@ -189,15 +193,12 @@ if (!empty($options['create_document'])) {
         $ajax = $options['op'] == 'add_intervento' ? 'clienti' : 'fornitori';
 
         echo '
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 
     echo '
-                <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
-                </div>
             </div>
         </div>
     </div>';
@@ -221,9 +222,12 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
     }
 
     echo '
-    <div class="card card-primary">
+    <div class="card card-primary collapsable collapsed-card">
         <div class="card-header with-border">
             <h3 class="card-title">'.tr('Opzioni generali delle righe').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            </div>
         </div>
         <div class="card-body">';
 
@@ -251,7 +255,6 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
     echo '
             </div>';
 
-    $width = $show_ritenuta_contributi ? 6 : 12;
 
     echo '
             <div class="row">';
@@ -259,14 +262,14 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
     // Ritenuta previdenziale
     if ($show_ritenuta_contributi) {
         echo '
-                <div class="col-md-'.$width.'">
+                <div class="col-md-4">
                     {[ "type": "checkbox", "label": "'.tr('Ritenuta previdenziale').'", "name": "ritenuta_contributi", "value": "1" ]}
                 </div>';
     }
 
     // Conto
     echo '
-                <div class="col-md-'.$width.'">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "'.($dir == 'entrata' ? 'conti-vendite' : 'conti-acquisti').'" ]}
                 </div>
             </div>';
@@ -324,6 +327,52 @@ if (!empty($options['serials'])) {
     }
 }
 
+// Calcolo disponibilità magazzino per ogni articolo
+$disponibilita_articoli = [];
+$abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino;
+
+// Recupera la sede di partenza dal documento (preventivo/ordine)
+$id_sede_partenza = $documento->idsede_partenza ?? 0;
+
+if ($abilita_controllo_disponibilita) {
+    foreach ($righe as $riga) {
+        if ($riga->isArticolo() && !empty($riga->idarticolo)) {
+            $id_articolo = $riga->idarticolo;
+            if (!isset($disponibilita_articoli[$id_articolo])) {
+                $articolo = $riga->articolo;
+
+                // Calcola giacenza per la sede specifica
+                $giacenze = $articolo->getGiacenze();
+                $giacenza = $giacenze[$id_sede_partenza][0] ?? 0;
+
+                // Calcolo quantità impegnata in ordini cliente (per la sede specifica)
+                // Cerchiamo ordini cliente (dir = 'entrata') che impegnano il nostro magazzino
+                $impegnato = (float) database()->fetchOne('SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata
+                    FROM or_righe_ordini
+                    INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
+                    INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
+                    INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id
+                    WHERE or_righe_ordini.idarticolo = '.prepare($id_articolo).'
+                    AND or_tipiordine.dir = \'entrata\'
+                    AND or_righe_ordini.confermato = 1
+                    AND or_statiordine.impegnato = 1
+                    AND or_ordini.idsede_destinazione = '.prepare($id_sede_partenza))['qta_impegnata'];
+
+                $disponibilita_iniziale = $giacenza - $impegnato;
+                $disponibilita_articoli[$id_articolo] = [
+                    'giacenza' => $giacenza,
+                    'impegnato' => $impegnato,
+                    'disponibile_iniziale' => $disponibilita_iniziale,
+                    'disponibile' => $disponibilita_iniziale, // Questa verrà decrementata
+                    'servizio' => $articolo->servizio,
+                ];
+            }
+        }
+    }
+}
+
+
+
 // Righe del documento
 echo '
     <div class="card card-primary">
@@ -331,18 +380,26 @@ echo '
             <h3 class="card-title">'.tr('Righe da importare').'</h3>
         </div>
 
-        <table class="card-body table table-striped table-hover table-sm">
+        <div class="card-body p-0">
+        <table class="table table-striped table-hover table-sm">
             <thead>
                 <tr>
                     <th width="2%"><input id="import_all" type="checkbox" class="'.($block_input ? 'disabled' : '').'" checked/></th>
                     <th>'.tr('Descrizione').'</th>
-                    <th width="10%" class="text-center">'.tr('Q.tà').'</th>
-                    <th width="15%">'.tr('Q.tà da evadere').'</th>
-                    <th width="20%" class="text-center">'.tr('Subtot.').'</th>';
+                    <th width="8%" class="text-center">'.tr('Q.tà').'</th>';
+
+if ($abilita_controllo_disponibilita) {
+    echo '
+                    <th width="8%" class="text-center">'.tr('Disp.').'</th>';
+}
+
+echo '
+                    <th width="12%">'.tr('Q.tà da evadere').'</th>
+                    <th width="15%" class="text-center">'.tr('Subtot.').'</th>';
 
 if (!empty($has_serial)) {
     echo '
-                    <th width="20%">'.tr('Seriali').'</th>';
+                    <th width="15%">'.tr('Seriali').'</th>';
 }
 
 echo '
@@ -355,6 +412,23 @@ foreach ($righe as $i => $riga) {
         $qta_rimanente = $riga['qta'];
     } else {
         $qta_rimanente = $riga['qta_rimanente'];
+    }
+
+    // Calcola disponibilità per questa riga
+    $qta_disponibile = null;
+    $qta_disponibile_originale = null;
+    $qta_da_evadere = $qta_rimanente;
+    if ($abilita_controllo_disponibilita && $riga->isArticolo() && !$riga['is_descrizione']) {
+        $id_articolo = $riga->idarticolo;
+        $info_disponibilita = $disponibilita_articoli[$id_articolo] ?? null;
+
+        if ($info_disponibilita && !$info_disponibilita['servizio']) {
+            $qta_disponibile_originale = max(0, $info_disponibilita['disponibile']);
+            $qta_da_evadere = min($qta_rimanente, $qta_disponibile_originale);
+            // Decrementa disponibilità per righe successive
+            $disponibilita_articoli[$id_articolo]['disponibile'] -= $qta_da_evadere;
+            $qta_disponibile = $qta_disponibile_originale;
+        }
     }
 
     $attr = 'checked="checked"';
@@ -413,10 +487,28 @@ foreach ($righe as $i => $riga) {
                         '.numberFormat($qta_rimanente).'
                     </td>';
 
+    // Q.tà disponibile (solo se abilitato controllo disponibilità)
+    if ($abilita_controllo_disponibilita) {
+        $disp_class = '';
+        $disp_text = '-';
+        if ($qta_disponibile !== null) {
+            $disp_text = numberFormat($qta_disponibile);
+            if ($qta_disponibile < $qta_rimanente) {
+                $disp_class = 'text-warning';
+            }
+        }
+        echo '
+                    <td class="text-center '.$disp_class.'" style="vertical-align:middle">
+                        '.$disp_text.'
+                    </td>';
+    }
+
     // Q.tà da evadere
     echo '
-                    <td style="vertical-align:middle">
-                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"", "disabled": "'.($block_input ? '1' : '0').'" ]}
+                    <td class="text-center" style="vertical-align:middle; padding: 0;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 8px;">
+                            {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_da_evadere.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"", "disabled": "'.($block_input ? '1' : '0').'" ]}
+                        </div>
                     </td>';
 
     echo '
@@ -455,11 +547,12 @@ foreach ($righe as $i => $riga) {
 }
 
 // Totale
+$colspan_totale = $abilita_controllo_disponibilita ? 5 : 4;
 echo '
             </tbody>
 
             <tr>
-                <td colspan="4" class="text-right">
+                <td colspan="'.$colspan_totale.'" class="text-right">
                     <b>'.tr('Totale').':</b>
                 </td>
                 <td class="text-right">
@@ -467,6 +560,7 @@ echo '
                 </td>
             </tr>
         </table>
+        </div>
     </div>';
 
 // Elenco righe evase completametne
@@ -480,7 +574,8 @@ if (!$righe_evase->isEmpty()) {
             </div>
         </div>
 
-        <table class="card-body table table-striped table-hover table-sm">
+        <div class="card-body p-0">
+        <table class="table table-striped table-hover table-sm">
             <thead>
                 <tr>
                     <th>'.tr('Descrizione').'</th>
@@ -500,24 +595,30 @@ if (!$righe_evase->isEmpty()) {
     echo '
             </tbody>
         </table>
+        </div>
     </div>';
 }
 
 // Gestione articolo sottoscorta
 echo '
-    <div class="card alert-warning hidden" id="articoli_sottoscorta">
-        <table class="table table-sm">
+    <div class="card card-warning hidden" id="articoli_sottoscorta">
+        <div class="card-header with-border">
+            <h3 class="card-title"><i class="fa fa-exclamation-triangle"></i> '.tr('Quantità non disponibili').'</h3>
+        </div>
+        <div class="card-body p-0">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>'.tr('Articolo').'</th>
-                    <th class="text-center tip" width="150" title="'.tr('Quantità richiesta').'">'.tr('Q.tà').'</th>
-                    <th class="text-center tip" width="150" title="'.tr('Quantità disponibile nel magazzino del gestionale').'">'.tr('Q.tà magazzino').'</th>
-                    <th class="text-center" width="150">'.tr('Scarto').'</th>
+                    <th class="text-center tip" width="120" title="'.tr('Quantità richiesta').'">'.tr('Q.tà richiesta').'</th>
+                    <th class="text-center tip" width="120" title="'.tr('Quantità disponibile nel magazzino del gestionale').'">'.tr('Disponibile').'</th>
+                    <th class="text-center tip" width="120" title="'.tr('Quantità non evadibile').'">'.tr('Mancante').'</th>
                 </tr>
             </thead>
 
             <tbody></tbody>
         </table>
+        </div>
     </div>';
 
 echo '
@@ -535,19 +636,33 @@ echo '
 echo '
 <script>$(document).ready(init)</script>';
 
-// Individuazione scorte
+// Individuazione scorte (usa la disponibilità calcolata per sede se disponibile)
 $articoli = $documento->articoli->groupBy('idarticolo');
 $scorte = [];
 foreach ($articoli as $elenco) {
-    $qta = $elenco->sum('qta');
     $articolo = $elenco->first()->articolo;
 
     $descrizione_riga = $articolo->codice.' - '.$articolo->getTranslation('title');
-    $text = $articolo ? Modules::link('Articoli', $articolo->id, $descrizione_riga) : $descrizione_riga;
+    $link_articolo = $articolo ? Modules::link('Articoli', $articolo->id, $descrizione_riga) : $descrizione_riga;
+
+    // Usa la disponibilità calcolata per sede se presente, altrimenti la giacenza totale
+    if (isset($disponibilita_articoli[$articolo->id])) {
+        $qta_disponibile_scorte = $disponibilita_articoli[$articolo->id]['disponibile_iniziale'];
+    } else {
+        $qta_disponibile_scorte = $articolo->qta;
+    }
+
+    // Calcola quantità rimanente da evadere per questo articolo
+    $qta_rimanente_articolo = 0;
+    foreach ($elenco as $riga_articolo) {
+        $qta_rimanente_articolo += ($final_module->name == 'Ordini fornitore') ? $riga_articolo['qta'] : $riga_articolo['qta_rimanente'];
+    }
 
     $scorte[$articolo->id] = [
-        'qta' => $articolo->qta,
-        'descrizione' => $text,
+        'qta' => $qta_disponibile_scorte,
+        'qta_rimanente' => $qta_rimanente_articolo,
+        'descrizione' => $descrizione_riga,
+        'link' => $link_articolo,
         'servizio' => $articolo->servizio,
     ];
 }
@@ -562,7 +677,7 @@ echo '
 
         let righe = $("#righe_documento_importato tr", "#modals");
 
-        // Lettura delle righe selezionate per l\'improtazione
+        // Lettura delle righe selezionate per l\'importazione
         let richieste = {};
         for(const r of righe) {
             let riga = $(r);
@@ -581,15 +696,40 @@ echo '
         let body = sottoscorta.find("tbody");
         body.html("");
 
+        // Mostra articoli dove la quantità richiesta supera la disponibilità
         for(const id_articolo in richieste) {
             let qta_scorta = parseFloat(scorte[id_articolo]["qta"]);
             let qta_richiesta = parseFloat(richieste[id_articolo]);
             if ((qta_richiesta > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1)) {
                 body.append(`<tr>
-            <td>` + scorte[id_articolo]["descrizione"] + `</td>
-            <td class="text-right">` + qta_richiesta.toLocale() + `</td>
-            <td class="text-right">` + qta_scorta.toLocale() + `</td>
-            <td class="text-right">` + (qta_richiesta - qta_scorta).toLocale() + `</td>
+            <td>` + scorte[id_articolo]["link"] + `</td>
+            <td class="text-center">` + qta_richiesta.toLocale() + `</td>
+            <td class="text-center">` + qta_scorta.toLocale() + `</td>
+            <td class="text-center text-danger"><strong>` + (qta_richiesta - qta_scorta).toLocale() + `</strong></td>
+        </tr>`);
+            }
+        }
+
+        // Mostra anche articoli dove la quantità rimanente originale supera la disponibilità
+        for(const id_articolo in scorte) {
+            let qta_scorta = parseFloat(scorte[id_articolo]["qta"]);
+            let qta_rimanente = parseFloat(scorte[id_articolo]["qta_rimanente"]);
+            // Mostra solo se non già mostrato sopra e se la qta rimanente > disponibilità
+            if ((qta_rimanente > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) && !richieste[id_articolo]) {
+                body.append(`<tr>
+            <td>` + scorte[id_articolo]["link"] + `</td>
+            <td class="text-center">` + qta_rimanente.toLocale() + `</td>
+            <td class="text-center">` + qta_scorta.toLocale() + `</td>
+            <td class="text-center text-danger"><strong>` + (qta_rimanente - qta_scorta).toLocale() + `</strong></td>
+        </tr>`);
+            }
+            // Mostra anche se la riga è selezionata ma la qta originale > disponibilità (differenza non evadibile)
+            if ((qta_rimanente > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) && richieste[id_articolo] && richieste[id_articolo] <= qta_scorta) {
+                body.append(`<tr>
+            <td>` + scorte[id_articolo]["link"] + `</td>
+            <td class="text-center">` + qta_rimanente.toLocale() + `</td>
+            <td class="text-center">` + qta_scorta.toLocale() + `</td>
+            <td class="text-center text-danger"><strong>` + (qta_rimanente - qta_scorta).toLocale() + `</strong></td>
         </tr>`);
             }
         }

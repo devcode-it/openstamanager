@@ -618,6 +618,37 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             data_competenza_iva BETWEEN '.prepare($periodo_precedente_start).' AND '.prepare($periodo_precedente_end).'
         ORDER BY `aliquota` desc');
 
+    $acconto_iva_periodo_corrente = $dbo->fetchOne('
+        SELECT
+            SUM(totale) AS totale
+        FROM
+            co_movimenti
+            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+        WHERE
+            co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+            AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end));
+
+    $acconto_iva_periodo_precedente = $dbo->fetchOne('
+        SELECT
+            SUM(totale) AS totale
+        FROM
+            co_movimenti
+            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+        WHERE
+            co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+            AND co_movimenti.data >= '.prepare($periodo_precedente_start).' AND co_movimenti.data <= '.prepare($periodo_precedente_end));
+
+    $acconto_iva_periodo_precedente_utilizzato = $dbo->fetchOne('
+            SELECT
+                -SUM(totale) AS totale
+            FROM
+                co_movimenti
+                INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+            WHERE
+                co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+                AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
+                AND co_movimenti.totale < 0');
+
     // Calcolo totali
     $totale_iva_esigibile = sum(array_column($iva_vendite_esigibile, 'iva'), null, 2);
     $totale_iva_nonesigibile = sum(array_column($iva_vendite_nonesigibile, 'iva'), null, 2);
@@ -653,6 +684,9 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         'iva_vendite_periodo_precedente' => $iva_vendite_periodo_precedente,
         'iva_acquisti_anno_precedente' => $iva_acquisti_anno_precedente,
         'iva_acquisti_periodo_precedente' => $iva_acquisti_periodo_precedente,
+        'acconto_iva_periodo_corrente' => $acconto_iva_periodo_corrente,
+        'acconto_iva_periodo_precedente' => $acconto_iva_periodo_precedente,
+        'acconto_iva_periodo_precedente_utilizzato' => $acconto_iva_periodo_precedente_utilizzato,
         'totale_iva_esigibile' => $totale_iva_esigibile,
         'totale_iva_nonesigibile' => $totale_iva_nonesigibile,
         'totale_iva_detraibile' => $totale_iva_detraibile,

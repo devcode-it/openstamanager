@@ -31,7 +31,7 @@ include_once __DIR__.'/../../../core.php';
         </div>
 
         <div class="col-md-5">
-            {[ "type": "text", "label": "<?php echo tr('Data'); ?>", "name": "data", "value": "-now-", "required": 1 ]}
+            {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "value": "-now-", "required": 1 ]}
         </div>
     </div>
 

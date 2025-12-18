@@ -29,12 +29,12 @@ if (empty($righe) || !is_array($righe)) {
 echo '<table class="table table-striped table-hover table-bordered" id="tabella-inventario">
     <thead>
         <tr>
-            <th width="20%">'.tr('Codice').'</th>
-            <th width="30%">'.tr('Descrizione').'</th>
-            <th width="15%">'.tr('Giacenza attuale').'</th>
-            <th width="15%">'.tr('Nuova giacenza').'</th>
+            <th width="15%">'.tr('Codice').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th width="18%" class="text-center">'.tr('Attuale giacenza').'</th>
+            <th width="10%" class="text-center">'.tr('Nuova giacenza').'</th>
             <th width="15%">'.tr('Ubicazione').'</th>
-            <th width="5%">'.tr('Azioni').'</th>
+            <th width="4%">'.tr('Azioni').'</th>
         </tr>
     </thead>
     <tbody>';
@@ -45,27 +45,32 @@ foreach ($righe as $riga) {
     $descrizione = $riga['descrizione'];
     $giacenza_attuale = floatval($riga['giacenza_attuale']);
     $nuova_giacenza = floatval($riga['nuova_giacenza']);
-    $ubicazione = $riga['ubicazione'];
 
+    $ultimo_movimento = $dbo->fetchOne('SELECT data, movimento FROM mg_movimenti WHERE idarticolo = '.prepare($riga['id_articolo']).' ORDER BY data DESC LIMIT 1');
+    $data_movimento = $ultimo_movimento['data'];
+    $descrizione_movimento = $ultimo_movimento['movimento'];
     echo '<tr data-id="'.$id.'">
         <td>'.$codice.'</td>
         <td>'.$descrizione.'</td>
-        <td class="text-right">'.Translator::numberToLocale($giacenza_attuale).'</td>
+        <td class="text-right">
+            <small class="text-muted">('.Translator::dateToLocale($data_movimento).')</small> <span class="badge badge-info">'.Translator::numberToLocale($giacenza_attuale).'</span><br>
+            <small class="text-muted">'.$descrizione_movimento.'</small>
+        </td>
         <td>';
 
-    // Input giacenza con struttura OpenSTAManager
-    echo '{[ "type": "number", "name": "giacenza_'.$id.'", "value": "'.$nuova_giacenza.'", "decimals": "qta", "class": "text-right", "onchange": "aggiornaGiacenza('.$id.', this.value)" ]}';
+        // Input giacenza con struttura OpenSTAManager
+        echo '{[ "type": "number", "name": "giacenza_'.$id.'", "value": "'.$nuova_giacenza.'", "decimals": "qta", "class": "text-right", "onchange": "aggiornaGiacenza('.$id.', this.value)" ]}';
 
     echo '</td>
         <td>';
 
-    // Input ubicazione con struttura OpenSTAManager
-    echo '{[ "type": "text", "name": "ubicazione_'.$id.'", "value": "'.$ubicazione.'", "placeholder": "'.tr('Ubicazione').'", "onchange": "aggiornaUbicazione('.$id.', this.value)" ]}';
+        // Input ubicazione con struttura OpenSTAManager
+        echo '{[ "type": "text", "name": "ubicazione_'.$id.'", "value": "'.$ubicazione.'", "placeholder": "'.tr('Ubicazione').'", "onchange": "aggiornaUbicazione('.$id.', this.value)" ]}';
 
     echo '</td>
         <td class="text-center">
-            <button type="button" class="btn btn-danger" 
-                    onclick="rimuoviRigaInventario('.$id.')" 
+            <button type="button" class="btn btn-danger"
+                    onclick="rimuoviRigaInventario('.$id.')"
                     title="'.tr('Rimuovi').'">
                 <i class="fa fa-trash"></i>
             </button>

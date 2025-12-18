@@ -329,6 +329,8 @@ switch ($resource) {
         break;
 
     case 'serial-articolo':
+        // Query per selezionare i serial disponibili in magazzino
+        // Un serial è disponibile se l'ultimo movimento cronologico è dir='uscita' (articolo entrato in magazzino)
         $query = 'SELECT serial AS id, serial AS descrizione FROM mg_prodotti |where|';
 
         foreach ($elements as $element) {
@@ -341,37 +343,20 @@ switch ($resource) {
 
         $where[] = 'mg_prodotti.id_articolo='.prepare($superselect['idarticolo']);
         $where[] = 'mg_prodotti.dir=\'uscita\'';
-        $where[] = 'mg_prodotti.id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)';
-        // Escludi i serial già venduti, considerando la data di carico effettiva (DDT se esiste, altrimenti fattura)
-        $where[] = 'mg_prodotti.serial NOT IN (
-            SELECT DISTINCT vendite.serial
-            FROM mg_prodotti AS vendite
-            INNER JOIN co_righe_documenti AS riga_vendita ON vendite.id_riga_documento = riga_vendita.id
-            INNER JOIN co_documenti AS doc_vendita ON riga_vendita.iddocumento = doc_vendita.id
-            WHERE vendite.dir = \'entrata\'
-            AND vendite.id_articolo = mg_prodotti.id_articolo
-            AND vendite.serial IS NOT NULL
-            AND doc_vendita.data >= COALESCE(
-                (
-                    SELECT MIN(ddt.data)
-                    FROM mg_prodotti AS acquisti_ddt
-                    INNER JOIN dt_righe_ddt AS riga_ddt ON acquisti_ddt.id_riga_ddt = riga_ddt.id
-                    INNER JOIN dt_ddt AS ddt ON riga_ddt.idddt = ddt.id
-                    WHERE acquisti_ddt.serial = mg_prodotti.serial
-                    AND acquisti_ddt.id_articolo = mg_prodotti.id_articolo
-                    AND acquisti_ddt.dir = \'uscita\'
-                ),
-                (
-                    SELECT MIN(doc_acquisto.data)
-                    FROM mg_prodotti AS acquisti_fat
-                    INNER JOIN co_righe_documenti AS riga_acquisto ON acquisti_fat.id_riga_documento = riga_acquisto.id
-                    INNER JOIN co_documenti AS doc_acquisto ON riga_acquisto.iddocumento = doc_acquisto.id
-                    WHERE acquisti_fat.serial = mg_prodotti.serial
-                    AND acquisti_fat.id_articolo = mg_prodotti.id_articolo
-                    AND acquisti_fat.dir = \'uscita\'
-                    AND acquisti_fat.id_riga_ddt IS NULL
-                )
-            )
+
+        $where[] = 'mg_prodotti.id = (
+            SELECT m.id
+            FROM mg_prodotti AS m
+            LEFT JOIN co_righe_documenti rd ON rd.id = m.id_riga_documento
+            LEFT JOIN co_documenti doc ON doc.id = rd.iddocumento
+            LEFT JOIN dt_righe_ddt rdt ON rdt.id = m.id_riga_ddt
+            LEFT JOIN dt_ddt ddt ON ddt.id = rdt.idddt
+            LEFT JOIN or_righe_ordini ro ON ro.id = m.id_riga_ordine
+            LEFT JOIN or_ordini ord ON ord.id = ro.idordine
+            WHERE m.id_articolo = mg_prodotti.id_articolo
+            AND m.serial = mg_prodotti.serial
+            ORDER BY COALESCE(doc.data, ddt.data, ord.data, m.created_at) DESC, m.id DESC
+            LIMIT 1
         )';
 
         if (!empty($search)) {

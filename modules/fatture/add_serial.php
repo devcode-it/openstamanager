@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
 
 $module = Module::find($id_module);
 $id_module_articoli = Module::where('name', 'Articoli')->first()->id;
@@ -37,6 +38,13 @@ if (in_array($module->name, $uscite)) {
     $dir = 'uscita';
 } else {
     $dir = 'entrata';
+}
+
+// Controllo se il documento è una nota di credito/debito (per gestione inversa seriali)
+$is_nota = false;
+if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
+    $fattura_corrente = Fattura::find($id_record);
+    $is_nota = $fattura_corrente ? $fattura_corrente->isNota() : false;
 }
 
 $data = [
@@ -111,12 +119,42 @@ $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND
 $serials = $info ? array_column($info, 'serial') : [];
 
 if ($dir == 'entrata') {
-    echo '
+    // Per le note di credito di vendita, mostra i seriali dalla fattura originale
+    if ($is_nota && !empty($fattura_corrente->ref_documento)) {
+        // Recupera la riga originale collegata a questa riga della nota di credito
+        $riga_corrente = $dbo->fetchOne('SELECT ref_riga_documento FROM co_righe_documenti WHERE id = '.prepare($idriga));
+        $id_riga_originale = $riga_corrente['ref_riga_documento'];
+
+        // Recupera i seriali dalla riga della fattura originale
+        $serials_originali = [];
+        if (!empty($id_riga_originale)) {
+            $serials_originali = $dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento = '.prepare($id_riga_originale));
+            $serials_originali = array_column($serials_originali, 'serial');
+        }
+
+        // Costruisci le opzioni per il select
+        $options = [];
+        foreach ($serials_originali as $serial) {
+            $options[] = [
+                'id' => $serial,
+                'text' => $serial,
+            ];
+        }
+
+        echo '
+    <div class="row">
+        <div class="col-md-12">
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": '.json_encode($options).', "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
+        </div>
+    </div>';
+    } else {
+        echo '
     <div class="row">
         <div class="col-md-12">
             {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $rs[0]['idarticolo']]).', "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
         </div>
     </div>';
+    }
 } else {
     echo '
     <div class="row">

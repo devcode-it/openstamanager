@@ -1023,10 +1023,6 @@ echo '
         var pagamentoData = $("#idpagamento").selectData();
         var bancaMancante = !bancaVal || bancaVal == "" || bancaVal == "null";
 
-        console.log("DEBUG pagamentoData completo:", JSON.stringify(pagamentoData));
-        console.log("DEBUG codice_modalita_pagamento_fe:", pagamentoData ? pagamentoData.codice_modalita_pagamento_fe : "N/A");
-        console.log("DEBUG bancaVal:", bancaVal, "bancaMancante:", bancaMancante);
-
         if (pagamentoData && pagamentoData.codice_modalita_pagamento_fe == "MP12") {
             var avviso = " ('.tr('Nessuna banca di addebito selezionata').')";
             var testoOriginale = pagamentoData.text || "";

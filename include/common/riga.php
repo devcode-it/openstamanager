@@ -211,6 +211,9 @@ echo '
 // Sconto unitario
 echo '
         <div class="col-md-'.$width.'">
+            <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Calcola sconto combinato').'" id="btn-sconto-combinato" '.($result['tipo_sconto'] !== 'PRC' ? 'disabled' : '').'>
+                <i class="fa fa-calculator"></i>
+            </button>
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
         </div>
     </div>';
@@ -424,6 +427,31 @@ echo '
                     } else if (dataFine.date() < dataInizio.date()) {
                         dataInizio.date(dataFine.date());
                     }
+                }
+            });
+
+            // Abilita/disabilita il pulsante in base al tipo di sconto
+            var updateButtonState = function() {
+                var tipo_sconto_select = $("#modals select[id^=\'tipo_sconto\']");
+                var btn = $("#btn-sconto-combinato");
+
+                if (tipo_sconto_select.length) {
+                    var tipo = tipo_sconto_select.val();
+                    if (tipo === "PRC") {
+                        btn.prop("disabled", false);
+                    } else {
+                        btn.prop("disabled", true);
+                    }
+                }
+            };
+
+            // Aggiorna lo stato al cambio del tipo di sconto
+            $(document).on("change", "#modals select[id^=\'tipo_sconto\']", updateButtonState);
+
+            // Pulsante calcola sconto combinato
+            $("#btn-sconto-combinato").click(function() {
+                if (!$(this).prop("disabled")) {
+                    openModal("'.tr('Calcola sconto combinato').'", globals.rootdir + "/modules/fatture/modals/sconto_combinato.php");
                 }
             });
         });

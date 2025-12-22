@@ -209,12 +209,11 @@ echo '
     </div>
     <br>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <button type="button" class="btn btn-danger" data-action="clear">
                 <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
             </button>
-        </div>
-        <div class="col-md-6">
+
             <button type="submit" class="btn btn-success pull-right" data-action="save">
                 <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
             </button>

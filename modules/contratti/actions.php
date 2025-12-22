@@ -834,6 +834,9 @@ switch (post('op')) {
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');
+        $update_prezzo_acquisto = post('update_prezzo_acquisto');
+        $update_prezzo_vendita = post('update_prezzo_vendita');
+        $update_descrizione = post('update_descrizione');
 
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
@@ -843,18 +846,25 @@ switch (post('op')) {
             $sconto = 0;
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
-                if (!$prezzo_consigliato['prezzo_unitario']) {
-                    $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+
+                if( $update_prezzo_vendita) {
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                    if (!$prezzo_consigliato['prezzo_unitario']) {
+                        $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+                    }
+                    $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
+                    $sconto = $prezzo_consigliato['sconto'];
+
+                    $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
+                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
                 }
-                $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
-                $sconto = $prezzo_consigliato['sconto'];
 
-                $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
-                $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
-
-                if ($dir == 'entrata') {
+                if ($dir == 'entrata' && $update_prezzo_acquisto) {
                     $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
+                }
+
+                if( $update_descrizione) {
+                    $riga->descrizione = $riga->articolo->getTranslation('title');
                 }
             }
 

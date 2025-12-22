@@ -1345,6 +1345,9 @@ switch ($op) {
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');
+        $update_prezzo_acquisto = post('update_prezzo_acquisto');
+        $update_prezzo_vendita = post('update_prezzo_vendita');
+        $update_descrizione = post('update_descrizione');
 
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
@@ -1363,11 +1366,21 @@ switch ($op) {
 
                 if ($dir == 'entrata') {
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
-                    $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
+
+                    if ($update_prezzo_acquisto) {
+                        $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
+                    }
                 } else {
                     $prezzo_unitario = $prezzo_unitario ?: $riga->articolo->prezzo_acquisto;
                 }
-                $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
+
+                if( $update_prezzo_vendita) {
+                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
+                }
+
+                if( $update_descrizione) {
+                    $riga->descrizione = $riga->articolo->getTranslation('title');
+                }
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica

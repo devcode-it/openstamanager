@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.9.8 (2025-12-23)](#298-2025-12-23)
 - [2.9.7 (2025-12-09)](#297-2025-12-09)
 - [2.9.6 (2025-11-26)](#296-2025-11-26)
 - [2.9.5 (2025-11-12)](#295-2025-11-12)
@@ -66,6 +67,37 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
+## 2.9.8 (2025-12-23)
+### Modificato (Changed)
+- Migliorata la gestione delle aliquote IVA con aggiunta di un controllo sulla presenza della natura IVA per aliquote esenti
+- Aggiornamento foglio di stile asso software per generazione XML
+- Miglioria controllo su importazione fatture
+
+### Fixed
+- Corretta la gestione dei barcode collegati ad articoli eliminati
+- Corretto l'avviso sulle risorse in scadenza
+- Corretta la generazione di scadenze relative a fatture con marca da bollo
+- Corretta la visualizzazione della ragione sociale del fornitore nella sezione Ultimi 20 prezzi di acquisto in Articoli
+- Corretta la stampa inventario
+- Corretta la stampa dei contratti
+- Corretta l'impostazione del pagamento predefinito dell'anagrafica in aggiunta di una nuova attività
+- Corretta l'aggiunta di marca e modello in fase di creazione di un impianto
+- Corretta l'aggiunta di una prima nota dall'edit prima nota
+- Corretta la stampa della provvigione agente
+- Corretto il salvataggio della configurazione Oauth2
+- Corretto l'avviso
+- Corretta l'associazione di permessi ai gruppi di utenti
+- Corretto l'invio mail da terminale durante l'esecuzione del cron
+- Corretta la vista di Accesso con OAuth
+- Corretta l'aggiunta di una categoria
+- Corretta la visualizzazione di articoli collegati a una marca
+- Corretta l'aggiunta di una categoria file
+- Corretto il calcolo della quantità evasa delle righe preventivo per problema in fase di eliminazione fattura creata da preventivo con quantità eccedenti la disponibilità a magazzino
+- Corretto l'ordinamento dei movimenti degli articoli da plugin per data movimento
+- Corretta la gestione dei seriali in note di credito collegate a fatture
+- Corretto il redirect al modulo fatture da plugin serial, nel caso di note di credito
+- Corretta la gestione dei seriali rientrati a magazzino tramite nota di credito
+- Corretta la selezione del tipo documento in fase di generazione nota di credito
 
 ## 2.9.7 (2025-12-09)
 ### Modificato (Changed)

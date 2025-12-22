@@ -80,9 +80,7 @@ $giacenze = $articolo->getGiacenze();
 $movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
 
 // Ordinamento per data del documento (decrescente) e poi per ID (decrescente)
-$movimenti = $movimenti->sortByDesc(function ($movimento) {
-    return [$movimento->data, $movimento->id];
-})->values();
+$movimenti = $movimenti->sortByDesc(fn ($movimento) => [$movimento->data, $movimento->id])->values();
 
 // Limite ai primi 20 movimenti se non richiesta la movimentazione completa
 if (empty($_GET['movimentazione_completa'])) {

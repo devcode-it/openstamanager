@@ -6,7 +6,6 @@ use TheNetworg\OAuth2\Client\Provider\Azure;
 
 class Microsoft extends Azure implements ProviderInterface
 {
-
     protected static $provider = 'Microsoft';
 
     /**

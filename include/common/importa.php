@@ -182,7 +182,7 @@ if (!empty($options['create_document'])) {
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * ,`or_statiordine`.`id`, `or_statiordine_lang`.`title` AS descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito.'" ]}
             </div>';
     }
-    echo'
+    echo '
                 <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $idtipodocumento])['id_segment'].'" ]}
                 </div>';
@@ -254,7 +254,6 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
 
     echo '
             </div>';
-
 
     echo '
             <div class="row">';
@@ -370,8 +369,6 @@ if ($abilita_controllo_disponibilita) {
         }
     }
 }
-
-
 
 // Righe del documento
 echo '

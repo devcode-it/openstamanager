@@ -38,7 +38,7 @@ switch ($operazione) {
             $esistente_barcode = $dbo->table('mg_articoli_barcode')
                 ->where('mg_articoli_barcode.barcode', $barcode_value)
                 ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.idarticolo')
-                ->where('mg_articoli.deleted_at', null)                   
+                ->where('mg_articoli.deleted_at', null)
                 ->count() > 0;
 
             // Verifica che il barcode non coincida con un codice articolo esistente

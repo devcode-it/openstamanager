@@ -258,7 +258,7 @@ foreach ($righe as $riga) {
     $autofill->next();
 }
 
-    $autofill->count($documento['esclusioni']);
+$autofill->count($documento['esclusioni']);
 echo '
         |autofill|
     </tbody>';

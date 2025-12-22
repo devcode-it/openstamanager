@@ -21,7 +21,7 @@ Per migliorare il sistema con cui sviluppiamo il codice, abbiamo deciso di adott
 
 ### Standard del codice
 
-Per lo standard ufficiale riguardante i nomi e le strutture da utilizzare, visita la sezione [Standard](STANDARD.md).
+Per lo standard ufficiale riguardante i nomi e le strutture da utilizzare, visita la sezione [Standard](https://github.com/devcode-it/openstamanager/blob/master/.github/STANDARD.md).
 
 ### Codice di condotta
 
@@ -71,7 +71,7 @@ Se sei in grado di risolvere uno dei bug segnalati oppure vuoi completare una nu
 
 ## Community
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager) e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>.
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager) e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com/>.
 
 Cerchiamo di essere disponibili quanto possibile, ma non sempre riusciamo a rispondere tempestivamente.
 

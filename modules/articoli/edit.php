@@ -108,7 +108,7 @@ use Modules\Iva\Aliquota;
 
                     <div class="row">
                         <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "garanzia", "decimals": 0, "value": "$garanzia$", "icon-after": "choice|period|<?php echo $record['tipo_garanzia']; ?>" ]}
                         </div>
 
                         <div class="col-md-4">

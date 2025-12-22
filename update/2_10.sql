@@ -403,3 +403,8 @@ DROP TABLE IF EXISTS `an_sedi_tecnici`;
 
 -- Aggiunta campo deleted_at per gestire eliminazione sedi
 ALTER TABLE `an_sedi` ADD `deleted_at` TIMESTAMP NULL AFTER `enable_newsletter`; 
+
+-- modifica nome campo gg_garanzia in garanzia in mg_articoli e aggiunta campo tipo_garanzia per gestione dell'unità di misura del valore (giorni, mesi, anni)
+ALTER TABLE `mg_articoli` 
+    CHANGE `gg_garanzia` `garanzia` INT(11) NOT NULL DEFAULT 0,
+    ADD `tipo_garanzia` ENUM('days', 'months', 'years')  NOT NULL DEFAULT 'days';

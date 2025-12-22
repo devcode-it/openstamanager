@@ -42,7 +42,8 @@ class Combinazione extends Model
         'id_sottocategoria',
         // 'descrizione',
         'um',
-        'gg_garanzia',
+        'garanzia',
+        'tipo_garanzia',
         'servizio',
     ];
 

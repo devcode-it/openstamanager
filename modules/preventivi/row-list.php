@@ -269,7 +269,8 @@ foreach ($righe as $key => $riga) {
             echo '
                     <td class="text-center">
                         '.($show_notifica['show_notifica_sconto'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
-                        {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.$block_edit.'" ]}
+                        {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.($block_edit || $riga->sconto_percentuale_combinato).'" ]}
+                    <small class="badge badge-info '.($riga->tipo_sconto == 'PRC+' ? '' : 'hidden').'">Sconto combinato: '.$riga->sconto_percentuale_combinato.'</small>
                     </td>';
 
             // Importo

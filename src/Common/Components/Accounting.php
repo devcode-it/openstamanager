@@ -183,7 +183,7 @@ abstract class Accounting extends Component
      */
     public function getTipoScontoAttribute()
     {
-        return $this->sconto_percentuale ? 'PRC' : ($this->sconto ? 'UNT' : 'PRC');
+        return $this->sconto_percentuale ? ($this->sconto_percentuale_combinato ? 'PRC+' : 'PRC') : ($this->sconto ? 'UNT' : 'PRC');
     }
 
     /**
@@ -276,12 +276,13 @@ abstract class Accounting extends Component
     /**
      * Imposta lo sconto secondo le informazioni indicate per valore e tipologia (UNT o PRC).
      */
-    public function setSconto($value, $type)
+    public function setSconto($value, $type, $value_combinato = null)
     {
         $incorpora_iva = $this->incorporaIVA();
 
-        if ($type == 'PRC') {
+        if ($type == 'PRC' || $type == 'PRC+') {
             $this->attributes['sconto_percentuale'] = $value;
+            $this->attributes['sconto_percentuale_combinato'] = $value_combinato ?: null;
 
             $sconto = calcola_sconto([
                 'sconto' => $value,
@@ -291,6 +292,7 @@ abstract class Accounting extends Component
             ]);
         } else {
             $this->attributes['sconto_percentuale'] = 0;
+            $this->attributes['sconto_percentuale_combinato'] = null;
             $sconto = $value;
         }
 

@@ -279,6 +279,10 @@ class HTMLWrapper implements WrapperInterface
                     'id' => 'UNT',
                     'descrizione' => currency(),
                 ],
+                [
+                    'id' => 'PRC+',
+                    'descrizione' => '%+',
+                ],
             ];
         } elseif ($type == 'email') {
             $choices = [

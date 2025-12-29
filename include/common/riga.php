@@ -133,7 +133,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                 mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
             }
 
-            div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-25px;\" >\
+            div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-13px;\" >\
                         <tr>\
                             <td>\
                                 <small>&nbsp;'.tr('Guadagno').':</small>\
@@ -215,6 +215,12 @@ echo '
                 <i class="fa fa-calculator"></i>
             </button>
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
+            <div style="margin-top:-29px;">
+                <span class="badge badge-info" id="label_sconto">
+                    '.tr('Sconto combinato').': '.$result['sconto_percentuale_combinato'].'
+                </span>
+            </div>
+            <input type="hidden" name="sconto_percentuale_combinato" id="sconto_percentuale_combinato" value="'.$result['sconto_percentuale_combinato'].'">
         </div>
     </div>';
 
@@ -416,7 +422,7 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
 echo '
     <script>
         // Data inizio competenza deve essere minore di data fine competenza e data fine competenza deve essere maggiore di data inizio competenza
-        $(document).ready(function() {
+        $("#modals > div").on( "shown.bs.modal", function() {
             $("#data_inizio_competenza, #data_fine_competenza").on("dp.change", function (e) {
                 var dataInizio = $("#data_inizio_competenza").data("DateTimePicker");
                 var dataFine = $("#data_fine_competenza").data("DateTimePicker");
@@ -429,24 +435,33 @@ echo '
                     }
                 }
             });
+            updateButtonScontoCombinato();
 
             // Abilita/disabilita il pulsante in base al tipo di sconto
-            var updateButtonState = function() {
+            function updateButtonScontoCombinato() {
                 var tipo_sconto_select = $("#modals select[id^=\'tipo_sconto\']");
                 var btn = $("#btn-sconto-combinato");
 
                 if (tipo_sconto_select.length) {
                     var tipo = tipo_sconto_select.val();
-                    if (tipo === "PRC") {
+                    if (tipo === "PRC+") {
                         btn.prop("disabled", false);
+                        $("#sconto").prop("disabled", true);
+                        $("#label_sconto").removeClass("hidden");
                     } else {
                         btn.prop("disabled", true);
+                        $("#sconto").prop("disabled", false);
+                        $("#label_sconto").addClass("hidden");
+                        $("#label_sconto").text("");
+                        $("#sconto_percentuale_combinato").val("");
                     }
                 }
-            };
+            }
 
             // Aggiorna lo stato al cambio del tipo di sconto
-            $(document).on("change", "#modals select[id^=\'tipo_sconto\']", updateButtonState);
+            $("#modals select[id^=\'tipo_sconto\']").on("change", function () {
+                updateButtonScontoCombinato();
+            });
 
             // Pulsante calcola sconto combinato
             $("#btn-sconto-combinato").click(function() {

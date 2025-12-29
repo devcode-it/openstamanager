@@ -173,7 +173,7 @@ switch (filter('op')) {
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->idconto = post('idconto') ?: null;
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
@@ -237,7 +237,7 @@ switch (filter('op')) {
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-        $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         if ($dir == 'entrata') {
             $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }

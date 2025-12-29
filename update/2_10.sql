@@ -408,3 +408,17 @@ ALTER TABLE `an_sedi` ADD `deleted_at` TIMESTAMP NULL AFTER `enable_newsletter`;
 ALTER TABLE `mg_articoli` 
     CHANGE `gg_garanzia` `garanzia` INT(11) NOT NULL DEFAULT 0,
     ADD `tipo_garanzia` ENUM('days', 'months', 'years')  NOT NULL DEFAULT 'days';
+
+-- Aggiunta sconto combinato
+ALTER TABLE `co_righe_contratti` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_righe_contratti` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+ALTER TABLE `co_righe_documenti` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_righe_documenti` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+ALTER TABLE `co_righe_preventivi` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_righe_preventivi` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+ALTER TABLE `dt_righe_ddt` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `dt_righe_ddt` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+ALTER TABLE `in_righe_interventi` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `in_righe_interventi` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+ALTER TABLE `or_righe_ordini` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `or_righe_ordini` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;

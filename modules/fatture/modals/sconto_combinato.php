@@ -42,6 +42,7 @@ $(document).ready(function() {
 
     // Determina quale campo sconto è presente (sconto_percentuale o sconto)
     var sconto_field = $("#sconto_percentuale").length ? $("#sconto_percentuale") : $("#sconto");
+    var label_sconto = $("#label_sconto");
 
     // Reinizializza i componenti del form quando il modal si apre
     modal.on("shown.bs.modal", function() {
@@ -66,6 +67,9 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.success) {
                         sconto_field.val(response.sconto.toLocale());
+                        $("#sconto_percentuale_combinato").val(prc_combinato);
+                        label_sconto.removeClass("hidden");
+                        label_sconto.text("'.tr('Sconto combinato').': " + prc_combinato);
                         sconto_field.trigger("keyup");
                         modal.modal("hide");
                     } else {

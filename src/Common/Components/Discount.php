@@ -96,7 +96,7 @@ abstract class Discount extends Accounting
         throw new \InvalidArgumentException();
     }
 
-    public function setSconto($value, $type): never
+    public function setSconto($value, $type, $value_combinato = null): never
     {
         throw new \InvalidArgumentException();
     }

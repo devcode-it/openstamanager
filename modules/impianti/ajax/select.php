@@ -121,7 +121,12 @@ switch ($resource) {
 
             $impianti = $superselect['matricola'];
             if (!empty($impianti)) {
-                $where[] = '`my_componenti`.`id_impianto` IN ('.$impianti.')';
+                // Sanifica la lista di ID separati da virgola
+                $ids = explode(',', $impianti);
+                $ids_preparati = array_map(function($id) {
+                    return prepare(trim($id));
+                }, $ids);
+                $where[] = '`my_componenti`.`id_impianto` IN ('.implode(',', $ids_preparati).')';
             }
 
             if (!empty($search)) {

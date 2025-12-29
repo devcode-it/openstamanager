@@ -95,6 +95,11 @@ class XML
 
         $output_file = $directory.'/'.basename($file, '.p7m');
 
+        // Validate that file path doesn't contain shell metacharacters
+        if (preg_match('/[;&|`$(){}\\[\\]<>]/', $file)) {
+            throw new \Exception('Invalid file path');
+        }
+
         try {
             if (function_exists('exec')) {
                 exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$output_file.'"', $output, $cmd);

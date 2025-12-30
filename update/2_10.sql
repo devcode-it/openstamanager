@@ -135,11 +135,6 @@ INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_modules`), 'Ammortamenti'),
 (2, (SELECT MAX(`id`) FROM `zz_modules`), 'Depreciations');
 
-INSERT INTO `zz_modules_flags` (`id_module`, `name`)
-SELECT (SELECT MAX(`id`) FROM `zz_modules`), 'use_notes'
-UNION ALL
-SELECT (SELECT MAX(`id`) FROM `zz_modules`), 'use_checklists';
-
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`, `format`, `summable`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'id', '`co_righe_documenti`.`id`', 1, 0, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ammortamenti'), 'Descrizione', '`co_righe_documenti`.`descrizione`', 2, 1, 0, 0),

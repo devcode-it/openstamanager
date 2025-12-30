@@ -253,10 +253,11 @@ abstract class Component extends Model
         $model->customInitCopiaIn($this);
 
         if (empty($model->idiva)) {
-            if (!empty($this->idiva)) {
+            if (($this->idiva)) {
                 $model->idiva = $this->idiva;
             } else {
                 $model->idiva = setting('Iva predefinita');
+                unset ($attributes['idiva']);
             }
         }
 

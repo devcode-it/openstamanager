@@ -1,6 +1,8 @@
 echo "Inserisci il numero di versione di OSM, verrà usato anche per Docker (2.7-beta, oppure 2.7.1, ecc):"
 read version
 
+docker image rm devcodesrl/openstamanager:latest
+
 docker build .
 
 images=$(docker image ls)

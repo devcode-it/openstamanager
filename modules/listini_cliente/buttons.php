@@ -20,13 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\ListiniCliente\Listino;
-
-if (!empty($id_record)) {
-    $listino = Listino::find($id_record);
-    $record = $dbo->fetchOne('SELECT * FROM `mg_listini` WHERE `id`='.prepare($id_record));
-    $anagrafiche = $listino->anagrafiche->pluck('idanagrafica')->toArray();
-    $anagrafiche = implode(',', $anagrafiche);
-
-    $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-}
+// Duplica listino
+echo '
+<button type="button" class="btn btn-primary ask" data-title="'.tr('Duplicare questo listino?').'" data-msg="'.tr('Clicca su tasto duplica per procedere.').'" data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
+    <i class="fa fa-copy"></i> '.tr('Duplica listino').'
+</button>';

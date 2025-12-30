@@ -22,6 +22,7 @@ namespace Modules\ListiniCliente;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Anagrafiche\Anagrafica;
 
 /*
  * Classe per la gestione delle relazioni articolo-prezzo sulla base di un range di quantità e di una specifica anagrafica.
@@ -47,5 +48,10 @@ class Listino extends Model
         $model->save();
 
         return $model;
+    }
+
+    public function anagrafiche()
+    {
+        return $this->hasMany(Anagrafica::class, 'id_listino');
     }
 }

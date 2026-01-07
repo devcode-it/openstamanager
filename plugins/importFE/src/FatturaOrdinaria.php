@@ -541,7 +541,7 @@ class FatturaOrdinaria extends FatturaElettronica
         if (abs($diff) > 0.001) {
             $arrotondamento_finale = 0;
 
-            if ($arrotondamento_documento_xml != 0) {
+            if ($arrotondamento_documento_xml != 0 && $arrotondamento_documento_xml != $totale_documento) {
                 // Se c'è un arrotondamento esplicito nel XML, lo usiamo
                 $arrotondamento_finale = $arrotondamento_documento_xml;
             } else {

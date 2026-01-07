@@ -49,10 +49,9 @@ $credito_iva_compensabile = $acconto_iva_periodo_precedente['totale'] - $acconto
 $credito_iva_compensabile = $credito_iva_compensabile > 0 ? $credito_iva_compensabile : 0;
 
 // A fine anno considero anche l'acconto
-if (date('m', strtotime($date_end)) == 12) {
-    $credito_iva_compensabile += + $acconto_iva_periodo_corrente['totale'];
+if (date('m', strtotime((string) $date_end)) == 12) {
+    $credito_iva_compensabile += +$acconto_iva_periodo_corrente['totale'];
 }
-
 
 if ($periodo == 'Trimestrale') {
     if ($totale_iva_periodo_precedente > 0) {
@@ -355,26 +354,26 @@ echo '
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>';
-        if ($periodo == 'Mensile') {
-            $importo_da_versare = $totale_iva;
-        } else {
-            $importo_da_versare = $totale_iva_maggiorata;
-        }
+if ($periodo == 'Mensile') {
+    $importo_da_versare = $totale_iva;
+} else {
+    $importo_da_versare = $totale_iva_maggiorata;
+}
 
-        $importo_da_versare -= $credito_iva_compensabile;
-        $importo_da_versare = $importo_da_versare > 0 ? $importo_da_versare : 0;
-        echo '
+$importo_da_versare -= $credito_iva_compensabile;
+$importo_da_versare = $importo_da_versare > 0 ? $importo_da_versare : 0;
+echo '
         <td class=text-right>'.moneyFormat($importo_da_versare, 2).'</td>
     </tr>
     <tr>
         <td>CREDITO UTILIZZABILE PER PROSSIMA LIQUIDAZIONE</td>';
-        
-    if ($totale_iva < $credito_iva_compensabile) {
-        echo '<td class="text-right">' . moneyFormat(abs($credito_iva_compensabile - $totale_iva), 2) . '</td>';
-    } else {
-        echo '<td class="text-right">0,00 €</td>';
-    }
-    echo '
+
+if ($totale_iva < $credito_iva_compensabile) {
+    echo '<td class="text-right">'.moneyFormat(abs($credito_iva_compensabile - $totale_iva), 2).'</td>';
+} else {
+    echo '<td class="text-right">0,00 €</td>';
+}
+echo '
     </tr>
     <tr>
         <td>CREDITO INFRANNUALE DI IMPOSTA CHIESTO A RIMBORSO</td>

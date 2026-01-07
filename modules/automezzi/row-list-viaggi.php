@@ -91,7 +91,7 @@ if (!empty($rs_viaggi)) {
                 <button class="btn btn-warning btn-sm" data-href="'.$module->fileurl('modals/manage_viaggio.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idviaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Modifica viaggio').'" '.$disabled.'>
                     <i class="fa fa-edit"></i>
                 </button>
-                <button class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delviaggio" data-id="'.$viaggio['id'].'" data-msg="'.tr("Rimuovere il viaggio dal registro?").'" '.$disabled.'>
+                <button class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delviaggio" data-id="'.$viaggio['id'].'" data-msg="'.tr('Rimuovere il viaggio dal registro?').'" '.$disabled.'>
                     <i class="fa fa-trash"></i>
                 </button>
             </td>
@@ -110,4 +110,3 @@ if (!empty($rs_viaggi)) {
     echo '
 <p>'.tr('Nessun viaggio inserito').'...</p>';
 }
-

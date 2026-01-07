@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -40,7 +41,7 @@ switch (post('op')) {
 
         break;
 
-    // Modifica manutenzione
+        // Modifica manutenzione
     case 'editmanutenzione':
         $idmanutenzione = post('idmanutenzione');
         $descrizione = post('descrizione');
@@ -49,13 +50,12 @@ switch (post('op')) {
         $codice = post('codice');
         $is_completato = post('is_completato');
 
-
         $dbo->update('an_automezzi_scadenze', [
             'descrizione' => $descrizione,
             'data_inizio' => $data_inizio,
             'km' => $km,
             'codice' => $codice,
-            'is_completato' => $is_completato
+            'is_completato' => $is_completato,
         ], [
             'id' => $idmanutenzione,
         ]);
@@ -64,7 +64,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione scadenza
+        // Eliminazione scadenza
     case 'delscadenza':
         $idscadenza = post('id');
 

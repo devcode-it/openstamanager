@@ -55,113 +55,6 @@ class FileHtaccess extends Controllo
         ],
     ];
 
-    /**
-     * Contenuto del file .htaccess principale (root).
-     */
-    protected static function getRootHtaccessContent()
-    {
-        return <<<'HTACCESS'
-# Remove autoindex
-<IfModule mod_autoindex.c>
-    IndexIgnore */*
-</IfModule>
-
-# Deny access to files starting with a dot (e.g. .htaccess, .git)
-<FilesMatch "^\.">
-    Require all denied
-</FilesMatch>
-
-# Deny access to certain file types like log, sql, htaccess, etc.
-<FilesMatch "\.(ini|psd|log|sh|sql|md|lock|phar)$">
-    Require all denied
-</FilesMatch>
-
-# Deny access to VERSION, REVISION, LICENSE, and config files
-<Files ~ "(VERSION$|REVISION$|LICENSE|(config.inc|config.example).php|(composer|package).json|gulpfile.js)">
-    Require all denied
-</Files>
-
-# Disable indexing of php, html, htm, pdf files
-ServerSignature Off
-<IfModule mod_headers.c>
-    Header set X-Robots-Tag: "noindex,nofollow"
-    Header set X-Content-Type-Options nosniff
-</IfModule>
-
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-
-	# Tell PHP that the mod_rewrite module is ENABLED.
-	<IfModule mod_env.c>
-        SetEnv HTTP_MOD_REWRITE On
-    </IfModule>
-
-	# Deny access to protected folders
-    RewriteRule ^backup/ - [F,L]
-    RewriteRule ^docs/ - [F,L]
-    RewriteRule ^include/ - [F,L]
-    RewriteRule ^locale/ - [F,L]
-    RewriteRule ^logs/ - [F,L]
-    RewriteRule ^update/ - [F,L]
-
-	# Deny access to svn, git, node_modules and vendor folders
-    RewriteRule ^.git/ - [F,L]
-    RewriteRule ^.svn/ - [F,L]
-    RewriteRule ^node_modules/ - [F,L]
-    RewriteRule ^vendor/ - [F,L]
-
-    # Disable HTTP TRACE
-    RewriteCond %{REQUEST_METHOD} ^TRACE
-    RewriteRule .* - [F]
-
-    # Prevent hacks
-	# proc/self/environ? no way!
-	RewriteCond %{QUERY_STRING} proc/self/environ [OR]
-
-	# Block out any script trying to set a mosConfig value through the URL
-	RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
-
-	# Block out any script trying to base64_encode crap to send via URL
-	RewriteCond %{QUERY_STRING} base64_encode.*(.*) [OR]
-
-	# Block out any script that includes a <script> tag in URL
-	RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
-
-	# Block out any script trying to set a PHP GLOBALS variable via URL
-	RewriteCond %{QUERY_STRING} GLOBALS(=|[|\%[0-9A-Z]{0,2}) [OR]
-
-	# Block out any script trying to modify a _REQUEST variable via URL
-	RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
-
-    # Set an environment variable for bad bots using user-agent patterns
-    SetEnvIfNoCase User-Agent ".*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures).*" HTTP_SAFE_BADBOT
-    SetEnvIfNoCase User-Agent ".*(libwww-perl|aesop_com_spiderman).*" HTTP_SAFE_BADBOT
-
-    # Deny access to requests from this environment variable
-    <RequireAll>
-        Require all granted
-        Require not env HTTP_SAFE_BADBOT
-    </RequireAll>
-</ifModule>
-
-# Compress text, html, javascript, css, ecc...
-<IfModule mod_gzip.c>
-    mod_gzip_on       Yes
-    mod_gzip_dechunk  Yes
-    mod_gzip_item_include file      \.(html?|txt|css|js|php|pl)$
-    mod_gzip_item_include handler   ^cgi-script$
-    mod_gzip_item_include mime      ^text/.*
-    mod_gzip_item_include mime      ^application/x-javascript.*
-    mod_gzip_item_exclude mime      ^image/.*
-    mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
-</IfModule>
-
-<IfModule mod_mime.c>
-  AddType text/javascript mjs
-</IfModule>
-HTACCESS;
-    }
-
     public function getName()
     {
         return tr('File .htaccess di sistema');
@@ -269,6 +162,113 @@ HTACCESS;
     }
 
     /**
+     * Contenuto del file .htaccess principale (root).
+     */
+    protected static function getRootHtaccessContent()
+    {
+        return <<<'HTACCESS'
+# Remove autoindex
+<IfModule mod_autoindex.c>
+    IndexIgnore */*
+</IfModule>
+
+# Deny access to files starting with a dot (e.g. .htaccess, .git)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Deny access to certain file types like log, sql, htaccess, etc.
+<FilesMatch "\.(ini|psd|log|sh|sql|md|lock|phar)$">
+    Require all denied
+</FilesMatch>
+
+# Deny access to VERSION, REVISION, LICENSE, and config files
+<Files ~ "(VERSION$|REVISION$|LICENSE|(config.inc|config.example).php|(composer|package).json|gulpfile.js)">
+    Require all denied
+</Files>
+
+# Disable indexing of php, html, htm, pdf files
+ServerSignature Off
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag: "noindex,nofollow"
+    Header set X-Content-Type-Options nosniff
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# Tell PHP that the mod_rewrite module is ENABLED.
+	<IfModule mod_env.c>
+        SetEnv HTTP_MOD_REWRITE On
+    </IfModule>
+
+	# Deny access to protected folders
+    RewriteRule ^backup/ - [F,L]
+    RewriteRule ^docs/ - [F,L]
+    RewriteRule ^include/ - [F,L]
+    RewriteRule ^locale/ - [F,L]
+    RewriteRule ^logs/ - [F,L]
+    RewriteRule ^update/ - [F,L]
+
+	# Deny access to svn, git, node_modules and vendor folders
+    RewriteRule ^.git/ - [F,L]
+    RewriteRule ^.svn/ - [F,L]
+    RewriteRule ^node_modules/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+
+    # Disable HTTP TRACE
+    RewriteCond %{REQUEST_METHOD} ^TRACE
+    RewriteRule .* - [F]
+
+    # Prevent hacks
+	# proc/self/environ? no way!
+	RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+
+	# Block out any script trying to set a mosConfig value through the URL
+	RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
+
+	# Block out any script trying to base64_encode crap to send via URL
+	RewriteCond %{QUERY_STRING} base64_encode.*(.*) [OR]
+
+	# Block out any script that includes a <script> tag in URL
+	RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+
+	# Block out any script trying to set a PHP GLOBALS variable via URL
+	RewriteCond %{QUERY_STRING} GLOBALS(=|[|\%[0-9A-Z]{0,2}) [OR]
+
+	# Block out any script trying to modify a _REQUEST variable via URL
+	RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
+
+    # Set an environment variable for bad bots using user-agent patterns
+    SetEnvIfNoCase User-Agent ".*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures).*" HTTP_SAFE_BADBOT
+    SetEnvIfNoCase User-Agent ".*(libwww-perl|aesop_com_spiderman).*" HTTP_SAFE_BADBOT
+
+    # Deny access to requests from this environment variable
+    <RequireAll>
+        Require all granted
+        Require not env HTTP_SAFE_BADBOT
+    </RequireAll>
+</ifModule>
+
+# Compress text, html, javascript, css, ecc...
+<IfModule mod_gzip.c>
+    mod_gzip_on       Yes
+    mod_gzip_dechunk  Yes
+    mod_gzip_item_include file      \.(html?|txt|css|js|php|pl)$
+    mod_gzip_item_include handler   ^cgi-script$
+    mod_gzip_item_include mime      ^text/.*
+    mod_gzip_item_include mime      ^application/x-javascript.*
+    mod_gzip_item_exclude mime      ^image/.*
+    mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType text/javascript mjs
+</IfModule>
+HTACCESS;
+    }
+
+    /**
      * Rigenera il file .htaccess per una cartella specifica.
      */
     protected function regenerateHtaccess($folder)
@@ -309,4 +309,3 @@ HTACCESS;
         return tr('File .htaccess rigenerato con successo nella _FOLDER_', ['_FOLDER_' => $display_folder]);
     }
 }
-

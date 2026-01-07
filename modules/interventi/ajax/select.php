@@ -120,7 +120,6 @@ switch ($resource) {
             ORDER BY `title`';
 
             $where[] = '`co_contratti_tipiintervento`.`idtecnico` = '.prepare($idtecnico);
-
         } else {
             $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione, `in_tariffe`.`costo_ore` AS prezzo_ore_unitario, `in_tariffe`.`costo_km` AS prezzo_km_unitario, `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata
             FROM `in_tipiintervento`
@@ -130,7 +129,6 @@ switch ($resource) {
             ORDER BY `title`';
 
             $where[] = '`in_tariffe`.`idtecnico` = '.prepare($idtecnico);
-            
         }
 
         foreach ($elements as $element) {

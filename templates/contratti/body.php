@@ -187,7 +187,6 @@ foreach ($righe as $riga) {
     }
 
     if ($riga->isArticolo()) {
-
         if (!$options['hide-item-number']) {
             echo nl2br('<br><small>'.$riga->codice.'</small>');
             $autofill->count($riga->codice, true);
@@ -261,7 +260,7 @@ foreach ($righe as $riga) {
     $autofill->next();
 }
 
-    $autofill->count($documento['esclusioni']);
+$autofill->count($documento['esclusioni']);
 echo '
         |autofill|
     </tbody>';

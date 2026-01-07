@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -20,7 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-      // Aggiunta scadenza
+    // Aggiunta scadenza
     case 'addscadenza':
         $descrizione = post('descrizione');
         $data_inizio = post('data_inizio');
@@ -42,7 +43,7 @@ switch (post('op')) {
 
         break;
 
-    // Modifica scadenza
+        // Modifica scadenza
     case 'editscadenza':
         $idscadenza = post('idscadenza');
         $descrizione = post('descrizione');
@@ -58,7 +59,7 @@ switch (post('op')) {
             'data_fine' => $data_fine,
             'km' => $km,
             'codice' => $codice,
-            'is_completato' => $is_completato
+            'is_completato' => $is_completato,
         ], [
             'id' => $idscadenza,
         ]);
@@ -67,7 +68,7 @@ switch (post('op')) {
 
         break;
 
-    // Eliminazione scadenza
+        // Eliminazione scadenza
     case 'delscadenza':
         $idscadenza = post('id');
 

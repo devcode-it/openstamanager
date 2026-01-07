@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -79,4 +80,3 @@ if (!empty($manutenzioni)) {
 echo '
     </tbody>
 </table>';
-

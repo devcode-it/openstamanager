@@ -9,4 +9,3 @@ echo '
 <p><b>'.tr('TARGA').':</b> '.$automezzo['targa'].'</p>
 <br>
 ';
-

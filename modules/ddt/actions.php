@@ -845,7 +845,7 @@ switch (filter('op')) {
 
                 if ($dir == 'entrata') {
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
-                    
+
                     if ($update_prezzo_acquisto) {
                         $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
                     }
@@ -853,11 +853,11 @@ switch (filter('op')) {
                     $prezzo_unitario = $prezzo_unitario ?: $riga->articolo->prezzo_acquisto;
                 }
 
-                if( $update_prezzo_vendita) {
+                if ($update_prezzo_vendita) {
                     $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
                 }
 
-                if( $update_descrizione) {
+                if ($update_descrizione) {
                     $riga->descrizione = $riga->articolo->getTranslation('title');
                 }
             }

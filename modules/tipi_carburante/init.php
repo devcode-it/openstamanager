@@ -1,4 +1,5 @@
 <?php
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -22,4 +23,3 @@ include_once __DIR__.'/../../core.php';
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `an_automezzi_tipi_carburante` WHERE `id`='.prepare($id_record));
 }
-

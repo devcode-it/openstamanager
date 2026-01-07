@@ -83,8 +83,8 @@ if (!empty($records)) {
                             <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.$rif['km'].'</small></td>
                             <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.Translator::numberToLocale($rif['quantita'], 2).' '.$um.'</small></td>
                             <td class="text-right" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.moneyFormat($rif['costo'], 2).'</small></td>
-                            <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.strtoupper($rif['gestore_desc']).'</small></td>
-                            <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.strtoupper($rif['id_carburante_desc']).'</small></td>
+                            <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.strtoupper((string) $rif['gestore_desc']).'</small></td>
+                            <td class="text-center" style="border: 1px solid #ddd; padding: 2px 4px;"><small>'.strtoupper((string) $rif['id_carburante_desc']).'</small></td>
                         </tr>';
             }
 
@@ -107,4 +107,3 @@ if (!empty($records)) {
 echo '
     </tbody>
 </table>';
-

@@ -58,14 +58,14 @@ foreach ($righe as $riga) {
         </td>
         <td>';
 
-        // Input giacenza con struttura OpenSTAManager
-        echo '{[ "type": "number", "name": "giacenza_'.$id.'", "value": "'.$nuova_giacenza.'", "decimals": "qta", "class": "text-right", "onchange": "aggiornaGiacenza('.$id.', this.value)" ]}';
+    // Input giacenza con struttura OpenSTAManager
+    echo '{[ "type": "number", "name": "giacenza_'.$id.'", "value": "'.$nuova_giacenza.'", "decimals": "qta", "class": "text-right", "onchange": "aggiornaGiacenza('.$id.', this.value)" ]}';
 
     echo '</td>
         <td>';
 
-        // Input ubicazione con struttura OpenSTAManager
-        echo '{[ "type": "text", "name": "ubicazione_'.$id.'", "value": "'.$ubicazione.'", "placeholder": "'.tr('Ubicazione').'", "onchange": "aggiornaUbicazione('.$id.', this.value)" ]}';
+    // Input ubicazione con struttura OpenSTAManager
+    echo '{[ "type": "text", "name": "ubicazione_'.$id.'", "value": "'.$ubicazione.'", "placeholder": "'.tr('Ubicazione').'", "onchange": "aggiornaUbicazione('.$id.', this.value)" ]}';
 
     echo '</td>
         <td class="text-center">

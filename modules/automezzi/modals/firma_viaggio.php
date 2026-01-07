@@ -30,9 +30,9 @@ if (!empty($viaggio['firma_data'])) {
     echo '
     <div class="alert alert-info">
         <i class="fa fa-info-circle"></i> '.tr('Questo viaggio è già stato firmato da _NOME_ in data _DATA_', [
-            '_NOME_' => $viaggio['firma_nome'],
-            '_DATA_' => Translator::timestampToLocale($viaggio['firma_data']),
-        ]).'
+        '_NOME_' => $viaggio['firma_nome'],
+        '_DATA_' => Translator::timestampToLocale($viaggio['firma_data']),
+    ]).'
     </div>
     <div class="text-center">
         <img src="'.$url.'" style="max-width: 100%; border: 1px solid #ddd; padding: 10px;">

@@ -847,7 +847,7 @@ switch (post('op')) {
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
 
-                if( $update_prezzo_vendita) {
+                if ($update_prezzo_vendita) {
                     $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
                     if (!$prezzo_consigliato['prezzo_unitario']) {
                         $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
@@ -863,7 +863,7 @@ switch (post('op')) {
                     $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
                 }
 
-                if( $update_descrizione) {
+                if ($update_descrizione) {
                     $riga->descrizione = $riga->articolo->getTranslation('title');
                 }
             }

@@ -103,7 +103,6 @@ switch (filter('op')) {
 
         break;
 
-
     case 'delete_articolo':
         $id_righe = (array) post('id');
 

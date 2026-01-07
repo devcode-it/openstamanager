@@ -80,7 +80,7 @@ switch (filter('op')) {
         else {
             $provider_name = '';
             if (class_exists(post('provider'))) {
-                $provider = new(post('provider'));
+                $provider = new (post('provider'));
                 $provider_name = $provider->getName();
             }
             $oauth2 = $account->oauth2 ?: OAuth2::build($provider_name);

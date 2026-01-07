@@ -923,11 +923,11 @@ switch (post('op')) {
                     $prezzo_unitario = $prezzo_unitario ?: $riga->articolo->prezzo_acquisto;
                 }
 
-                if( $update_prezzo_vendita) {
+                if ($update_prezzo_vendita) {
                     $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
                 }
 
-                if( $update_descrizione) {
+                if ($update_descrizione) {
                     $riga->descrizione = $riga->articolo->getTranslation('title');
                 }
             }

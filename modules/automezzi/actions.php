@@ -110,7 +110,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta viaggio
+        // Aggiunta viaggio
     case 'addviaggio':
         $idtecnico = post('idtecnico');
         $data_inizio = post('data_inizio');
@@ -135,7 +135,7 @@ switch (post('op')) {
         flash()->info(tr('Viaggio aggiunto al registro!'));
         break;
 
-    // Modifica viaggio
+        // Modifica viaggio
     case 'editviaggio':
         $idviaggio = post('idviaggio');
         $idtecnico = post('idtecnico');
@@ -160,7 +160,7 @@ switch (post('op')) {
         flash()->info(tr('Viaggio aggiornato!'));
         break;
 
-    // Eliminazione viaggio
+        // Eliminazione viaggio
     case 'delviaggio':
         $idviaggio = post('id');
 
@@ -171,7 +171,7 @@ switch (post('op')) {
         }
         break;
 
-    // Aggiunta rifornimento
+        // Aggiunta rifornimento
     case 'addrifornimento':
         $idviaggio = post('idviaggio');
         $data = post('data');
@@ -199,7 +199,7 @@ switch (post('op')) {
         flash()->info(tr('Rifornimento aggiunto!'));
         break;
 
-    // Modifica rifornimento
+        // Modifica rifornimento
     case 'editrifornimento':
         $idrifornimento = post('idrifornimento');
         $data = post('data');
@@ -226,7 +226,7 @@ switch (post('op')) {
         flash()->info(tr('Rifornimento aggiornato!'));
         break;
 
-    // Eliminazione rifornimento
+        // Eliminazione rifornimento
     case 'delrifornimento':
         $idrifornimento = post('id');
 
@@ -237,7 +237,7 @@ switch (post('op')) {
         }
         break;
 
-    // Firma viaggio
+        // Firma viaggio
     case 'firma_viaggio':
         $idviaggio = post('idviaggio');
         $firma_base64 = post('firma_base64');

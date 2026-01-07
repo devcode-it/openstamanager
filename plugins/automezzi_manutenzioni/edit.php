@@ -19,8 +19,8 @@ $plugin = Plugin::find($id_plugin);
 				<div class="row">
 					<div class="col-md-12">
 						<?php
-						include $plugin->filepath('row-list-manutenzioni.php');
-		?>
+                        include $plugin->filepath('row-list-manutenzioni.php');
+?>
 
 						<div class="pull-left">
 							<a class="btn btn-sm btn-primary" data-href="<?php echo $plugin->fileurl('modals/manage_manutenzione.php'); ?>?id_module=<?php echo $id_module; ?>&id_plugin=<?php echo $id_plugin; ?>&id=<?php echo $id_record; ?>" data-card-widget="modal" data-title="<?php echo tr('Aggiungi manutenzione'); ?>"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi manutenzione'); ?></a>

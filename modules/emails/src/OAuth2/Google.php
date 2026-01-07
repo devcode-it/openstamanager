@@ -6,7 +6,6 @@ use League\OAuth2\Client\Provider\Google as OriginalProvider;
 
 class Google extends OriginalProvider implements ProviderInterface
 {
-
     protected static $provider = 'Google';
     protected static $options = [
         'scope' => ['https://mail.google.com/'],
@@ -33,14 +32,13 @@ class Google extends OriginalProvider implements ProviderInterface
         return [];
     }
 
-    protected function getDefaultScopes(): array
-    {
-        return ['https://mail.google.com/'];
-    }
-
     public static function getName()
     {
         return static::$provider;
     }
 
+    protected function getDefaultScopes(): array
+    {
+        return ['https://mail.google.com/'];
+    }
 }

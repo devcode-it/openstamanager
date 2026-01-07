@@ -103,11 +103,15 @@ class FatturaElettronica
     {
         $module = Module::where('name', $name ?: 'Fatture di acquisto')->first();
 
-        $plugins = $module->plugins;
-        if (!empty($plugins)) {
-            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == ($plugin ?: 'Fatturazione Elettronica'));
+        if (!empty($module)) {
+            $plugins = $module->plugins;
+            if (!empty($plugins)) {
+                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == ($plugin ?: 'Fatturazione Elettronica'));
 
-            self::$directory = base_dir().'/'.$plugin->upload_directory;
+                if (!empty($plugin)) {
+                    self::$directory = base_dir().'/'.$plugin->upload_directory;
+                }
+            }
         }
 
         return self::$directory;
@@ -131,6 +135,11 @@ class FatturaElettronica
 
             return true;
         } catch (\UnexpectedValueException) {
+            $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
+            delete($file);
+
+            return false;
+        } catch (\Exception) {
             $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
             delete($file);
 

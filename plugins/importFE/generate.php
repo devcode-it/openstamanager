@@ -284,28 +284,37 @@ if (!empty($numero_tipo)) {
     $query = $query_tipo;
 }
 
-$id_tipodocumento = $database->fetchOne($query_tipo)['id'];
+$tipo_doc = $database->fetchOne($query_tipo);
+$id_tipodocumento = $tipo_doc['id'] ?? null;
 
 echo '
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 ? $id_tipodocumento : '').'" ]}
+                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 && !empty($id_tipodocumento) ? $id_tipodocumento : '').'" ]}
             </div>';
 
 // Sezionale
-$id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+$id_segment = null;
+if (!empty($id_tipodocumento)) {
+    $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+}
 
 echo '
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.$id_segment.'" ]}
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.($id_segment ?: '').'" ]}
             </div>';
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
-$data_registrazione = new Carbon($data_registrazione);
+if (!empty($data_registrazione)) {
+    $data_registrazione = new Carbon($data_registrazione);
+} else {
+    $data_registrazione = null;
+}
+$data_registrazione_value = !empty($data_registrazione) ? $data_registrazione->format('Y-m-d') : $dati_generali['Data'];
 echo '
             <div class="col-md-3">
-                {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
+                {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.$data_registrazione_value.'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
             </div>';
 
 if (!empty($anagrafica)) {
@@ -514,16 +523,20 @@ if (!empty($righe)) {
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
-                $id_articolo = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id));
+                $id_articolo = $result['id'] ?? null;
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' AND `id_fornitore` = '.prepare($anagrafica->id))['id'];
+                    $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' AND `id_fornitore` = '.prepare($anagrafica->id));
+                    $id_articolo = $result['id'] ?? null;
                 }
             }
 
             if (empty($id_articolo)) {
-                $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale))['id'];
+                $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale));
+                $id_articolo = $result['id'] ?? null;
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale))['id'];
+                    $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale));
+                    $id_articolo = $result['id'] ?? null;
                 }
             }
 

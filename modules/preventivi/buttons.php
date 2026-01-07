@@ -77,7 +77,7 @@ if (!$is_anagrafica_deleted) {
                 <i class="fa fa-file-o"></i> '.tr('Attività').'
             </a>
 
-            <a class="'.($disabled ? '' : 'disabled').' btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea ordine cliente').'">
+            <a class="'.($disabled ? '' : 'disabled').' btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-widget="modal" data-title="'.tr('Crea DDT in uscita').'">
                 <i class="fa fa-truck"></i> '.tr('DDT in uscita').'
             </a>
 

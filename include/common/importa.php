@@ -328,10 +328,13 @@ if (!empty($options['serials'])) {
 
 // Calcolo disponibilità magazzino per ogni articolo
 $disponibilita_articoli = [];
-$abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino;
+$abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino && $documento->direzione != 'uscita';
 
 // Recupera la sede di partenza dal documento (preventivo/ordine)
-$id_sede_partenza = $documento->idsede_partenza ?? 0;
+// Per documenti con direzione 'entrata' (DDT in uscita, Ordini cliente), la sede di partenza è idsede_destinazione
+// Per documenti con direzione 'uscita' (DDT in entrata, Ordini fornitore), la sede di partenza è idsede_partenza
+$id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+$id_sede_partenza = $id_sede_partenza ?: 0;
 
 if ($abilita_controllo_disponibilita) {
     foreach ($righe as $riga) {
@@ -605,7 +608,8 @@ if (!$righe_evase->isEmpty()) {
 }
 
 // Gestione articolo sottoscorta
-echo '
+if ($abilita_controllo_disponibilita) {
+    echo '
     <div class="card card-warning hidden" id="articoli_sottoscorta">
         <div class="card-header with-border">
             <h3 class="card-title"><i class="fa fa-exclamation-triangle"></i> '.tr('Quantità non disponibili').'</h3>
@@ -625,6 +629,7 @@ echo '
         </table>
         </div>
     </div>';
+}
 
 echo '
 

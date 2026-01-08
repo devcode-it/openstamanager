@@ -1059,6 +1059,7 @@ echo '
     $(document).ready(function() {
         setTimeout(function() {
             aggiornaTestoPagamento();
+            content_was_modified = false;
         }, 500);
     });
 

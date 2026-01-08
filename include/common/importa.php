@@ -346,7 +346,8 @@ if ($abilita_controllo_disponibilita) {
 
                 // Calcolo quantità impegnata in ordini cliente (per la sede specifica)
                 // Cerchiamo ordini cliente (dir = 'entrata') che impegnano il nostro magazzino
-                $impegnato = (float) database()->fetchOne('SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata
+                // Escludiamo l'ordine corrente che si sta evadendo (se il documento di origine è un ordine)
+                $query_impegnato = 'SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata
                     FROM or_righe_ordini
                     INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
                     INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
@@ -355,7 +356,14 @@ if ($abilita_controllo_disponibilita) {
                     AND or_tipiordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1
                     AND or_statiordine.impegnato = 1
-                    AND or_ordini.idsede_destinazione = '.prepare($id_sede_partenza))['qta_impegnata'];
+                    AND or_ordini.idsede_destinazione = '.prepare($id_sede_partenza);
+
+                // Se il documento di origine è un ordine cliente, escludiamolo dal calcolo
+                if ($original_module->name == 'Ordini cliente' && !empty($documento->id)) {
+                    $query_impegnato .= ' AND or_ordini.id != '.prepare($documento->id);
+                }
+
+                $impegnato = (float) database()->fetchOne($query_impegnato)['qta_impegnata'];
 
                 $disponibilita_iniziale = $giacenza - $impegnato;
                 $disponibilita_articoli[$id_articolo] = [

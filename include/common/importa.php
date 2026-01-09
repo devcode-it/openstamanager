@@ -328,7 +328,7 @@ if (!empty($options['serials'])) {
 
 // Calcolo disponibilità magazzino per ogni articolo
 $disponibilita_articoli = [];
-$abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino && $documento->direzione != 'uscita';
+$abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino && $documento->direzione != 'uscita' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
 
 // Recupera la sede di partenza dal documento (preventivo/ordine)
 // Per documenti con direzione 'entrata' (DDT in uscita, Ordini cliente), la sede di partenza è idsede_destinazione

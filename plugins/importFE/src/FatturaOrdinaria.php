@@ -285,14 +285,14 @@ class FatturaOrdinaria extends FatturaElettronica
                     $articolo = ArticoloOriginale::build($codice, $categoria);
                     $articolo->setTranslation('title', $riga['Descrizione']);
                     $articolo->um = $riga['UnitaMisura'];
-                    $articolo->idconto_acquisto = $conto[$key];
+                    $articolo->idconto_acquisto = $conto[$key] ?: null;
                     $articolo->abilita_serial = setting('Serial number abilitato di default');
                     $articolo->save();
                 }
             }
 
             if (!empty($articolo)) {
-                $articolo->idconto_acquisto = $conto[$key];
+                $articolo->idconto_acquisto = $conto[$key] ?: null;
                 $articolo->save();
 
                 $obj = Articolo::build($fattura, $articolo);
@@ -353,12 +353,13 @@ class FatturaOrdinaria extends FatturaElettronica
 
             if (!$is_descrizione) {
                 $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
+                $conto_value = !empty($conto[$key]) ? $conto[$key] : setting('Conto predefinito fatture di acquisto');
 
                 $obj->id_iva = $iva_value;
-                $obj->idconto = $conto[$key];
+                $obj->idconto = $conto_value;
 
-                if (empty($conto_arrotondamenti) && !empty($conto[$key])) {
-                    $conto_arrotondamenti = $conto[$key];
+                if (empty($conto_arrotondamenti) && !empty($conto_value)) {
+                    $conto_arrotondamenti = $conto_value;
                 }
 
                 $obj->ritenuta_contributi = $ritenuta_contributi;

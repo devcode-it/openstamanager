@@ -312,8 +312,8 @@ ALTER TABLE `an_automezzi_scadenze` ADD CONSTRAINT `an_automezzi_scadenze_ibfk_1
 INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Manutenzioni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'tab', '', '1', '0', '0', '2.*', '2.10', 'custom', 'automezzi_manutenzioni', '');
 INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
 VALUES
-  (1, LAST_INSERT_ID(), 'Manutenzioni'),
-  (2, LAST_INSERT_ID(), 'Maintenance');
+  (1, (SELECT MAX(`id`) FROM `zz_plugins`), 'Manutenzioni'),
+  (2, (SELECT MAX(`id`) FROM `zz_plugins`), 'Maintenance');
 
 INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Scadenze', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'tab', '', '1', '0', '0', '2.*', '2.10', 'custom', 'automezzi_scadenze', '');
 INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)

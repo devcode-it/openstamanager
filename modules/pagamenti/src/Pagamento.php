@@ -116,7 +116,7 @@ class Pagamento extends Model
             $regola_pagamento = database()->selectOne('an_pagamenti_anagrafiche', '*', ['idanagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
             if (!empty($regola_pagamento)) {
                 $date->modify('last day of this month');
-                $date->addDay();
+                $date->addDays($regola_pagamento['giorno_fisso']);
             }
 
             // Conversione della data in stringa standard

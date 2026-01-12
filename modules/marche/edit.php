@@ -95,10 +95,10 @@ $img = !empty($marca) ? $marca->image : null;
 </div>
 
 <?php
-$articoli = $marca->articoli;
+$articoli = $marca->articoli ?? [];
 $class = '';
 
-if (!empty(count($articoli))) {
+if (count($articoli) > 0) {
     echo '
 <div class="card card-warning collapsable collapsed-card">
     <div class="card-header with-border">

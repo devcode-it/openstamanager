@@ -137,9 +137,10 @@ function discountInfo(Accounting $riga, $mostra_maggiorazione = true)
 
     $text = ($riga->prezzo_unitario >= 0 && $riga->sconto_unitario > 0) || ($riga->prezzo_unitario < 0 && $riga->sconto_unitario < 0) ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
     $totale = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario_corrente;
+    $sconto_combinato = $riga->sconto_percentuale_combinato ? '('.$riga->sconto_percentuale_combinato.')' : '';
 
     return replace($text, [
-        '_TOT_' => Translator::numberToLocale(abs($totale)),
+        '_TOT_' => $sconto_combinato ?: Translator::numberToLocale(abs($totale)),
         '_TYPE_' => !empty($riga->sconto_percentuale) ? '%' : currency(),
     ]);
 }

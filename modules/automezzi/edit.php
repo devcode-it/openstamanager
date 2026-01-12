@@ -18,13 +18,12 @@ unset($_SESSION['superselect']['idautomezzo']);
 
 		<div class="card-body">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Targa'); ?>", "name": "targa", "required": 1, "maxlength": 10, "class": "alphanumeric-mask", "value": "$targa$" ]}
 				</div>
-
 			</div>
 			<div class="row">
 				<div class="col-md-12">
@@ -44,7 +43,7 @@ unset($_SESSION['superselect']['idautomezzo']);
 			<div class="card-header">
 				<div class="row">
 					<div class="col-md-12">
-						<h3 class="card-title"><?php echo tr('Tecnici responsabili automezzo'); ?></h3>
+						<h3 class="card-title"><?php echo tr('Utenti responsabili automezzo'); ?></h3>
 					</div>
 				</div>
 			</div>
@@ -61,13 +60,6 @@ unset($_SESSION['superselect']['idautomezzo']);
                             include $docroot.'/modules/automezzi/row-list-tecnici.php';
 ?>
 						</form>
-
-						<a href="javascript:;" class="btn btn-sm btn-success pull-right" title="Aggiorna date" onclick="$('#updatetech-form input[name=op]').val('savetech'); $('#updatetech-form').submit();"><i class="fa fa-edit"></i> <?php echo tr('Salva date'); ?></a>
-
-						<div class="pull-left">
-							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_tecnico.php?idautomezzo=<?php echo $id_record; ?>" data-card-widget="modal" data-title="Aggiungi tecnico"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi tecnico'); ?></a><br>
-						</div>
-						<div class="clearfix"></div>
 					</div>
 				</div>
 			</div>
@@ -103,6 +95,31 @@ unset($_SESSION['superselect']['idautomezzo']);
 		</div>
 	</div>
 </div>
+
+<!-- REGISTRI DI VIAGGIO -->
+<div class="card card-primary">
+	<div class="card-header">
+		<h3 class="card-title"><?php echo tr('Registro di viaggio'); ?></h3>
+	</div>
+
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-12">
+				<?php
+                include $docroot.'/modules/automezzi/row-list-viaggi.php';
+?>
+
+				<div class="pull-left">
+					<a class="btn btn-sm btn-primary" data-href="<?php echo $module->fileurl('modals/manage_viaggio.php'); ?>?id_record=<?php echo $id_record; ?>" data-card-widget="modal" data-title="Aggiungi viaggio"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi viaggio'); ?></a>
+					<a class="btn btn-sm btn-info" data-href="<?php echo $module->fileurl('modals/stampa_registro.php'); ?>?id_record=<?php echo $id_record; ?>" data-card-widget="modal" data-title="<?php echo tr('Stampa registro viaggio'); ?>"><i class="fa fa-print"></i> <?php echo tr('Stampa registro'); ?></a>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

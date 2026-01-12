@@ -66,7 +66,7 @@ class App
             'i18n/moment/|lang|.min.js',
             'i18n/locales.min.js',
             'i18n/@fullcalendar/|lang|.min.js',
-            'api.js'
+            'api.js',
         ],
     ];
 

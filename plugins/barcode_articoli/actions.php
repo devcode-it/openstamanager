@@ -34,9 +34,11 @@ switch ($operazione) {
             // Verifica che il barcode non sia già presente nella tabella mg_articoli
             $esistente_articoli = Articolo::where('barcode', $barcode_value)->count() > 0;
 
-            // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode
+            // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode escludendo articoli con deleted_at valorizzato
             $esistente_barcode = $dbo->table('mg_articoli_barcode')
-                ->where('barcode', $barcode_value)
+                ->where('mg_articoli_barcode.barcode', $barcode_value)
+                ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.idarticolo')
+                ->where('mg_articoli.deleted_at', null)
                 ->count() > 0;
 
             // Verifica che il barcode non coincida con un codice articolo esistente

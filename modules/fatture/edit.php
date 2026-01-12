@@ -425,7 +425,7 @@ if ($dir == 'entrata') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"if($(this).selectData()) {$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change();} \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -1011,9 +1011,67 @@ if ($dir == 'entrata') {
 echo '
 <script type="text/javascript">
 
+    // Imposta la direzione del documento nella sessione
+    session_set("superselect,dir", "'.$dir.'", 0);
+
+    // Imposta la banca controparte nella sessione
+    session_set("superselect,id_banca_controparte", $("#id_banca_controparte").val(), 0);
+
+    // Funzione per aggiornare il testo del pagamento in base alla banca
+    function aggiornaTestoPagamento() {
+        var bancaVal = $("#id_banca_controparte").val();
+        var pagamentoData = $("#idpagamento").selectData();
+        var bancaMancante = !bancaVal || bancaVal == "" || bancaVal == "null";
+
+        if (pagamentoData && pagamentoData.codice_modalita_pagamento_fe == "MP12") {
+            var avviso = " ('.tr('Nessuna banca di addebito selezionata').')";
+            var testoOriginale = pagamentoData.text || "";
+            var descrizioneBase = (pagamentoData.descrizione || "").replace(avviso, "");
+
+            // Rimuovi avviso esistente dal testo
+            var testoSenzaAvviso = testoOriginale.replace(avviso, "");
+
+            if (bancaMancante) {
+                // Aggiungi avviso prima della chiusura del link </a> o alla fine
+                var nuovoTesto;
+                if (testoSenzaAvviso.indexOf("</a>") !== -1) {
+                    nuovoTesto = testoSenzaAvviso.replace("</a>", avviso + "</a>");
+                } else {
+                    nuovoTesto = testoSenzaAvviso + avviso;
+                }
+
+                var nuovoData = $.extend({}, pagamentoData);
+                nuovoData.text = nuovoTesto;
+                nuovoData.descrizione = descrizioneBase + avviso;
+
+                $("#idpagamento").selectSetNew(pagamentoData.id, nuovoTesto, nuovoData);
+            } else {
+                var nuovoData = $.extend({}, pagamentoData);
+                nuovoData.text = testoSenzaAvviso;
+                nuovoData.descrizione = descrizioneBase;
+
+                $("#idpagamento").selectSetNew(pagamentoData.id, testoSenzaAvviso, nuovoData);
+            }
+        }
+    }
+
+    // Controllo iniziale al caricamento
+    $(document).ready(function() {
+        setTimeout(function() {
+            aggiornaTestoPagamento();
+            content_was_modified = false;
+        }, 500);
+    });
+
     $("#idtipodocumento").change(function() {
          updateSelectOption("idtipodocumento", $(this).val());
          session_set("superselect,idtipodocumento",$(this).val(), 0);
+    });
+
+    $("#id_banca_controparte").change(function() {
+        session_set("superselect,id_banca_controparte", $(this).val(), 0).then(function() {
+            aggiornaTestoPagamento();
+        });
     });
 
 	$("#idanagrafica").change(function() {

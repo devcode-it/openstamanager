@@ -68,13 +68,13 @@ switch (filter('op')) {
         $codice = post('codice');
         $esente = post('esente_add');
         $percentuale = empty($esente) ? post('percentuale') : 0;
-        $codice_natura = post('codice_natura_fe') ?: '';
+        $codice_natura = post('codice_natura_fe') ?: null;
         $esigibilita = post('esigibilita');
         $indetraibile = post('indetraibile');
 
-        $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->first();
+        $aliquota = Aliquota::where('name', '=', $descrizione)->where('codice', '=', $codice)->first();
         if (!$aliquota) {
-            $iva = Aliquota::build($descrizione, $esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura_fe, $esigibilita);
+            $iva = Aliquota::build($descrizione, $esente, $percentuale, $indetraibile, $dicitura, $codice, $codice_natura, $esigibilita);
             $id_record = $dbo->lastInsertedID();
             $iva->save();
 

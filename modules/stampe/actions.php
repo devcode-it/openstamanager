@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
-            $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.post('module'));
+            $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.prepare(post('module')));
         }
         $print->options = post('options');
         $print->order = post('order');

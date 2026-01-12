@@ -44,7 +44,7 @@ class MovimentiManuali extends AppResource
         $records = database()->fetchArray($query);
         $ids = array_column($records, 'id');
 
-        return $this->getMissingIDs('mg_movimenti', 'id', $last_sync_at, $ids);
+        return $this->getMissingIDs('mg_movimenti', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)

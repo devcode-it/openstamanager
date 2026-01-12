@@ -341,16 +341,16 @@ switch (post('op')) {
             foreach ($sessioni_aggiuntive as $sessione) {
                 if (!empty($sessione['orario_inizio']) && !empty($sessione['orario_fine']) && !empty($sessione['idtecnico'])) {
                     // Crea la sessione manualmente per poter specificare un tipo attività diverso
-                    $intervento = Modules\Interventi\Intervento::find($id_record);
-                    $anagrafica = Modules\Anagrafiche\Anagrafica::find($sessione['idtecnico']);
+                    $intervento = Intervento::find($id_record);
+                    $anagrafica = Anagrafica::find($sessione['idtecnico']);
 
-                    $sessione_obj = new Modules\Interventi\Components\Sessione();
+                    $sessione_obj = new Sessione();
                     $sessione_obj->document()->associate($intervento);
                     $sessione_obj->anagrafica()->associate($anagrafica);
 
                     // Usa il tipo attività specificato per questa sessione, o quello dell'intervento come fallback
-                    $tipo_sessione_id = !empty($sessione['idtipointervento']) ? $sessione['idtipointervento'] : $idtipointervento;
-                    $tipo_sessione = Modules\TipiIntervento\Tipo::find($tipo_sessione_id);
+                    $tipo_sessione_id = !empty($sessione['idtiposessione']) ? $sessione['idtiposessione'] : $idtipointervento;
+                    $tipo_sessione = TipoSessione::find($tipo_sessione_id);
                     $sessione_obj->tipo()->associate($tipo_sessione);
 
                     $sessione_obj->orario_inizio = $sessione['orario_inizio'];
@@ -382,7 +382,7 @@ switch (post('op')) {
         if (!empty($tecnici_assegnati)) {
             // Converte in array se necessario e filtra i valori vuoti
             $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
-            $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
+            $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
             $tecnici_assegnati = array_unique($tecnici_assegnati);
 
             if (!empty($tecnici_assegnati)) {
@@ -580,7 +580,7 @@ switch (post('op')) {
                 // Assegnazione dei tecnici all'intervento
                 $tecnici_assegnati = (array) post('tecnici_assegnati');
                 // Filtra i valori vuoti per evitare errori di foreign key
-                $tecnici_assegnati = array_filter($tecnici_assegnati, function($value) { return !empty($value) && is_numeric($value); });
+                $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
 
                 if (!empty($tecnici_assegnati)) {
                     $dbo->sync('in_interventi_tecnici_assegnati', [
@@ -762,7 +762,7 @@ switch (post('op')) {
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         $articolo->idconto = post('idconto') ?: null;
 
@@ -832,7 +832,7 @@ switch (post('op')) {
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
-        $riga->setSconto(post('sconto'), post('tipo_sconto'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
         $riga->qta = $qta;
@@ -1226,6 +1226,12 @@ switch (post('op')) {
         $sessione->orario_fine = post('orario_fine');
         $sessione->km = post('km');
 
+        // Modifica del tecnico (se cambiato)
+        $id_tecnico = post('idtecnico');
+        if (!empty($id_tecnico) && $id_tecnico != $sessione->idtecnico) {
+            $sessione->setTecnico($id_tecnico);
+        }
+
         $id_tipo = post('idtipointerventot');
         $sessione->setTipo($id_tipo);
 
@@ -1606,6 +1612,9 @@ switch (post('op')) {
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');
+        $update_prezzo_acquisto = post('update_prezzo_acquisto');
+        $update_prezzo_vendita = post('update_prezzo_vendita');
+        $update_descrizione = post('update_descrizione');
 
         foreach ($id_righe as $id_riga) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
@@ -1615,18 +1624,25 @@ switch (post('op')) {
             $sconto = 0;
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
-                if (!$prezzo_consigliato['prezzo_unitario']) {
-                    $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+
+                if ($update_prezzo_vendita) {
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                    if (!$prezzo_consigliato['prezzo_unitario']) {
+                        $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+                    }
+                    $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
+                    $sconto = $prezzo_consigliato['sconto'];
+
+                    $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
+                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
                 }
-                $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
-                $sconto = $prezzo_consigliato['sconto'];
 
-                $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
-                $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
-
-                if ($dir == 'entrata') {
+                if ($dir == 'entrata' && $update_prezzo_acquisto) {
                     $riga->costo_unitario = $riga->articolo->prezzo_acquisto;
+                }
+
+                if ($update_descrizione) {
+                    $riga->descrizione = $riga->articolo->getTranslation('title');
                 }
             }
 

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'categorie-files':
-        $query = 'SELECT `zz_files_categories`.`id`, `zz_files_categories`.`name` as descrizione FROM `zz_files_categories` ORDER BY `name` ASC';
+        $query = 'SELECT `zz_files_categories`.`id`, `zz_files_categories`.`name` as descrizione FROM `zz_files_categories` |where| ORDER BY `name` ASC';
 
         foreach ($elements as $element) {
             $filter[] = '`zz_files_categories`.`id`='.prepare($element);

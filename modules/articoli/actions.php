@@ -188,7 +188,8 @@ switch (post('op')) {
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->id_fornitore = post('id_fornitore');
-        $articolo->gg_garanzia = post('gg_garanzia');
+        $articolo->garanzia = post('garanzia');
+        $articolo->tipo_garanzia = post('tipo_garanzia');
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');

@@ -41,7 +41,7 @@ echo '
 	
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "help": "'.tr('Se impostato il valore sarà sempre visibile sull\'articolo se il listino è attivo e la data di scadenza è ancora valida').'" ]}
+			{[ "type":"checkbox", "label":"'.tr('Sempre visibile').'", "name":"is_sempre_visibile", "help": "'.tr('Se impostato il valore sarà sempre visibile sull\'articolo se il listino è attivo e la data di scadenza è ancora valida non è quindi necessario associare il listino alle anagrafiche').'" ]}
 		</div>
 
 		<div class="col-md-6">

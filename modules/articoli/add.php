@@ -36,7 +36,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
         <div class="col-md-6">
-            <span class="pull-right tip text-muted"><input type="checkbox" id="genera_barcode" name="genera_barcode" /> <?php echo tr('Genera automaticamente un barcode'); ?></span>
+            <span class="pull-right tip text-muted"><input type="checkbox" id="genera_barcode" name="genera_barcode" <?php echo setting('Genera barcode automaticamente') ? 'checked' : ''; ?> /> <?php echo tr('Genera automaticamente un barcode'); ?></span>
             {[ "type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "required": 0, "value": "<?php echo htmlentities(filter('barcode')) ?: ''; ?>", "validation": "barcode" ]}
 		</div>
     </div>
@@ -47,7 +47,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|is_articolo=1" ]}
 		</div>
 
 		<div class="col-md-3">

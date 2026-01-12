@@ -30,10 +30,16 @@ if (!empty($record)) {
 
 echo '
 <script>
-    function upload(btn) {
+    function upload(btn, automatic = false) {
         if ($("#blob").val()) {
+            let text = "";
+            if (automatic) {
+                text = "'.tr('Importare la fattura automaticamente in modalità semplificata?').'";
+            } else {
+                text = "'.tr('Avviare la procedura?').'";
+            }
             swal({
-                title: "'.tr('Avviare la procedura?').'",
+                title: text,
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Sì').'"
@@ -52,7 +58,13 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                            if (automatic) {
+                                import_fe_auto(btn, data.name, null);
+                                $("#blob").val("");
+                                renderMessages();
+                            } else {
+                                redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                            }
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata').'.",
@@ -97,8 +109,14 @@ echo '
                 {[ "type": "file", "name": "blob", "required": 1, "placeholder": "'.tr('Seleziona un file XML, P7M o ZIP').'" ]}
             </div>
 
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-info btn-block tip" onclick="upload(this, true)" title="'.tr('Carica e importa automaticamente il file selezionato').'">
+                    <i class="fa fa-upload"></i>
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <button type="button" class="btn btn-warning btn-block" onclick="upload(this)">
                     <i class="fa fa-upload"></i> '.tr('Carica documento fornitore').'
                 </button>
             </div>

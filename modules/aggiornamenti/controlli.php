@@ -1116,7 +1116,8 @@ function hasGlobalActions(controllo) {
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ColonneDuplicateViste",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PluginDuplicati",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\FileHtaccess"
     ];
 
     return controlliConAzioniGlobali.includes(controllo["class"]);
@@ -1202,6 +1203,16 @@ function getMessaggioConferma(controlloClass) {
                 "'.tr('Libererà spazio su disco e pulirà il database da riferimenti non validi').'",
                 "'.tr('Non può essere annullata').'"
             ]
+        },
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\FileHtaccess": {
+            titolo: "'.tr('Conferma rigenerazione file .htaccess').'",
+            descrizione: "'.tr('Sei sicuro di voler rigenerare tutti i file .htaccess mancanti?').'",
+            operazioni: [
+                "'.tr('Creerà i file .htaccess mancanti nelle cartelle di sistema').'",
+                "'.tr('I file .htaccess proteggono le cartelle sensibili da accessi non autorizzati').'",
+                "'.tr('Verranno utilizzati i contenuti standard per ciascuna cartella').'",
+                "'.tr('I file esistenti non verranno sovrascritti').'"
+            ]
         }
     };
 
@@ -1225,7 +1236,8 @@ function eseguiAzioneGlobale(buttonElement) {
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoConti",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoContiRagioneSociale",
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\ReaValidi",
-        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage"
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\TabelleLanguage",
+        "Modules\\\\Aggiornamenti\\\\Controlli\\\\FileHtaccess"
     ];
 
     let isInfo = controlliInfo.includes(controlloClass);

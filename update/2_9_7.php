@@ -7,7 +7,7 @@ $database = database();
 $id_module = Module::where('name', 'Marche')->first()->id;
 
 if (!empty($id_module)) {
-    $marche = $database->fetchArray('SELECT `id`, `immagine` FROM `zz_marche` WHERE `immagine` IS NOT NULL');
+    $marche = $database->fetchArray('SELECT `id`, `immagine` FROM `zz_marche` WHERE `immagine` IS NOT NULL AND `immagine` != ""');
 
     foreach ($marche as $marca) {
         $file_exists = $database->selectOne('zz_files', ['id'], [
@@ -20,6 +20,7 @@ if (!empty($id_module)) {
             $database->insert('zz_files', [
                 'id_module' => $id_module,
                 'id_record' => $marca['id'],
+                'id_adapter' => 1,
                 'name' => 'Immagine',
                 'filename' => $marca['immagine'],
                 'original' => $marca['immagine'],
@@ -48,7 +49,7 @@ if (!empty($id_module)) {
 
     foreach ($files_firma as $file) {
         // Estrae nome e data dalla key (formato: signature_nome_data)
-        $key_parts = explode('_', $file['key']);
+        $key_parts = explode('_', (string) $file['key']);
         if (count($key_parts) >= 3) {
             // Rimuove 'signature' dall'inizio
             array_shift($key_parts);
@@ -70,3 +71,6 @@ if (!empty($id_module)) {
         }
     }
 }
+
+// Fix per i record migrati con 2_9_6.php che hanno id_adapter = 0
+$database->query('UPDATE `zz_files` SET `id_adapter` = 1 WHERE `id_adapter` = 0');

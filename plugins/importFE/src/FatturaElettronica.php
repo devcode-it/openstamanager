@@ -28,6 +28,7 @@ use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
+use Modules\Pagamenti\Pagamento;
 use Util\XML;
 
 /**
@@ -70,14 +71,32 @@ class FatturaElettronica
         $numero = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
-        $fattura = Fattura::where([
-            'progressivo_invio' => $progressivo_invio,
-            'numero_esterno' => $numero,
-            'data' => $data,
-        ])->first();
+        // Estrazione partita IVA e codice fiscale del cedente dal file XML
+        $cedente = $this->getHeader()['CedentePrestatore']['DatiAnagrafici'];
+        $partita_iva = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
+        $codice_fiscale = $cedente['CodiceFiscale'] ?? null;
 
-        if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
-            throw new \UnexpectedValueException();
+        // Ricerca anagrafica corrispondente per partita IVA o codice fiscale
+        $anagrafica = null;
+        if (!empty($partita_iva)) {
+            $anagrafica = Anagrafica::where('piva', $partita_iva)->first();
+        }
+        if (empty($anagrafica) && !empty($codice_fiscale)) {
+            $anagrafica = Anagrafica::where('codice_fiscale', $codice_fiscale)->first();
+        }
+
+        // Verifica fattura pre-esistente solo se l'anagrafica corrisponde
+        if (!empty($anagrafica)) {
+            $fattura = Fattura::where([
+                'progressivo_invio' => $progressivo_invio,
+                'numero_esterno' => $numero,
+                'data' => $data,
+                'idanagrafica' => $anagrafica->id,
+            ])->first();
+
+            if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {
+                throw new \UnexpectedValueException();
+            }
         }
     }
 
@@ -85,11 +104,15 @@ class FatturaElettronica
     {
         $module = Module::where('name', $name ?: 'Fatture di acquisto')->first();
 
-        $plugins = $module->plugins;
-        if (!empty($plugins)) {
-            $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == ($plugin ?: 'Fatturazione Elettronica'));
+        if (!empty($module)) {
+            $plugins = $module->plugins;
+            if (!empty($plugins)) {
+                $plugin = $plugins->first(fn ($value, $key) => $value->getTranslation('title') == ($plugin ?: 'Fatturazione Elettronica'));
 
-            self::$directory = base_dir().'/'.$plugin->upload_directory;
+                if (!empty($plugin)) {
+                    self::$directory = base_dir().'/'.$plugin->upload_directory;
+                }
+            }
         }
 
         return self::$directory;
@@ -113,6 +136,11 @@ class FatturaElettronica
 
             return true;
         } catch (\UnexpectedValueException) {
+            $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
+            delete($file);
+
+            return false;
+        } catch (\Exception) {
             $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
             delete($file);
 
@@ -610,5 +638,73 @@ class FatturaElettronica
         }
 
         return $result;
+    }
+
+    /**
+     * Fornisce le informazioni di default per l'importazione automatica.
+     *
+     * @return bool
+     */
+    public static function getInfoAutoImportFE($fattura_pa)
+    {
+        $fattura_body = $fattura_pa->getBody();
+        $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
+        $id_module_fatture_acquisto = Module::where('name', 'Fatture di acquisto')->first()->id;
+
+        // Data registrazione
+        $data_registrazione = post('data_registrazione') ?: $dati_generali['Data'];
+
+        // Pagamento
+        $pagamenti = [];
+        if (isset($fattura_body['DatiPagamento'])) {
+            $pagamenti = $fattura_body['DatiPagamento'];
+            $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        }
+        $metodi = [];
+        foreach ($pagamenti as $pagamento) {
+            $rate = $pagamento['DettaglioPagamento'];
+            $rate = isset($rate[0]) ? $rate : [$rate];
+            $metodi = array_merge($metodi, $rate);
+        }
+        $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+        $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+        $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
+
+        // Tipo del documento
+        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+        $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
+        $numero_tipo = database()->fetchNum($query_tipo);
+        if (!empty($numero_tipo)) {
+            $query = $query_tipo;
+        }
+        $id_tipodocumento = database()->fetchOne($query)['id'];
+
+        // Sezionale
+        $id_segment = null;
+        if (!empty($id_tipodocumento)) {
+            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+        }
+
+        $info = [
+            'id_pagamento' => $pagamento->id ?? setting('Tipo di pagamento predefinito'),
+            'id_segment' => $id_segment ?? getSegmentPredefined($id_module_fatture_acquisto),
+            'id_tipo' => $id_tipodocumento,
+            'ref_fattura' => null,
+            'data_registrazione' => $data_registrazione,
+            'articoli' => [],
+            'iva' => [],
+            'conto' => [],
+            'tipo_riga_riferimento' => [],
+            'id_riga_riferimento' => [],
+            'tipo_riga_riferimento_vendita' => [],
+            'id_riga_riferimento_vendita' => [],
+            'movimentazione' => 0,
+            'crea_articoli' => 0,
+            'is_ritenuta_pagata' => 0,
+            'update_info' => [],
+            'serial' => [],
+        ];
+
+        return $info;
     }
 }

@@ -50,6 +50,10 @@ $iva_vendite_periodo_precedente = $dati_liquidazione['iva_vendite_periodo_preced
 $iva_acquisti_anno_precedente = $dati_liquidazione['iva_acquisti_anno_precedente'];
 $iva_acquisti_periodo_precedente = $dati_liquidazione['iva_acquisti_periodo_precedente'];
 
+$acconto_iva_periodo_corrente = $dati_liquidazione['acconto_iva_periodo_corrente'];
+$acconto_iva_periodo_precedente = $dati_liquidazione['acconto_iva_periodo_precedente'];
+$acconto_iva_periodo_precedente_utilizzato = $dati_liquidazione['acconto_iva_periodo_precedente_utilizzato'];
+
 // Estrae i totali dei periodi precedenti
 $totale_iva_vendite_periodo_precedente = $dati_liquidazione['totale_iva_vendite_periodo_precedente'];
 $totale_iva_acquisti_periodo_precedente = $dati_liquidazione['totale_iva_acquisti_periodo_precedente'];

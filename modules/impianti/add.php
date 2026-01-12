@@ -53,7 +53,7 @@ $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 
 	<div class="row">
 		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>|is_impianto=1" ]}
 		</div>
 
 		<div class="col-md-3">
@@ -61,11 +61,11 @@ $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 		</div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "id": "id_marca_add", "ajax-source": "marca", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
+            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "id": "id_marca_add", "ajax-source": "marche", "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modello", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>||hide" ]}
+            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca']]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>||hide" ]}
         </div>
 	</div>
 

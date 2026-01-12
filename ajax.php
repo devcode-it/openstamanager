@@ -154,4 +154,22 @@ switch (filter('op')) {
         echo json_encode($results);
 
         break;
+
+    case 'calcola_sconto_combinato':
+        $prc_combinato = post('prc_combinato');
+
+        if (!empty($prc_combinato)) {
+            $sconto = parseScontoCombinato($prc_combinato);
+            echo json_encode([
+                'success' => true,
+                'sconto' => $sconto,
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => tr('Sconto combinato non valido'),
+            ]);
+        }
+
+        break;
 }

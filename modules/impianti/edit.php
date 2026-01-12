@@ -87,7 +87,7 @@ $img = !empty($impianto) ? $impianto->image : null;
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?
     Modules::link('Categorie', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_imp", "icon-after": "add|<?php echo $id_modulo_categorie_impianti; ?>|is_impianto=1" ]}
                         </div>
 
                         <div class="col-md-6">

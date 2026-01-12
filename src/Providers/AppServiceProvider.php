@@ -2,16 +2,10 @@
 
 namespace Providers;
 
-use API\Controllers\DataTablesController;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Request;
 use Models\Locale;
-use Modules\Impostazioni\API\Controllers\GetImpostazioneProvider;
-use Modules\Impostazioni\API\Controllers\ListImpostazioniProvider;
-use Modules\Impostazioni\API\Controllers\ListSezioniImpostazioniProvider;
-use Modules\Impostazioni\API\Controllers\UpdateImpostazioneProcessor;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +14,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
     }
 
     /**
@@ -45,11 +38,17 @@ class AppServiceProvider extends ServiceProvider
             $lang = Locale::find($id_lang)->language_code;
             $translator->setLocale($lang, $formatter);
         }
-        
-        $this->app->tag(GetImpostazioneProvider::class, ProviderInterface::class);
-        $this->app->tag(UpdateImpostazioneProcessor::class, ProcessorInterface::class);
-        $this->app->tag(ListSezioniImpostazioniProvider::class, ProviderInterface::class);
-        $this->app->tag(ListImpostazioniProvider::class, ProviderInterface::class);
-        $this->app->tag(DataTablesController::class, ProcessorInterface::class);    
+
+        // Register all Providers and Processors from Modules and Plugins
+        foreach (get_declared_classes() as $className) {
+            if (str_contains($className, 'Modules\\') || str_contains($className, 'API\\') || str_contains($className, 'Plugins\\')) {
+                if (in_array(ProviderInterface::class, class_implements($className))) {
+                    $this->app->tag($className, ProviderInterface::class);
+                }
+                if (in_array(ProcessorInterface::class, class_implements($className))) {
+                    $this->app->tag($className, ProcessorInterface::class);
+                }
+            }
+        }
     }
 }

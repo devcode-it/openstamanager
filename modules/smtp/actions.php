@@ -78,7 +78,12 @@ switch (filter('op')) {
         }
         // Aggiornamento delle informazioni per OAuth2
         else {
-            $oauth2 = $account->oauth2 ?: OAuth2::build();
+            $provider_name = '';
+            if (class_exists(post('provider'))) {
+                $provider = new (post('provider'));
+                $provider_name = $provider->getName();
+            }
+            $oauth2 = $account->oauth2 ?: OAuth2::build($provider_name);
 
             $oauth2->class = post('provider');
             $oauth2->client_id = post('client_id');

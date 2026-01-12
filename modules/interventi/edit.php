@@ -367,17 +367,16 @@ if (!$block_edit) {
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 
-    $ordini_query = 'SELECT 
-            COUNT(*) AS tot 
-        FROM 
+    $ordini_query = 'SELECT
+            COUNT(*) AS tot
+        FROM
             `or_ordini`
             INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
-        WHERE 
+        WHERE
             ((`or_tipiordine`.`dir` = "entrata" AND `idanagrafica`='.prepare($record['idanagrafica']).') || `or_tipiordine`.`dir` = "uscita")
-            AND `or_statiordine_lang`.`title` IN ("Accettato")
+            AND `or_statiordine`.`is_fatturabile` = 1
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
     $ordine = $dbo->fetchArray($ordini_query)[0]['tot'];
 

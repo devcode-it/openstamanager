@@ -101,7 +101,7 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = $righe_bollo->idiva ?: database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
+        $riga->id_iva = $righe_bollo->idiva ?? database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
         $riga->iddocumento = $this->fattura->id;
 

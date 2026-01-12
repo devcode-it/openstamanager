@@ -249,6 +249,7 @@ class Module extends Model
      * Verifica se il modulo ha un flag specifico attivo.
      *
      * @param string $flag_name Nome del flag da verificare
+     *
      * @return bool True se il flag è presente, false altrimenti
      */
     public function hasFlag($flag_name)

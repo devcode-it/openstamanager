@@ -284,28 +284,37 @@ if (!empty($numero_tipo)) {
     $query = $query_tipo;
 }
 
-$id_tipodocumento = $database->fetchOne($query_tipo)['id'];
+$tipo_doc = $database->fetchOne($query_tipo);
+$id_tipodocumento = $tipo_doc['id'] ?? null;
 
 echo '
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 ? $id_tipodocumento : '').'" ]}
+                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 && !empty($id_tipodocumento) ? $id_tipodocumento : '').'" ]}
             </div>';
 
 // Sezionale
-$id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+$id_segment = null;
+if (!empty($id_tipodocumento)) {
+    $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+}
 
 echo '
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.$id_segment.'" ]}
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.($id_segment ?: '').'" ]}
             </div>';
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
-$data_registrazione = new Carbon($data_registrazione);
+if (!empty($data_registrazione)) {
+    $data_registrazione = new Carbon($data_registrazione);
+} else {
+    $data_registrazione = null;
+}
+$data_registrazione_value = !empty($data_registrazione) ? $data_registrazione->format('Y-m-d') : $dati_generali['Data'];
 echo '
             <div class="col-md-3">
-                {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
+                {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.$data_registrazione_value.'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
             </div>';
 
 if (!empty($anagrafica)) {
@@ -451,6 +460,13 @@ if (!empty($righe)) {
                 'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }
+
+        if (!$dato['RiferimentoNumeroLinea']) {
+            $dati_ordini_documento[] = [
+                'numero' => $dato['IdDocumento'],
+                'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
+            ];
+        }
     }
 
     // Riorganizzazione dati ordini per numero di riga
@@ -458,6 +474,13 @@ if (!empty($righe)) {
     foreach ($DatiDDT as $dato) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ddt[(int) $linea] = [
+                'numero' => $dato['NumeroDDT'],
+                'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
+            ];
+        }
+
+        if (!$dato['RiferimentoNumeroLinea']) {
+            $dati_ddt_documento[] = [
                 'numero' => $dato['NumeroDDT'],
                 'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
             ];
@@ -500,16 +523,20 @@ if (!empty($righe)) {
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
-                $id_articolo = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id));
+                $id_articolo = $result['id'] ?? null;
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' AND `id_fornitore` = '.prepare($anagrafica->id))['id'];
+                    $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' AND `id_fornitore` = '.prepare($anagrafica->id));
+                    $id_articolo = $result['id'] ?? null;
                 }
             }
 
             if (empty($id_articolo)) {
-                $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale))['id'];
+                $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale));
+                $id_articolo = $result['id'] ?? null;
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale))['id'];
+                    $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale));
+                    $id_articolo = $result['id'] ?? null;
                 }
             }
 
@@ -568,25 +595,50 @@ if (!empty($righe)) {
             }
         }
 
-        $riferimento_fe = '';
-
+        $riferimento_fe = [];
+        if ($dati_ordini[(int) $riga['NumeroLinea']]) {
+            $riferimento_fe[] = tr('Ordine _NUMERO_ del _DATA_',
+                [
+                    '_NUMERO_' => $dati_ordini[(int) $riga['NumeroLinea']]['numero'],
+                    '_DATA_' => $dati_ordini[(int) $riga['NumeroLinea']]['data'],
+                ]);
+        }
+        if ($dati_ordini_documento) {
+            foreach ($dati_ordini_documento as $ordine) {
+                $riferimento_fe[] = tr('Ordine _NUMERO_ del _DATA_',
+                    [
+                        '_NUMERO_' => $ordine['numero'],
+                        '_DATA_' => $ordine['data'],
+                    ]);
+            }
+        }
         if ($dati_ddt[(int) $riga['NumeroLinea']]) {
-            $riferimento_fe = tr('DDT _NUMERO_ del _DATA_',
+            $riferimento_fe[] = tr('DDT _NUMERO_ del _DATA_',
                 [
                     '_NUMERO_' => $dati_ddt[(int) $riga['NumeroLinea']]['numero'],
                     '_DATA_' => $dati_ddt[(int) $riga['NumeroLinea']]['data'],
                 ]);
         }
+        if ($dati_ddt_documento) {
+            foreach ($dati_ddt_documento as $ddt) {
+                $riferimento_fe[] = tr('DDT _NUMERO_ del _DATA_',
+                    [
+                        '_NUMERO_' => $ddt['numero'],
+                        '_DATA_' => $ddt['data'],
+                    ]);
+            }
+        }
 
         echo '
-        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
+        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'" data-sconto_unitario="'.$sconto_unitario.'">
             <td>
                 '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
-                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small><br>
-                <small class="pull-right text-muted">'.$riferimento_fe.'</small>
+                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>';
+        if (!empty($riferimento_fe)) {
+            echo '<small class="pull-right text-muted">'.implode('<br>', $riferimento_fe).'</small>';
+        }
 
-
-                '.$riga['Descrizione'].'<br>
+        echo $riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
 
@@ -903,7 +955,7 @@ function impostaRiferimento(id_riga, documento, riga) {
     impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta", true);
 
     // Informazioni visibili sul prezzo unitario
-    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo", true);
+    impostaContenuto(riga_fe.data("prezzo_unitario")-riga_fe.data("sconto_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo", true);
 
     // Informazioni visibili sull\'aliquota IVA
     impostaContenuto(riga_fe.data("iva_percentuale"), parseInt(riga.iva_percentuale), "%", "#riferimento_" + id_riga + "_iva", false);

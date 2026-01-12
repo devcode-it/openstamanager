@@ -34,6 +34,12 @@ switch (filter('op')) {
         $listino->note = post('note');
         $listino->save();
 
+        $id_anagrafiche = (array) post('idanagrafica');
+        $dbo->query('UPDATE `an_anagrafiche` SET id_listino=0 WHERE id_listino='.prepare($id_record));
+        foreach ($id_anagrafiche as $id_anagrafica) {
+            $dbo->query('UPDATE `an_anagrafiche` SET id_listino='.prepare($id_record).' WHERE idanagrafica='.prepare($id_anagrafica));
+        }
+
         flash()->info(tr('Listino modificato correttamente!'));
 
         break;
@@ -71,6 +77,29 @@ switch (filter('op')) {
         }
 
         flash()->info(tr('Nuovo articolo al listino aggiunto!'));
+
+        break;
+
+    case 'copy':
+        $database->beginTransaction();
+        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_listini WHERE id= '.prepare($id_record));
+        $dbo->query('ALTER TABLE tmp DROP id');
+        $dbo->query('INSERT INTO mg_listini SELECT NULL,tmp. * FROM tmp');
+        $id_record_new = $dbo->lastInsertedID();
+        $dbo->query('DROP TEMPORARY TABLE tmp');
+        $dbo->query('UPDATE mg_listini SET nome = CONCAT (nome, " (copia)") WHERE id = '.prepare($id_record_new));
+
+        $articoli = Articolo::where('id_listino', $id_record)->get();
+        foreach ($articoli as $articolo) {
+            $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_listini_articoli WHERE id= '.prepare($articolo->id));
+            $dbo->query('ALTER TABLE tmp DROP id');
+            $dbo->query('INSERT INTO mg_listini_articoli SELECT NULL,tmp. * FROM tmp');
+            $id_riga_new = $dbo->lastInsertedID();
+            $dbo->query('DROP TEMPORARY TABLE tmp');
+            $dbo->query('UPDATE mg_listini_articoli SET id_listino = '.prepare($id_record_new).' WHERE id = '.prepare($id_riga_new));
+        }
+
+        flash()->info(tr('Listino duplicato correttamente!'));
 
         break;
 

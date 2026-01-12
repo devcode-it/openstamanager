@@ -146,7 +146,7 @@ $dbo->query('ALTER TABLE `zz_files` DROP `category`');
 // Rimozione delle foreign key dalla tabella my_impianti_marche_lang
 try {
     $dbo->query('ALTER TABLE `my_impianti_marche_lang` DROP FOREIGN KEY `my_impianti_marche_lang_ibfk_1`');
-} catch (Exception $e) {
+} catch (Exception) {
     // Errore durante la rimozione della foreign key, continua l'esecuzione
 }
 try {
@@ -158,7 +158,7 @@ try {
 // Rimozione delle tabelle my_impianti_marche_lang e my_impianti_marche
 try {
     $dbo->query('DROP TABLE `my_impianti_marche_lang`');
-} catch (Exception $e) {
+} catch (Exception) {
     // Errore durante la rimozione della tabella, continua l'esecuzione
 }
 try {

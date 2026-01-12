@@ -46,6 +46,20 @@ if ($res) {
     $is_readonly = '1';
 }
 
+// Alert per aliquota esente senza codice natura o con codice natura obsoleto
+$codici_natura_obsoleti = ['N2', 'N3', 'N6'];
+if ($record['esente'] && empty($record['codice_natura_fe'])) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Attenzione').':</strong> '.tr('Questa aliquota è marcata come esente ma non ha un codice natura IVA impostato. Per la fatturazione elettronica è obbligatorio specificare il codice natura per le aliquote esenti.').'
+    </div>';
+} elseif ($record['esente'] && in_array($record['codice_natura_fe'], $codici_natura_obsoleti)) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Attenzione').':</strong> '.tr('Il codice natura "_NATURA_" non è più valido dal 1° gennaio 2021. È necessario utilizzare un sottocodice specifico (es. _NATURA_.1, _NATURA_.2, ecc.).', ['_NATURA_' => $record['codice_natura_fe']]).'
+    </div>';
+}
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -78,7 +92,7 @@ if ($res) {
 				</div>
                 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `title`) AS descrizione FROM fe_natura LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT `codice` as id, CONCAT(`codice`, ' - ', `title`) AS descrizione FROM fe_natura LEFT JOIN `fe_natura_lang` ON (`fe_natura`.`codice` = `fe_natura_lang`.`id_record` AND `fe_natura_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `codice` NOT IN ('N2', 'N3', 'N6')", "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
 				</div>
 			</div>
 

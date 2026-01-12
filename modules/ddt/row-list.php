@@ -251,7 +251,8 @@ foreach ($righe as $riga) {
         echo '
                 <td>
                     '.($show_notifica['show_notifica_sconto'] ? '<i class="fa fa-info-circle notifica-prezzi"></i>' : '').'
-                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.$block_edit.'" ]}
+                    {[ "type": "number", "name": "sconto_'.$riga->id.'", "value": "'.($riga->sconto_percentuale ?: $riga->sconto_unitario_corrente).'", "onchange": "aggiornaInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "'.($riga->isSconto() ? currency() : 'choice|untprc|'.($tipo_sconto ?: $riga->tipo_sconto)).'", "disabled": "'.($block_edit || $riga->sconto_percentuale_combinato).'" ]}
+                    <small class="badge badge-info '.($riga->tipo_sconto == 'PRC+' ? '' : 'hidden').'">Sconto combinato: '.$riga->sconto_percentuale_combinato.'</small>
                 </td>';
 
         // Importo
@@ -542,8 +543,10 @@ function confrontaRighe(id) {
 function aggiornaRighe(id) {
     swal({
         title: "'.tr('Aggiornare prezzi di queste righe?').'",
-        html: "'.tr('Confermando verranno aggiornati i prezzi delle righe secondo i listini ed i prezzi predefiniti collegati all\'articolo e ai piani sconto collegati all\'anagrafica.').'",
-        type: "warning",
+        html: `'.tr('Confermando verranno aggiornati i prezzi delle righe secondo i listini ed i prezzi predefiniti collegati all\'articolo e ai piani sconto collegati all\'anagrafica.').'.<br><br>
+        {[ "type": "checkbox", "label": "", "name": "update_prezzo_acquisto", "value":"1", "values":" \"'.tr('Aggiornare prezzo di acquisto').'\",\"'.tr('Non aggiornare prezzo di acquisto').'\" " ]}<br>
+        {[ "type": "checkbox", "label": "", "name": "update_prezzo_vendita", "value":"1", "values":" \"'.tr('Aggiornare prezzo di vendita').'\",\"'.tr('Non aggiornare prezzo di vendita').'\" " ]}<br>
+        {[ "type": "checkbox", "label": "", "name": "update_descrizione", "value":"0", "values":" \"'.tr('Aggiornare descrizione').'\",\"'.tr('Non aggiornare descrizione').'\" " ]}<br>`,        type: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
@@ -555,6 +558,9 @@ function aggiornaRighe(id) {
                 id_record: globals.id_record,
                 op: "update-price",
                 righe: id,
+                update_prezzo_acquisto: input("update_prezzo_acquisto").get(),
+                update_prezzo_vendita: input("update_prezzo_vendita").get(),
+                update_descrizione: input("update_descrizione").get(),
             },
             success: function (response) {
                 renderMessages();

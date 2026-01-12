@@ -1,0 +1,80 @@
+<?php
+
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+include_once __DIR__.'/../../core.php';
+
+switch (post('op')) {
+    // Aggiunta scadenza
+    case 'addscadenza':
+        $descrizione = post('descrizione');
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine');
+        $km = post('km');
+        $codice = post('codice');
+
+        $dbo->insert('an_automezzi_scadenze', [
+            'idsede' => $id_record,
+            'descrizione' => $descrizione,
+            'data_inizio' => $data_inizio,
+            'data_fine' => $data_fine,
+            'km' => $km,
+            'codice' => $codice,
+            'is_manutenzione' => 0,
+        ]);
+
+        flash()->info(tr('Scadenza aggiunta correttamente!'));
+
+        break;
+
+        // Modifica scadenza
+    case 'editscadenza':
+        $idscadenza = post('idscadenza');
+        $descrizione = post('descrizione');
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine');
+        $km = post('km');
+        $codice = post('codice');
+        $is_completato = post('is_completato');
+
+        $dbo->update('an_automezzi_scadenze', [
+            'descrizione' => $descrizione,
+            'data_inizio' => $data_inizio,
+            'data_fine' => $data_fine,
+            'km' => $km,
+            'codice' => $codice,
+            'is_completato' => $is_completato,
+        ], [
+            'id' => $idscadenza,
+        ]);
+
+        flash()->info(tr('Scadenza modificata correttamente!'));
+
+        break;
+
+        // Eliminazione scadenza
+    case 'delscadenza':
+        $idscadenza = post('id');
+
+        $dbo->query('DELETE FROM an_automezzi_scadenze WHERE id = '.prepare($idscadenza));
+
+        flash()->info(tr('Scadenza eliminata correttamente!'));
+
+        break;
+}

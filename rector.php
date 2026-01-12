@@ -9,13 +9,19 @@ use Rector\Set\ValueObject\LevelSetList;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
         __DIR__.'/api',
+        __DIR__.'/bootstrap',
         __DIR__.'/config',
+        __DIR__.'/docker',
         __DIR__.'/include',
         __DIR__.'/lib',
         __DIR__.'/modules',
         __DIR__.'/plugins',
+        __DIR__.'/public',
+        __DIR__.'/routes',
         __DIR__.'/src',
+        __DIR__.'/storage',
         __DIR__.'/templates',
+        __DIR__.'/tests',
         __DIR__.'/update',
     ]);
 

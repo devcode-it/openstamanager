@@ -92,6 +92,7 @@ switch (filter('op')) {
 
         echo json_encode([
             'id' => $index + 1,
+            'name' => $file,
         ]);
 
         break;
@@ -124,28 +125,32 @@ switch (filter('op')) {
 
     case 'generate':
         $filename = post('filename');
-
-        $info = [
-            'id_pagamento' => post('pagamento'),
-            'id_segment' => post('id_segment'),
-            'id_tipo' => post('id_tipo'),
-            'ref_fattura' => post('ref_fattura'),
-            'data_registrazione' => post('data_registrazione'),
-            'articoli' => post('articoli'),
-            'iva' => post('iva'),
-            'conto' => post('conto'),
-            'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
-            'id_riga_riferimento' => post('id_riga_riferimento'),
-            'tipo_riga_riferimento_vendita' => post('tipo_riga_riferimento_vendita'),
-            'id_riga_riferimento_vendita' => post('id_riga_riferimento_vendita'),
-            'movimentazione' => post('movimentazione'),
-            'crea_articoli' => post('crea_articoli'),
-            'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
-            'update_info' => post('update_info'),
-            'serial' => post('flag_crea_seriali') ? post('serial') : [],
-        ];
-
         $fattura_pa = FatturaElettronica::manage($filename);
+
+        if (post('type') == 'auto') {
+            $info = FatturaElettronica::getInfoAutoImportFE($fattura_pa);
+        } else {
+            $info = [
+                'id_pagamento' => post('pagamento'),
+                'id_segment' => post('id_segment'),
+                'id_tipo' => post('id_tipo'),
+                'ref_fattura' => post('ref_fattura'),
+                'data_registrazione' => post('data_registrazione'),
+                'articoli' => post('articoli'),
+                'iva' => post('iva'),
+                'conto' => post('conto'),
+                'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
+                'id_riga_riferimento' => post('id_riga_riferimento'),
+                'tipo_riga_riferimento_vendita' => post('tipo_riga_riferimento_vendita'),
+                'id_riga_riferimento_vendita' => post('id_riga_riferimento_vendita'),
+                'movimentazione' => post('movimentazione'),
+                'crea_articoli' => post('crea_articoli'),
+                'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
+                'update_info' => post('update_info'),
+                'serial' => post('flag_crea_seriali') ? post('serial') : [],
+            ];
+        }
+
         $id_fattura = $fattura_pa->save($info, 'Fornitore');
         $fattura_pa->delete();
         $fattura = Fattura::find($id_fattura);
@@ -196,21 +201,26 @@ switch (filter('op')) {
             }
         }
 
-        $files = Interaction::getFileList();
-        $file = $files[$id_record - 1];
-
         if (get('sequence') == null) {
-            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
-        } elseif (!empty($file)) {
-            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
-            flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
+            flash()->info(tr('La fattura numero _NUM_ del _DATA_ è stata importata correttamente', [
                 '_NUM_' => $fattura->numero,
                 '_DATA_' => dateFormat($fattura->data),
-                '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,
             ]));
+            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } else {
-            flash()->info(tr('Tutte le fatture salvate sono state importate!'));
-            redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
+            $files = Interaction::getFileList();
+            $file = $files[$id_record - 1];
+            if (!empty($file)) {
+                redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+                flash()->info(tr('La fattura numero _NUM_ del _DATA_ (_ANAGRAFICA_) è stata importata correttamente', [
+                    '_NUM_' => $fattura->numero,
+                    '_DATA_' => dateFormat($fattura->data),
+                    '_ANAGRAFICA_' => $fattura->anagrafica->ragione_sociale,
+                ]));
+            } else {
+                flash()->info(tr('Tutte le fatture salvate sono state importate!'));
+                redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
+            }
         }
         break;
 

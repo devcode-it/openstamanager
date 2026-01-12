@@ -30,27 +30,27 @@ foreach ($subcategorie as $sub) {
     echo '
     <tr>
         <td class="align-middle">
-            <strong>' . $sub->getTranslation('title') . '</strong>
+            <strong>'.$sub->getTranslation('title').'</strong>
         </td>
         <td class="text-center align-middle">
-            <span class="badge" style="background-color: ' . $sub->colore . '; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span>
-            <span class="text-muted">' . $sub->colore . '</span>
+            <span class="badge" style="background-color: '.$sub->colore.'; width: 20px; height: 20px; display: inline-block; vertical-align: middle;"></span>
+            <span class="text-muted">'.$sub->colore.'</span>
         </td>
         <td class="text-center align-middle">
-            ' . ($n_articoli > 0 ? '<span class="badge badge-info">' . $n_articoli . '</span>' : '<span class="badge badge-secondary">0</span>') . '
+            '.($n_articoli > 0 ? '<span class="badge badge-info">'.$n_articoli.'</span>' : '<span class="badge badge-secondary">0</span>').'
         </td>
         <td class="text-center align-middle">
-            ' . ($n_impianti > 0 ? '<span class="badge badge-primary">' . $n_impianti . '</span>' : '<span class="badge badge-secondary">0</span>') . '
+            '.($n_impianti > 0 ? '<span class="badge badge-primary">'.$n_impianti.'</span>' : '<span class="badge badge-secondary">0</span>').'
         </td>
         <td class="align-middle">
-            <small>' . nl2br(htmlentities(substr((string) $sub->getTranslation('note'), 0, 100))) . (strlen((string) $sub->getTranslation('note')) > 100 ? '...' : '') . '</small>
+            <small>'.nl2br(htmlentities(substr((string) $sub->getTranslation('note'), 0, 100))).(strlen((string) $sub->getTranslation('note')) > 100 ? '...' : '').'</small>
         </td>
         <td class="text-center align-middle">
             <div class="btn-group">
-                <button type="button" class="btn btn-warning btn-sm" title="' . tr('Modifica') . '" onclick="launch_modal(\'' . tr('Modifica sottocategoria') . '\', \'' . base_path() . '/add.php?id_module=' . $id_module . '&id_record=' . $sub->id . '&id_original=' . $id_record . '\');">
+                <button type="button" class="btn btn-warning btn-sm" title="'.tr('Modifica').'" onclick="launch_modal(\''.tr('Modifica sottocategoria').'\', \''.base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$sub->id.'&id_original='.$id_record.'\');">
                     <i class="fa fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-danger ask ' . (($n_articoli > 0 || $n_impianti > 0) ? 'disabled tip' : '') . '" data-backto="record-edit" data-id="' . $sub['id'] . '" title="' . (($n_articoli > 0 || $n_impianti > 0) ? 'Sottocategoria collegata a ' . $n_articoli . ' articoli e ' . $n_impianti . ' impianti' : tr('Elimina')) . '">
+                <button type="button" class="btn btn-sm btn-danger ask '.(($n_articoli > 0 || $n_impianti > 0) ? 'disabled tip' : '').'" data-backto="record-edit" data-id="'.$sub['id'].'" title="'.(($n_articoli > 0 || $n_impianti > 0) ? 'Sottocategoria collegata a '.$n_articoli.' articoli e '.$n_impianti.' impianti' : tr('Elimina')).'">
                     <i class="fa fa-trash"></i>
                 </button>
             </div>

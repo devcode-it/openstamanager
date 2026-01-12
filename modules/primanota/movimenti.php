@@ -183,10 +183,18 @@ $nome = tr('Generale');
 
 renderTabella($nome, $movimenti_generali, $totale_dare, $totale_avere);
 
-// Nuova riga
+// Somma i totali dei movimenti generali
+foreach ($movimenti_generali as $riga) {
+    $totale_dare += $riga['dare'] ?? 0;
+    $totale_avere += $riga['avere'] ?? 0;
+}
+
+// Suffisso per distinguere add da edit
+$suffix = empty($id_record) ? '_add' : '';
+
 echo '
 <table class="hide">
-    <tbody id="template">';
+    <tbody id="template'.$suffix.'">';
 
 renderRiga('-id-',
     [
@@ -199,80 +207,61 @@ renderRiga('-id-',
 
 echo '
     </tbody>
-</table>';
+</table>
 
-// Nuova riga
-$suffix = empty($id_record) ? '_add' : '';
-echo '
 <table class="table table-bordered">
     <tr>
         <th class="text-right">'.tr('Totale').'</th>
         <th id="totale_dare'.$suffix.'" class="text-right" width="20%">'.moneyFormat($totale_dare).'</th>
         <th id="totale_avere'.$suffix.'" class="text-right" width="20%">'.moneyFormat($totale_avere).'</th>
     </tr>
-</table>';
+</table>
 
-echo '
 <script>
 var formatted_zero = "'.numberFormat(0).'";
 var n = '.$counter.';
 
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
+    var isInModal = $(btn).closest("#modals").length > 0;
     cleanup_inputs();
 
     var tabella = raggruppamento.find("tbody");
-    var content = $("#template").html();
-    content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"))
+    var templateId = isInModal ? "#template_add" : "#template";
+    var content = $(templateId).html()
+        .replace("-id_scadenza-", raggruppamento.data("id_scadenza"))
         .replace("-id_documento-", raggruppamento.data("id_documento"));
 
-    var text = replaceAll(content, "-id-", "" + n);
-    tabella.append(text);
-
+    tabella.append(replaceAll(content, "-id-", "" + n));
     restart_inputs();
     n++;
 }
 
 /**
-* Funzione per controllare lo stato dei conti della prima nota.
-*
-* @returns {boolean}
+* Controlla lo stato dei conti della prima nota e abilita/disabilita i bottoni di submit.
 */
-function controllaConti() {
+function controllaConti(element) {
     let continuare = true;
+    let isInModal = element ? $(element).closest("#modals").length > 0 : $("#modals > div").length > 0;
+    let container = isInModal ? $("#modals > div") : $(document);
 
-    // Controlli sullo stato dei raggruppamenti
-    $(".raggruppamento_primanota").each(function() {
-        let bilancio = calcolaBilancio(this);
-
-        continuare &= bilancio === 0;
+    // Controlli sullo stato dei raggruppamenti nel container corrente
+    container.find(".raggruppamento_primanota").each(function() {
+        continuare &= calcolaBilancio(this) === 0;
     });
 
-    // Blocco degli input con valore non impostato
-    $("input[id*=dare], input[id*=avere]").each(function() {
-        let conto_relativo = $(this).parent().parent().parent().parent().find("select").val();
-
-        if (!conto_relativo) {
-            $(this).prop("disabled", true);
-        }
-
-        if ($(this).val().toEnglish()){
-            continuare &= !!conto_relativo;
-        }
+    // Blocco degli input senza conto selezionato
+    container.find("input[id*=dare], input[id*=avere]").each(function() {
+        let conto = $(this).closest("tr").find("select").val();
+        if (!conto) $(this).prop("disabled", true);
+        if ($(this).val().toEnglish()) continuare &= !!conto;
     });
 
-    if (continuare) {
-        $("#add-submit").prop("disabled", false);
-        $("#modello-button").prop("disabled", false);
-        if (!$("#modals > div").get().length) {
-            $("#save, #save-close").removeAttr("disabled").removeClass("disabled");
-        }
+    // Gestione bottoni submit
+    if (isInModal) {
+        $("#modals > div #add-submit, #modals > div #modello-button").prop("disabled", !continuare);
     } else {
-        $("#add-submit").prop("disabled", true);
-        $("#modello-button").prop("disabled", true);
-        if (!$("#modals > div").get().length) {
-            $("#save, #save-close").attr("disabled", "true").addClass("disabled");
-        }
+        $("#save, #save-close").prop("disabled", !continuare).toggleClass("disabled", !continuare);
     }
 
     return continuare;
@@ -328,106 +317,71 @@ function calcolaBilancio(gruppo) {
 $(document).ready(function() {
     controllaConti();
 
-    // Fix per l\'inizializzazione degli input
+    // Inizializzazione input: disabilita quelli a zero
     $("input[id*=dare], input[id*=avere]").each(function() {
-        if (input(this).get() === 0) {
-            $(this).prop("disabled", true);
-        } else {
-            $(this).prop("disabled", false);
-        }
+        $(this).prop("disabled", input(this).get() === 0);
     });
 
-    // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
+    // Trigger iniziale per controlli
     $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
     $("select[id*=conto]").click(function() {
-        $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+        $(this).closest(".raggruppamento_primanota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
     });
 });
 
-$(document).on("change", "select", function() {
-    let row = $(this).parent().parent().parent().parent();
+$(document).on("change", "select[id*=conto]", function() {
+    let row = $(this).closest("tr");
 
     if (row.find("input[disabled]").length > 1) {
         row.find("input").prop("disabled", !$(this).val());
     }
 
-    // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
-    $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+    $(this).closest(".raggruppamento_primanota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+    controllaConti(this);
 
-    controllaConti();
+    $(this).closest("td").find("button").toggleClass("disabled", !$(this).val());
+});
 
-    let button = $(this).parent().parent().find("button");
-    if ($(this).val()) {
-        button.removeClass("disabled");
+// Handler unificato per input dare/avere - disabilita il campo opposto e aggiorna totali
+$(document).on("keyup change", "input[id*=dare], input[id*=avere]", function() {
+    if ($(this).prop("disabled")) return;
+
+    let row = $(this).parent().parent().parent();
+    let isDare = this.id.includes("dare");
+    let oppositeField = isDare ? "input[id*=avere]" : "input[id*=dare]";
+
+    row.find(oppositeField).prop("disabled", $(this).val().toEnglish());
+    controllaConti(this);
+    aggiornaTotali(this);
+});
+
+// Funzione unificata per aggiornare i totali in base al contesto
+function aggiornaTotali(element) {
+    var isInModal = $(element).closest("#modals").length > 0;
+    var totalDare = 0;
+    var totalAvere = 0;
+
+    if (isInModal) {
+        $("#modals [id*=dare_add_]").each(function() {
+            totalDare += parseFloat($(this).val().toEnglish()) || 0;
+        });
+        $("#modals [id*=avere_add_]").each(function() {
+            totalAvere += parseFloat($(this).val().toEnglish()) || 0;
+        });
+        $("#modals #totale_dare_add").text(totalDare.toLocale());
+        $("#modals #totale_avere_add").text(totalAvere.toLocale());
     } else {
-        button.addClass("disabled");
+        $("[id*=dare]:not([id*=_add_])").not("#modals *").each(function() {
+            totalDare += parseFloat($(this).val().toEnglish()) || 0;
+        });
+        $("[id*=avere]:not([id*=_add_])").not("#modals *").each(function() {
+            totalAvere += parseFloat($(this).val().toEnglish()) || 0;
+        });
+        $("#totale_dare").text(totalDare.toLocale());
+        $("#totale_avere").text(totalAvere.toLocale());
     }
-});
-
-$(document).on("keyup change", "input[id*=dare]", function() {
-    let row = $(this).parent().parent().parent();
-
-    if (!$(this).prop("disabled")) {
-        row.find("input[id*=avere]").prop("disabled", $(this).val().toEnglish());
-
-        controllaConti();
-    }
-});
-
-$(document).on("keyup change", "input[id*=avere]", function() {
-    let row = $(this).parent().parent().parent();
-
-    if (!$(this).prop("disabled")) {
-        row.find("input[id*=dare]").prop("disabled", $(this).val().toEnglish());
-
-        controllaConti();
-    }
-});
-
-// Funzione per aggiornare i totali dell\'edit
-function aggiornaTotaliEdit() {
-  var totalDare = 0;
-  var totalAvere = 0;
-
-  $("[id*=dare]:not([id*=_add_])").each(function() {
-    totalDare += parseFloat($(this).val().toEnglish()) || 0;
-  });
-
-  $("[id*=avere]:not([id*=_add_])").each(function() {
-    totalAvere += parseFloat($(this).val().toEnglish()) || 0;
-  });
-
-  $("#totale_dare").text(totalDare.toLocale());
-  $("#totale_avere").text(totalAvere.toLocale());
 }
-
-// Funzione per aggiornare i totali dell\'add
-function aggiornaTotaliAdd() {
-  var totalDare = 0;
-  var totalAvere = 0;
-
-  $("[id*=dare_add_]").each(function() {
-    totalDare += parseFloat($(this).val().toEnglish()) || 0;
-  });
-
-  $("[id*=avere_add_]").each(function() {
-    totalAvere += parseFloat($(this).val().toEnglish()) || 0;
-  });
-
-  $("#totale_dare_add").text(totalDare.toLocale());
-  $("#totale_avere_add").text(totalAvere.toLocale());
-}
-
-// Event handler per i campi dell\'edit
-$(document).on("change", "[id*=dare]:not([id*=_add_]), [id*=avere]:not([id*=_add_])", function() {
-  aggiornaTotaliEdit();
-});
-
-// Event handler per i campi dell\'add
-$(document).on("change", "[id*=dare_add_], [id*=avere_add_]", function() {
-  aggiornaTotaliAdd();
-});
 
 function visualizzaMovimenti(button) {
     let id_conto = $(button).parent().parent().parent().find("select").val();
@@ -435,16 +389,13 @@ function visualizzaMovimenti(button) {
 }
 
 function deleteRiga(button) {
-    // Get the row
     let row = $(button).closest("tr");
+    let isInModal = $(button).closest("#modals").length > 0;
 
-    // Remove the row
     row.remove();
+    controllaConti(button);
 
-    // Recalculate totals and check balance
-    controllaConti();
-
-    // Trigger change event to update totals
-    $("[id*=dare], [id*=avere]").trigger("change");
+    // Aggiorna i totali usando un elemento fittizio per determinare il contesto
+    aggiornaTotali(isInModal ? $("#modals [id*=dare]").first() : $("[id*=dare]:not([id*=_add_])").first());
 }
 </script>';

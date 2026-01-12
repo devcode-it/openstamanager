@@ -33,6 +33,9 @@ echo '
 if ($options['action'] == 'add') {
     echo '
     <div class="col-md-4">
+        <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Calcola sconto combinato').'" id="btn-sconto-combinato">
+            <i class="fa fa-calculator"></i>
+        </button>
         {[ "type": "number", "label": "'.tr('Sconto/maggiorazione percentuale').'", "name": "sconto_percentuale", "icon-after": "%", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'" ]}
     </div>';
 }
@@ -105,4 +108,9 @@ echo '
 
     sconto_percentuale.keyup(aggiorna_sconto_percentuale);
     sconto_unitario.keyup(aggiorna_sconto_unitario);
+
+    // Gestione pulsante sconto combinato
+    $("#btn-sconto-combinato").click(function() {
+        openModal("'.tr('Calcola sconto combinato').'", globals.rootdir + "/modules/fatture/modals/sconto_combinato.php");
+    });
 </script>';

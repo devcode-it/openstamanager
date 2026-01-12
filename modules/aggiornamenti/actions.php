@@ -25,6 +25,7 @@ use Models\OperationLog;
 use Modules\Aggiornamenti\Controlli\ColonneDuplicateViste;
 use Modules\Aggiornamenti\Controlli\Controllo;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
+use Modules\Aggiornamenti\Controlli\FileHtaccess;
 use Modules\Aggiornamenti\Controlli\IntegritaFile;
 use Modules\Aggiornamenti\Controlli\PianoConti;
 use Modules\Aggiornamenti\Controlli\PianoContiRagioneSociale;
@@ -174,6 +175,7 @@ switch (filter('op')) {
             PluginDuplicati::class,
             TabelleLanguage::class,
             IntegritaFile::class,
+            FileHtaccess::class,
         ];
 
         $results = [];
@@ -264,6 +266,7 @@ switch (filter('op')) {
             PluginDuplicati::class,
             TabelleLanguage::class,
             IntegritaFile::class,
+            FileHtaccess::class,
         ];
 
         $results = [];

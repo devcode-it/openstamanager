@@ -43,7 +43,11 @@ class Interaction extends Services
         $result = self::getFileList($list, $directory, $plugin);
 
         // Aggiornamento cache hook
-        Cache::where('name', 'Fatture Elettroniche')->first()->set($result);
+        $cache = Cache::where('name', 'Fatture Elettroniche')->first();
+        if (empty($cache)) {
+            $cache = Cache::build('Fatture Elettroniche');
+        }
+        $cache->set($result);
 
         return $result;
     }
@@ -73,18 +77,20 @@ class Interaction extends Services
         $directory = FatturaElettronica::getImportDirectory($directory, $plugin);
 
         $files = glob($directory.'/*.xml*');
-        foreach ($files as $id => $file) {
-            $name = basename($file);
-            $pos = array_search($name, $names);
+        if (!empty($files) && is_array($files)) {
+            foreach ($files as $id => $file) {
+                $name = basename($file);
+                $pos = array_search($name, $names);
 
-            if ($pos === false) {
-                $list[] = [
-                    'id' => $id,
-                    'name' => $name,
-                    'file' => true,
-                ];
-            } else {
-                $list[$pos]['id'] = $id;
+                if ($pos === false) {
+                    $list[] = [
+                        'id' => $id,
+                        'name' => $name,
+                        'file' => true,
+                    ];
+                } else {
+                    $list[$pos]['id'] = $id;
+                }
             }
         }
 

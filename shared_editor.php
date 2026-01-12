@@ -282,11 +282,11 @@ body {
 
             <div class="card">
                 <div class="card-body">';
-                
-//Se abbiamo accesso solo agli allegati mostro un header informativo
+
+// Se abbiamo accesso solo agli allegati mostro un header informativo
 if ($current_permission == 'ra' || $current_permission == 'rwa') {
     // Includi l'header personalizzato se il modulo lo supporta e abbiamo i dati necessari
-    if(file_exists(App::filepath('modules/'.$module['directory'].'|custom|', 'shared_header.php'))) {
+    if (file_exists(App::filepath('modules/'.$module['directory'].'|custom|', 'shared_header.php'))) {
         include_once App::filepath('modules/'.$module['directory'].'|custom|', 'shared_header.php');
     }
 }

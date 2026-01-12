@@ -113,6 +113,10 @@ if (!empty($list)) {
 
         echo '
 
+                <button type="button" class="btn btn-info tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe_auto(this, \''.$name.'\', \''.$data.'\')" title="'.tr('Importa la fattura nel gestionale automaticamente in modalità semplificata, non verranno associati gli articoli').'">
+                    <i class="fa fa-cloud-download"></i>
+                </button>
+
                 <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && str_ends_with(strtolower((string) $name), '.p7m')) ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$data.'\')" title="'.tr('Importa la fattura nel gestionale').'">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
@@ -163,6 +167,39 @@ function import_fe(button, file, data_registrazione) {
 
             buttonRestore(button, restore);
         }
+    });
+}
+
+function import_fe_auto(button, file, data_registrazione) {
+    swal({
+        title: "'.tr('Importare la fattura automaticamente in modalità semplificata?').'",
+        html: "'.tr('Non verranno associati gli articoli').'",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function (result) {
+        var restore = buttonLoading(button);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                id_module: globals.id_module,
+                id_plugin: '.$id_plugin.',
+                op: "generate",
+                filename: file,
+                data_registrazione: data_registrazione,
+                type: "auto",
+            },
+            success: function(data) {
+                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                    start_local_datatables();
+                    buttonRestore(button, restore);
+                });
+            }
+        });
+        renderMessages();
     });
 }
 

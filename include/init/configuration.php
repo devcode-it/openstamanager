@@ -141,6 +141,22 @@ if (!empty(post('db_host'))) {
 
         // Controlla che la scrittura del file di configurazione sia andata a buon fine
         $creation = file_put_contents('config.inc.php', $new_config);
+        
+        // Configurazione per Larvel (.env)
+        $laravel_config = file_get_contents(base_dir().'/.env.example');
+        $laravel_values = [
+            'http://localhost' => base_url(),
+        ];
+        $laravel_config = str_replace(array_keys($laravel_values), $laravel_values, $laravel_config);
+        $creation_env = file_put_contents('.env', $laravel_config);
+        // TODO: aggiungere validazione per .env
+
+        // Crea la chiave di crittografia dell'applicazione per Laravel
+        // Laravel non è inizializzato in questo contesto
+        // use Illuminate\Support\Facades\Artisan;
+        //Artisan::call('key:generate');
+        shell_exec("php artisan key:generate");
+
         if (!$creation) {
             echo '
 		<div class="card card-center card-danger card-solid text-center">

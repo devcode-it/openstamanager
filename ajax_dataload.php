@@ -62,7 +62,9 @@ $results = [
 $query = Query::getQuery($structure, [], [], [], $total);
 if (!empty($query)) {
     // CONTEGGIO TOTALE
-    $results['recordsTotal'] = $dbo->fetchNum($query);
+    if (!setting('Nascondere il valore totale dei record delle tabelle')) {
+        $results['recordsTotal'] = $dbo->fetchNum($query);
+    }
 
     // CONTEGGIO RECORD FILTRATI (senza LIMIT)
     $query_filtered = Query::getQuery($structure, $search, $order, [], $total);

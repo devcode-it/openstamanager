@@ -72,17 +72,20 @@ echo '
 <p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'." ><i class="fa fa-question-circle-o"></i></span></p>';
 
 // Individuazione movimenti
-$movimenti = $articolo->movimentiComposti()
-    ->orderBy('mg_movimenti.data', 'DESC')
-    ->orderBy('mg_movimenti.id', 'DESC');
-if (empty($_GET['movimentazione_completa'])) {
-    $movimenti->limit(20);
-}
+$movimenti = $articolo->movimentiComposti();
 
 $giacenze = $articolo->getGiacenze();
 
 // Raggruppamento per documento
 $movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
+
+// Ordinamento per data del documento (decrescente) e poi per ID (decrescente)
+$movimenti = $movimenti->sortByDesc(fn ($movimento) => [$movimento->data, $movimento->id])->values();
+
+// Limite ai primi 20 movimenti se non richiesta la movimentazione completa
+if (empty($_GET['movimentazione_completa'])) {
+    $movimenti = $movimenti->take(20);
+}
 if (!empty($movimenti)) {
     echo '
         <table class="table table-striped table-sm table-bordered">

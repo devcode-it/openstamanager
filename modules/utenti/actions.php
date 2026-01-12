@@ -172,6 +172,7 @@ switch (filter('op')) {
 
                 $dbo->update('zz_users', [
                     'enabled' => 0,
+                    'deleted_at' => Carbon\Carbon::now(),
                 ], ['id' => $id_utente]);
 
                 flash()->info(tr('Utente disabilitato!'));

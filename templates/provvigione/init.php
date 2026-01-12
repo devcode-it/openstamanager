@@ -27,7 +27,7 @@ $module_query = '
 SELECT
     `numero_esterno`,
     `an_anagrafiche`.`ragione_sociale`,
-    SUM(`prezzo_unitario`*`qta`) as \'Totale\',
+    SUM(`prezzo_unitario`*`qta`-`sconto`) as \'Totale\',
     `provvigione_percentuale`,
     `provvigione`
 FROM

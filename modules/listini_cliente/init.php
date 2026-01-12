@@ -25,6 +25,8 @@ use Modules\ListiniCliente\Listino;
 if (!empty($id_record)) {
     $listino = Listino::find($id_record);
     $record = $dbo->fetchOne('SELECT * FROM `mg_listini` WHERE `id`='.prepare($id_record));
+    $anagrafiche = $listino->anagrafiche->pluck('idanagrafica')->toArray();
+    $anagrafiche = implode(',', $anagrafiche);
 
     $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 }

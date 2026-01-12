@@ -23,6 +23,12 @@ use Modules\Articoli\Marca;
 
 $immagine_articolo = $articolo->image ?: App::getPaths()['img'].'/logo_header.png';
 
+$validita = [
+    'days' => 'giorni',
+    'months' => 'mesi',
+    'years' => 'anni',
+];
+
 echo '
 <hr>
 <div class="row">
@@ -147,7 +153,7 @@ echo '
                     <tbody>
                         <tr>
                             <td><i class="fa fa-calendar-check-o mr-1"></i> '.tr('Garanzia').'</td>
-                            <td class="text-right font-weight-bold">'.($articolo->gg_garanzia ? $articolo->gg_garanzia.' giorni' : '<span class="text-muted">-</span>').'</td>
+                            <td class="text-right font-weight-bold">'.($articolo->garanzia ? $articolo->garanzia.' '.$validita[$articolo->tipo_garanzia] : '<span class="text-muted">-</span>').'</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-qrcode mr-1"></i> '.tr('Serial number').'</td>

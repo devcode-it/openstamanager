@@ -113,12 +113,10 @@ foreach ($id_scadenze as $id_scadenza) {
 }
 
 // Fatture
-$numeri_fatture = [];
+$fatture_per_anagrafica = [];
 $counter = 0;
-$is_ultimo_importo_avere = false;
 
 $id_documenti = array_unique($id_documenti);
-$id_anagrafica_movimenti = null;
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
     $tipo = $fattura->tipo;
@@ -130,13 +128,7 @@ foreach ($id_documenti as $id_documento) {
         continue;
     }
 
-    if ($id_anagrafica_movimenti == null) {
-        $id_anagrafica_movimenti = $fattura->idanagrafica;
-    } elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
-        $id_anagrafica_movimenti = 0;
-    }
-
-    $numeri_fatture[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
+    $numero_fattura_str = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $is_nota_credito = $tipo->reversed;
     $is_importo_avere = ($dir == 'entrata' && !$is_nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($is_nota_credito || $is_insoluto));
@@ -156,6 +148,23 @@ foreach ($id_documenti as $id_documento) {
     // Selezione prima scadenza
     if ($singola_scadenza && !empty($scadenze)) {
         $scadenze = [$scadenze[0]];
+    }
+
+    // Raggruppamento fatture per direzione e anagrafica - solo se ci sono scadenze selezionate
+    if (!empty($scadenze)) {
+        $chiave_anagrafica = $dir.'_'.$fattura->idanagrafica;
+        if (!isset($fatture_per_anagrafica[$chiave_anagrafica])) {
+            $fatture_per_anagrafica[$chiave_anagrafica] = [
+                'ragione_sociale' => $fattura->anagrafica['ragione_sociale'],
+                'direzione' => $dir,
+                'numeri' => [],
+            ];
+        }
+
+        // Aggiungi il numero di fattura solo se non è già presente
+        if (!in_array($numero_fattura_str, $fatture_per_anagrafica[$chiave_anagrafica]['numeri'])) {
+            $fatture_per_anagrafica[$chiave_anagrafica]['numeri'][] = $numero_fattura_str;
+        }
     }
 
     $righe_documento = [];
@@ -190,7 +199,6 @@ foreach ($id_documenti as $id_documento) {
         'avere' => $is_importo_avere ? 0 : $totale,
     ];
 
-    $is_ultimo_importo_avere = $is_importo_avere;
     $movimenti = array_merge($movimenti, $righe_documento);
 }
 
@@ -207,19 +215,48 @@ foreach ($movimenti as $key => $value) {
 $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
-    if (!empty($id_anagrafica_movimenti)) {
-        $anagrafica_movimenti = Anagrafica::find($id_anagrafica_movimenti);
+    // Conta quante anagrafiche diverse ci sono
+    $anagrafiche_diverse = count($fatture_per_anagrafica);
 
-        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture _NAME_ num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
-        $descrizione = replace($descrizione, [
-            '_NAME_' => $anagrafica_movimenti->ragione_sociale ?: '',
-            '_LIST_' => implode(', ', $numeri_fatture),
-        ]);
+    if ($anagrafiche_diverse == 1) {
+        // Una sola anagrafica - estrai i dati
+        $dati_unica = reset($fatture_per_anagrafica);
+
+        // Estrai l'ID anagrafica dalla chiave (formato: direzione_idanagrafica)
+        $chiave_unica = array_key_first($fatture_per_anagrafica);
+        $id_anagrafica_unica = (int) substr((string) $chiave_unica, strpos((string) $chiave_unica, '_') + 1);
+        $anagrafica_movimenti = Anagrafica::find($id_anagrafica_unica);
+
+        $numeri_ordinati = $dati_unica['numeri'];
+        sort($numeri_ordinati);
+
+        $operazione = ($dati_unica['direzione'] == 'entrata') ? tr('Inc.') : tr('Pag.');
+        $descrizione = $operazione.' fatture '.$anagrafica_movimenti->ragione_sociale.' num. '.implode(', ', $numeri_ordinati);
     } else {
-        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
-        $descrizione = replace($descrizione, [
-            '_LIST_' => implode(', ', $numeri_fatture),
-        ]);
+        // Fatture di più fornitori/clienti o più direzioni - raggruppare per direzione, anagrafica e numero
+        $descrizione_parti = [];
+
+        // Ordina per direzione: prima 'uscita' (Pag.), poi 'entrata' (Inc.)
+        $direzioni_ordinate = ['uscita', 'entrata'];
+
+        foreach ($direzioni_ordinate as $dir_ordinata) {
+            $parti_per_dir = [];
+
+            foreach ($fatture_per_anagrafica as $dati) {
+                if ($dati['direzione'] === $dir_ordinata) {
+                    $numeri_ordinati = $dati['numeri'];
+                    sort($numeri_ordinati);
+                    $parti_per_dir[] = $dati['ragione_sociale'].': '.implode(', ', $numeri_ordinati);
+                }
+            }
+
+            if (!empty($parti_per_dir)) {
+                $operazione = ($dir_ordinata == 'entrata') ? tr('Inc.') : tr('Pag.');
+                $descrizione_parti[] = $operazione.' fatture '.implode('; ', $parti_per_dir);
+            }
+        }
+
+        $descrizione = implode(' - ', $descrizione_parti);
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
@@ -228,7 +265,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');
     } else {
-        $operation = $is_ultimo_importo_avere ? tr('Inc.') : tr('Pag.');
+        $operation = $dir == 'entrata' ? tr('Inc.') : tr('Pag.');
     }
 
     $descrizione = tr('_OP_ _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [

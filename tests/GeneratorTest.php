@@ -65,6 +65,6 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function pad($number, $length)
     {
-        return str_pad($number, $length, '0', STR_PAD_LEFT);
+        return str_pad((string) $number, $length, '0', STR_PAD_LEFT);
     }
 }

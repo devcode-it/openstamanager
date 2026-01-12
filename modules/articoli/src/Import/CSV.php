@@ -789,7 +789,7 @@ class CSV extends CSVImporter
 
     protected function aggiornaGiacenza($articolo, $nuova_qta, $nome_sede, $record)
     {
-        if (!isset($record['qta']) || empty($record['data_qta'])) {
+        if (!isset($record['qta'])) {
             return;
         }
 

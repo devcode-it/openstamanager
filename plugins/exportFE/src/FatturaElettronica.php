@@ -1713,8 +1713,9 @@ class FatturaElettronica implements \Stringable
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
-        $directory = \Uploads::getDirectory($id_module);
+        $module = Module::where('name', 'Fatture di vendita')->first();
+        $id_module = $module->id;
+        $directory = 'files/'.$module->attachments_directory;
 
         // Allegati
         $allegati = \Uploads::get([
@@ -1725,7 +1726,7 @@ class FatturaElettronica implements \Stringable
         // Inclusione
         foreach ($allegati as $allegato) {
             $categoria = database()->fetchOne('SELECT `name` FROM `zz_files_categories` WHERE `id` = '.prepare($allegato['id_category']))['name'];
-            if ($categoria == 'Allegati Fattura Elettronica') {
+            if (strcasecmp((string) $categoria, 'Allegati Fattura Elettronica') === 0) {
                 $file = base_dir().'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [

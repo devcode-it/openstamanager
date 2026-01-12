@@ -18,7 +18,7 @@ class OSMAuthMiddleware
     {
         $base_path = $request->url();
 
-        $base_path = substr($base_path, stripos($base_path, $request->host()) + strlen($request->host()));
+        $base_path = substr($base_path, stripos($base_path, (string) $request->host()) + strlen($request->host()));
         if (stripos($base_path, '/public/') !== false) {
             $base_path = substr($base_path, 0, stripos($base_path, '/public/'));
         }

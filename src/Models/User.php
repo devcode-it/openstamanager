@@ -21,9 +21,9 @@
 namespace Models;
 
 use Common\SimpleModelTrait;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class User extends Model implements Authenticatable
 {
@@ -250,36 +250,36 @@ class User extends Model implements Authenticatable
         return $this->group->modules();
     }
 
-    public function getAuthIdentifierName() : string
+    public function getAuthIdentifierName(): string
     {
         return $this->username;
     }
 
-    public function getAuthIdentifier() : mixed
+    public function getAuthIdentifier(): mixed
     {
         return $this->id;
     }
-    
-    public function getAuthPassword() : string
+
+    public function getAuthPassword(): string
     {
         return $this->password;
     }
 
-    public function getAuthPasswordName() : string
+    public function getAuthPasswordName(): string
     {
         return 'password';
     }
-    
-    public function getRememberToken() : string
+
+    public function getRememberToken(): string
     {
         return '';
-    } 
-    
+    }
+
     public function setRememberToken($value)
     {
-    } 
-    
-    public function getRememberTokenName() : string
+    }
+
+    public function getRememberTokenName(): string
     {
         return '';
     }

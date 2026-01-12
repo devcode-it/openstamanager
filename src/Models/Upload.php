@@ -471,6 +471,7 @@ class Upload extends Model
      * Verifica i permessi per il caricamento degli allegati.
      *
      * @param array $data Dati del file da caricare
+     *
      * @return bool True se l'utente ha i permessi, false altrimenti
      */
     protected static function checkUploadPermissions($data)
@@ -482,7 +483,7 @@ class Upload extends Model
 
         $id_module = $data['id_module'] ?? null;
         if (!empty($data['id_plugin'])) {
-            $plugin = \Models\Plugin::find($data['id_plugin']);
+            $plugin = Plugin::find($data['id_plugin']);
             $id_module = $plugin ? $plugin->idmodule_to : null;
         }
 
@@ -501,7 +502,7 @@ class Upload extends Model
 
             if (!$has_permission) {
                 flash()->error(tr('Non hai permessi di caricamento per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
                 ]));
             }
 
@@ -512,7 +513,7 @@ class Upload extends Model
 
             if (!$has_permission) {
                 flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
                 ]));
             }
 
@@ -524,6 +525,7 @@ class Upload extends Model
      * Verifica i permessi per l'eliminazione degli allegati.
      *
      * @param array $data Dati del file da eliminare
+     *
      * @return bool True se l'utente ha i permessi, false altrimenti
      */
     protected static function checkDeletePermissions($data)
@@ -535,7 +537,7 @@ class Upload extends Model
 
         $id_module = $data['id_module'] ?? null;
         if (!empty($data['id_plugin'])) {
-            $plugin = \Models\Plugin::find($data['id_plugin']);
+            $plugin = Plugin::find($data['id_plugin']);
             $id_module = $plugin ? $plugin->idmodule_to : null;
         }
 
@@ -554,7 +556,7 @@ class Upload extends Model
 
             if (!$has_permission) {
                 flash()->error(tr('Non hai permessi di eliminazione per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
                 ]));
             }
 
@@ -565,7 +567,7 @@ class Upload extends Model
 
             if (!$has_permission) {
                 flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.\Models\Module::find($id_module)->getTranslation('title').'"',
+                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
                 ]));
             }
 

@@ -115,6 +115,11 @@ echo '
             return;
         }
 
+        // Ignora l\'evento se un select2 è aperto o se il focus è su un elemento select2
+        if ($(".select2-container--open").length > 0 || $(event.target).closest(".select2-container").length > 0) {
+            return;
+        }
+
         let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");

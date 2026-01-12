@@ -203,7 +203,7 @@ if (AuthOSM::check()) {
                     "emptyTable": "'.tr('Nessun dato presente nella tabella').'",
                     "info": "'.tr('_TOTAL_ elementi').'",
                     "infoEmpty": "'.tr('Nessun risultato').'",
-                    "infoFiltered": "('.tr('_MAX_ totali').')",
+                    "infoFiltered": "'.(setting('Nascondere il valore totale dei record delle tabelle') ? '' : tr('(_TOTAL_ totali)')).'",
                     "infoPostFix": "",
                     "lengthMenu": "'.tr('Visualizza _MENU_ elementi').'",
                     "loadingRecords": " ",

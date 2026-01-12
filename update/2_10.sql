@@ -417,3 +417,11 @@ ALTER TABLE `in_righe_interventi` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT',
 ALTER TABLE `in_righe_interventi` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
 ALTER TABLE `or_righe_ordini` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
 ALTER TABLE `or_righe_ordini` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+
+-- Nascondere totali tabelle
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Nascondere il valore totale dei record delle tabelle', '1', 'boolean', 1, 'Generali');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Nascondere il valore totale dei record delle tabelle', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Hide total value of records in tables', '');

@@ -32,7 +32,7 @@
         "davidepastore/codice-fiscale": "^0.10.0",
         "devcode-it/ical-easy-reader": "dev-main",
         "devcode-it/sdd_ita": "dev-master",
-        "digitick/sepa-xml": "^2.1",
+        "digitick/sepa-xml": "^3.0",
         "doctrine/sql-formatter": "^1.5",
         "dragonmantank/cron-expression": "^3.0",
         "endroid/qr-code": "^6.0",

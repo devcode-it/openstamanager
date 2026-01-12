@@ -110,7 +110,7 @@ function initCKEditor(input) {
     CKEDITOR.replace(name, {
         toolbar: (input.hasAttribute('use_full_ckeditor')) ? globals.ckeditorToolbar_Full : globals.ckeditorToolbar,
         language: globals.locale,
-        scayt_autoStartup: true,
+        scayt_autoStartup: globals.ckeditorSpellChecker,
         scayt_sLang: globals.full_locale,
         scayt_disableOptionsStorage: 'lang',
         disableNativeSpellChecker: false,

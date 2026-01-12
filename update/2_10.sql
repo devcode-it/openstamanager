@@ -425,3 +425,11 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Nascondere il valore totale dei record delle tabelle', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Hide total value of records in tables', '');
+
+-- Abilita correttore ortografico CKEditor
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Abilita correttore ortografico', '0', 'boolean', 1, 'Generali');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Abilita correttore ortografico', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Enable spell checker', '');

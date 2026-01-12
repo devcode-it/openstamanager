@@ -288,6 +288,7 @@ if (AuthOSM::check()) {
                 openRouterApiKey: "'.setting('OpenRouter API Key').'",
                 openRouterDefaultModel: "'.setting('Modello AI predefinito per OpenRouter').'",
                 AISystemPrompt: "'.addslashes(setting('Prompt di sistema per Modello AI')).'",
+                ckeditorSpellChecker: '.(((int) setting('Abilita correttore ortografico') == 1) ? 'true' : 'false').',
             };
 		</script>';
 } else {

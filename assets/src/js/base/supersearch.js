@@ -174,6 +174,16 @@ $(document).ready(function () {
         return matchingModules;
     }
 
+    // Funzione di utility per effettuare l'escape dei caratteri HTML speciali
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     // Funzione per visualizzare i risultati unificati nella sidebar
     function displayUnifiedResults(searchTerm, recordResults) {
         const container = initSearchResultsContainer();
@@ -293,10 +303,11 @@ $(document).ready(function () {
 
         // Se non ci sono risultati né di moduli né di record
         if (matchingModules.length === 0 && recordResults.length === 0) {
+            const safeSearchTerm = escapeHtml(searchTerm);
             container.append(`
                 <div class="search-no-results">
                     <i class="fa fa-search-minus"></i>
-                    <p>Nessun risultato trovato per "<strong>${searchTerm}</strong>"</p>
+                    <p>Nessun risultato trovato per "<strong>${safeSearchTerm}</strong>"</p>
                 </div>
             `);
         }

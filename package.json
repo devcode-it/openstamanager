@@ -30,7 +30,7 @@
         "geocomplete": "^1.7.0",
         "gl-matrix": "^3.4.3",
         "hotkeys-js": "^3.8.5",
-        "html5sortable": "^0.13.2",
+        "html5sortable": "^0.14.0",
         "inputmask": "^3.3.9",
         "ismobilejs": "^1.1.1",
         "jquery": "^3.5.1",

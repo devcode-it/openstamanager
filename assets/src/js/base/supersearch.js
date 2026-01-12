@@ -193,13 +193,14 @@ $(document).ready(function () {
         $('.nav-sidebar').hide().addClass('search-hidden');
         container.show();
 
+        const safeSearchTerm = escapeHtml(searchTerm);
         // Aggiungi header per i risultati
         container.append(`
             <div class="search-results-header">
                 <h6>
                     <span>
                         <i class="fa fa-search"></i> Risultati per:
-                        <span class="search-term">${searchTerm}</span>
+                        <span class="search-term">${safeSearchTerm}</span>
                     </span>
                     <button class="btn btn-sm" id="clear-search" title="Cancella ricerca">
                         <i class="fa fa-times"></i>

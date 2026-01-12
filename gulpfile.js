@@ -426,7 +426,7 @@ function hotkeys() {
 
 function chartjs() {
     return gulp.src([
-        config.nodeDirectory + '/chart.js/dist/chart.min.js',
+        config.nodeDirectory + '/chart.js/dist/chart.umd.min.js',
     ])
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));

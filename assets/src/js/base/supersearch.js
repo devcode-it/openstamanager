@@ -32,6 +32,26 @@ $(document).ready(function () {
         sidebarSearchWidget.attr('data-widget-disabled', 'true');
     }
 
+    /**
+     * Escape a string for safe use inside HTML attribute values.
+     * Converts characters that could break out of the attribute context
+     * or be interpreted as HTML markup.
+     *
+     * @param {string} value
+     * @returns {string}
+     */
+    function escapeHtmlAttribute(value) {
+        if (value == null) {
+            return '';
+        }
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     // Disabilita anche eventuali event listener di AdminLTE già attaccati
     searchInput.off('.adminlte.sidebar-search');
     searchInput.parent().off('.adminlte.sidebar-search');
@@ -279,7 +299,7 @@ $(document).ready(function () {
                 // Sostituisci la classe highlight con search-highlight per coerenza
                 processedLabels = processedLabels.replace(/class=['"]highlight['"]/g, 'class="search-highlight"');
 
-                const cleanLabels = labels.replace(/<[^>]*>/g, ''); // Rimuovi HTML per il tooltip
+                const cleanLabels = escapeHtmlAttribute(labels.replace(/<[^>]*>/g, '')); // Rimuovi HTML per il tooltip ed effettua l'escape per l'attributo
 
                 // Evidenzia il termine di ricerca nel titolo
                 const highlightedTitle = highlightSearchTerm(title, searchTerm);

@@ -44,7 +44,7 @@ function initTextShortener() {
                     // Mostra tutto il testo
                     const originalText = $(element).find('.allcontent').text();
                     if (originalText) {
-                        $(element).html(originalText);
+                        $(element).text(originalText);
                     }
                 }
             }

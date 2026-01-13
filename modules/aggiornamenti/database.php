@@ -116,6 +116,22 @@ $results_added = integrity_diff($info, $data);
 $contents = file_get_contents(base_dir().'/settings.json');
 $data_settings = json_decode($contents, true);
 
+// Carica e accoda le impostazioni dai file settings.json presenti nelle sottocartelle di modules/
+$modules_dir = base_dir().'/modules/';
+$settings_json_files = glob($modules_dir.'*/settings.json');
+
+if (!empty($settings_json_files)) {
+    foreach ($settings_json_files as $settings_json_file) {
+        $settings_contents = file_get_contents($settings_json_file);
+        $settings_data = json_decode($settings_contents, true);
+
+        if (!empty($settings_data) && is_array($settings_data)) {
+            // Accoda le impostazioni del modulo a quelle principali
+            $data_settings = array_merge($data_settings, $settings_data);
+        }
+    }
+}
+
 $settings = Update::getSettings();
 $results_settings = settings_diff($data_settings, $settings);
 $results_settings_added = settings_diff($settings, $data_settings);

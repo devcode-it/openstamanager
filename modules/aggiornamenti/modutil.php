@@ -81,6 +81,21 @@ if (!function_exists('customTables')) {
     {
         $tables = include base_dir().'/update/tables.php';
 
+        // Carica e accoda le tabelle dai file tables.php presenti nelle cartelle update dei moduli
+        $modules_dir = base_dir().'/modules/';
+        $module_tables_files = glob($modules_dir.'*/update/tables.php');
+
+        if (!empty($module_tables_files)) {
+            foreach ($module_tables_files as $module_tables_file) {
+                $module_tables = include $module_tables_file;
+
+                if (!empty($module_tables) && is_array($module_tables)) {
+                    // Accoda le tabelle del modulo a quelle principali
+                    $tables = array_merge($tables, $module_tables);
+                }
+            }
+        }
+
         $names = [];
         foreach ($tables as $table) {
             $names[] = prepare($table);
@@ -327,6 +342,64 @@ if (!function_exists('customViewsNotStandard')) {
             }
         }
 
+        // Carica e accoda le viste dai file views.json presenti nelle sottocartelle di modules/
+        $modules_dir = base_dir().'/modules/';
+        $views_json_files = glob($modules_dir.'*/views.json');
+
+        // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
+        $premium_modules = [];
+
+        // Prima carica i moduli dai file modules.json per identificare quelli premium
+        $module_json_files = glob($modules_dir.'*/modules.json');
+        if (!empty($module_json_files)) {
+            foreach ($module_json_files as $module_json_file) {
+                $module_contents = file_get_contents($module_json_file);
+                $module_data = json_decode($module_contents, true);
+
+                if (!empty($module_data) && is_array($module_data)) {
+                    foreach ($module_data as $module_name => $data) {
+                        if (is_array($data)) {
+                            $premium_modules[$module_name] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($views_json_files)) {
+            foreach ($views_json_files as $views_json_file) {
+                $views_contents = file_get_contents($views_json_file);
+                $views_data = json_decode($views_contents, true);
+
+                if (!empty($views_data) && is_array($views_data)) {
+                    // Accoda le viste del modulo a quelle principali
+                    foreach ($views_data as $module_name => $module_views) {
+                        $module_key = trim((string) $module_name);
+
+                        if ($module_key === '' || !is_array($module_views)) {
+                            continue;
+                        }
+
+                        foreach ($module_views as $view_name => $view_query) {
+                            $view_key = trim((string) $view_name);
+
+                            if ($view_key === '') {
+                                continue;
+                            }
+
+                            // Se view_query è un array (struttura estesa), estrai il campo 'id'
+                            if (is_array($view_query) && isset($view_query['id'])) {
+                                $standard_views[$module_key][$view_key] = $view_query['id'];
+                            } elseif (is_string($view_query)) {
+                                // Se è una stringa (struttura semplice), usala direttamente
+                                $standard_views[$module_key][$view_key] = $view_query;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Ottieni tutte le viste presenti nel database
         $query = "SELECT
             zv.id,
@@ -378,7 +451,12 @@ if (!function_exists('customViewsNotStandard')) {
 
             if (!isset($standard_views[$module_name])) {
                 $is_custom = true;
-                $reason = 'Modulo non previsto';
+                // Verifica se il modulo proviene da un file modules.json in una sottocartella (modulo premium)
+                if (isset($premium_modules[$module_name])) {
+                    $reason = 'Modulo premium';
+                } else {
+                    $reason = 'Modulo non previsto';
+                }
             } elseif (!isset($standard_views[$module_name][$view_name])) {
                 $is_custom = true;
                 $reason = 'Vista aggiuntiva';
@@ -519,6 +597,34 @@ if (!function_exists('customModulesNotStandard')) {
             }
         }
 
+        // Carica i moduli dai file modules.json presenti nelle sottocartelle di modules/ (moduli premium)
+        // NOTA: Non li aggiungiamo a $standard_modules per poterli mostrare nella lista come premium
+        $modules_dir = base_dir().'/modules/';
+        $module_json_files = glob($modules_dir.'*/modules.json');
+
+        // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
+        $premium_modules = [];
+
+        if (!empty($module_json_files)) {
+            foreach ($module_json_files as $module_json_file) {
+                $module_contents = file_get_contents($module_json_file);
+                $module_data = json_decode($module_contents, true);
+
+                if (!empty($module_data) && is_array($module_data)) {
+                    // Traccia i moduli premium senza aggiungerli a $standard_modules
+                    foreach ($module_data as $module_name => $data) {
+                        if (is_array($data)) {
+                            // Traccia questo modulo come premium
+                            $premium_modules[$module_name] = [
+                                'options' => $data['options'] ?? '',
+                                'options2' => $data['options2'] ?? '',
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
         // Ottieni tutti i moduli presenti nel database
         $query = "SELECT
             zm.id,
@@ -538,6 +644,8 @@ if (!function_exists('customModulesNotStandard')) {
             $module_name = $module['name'];
             $is_custom = false;
             $reason = '';
+            $expected_options = '';
+            $expected_options2 = '';
 
             // Normalizza le options del modulo corrente
             $current_options = normalizeModuleOptions($module['options']);
@@ -550,10 +658,19 @@ if (!function_exists('customModulesNotStandard')) {
             // Controlla se il modulo non è previsto nel file standard
             if (!isset($standard_modules[$module_name])) {
                 $is_custom = true;
-                $reason = 'Modulo non previsto';
+                // Verifica se il modulo proviene da un file modules.json in una sottocartella (modulo premium)
+                if (isset($premium_modules[$module_name])) {
+                    $reason = 'Modulo premium';
+                    // Per i moduli premium, usa le options definite nel file premium
+                    $expected_options = $premium_modules[$module_name]['options'] ?? '';
+                    $expected_options2 = $premium_modules[$module_name]['options2'] ?? '';
+                } else {
+                    $reason = 'Modulo non previsto';
+                }
             } else {
                 // Normalizza le options standard
                 $expected_options = normalizeModuleOptions($standard_modules[$module_name]['options']);
+                $expected_options2 = $standard_modules[$module_name]['options2'] ?? '';
 
                 // Controlla se options2 è valorizzato (modulo personalizzato)
                 if (!empty($current_options2)) {
@@ -575,8 +692,8 @@ if (!function_exists('customModulesNotStandard')) {
                     'reason' => $reason,
                     'current_options' => $module['options'],
                     'current_options2' => $module['options2'],
-                    'expected_options' => $standard_modules[$module_name]['options'] ?? '',
-                    'expected_options2' => $standard_modules[$module_name]['options2'] ?? '',
+                    'expected_options' => $expected_options,
+                    'expected_options2' => $expected_options2,
                 ];
             }
         }

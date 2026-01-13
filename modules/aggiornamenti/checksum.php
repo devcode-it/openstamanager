@@ -55,7 +55,23 @@ $(document).ready(function () {
 }
 
 $contents = file_get_contents(base_dir().'/checksum.json');
-$checksum = json_decode($contents);
+$checksum = json_decode($contents, true);
+
+// Carica e accoda i checksum dei moduli premium
+$modules_dir = base_dir().'/modules/';
+$module_checksum_files = glob($modules_dir.'*/checksum.json');
+
+if (!empty($module_checksum_files)) {
+    foreach ($module_checksum_files as $module_checksum_file) {
+        $module_contents = file_get_contents($module_checksum_file);
+        $module_checksum = json_decode($module_contents, true);
+        
+        if (!empty($module_checksum)) {
+            // Accoda i checksum del modulo a quello principale
+            $checksum = array_merge($checksum, $module_checksum);
+        }
+    }
+}
 
 if (empty($checksum)) {
     echo '

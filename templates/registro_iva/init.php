@@ -56,9 +56,9 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     (
         SELECT
         IF(
-            (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
+            (MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16),
             DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
-            DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
+            co_documenti.data_competenza
         ) AS data_competenza_iva,
         `co_documenti`.`data_registrazione`,
         `co_documenti`.`numero_esterno`,
@@ -123,9 +123,9 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     $query = '
         SELECT
         IF(
-            (YEAR(co_documenti.data_registrazione) = YEAR(co_documenti.data_competenza) AND MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16) OR (YEAR(co_documenti.data_registrazione) > YEAR(co_documenti.data_competenza)),
+            (MONTH(co_documenti.data_registrazione) > MONTH(co_documenti.data_competenza) AND DAY(co_documenti.data_registrazione) >= 16),
             DATE_FORMAT(co_documenti.data_registrazione, \'%Y-%m-01\'),
-            DATE_FORMAT(co_documenti.data_competenza, \'%Y-%m-01\')
+            co_documenti.data_competenza
         ) AS data_competenza_iva,
         `co_documenti`.`data_registrazione`,
         `co_documenti`.`numero_esterno`,

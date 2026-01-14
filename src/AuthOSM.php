@@ -47,6 +47,10 @@ class AuthOSM extends Util\Singleton
             'code' => 5,
             'message' => "L'utente non ha nessun permesso impostato!",
         ],
+        'already_logged_in' => [
+            'code' => 6,
+            'message' => 'Utente già connesso al gestionale',
+        ],
     ];
 
     /** @var array Opzioni di sicurezza relative all'hashing delle password */
@@ -131,11 +135,24 @@ class AuthOSM extends Util\Singleton
 
         $status = 'failed';
 
-        $users = $database->fetchArray('SELECT id, password, enabled FROM zz_users WHERE username = :username LIMIT 1', [
+        $users = $database->fetchArray('SELECT id, password, enabled, session_token FROM zz_users WHERE username = :username LIMIT 1', [
             ':username' => $username,
         ]);
         if (!empty($users)) {
             $user = $users[0];
+
+            // Verifica se l'utente è già connesso (ha un token di sessione attivo)
+            if (!empty($user['session_token'])) {
+                $status = 'already_logged_in';
+                $this->current_status = $status;
+
+                // Log del tentativo
+                $log['stato'] = self::getStatus()[$status]['code'];
+                $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
+                $database->insert('zz_logs', $log);
+
+                return false;
+            }
 
             if (!empty($user['enabled'])) {
                 $this->identifyUser($user['id']);
@@ -279,6 +296,23 @@ class AuthOSM extends Util\Singleton
     public function destory()
     {
         if ($this->isAuthenticated() || !empty($_SESSION['id_utente'])) {
+            // Pulisci il token di sessione dal database
+            if (!empty($this->user) && !empty($this->user->id)) {
+                $database = database();
+                $database->update('zz_users', [
+                    'session_token' => null,
+                ], [
+                    'id' => $this->user->id,
+                ]);
+            } elseif (!empty($_SESSION['id_utente'])) {
+                $database = database();
+                $database->update('zz_users', [
+                    'session_token' => null,
+                ], [
+                    'id' => $_SESSION['id_utente'],
+                ]);
+            }
+
             $this->user = [];
             $this->token_user = null;
             $this->first_module = null;
@@ -981,8 +1015,8 @@ class AuthOSM extends Util\Singleton
             }
             $_SESSION['id_utente'] = $this->user->id;
 
-            // Salva il token di autenticazione nella sessione
-            if (!empty($this->user->session_token) && empty($_SESSION['auth_token'])) {
+            // Salva il token di autenticazione nella sessione (aggiorna sempre se presente)
+            if (!empty($this->user->session_token)) {
                 $_SESSION['auth_token'] = $this->user->session_token;
             }
 
@@ -1114,16 +1148,59 @@ class AuthOSM extends Util\Singleton
     }
 
     /**
+     * Ricarica l'utente dal database dopo una riconnessione.
+     * Questo metodo viene utilizzato per ripristinare lo stato dell'utente
+     * quando la connessione al database viene persa e ripristinata.
+     *
+     * @return bool True se l'utente è stato ricaricato con successo, false altrimenti
+     */
+    protected function refreshUser()
+    {
+        // Verifica se c'è un ID utente nella sessione
+        if (empty($_SESSION['id_utente'])) {
+            return false;
+        }
+
+        try {
+            $database = database();
+            
+            // Verifica che il database sia connesso
+            if (!$database->isConnected() || !$database->isInstalled()) {
+                return false;
+            }
+
+            // Ricarica l'utente dal database
+            $this->identifyUser($_SESSION['id_utente']);
+
+            // Se l'utente è stato caricato con successo, salva le informazioni nella sessione
+            if (!empty($this->user)) {
+                $this->saveToSession();
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            // In caso di errore, logga il problema e restituisci false
+            error_log('Errore durante il refresh dell\'utente: '.$e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Verifica che il token di sessione corrisponda a quello nel database.
      * Permette il login per utenti senza token (periodo di transizione).
+     * Gestisce anche il ripristino del token quando la connessione al database viene persa.
      *
      * @return bool True se il token è valido o non presente, false altrimenti
      */
     protected function checkSessionToken()
     {
-        // Se l'utente non è caricato, non possiamo verificare
+        // Se l'utente non è caricato, prova a ricaricarlo dalla sessione
         if (empty($this->user)) {
-            return false;
+            // Prova a ricaricare l'utente dalla sessione (gestisce riconnessione al DB)
+            if (!$this->refreshUser()) {
+                return false;
+            }
         }
 
         // Periodo di transizione: se l'utente non ha ancora un token nel DB, permetti l'accesso

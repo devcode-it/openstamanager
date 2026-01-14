@@ -998,6 +998,22 @@ class Fattura extends Document
         self::cleanInvalidBankReferences($azienda);
         self::cleanInvalidBankReferences($anagrafica_controparte);
 
+        // Per le fatture di vendita, verifica prima la banca predefinita per accrediti del cliente
+        if ($direzione == 'entrata' && !empty($anagrafica_controparte->idbanca_vendite)) {
+            $id_banca = $anagrafica_controparte->idbanca_vendite;
+            
+            // Verifica che la banca esista effettivamente
+            $banca_esistente = Banca::find($id_banca);
+            if (!$banca_esistente || $banca_esistente->deleted_at) {
+                $id_banca = null;
+            }
+            
+            // Se la banca del cliente è valida, la restituisce
+            if ($id_banca) {
+                return $id_banca;
+            }
+        }
+
         // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
         $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
 

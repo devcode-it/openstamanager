@@ -409,6 +409,43 @@ if (!empty($contratto->provvigione)) {
     </tr>';
 }
 
+// Margine
+$margine = $contratto->margine;
+$margine_class = ($margine <= 0 && $contratto->totale > 0) ? 'danger' : 'success';
+$margine_icon = ($margine <= 0 && $contratto->totale > 0) ? 'warning' : 'check';
+
+echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Costi').':
+            </td>
+            <td class="text-right">
+                '.moneyFormat($contratto->spesa).'
+            </td>
+            <td></td>
+        </tr>';
+
+echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Margine (_PRC_%)', [
+    '_PRC_' => numberFormat($contratto->margine_percentuale),
+]).':
+            </td>
+            <td class="text-right '.$margine_class.'" rowspan="2" style="vertical-align:middle;">
+                <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($contratto->margine).'
+            </td>
+            <td rowspan="2"></td>
+        </tr>
+
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Ricarico (_PRC_)', [
+    '_PRC_' => ($contratto->ricarico_percentuale != 0 ? numberFormat($contratto->ricarico_percentuale).'%' : 'N.D.'),
+]).':
+            </td>
+        </tr>';
+
 echo '
     </table>';
 if (sizeof($righe) > 0) {

@@ -26,6 +26,14 @@ $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $iva_predefinita = setting('Iva predefinita');
 $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 
+// Recupera l'unità di misura predefinita (descrizione)
+$um_predefinita = '';
+$id_um_predefinita = setting('Unità di misura predefinita');
+if (!empty($id_um_predefinita)) {
+    $um_predefinita = $database->fetchOne('SELECT valore FROM mg_unitamisura WHERE id = '.prepare($id_um_predefinita));
+    $um_predefinita = $um_predefinita ? $um_predefinita['valore'] : '';
+}
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -114,7 +122,7 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "<?php echo htmlentities(filter('um')) ?: ''; ?>", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "<?php echo $um_predefinita; ?>", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
                 </div>
                 <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}

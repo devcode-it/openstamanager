@@ -433,3 +433,11 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Abilita correttore ortografico', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Enable spell checker', '');
+
+-- Aggiunta impostazione Unità di misura predefinita 
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Unità di misura predefinita', '', 'query=SELECT id, valore as descrizione FROM mg_unitamisura', 1, 'Magazzino');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Unità di misura predefinita', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Default unit of measurement', '');

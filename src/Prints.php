@@ -279,7 +279,9 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_path_osm().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.random_int(0, mt_getrandmax())), '/');
+        // Utilizza il nuovo approccio con pdfjs-viewer-element (Web Component)
+        // Il file viene visualizzato direttamente tramite il browser
+        return base_url().'/'.ltrim(str_replace(base_dir(), '', $path.'?'.random_int(0, mt_getrandmax())), '/');
     }
 
     /**

@@ -299,7 +299,7 @@ $(document).ready(function () {
                 // Sostituisci la classe highlight con search-highlight per coerenza
                 processedLabels = processedLabels.replace(/class=['"]highlight['"]/g, 'class="search-highlight"');
 
-                const cleanLabels = escapeHtmlAttribute(labels.replace(/<[^>]*>/g, '')); // Rimuovi HTML per il tooltip ed effettua l'escape per l'attributo
+                const cleanLabels = escapeHtmlAttribute(labels); // Effettua l'escape per l'attributo del tooltip
 
                 // Evidenzia il termine di ricerca nel titolo
                 const highlightedTitle = highlightSearchTerm(title, searchTerm);

@@ -336,7 +336,7 @@ class Interventi extends AppResource
         $record->idpagamento = $data['id_pagamento'] ?: 0;
 
         // Salvataggio firma eventuale
-        if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
+        if (empty($record->firma_file) && !empty($data['firma_contenuto'])) {
             $record->firma_nome = $data['firma_nome'];
             $record->firma_data = $data['firma_data'];
 

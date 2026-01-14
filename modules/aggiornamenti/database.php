@@ -91,11 +91,27 @@ switch ($database->getType()) {
         break;
 }
 
+// Carica il file di riferimento principale per il database
+$data = [];
 if (file_exists(base_dir().'/'.$file_to_check_database)) {
     $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
     $data = json_decode($contents, true);
-} else {
-    $data = [];
+}
+
+// Carica e accoda le definizioni del database dai file mysql.json presenti nelle sottocartelle di modules/
+$modules_dir = base_dir().'/modules/';
+$database_json_files = glob($modules_dir.'*/'.$file_to_check_database);
+
+if (!empty($database_json_files)) {
+    foreach ($database_json_files as $database_json_file) {
+        $database_contents = file_get_contents($database_json_file);
+        $database_data = json_decode($database_contents, true);
+
+        if (!empty($database_data) && is_array($database_data)) {
+            // Accoda le definizioni del database del modulo a quelle principali
+            $data = array_merge($data, $database_data);
+        }
+    }
 }
 
 if (empty($data)) {

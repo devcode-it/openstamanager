@@ -33,10 +33,16 @@ function initTextShortener() {
                         const visibleText = text.substr(0, showChars);
                         const hiddenText = text.substr(showChars, text.length - showChars);
 
-                        $(element).html(
-                            '<span class="shortcontent">' + visibleText + '...</span>' +
-                            '<span class="allcontent">' + text + '</span>'
-                        );
+                        // Ricostruisci il contenuto usando nodi di testo per evitare XSS
+                        $(element).empty();
+
+                        const $shortSpan = $('<span class="shortcontent"></span>');
+                        $shortSpan.text(visibleText + '...');
+
+                        const $allSpan = $('<span class="allcontent"></span>');
+                        $allSpan.text(text);
+
+                        $(element).append($shortSpan).append($allSpan);
 
                         $(element).find('.allcontent').hide();
                     }

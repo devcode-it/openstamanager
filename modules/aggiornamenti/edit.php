@@ -39,6 +39,7 @@ if (!function_exists('base_dir')) {
 use Models\Module;
 use Modules\Aggiornamenti\IntegrityChecker;
 use Modules\Aggiornamenti\Utils;
+use Update;
 
 // Funzioni per il controllo database (wrapper per compatibilità)
 function integrity_diff($expected, $current)
@@ -397,14 +398,18 @@ if (function_exists('customComponents')) {
 
     if ($has_view_data_issues) {
         foreach ($custom_views_not_standard as $view) {
-            match ($view['reason']) {
-                'Vista aggiuntiva' => $view_info_count++,
-                'Vista mancante' => $view_info_count++,
-                'Query modificata' => $view_warning_count++,
-                'Modulo non previsto' => $view_info_count++,
-                'Modulo premium' => $view_info_count++,
-                default => null,
-            };
+            // Verifica se la reason inizia con "Vista modulo"
+            if (str_starts_with($view['reason'], 'Vista modulo ')) {
+                $view_info_count++;
+            } else {
+                match ($view['reason']) {
+                    'Vista aggiuntiva' => $view_info_count++,
+                    'Vista mancante' => $view_info_count++,
+                    'Query modificata' => $view_warning_count++,
+                    'Modulo non previsto' => $view_info_count++,
+                    default => null,
+                };
+            }
         }
     }
 
@@ -448,14 +453,18 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
         foreach ($custom_views_not_standard as $index => $view) {
-            $badge_class = match ($view['reason']) {
-                'Vista aggiuntiva' => 'badge-info',
-                'Vista mancante' => 'badge-info',
-                'Query modificata' => 'badge-warning',
-                'Modulo non previsto' => 'badge-info',
-                'Modulo premium' => 'badge-primary',
-                default => 'badge-secondary',
-            };
+            // Verifica se la reason inizia con "Vista modulo" per assegnare il badge blu
+            if (str_starts_with($view['reason'], 'Vista modulo ')) {
+                $badge_class = 'badge-primary';
+            } else {
+                $badge_class = match ($view['reason']) {
+                    'Vista aggiuntiva' => 'badge-info',
+                    'Vista mancante' => 'badge-info',
+                    'Query modificata' => 'badge-warning',
+                    'Modulo non previsto' => 'badge-info',
+                    default => 'badge-secondary',
+                };
+            }
 
             $row_id = 'view_'.$index;
             $has_long_content = false;
@@ -531,13 +540,17 @@ if (function_exists('customComponents')) {
 
     if ($has_module_data_issues) {
         foreach ($custom_modules_not_standard as $modulo) {
-            match ($modulo['reason']) {
-                'Options modificato' => $module_warning_count++,
-                'Modulo non previsto' => $module_warning_count++,
-                'Modulo premium' => $module_info_count++,
-                'Options2 valorizzato' => $module_info_count++,
-                default => null,
-            };
+            // Verifica se la reason è "Modulo Premium"
+            if ($modulo['reason'] === 'Modulo Premium') {
+                $module_info_count++;
+            } else {
+                match ($modulo['reason']) {
+                    'Options modificato' => $module_warning_count++,
+                    'Modulo non previsto' => $module_warning_count++,
+                    'Options2 valorizzato' => $module_info_count++,
+                    default => null,
+                };
+            }
         }
     }
 
@@ -580,13 +593,17 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
         foreach ($custom_modules_not_standard as $index => $modulo) {
-            $badge_class = match ($modulo['reason']) {
-                'Options2 valorizzato' => 'badge-info',
-                'Options modificato' => 'badge-warning',
-                'Modulo non previsto' => 'badge-warning',
-                'Modulo premium' => 'badge-primary',
-                default => 'badge-secondary',
-            };
+            // Verifica se la reason è "Modulo Premium" per assegnare il badge blu
+            if ($modulo['reason'] === 'Modulo Premium') {
+                $badge_class = 'badge-primary';
+            } else {
+                $badge_class = match ($modulo['reason']) {
+                    'Options2 valorizzato' => 'badge-info',
+                    'Options modificato' => 'badge-warning',
+                    'Modulo non previsto' => 'badge-warning',
+                    default => 'badge-secondary',
+                };
+            }
 
             // Determina quale options mostrare: se options2 è valorizzato, mostra quello, altrimenti options
             $current_to_show = !empty($modulo['current_options2']) ? $modulo['current_options2'] : $modulo['current_options'];

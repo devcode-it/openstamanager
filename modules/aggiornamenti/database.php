@@ -91,11 +91,62 @@ switch ($database->getType()) {
         break;
 }
 
+// Carica il file modules.json per ottenere i nomi corretti dei moduli
+$modules_json_file = base_dir().'/modules.json';
+$modules_json_data = [];
+if (file_exists($modules_json_file)) {
+    $modules_json_contents = file_get_contents($modules_json_file);
+    $modules_json_data = json_decode($modules_json_contents, true);
+}
+
+// Funzione per ottenere il nome del modulo dal file di riferimento appropriato
+function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data) {
+    $module_name = $folder_name; // Default: usa il nome della cartella
+    
+    // Verifica se esiste il file di riferimento
+    if (file_exists($reference_file)) {
+        $reference_contents = file_get_contents($reference_file);
+        $reference_data = json_decode($reference_contents, true);
+        
+        if (!empty($reference_data) && is_array($reference_data)) {
+            foreach ($reference_data as $name => $module_info) {
+                // Cerca una corrispondenza parziale o esatta
+                if (stripos(strtolower($folder_name), strtolower($name)) !== false) {
+                    $module_name = $name;
+                    break;
+                }
+                // Seconda prova: cerca se il nome del modulo (senza spazi) è contenuto nel nome della cartella
+                if (stripos(strtolower($folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
+                    $module_name = $name;
+                    break;
+                }
+            }
+        }
+    }
+    
+    return $module_name;
+}
+
+// Traccia da quale modulo proviene ogni campo (per identificare i campi premium)
+$premium_fields = [];
+
 // Carica il file di riferimento principale per il database
 $data = [];
 if (file_exists(base_dir().'/'.$file_to_check_database)) {
     $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
-    $data = json_decode($contents, true);
+    $root_data = json_decode($contents, true);
+    
+    if (!empty($root_data) && is_array($root_data)) {
+        $data = array_merge($root_data, $data);
+    }
+} else {
+    echo '
+<div class="alert alert-danger alert-database">
+    <i class="fa fa-times"></i> '.tr('File di riferimento del database non trovato: _FILE_', [
+        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+    ]).'
+</div>';
+    return;
 }
 
 // Carica e accoda le definizioni del database dai file mysql.json presenti nelle sottocartelle di modules/
@@ -108,8 +159,27 @@ if (!empty($database_json_files)) {
         $database_data = json_decode($database_contents, true);
 
         if (!empty($database_data) && is_array($database_data)) {
-            // Accoda le definizioni del database del modulo a quelle principali
+            // Estrai il nome della cartella dal percorso del file
+            $path_parts = explode('/', $database_json_file);
+            $folder_name = $path_parts[count($path_parts) - 2];
+            
+            // Ottieni il nome del modulo dal file modules.json
+            $module_name = getModuleNameFromReference($modules_json_file, $folder_name, $modules_json_data);
+
+            // Accoda le definizioni del modulo a quelle principali
             $data = array_merge($data, $database_data);
+
+            // Traccia i campi provenienti da questo modulo premium
+            foreach ($database_data as $table => $table_data) {
+                if (is_array($table_data)) {
+                    foreach ($table_data as $field_name => $field_data) {
+                        if (!isset($premium_fields[$table])) {
+                            $premium_fields[$table] = [];
+                        }
+                        $premium_fields[$table][$field_name] = $module_name;
+                    }
+                }
+            }
         }
     }
 }
@@ -125,9 +195,19 @@ if (empty($data)) {
     return;
 }
 
-$info = Update::getDatabaseStructure();
-$results = integrity_diff($data, $info);
-$results_added = integrity_diff($info, $data);
+try {
+    $info = Update::getDatabaseStructure();
+    $results = integrity_diff($data, $info);
+    $results_added = integrity_diff($info, $data);
+} catch (Exception $e) {
+    echo '
+<div class="alert alert-danger alert-database">
+    <i class="fa fa-times"></i> '.tr('Errore durante il recupero della struttura del database: _ERROR_', [
+        '_ERROR_' => htmlspecialchars($e->getMessage()),
+    ]).'
+</div>';
+    return;
+}
 
 $contents = file_get_contents(base_dir().'/settings.json');
 $data_settings = json_decode($contents, true);
@@ -392,9 +472,25 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 }
 
                 $foreign_keys = $errors['foreign_keys'] ?: [];
-                $error_count = ($has_keys ? count(array_filter($errors, fn ($e) => isset($e['key']))) : 0) + count($foreign_keys);
+                
+                // Calcola il conteggio corretto includendo tutti i tipi di errori
+                $keys_count = ($has_keys ? count(array_filter($errors, fn ($e) => isset($e['key']))) : 0);
+                $foreign_keys_count = count($foreign_keys);
+                
+                // Conta i campi non previsti (escludendo le chiavi, le chiavi esterne e i campi premium)
+                $fields_count = 0;
+                foreach ($errors as $name => $diff) {
+                    if ($name != 'foreign_keys' && !isset($diff['key']) && !isset($results[$table][$name])) {
+                        // Non contare i campi premium (verranno mostrati in una sezione separata)
+                        if (!isset($premium_fields[$table][$name])) {
+                            $fields_count++;
+                        }
+                    }
+                }
+                
+                $error_count = $keys_count + $foreign_keys_count + $fields_count;
 
-                if ($table_not_expected || $has_keys || !empty($foreign_keys)) {
+                if ($table_not_expected || $has_keys || !empty($foreign_keys) || $fields_count > 0) {
                     echo '
 <div class="mb-3">
     <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" onclick="$(this).next().slideToggle();">
@@ -451,9 +547,16 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 </tr>';
                                     } else {
                                         // Campi non previsti
-                                        $badge_text = 'Campo non previsto';
-                                        $badge_color = 'info';
-                                        echo '
+                                        // Verifica se il campo proviene da un modulo premium
+                                        // Se proviene da un modulo premium, non mostrarlo qui (verrà mostrato nella sezione dedicata)
+                                        if (isset($premium_fields[$table][$name])) {
+                                            // Salta i campi premium - verranno mostrati nella sezione "Campi modulo premium"
+                                            continue;
+                                        } else {
+                                            $badge_text = 'Campo non previsto';
+                                            $badge_color = 'info';
+                                            $query_text = 'Campo non previsto';
+                                            echo '
                 <tr>
                     <td class="column-name">
                         '.$name.'
@@ -462,9 +565,10 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                     </td>
                     <td class="column-conflict">
-                        Campo non previsto
+                        '.$query_text.'
                     </td>
                 </tr>';
+                                        }
                                     }
                                 }
                             }
@@ -524,17 +628,61 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     }
 
     $campi_non_previsti = [];
+    $campi_modulo_premium = [];
 
     if ($results_added) {
         foreach ($results_added as $table => $errors) {
-            if (!empty($errors) && (($results[$table] && array_keys($results[$table]) != array_keys($errors)) || (empty($results[$table]) && !empty($errors)))) {
-                foreach ($errors as $name => $diff) {
-                    if (!isset($results[$table][$name]) && !isset($diff['key']) && $name != 'foreign_keys') {
-                        $campi_non_previsti[] = [
-                            'tabella' => $table,
-                            'campo' => $name,
-                            'valore' => $diff['expected'] ?? '',
-                        ];
+            // Verifica che ci siano errori per questa tabella
+            if (!empty($errors)) {
+                // Se la tabella non è prevista nel file mysql.json principale, salta
+                if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                    continue;
+                }
+
+                // Verifica che ci siano campi non previsti (non presenti in results)
+                // Se la tabella non è in results, significa che tutti i campi sono in più
+                if (!isset($results[$table])) {
+                    foreach ($errors as $name => $diff) {
+                        if (!isset($diff['key']) && $name != 'foreign_keys') {
+                            // Verifica se il campo proviene da un modulo premium
+                            if (isset($premium_fields[$table][$name])) {
+                                $module_name = $premium_fields[$table][$name];
+                                $campi_modulo_premium[] = [
+                                    'tabella' => $table,
+                                    'campo' => $name,
+                                    'modulo' => $module_name,
+                                    'valore' => $diff['expected'] ?? '',
+                                ];
+                            } else {
+                                $campi_non_previsti[] = [
+                                    'tabella' => $table,
+                                    'campo' => $name,
+                                    'valore' => $diff['expected'] ?? '',
+                                ];
+                            }
+                        }
+                    }
+                } else {
+                    // Se la tabella è in results, verifica solo i campi non presenti in results
+                    foreach ($errors as $name => $diff) {
+                        if (!isset($results[$table][$name]) && !isset($diff['key']) && $name != 'foreign_keys') {
+                            // Verifica se il campo proviene da un modulo premium
+                            if (isset($premium_fields[$table][$name])) {
+                                $module_name = $premium_fields[$table][$name];
+                                $campi_modulo_premium[] = [
+                                    'tabella' => $table,
+                                    'campo' => $name,
+                                    'modulo' => $module_name,
+                                    'valore' => $diff['expected'] ?? '',
+                                ];
+                            } else {
+                                $campi_non_previsti[] = [
+                                    'tabella' => $table,
+                                    'campo' => $name,
+                                    'valore' => $diff['expected'] ?? '',
+                                ];
+                            }
+                        }
                     }
                 }
             }
@@ -639,12 +787,59 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 </div>';
     }
 
+    // Visualizza i campi dei moduli premium raggruppati per tabella
+    if (!empty($campi_modulo_premium)) {
+        // Raggruppa per tabella
+        $campi_premium_per_tabella = [];
+        foreach ($campi_modulo_premium as $campo) {
+            if (!isset($campi_premium_per_tabella[$campo['tabella']])) {
+                $campi_premium_per_tabella[$campo['tabella']] = [];
+            }
+            $campi_premium_per_tabella[$campo['tabella']][] = $campo;
+        }
+
+        foreach ($campi_premium_per_tabella as $tabella => $campi) {
+            echo '
+<div class="mb-3">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: #007bff;" onclick="$(this).next().slideToggle();">
+        <div>
+            <strong>'.$tabella.' ('.tr('Campi modulo premium').')</strong>
+            <span class="badge badge-primary ml-2">'.count($campi).'</span>
+        </div>
+        <i class="fa fa-chevron-down"></i>
+    </div>
+    <div class="module-aggiornamenti db-section-content">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm mb-2">
+                <thead class="thead-light">
+                    <tr>
+                        <th>'.tr('Campo').'</th>
+                        <th>'.tr('Modulo').'</th>
+                    </tr>
+                </thead>
+                <tbody>';
+            foreach ($campi as $campo) {
+                echo '
+                    <tr>
+                        <td class="column-name">'.$campo['campo'].'</td>
+                        <td><span class="badge badge-primary">Campo modulo '.$campo['modulo'].'</span></td>
+                    </tr>';
+            }
+            echo '
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>';
+        }
+    }
+
     // Visualizza i campi non previsti raggruppati per tabella
     if (!empty($campi_non_previsti)) {
         // Raggruppa per tabella
         $campi_per_tabella = [];
         foreach ($campi_non_previsti as $campo) {
-            $campi_per_tabella[$campo['tabella']][] = $campo['campo'];
+            $campi_per_tabella[$campo['tabella']][] = $campo;
         }
 
         foreach ($campi_per_tabella as $tabella => $campi) {
@@ -663,13 +858,26 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Campo').'</th>
+                        <th>'.tr('Tipo').'</th>
                     </tr>
                 </thead>
                 <tbody>';
             foreach ($campi as $campo) {
+                // Verifica se il campo proviene da un modulo premium
+                if (isset($premium_fields[$tabella][$campo['campo']])) {
+                    $module_name = $premium_fields[$tabella][$campo['campo']];
+                    $badge_text = 'Campo modulo '.$module_name;
+                    $badge_color = 'primary';
+                } else {
+                    $badge_text = 'Campo non previsto';
+                    $badge_color = 'info';
+                }
                 echo '
                     <tr>
-                        <td class="column-name">'.$campo.'</td>
+                        <td class="column-name">'.$campo['campo'].'</td>
+                        <td class="text-center">
+                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
+                        </td>
                     </tr>';
             }
             echo '
@@ -683,7 +891,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
 } else {
     echo '
 <div class="alert alert-info alert-database">
-    <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'.
+    <i class="fa fa-info-circle"></i> '.tr('Il database non presenta problemi di integrità').'
 </div>';
 }
 

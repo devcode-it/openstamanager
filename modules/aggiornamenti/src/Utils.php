@@ -134,6 +134,10 @@ class Utils
             if ($name === 'foreign_keys') {
                 continue;
             }
+            // Verifica se $diff è un array valido
+            if (!is_array($diff)) {
+                continue;
+            }
             if (array_key_exists('key', $diff)) {
                 if ($diff['key']['expected'] == '') {
                     ++$info_count;

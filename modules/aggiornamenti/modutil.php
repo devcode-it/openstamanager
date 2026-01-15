@@ -37,8 +37,8 @@ if (!function_exists('customStructure')) {
 
         // Controlli di personalizzazione fisica
         foreach ($dirs as $dir) {
-            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE);
-            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE);
+            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE) ?: [];
+            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
 
             $files = array_merge($files, $recursive_files);
 
@@ -53,8 +53,8 @@ if (!function_exists('customStructure')) {
         }
 
         // Gestione cartella include
-        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE);
-        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE);
+        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE) ?: [];
+        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
 
         $files = array_merge($files, $recursive_files);
 
@@ -83,7 +83,7 @@ if (!function_exists('customTables')) {
 
         // Carica e accoda le tabelle dai file tables.php presenti nelle cartelle update dei moduli
         $modules_dir = base_dir().'/modules/';
-        $module_tables_files = glob($modules_dir.'*/update/tables.php');
+        $module_tables_files = glob($modules_dir.'*/update/tables.php') ?: [];
 
         if (!empty($module_tables_files)) {
             foreach ($module_tables_files as $module_tables_file) {
@@ -241,8 +241,8 @@ if (!function_exists('customStructureWithFiles')) {
 
         // Controlli di personalizzazione fisica
         foreach ($dirs as $dir) {
-            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE);
-            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE);
+            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE) ?: [];
+            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
 
             $files = array_merge($files, $recursive_files);
 
@@ -268,8 +268,8 @@ if (!function_exists('customStructureWithFiles')) {
         }
 
         // Gestione cartella include
-        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE);
-        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE);
+        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE) ?: [];
+        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
 
         $files = array_merge($files, $recursive_files);
 
@@ -344,22 +344,52 @@ if (!function_exists('customViewsNotStandard')) {
 
         // Carica e accoda le viste dai file views.json presenti nelle sottocartelle di modules/
         $modules_dir = base_dir().'/modules/';
-        $views_json_files = glob($modules_dir.'*/views.json');
+        $views_json_files = glob($modules_dir.'*/views.json') ?: [];
 
         // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
         $premium_modules = [];
 
+        // Traccia tutte le viste definite nei file views.json delle sottocartelle (per mostrarle sempre)
+        $premium_views = [];
+
+        // Traccia il nome leggibile del modulo premium principale per ogni sottocartella
+        $premium_module_main_name = [];
+
+        // Traccia la sottocartella di appartenenza per ogni modulo premium
+        $premium_module_folder = [];
+
         // Prima carica i moduli dai file modules.json per identificare quelli premium
-        $module_json_files = glob($modules_dir.'*/modules.json');
+        $module_json_files = glob($modules_dir.'*/modules.json') ?: [];
         if (!empty($module_json_files)) {
             foreach ($module_json_files as $module_json_file) {
                 $module_contents = file_get_contents($module_json_file);
                 $module_data = json_decode($module_contents, true);
 
                 if (!empty($module_data) && is_array($module_data)) {
+                    // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/modules.json")
+                    $folder_name = basename(dirname($module_json_file));
+
+                    // Leggi il nome del modulo dal file MODULE presente nella sottocartella
+                    $module_file_path = dirname($module_json_file).'/MODULE';
+                    $main_module_name = null;
+
+                    if (file_exists($module_file_path)) {
+                        $module_file_content = file_get_contents($module_file_path);
+                        // Estrai il valore del campo "name" dal file MODULE
+                        if (preg_match('/name\s*=\s*"([^"]+)"/', $module_file_content, $matches)) {
+                            $main_module_name = $matches[1];
+                        }
+                    }
+
+                    if ($main_module_name !== null) {
+                        $premium_module_main_name[$folder_name] = $main_module_name;
+                    }
+
                     foreach ($module_data as $module_name => $data) {
                         if (is_array($data)) {
                             $premium_modules[$module_name] = true;
+                            // Traccia la sottocartella di appartenenza per questo modulo
+                            $premium_module_folder[$module_name] = $folder_name;
                         }
                     }
                 }
@@ -372,6 +402,9 @@ if (!function_exists('customViewsNotStandard')) {
                 $views_data = json_decode($views_contents, true);
 
                 if (!empty($views_data) && is_array($views_data)) {
+                    // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/views.json")
+                    $folder_name = basename(dirname($views_json_file));
+
                     // Accoda le viste del modulo a quelle principali
                     foreach ($views_data as $module_name => $module_views) {
                         $module_key = trim((string) $module_name);
@@ -386,6 +419,12 @@ if (!function_exists('customViewsNotStandard')) {
                             if ($view_key === '') {
                                 continue;
                             }
+
+                            // Traccia questa vista come vista premium con il nome della sottocartella
+                            if (!isset($premium_views[$module_key])) {
+                                $premium_views[$module_key] = [];
+                            }
+                            $premium_views[$module_key][$view_key] = $folder_name;
 
                             // Se view_query è un array (struttura estesa), estrai il campo 'id'
                             if (is_array($view_query) && isset($view_query['id'])) {
@@ -449,11 +488,30 @@ if (!function_exists('customViewsNotStandard')) {
                 continue;
             }
 
-            if (!isset($standard_views[$module_name])) {
+            // Verifica se questa vista è definita in un file views.json di una sottocartella (vista premium)
+            if (isset($premium_views[$module_name]) && isset($premium_views[$module_name][$view_name])) {
+                // Questa è una vista premium, mostrala sempre con l'etichetta blu usando il nome leggibile del modulo principale
+                $is_custom = true;
+                // Ottieni il nome della sottocartella
+                $folder_name = $premium_views[$module_name][$view_name];
+                // Usa il nome leggibile del modulo principale se disponibile, altrimenti usa il nome del modulo
+                $module_display_name = isset($premium_module_main_name[$folder_name]) ? $premium_module_main_name[$folder_name] : $view['module_display_name'];
+                $reason = 'Vista modulo '.$module_display_name;
+                $expected_query = trim((string) $standard_views[$module_name][$view_name]);
+
+                $expected_query = preg_replace('/<br\s*\/?>/i', '', $expected_query);
+                $expected_query = preg_replace('/\s+/', ' ', (string) $expected_query);
+                $expected_query = str_replace(['"', "'"], "'", $expected_query);
+                $expected_query = html_entity_decode($expected_query, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $expected_query = trim($expected_query);
+            } elseif (!isset($standard_views[$module_name])) {
                 $is_custom = true;
                 // Verifica se il modulo proviene da un file modules.json in una sottocartella (modulo premium)
                 if (isset($premium_modules[$module_name])) {
-                    $reason = 'Modulo premium';
+                    // Usa il nome leggibile del modulo principale se disponibile
+                    $folder_name = isset($premium_module_folder[$module_name]) ? $premium_module_folder[$module_name] : '';
+                    $module_display_name = isset($premium_module_main_name[$folder_name]) ? $premium_module_main_name[$folder_name] : $module_name;
+                    $reason = 'Vista modulo '.$module_display_name;
                 } else {
                     $reason = 'Modulo non previsto';
                 }
@@ -600,10 +658,19 @@ if (!function_exists('customModulesNotStandard')) {
         // Carica i moduli dai file modules.json presenti nelle sottocartelle di modules/ (moduli premium)
         // NOTA: Non li aggiungiamo a $standard_modules per poterli mostrare nella lista come premium
         $modules_dir = base_dir().'/modules/';
-        $module_json_files = glob($modules_dir.'*/modules.json');
+        $module_json_files = glob($modules_dir.'*/modules.json') ?: [];
 
         // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
         $premium_modules = [];
+
+        // Traccia tutti i moduli definiti nei file modules.json delle sottocartelle (per mostrarli sempre)
+        $premium_modules_all = [];
+
+        // Traccia il nome leggibile del modulo premium principale per ogni sottocartella
+        $premium_module_main_name = [];
+
+        // Traccia la sottocartella di appartenenza per ogni modulo premium
+        $premium_module_folder = [];
 
         if (!empty($module_json_files)) {
             foreach ($module_json_files as $module_json_file) {
@@ -611,6 +678,25 @@ if (!function_exists('customModulesNotStandard')) {
                 $module_data = json_decode($module_contents, true);
 
                 if (!empty($module_data) && is_array($module_data)) {
+                    // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/modules.json")
+                    $folder_name = basename(dirname($module_json_file));
+
+                    // Leggi il nome del modulo dal file MODULE presente nella sottocartella
+                    $module_file_path = dirname($module_json_file).'/MODULE';
+                    $main_module_name = null;
+
+                    if (file_exists($module_file_path)) {
+                        $module_file_content = file_get_contents($module_file_path);
+                        // Estrai il valore del campo "name" dal file MODULE
+                        if (preg_match('/name\s*=\s*"([^"]+)"/', $module_file_content, $matches)) {
+                            $main_module_name = $matches[1];
+                        }
+                    }
+
+                    if ($main_module_name !== null) {
+                        $premium_module_main_name[$folder_name] = $main_module_name;
+                    }
+
                     // Traccia i moduli premium senza aggiungerli a $standard_modules
                     foreach ($module_data as $module_name => $data) {
                         if (is_array($data)) {
@@ -619,6 +705,13 @@ if (!function_exists('customModulesNotStandard')) {
                                 'options' => $data['options'] ?? '',
                                 'options2' => $data['options2'] ?? '',
                             ];
+                            // Traccia tutti i moduli premium per mostrarli sempre
+                            $premium_modules_all[$module_name] = [
+                                'options' => $data['options'] ?? '',
+                                'options2' => $data['options2'] ?? '',
+                            ];
+                            // Traccia la sottocartella di appartenenza per questo modulo
+                            $premium_module_folder[$module_name] = $folder_name;
                         }
                     }
                 }
@@ -655,18 +748,17 @@ if (!function_exists('customModulesNotStandard')) {
                 continue;
             }
 
-            // Controlla se il modulo non è previsto nel file standard
-            if (!isset($standard_modules[$module_name])) {
+            // Verifica se questo modulo è definito in un file modules.json di una sottocartella (modulo premium)
+            if (isset($premium_modules_all[$module_name])) {
+                // Questo è un modulo premium, mostralo sempre con l'etichetta blu
                 $is_custom = true;
-                // Verifica se il modulo proviene da un file modules.json in una sottocartella (modulo premium)
-                if (isset($premium_modules[$module_name])) {
-                    $reason = 'Modulo premium';
-                    // Per i moduli premium, usa le options definite nel file premium
-                    $expected_options = $premium_modules[$module_name]['options'] ?? '';
-                    $expected_options2 = $premium_modules[$module_name]['options2'] ?? '';
-                } else {
-                    $reason = 'Modulo non previsto';
-                }
+                $reason = 'Modulo Premium';
+                // Per i moduli premium, usa le options definite nel file premium
+                $expected_options = $premium_modules_all[$module_name]['options'] ?? '';
+                $expected_options2 = $premium_modules_all[$module_name]['options2'] ?? '';
+            } elseif (!isset($standard_modules[$module_name])) {
+                $is_custom = true;
+                $reason = 'Modulo non previsto';
             } else {
                 // Normalizza le options standard
                 $expected_options = normalizeModuleOptions($standard_modules[$module_name]['options']);

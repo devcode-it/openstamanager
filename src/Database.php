@@ -660,7 +660,13 @@ class Database extends Util\Singleton
 
             $inserts = array_unique(array_diff($sync, $results));
             foreach ($inserts as $insert) {
-                $this->insert($table, array_merge($conditions, [$field => $insert]));
+                // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
+                $data = array_merge($conditions, [$field => $insert]);
+                $columns = array_keys($data);
+                $values = array_map(function ($v) {
+                    return $this->prepare($v);
+                }, $data);
+                $this->query('INSERT IGNORE INTO `'.$table.'` (`'.implode('`, `', $columns).'`) VALUES ('.implode(', ', $values).')');
             }
         }
 

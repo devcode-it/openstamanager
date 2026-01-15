@@ -99,15 +99,8 @@ class Group extends Model
             $default_views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' AND `default` = 1');
 
             foreach ($default_views as $view) {
-                // Controlla se il gruppo ha già accesso a questa vista specifica
-                $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
-
-                if ($has_view_access == 0) {
-                    $database->insert('zz_group_view', [
-                        'id_gruppo' => $this->id,
-                        'id_vista' => $view['id'],
-                    ]);
-                }
+                // Usa INSERT IGNORE per evitare errori di duplicazione
+                $database->query('INSERT IGNORE INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES ('.prepare($this->id).', '.prepare($view['id']).')');
             }
 
             // Se non ci sono viste predefinite, aggiungi il gruppo a tutte le viste del modulo
@@ -115,14 +108,8 @@ class Group extends Model
                 $all_views = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
 
                 foreach ($all_views as $view) {
-                    $has_view_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_vista` = '.prepare($view['id']))['cont'];
-
-                    if ($has_view_access == 0) {
-                        $database->insert('zz_group_view', [
-                            'id_gruppo' => $this->id,
-                            'id_vista' => $view['id'],
-                        ]);
-                    }
+                    // Usa INSERT IGNORE per evitare errori di duplicazione
+                    $database->query('INSERT IGNORE INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES ('.prepare($this->id).', '.prepare($view['id']).')');
                 }
             }
 
@@ -130,15 +117,8 @@ class Group extends Model
             $default_segments = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).' AND `predefined` = 1');
 
             foreach ($default_segments as $segment) {
-                // Controlla se il gruppo ha già accesso a questo segmento specifico
-                $has_segment_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($segment['id']))['cont'];
-
-                if ($has_segment_access == 0) {
-                    $database->insert('zz_group_segment', [
-                        'id_gruppo' => $this->id,
-                        'id_segment' => $segment['id'],
-                    ]);
-                }
+                // Usa INSERT IGNORE per evitare errori di duplicazione
+                $database->query('INSERT IGNORE INTO `zz_group_segment` (`id_gruppo`, `id_segment`) VALUES ('.prepare($this->id).', '.prepare($segment['id']).')');
             }
 
             // Se non ci sono segmenti predefiniti, aggiungi il gruppo ad almeno un segmento (il primo disponibile)
@@ -146,14 +126,8 @@ class Group extends Model
                 $first_segment = $database->fetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module`='.prepare($id_module).' ORDER BY `id` ASC LIMIT 1');
 
                 if (!empty($first_segment)) {
-                    $has_segment_access = $database->fetchArray('SELECT COUNT(*) as cont FROM `zz_group_segment` WHERE `id_gruppo` = '.prepare($this->id).' AND `id_segment` = '.prepare($first_segment[0]['id']))['cont'];
-
-                    if ($has_segment_access == 0) {
-                        $database->insert('zz_group_segment', [
-                            'id_gruppo' => $this->id,
-                            'id_segment' => $first_segment[0]['id'],
-                        ]);
-                    }
+                    // Usa INSERT IGNORE per evitare errori di duplicazione
+                    $database->query('INSERT IGNORE INTO `zz_group_segment` (`id_gruppo`, `id_segment`) VALUES ('.prepare($this->id).', '.prepare($first_segment[0]['id']).')');
                 }
             }
         } else {

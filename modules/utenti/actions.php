@@ -42,11 +42,8 @@ switch (filter('op')) {
             $group->save();
 
             if ($id_module_start) {
-                $dbo->insert('zz_permissions', [
-                    'idgruppo' => $id_record,
-                    'idmodule' => $id_module_start,
-                    'permessi' => 'r',
-                ]);
+                // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
+                $dbo->query('INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($id_module_start).', \'r\')');
 
                 // Sincronizza i permessi delle viste e dei segmenti per il modulo di partenza
                 $group->syncModulePermissions($id_module_start, 'r');
@@ -120,7 +117,8 @@ switch (filter('op')) {
                 $sedi = array_merge([0], $sedi);
             }
             foreach ($sedi as $id_sede) {
-                $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($utente['id']).', '.prepare($id_sede).')');
+                // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
+                $dbo->query('INSERT IGNORE INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($utente['id']).', '.prepare($id_sede).')');
             }
 
             flash()->info(tr("Informazioni per l'utente _USERNAME_ salvate correttamente!", [
@@ -258,11 +256,8 @@ switch (filter('op')) {
             foreach ($permessi as $module_name => $permesso) {
                 $module_id = Module::where('name', $module_name)->first()->id;
 
-                $dbo->insert('zz_permissions', [
-                    'idgruppo' => $id_record,
-                    'idmodule' => $module_id,
-                    'permessi' => $permesso,
-                ]);
+                // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
+                $dbo->query('INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($module_id).', '.prepare($permesso).')');
 
                 // Sincronizza i permessi delle viste e dei segmenti per ogni modulo
                 $group->syncModulePermissions($module_id, $permesso);
@@ -282,7 +277,8 @@ switch (filter('op')) {
         if ($permessi != '-') {
             $rs = $dbo->fetchArray('SELECT * FROM zz_permissions WHERE idgruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo));
             if (empty($rs)) {
-                $query = 'INSERT INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
+                // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
+                $query = 'INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
             } else {
                 $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs[0]['id']);
             }

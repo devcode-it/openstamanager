@@ -110,17 +110,8 @@ switch (post('op')) {
             $gruppi_con_accesso[] = ['idgruppo' => $id_gruppo_admin];
         }
 
-        $array = [];
-        foreach ($gruppi_con_accesso as $gruppo) {
-            $array[] = [
-                'id_gruppo' => $gruppo['idgruppo'],
-                'id_segment' => $id_record,
-            ];
-        }
-
-        if (!empty($array)) {
-            $dbo->insert('zz_group_segment', $array);
-        }
+        // Usa sync per evitare duplicati e sincronizzare correttamente i permessi
+        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => array_column($gruppi_con_accesso, 'idgruppo')]);
 
         flash()->info(tr('Nuovo segmento aggiunto'));
 

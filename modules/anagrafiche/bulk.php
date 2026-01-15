@@ -98,6 +98,20 @@ switch (post('op')) {
 
         break;
 
+    case 'update_agenti':
+        $idagente = post('idagente') ?: 0;
+        foreach ($id_records as $id) {
+            $anagrafica = Anagrafica::find($id);
+            if ($anagrafica->isTipo('Cliente')) {
+                $anagrafica->idagente = $idagente;
+                $anagrafica->save();
+            }
+        }
+
+        flash()->info(tr('Agenti aggiornati correttamente!'));
+
+        break;
+
     case 'export_newsletter_csv':
         $tipo_esportazione = post('tipo_esportazione');
         $id_records_list = implode(',', array_map(intval(...), $id_records));
@@ -265,6 +279,15 @@ $operations['export_csv'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => true,
+    ],
+];
+
+$operations['update_agenti'] = [
+    'text' => '<span><i class="fa fa-users"></i> '.tr('Aggiorna agente').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi aggiornare l\'agente a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "ajax-source": "agenti", "value": "$idagente$" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

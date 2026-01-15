@@ -164,7 +164,7 @@ switch (post('op')) {
         // Duplica contratto
     case 'copy':
         $new = $contratto->replicate(['idcontratto_prev']);
-        $new->numero = Contratto::getNextNumero($contratto->data_bozza, $contratto->id_segment);
+        $new->numero = Contratto::getNextNumero(Carbon::parse($data)->format('Y-m-d'), $contratto->id_segment);
 
         $stato = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato);

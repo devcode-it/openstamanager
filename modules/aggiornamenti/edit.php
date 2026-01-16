@@ -395,12 +395,13 @@ if (function_exists('customComponents')) {
     // Conta gli avvisi per tipo
     $view_warning_count = 0;
     $view_info_count = 0;
+    $view_premium_count = 0;
 
     if ($has_view_data_issues) {
         foreach ($custom_views_not_standard as $view) {
             // Verifica se la reason inizia con "Vista modulo"
             if (str_starts_with($view['reason'], 'Vista modulo ')) {
-                $view_info_count++;
+                $view_premium_count++;
             } else {
                 match ($view['reason']) {
                     'Vista aggiuntiva' => $view_info_count++,
@@ -428,6 +429,7 @@ if (function_exists('customComponents')) {
                     '.tr('Viste personalizzate').'
                     '.($view_warning_count > 0 ? '<span class="badge badge-warning ml-2">'.$view_warning_count.'</span>' : '').'
                     '.($view_info_count > 0 ? '<span class="badge badge-info ml-2">'.$view_info_count.'</span>' : '').'
+                    '.($view_premium_count > 0 ? '<span class="badge badge-primary ml-2">'.$view_premium_count.'</span>' : '').'
                 </h3>
                 <div class="card-tools pull-right">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -537,12 +539,13 @@ if (function_exists('customComponents')) {
     // Conta gli avvisi per tipo
     $module_warning_count = 0;
     $module_info_count = 0;
+    $module_premium_count = 0;
 
     if ($has_module_data_issues) {
         foreach ($custom_modules_not_standard as $modulo) {
             // Verifica se la reason è "Modulo Premium"
             if ($modulo['reason'] === 'Modulo Premium') {
-                $module_info_count++;
+                $module_premium_count++;
             } else {
                 match ($modulo['reason']) {
                     'Options modificato' => $module_warning_count++,
@@ -569,6 +572,7 @@ if (function_exists('customComponents')) {
                     '.tr('Moduli personalizzati').'
                     '.($module_warning_count > 0 ? '<span class="badge badge-warning ml-2">'.$module_warning_count.'</span>' : '').'
                     '.($module_info_count > 0 ? '<span class="badge badge-info ml-2">'.$module_info_count.'</span>' : '').'
+                    '.($module_premium_count > 0 ? '<span class="badge badge-primary ml-2">'.$module_premium_count.'</span>' : '').'
                 </h3>
                 <div class="card-tools pull-right">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -835,8 +839,17 @@ if (function_exists('customComponents')) {
                         $foreign_keys = $errors['foreign_keys'] ?: [];
                         unset($errors['foreign_keys']);
 
+                        // Filtra i campi premium prima del conteggio
+                        $filtered_errors = [];
+                        foreach ($errors as $name => $diff) {
+                            // Verifica se il campo proviene da un modulo premium
+                            if (!isset($premium_fields[$table][$name])) {
+                                $filtered_errors[$name] = $diff;
+                            }
+                        }
+
                         // Usa la funzione di utilità per contare gli errori
-                        $error_counts = Utils::countErrorsByType($errors, $foreign_keys);
+                        $error_counts = Utils::countErrorsByType($filtered_errors, $foreign_keys);
                         $database_danger_count += $error_counts['danger'];
                         $database_warning_count += $error_counts['warning'];
                         $database_info_count += $error_counts['info'];

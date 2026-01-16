@@ -96,12 +96,38 @@ if (!function_exists('customTables')) {
             }
         }
 
+        // Determina il file di riferimento per il database in base al tipo di DBMS
+        $file_to_check_database = 'mysql.json';
+        $database = database();
+        if ($database->getType() === 'MariaDB') {
+            $file_to_check_database = 'mariadb_10_x.json';
+        } elseif ($database->getType() === 'MySQL') {
+            $mysql_min_version = '8.0.0';
+            $mysql_max_version = '8.3.99';
+            $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
+        }
+
+        // Carica e accoda le tabelle dai file mysql.json presenti nelle sottocartelle di modules/
+        $database_json_files = glob($modules_dir.'*/'.$file_to_check_database) ?: [];
+
+        if (!empty($database_json_files)) {
+            foreach ($database_json_files as $database_json_file) {
+                $database_contents = file_get_contents($database_json_file);
+                $database_data = json_decode($database_contents, true);
+
+                if (!empty($database_data) && is_array($database_data)) {
+                    // Estrai i nomi delle tabelle dalle chiavi del JSON
+                    $module_tables = array_keys($database_data);
+                    // Accoda le tabelle del modulo a quelle principali
+                    $tables = array_merge($tables, $module_tables);
+                }
+            }
+        }
+
         $names = [];
         foreach ($tables as $table) {
             $names[] = prepare($table);
         }
-
-        $database = database();
 
         $results = $database->fetchArray('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '.prepare($database->getDatabaseName()).' AND TABLE_NAME NOT IN ('.implode(',', $names).") AND TABLE_NAME != 'updates'");
 

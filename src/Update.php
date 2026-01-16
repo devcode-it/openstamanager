@@ -381,6 +381,21 @@ class Update
         // Tabelle registrate per il gestionale
         $tables = include base_dir().'/update/tables.php';
 
+        // Carica e accoda le definizioni delle tabelle dai file tables.php presenti nelle sottocartelle update dei moduli
+        $modules_dir = base_dir().'/modules/';
+        $tables_php_files = glob($modules_dir.'*/update/tables.php');
+
+        if (!empty($tables_php_files)) {
+            foreach ($tables_php_files as $tables_php_file) {
+                $module_tables = include $tables_php_file;
+
+                if (!empty($module_tables) && is_array($module_tables)) {
+                    // Accoda le tabelle del modulo a quelle principali
+                    $tables = array_merge($tables, $module_tables);
+                }
+            }
+        }
+
         $database = database();
         $database_name = $database->getDatabaseName();
 
@@ -397,6 +412,11 @@ class Update
                     $column = array_change_key_case($column);
                     $name = $column['field'];
                     unset($column['field']);
+
+                    // Normalizza il valore di default per corrispondere al formato del mysql.json
+                    if ($column['default'] === 'NULL' || $column['default'] === null) {
+                        $column['default'] = null;
+                    }
 
                     $columns[$name] = $column;
                 }

@@ -340,7 +340,7 @@ echo '
             swal.setDefaults({
                 buttonsStyling: false,
                 confirmButtonClass: "btn btn-lg btn-primary",
-                cancelButtonClass: "btn btn-lg",
+                cancelButtonClass: "btn btn-lg btn-default",
                 cancelButtonText: "'.tr('Annulla').'",
             });
         </script>';

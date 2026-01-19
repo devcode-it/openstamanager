@@ -30,15 +30,18 @@ $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
+// Recupera la sede dell'intervento se disponibile
+$nomesede = null;
 if (!empty($intervento['idsede_destinazione'])) {
     $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
-
+    
     $nomesede = $sedi['nomesede'];
     $citta = $sedi['citta'];
     $indirizzo = $sedi['indirizzo'];
     $cap = $sedi['cap'];
     $provincia = $sedi['provincia'];
 } else {
+    // Se non c'è sede, usa l'anagrafica
     $sedi = $dbo->fetchOne('SELECT cap, citta, indirizzo, provincia FROM an_anagrafiche WHERE idanagrafica = '.prepare($intervento['idanagrafica']));
 
     $citta = $sedi['citta'];

@@ -36,7 +36,7 @@ table.dataTable thead th.sorting:after,
 table.dataTable thead th.sorting_asc:after,
 table.dataTable thead th.sorting_desc:after {
     position: absolute;
-    top: 12px;
+    top: 20px;
     right: 8px;
     display: block;
     font-family: FontAwesome;
@@ -61,15 +61,6 @@ div.dataTables_scrollBody table.dataTable thead th.sorting:after,
 div.dataTables_scrollBody table.dataTable thead th.sorting_asc:after,
 div.dataTables_scrollBody table.dataTable thead th.sorting_desc:after {
     content: "";
-}
-
-
-/* In Bootstrap and Foundation the padding top is a little different from the DataTables stylesheet */
-
-table.table thead th.sorting:after,
-table.table thead th.sorting_asc:after,
-table.table thead th.sorting_desc:after {
-    top: 8px;
 }
 
 

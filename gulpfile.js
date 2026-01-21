@@ -197,7 +197,7 @@ const CSS = gulp.parallel(() => {
         'sweetalert2/dist/sweetalert2.css',
         'toastr/build/toastr.min.css',
         'tooltipster/dist/css/tooltipster.bundle.css',
-        'admin-lte/dist/css/AdminLTE.css',
+        'admin-lte/dist/css/adminlte.css',
         'bootstrap/dist/css/bootstrap.min.css',
         'bootstrap-daterangepicker/daterangepicker.css',
         'datatables.net-bs/css/dataTables.bootstrap.css',
@@ -388,7 +388,7 @@ function srcFonts() {
 function ckeditor() {
 
     const ckeditorCore =  gulp.src([
-        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png,gif,html}',
+        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins}/**/*.{js,json,css,png,gif,html}',
         config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));

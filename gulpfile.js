@@ -139,15 +139,12 @@ const JS = gulp.parallel(function vendorJS() {
         'admin-lte/dist/js/adminlte.js',
         'bootstrap/dist/js/bootstrap.min.js',
         'bootstrap-daterangepicker/daterangepicker.js',
-        'datatables.net-bs/js/dataTables.bootstrap.js',
-        'datatables.net-buttons-bs/js/buttons.bootstrap.js',
         'smartwizard/dist/js/jquery.smartWizard.min.js',
         'bootstrap-maxlength/dist/bootstrap-maxlength.js',
         'leaflet/dist/leaflet.js',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js',
         'leaflet.fullscreen/Control.FullScreen.js',
         'ismobilejs/dist/isMobile.min.js',
-        'ua-parser-js/dist/ua-parser.min.js',
         'readmore.js/readmore.js',
     ];
 
@@ -456,11 +453,18 @@ function pdfjs() {
 }
 
 function uaparser() {
-    return gulp.src([
+    const js = gulp.src([
+        config.nodeDirectory + '/ua-parser-js/dist/ua-parser.min.js',
+    ])
+        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+
+    const icons = gulp.src([
         config.nodeDirectory + '/ua-parser-js/dist/icons/mono/**/*',
         '!' + config.nodeDirectory + '/ua-parser-js/dist/icons/mono/LICENSE.md',
     ], {encoding: false})
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/icons/'));
+
+    return merge(js, icons);
 }
 
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione

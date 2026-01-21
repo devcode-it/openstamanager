@@ -59,6 +59,7 @@ class App
         // JS
         'js' => [
             'app.min.js',
+            'ua-parser.min.js',
             'functions.min.js',
             'custom.min.js',
             'i18n/parsleyjs/|lang|.min.js',

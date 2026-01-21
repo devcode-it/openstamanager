@@ -5,30 +5,30 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-18.10
-    
+    runs-on: ubuntu-22.04
+
     strategy:
       matrix:
-        python-version: [3.9]
-        php-version: ['7.4']
-        
-    steps:
-    - uses: actions/checkout@v2
+        python-version: ['3.12']
+        php-version: ['8.3']
 
-#    - name: Set up PHP ${{ matrix.php-version }}
-#      uses: shivammathur/setup-php@v2
-#      with:
-#        php-version: ${{ matrix.php-version }}
-#        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
- 
-    - name: Setup PHP
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up PHP ${{ matrix.php-version }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: curl, dom, fileinfo, intl, json, libxml, mbstring, openssl, pdo, simplexml, xsl, zip, pdo_mysql, mysql, gd
+        coverage: none
+
+    - name: Configure PHP settings
       run: |
-        sudo apt install libapache2-mod-php7.4
-        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/apache2/php.ini
-        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/apache2/php.ini
-      
+        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/${{ matrix.php-version }}/apache2/php.ini
+        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/${{ matrix.php-version }}/apache2/php.ini
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         
@@ -70,7 +70,7 @@ jobs:
     
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -81,9 +81,9 @@ jobs:
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Use NPM and Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: '20'
     - name: Install NPM and compile assets
       run: |
         yarn install
@@ -97,7 +97,7 @@ jobs:
         sudo rm /var/www/html/openstamanager/.htaccess
         
     - name: Check out test repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: devcode-it/openstamanager-tests
         path: python-tests

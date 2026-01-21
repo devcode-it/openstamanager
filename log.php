@@ -26,24 +26,25 @@ $pageTitle = tr('Log');
 include_once App::filepath('include|custom|', 'top.php');
 
 echo '
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title"><i class="fa fa-book"></i> '.tr('Ultimi 100 accessi').'</h3>
+    <div class="card card-outline card-info shadow-sm">
+        <div class="card-header with-border bg-info text-white">
+            <h3 class="card-title mb-0"><i class="fa fa-book mr-2"></i> '.tr('Ultimi 100 accessi').'</h3>
         </div>
 
         <!-- /.card-header -->
-        <div class="card-body table-responsive no-padding">
-            <table class="datatables table table-hover">
-                <thead>
-                    <tr>
-                        <th width="200">'.tr('Username').'</th>
-                        <th width="150">'.tr('Data').'</th>
-                        <th width="100">'.tr('Indirizzo IP').'</th>
-                        <th>'.tr('Dispositivo').'</th>
-                        <th width="180">'.tr('Stato').'</th>
-                    </tr>
-                </thead>
-                <tbody>';
+        <div class="card-body p-3">
+            <div class="table-responsive">
+                <table class="datatables table table-hover table-sm">
+                    <thead class="bg-light">
+                        <tr>
+                            <th width="200">'.tr('Username').'</th>
+                            <th width="150">'.tr('Data').'</th>
+                            <th width="100">'.tr('Indirizzo IP').'</th>
+                            <th>'.tr('Dispositivo').'</th>
+                            <th width="180">'.tr('Stato').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 
 /*
     LEGGO DALLA TABELLA ZZ_LOG
@@ -77,9 +78,9 @@ foreach ($logs as $log) {
 
     echo '
                     <tr class="'.$type.'">
-                        <td>'.$log['username'].'</td>
-                        <td class="tip" title="'.$created_at->format('d/m/Y H:i:s').'">'.$created_at->diffForHumans().'</td>
-                        <td>'.$log['ip'].'</td>
+                        <td><strong>'.$log['username'].'</strong></td>
+                        <td class="tip" title="'.$created_at->format('d/m/Y H:i:s').'"><i class="fa fa-clock-o mr-1 text-muted"></i>'.$created_at->diffForHumans().'</td>
+                        <td><code>'.$log['ip'].'</code></td>
                         <td class="user-agent tip" title="'.strip_tags($log['user_agent'] ?: '').'">'.$log['user_agent'].'</td>
                         <td><span class="badge badge-'.$type.'">'.$stato.'</span></td>
                     </tr>';
@@ -89,11 +90,30 @@ echo '
 
                 </tbody>
             </table>
+            </div>
         </div>
         <!-- /.card-body -->
     </div>
     <!-- /.card -->';
 ?>
+
+<style>
+    /* Margine per il campo di ricerca di DataTables */
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 15px !important;
+    }
+
+    /* Margine per il totale elementi a piè di pagina */
+    .dataTables_wrapper .dataTables_info {
+        margin-top: 15px !important;
+    }
+
+    /* Margine per la paginazione */
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 15px !important;
+    }
+</style>
+
 
 <script>
 $(document).ready(function() {

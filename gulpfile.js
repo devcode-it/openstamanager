@@ -352,20 +352,28 @@ const fonts = gulp.parallel(() => {
         'font-awesome/fonts/fontawesome-webfont.woff',
         'font-awesome/fonts/fontawesome-webfont.woff2',
         'font-awesome/fonts/FontAwesome.otf',
-        '../assets/src/css/fonts/sourcesanspro-regular-webfont.eot',
-        '../assets/src/css/fonts/sourcesanspro-regular-webfont.svg',
-        '../assets/src/css/fonts/sourcesanspro-regular-webfont.ttf',
-        '../assets/src/css/fonts/sourcesanspro-regular-webfont.woff',
-        '../assets/src/css/fonts/sourcesanspro-regular-webfont.woff2',
     ];
 
     for (const i in vendor) {
         vendor[i] = config.nodeDirectory + '/' + vendor[i];
     }
 
-    return gulp.src(vendor, {encoding: false})
-        .pipe(flatten())
-        .pipe(gulp.dest(config.production + '/' + config.paths.fonts));
+    const customFonts = [
+        'assets/src/css/fonts/sourcesanspro-regular-webfont.eot',
+        'assets/src/css/fonts/sourcesanspro-regular-webfont.svg',
+        'assets/src/css/fonts/sourcesanspro-regular-webfont.ttf',
+        'assets/src/css/fonts/sourcesanspro-regular-webfont.woff',
+        'assets/src/css/fonts/sourcesanspro-regular-webfont.woff2',
+    ];
+
+    return merge(
+        gulp.src(vendor, {encoding: false})
+            .pipe(flatten())
+            .pipe(gulp.dest(config.production + '/' + config.paths.fonts)),
+        gulp.src(customFonts, {encoding: false})
+            .pipe(flatten())
+            .pipe(gulp.dest(config.production + '/' + config.paths.fonts))
+    );
 }, srcFonts);
 
 // Elaborazione dei fonts personalizzati

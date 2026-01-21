@@ -33,7 +33,7 @@
         "html5sortable": "^0.14.0",
         "inputmask": "^3.3.9",
         "ismobilejs": "^1.1.1",
-        "jquery": "^3.5.1",
+        "jquery": "^4.0.0",
         "jquery-form": "^4.3.0",
         "jquery-ui-touch-punch": "^0.2.3",
         "js-md5": "^0.7.3",

@@ -96,7 +96,7 @@ class AuthOSM extends Util\Singleton
                 $id = $_SESSION['id_utente'];
             }
 
-            if (!empty($id)) {
+            if (!empty($id) && database()->columnExists('zz_users', 'session_token')) {
                 $this->identifyUser($id);
             }
 
@@ -949,7 +949,7 @@ class AuthOSM extends Util\Singleton
     public function identifyUser($user_id)
     {
         $database = database();
-
+        
         try {
             $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,

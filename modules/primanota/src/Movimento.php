@@ -118,4 +118,69 @@ class Movimento extends Model
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');
     }
+
+    /**
+     * Registra automaticamente un pagamento di prima nota per una scadenza.
+     *
+     * @param int $id_scadenza ID della scadenza
+     * @param float $importo Importo da registrare
+     * @param int $id_conto_anagrafica ID del conto cliente/fornitore
+     * @param int $id_conto_contropartita ID del conto di contropartita
+     * @param string $dir Direzione (entrata/uscita)
+     * @return bool
+     */
+    public static function registraPagamentoAutomatico($id_scadenza, $importo, $id_conto_anagrafica, $id_conto_contropartita, $dir)
+    {
+        // Recupero la scadenza
+        $scadenza = Scadenza::find($id_scadenza);
+        if (empty($scadenza)) {
+            return false;
+        }
+
+        // Recupero il documento associato
+        $documento = $scadenza->documento;
+        if (empty($documento)) {
+            return false;
+        }
+
+        // Determino la data del pagamento (oggi o data scadenza se precedente)
+        $data_scadenza = !empty($scadenza->data_concordata) ? $scadenza->data_concordata : $scadenza->scadenza;
+        $data_pagamento = new \DateTime();
+        if ($data_pagamento > $data_scadenza) {
+            $data_pagamento = $data_scadenza;
+        }
+
+        // Creo la descrizione del movimento
+        $descrizione = tr('Pagamento automatico _DESC_', [
+            '_DESC_' => $documento->getReference(),
+        ]);
+
+        // Creo il mastrino
+        $mastrino = Mastrino::build($descrizione, $data_pagamento, false, true, $documento->idanagrafica);
+        $mastrino->save();
+
+        // Determino dare/avere in base alla direzione
+        if ($dir == 'entrata') {
+            // Fattura di vendita: Dare sul conto cliente, Avere sul conto contropartita
+            $movimento_cliente = self::build($mastrino, $id_conto_anagrafica, $documento, $scadenza);
+            $movimento_cliente->totale = $importo;
+            $movimento_cliente->save();
+
+            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, null);
+            $movimento_contropartita->totale = -$importo;
+            $movimento_contropartita->save();
+        } else {
+            // Fattura di acquisto: Avere sul conto fornitore, Dare sul conto contropartita
+            $movimento_fornitore = self::build($mastrino, $id_conto_anagrafica, $documento, $scadenza);
+            $movimento_fornitore->totale = -$importo;
+            $movimento_fornitore->save();
+
+            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, null);
+            $movimento_contropartita->totale = $importo;
+            $movimento_contropartita->save();
+        }
+        $mastrino->aggiornaScadenzario();
+
+        return true;
+    }
 }

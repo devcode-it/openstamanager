@@ -63,6 +63,7 @@ switch (filter('op')) {
                 $pagamento->importo_fisso_incasso = (float) post('importo_fisso_incasso');
                 $pagamento->importo_percentuale_incasso = (float) post('importo_percentuale_incasso');
                 $pagamento->codice_modalita_pagamento_fe = post('codice_modalita_pagamento_fe');
+                $pagamento->registra_pagamento_automatico = post('registra_pagamento_automatico');
                 $pagamento->save();
                 $pagamento->setTranslation('title', $descrizione);
             }

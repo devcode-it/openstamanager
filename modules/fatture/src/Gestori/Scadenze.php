@@ -21,6 +21,7 @@
 namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
+use Modules\PrimaNota\Movimento;
 use Modules\Scadenzario\Scadenza;
 use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 use Plugins\ImportFE\FatturaElettronica as FatturaElettronicaImport;
@@ -126,6 +127,26 @@ class Scadenze
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
             $assicurazione_crediti->save();
+        }
+
+        // Pagamento automatico se scadenza = data fattura e flag attivo
+        if (!$is_pagato && $scadenza->scadenza->format('Y-m-d') == $fattura->data->format('Y-m-d')) {
+            $pagamento = \Modules\Pagamenti\Pagamento::find($id_pagamento);
+            if (!empty($pagamento) && $pagamento->registra_pagamento_automatico) {
+                $importo_da_registrare = abs($importo);
+                $dir = $fattura->tipo->dir;
+
+                // Recupero conto anagrafica
+                $id_conto_anagrafica = database()->selectOne('an_anagrafiche', $dir == 'entrata' ? 'idconto_cliente' : 'idconto_fornitore', ['idanagrafica' => $idanagrafica]);
+                $id_conto_anagrafica = $id_conto_anagrafica[$dir == 'entrata' ? 'idconto_cliente' : 'idconto_fornitore'];
+
+                // Recupero conto contropartita
+                $id_conto_contropartita = $dir == 'entrata' ? $pagamento->idconto_vendite : $pagamento->idconto_acquisti;
+
+                if (!empty($id_conto_anagrafica) && !empty($id_conto_contropartita)) {
+                    Movimento::registraPagamentoAutomatico($scadenza->id, $importo_da_registrare, $id_conto_anagrafica, $id_conto_contropartita, $dir);
+                }
+            }
         }
     }
 

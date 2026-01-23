@@ -454,3 +454,7 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 UPDATE `zz_prints` SET `predefined` = '1' WHERE `zz_prints`.`name` = 'Registro viaggio'; 
 UPDATE `zz_prints_lang` SET `filename` = 'Registro viaggio {nome} {targa}' WHERE `zz_prints_lang`.`title` = 'Registro viaggio';
 UPDATE `zz_prints_lang` SET `filename` = 'Travel register {nome} {targa}' WHERE `zz_prints_lang`.`title` = 'Travel register';
+
+-- Aggiunta gestione delle scadenze per il pagamento automatico
+ALTER TABLE `co_pagamenti` ADD `registra_pagamento_automatico` BOOLEAN NOT NULL;
+INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`, `created_at`, `updated_at`, `enabled`) VALUES (NULL, 'Pagamento automatico', 'Modules\\PrimaNota\\PagamentoAutomaticoTask', '0 */24 * * *', NULL, NULL, NULL, NULL, '1');

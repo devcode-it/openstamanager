@@ -41,13 +41,17 @@ include_once __DIR__.'/../../core.php';
             </div>
 
 			<div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite'); ?>", "name": "idconto_vendite", "value": "$idconto_vendite$", "ajax-source": "conti" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti'); ?>", "name": "idconto_acquisti", "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
 				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Registra contabile automaticamente'); ?>", "name": "registra_pagamento_automatico", "value": "$registra_pagamento_automatico$", "help": "<?php echo tr('Attiva la registrazione automatica dei pagamenti in prima nota alla data di scadenza delle fatture. Il task viene eseguito dallo scheduler e utilizza i conti predefiniti configurati (Conto predefinito per le vendite/acquisti devono essere impostati) insieme al conto cliente/fornitore dell\'anagrafica.'); ?>" ]}
+    </div>
 			</div>
 		</div>
 	</div>

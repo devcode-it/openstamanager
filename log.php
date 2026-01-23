@@ -69,6 +69,9 @@ foreach ($logs as $log) {
     } elseif ($log['stato'] == $status['unauthorized']['code']) {
         $type = 'warning';
         $stato = $status['unauthorized']['message'];
+    } elseif ($log['stato'] == $status['already_logged_in']['code']) {
+        $type = 'warning';
+        $stato = $status['already_logged_in']['message'];
     } else {
         $type = 'danger';
         $stato = $status['failed']['message'];

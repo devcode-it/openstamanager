@@ -218,6 +218,23 @@ class User extends Model implements Authenticatable
         return $database->fetchArray($query);
     }
 
+    public function isOnline(): int
+    {
+        $session_timeout = (int) setting('Durata sessione', 60); // minuti
+        $database = database();
+
+        $recent_operations = $database->fetchArray('SELECT COUNT(*) as count FROM zz_operations
+            WHERE id_utente = :user_id
+            AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
+            ':user_id' => $this->id,
+            ':timeout' => $session_timeout,
+        ]);
+
+        return !empty($recent_operations) && $recent_operations[0]['count'] != 0 ? 1 : 0;
+    }
+
+
+
     /* Relazioni Eloquent */
 
     public function group()

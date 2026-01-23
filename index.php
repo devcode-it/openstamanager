@@ -62,7 +62,8 @@ switch ($op) {
         } else {
             $status = auth_osm()->getCurrentStatus();
 
-            flash()->error(AuthOSM::getStatus()[$status]['message']);
+            // Salva il messaggio di errore in una variabile di sessione separata
+            $_SESSION['login_error'] = AuthOSM::getStatus()[$status]['message'];
 
             redirect_url(base_path_osm().'/index.php');
             exit;
@@ -185,10 +186,12 @@ if (AuthOSM::isBrute()) {
     }
     </script>';
 }
-$error_message = flash()->getMessage('error');
+// Recupera il messaggio di errore dalla variabile di sessione
+$error_message = $_SESSION['login_error'] ?? null;
 if (!empty($error_message)) {
-    // Recupera il primo messaggio di errore
-    $error_text = is_array($error_message) ? reset($error_message) : $error_message;
+    // Rimuovi il messaggio dalla sessione dopo averlo recuperato
+    unset($_SESSION['login_error']);
+    
     echo '
             <script>
             $(document).ready(function(){
@@ -198,8 +201,8 @@ if (!empty($error_message)) {
                 // Add error styling to password field
                 $(".password-field").addClass("is-invalid");
 
-                // Add error message under password field (usando il messaggio reale dal flash)
-                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_text).'</div>\');
+                // Add error message under password field
+                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_message).'</div>\');
 
                 // Focus on password field
                 $("input[name=password]").focus();

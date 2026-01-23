@@ -32,7 +32,7 @@ $token = filter('token');
 
 // Verifica che sia stata fornita un token
 if (empty($token)) {
-    flash()->warning(tr('Token mancante'));
+    $_SESSION['login_error'] = tr('Token mancante');
     redirect_url(base_path_osm().'/index.php');
     exit;
 }
@@ -90,7 +90,7 @@ switch ($op) {
             exit;
         } else {
             // Login fallito, mostra errore e torna al form OTP
-            flash()->warning($result['message']);
+            $_SESSION['login_error'] = $result['message'];
             redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
             exit;
         }
@@ -131,12 +131,12 @@ switch ($op) {
                 exit;
             } else {
                 // Login fallito, mostra errore
-                flash()->warning($result['message']);
+                $_SESSION['login_error'] = $result['message'];
                 redirect_url(base_path_osm().'/index.php');
                 exit;
             }
         } else {
-            flash()->error(tr('Token non valido'));
+            $_SESSION['login_error'] = tr('Token non valido');
             redirect_url(base_path_osm().'/index.php');
             exit;
         }
@@ -152,7 +152,7 @@ switch ($op) {
             redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
             exit;
         } else {
-            flash()->error(tr('Token non valido'));
+            $_SESSION['login_error'] = tr('Token non valido');
             redirect_url(base_path_osm().'/index.php');
             exit;
         }
@@ -183,7 +183,7 @@ if (empty($token_record)) {
         'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
 
-    flash()->warning(tr('Token non valido o non abilitato'));
+    $_SESSION['login_error'] = tr('Token non valido o non abilitato');
     redirect_url(base_path_osm().'/index.php');
     exit;
 }
@@ -209,7 +209,7 @@ if ($is_not_active) {
         'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
     ]);
 
-    flash()->warning(tr('Token non attivo'));
+    $_SESSION['login_error'] = tr('Token non attivo');
     redirect_url(base_path_osm().'/index.php');
     exit;
 }
@@ -227,7 +227,7 @@ if (!empty($token_record['id_utente'])) {
             'user_agent' => Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']),
         ]);
 
-        flash()->warning(tr('Utente non abilitato'));
+        $_SESSION['login_error'] = tr('Utente non abilitato');
         redirect_url(base_path_osm().'/index.php');
         exit;
     }
@@ -274,13 +274,13 @@ if ($tipo_accesso == 'token') {
                 if (!empty($token_record['id_module_target']) && !empty($token_record['id_record_target'])) {
                     redirect_url(base_path_osm().'/shared_editor.php?id_module='.$token_record['id_module_target'].'&id_record='.$token_record['id_record_target']);
                 } else {
-                    flash()->warning(tr('Token non configurato correttamente per l\'accesso diretto'));
+                    $_SESSION['login_error'] = tr('Token non configurato correttamente per l\'accesso diretto');
                     redirect_url(base_path_osm().'/index.php');
                 }
             }
             exit;
         } else {
-            flash()->warning($result['message']);
+            $_SESSION['login_error'] = $result['message'];
             redirect_url(base_path_osm().'/index.php');
             exit;
         }
@@ -329,9 +329,9 @@ if ($tipo_accesso == 'otp') {
                     }
                 }
             } catch (Exception $e) {
-                flash()->error(tr('Errore durante l\'invio dell\'email OTP: _MSG_', [
+                $_SESSION['login_error'] = tr('Errore durante l\'invio dell\'email OTP: _MSG_', [
                     '_MSG_' => $e->getMessage(),
-                ]));
+                ]);
                 redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token));
                 exit;
             }
@@ -367,6 +367,46 @@ if (AuthOSM::check()) {
 $pageTitle = tr('Login OTP');
 
 include_once App::filepath('include|custom|', 'top.php');
+
+// Recupera il messaggio di errore dalla variabile di sessione
+$error_message = $_SESSION['login_error'] ?? null;
+if (!empty($error_message)) {
+    // Rimuovi il messaggio dalla sessione dopo averlo recuperato
+    unset($_SESSION['login_error']);
+    
+    echo '
+            <script>
+            $(document).ready(function(){
+                // Add shake animation to login box
+                $(".login-box").addClass("animated shake");
+
+                // Add error styling to input field
+                if ($("input[name=otp_code]").length > 0) {
+                    $("input[name=otp_code]").addClass("is-invalid");
+                    
+                    // Add error message under OTP field
+                    $("input[name=otp_code]").parent().append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_message).'</div>\');
+                    
+                    // Focus on OTP field
+                    $("input[name=otp_code]").focus();
+                } else if ($("input[name=password]").length > 0) {
+                    $("input[name=password]").addClass("is-invalid");
+                    
+                    // Add error message under password field
+                    $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_message).'</div>\');
+                    
+                    // Focus on password field
+                    $("input[name=password]").focus();
+                }
+
+                // Remove error styling when user starts typing
+                $("input[name=otp_code], input[name=password]").on("keydown", function() {
+                    $(this).removeClass("is-invalid");
+                    $(".invalid-feedback").fadeOut(300);
+                });
+            });
+            </script>';
+}
 
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {

@@ -49,7 +49,7 @@ class AuthOSM extends Util\Singleton
         ],
         'already_logged_in' => [
             'code' => 6,
-            'message' => 'Questo utente è già connesso al gestionale. Chiudere la sessione precedente o riprovare più tardi.',
+            'message' => 'Utente già connesso al gestionale.',
         ],
     ];
 
@@ -144,17 +144,11 @@ class AuthOSM extends Util\Singleton
             // Verifica se l'utente è già connesso (ha un token di sessione attivo)
             if (!empty($user['session_token'])) {
                 // Verifica se ci sono operazioni recenti per l'utente (sessione attiva)
-                $session_timeout = 10; // minuti
-                
-                $recent_operations = $database->fetchArray('SELECT COUNT(*) as count FROM zz_operations
-                    WHERE id_utente = :user_id
-                    AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
-                    ':user_id' => $user['id'],
-                    ':timeout' => $session_timeout,
-                ]);
-                
+                $user_model = User::find($user['id']);
+                $is_online = $user_model ? $user_model->isOnline() : 0;
+
                 // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
-                if (!empty($recent_operations) && $recent_operations[0]['count'] > 0) {
+                if ($is_online == 1) {
                     $status = 'already_logged_in';
                     $this->current_status = $status;
 
@@ -1229,18 +1223,11 @@ class AuthOSM extends Util\Singleton
         }
 
         // Verifica se il token è scaduto controllando le operazioni recenti
-        $session_timeout = 100; 
-        $database = database();
-        
-        $recent_operations = $database->fetchArray('SELECT COUNT(*) as count FROM zz_operations
-            WHERE id_utente = :user_id
-            AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
-            ':user_id' => $this->user->id,
-            ':timeout' => $session_timeout,
-        ]);
-        
+        $is_online = $this->user->isOnline();
+
         // Se non ci sono operazioni recenti, il token è scaduto -> resetta il token
-        if (empty($recent_operations) || $recent_operations[0]['count'] == 0) {
+        if ($is_online == 0) {
+            $database = database();
             $database->update('zz_users', [
                 'session_token' => null,
             ], [

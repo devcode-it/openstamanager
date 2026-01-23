@@ -449,3 +449,8 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Durata sessione (minuti)', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Session duration (minutes)', '');
+
+-- Fix stampa registro viaggi
+UPDATE `zz_prints` SET `predefined` = '1' WHERE `zz_prints`.`name` = 'Registro viaggio'; 
+UPDATE `zz_prints_lang` SET `filename` = 'Registro viaggio {nome} {targa}' WHERE `zz_prints_lang`.`title` = 'Registro viaggio';
+UPDATE `zz_prints_lang` SET `filename` = 'Travel register {nome} {targa}' WHERE `zz_prints_lang`.`title` = 'Travel register';

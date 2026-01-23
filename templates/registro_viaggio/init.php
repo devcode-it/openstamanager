@@ -21,8 +21,8 @@
 include_once __DIR__.'/../../core.php';
 
 // Recupero parametri
-$data_inizio = filter('data_inizio');
-$data_fine = filter('data_fine');
+$data_inizio = filter('data_inizio') ?: $_SESSION[$id_module]['data_inizio'];
+$data_fine = filter('data_fine') ?: $_SESSION[$id_module]['data_fine'];
 
 // Recupero dati automezzo
 $automezzo = $dbo->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($id_record));
@@ -37,8 +37,8 @@ FROM
     LEFT JOIN an_anagrafiche t ON v.idtecnico = t.idanagrafica
 WHERE 
     v.idsede = '.prepare($id_record).'
-    AND v.data_inizio >= '.prepare($data_inizio).'
-    AND v.data_fine <= '.prepare($data_fine).'
+    AND v.data_inizio >= '.prepare($data_inizio.' 00:00:00').'
+    AND v.data_fine <= '.prepare($data_fine.' 23:59:59').'
 ORDER BY 
     v.data_inizio ASC';
 

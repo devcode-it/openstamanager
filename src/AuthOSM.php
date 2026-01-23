@@ -143,15 +143,35 @@ class AuthOSM extends Util\Singleton
 
             // Verifica se l'utente è già connesso (ha un token di sessione attivo)
             if (!empty($user['session_token'])) {
-                $status = 'already_logged_in';
-                $this->current_status = $status;
+                // Verifica se ci sono operazioni recenti per l'utente (sessione attiva)
+                $session_timeout = 10; // minuti
+                
+                $recent_operations = $database->fetchArray('SELECT COUNT(*) as count FROM zz_operations
+                    WHERE id_utente = :user_id
+                    AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
+                    ':user_id' => $user['id'],
+                    ':timeout' => $session_timeout,
+                ]);
+                
+                // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
+                if (!empty($recent_operations) && $recent_operations[0]['count'] > 0) {
+                    $status = 'already_logged_in';
+                    $this->current_status = $status;
 
-                // Log del tentativo
-                $log['stato'] = self::getStatus()[$status]['code'];
-                $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
-                $database->insert('zz_logs', $log);
+                    // Log del tentativo
+                    $log['stato'] = self::getStatus()[$status]['code'];
+                    $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
+                    $database->insert('zz_logs', $log);
 
-                return false;
+                    return false;
+                }
+                
+                // Se non ci sono operazioni recenti, la sessione è scaduta -> resetta il token e permetti il login
+                $database->update('zz_users', [
+                    'session_token' => null,
+                ], [
+                    'id' => $user['id'],
+                ]);
             }
 
             if (!empty($user['enabled'])) {
@@ -1208,7 +1228,32 @@ class AuthOSM extends Util\Singleton
             return true;
         }
 
-        // Se c'è un token nel DB ma non in sessione, invalida la sessione
+        // Verifica se il token è scaduto controllando le operazioni recenti
+        $session_timeout = 100; 
+        $database = database();
+        
+        $recent_operations = $database->fetchArray('SELECT COUNT(*) as count FROM zz_operations
+            WHERE id_utente = :user_id
+            AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
+            ':user_id' => $this->user->id,
+            ':timeout' => $session_timeout,
+        ]);
+        
+        // Se non ci sono operazioni recenti, il token è scaduto -> resetta il token
+        if (empty($recent_operations) || $recent_operations[0]['count'] == 0) {
+            $database->update('zz_users', [
+                'session_token' => null,
+            ], [
+                'id' => $this->user->id,
+            ]);
+            
+            // Pulisci l'oggetto utente per forzare il logout
+            $this->user = null;
+            
+            return false;
+        }
+
+        // Se c'è un token nel DB ma non in sessione, la sessione PHP è scaduta o invalida
         if (empty($_SESSION['auth_token'])) {
             return false;
         }

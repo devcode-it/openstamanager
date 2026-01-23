@@ -49,7 +49,7 @@ class AuthOSM extends Util\Singleton
         ],
         'already_logged_in' => [
             'code' => 6,
-            'message' => 'Utente già connesso al gestionale',
+            'message' => 'Questo utente è già connesso al gestionale. Chiudere la sessione precedente o riprovare più tardi.',
         ],
     ];
 

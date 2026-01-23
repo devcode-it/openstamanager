@@ -185,7 +185,10 @@ if (AuthOSM::isBrute()) {
     }
     </script>';
 }
-if (!empty(flash()->getMessage('error'))) {
+$error_message = flash()->getMessage('error');
+if (!empty($error_message)) {
+    // Recupera il primo messaggio di errore
+    $error_text = is_array($error_message) ? reset($error_message) : $error_message;
     echo '
             <script>
             $(document).ready(function(){
@@ -195,8 +198,8 @@ if (!empty(flash()->getMessage('error'))) {
                 // Add error styling to password field
                 $(".password-field").addClass("is-invalid");
 
-                // Add error message under password field
-                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.tr('Credenziali non valide. Riprova.').'</div>\');
+                // Add error message under password field (usando il messaggio reale dal flash)
+                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_text).'</div>\');
 
                 // Focus on password field
                 $("input[name=password]").focus();

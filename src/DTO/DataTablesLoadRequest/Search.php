@@ -10,14 +10,6 @@ final class Search
     {
     }
 
-    public static function fromArray(array $input = []): self
-    {
-        $value = isset($input['value']) ? (string) $input['value'] : '';
-        $regex = isset($input['regex']) ? filter_var($input['regex'], FILTER_VALIDATE_BOOLEAN) : false;
-
-        return new self($value, $regex);
-    }
-
     public function getValue(): string
     {
         return $this->value;

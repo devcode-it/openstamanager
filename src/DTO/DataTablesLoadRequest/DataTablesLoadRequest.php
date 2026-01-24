@@ -6,22 +6,40 @@ namespace DTO\DataTablesLoadRequest;
 
 final class DataTablesLoadRequest
 {
+    // Private properties are from the route
+    private ?int $id_module = 0;
+    private ?int $id_plugin = 0;
+    private ?int $id_parent = 0;
+
     public int $draw = 0;
     public int $start = 0;
     public int $length = 200;
-    /**
-     * @var Search
-     */
-    public array $search; // Deserialization is not working correctly
+
+    public Search $search;
     /**
      * @var OrderItem[]
      */
-    public array $order = []; // Deserialization is not working correctly
+    public array $order = [];
     /**
      * @var Column[]
      */
-    public array $columns = []; // Deserialization is not working correctly
+    public array $columns = [];
     public ?string $_ = null;
+
+    public function getIdModule(): int
+    {
+        return $this->id_module;
+    }
+
+    public function getIdPlugin(): int
+    {
+        return $this->id_plugin;
+    }
+
+    public function getIdParent(): int
+    {
+        return $this->id_parent;
+    }
 
     public function getDraw(): int
     {

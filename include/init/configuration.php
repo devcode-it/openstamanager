@@ -180,9 +180,9 @@ if (!empty(post('db_host'))) {
 				<hr>
 				<div class="card card-default collapsed-card">
 					<div class="card-header with-border">
-						<h4 class="card-title"><a class="clickable" data-widget="collapse">'.tr('Creazione manuale').'...</a></h4>
+						<h4 class="card-title"><a class="clickable" data-card-widget="collapse">'.tr('Creazione manuale').'...</a></h4>
 						<div class="card-tools pull-right">
-							<button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+							<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
 						</div>
 					</div>
 					<div class="card-body">
@@ -245,69 +245,103 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
         <script>
         $(document).ready(function(){
-            $("#smartwizard").smartWizard({
-                useURLhash: false,
-                showStepURLhash: false,
-                theme: "default",
-                transitionEffect: "fade",
-                toolbarSettings: {
-                    toolbarPosition: "bottom",
-                    toolbarButtonPosition: "right",
-                    showNextButton: true,
-                    showPreviousButton: true
-                },
-                anchorSettings: {
-                    anchorClickable: true,
-                    enableAllAnchors: true,
-                    markDoneStep: true,
-                    markAllPreviousStepsAsDone: true
-                },
-                lang: {
-                    next: "'.tr('Successivo').'",
-                    previous: "'.tr('Precedente').'",
-                }
-            });
-
             // Custom tab navigation
-            $(".config-wizard-tabs li a").click(function(e) {
-                e.preventDefault();
-                var targetStep = $(this).attr("href").replace("#", "");
+            function navigateToStep(stepNumber) {
+                var targetStep = "step-" + stepNumber;
 
                 // Remove active class from all tabs
                 $(".config-wizard-tabs li").removeClass("active");
 
                 // Add active class to current tab
-                $(this).parent().addClass("active");
+                $(".config-wizard-tabs li").eq(stepNumber - 1).addClass("active");
 
                 // Hide all steps
-                $("#steps > div[id^=\'step-\']").hide();
+                $(".config-wizard-content > div[id^=\"step-\"]").hide();
 
                 // Show target step
                 $("#" + targetStep).show();
 
                 // Scroll to top of steps
                 $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
+
+                // Update button states
+                updateNavigationButtons(stepNumber);
+            }
+
+            function updateNavigationButtons(currentStep) {
+                var totalSteps = $(".config-wizard-tabs li").length;
+
+                // Disable/enable previous button
+                if (currentStep === 1) {
+                    $(".btn-previous").addClass("disabled").prop("disabled", true);
+                } else {
+                    $(".btn-previous").removeClass("disabled").prop("disabled", false);
+                }
+
+                // Disable/enable next button
+                if (currentStep === totalSteps) {
+                    $(".btn-next").addClass("disabled").prop("disabled", true);
+                } else {
+                    $(".btn-next").removeClass("disabled").prop("disabled", false);
+                }
+            }
+
+            $(document).on("click", ".config-wizard-tabs li a", function(e) {
+                e.preventDefault();
+                var targetStep = $(this).attr("href").replace("#", "");
+                var stepNumber = parseInt(targetStep.replace("step-", ""));
+
+                navigateToStep(stepNumber);
+            });
+
+            // Previous button handler
+            $(document).on("click", ".btn-previous", function(e) {
+                e.preventDefault();
+                var currentStep = $(".config-wizard-tabs li.active").index() + 1;
+                if (currentStep > 1) {
+                    navigateToStep(currentStep - 1);
+                }
+            });
+
+            // Next button handler
+            $(document).on("click", ".btn-next", function(e) {
+                e.preventDefault();
+                var currentStep = $(".config-wizard-tabs li.active").index() + 1;
+                var totalSteps = $(".config-wizard-tabs li").length;
+
+                // Validazione per step 2 (licenza)
+                if (currentStep === 2) {
+                    if (!$("#agree").is(":checked")) {
+                        swal("'.tr('Impossibile procedere').'", "'.tr('Devi accettare la licenza per proseguire!').'", "error");
+                        return false;
+                    }
+                }
+
+                if (currentStep <= totalSteps) {
+                    navigateToStep(currentStep + 1);
+                }
             });
 
             // Set first tab as active by default
             $(".config-wizard-tabs li:first").addClass("active");
-            $("#steps > div[id^=\'step-\']").hide();
+            $(".config-wizard-content > div[id^=\"step-\"]").hide();
             $("#step-1").show();
+            updateNavigationButtons(1);
 
-            // Original leaveStep handler
-            $("#smartwizard").on("leaveStep", function(e, anchorObject, stepNumber, stepDirection) {
-                result = true;
-                if(stepDirection == "forward" && $("#step-" + (stepNumber + 1) + " form").length){
-                    result = $("#step-" + (stepNumber + 1) + " form").parsley().validate();
+            // Inizializza il widget collapse per le card
+            $(document).on("click", "[data-card-widget=\"collapse\"]", function(e) {
+                e.preventDefault();
+                var card = $(this).closest(".card");
+
+                if (card.hasClass("collapsed-card")) {
+                    card.removeClass("collapsed-card");
+                    card.find(".card-body").slideDown(300);
+                    $(this).find("i").removeClass("fa-plus").addClass("fa-minus");
+                } else {
+                    card.addClass("collapsed-card");
+                    card.find(".card-body").slideUp(300);
+                    $(this).find("i").removeClass("fa-minus").addClass("fa-plus");
                 }
-
-                if(!result){
-                    swal("'.tr('Impossibile procedere').'", "'.tr('Prima di proseguire devi completare i campi obbligatori!').'", "error");
-                }
-
-                $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
-
-                return result;
             });
 
             $("#install").on("click", function(){
@@ -649,6 +683,15 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         </form>
                     </div>
 
+                </div>
+
+                <div class="config-wizard-navigation" style="padding: 20px; text-align: center; border-top: 1px solid #ddd; margin-top: 20px;">
+                    <button type="button" class="btn btn-default btn-previous" style="margin-right: 10px;">
+                        <i class="fa fa-arrow-left"></i> '.tr('Precedente').'
+                    </button>
+                    <button type="button" class="btn btn-primary btn-next">
+                        '.tr('Successivo').' <i class="fa fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
         </div>';

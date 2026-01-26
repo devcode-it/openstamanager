@@ -21,6 +21,7 @@
 use Carbon\Carbon;
 use Models\Locale;
 use Models\Module;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
@@ -772,4 +773,219 @@ function creaMovimentoLiquidazioneIva($date_start, $date_end)
 
         return null;
     }
+}
+
+/**
+ * Genera il file XML per la LIPE (Liquidazione IVA Periodica).
+ *
+ * @param string $date_start Data inizio periodo
+ * @param string $date_end   Data fine periodo
+ *
+ * @return string Contenuto del file XML
+ */
+function generaXmlLipe($date_start, $date_end)
+{
+    // Recupera i dati dell'anagrafica azienda
+    $azienda = Anagrafica::find(setting('Azienda predefinita'));
+    
+    if (empty($azienda)) {
+        throw new Exception('Anagrafica azienda non configurata');
+    }
+    
+    // Determina i mesi da includere
+    $data_start = new Carbon($date_start);
+    $data_end = new Carbon($date_end);
+    $anno = $data_start->format('Y');
+    
+    // Calcola i mesi del periodo
+    $mesi = [];
+    $current = clone $data_start;
+    while ($current <= $data_end) {
+        $mesi[] = (int) $current->format('m');
+        $current->addMonth();
+    }
+    
+    // Recupera dati intermediario (da impostazioni o fallback ai dati azienda)
+    $cf_dichiarante = setting('Codice fiscale dichiarante') ?: $azienda->codice_fiscale;
+    $cf_intermediario = setting('Codice fiscale intermediario');
+    $identificativo_software = setting('Identificativo software');
+    $piva = $azienda->piva ?: '';
+    
+    // Crea il documento DOM
+    $dom = new \DOMDocument('1.0', 'UTF-8');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    
+    // Crea elemento radice Fornitura con namespace
+    $fornitura = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Fornitura');
+    $fornitura->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
+    $dom->appendChild($fornitura);
+    
+    // Crea Intestazione
+    $intestazione = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Intestazione');
+    $fornitura->appendChild($intestazione);
+    
+    // CodiceFornitura
+    $codiceFornitura = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceFornitura');
+    $codiceFornitura->appendChild($dom->createTextNode('IVP18'));
+    $intestazione->appendChild($codiceFornitura);
+    
+    // CodiceFiscaleDichiarante
+    $codiceFiscaleDichiarante = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceFiscaleDichiarante');
+    $codiceFiscaleDichiarante->appendChild($dom->createTextNode($cf_dichiarante ?: ''));
+    $intestazione->appendChild($codiceFiscaleDichiarante);
+    
+    // CodiceCarica
+    $codiceCarica = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceCarica');
+    $codiceCarica->appendChild($dom->createTextNode('1'));
+    $intestazione->appendChild($codiceCarica);
+    
+    // Crea Comunicazione
+    $comunicazione = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Comunicazione');
+    $comunicazione->setAttribute('identificativo', '00001');
+    $fornitura->appendChild($comunicazione);
+    
+    // Crea Frontespizio
+    $frontespizio = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Frontespizio');
+    $comunicazione->appendChild($frontespizio);
+    
+    // CodiceFiscale (Partita IVA)
+    $codiceFiscale = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceFiscale');
+    $codiceFiscale->appendChild($dom->createTextNode($piva ?: ''));
+    $frontespizio->appendChild($codiceFiscale);
+    
+    // AnnoImposta
+    $annoImposta = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:AnnoImposta');
+    $annoImposta->appendChild($dom->createTextNode($anno));
+    $frontespizio->appendChild($annoImposta);
+    
+    // PartitaIVA
+    $partitaIVA = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:PartitaIVA');
+    $partitaIVA->appendChild($dom->createTextNode($piva ?: ''));
+    $frontespizio->appendChild($partitaIVA);
+    
+    // CFDichiarante
+    $cfDichiarante = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CFDichiarante');
+    $cfDichiarante->appendChild($dom->createTextNode($cf_dichiarante ?: ''));
+    $frontespizio->appendChild($cfDichiarante);
+    
+    // CodiceCaricaDichiarante
+    $codiceCaricaDichiarante = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceCaricaDichiarante');
+    $codiceCaricaDichiarante->appendChild($dom->createTextNode('1'));
+    $frontespizio->appendChild($codiceCaricaDichiarante);
+    
+    // FirmaDichiarazione
+    $firmaDichiarazione = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:FirmaDichiarazione');
+    $firmaDichiarazione->appendChild($dom->createTextNode('1'));
+    $frontespizio->appendChild($firmaDichiarazione);
+    
+    // CFIntermediario
+    if ($cf_intermediario) {
+        $cfIntermediario = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CFIntermediario');
+        $cfIntermediario->appendChild($dom->createTextNode($cf_intermediario ?: ''));
+        $frontespizio->appendChild($cfIntermediario);
+        
+        // ImpegnoPresentazione
+        $impegnoPresentazione = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:ImpegnoPresentazione');
+        $impegnoPresentazione->appendChild($dom->createTextNode('1'));
+        $frontespizio->appendChild($impegnoPresentazione);
+        
+        // DataImpegno
+        $dataImpegno = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:DataImpegno');
+        $dataImpegno->appendChild($dom->createTextNode(date('dmY')));
+        $frontespizio->appendChild($dataImpegno);
+        
+        // FirmaIntermediario
+        $firmaIntermediario = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:FirmaIntermediario');
+        $firmaIntermediario->appendChild($dom->createTextNode('1'));
+        $frontespizio->appendChild($firmaIntermediario);
+    }
+    
+    // IdentificativoProdSoftware
+    if ($identificativo_software) {
+        $identificativoProdSoftware = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:IdentificativoProdSoftware');
+        $identificativoProdSoftware->appendChild($dom->createTextNode($identificativo_software ?: ''));
+        $frontespizio->appendChild($identificativoProdSoftware);
+    }
+    
+    // Crea DatiContabili
+    $datiContabili = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:DatiContabili');
+    $comunicazione->appendChild($datiContabili);
+    
+    // Genera i moduli per ogni mese
+    $numero_modulo = 1;
+    
+    foreach ($mesi as $mese) {
+        // Calcola date per il mese corrente
+        $mese_start = $anno.'-'.str_pad($mese, 2, '0', STR_PAD_LEFT).'-01';
+        $mese_end = (new Carbon($mese_start))->endOfMonth()->format('Y-m-d');
+        
+        // Calcola importi per il mese specifico
+        $importi_mese = calcolaImportiLiquidazioneIva($mese_start, $mese_end);
+        
+        // Calcola totali operazioni per il mese
+        $totale_attive_mese = 0;
+        $totale_passive_mese = 0;
+        
+        foreach ($importi_mese['iva_vendite'] as $iva) {
+            $totale_attive_mese += floatval($iva['subtotale']);
+        }
+        
+        foreach ($importi_mese['iva_acquisti'] as $iva) {
+            $totale_passive_mese += floatval($iva['subtotale']);
+        }
+        
+        $iva_esigibile_mese = floatval($importi_mese['totale_iva_esigibile']);
+        $iva_detraibile_mese = floatval($importi_mese['totale_iva_detraibile']);
+        $iva_dovuta_mese = $iva_esigibile_mese - $iva_detraibile_mese;
+        $importo_da_versare_mese = max(0, $iva_dovuta_mese);
+        
+        // Crea elemento Modulo
+        $modulo = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Modulo');
+        $datiContabili->appendChild($modulo);
+        
+        // NumeroModulo
+        $numeroModuloEl = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:NumeroModulo');
+        $numeroModuloEl->appendChild($dom->createTextNode((string) $numero_modulo));
+        $modulo->appendChild($numeroModuloEl);
+        
+        // Mese
+        $meseEl = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:Mese');
+        $meseEl->appendChild($dom->createTextNode((string) $mese));
+        $modulo->appendChild($meseEl);
+        
+        // TotaleOperazioniAttive
+        $totaleAttive = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:TotaleOperazioniAttive');
+        $totaleAttive->appendChild($dom->createTextNode(number_format($totale_attive_mese, 2, ',', '')));
+        $modulo->appendChild($totaleAttive);
+        
+        // TotaleOperazioniPassive
+        $totalePassive = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:TotaleOperazioniPassive');
+        $totalePassive->appendChild($dom->createTextNode(number_format($totale_passive_mese, 2, ',', '')));
+        $modulo->appendChild($totalePassive);
+        
+        // IvaEsigibile
+        $ivaEsigibile = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:IvaEsigibile');
+        $ivaEsigibile->appendChild($dom->createTextNode(number_format($iva_esigibile_mese, 2, ',', '')));
+        $modulo->appendChild($ivaEsigibile);
+        
+        // IvaDetratta
+        $ivaDetratta = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:IvaDetratta');
+        $ivaDetratta->appendChild($dom->createTextNode(number_format($iva_detraibile_mese, 2, ',', '')));
+        $modulo->appendChild($ivaDetratta);
+        
+        // IvaDovuta
+        $ivaDovuta = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:IvaDovuta');
+        $ivaDovuta->appendChild($dom->createTextNode(number_format($iva_dovuta_mese, 2, ',', '')));
+        $modulo->appendChild($ivaDovuta);
+        
+        // ImportoDaVersare
+        $importoDaVersare = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:ImportoDaVersare');
+        $importoDaVersare->appendChild($dom->createTextNode(number_format($importo_da_versare_mese, 2, ',', '')));
+        $modulo->appendChild($importoDaVersare);
+        
+        $numero_modulo++;
+    }
+    
+    return $dom->saveXML();
 }

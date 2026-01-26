@@ -191,7 +191,28 @@ echo '
             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body">';
+
+		// Alert per configurazione impostazioni XML LIPE (solo per Liquidazione IVA)
+		if ($nome_stampa === 'Liquidazione IVA') {
+			$impostazioni_lipe = setting('Codice fiscale dichiarante') || setting('Codice fiscale intermediario') || setting('Identificativo software');
+			if (empty($impostazioni_lipe)) {
+				echo '
+		<div class="alert alert-warning">
+			<div class="row">
+				<div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+					<i class="fa fa-info-circle fa-2x"></i>
+				</div>
+				<div class="col-md-11">
+					<strong>'.tr('Configurazione XML LIPE').'</strong><br>
+					'.tr('Per esportare correttamente il file XML per la LIPE (Liquidazione IVA Periodica) potrebbe essere necessario configurare i campi aggiuntivi in '.Modules::link('Impostazioni', null, 'Strumenti->Impostazioni->LIPE XML')).'
+				</div>
+			</div>
+		</div>';
+			}
+		}
+
+		echo '
         <div class="table-responsive">
             <table class="table table-hover table-striped">';
 
@@ -224,6 +245,15 @@ if (!empty($elementi)) {
                             </a>';
         }
 
+        // Pulsante per esportazione XML LIPE (solo per Liquidazione IVA)
+        $xml_button = '';
+        if ($nome_stampa === 'Liquidazione IVA') {
+            $xml_button = '
+                            <a class="btn btn-sm btn-info" href="'.base_path_osm().'/actions.php?id_module='.$id_module.'&op=download-xml-lipe&date_start='.$elemento['date_start'].'&date_end='.$elemento['date_end'].'" target="_blank">
+                                <i class="fa fa-file-code-o"></i> '.tr('Esporta XML').'
+                            </a>';
+        }
+
         echo '
                     <tr>
                         <td>'.dateFormat($elemento['date_start']).' - '.dateFormat($elemento['date_end']).'</td>
@@ -233,7 +263,8 @@ if (!empty($elementi)) {
                             <a class="btn btn-sm btn-info" href="'.base_path_osm().'/actions.php?id_module='.$id_module.'&op=download-allegato&id='.$file['id'].'&filename='.$file['filename'].'" target="_blank">
                                 <i class="fa fa-download"></i> '.tr('Scarica').'
                             </a>
-                            '.$movimento_button.'
+                            '.$xml_button.'
+							'.$movimento_button.'
                         </td>
                     </tr>';
     }

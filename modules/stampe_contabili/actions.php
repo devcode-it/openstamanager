@@ -105,4 +105,36 @@ switch (filter('op')) {
         echo json_encode(['first_page' => $first_page - 1]);
 
         break;
+
+    case 'download-xml-lipe':
+        $date_start = get('date_start');
+        $date_end = get('date_end');
+        
+        if (empty($date_start) || empty($date_end)) {
+            echo json_encode(['error' => 'Date non specificate']);
+            exit();
+        }
+        
+        try {
+            // Genera il contenuto XML
+            $xml_content = generaXmlLipe($date_start, $date_end);
+            
+            // Nome del file
+            $filename = 'LIPE_'.date('Ymd', strtotime($date_start)).'_'.date('Ymd', strtotime($date_end)).'.xml';
+            
+            // Imposta gli header per il download
+            header('Content-Type: application/xml; charset=utf-8');
+            header('Content-Disposition: attachment; filename="'.$filename.'"');
+            header('Content-Length: '.strlen($xml_content));
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Pragma: no-cache');
+            
+            echo $xml_content;
+            exit();
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+            exit();
+        }
+
+        break;
 }

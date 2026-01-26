@@ -471,3 +471,17 @@ CREATE TABLE IF NOT EXISTS `in_tariffe_sedi` (
 );
 ALTER TABLE `in_tariffe_sedi` ADD CONSTRAINT `in_tariffe_sedi_ibfk_1` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 ALTER TABLE `in_tariffe_sedi` ADD CONSTRAINT `in_tariffe_sedi_ibfk_2` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Aggiunta impostazioni per esportazione XML LIPE
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES 
+(NULL, 'Codice fiscale dichiarante', '', 'string', '1', 'LIPE XML', NULL),
+(NULL, 'Codice fiscale intermediario', '', 'string', '1', 'LIPE XML', NULL),
+(NULL, 'Identificativo software', '', 'string', '1', 'LIPE XML', NULL);
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES 
+(1, (SELECT MAX(`id`)-2 FROM `zz_settings`), 'Codice fiscale dichiarante', 'Codice fiscale del dichiarante per la LIPE (Liquidazione IVA Periodica). Se vuoto, viene usato il codice fiscale dell''azienda predefinita.'),
+(1, (SELECT MAX(`id`)-1 FROM `zz_settings`), 'Codice fiscale intermediario', 'Codice fiscale dell''intermediario per la LIPE.'),
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Identificativo software', 'Codice identificativo del software utilizzato per la LIPE (es. codice fiscale del produttore del software). Se vuoto, il campo viene omesso nel file XML.'),
+(2, (SELECT MAX(`id`)-2 FROM `zz_settings`), 'Tax ID of declarant', 'Tax ID of declarant for LIPE (Periodic VAT Settlement). If empty, the company''s default tax ID is used.'),
+(2, (SELECT MAX(`id`)-1 FROM `zz_settings`), 'Tax ID of intermediary', 'Tax ID of intermediary for LIPE.'),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Software identifier', 'Software identifier code for LIPE (e.g., tax ID of software producer). If empty, the field is omitted from the XML file.');

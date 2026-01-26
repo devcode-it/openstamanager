@@ -104,6 +104,9 @@ switch ($operazione) {
         $sede->descrizione = post('descrizione');
         $sede->save();
 
+        // Salva le tariffe specifiche per la sede
+        salvaTariffeSede($id_record, $id_parent);
+
         $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);
         $id_referenti = (array) post('id_referenti');
         $refs = array_diff($referenti, $id_referenti);
@@ -137,4 +140,63 @@ switch ($operazione) {
         flash()->info(tr('Sede eliminata!'));
 
         break;
+}
+
+// Funzione per salvare le tariffe della sede
+function salvaTariffeSede($id_sede, $id_parent)
+{
+    global $dbo;
+
+    $costo_ore = (array)post('costo_ore');
+    $costo_km = (array)post('costo_km');
+    $costo_dirittochiamata = (array)post('costo_dirittochiamata');
+    $tariffa_attiva = (array)post('tariffa_attiva');
+
+    // Verifica se l'anagrafica è di tipo Cliente
+    $anagrafica = Anagrafica::find($id_parent);
+    if (!$anagrafica->isTipo('Cliente')) {
+        return;
+    }
+
+    // Recupera i tipi di intervento
+    $tipi_interventi = $dbo->fetchArray('SELECT id FROM in_tipiintervento WHERE deleted_at IS NULL');
+
+    // Recupera le tariffe esistenti per questa sede
+    $tariffe_esistenti = $dbo->fetchArray('SELECT id, idtipointervento FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede));
+    $tariffe_map = [];
+    foreach ($tariffe_esistenti as $tariffa) {
+        $tariffe_map[$tariffa['idtipointervento']] = $tariffa['id'];
+    }
+
+    // Salva le tariffe
+    foreach ($tipi_interventi as $tipo) {
+        $id_tipo = $tipo['id'];
+        $attivo = $tariffa_attiva[$id_tipo];
+
+        if ($attivo) {
+            // Se attivo, salva o aggiorna la tariffa
+            if (isset($tariffe_map[$id_tipo])) {
+                $dbo->update('in_tariffe_sedi', [
+                    'costo_ore' => $costo_ore[$id_tipo],
+                    'costo_km' => $costo_km[$id_tipo],
+                    'costo_dirittochiamata' => $costo_dirittochiamata[$id_tipo],
+                ], [
+                    'id' => $tariffe_map[$id_tipo],
+                ]);
+            } else {
+                $dbo->insert('in_tariffe_sedi', [
+                    'idsede' => $id_sede,
+                    'idtipointervento' => $id_tipo,
+                    'costo_ore' => $costo_ore[$id_tipo],
+                    'costo_km' => $costo_km[$id_tipo],
+                    'costo_dirittochiamata' => $costo_dirittochiamata[$id_tipo],
+                ]);
+            }
+        } else {
+            // Se disattivo, elimina la tariffa se esiste
+            if (isset($tariffe_map[$id_tipo])) {
+                $dbo->query('DELETE FROM in_tariffe_sedi WHERE id = '.prepare($tariffe_map[$id_tipo]));
+            }
+        }
+    }
 }

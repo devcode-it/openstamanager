@@ -465,6 +465,16 @@ class Sessione extends Model
         // Costi unitari dalla tariffa del tecnico
         $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($this->anagrafica->id).' AND idtipointervento = '.prepare($id_tipo));
 
+        // Costi unitari specifici per la sede
+        $id_sede = $this->intervento->idsede_destinazione;
+        if (!empty($id_sede) && $this->intervento->anagrafica->isTipo('Cliente')) {
+            $tariffa_sede = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede).' AND idtipointervento = '.prepare($id_tipo));
+
+            if (!empty($tariffa_sede)) {
+                $result = array_merge($result, $tariffa_sede);
+            }
+        }
+
         // Costi unitari del contratto
         $id_contratto = $this->intervento->id_contratto;
         if (!empty($id_contratto)) {

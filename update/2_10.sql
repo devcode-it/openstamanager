@@ -458,3 +458,16 @@ UPDATE `zz_prints_lang` SET `filename` = 'Travel register {nome} {targa}' WHERE 
 -- Aggiunta gestione delle scadenze per il pagamento automatico
 ALTER TABLE `co_pagamenti` ADD `registra_pagamento_automatico` BOOLEAN NOT NULL;
 INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `next_execution_at`, `last_executed_at`, `created_at`, `updated_at`, `enabled`) VALUES (NULL, 'Pagamento automatico', 'Modules\\PrimaNota\\PagamentoAutomaticoTask', '0 */24 * * *', NULL, NULL, NULL, NULL, '1');
+
+-- Creazione tabella per le tariffe delle sedi
+CREATE TABLE IF NOT EXISTS `in_tariffe_sedi` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `idsede` INT NOT NULL,
+    `idtipointervento` INT NOT NULL,
+    `costo_ore` DECIMAL(12,4) NOT NULL,
+    `costo_km` DECIMAL(12,4) NOT NULL,
+    `costo_dirittochiamata` DECIMAL(12,4) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+ALTER TABLE `in_tariffe_sedi` ADD CONSTRAINT `in_tariffe_sedi_ibfk_1` FOREIGN KEY (`idsede`) REFERENCES `an_sedi`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE `in_tariffe_sedi` ADD CONSTRAINT `in_tariffe_sedi_ibfk_2` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;

@@ -24,7 +24,7 @@ use Modules\Interventi\Intervento;
 
 switch ($resource) {
     case 'tipiintervento':
-        $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN  CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard` 
+        $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard` 
         FROM `in_tipiintervento`
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         |where| 
@@ -110,23 +110,57 @@ switch ($resource) {
 
         $intervento = Intervento::find($id_intervento);
 
-        // Query per i tipi di intervento in base al contratto o al tecnico
-        if (!empty($intervento->id_contratto)) {
-            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione, `co_contratti_tipiintervento`.`costo_ore` AS prezzo_ore_unitario, `co_contratti_tipiintervento`.`costo_km` AS prezzo_km_unitario, `co_contratti_tipiintervento`.`costo_dirittochiamata` AS prezzo_dirittochiamata
-            FROM `in_tipiintervento`
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento`
-            |where|
-            ORDER BY `title`';
+        // Query per i tipi di intervento in base alla sede al contratto o al tecnico
+        // Priorità: tariffe contratto > tariffe sede > tariffe tecnico
+        if (!empty($intervento->idsede_destinazione)) {
+            // Se c'è una sede configurata: prova prima tariffe contratto, poi sede, poi tecnico
+            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+                COALESCE(`co_contratti_tipiintervento`.`costo_ore`, `in_tariffe_sedi`.`costo_ore`, `in_tariffe`.`costo_ore`) AS prezzo_ore_unitario,
+                COALESCE(`co_contratti_tipiintervento`.`costo_km`, `in_tariffe_sedi`.`costo_km`, `in_tariffe`.`costo_km`) AS prezzo_km_unitario,
+                COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe_sedi`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
+                FROM `in_tipiintervento`
+                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`idtipointervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                |where|
+                ORDER BY `title`';
 
-            $where[] = '`co_contratti_tipiintervento`.`idtecnico` = '.prepare($idtecnico);
+            // Filtro: mostra tipi con tariffe contratto, o sede, o tecnico
+            $where[] = '(
+                `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                OR `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                OR `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+            )';
+        } elseif (!empty($intervento->id_contratto)) {
+            // Se c'è un contratto: prova tariffe contratto, poi tecnico
+            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+                COALESCE(`co_contratti_tipiintervento`.`costo_ore`, `in_tariffe`.`costo_ore`) AS prezzo_ore_unitario,
+                COALESCE(`co_contratti_tipiintervento`.`costo_km`, `in_tariffe`.`costo_km`) AS prezzo_km_unitario,
+                COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
+                FROM `in_tipiintervento`
+                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                |where|
+                ORDER BY `title`';
+
+            // Filtro: mostra tipi con tariffe contratto o tecnico
+            $where[] = '(
+                `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                OR `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+            )';
         } else {
-            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione, `in_tariffe`.`costo_ore` AS prezzo_ore_unitario, `in_tariffe`.`costo_km` AS prezzo_km_unitario, `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata
-            FROM `in_tipiintervento`
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento`
-            |where|
-            ORDER BY `title`';
+            // Altrimenti usa solo tariffe tecnico
+            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+                `in_tariffe`.`costo_ore` AS prezzo_ore_unitario,
+                `in_tariffe`.`costo_km` AS prezzo_km_unitario,
+                `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata
+                FROM `in_tipiintervento`
+                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                |where|
+                ORDER BY `title`';
 
             $where[] = '`in_tariffe`.`idtecnico` = '.prepare($idtecnico);
         }

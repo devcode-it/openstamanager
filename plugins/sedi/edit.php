@@ -21,9 +21,30 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Models\Plugin;
+use Modules\Anagrafiche\Anagrafica;
 
 $referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'idanagrafica' => $id_parent]);
 $referenti = implode(',', array_column($referenti, 'id'));
+
+// Verifica se l'anagrafica è di tipo Cliente
+$anagrafica = Anagrafica::find($id_parent);
+$is_cliente = $anagrafica->isTipo('Cliente');
+
+// Recupera i tipi di intervento
+$tipi_interventi = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title`, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km`, `in_tipiintervento`.`costo_diritto_chiamata`
+FROM `in_tipiintervento` 
+LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+WHERE `in_tipiintervento`.`deleted_at` IS NULL 
+ORDER BY `title`');
+
+// Recupera le tariffe esistenti per questa sede
+$tariffe_sedi = [];
+if ($is_cliente) {
+    $tariffe_db = $dbo->fetchArray('SELECT * FROM in_tariffe_sedi WHERE idsede = '.prepare($id_record));
+    foreach ($tariffe_db as $tariffa) {
+        $tariffe_sedi[$tariffa['idtipointervento']] = $tariffa;
+    }
+}
 
 $id_azienda = setting('Azienda predefinita');
 if ($id_parent == $id_azienda) {
@@ -259,6 +280,75 @@ echo '
 		</div>
 	</div>';
 
+// Sezione tariffe specifiche per le sedi dei clienti
+if ($is_cliente) {
+    echo '
+    <!-- TARIFFE SPECIFICHE SEDE -->
+    <div class="card card-info collapsable collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Tariffe specifiche per la sede').'</h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-12 alert alert-warning">
+					'.tr('Configura i costi specifici per questa sede per ogni tipologia di intervento. Se non configurati nessuno dei tre campi, verranno utilizzati i costi standard del tipo di intervento.').'
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>'.tr('Tipo intervento').'</th>
+								<th width="8%"></th>
+								<th width="21%">'.tr('Addebito orario').'</th>
+								<th width="21%">'.tr('Addebito km').'</th>
+								<th width="21%">'.tr('Addebito diritto chiamata').'</th>
+							</tr>
+						</thead>
+						<tbody>';
+
+    foreach ($tipi_interventi as $tipo_intervento) {
+        $id_tipo = $tipo_intervento['id'];
+        $tariffa = isset($tariffe_sedi[$id_tipo]) ? $tariffe_sedi[$id_tipo] : [];
+        $attivo = !empty($tariffa) ? 1 : 0;
+        $costo_ore = isset($tariffa['costo_ore']) ? $tariffa['costo_ore'] : $tipo_intervento['costo_orario'];
+        $costo_km = isset($tariffa['costo_km']) ? $tariffa['costo_km'] : $tipo_intervento['costo_km'];
+        $costo_dirittochiamata = isset($tariffa['costo_dirittochiamata']) ? $tariffa['costo_dirittochiamata'] : $tipo_intervento['costo_diritto_chiamata'];
+
+        echo '
+							<tr data-id="'.$id_tipo.'">
+								<td>'.$tipo_intervento['title'].'</td>
+								<td class="text-center">
+									{[ "type": "checkbox", "name": "tariffa_attiva['.$id_tipo.']", "value": "'.$attivo.'", "class": "tariffa-checkbox" ]}
+								</td>
+								<td>
+									{[ "type": "number", "name": "costo_ore['.$id_tipo.']", "value": "'.$costo_ore.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-ore-'.$id_tipo.'" ]}
+								</td>
+								<td>
+									{[ "type": "number", "name": "costo_km['.$id_tipo.']", "value": "'.$costo_km.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-km-'.$id_tipo.'" ]}
+								</td>
+								<td>
+									{[ "type": "number", "name": "costo_dirittochiamata['.$id_tipo.']", "value": "'.$costo_dirittochiamata.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-dirittochiamata-'.$id_tipo.'" ]}
+								</td>
+							</tr>';
+    }
+
+    echo '
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>';
+}
+
 echo '
 	<!-- PULSANTI -->
 	<div class="modal-footer">
@@ -373,4 +463,38 @@ function rimuoviSede(button) {
         });
     }).catch(swal.noop);
 }
+
+function toggleTariffa(idTipo, attivo, costoOreStandard, costoKmStandard, costoDirittochiamataStandard) {
+    let inputOre = input("costo_ore[" + idTipo + "]");
+    let inputKm = input("costo_km[" + idTipo + "]");
+    let inputDirittochiamata = input("costo_dirittochiamata[" + idTipo + "]");
+
+    if (attivo) {
+        // Se attivo, abilita i campi
+        inputOre.enable();
+        inputKm.enable();
+        inputDirittochiamata.enable();
+    } else {
+        // Se disattivo, disabilita i campi e imposta i valori standard
+        inputOre.disable();
+        inputKm.disable();
+        inputDirittochiamata.disable();
+    }
+}
+
+$(document).ready(function() {
+    // Inizializza lo stato dei campi al caricamento
+    $(".tariffa-checkbox").each(function() {
+        let idTipo = $(this).closest("tr").data("id");
+        let attivo = $(this).is(":checked");
+        toggleTariffa(idTipo, attivo);
+    });
+    
+    // Aggiunge event listener per il cambio del checkbox
+    $(document).on("change", ".tariffa-checkbox", function() {
+        let idTipo = $(this).closest("tr").data("id");
+        let attivo = $(this).is(":checked");
+        toggleTariffa(idTipo, attivo);
+    });
+});
 </script>';

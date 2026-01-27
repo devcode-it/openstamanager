@@ -244,12 +244,13 @@ $diciture[] = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an
 
 // Aggiungo diciture per condizioni iva particolari
 foreach ($v_iva as $key => $value) {
-    $diciture[] = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title` = '.prepare($key))['dicitura'];
+    $diciture[] = $dbo->fetchOne('SELECT `dicitura` FROM `co_iva` WHERE `name` = '.prepare($key))['dicitura'];
 }
 
 // Conteggio righe per dicitura condizioni IVA
 foreach ($diciture as $dicitura) {
     $autofill->count($dicitura);
+    $autofill->count(1);
 }
 
 if ($documento['note']) {
@@ -267,7 +268,7 @@ echo '
 foreach ($diciture as $dicitura) {
     if (!empty($dicitura)) {
         echo '
-<p class="text-center">
+<p>
     <b>'.nl2br((string) $dicitura).'</b>
 </p>';
     }

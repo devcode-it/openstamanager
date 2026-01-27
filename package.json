@@ -48,7 +48,7 @@
         "pdfjs-viewer-element": "2.7.4",
         "poly2tri": "^1.5.0",
         "popper.js": "^1.16.1",
-        "protobufjs": "7.2.5",
+        "protobufjs": "8.0.0",
         "pwstrength-bootstrap": "^3.0.4",
         "rbush": "^3.0.1",
         "readmore.js": "^2.0.4",

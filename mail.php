@@ -41,6 +41,17 @@ if ($module->replacePlaceholders($id_record, '{email}')) {
 
 $id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}', $placeholder_options);
 
+// Calcolo ReplyTo
+$reply_to = '';
+if (!empty($template['tipo_reply_to'])) {
+    if ($template['tipo_reply_to'] == 'email_fissa') {
+        $reply_to = $module->replacePlaceholders($id_record, $template['reply_to'], $placeholder_options);
+    } elseif ($template['tipo_reply_to'] == 'email_user') {
+        $user = auth_osm()->getUser();
+        $reply_to = $user->email;
+    }
+}
+
 // Aggiungo email referenti in base alla mansione impostata nel template
 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
 foreach ($mansioni as $mansione) {
@@ -53,7 +64,7 @@ foreach ($mansioni as $mansione) {
 }
 
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
-if ($template->getTranslation('title') == 'Notifica intervento') {
+if ($template->name == 'Notifica intervento') {
     $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
     foreach ($tecnici as $tecnico) {
         $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
@@ -107,6 +118,11 @@ if (!empty($template['cc'])) {
 if (!empty($template['bcc'])) {
     echo '
     <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
+}
+
+if (!empty($reply_to)) {
+    echo '
+    <p><b>'.tr('Rispondi a').'</b>: '.$reply_to.'</p>';
 }
 
 echo '

@@ -42,6 +42,8 @@ $r = $dbo->fetchOne('SELECT *,
         LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != "", CONCAT(" - ", `nome`), "")) SEPARATOR "<br>") AS descrizione, `my_impianti_interventi`.`idintervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`idimpianto` GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti ON `impianti`.`idintervento` = `in_interventi`.`id`
     WHERE `in_interventi`.`id`='.prepare($id_record));
 
+$user = auth_osm()->getUser();
+
 // Variabili da sostituire
 return [
     'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
@@ -59,4 +61,5 @@ return [
     'nome_referente' => $r['nome'],
     'sede' => $r['sede'],
     'sede_indirizzo' => $r['sede_indirizzo'],
+    'email_user' => $user->email,
 ];

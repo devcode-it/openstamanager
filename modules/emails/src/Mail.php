@@ -300,7 +300,8 @@ class Mail extends Model
         if (!empty($template['tipo_reply_to'])) {
             $reply_to = '';
             if ($template['tipo_reply_to'] == 'email_fissa') {
-                $reply_to = $template['reply_to'];
+                $module = $this->template->module;
+                $reply_to = $module->replacePlaceholders($this->id_record, $template['reply_to'], ['is_pec' => intval($this->account->pec)]);
             } else {
                 $user = auth_osm()->getUser();
                 $reply_to = $user->email;

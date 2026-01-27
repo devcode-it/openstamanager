@@ -53,10 +53,30 @@ $(document).ready(function () {
         var wrapper = getTable(table_selector);
         var table = wrapper.datatable;
 
-        // Selezione di tutte le righe della tabella corrente senza caricamento
-        var row_ids = table.rows().ids().toArray();
-        wrapper.addSelectedRows(row_ids);
-        table.clear().draw();
+        // Visualizzazione del caricamento
+        $("#main_loading").show();
+
+        // Parametri della richiesta
+        var params = table.ajax.params();
+        params.length = -1;
+
+        $.ajax({
+            url: table.ajax.url(),
+            data: params,
+            type: 'GET',
+            dataType: "json",
+            success: function (response) {
+                var row_ids = response.data.map(function (a) {
+                    return a.id;
+                });
+
+                // Chiamata di selezione completa
+                wrapper.addSelectedRows(row_ids);
+                table.clear().draw();
+
+                $("#main_loading").hide();
+            }
+        })
     });
 
     $(".btn-select-none").click(function () {

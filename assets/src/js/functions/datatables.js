@@ -62,7 +62,7 @@ function start_datatables( $elements ) {
                 const single_value = search[(id_plugin ? id_plugin : "") + "_search_" + id] ? search[(id_plugin ? id_plugin : "") + "_search_" + id] : "";
 
                 column_search.push({
-                    "search": single_value,
+                    "sSearch": single_value,
                 });
             });
 
@@ -78,8 +78,8 @@ function start_datatables( $elements ) {
                 deferRender: true,
                 ordering: true,
                 searching: true,
-                order: [],
-                searchCols: column_search,
+                aaSorting: [],
+                aoSearchCols: column_search,
                 scrollY: "60vh",
                 scrollX: '100%',
                 retrieve: true,
@@ -287,20 +287,13 @@ function initComplete(settings) {
     const $this = $(this);
     const search = getTableSearch();
 
-    // In DataTables 2.x, il selettore .search potrebbe non funzionare come previsto
-    // Usiamo un approccio più robusto basato sugli ID delle colonne
-    api.columns().every(function () {
+    api.columns('.search').every(function () {
         const column = this;
-        const header = $(column.header());
-
-        // Verifica se la colonna ha la classe 'search'
-        if (!header.hasClass('search')) {
-            return;
-        }
 
         // Valore predefinito della ricerca
         let tempo;
         const id_plugin = $this.data('idplugin');
+        const header = $(column.header());
         const name = header.attr('id').replace('th_', '');
 
         const value = search[(id_plugin ? id_plugin : "") + "_search_" + name] ? search[(id_plugin ? id_plugin : "") + "_search_" + name] : '';

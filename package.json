@@ -29,7 +29,7 @@
         "fullcalendar-scheduler": "^6.1.5",
         "geocomplete": "^1.7.0",
         "gl-matrix": "^3.4.3",
-        "hotkeys-js": "^3.8.5",
+        "hotkeys-js": "^4.0.0",
         "html5sortable": "^0.14.0",
         "inputmask": "^3.3.9",
         "ismobilejs": "^1.1.1",

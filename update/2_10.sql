@@ -485,3 +485,21 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (2, (SELECT MAX(`id`)-2 FROM `zz_settings`), 'Tax ID of declarant', 'Tax ID of declarant for LIPE (Periodic VAT Settlement). If empty, the company''s default tax ID is used.'),
 (2, (SELECT MAX(`id`)-1 FROM `zz_settings`), 'Tax ID of intermediary', 'Tax ID of intermediary for LIPE.'),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Software identifier', 'Software identifier code for LIPE (e.g., tax ID of software producer). If empty, the field is omitted from the XML file.');
+
+-- Nuovo plugin Danni automezzi
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options`, `directory`, `help`) VALUES ('Danni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'tab', '', '1', '0', '0', '2.*', '2.10', 'custom', 'automezzi_danni', '');
+INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
+VALUES
+  (1, (SELECT MAX(`id`) FROM `zz_plugins`), 'Danni'),
+  (2, (SELECT MAX(`id`) FROM `zz_plugins`), 'Damages');
+
+-- Creazione tabella per danni automezzi
+CREATE TABLE IF NOT EXISTS `an_automezzi_danni` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `idsede` INT NOT NULL,
+    `descrizione` VARCHAR(255) NOT NULL,
+    `data` DATE NOT NULL,
+    `luogo` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX(`idsede`)
+);

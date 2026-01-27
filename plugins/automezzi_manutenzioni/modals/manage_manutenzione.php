@@ -66,9 +66,13 @@ echo '
             <button type="submit" class="btn btn-primary"><i class="fa fa-'.$button_icon.'"></i> '.$title.'</button>
         </div>
     </div>
-</form>
-<hr>
-{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$idmanutenzione.'", "id_plugin": "'.$id_plugin.'" )}';
+</form>';
+
+if ($record['id']) {
+    echo '
+    <hr>
+    {( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$idmanutenzione.'", "id_plugin": "'.$id_plugin.'" )}';
+}
 
 // Recupero elenco descrizioni già utilizzate per l'autocompletamento
 $descrizioni = $dbo->fetchArray('SELECT DISTINCT(BINARY `descrizione`) AS `descrizione` FROM `an_automezzi_scadenze` WHERE `is_manutenzione` = 1 AND `descrizione` IS NOT NULL AND `descrizione` != "" ORDER BY `descrizione`');

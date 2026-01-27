@@ -75,12 +75,17 @@ echo '
             <button type="submit" class="btn btn-primary"><i class="fa fa-'.$button_icon.'"></i> '.$title.'</button>
         </div>
     </div>
-</form>
-<hr>
-{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$idscadenza.'", "id_plugin": "'.$id_plugin.'" )}
+</form>';
 
+if ($record['id']) {
+    echo '
+    <hr>
+    {( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$idscadenza.'", "id_plugin": "'.$id_plugin.'" )}';
+}
+
+echo '
 <script>
-$(document).ready(function() {
-    init();
-});
+    $(document).ready(function() {
+        init();
+    });
 </script>';

@@ -11,9 +11,14 @@ use DTO\DataTablesLoadResponse\DataTablesLoadResponse;
 use Models\Module;
 use Util\Query;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+
+
 #[Post(
     uriTemplate: '/datatables/list/{id_module}/{id_plugin}/{id_parent}',
-    processor: DataTablesController::class,
+    controller: DataTablesController::class,
     input: DataTablesLoadRequest::class,
     output: DataTablesLoadResponse::class,
 )]
@@ -21,8 +26,31 @@ class DataTablesResource
 {
 }
 
-final class DataTablesController implements ProcessorInterface
+final class DataTablesController extends BaseController
 {
+    public function __invoke(Request $request): JsonResponse
+    {
+        $data = $this->_cast($request, DataTablesLoadRequest::class);
+
+        $id_module = (int) $data->getIdModule();
+        $id_plugin = (int) $data->getIdPlugin();
+        $id_parent = (int) $data->getIdParent();
+
+        $module = \Modules::get($id_module);
+        \Modules::setCurrent($id_module);
+        
+        $plugin = null;
+        if (!empty($id_plugin)) {
+            \Plugins::setCurrent($id_plugin);
+            $plugin = \Plugins::get($id_plugin);
+        }
+
+        $structure = $plugin ?? $module;
+
+        return new JsonResponse($this->retrieveRecords($structure, $data, $id_module, $id_plugin, $id_parent));
+    }
+
+    /*
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): DataTablesLoadResponse
     {
         if (!$data instanceof DataTablesLoadRequest) {
@@ -45,7 +73,7 @@ final class DataTablesController implements ProcessorInterface
         $structure = $plugin ?? $module;
 
         return $this->retrieveRecords($structure, $data, $id_module, $id_plugin, $id_parent);
-    }
+    }*/
 
     private function retrieveRecords($structure, DataTablesLoadRequest $data, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
     {
@@ -53,8 +81,13 @@ final class DataTablesController implements ProcessorInterface
         $order = $data->order ? $data->order[0] : [];
 
         if (!empty($order)) {
-            $order['column'] = $order['column'] - 1;
+            $order->column = $order->column - 1;
         }
+
+        $order_array = [
+            'column' => $order->column ?? null,
+            'dir' => $order->dir->value ?? null,
+        ];
 
         $query_structure = Query::readQuery($structure);
 
@@ -80,7 +113,7 @@ final class DataTablesController implements ProcessorInterface
         $response->recordsTotal = database()->fetchNum($query);
 
         // CONTEGGIO RECORD FILTRATI (senza LIMIT)
-        $query_filtered = Query::getQuery($structure, $search, $order, [], $query_structure);
+        $query_filtered = Query::getQuery($structure, $search, $order_array, [], $query_structure);
         if (empty($id_plugin)) {
             $query_filtered = \Modules::replaceAdditionals($id_module, $query_filtered);
         }
@@ -97,7 +130,7 @@ final class DataTablesController implements ProcessorInterface
             'length' => $data->length,
         ];
         // RISULTATI VISIBILI (con LIMIT)
-        $query = Query::getQuery($structure, $search, $order, $limit, $query_structure);
+        $query = Query::getQuery($structure, $search, $order_array, $limit, $query_structure);
 
         // Filtri derivanti dai permessi (eventuali)
         if (empty($id_plugin)) {

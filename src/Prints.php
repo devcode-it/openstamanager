@@ -192,9 +192,9 @@ class Prints
             return self::customLoader($infos['id'], $id_record, $directory, $return_string);
         } elseif (self::isOldStandard($print)) {
             return self::oldLoader($infos['id'], $id_record, $directory, $return_string, $overwrite);
-        } else {
-            return self::loader($infos['id'], $id_record, $directory, $return_string, $overwrite, $mpdfPageNumSubstitutions);
         }
+
+        return self::loader($infos['id'], $id_record, $directory, $return_string, $overwrite, $mpdfPageNumSubstitutions);
     }
 
     /**

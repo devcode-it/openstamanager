@@ -31,7 +31,7 @@ switch (post('op')) {
             'idsede' => $id_record,
             'descrizione' => $descrizione,
             'data' => $data,
-            'luogo' => $luogo
+            'luogo' => $luogo,
         ]);
 
         flash()->info(tr('Danno aggiunto correttamente!'));
@@ -48,7 +48,7 @@ switch (post('op')) {
         $dbo->update('an_automezzi_danni', [
             'descrizione' => $descrizione,
             'data' => $data,
-            'luogo' => $luogo
+            'luogo' => $luogo,
         ], [
             'id' => $iddanno,
         ]);

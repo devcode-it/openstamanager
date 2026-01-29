@@ -521,7 +521,7 @@ if (!function_exists('customViewsNotStandard')) {
                 // Ottieni il nome della sottocartella
                 $folder_name = $premium_views[$module_name][$view_name];
                 // Usa il nome leggibile del modulo principale se disponibile, altrimenti usa il nome del modulo
-                $module_display_name = isset($premium_module_main_name[$folder_name]) ? $premium_module_main_name[$folder_name] : $view['module_display_name'];
+                $module_display_name = $premium_module_main_name[$folder_name] ?? $view['module_display_name'];
                 $reason = 'Vista modulo '.$module_display_name;
                 $expected_query = trim((string) $standard_views[$module_name][$view_name]);
 
@@ -535,8 +535,8 @@ if (!function_exists('customViewsNotStandard')) {
                 // Verifica se il modulo proviene da un file modules.json in una sottocartella (modulo premium)
                 if (isset($premium_modules[$module_name])) {
                     // Usa il nome leggibile del modulo principale se disponibile
-                    $folder_name = isset($premium_module_folder[$module_name]) ? $premium_module_folder[$module_name] : '';
-                    $module_display_name = isset($premium_module_main_name[$folder_name]) ? $premium_module_main_name[$folder_name] : $module_name;
+                    $folder_name = $premium_module_folder[$module_name] ?? '';
+                    $module_display_name = $premium_module_main_name[$folder_name] ?? $module_name;
                     $reason = 'Vista modulo '.$module_display_name;
                 } else {
                     $reason = 'Modulo non previsto';

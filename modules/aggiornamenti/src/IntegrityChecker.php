@@ -133,13 +133,13 @@ class IntegrityChecker
         $update_rule = $fk_data['update_rule'] ?? 'RESTRICT';
 
         // Genera un hash basato sul contenuto della chiave esterna
-        return md5($column . '|' . $referenced_table . '|' . $referenced_column . '|' . $delete_rule . '|' . $update_rule);
+        return md5($column.'|'.$referenced_table.'|'.$referenced_column.'|'.$delete_rule.'|'.$update_rule);
     }
 
     /**
      * Verifica se una chiave esterna esiste in un array basandosi sul contenuto.
      *
-     * @param array $fk_data Dati della chiave esterna da cercare
+     * @param array $fk_data      Dati della chiave esterna da cercare
      * @param array $foreign_keys Array di chiavi esterne in cui cercare
      *
      * @return bool True se la chiave esterna esiste, false altrimenti
@@ -164,7 +164,7 @@ class IntegrityChecker
     /**
      * Filtra le chiavi esterne rimuovendo quelle che esistono per contenuto.
      *
-     * @param array $foreign_keys Array di chiavi esterne da filtrare
+     * @param array $foreign_keys          Array di chiavi esterne da filtrare
      * @param array $expected_foreign_keys Array di chiavi esterne attese
      *
      * @return array Array di chiavi esterne filtrate

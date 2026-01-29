@@ -547,9 +547,9 @@ class Gestore
     {
         if (database()->tableExists('co_mandati_sepa')) {
             return database()->fetchOne('SELECT * FROM co_mandati_sepa WHERE id_banca = '.prepare($banca->id));
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     protected function getTipo(Scadenza $scadenza)

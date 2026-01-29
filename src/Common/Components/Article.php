@@ -396,18 +396,17 @@ abstract class Article extends Accounting
             // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
             if ($this->getDirection() == 'uscita' && $new_qta < $count_seriali_usati) {
                 return false;
-            } else {
-                // Controllo sul numero di seriali effettivi da rimuovere
-                $seriali = $this->serials;
+            }
+            // Controllo sul numero di seriali effettivi da rimuovere
+            $seriali = $this->serials;
 
-                if ($new_qta < count($seriali)) {
-                    $rimovibili = array_diff($seriali, $seriali_usati);
+            if ($new_qta < count($seriali)) {
+                $rimovibili = array_diff($seriali, $seriali_usati);
 
-                    // Rimozione dei seriali aggiuntivi
-                    $serials = array_slice($rimovibili, 0, $new_qta - $count_seriali_usati);
+                // Rimozione dei seriali aggiuntivi
+                $serials = array_slice($rimovibili, 0, $new_qta - $count_seriali_usati);
 
-                    $this->serials = array_merge($seriali_usati, $serials);
-                }
+                $this->serials = array_merge($seriali_usati, $serials);
             }
         }
 

@@ -56,11 +56,10 @@ switch (filter('op')) {
                 'id' => 1,
             ]);
             exit;
-        } else {
-            $content = file_get_contents($temp_name);
-
-            $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
         }
+        $content = file_get_contents($temp_name);
+
+        $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
 
         // no break
     case 'prepare':

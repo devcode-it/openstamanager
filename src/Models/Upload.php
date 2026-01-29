@@ -507,18 +507,17 @@ class Upload extends Model
             }
 
             return $has_permission;
-        } else {
-            // Per accesso normale, usa i permessi standard del modulo
-            $has_permission = (\Modules::getPermission($id_module) == 'rw');
-
-            if (!$has_permission) {
-                flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
-                ]));
-            }
-
-            return $has_permission;
         }
+        // Per accesso normale, usa i permessi standard del modulo
+        $has_permission = (\Modules::getPermission($id_module) == 'rw');
+
+        if (!$has_permission) {
+            flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+                '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
+            ]));
+        }
+
+        return $has_permission;
     }
 
     /**
@@ -561,18 +560,17 @@ class Upload extends Model
             }
 
             return $has_permission;
-        } else {
-            // Per accesso normale, usa i permessi standard del modulo
-            $has_permission = (\Modules::getPermission($id_module) == 'rw');
-
-            if (!$has_permission) {
-                flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-                    '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
-                ]));
-            }
-
-            return $has_permission;
         }
+        // Per accesso normale, usa i permessi standard del modulo
+        $has_permission = (\Modules::getPermission($id_module) == 'rw');
+
+        if (!$has_permission) {
+            flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+                '_MODULE_' => '"'.Module::find($id_module)->getTranslation('title').'"',
+            ]));
+        }
+
+        return $has_permission;
     }
 
     /**

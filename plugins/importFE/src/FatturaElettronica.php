@@ -135,12 +135,7 @@ class FatturaElettronica
             new static($name, $directory, $plugin);
 
             return true;
-        } catch (\UnexpectedValueException) {
-            $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
-            delete($file);
-
-            return false;
-        } catch (\Exception) {
+        } catch (\UnexpectedValueException|\Exception) {
             $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
             delete($file);
 
@@ -464,6 +459,74 @@ class FatturaElettronica
         return date('Y-m-d', strtotime((string) $data));
     }
 
+    /**
+     * Fornisce le informazioni di default per l'importazione automatica.
+     *
+     * @return bool
+     */
+    public static function getInfoAutoImportFE($fattura_pa)
+    {
+        $fattura_body = $fattura_pa->getBody();
+        $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
+        $id_module_fatture_acquisto = Module::where('name', 'Fatture di acquisto')->first()->id;
+
+        // Data registrazione
+        $data_registrazione = post('data_registrazione') ?: $dati_generali['Data'];
+
+        // Pagamento
+        $pagamenti = [];
+        if (isset($fattura_body['DatiPagamento'])) {
+            $pagamenti = $fattura_body['DatiPagamento'];
+            $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        }
+        $metodi = [];
+        foreach ($pagamenti as $pagamento) {
+            $rate = $pagamento['DettaglioPagamento'];
+            $rate = isset($rate[0]) ? $rate : [$rate];
+            $metodi = array_merge($metodi, $rate);
+        }
+        $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+        $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+        $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
+
+        // Tipo del documento
+        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+        $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
+        $numero_tipo = database()->fetchNum($query_tipo);
+        if (!empty($numero_tipo)) {
+            $query = $query_tipo;
+        }
+        $id_tipodocumento = database()->fetchOne($query)['id'];
+
+        // Sezionale
+        $id_segment = null;
+        if (!empty($id_tipodocumento)) {
+            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+        }
+
+        $info = [
+            'id_pagamento' => $pagamento->id ?? setting('Tipo di pagamento predefinito'),
+            'id_segment' => $id_segment ?? getSegmentPredefined($id_module_fatture_acquisto),
+            'id_tipo' => $id_tipodocumento,
+            'ref_fattura' => null,
+            'data_registrazione' => $data_registrazione,
+            'articoli' => [],
+            'iva' => [],
+            'conto' => [],
+            'tipo_riga_riferimento' => [],
+            'id_riga_riferimento' => [],
+            'tipo_riga_riferimento_vendita' => [],
+            'id_riga_riferimento_vendita' => [],
+            'movimentazione' => 0,
+            'crea_articoli' => 0,
+            'is_ritenuta_pagata' => 0,
+            'update_info' => [],
+            'serial' => [],
+        ];
+
+        return $info;
+    }
+
     protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
         $anagrafica = $this->saveAnagrafica($tipo);
@@ -638,73 +701,5 @@ class FatturaElettronica
         }
 
         return $result;
-    }
-
-    /**
-     * Fornisce le informazioni di default per l'importazione automatica.
-     *
-     * @return bool
-     */
-    public static function getInfoAutoImportFE($fattura_pa)
-    {
-        $fattura_body = $fattura_pa->getBody();
-        $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
-        $id_module_fatture_acquisto = Module::where('name', 'Fatture di acquisto')->first()->id;
-
-        // Data registrazione
-        $data_registrazione = post('data_registrazione') ?: $dati_generali['Data'];
-
-        // Pagamento
-        $pagamenti = [];
-        if (isset($fattura_body['DatiPagamento'])) {
-            $pagamenti = $fattura_body['DatiPagamento'];
-            $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
-        }
-        $metodi = [];
-        foreach ($pagamenti as $pagamento) {
-            $rate = $pagamento['DettaglioPagamento'];
-            $rate = isset($rate[0]) ? $rate : [$rate];
-            $metodi = array_merge($metodi, $rate);
-        }
-        $metodi = isset($metodi[0]) ? $metodi : [$metodi];
-        $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
-        $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
-
-        // Tipo del documento
-        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
-        $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
-        $numero_tipo = database()->fetchNum($query_tipo);
-        if (!empty($numero_tipo)) {
-            $query = $query_tipo;
-        }
-        $id_tipodocumento = database()->fetchOne($query)['id'];
-
-        // Sezionale
-        $id_segment = null;
-        if (!empty($id_tipodocumento)) {
-            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
-        }
-
-        $info = [
-            'id_pagamento' => $pagamento->id ?? setting('Tipo di pagamento predefinito'),
-            'id_segment' => $id_segment ?? getSegmentPredefined($id_module_fatture_acquisto),
-            'id_tipo' => $id_tipodocumento,
-            'ref_fattura' => null,
-            'data_registrazione' => $data_registrazione,
-            'articoli' => [],
-            'iva' => [],
-            'conto' => [],
-            'tipo_riga_riferimento' => [],
-            'id_riga_riferimento' => [],
-            'tipo_riga_riferimento_vendita' => [],
-            'id_riga_riferimento_vendita' => [],
-            'movimentazione' => 0,
-            'crea_articoli' => 0,
-            'is_ritenuta_pagata' => 0,
-            'update_info' => [],
-            'serial' => [],
-        ];
-
-        return $info;
     }
 }

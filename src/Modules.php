@@ -328,9 +328,9 @@ class Modules
             $link = !empty($id_record) ? 'editor.php?id_module='.$module->id.'&id_record='.$id_record : 'controller.php?id_module='.$module->id;
 
             return '<a href="'.base_path_osm().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
-        } else {
-            return $alternativo;
         }
+
+        return $alternativo;
     }
 
     /**

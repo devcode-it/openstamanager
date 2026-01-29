@@ -20,7 +20,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Module;
 use Util\Zip;
 
 switch (post('op')) {

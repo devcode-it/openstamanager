@@ -468,9 +468,8 @@ class Anagrafica extends Model
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
 
                     return false;
-                } else {
-                    $ch = curl_init();
                 }
+                $ch = curl_init();
 
                 $lang = \Models\Locale::find(setting('Lingua'))->language_code;
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;

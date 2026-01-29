@@ -61,17 +61,16 @@ class MediaHandler implements HandlerInterface
 
         // Valore presente
         // Visualizzazione dell'immagine e della relativa spunta per la cancellazione
-        else {
-            $values['class'][] = 'img-thumbnail';
-            $values['class'][] = 'img-responsive';
 
-            // Generazione del codice HTML
-            return '
+        $values['class'][] = 'img-thumbnail';
+        $values['class'][] = 'img-responsive';
+
+        // Generazione del codice HTML
+        return '
     <img src="|value|" |attr|><br>
     <label>
         <input type="checkbox" name="delete_|name|" id="delete_|id|"> '.tr('Elimina').'
     </label>
     <input type="hidden" name="|name|" value="|value|" id="|id|">';
-        }
     }
 }

@@ -126,9 +126,9 @@ class Uploads
                 }
 
                 return $name;
-            } else {
-                return null;
             }
+
+            return null;
         }
 
         return null;

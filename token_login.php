@@ -88,12 +88,11 @@ switch ($op) {
                 }
             }
             exit;
-        } else {
-            // Login fallito, mostra errore e torna al form OTP
-            $_SESSION['login_error'] = $result['message'];
-            redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
-            exit;
         }
+        // Login fallito, mostra errore e torna al form OTP
+        $_SESSION['login_error'] = $result['message'];
+        redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
+        exit;
 
         break;
 
@@ -129,17 +128,15 @@ switch ($op) {
                     redirect_url(base_path_osm().'/index.php');
                 }
                 exit;
-            } else {
-                // Login fallito, mostra errore
-                $_SESSION['login_error'] = $result['message'];
-                redirect_url(base_path_osm().'/index.php');
-                exit;
             }
-        } else {
-            $_SESSION['login_error'] = tr('Token non valido');
+            // Login fallito, mostra errore
+            $_SESSION['login_error'] = $result['message'];
             redirect_url(base_path_osm().'/index.php');
             exit;
         }
+        $_SESSION['login_error'] = tr('Token non valido');
+        redirect_url(base_path_osm().'/index.php');
+        exit;
 
         break;
 
@@ -151,11 +148,10 @@ switch ($op) {
             // Genera e invia il primo codice OTP
             redirect_url(base_path_osm().'/token_login.php?token='.urlencode($token_param).'&otp_requested=1');
             exit;
-        } else {
-            $_SESSION['login_error'] = tr('Token non valido');
-            redirect_url(base_path_osm().'/index.php');
-            exit;
         }
+        $_SESSION['login_error'] = tr('Token non valido');
+        redirect_url(base_path_osm().'/index.php');
+        exit;
 
         break;
 }
@@ -279,15 +275,13 @@ if ($tipo_accesso == 'token') {
                 }
             }
             exit;
-        } else {
-            $_SESSION['login_error'] = $result['message'];
-            redirect_url(base_path_osm().'/index.php');
-            exit;
         }
-    } else {
-        // Mostra schermata di conferma
-        $show_token_confirm = true;
+        $_SESSION['login_error'] = $result['message'];
+        redirect_url(base_path_osm().'/index.php');
+        exit;
     }
+    // Mostra schermata di conferma
+    $show_token_confirm = true;
 }
 
 // Gestione OTP solo per token di tipo 'otp'
@@ -373,7 +367,7 @@ $error_message = $_SESSION['login_error'] ?? null;
 if (!empty($error_message)) {
     // Rimuovi il messaggio dalla sessione dopo averlo recuperato
     unset($_SESSION['login_error']);
-    
+
     echo '
             <script>
             $(document).ready(function(){

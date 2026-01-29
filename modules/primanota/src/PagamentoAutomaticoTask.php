@@ -41,9 +41,9 @@ class PagamentoAutomaticoTask extends Manager
         ];
 
         $database = database();
-        
+
         // Recupero le scadenze scadute o in scadenza oggi con flag registra_pagamento attivo
-        $scadenze = $database->fetchArray("
+        $scadenze = $database->fetchArray('
             SELECT 
                 `co_scadenziario`.*,
                 `co_documenti`.`idanagrafica`,
@@ -62,7 +62,7 @@ class PagamentoAutomaticoTask extends Manager
                 AND (
                     IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) <= CURDATE()
                 )
-        ");
+        ');
 
         $conta_registrati = 0;
         $conta_errori = 0;
@@ -98,12 +98,12 @@ class PagamentoAutomaticoTask extends Manager
 
                 // Verifica che i conti siano valorizzati
                 if (empty($id_conto_anagrafica)) {
-                    $conta_errori++;
+                    ++$conta_errori;
                     continue;
                 }
 
                 if (empty($id_conto_contropartita)) {
-                    $conta_errori++;
+                    ++$conta_errori;
                     continue;
                 }
 
@@ -116,9 +116,9 @@ class PagamentoAutomaticoTask extends Manager
                     $scadenza['dir']
                 );
 
-                $conta_registrati++;
-            } catch (\Exception $e) {
-                $conta_errori++;
+                ++$conta_registrati;
+            } catch (\Exception) {
+                ++$conta_errori;
             }
         }
 

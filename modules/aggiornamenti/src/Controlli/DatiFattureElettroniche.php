@@ -778,9 +778,9 @@ class DatiFattureElettroniche extends Controllo
             return 'TD04';
         } elseif ($fattura->tipo->getTranslation('title') === 'Nota di debito') {
             return 'TD05';
-        } else {
-            return $fattura->tipo->codice_tipo_documento_fe ?: 'TD01';
         }
+
+        return $fattura->tipo->codice_tipo_documento_fe ?: 'TD01';
     }
 
     /**

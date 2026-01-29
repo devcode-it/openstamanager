@@ -500,9 +500,8 @@ class Query
             return 'CAST('.$search_query.' AS DECIMAL(15,2)) '.$operator.' '.prepare($clean_value);
         }
         // Gestione valori stringa
-        else {
-            return $search_query.' '.$operator.' '.prepare($clean_value);
-        }
+
+        return $search_query.' '.$operator.' '.prepare($clean_value);
     }
 
     /**

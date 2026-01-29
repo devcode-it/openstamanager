@@ -454,17 +454,17 @@ if (!function_exists('color_inverse')) {
             }
             if ($lum >= 2.5) {
                 return '#fff';
-            } else {
-                return '#000';
             }
-        } else {
-            return match ($start_colour) {
-                'black' => 'white',
-                'blue' => 'white',
-                'purple' => 'white',
-                default => '#000',
-            };
+
+            return '#000';
         }
+
+        return match ($start_colour) {
+            'black' => 'white',
+            'blue' => 'white',
+            'purple' => 'white',
+            default => '#000',
+        };
     }
 }
 

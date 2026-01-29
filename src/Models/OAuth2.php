@@ -111,20 +111,19 @@ class OAuth2 extends Model
             $this->save();
 
             throw new \InvalidArgumentException();
-        } else {
-            $this->state = null;
-            $this->save();
-
-            // Try to get an access token using the authorization code grant
-            $access_token = $provider->getAccessToken('authorization_code', [
-                'code' => $code,
-            ]);
-            $refresh_token = $access_token->getRefreshToken();
-
-            $this->updateTokens($access_token, $refresh_token);
-
-            return ['access_token' => $access_token];
         }
+        $this->state = null;
+        $this->save();
+
+        // Try to get an access token using the authorization code grant
+        $access_token = $provider->getAccessToken('authorization_code', [
+            'code' => $code,
+        ]);
+        $refresh_token = $access_token->getRefreshToken();
+
+        $this->updateTokens($access_token, $refresh_token);
+
+        return ['access_token' => $access_token];
 
         return null;
     }

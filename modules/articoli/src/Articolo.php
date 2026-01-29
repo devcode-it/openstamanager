@@ -477,9 +477,9 @@ class Articolo extends Model
             }
 
             return $result;
-        } else {
-            return parent::save($attributes);
         }
+
+        return parent::save($attributes);
     }
 
     /**

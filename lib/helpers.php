@@ -295,12 +295,12 @@ function moneyFormat($number, $decimals = null)
             '_CURRENCY_' => currency(),
             '_TOTAL_' => numberFormat($number, $decimals),
         ]);
-    } else {
-        return tr('_TOTAL_ _CURRENCY_', [
-            '_TOTAL_' => numberFormat($number, $decimals),
-            '_CURRENCY_' => currency(),
-        ]);
     }
+
+    return tr('_TOTAL_ _CURRENCY_', [
+        '_TOTAL_' => numberFormat($number, $decimals),
+        '_CURRENCY_' => currency(),
+    ]);
 }
 
 /**

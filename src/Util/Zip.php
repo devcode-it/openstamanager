@@ -162,8 +162,8 @@ class Zip
             }
 
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 }

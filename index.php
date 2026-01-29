@@ -98,11 +98,10 @@ if (AuthOSM::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled(
             AuthOSM::clearIntended();
             redirect_url($intended_url);
             exit;
-        } else {
-            // L'utente non ha i permessi per accedere alla pagina richiesta
-            AuthOSM::clearIntended();
-            flash()->warning(tr('Non hai i permessi necessari per accedere alla pagina richiesta.'));
         }
+        // L'utente non ha i permessi per accedere alla pagina richiesta
+        AuthOSM::clearIntended();
+        flash()->warning(tr('Non hai i permessi necessari per accedere alla pagina richiesta.'));
     }
 
     // Priorità 3: Primo modulo (sistema esistente come fallback)
@@ -191,7 +190,7 @@ $error_message = $_SESSION['login_error'] ?? null;
 if (!empty($error_message)) {
     // Rimuovi il messaggio dalla sessione dopo averlo recuperato
     unset($_SESSION['login_error']);
-    
+
     echo '
             <script>
             $(document).ready(function(){

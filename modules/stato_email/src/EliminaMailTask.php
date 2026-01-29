@@ -34,12 +34,12 @@ class EliminaMailTask extends Manager
 
             if (sizeof($rs) > 0) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
+
             return false;
         }
+
+        return false;
     }
 
     public function execute()

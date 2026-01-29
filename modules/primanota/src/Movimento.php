@@ -122,11 +122,12 @@ class Movimento extends Model
     /**
      * Registra automaticamente un pagamento di prima nota per una scadenza.
      *
-     * @param int $id_scadenza ID della scadenza
-     * @param float $importo Importo da registrare
-     * @param int $id_conto_anagrafica ID del conto cliente/fornitore
-     * @param int $id_conto_contropartita ID del conto di contropartita
-     * @param string $dir Direzione (entrata/uscita)
+     * @param int    $id_scadenza            ID della scadenza
+     * @param float  $importo                Importo da registrare
+     * @param int    $id_conto_anagrafica    ID del conto cliente/fornitore
+     * @param int    $id_conto_contropartita ID del conto di contropartita
+     * @param string $dir                    Direzione (entrata/uscita)
+     *
      * @return bool
      */
     public static function registraPagamentoAutomatico($id_scadenza, $importo, $id_conto_anagrafica, $id_conto_contropartita, $dir)

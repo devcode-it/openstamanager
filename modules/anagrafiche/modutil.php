@@ -38,9 +38,9 @@ if (!function_exists('geolocalizzazione')) {
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
 
                     return false;
-                } else {
-                    $ch = curl_init();
                 }
+                $ch = curl_init();
+
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
@@ -68,9 +68,8 @@ if (!function_exists('geolocalizzazione')) {
                     flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
 
                     return false;
-                } else {
-                    $ch = curl_init();
                 }
+                $ch = curl_init();
 
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';

@@ -65,7 +65,7 @@ if (!empty($module_checksum_files)) {
     foreach ($module_checksum_files as $module_checksum_file) {
         $module_contents = file_get_contents($module_checksum_file);
         $module_checksum = json_decode($module_contents, true);
-        
+
         if (!empty($module_checksum)) {
             // Accoda i checksum del modulo a quello principale
             $checksum = array_merge($checksum, $module_checksum);

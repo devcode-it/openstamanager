@@ -109,12 +109,11 @@ class Permissions
                     redirect_url(base_path_osm().'/index.php');
                     $result = false;
                     exit;
-                } else {
-                    if (!empty(self::$permissions)) {
-                        foreach (self::$permissions as $module) {
-                            if (!in_array(Modules::getPermission($module), $permissions)) {
-                                $result = false;
-                            }
+                }
+                if (!empty(self::$permissions)) {
+                    foreach (self::$permissions as $module) {
+                        if (!in_array(Modules::getPermission($module), $permissions)) {
+                            $result = false;
                         }
                     }
                 }
@@ -227,10 +226,10 @@ class Permissions
             // Se ha anche un record target specifico, redirect a editor.php
             if (!empty($token_info['id_record_target']) && $token_info['id_record_target'] > 0) {
                 return $base_url.'/editor.php?id_module='.$token_info['id_module_target'].'&id_record='.$token_info['id_record_target'];
-            } else {
-                // Se non ha un record target, redirect a controller.php
-                return $base_url.'/controller.php?id_module='.$token_info['id_module_target'];
             }
+
+            // Se non ha un record target, redirect a controller.php
+            return $base_url.'/controller.php?id_module='.$token_info['id_module_target'];
         }
 
         return null;

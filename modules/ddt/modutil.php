@@ -220,16 +220,15 @@ if (!function_exists('get_stato_ddt')) {
 
         if ($rs[0]['qta'] == 0) {
             return 'Bozza';
-        } else {
-            if ($rs[0]['qta_evasa'] > 0) {
-                if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-                    return 'Parzialmente fatturato';
-                } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-                    return 'Fatturato';
-                }
-            } else {
-                return 'Evaso';
+        }
+        if ($rs[0]['qta_evasa'] > 0) {
+            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
+                return 'Parzialmente fatturato';
+            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
+                return 'Fatturato';
             }
+        } else {
+            return 'Evaso';
         }
     }
 }

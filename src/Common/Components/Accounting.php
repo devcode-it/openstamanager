@@ -268,9 +268,9 @@ abstract class Accounting extends Component
         // Gestione IVA incorporata
         if ($this->incorporaIVA()) {
             return $this->sconto_unitario_ivato;
-        } else {
-            return $this->sconto_unitario;
         }
+
+        return $this->sconto_unitario;
     }
 
     /**
@@ -373,9 +373,9 @@ abstract class Accounting extends Component
         // Gestione IVA incorporata
         if ($this->incorporaIVA()) {
             return $this->prezzo_unitario_ivato;
-        } else {
-            return $this->prezzo_unitario;
         }
+
+        return $this->prezzo_unitario;
     }
 
     /**

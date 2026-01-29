@@ -9,23 +9,22 @@ if (!empty($records)) {
     include $structure->filepath('generate.php');
 
     return;
-} else {
-    $banca_azienda = Banca::where('id_anagrafica', Gestore::getAzienda()->id)
-    ->where('predefined', 1)
-    ->whereNull('deleted_at')
-    ->first();
+}
+$banca_azienda = Banca::where('id_anagrafica', Gestore::getAzienda()->id)
+->where('predefined', 1)
+->whereNull('deleted_at')
+->first();
 
-    try {
-        if (empty($banca_azienda)) {
-            echo '
+try {
+    if (empty($banca_azienda)) {
+        echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
     '.tr("La banca dell'azienda non è definita o non ha impostati i campi Codice IBAN e BIC").'.
     '.Modules::link('Banche', null, tr('Imposta'), null, null).'
 </div>';
-        }
-    } catch (Exception) {
     }
+} catch (Exception) {
 }
 
 echo '

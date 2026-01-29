@@ -227,13 +227,12 @@ switch (filter('op')) {
                 ]);
 
                 exit;
-            } else {
-                // Messaggio di errore per file non ZIP
-                echo json_encode([
-                    'error' => tr('È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP valido.'),
-                ]);
-                exit;
             }
+            // Messaggio di errore per file non ZIP
+            echo json_encode([
+                'error' => tr('È possibile caricare solo file ZIP. Il file selezionato non è un file ZIP valido.'),
+            ]);
+            exit;
         }
 
         break;

@@ -47,7 +47,7 @@ final class DataTablesController implements ProcessorInterface
         return $this->retrieveRecords($structure, $data, $id_module, $id_plugin, $id_parent);
     }
 
-    protected function retrieveRecords($structure, DataTablesLoadRequest $data, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
+    private function retrieveRecords($structure, DataTablesLoadRequest $data, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
     {
         // Informazioni fondamentali
         $order = $data->order ? $data->order[0] : [];
@@ -119,7 +119,7 @@ final class DataTablesController implements ProcessorInterface
         return $response;
     }
 
-    protected function detectAlignment(array $rows): array
+    private function detectAlignment(array $rows): array
     {
         // Allineamento delle righe
         $align = [];
@@ -143,7 +143,7 @@ final class DataTablesController implements ProcessorInterface
         return $align;
     }
 
-    protected function getSingleRow($r, $query_structure, $align, $id_module, $id_plugin, $id_parent): array
+    private function getSingleRow($r, $query_structure, $align, $id_module, $id_plugin, $id_parent): array
     {
         // Evitare risultati con ID a null
         // Codice non applicabile in ogni caso: sulla base dei permessi, ID può non essere impostato

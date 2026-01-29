@@ -60,8 +60,7 @@ if (empty($response['authorization_url'])) {
 if (empty($_GET['error'])) {
     redirect_url($redirect);
     exit;
-} else {
-    echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'
+}
+echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'
 <br><br>
 <a href="'.$redirect.'">'.tr('Riprova').'</a>';
-}

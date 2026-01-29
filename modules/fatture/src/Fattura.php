@@ -976,9 +976,9 @@ class Fattura extends Document
         $totale = $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
         if ($this->isNota()) {
             return $totale * (-1);
-        } else {
-            return $totale;
         }
+
+        return $totale;
     }
 
     // Metodi statici
@@ -1001,13 +1001,13 @@ class Fattura extends Document
         // Per le fatture di vendita, verifica prima la banca predefinita per accrediti del cliente
         if ($direzione == 'entrata' && !empty($anagrafica_controparte->idbanca_vendite)) {
             $id_banca = $anagrafica_controparte->idbanca_vendite;
-            
+
             // Verifica che la banca esista effettivamente
             $banca_esistente = Banca::find($id_banca);
             if (!$banca_esistente || $banca_esistente->deleted_at) {
                 $id_banca = null;
             }
-            
+
             // Se la banca del cliente è valida, la restituisce
             if ($id_banca) {
                 return $id_banca;

@@ -420,9 +420,9 @@ function hasArticoliFiglio($id_articolo)
 {
     if (function_exists('renderDistinta')) {
         return database()->fetchOne('SELECT qta FROM mg_articoli_distinte WHERE id_articolo='.prepare($id_articolo));
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**

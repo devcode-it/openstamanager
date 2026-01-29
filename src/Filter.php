@@ -88,9 +88,9 @@ class Filter
 
         if (isset(self::$post[$category][$property])) {
             return self::$post[$category][$property];
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -123,9 +123,9 @@ class Filter
 
         if (isset(self::$get[$category][$property])) {
             return self::$get[$category][$property];
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**

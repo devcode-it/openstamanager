@@ -159,7 +159,7 @@ class AuthOSM extends Util\Singleton
 
                     return false;
                 }
-                
+
                 // Se non ci sono operazioni recenti, la sessione è scaduta -> resetta il token e permetti il login
                 $database->update('zz_users', [
                     'session_token' => null,
@@ -963,7 +963,7 @@ class AuthOSM extends Util\Singleton
     public function identifyUser($user_id)
     {
         $database = database();
-        
+
         try {
             $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
@@ -1177,7 +1177,7 @@ class AuthOSM extends Util\Singleton
 
         try {
             $database = database();
-            
+
             // Verifica che il database sia connesso
             if (!$database->isConnected() || !$database->isInstalled()) {
                 return false;
@@ -1189,6 +1189,7 @@ class AuthOSM extends Util\Singleton
             // Se l'utente è stato caricato con successo, salva le informazioni nella sessione
             if (!empty($this->user)) {
                 $this->saveToSession();
+
                 return true;
             }
 
@@ -1196,6 +1197,7 @@ class AuthOSM extends Util\Singleton
         } catch (Exception $e) {
             // In caso di errore, logga il problema e restituisci false
             error_log('Errore durante il refresh dell\'utente: '.$e->getMessage());
+
             return false;
         }
     }
@@ -1233,10 +1235,10 @@ class AuthOSM extends Util\Singleton
             ], [
                 'id' => $this->user->id,
             ]);
-            
+
             // Pulisci l'oggetto utente per forzare il logout
             $this->user = null;
-            
+
             return false;
         }
 

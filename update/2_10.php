@@ -83,5 +83,5 @@ $creation_env = file_put_contents('.env', $laravel_config);
 // Crea la chiave di crittografia dell'applicazione per Laravel
 // Laravel non è inizializzato in questo contesto
 // use Illuminate\Support\Facades\Artisan;
-//Artisan::call('key:generate');
-shell_exec("php artisan key:generate");
+// Artisan::call('key:generate');
+shell_exec('php artisan key:generate');

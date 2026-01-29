@@ -43,5 +43,3 @@ if (!isset($resource)) {
 }
 
 // Casi particolari
-else {
-}

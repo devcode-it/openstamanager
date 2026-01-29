@@ -212,12 +212,12 @@ class Database extends Util\Singleton
             $ver = $this->fetchArray('SELECT VERSION()');
             if (preg_match('/MariaDB/', (string) $ver[0]['VERSION()'])) {
                 return 'MariaDB';
-            } else {
-                return 'MySQL';
             }
-        } else {
-            return '';
+
+            return 'MySQL';
         }
+
+        return '';
     }
 
     /**
@@ -230,9 +230,9 @@ class Database extends Util\Singleton
         $ver = $this->fetchOne('SELECT VERSION()')['VERSION()'];
         if (preg_match('/MariaDB/', (string) $ver)) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
@@ -265,9 +265,9 @@ class Database extends Util\Singleton
         $id = $this->lastInsertedID();
         if ($id == 0) {
             return 1;
-        } else {
-            return $id;
         }
+
+        return $id;
     }
 
     /**
@@ -547,11 +547,10 @@ class Database extends Util\Singleton
 
         if (!empty($return)) {
             return $statement->toSql();
-        } else {
-            $result = $statement->get()->toArray();
-
-            return json_decode(json_encode($result), true);
         }
+        $result = $statement->get()->toArray();
+
+        return json_decode(json_encode($result), true);
     }
 
     /**
@@ -663,9 +662,7 @@ class Database extends Util\Singleton
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
                 $data = array_merge($conditions, [$field => $insert]);
                 $columns = array_keys($data);
-                $values = array_map(function ($v) {
-                    return $this->prepare($v);
-                }, $data);
+                $values = array_map($this->prepare(...), $data);
                 $this->query('INSERT IGNORE INTO `'.$table.'` (`'.implode('`, `', $columns).'`) VALUES ('.implode(', ', $values).')');
             }
         }

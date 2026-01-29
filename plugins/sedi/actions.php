@@ -147,10 +147,10 @@ function salvaTariffeSede($id_sede, $id_parent)
 {
     global $dbo;
 
-    $costo_ore = (array)post('costo_ore');
-    $costo_km = (array)post('costo_km');
-    $costo_dirittochiamata = (array)post('costo_dirittochiamata');
-    $tariffa_attiva = (array)post('tariffa_attiva');
+    $costo_ore = (array) post('costo_ore');
+    $costo_km = (array) post('costo_km');
+    $costo_dirittochiamata = (array) post('costo_dirittochiamata');
+    $tariffa_attiva = (array) post('tariffa_attiva');
 
     // Verifica se l'anagrafica è di tipo Cliente
     $anagrafica = Anagrafica::find($id_parent);

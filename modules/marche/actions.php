@@ -146,19 +146,18 @@ switch (post('op')) {
 
             redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
             exit;
-        } else {
-            $marca = Marca::build($nome);
-            $marca->parent = $id_original;
-            $marca->is_articolo = $is_articolo;
-            $marca->is_impianto = $is_impianto;
-            $marca->link = $link;
-            $marca->save();
-            $id_record = $marca->id;
-
-            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                '_TYPE_' => 'marca',
-            ]));
         }
+        $marca = Marca::build($nome);
+        $marca->parent = $id_original;
+        $marca->is_articolo = $is_articolo;
+        $marca->is_impianto = $is_impianto;
+        $marca->link = $link;
+        $marca->save();
+        $id_record = $marca->id;
+
+        flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+            '_TYPE_' => 'marca',
+        ]));
 
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);

@@ -32,9 +32,8 @@ if (!$group || !$record) {
     </div>';
 
     return;
-} else {
-    $record = $group->toArray();
 }
+$record = $group->toArray();
 
 // Lettura gruppi
 $gruppi = $dbo->fetchArray('SELECT `id`, `nome` FROM `zz_groups`');

@@ -29,5 +29,5 @@ $r = $dbo->fetchOne('
 // Variabili da sostituire
 return [
     'nome' => $r['nome'],
-    'targa' => $r['targa']
+    'targa' => $r['targa'],
 ];

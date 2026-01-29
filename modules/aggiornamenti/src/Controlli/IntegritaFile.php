@@ -111,12 +111,12 @@ class IntegritaFile extends Controllo
             if (file_exists($file_path)) {
                 if (unlink($file_path)) {
                     return tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
-                } else {
-                    return tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
                 }
-            } else {
-                return tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+
+                return tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
             }
+
+            return tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
         } elseif ($action === 'remove_orphan_record' && $record['tipo'] === 'file_mancante') {
             // Estraggo l'ID del record dal campo id (formato: missing_file_123)
             $upload_id = str_replace('missing_file_', '', $record['id']);
@@ -127,9 +127,9 @@ class IntegritaFile extends Controllo
                     $upload->delete();
 
                     return tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                } else {
-                    return tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
                 }
+
+                return tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
             } catch (\Exception $e) {
                 return tr('Errore nella rimozione del record _FILE_: _ERROR_', [
                     '_FILE_' => $record['nome_file'],

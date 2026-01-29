@@ -141,7 +141,7 @@ if (!empty(post('db_host'))) {
 
         // Controlla che la scrittura del file di configurazione sia andata a buon fine
         $creation = file_put_contents('config.inc.php', $new_config);
-        
+
         // Configurazione per Larvel (.env)
         $laravel_config = file_get_contents(base_dir().'/.env.example');
         $laravel_values = [
@@ -154,8 +154,8 @@ if (!empty(post('db_host'))) {
         // Crea la chiave di crittografia dell'applicazione per Laravel
         // Laravel non è inizializzato in questo contesto
         // use Illuminate\Support\Facades\Artisan;
-        //Artisan::call('key:generate');
-        shell_exec("php artisan key:generate");
+        // Artisan::call('key:generate');
+        shell_exec('php artisan key:generate');
 
         if (!$creation) {
             echo '

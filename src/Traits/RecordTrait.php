@@ -139,9 +139,9 @@ trait RecordTrait
             ->where('id_lang', '=', $id_lang)
             ->first()
             ->$field;
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     public function getByField($field, $value, $id_lang = null)
@@ -155,8 +155,8 @@ trait RecordTrait
                 ->where('id_lang', '=', $id_lang)
                 ->first()
                 ->id_record;
-        } else {
-            return '';
         }
+
+        return '';
     }
 }

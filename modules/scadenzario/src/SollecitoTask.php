@@ -37,9 +37,9 @@ class SollecitoTask extends Manager
     {
         if (setting('Invio solleciti in automatico') > 0) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function execute()

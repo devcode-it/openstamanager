@@ -316,11 +316,11 @@ if ($is_cliente) {
 
     foreach ($tipi_interventi as $tipo_intervento) {
         $id_tipo = $tipo_intervento['id'];
-        $tariffa = isset($tariffe_sedi[$id_tipo]) ? $tariffe_sedi[$id_tipo] : [];
+        $tariffa = $tariffe_sedi[$id_tipo] ?? [];
         $attivo = !empty($tariffa) ? 1 : 0;
-        $costo_ore = isset($tariffa['costo_ore']) ? $tariffa['costo_ore'] : $tipo_intervento['costo_orario'];
-        $costo_km = isset($tariffa['costo_km']) ? $tariffa['costo_km'] : $tipo_intervento['costo_km'];
-        $costo_dirittochiamata = isset($tariffa['costo_dirittochiamata']) ? $tariffa['costo_dirittochiamata'] : $tipo_intervento['costo_diritto_chiamata'];
+        $costo_ore = $tariffa['costo_ore'] ?? $tipo_intervento['costo_orario'];
+        $costo_km = $tariffa['costo_km'] ?? $tipo_intervento['costo_km'];
+        $costo_dirittochiamata = $tariffa['costo_dirittochiamata'] ?? $tipo_intervento['costo_diritto_chiamata'];
 
         echo '
 							<tr data-id="'.$id_tipo.'">

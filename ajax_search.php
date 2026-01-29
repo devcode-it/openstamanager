@@ -36,5 +36,3 @@ if (!isset($term)) {
 }
 
 // Casi particolari
-else {
-}

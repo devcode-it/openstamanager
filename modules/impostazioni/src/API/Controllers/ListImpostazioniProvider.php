@@ -16,11 +16,11 @@ final class ListImpostazioniProvider implements ProviderInterface
         $search = $operation->getParameters()->get('ricerca')->getValue();
 
         // Trova le impostazioni che corrispondono alla ricerca
-        if (!($search instanceof ParameterNotFound)) {
+        if (!$search instanceof ParameterNotFound) {
             $impostazioni = Setting::where('nome', 'like', '%'.$search.'%')
                 ->orWhere('sezione', 'like', '%'.$search.'%')
                 ->get();
-        } elseif (!($sezione instanceof ParameterNotFound)) {
+        } elseif (!$sezione instanceof ParameterNotFound) {
             $impostazioni = Setting::where('sezione', $sezione)->get();
         } else {
             $impostazioni = Setting::all();

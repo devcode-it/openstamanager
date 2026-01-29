@@ -218,16 +218,15 @@ function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
         // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
         if ($dir == 'uscita' && $new_qta < count(seriali_non_rimuovibili($field, $id_riga, $dir))) {
             return false;
-        } else {
-            // Controllo sul numero di seriali effettivi da rimuovere
-            $count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM mg_prodotti WHERE '.$field.'='.prepare($id_riga))[0]['tot'];
-            if ($new_qta < $count) {
-                $deletes = $dbo->fetchArray("SELECT id FROM mg_prodotti WHERE serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir = 'entrata' AND ".$field.'!='.prepare($id_riga).') AND '.$field.'='.prepare($id_riga).' ORDER BY serial DESC LIMIT '.abs($count - $new_qta));
+        }
+        // Controllo sul numero di seriali effettivi da rimuovere
+        $count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM mg_prodotti WHERE '.$field.'='.prepare($id_riga))[0]['tot'];
+        if ($new_qta < $count) {
+            $deletes = $dbo->fetchArray("SELECT id FROM mg_prodotti WHERE serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir = 'entrata' AND ".$field.'!='.prepare($id_riga).') AND '.$field.'='.prepare($id_riga).' ORDER BY serial DESC LIMIT '.abs($count - $new_qta));
 
-                // Rimozione
-                foreach ($deletes as $delete) {
-                    $dbo->query('DELETE FROM mg_prodotti WHERE id = '.prepare($delete['id']));
-                }
+            // Rimozione
+            foreach ($deletes as $delete) {
+                $dbo->query('DELETE FROM mg_prodotti WHERE id = '.prepare($delete['id']));
             }
         }
     }

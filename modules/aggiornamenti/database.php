@@ -101,30 +101,31 @@ if (file_exists($modules_json_file)) {
 
 // Funzione per ottenere il nome del modulo dal file di riferimento appropriato
 if (!function_exists('getModuleNameFromReference')) {
-    function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data) {
+    function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data)
+    {
         $module_name = $folder_name; // Default: usa il nome della cartella
-        
+
         // Verifica se esiste il file di riferimento
         if (file_exists($reference_file)) {
             $reference_contents = file_get_contents($reference_file);
             $reference_data = json_decode($reference_contents, true);
-            
+
             if (!empty($reference_data) && is_array($reference_data)) {
                 foreach ($reference_data as $name => $module_info) {
                     // Cerca una corrispondenza parziale o esatta
-                    if (stripos(strtolower($folder_name), strtolower($name)) !== false) {
+                    if (stripos(strtolower((string) $folder_name), strtolower((string) $name)) !== false) {
                         $module_name = $name;
                         break;
                     }
                     // Seconda prova: cerca se il nome del modulo (senza spazi) è contenuto nel nome della cartella
-                    if (stripos(strtolower($folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
+                    if (stripos(strtolower((string) $folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
                         $module_name = $name;
                         break;
                     }
                 }
             }
         }
-        
+
         return $module_name;
     }
 }
@@ -144,7 +145,7 @@ $data = [];
 if (file_exists(base_dir().'/'.$file_to_check_database)) {
     $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
     $root_data = json_decode($contents, true);
-    
+
     if (!empty($root_data) && is_array($root_data)) {
         $data = array_merge($root_data, $data);
     }
@@ -155,6 +156,7 @@ if (file_exists(base_dir().'/'.$file_to_check_database)) {
         '_FILE_' => '<b>'.$file_to_check_database.'</b>',
     ]).'
 </div>';
+
     return;
 }
 
@@ -176,7 +178,7 @@ if (!empty($database_json_files)) {
             // Estrai il nome della cartella dal percorso del file
             $path_parts = explode('/', $database_json_file);
             $folder_name = $path_parts[count($path_parts) - 2];
-            
+
             // Ottieni il nome del modulo dal file modules.json
             $module_name = getModuleNameFromReference($modules_json_file, $folder_name, $modules_json_data);
 
@@ -253,6 +255,7 @@ try {
         '_ERROR_' => htmlspecialchars($e->getMessage()),
     ]).'
 </div>';
+
     return;
 }
 
@@ -333,7 +336,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         ++$danger_count;
                     } elseif (is_array($diff) && isset($diff['current'])) {
                         // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                        $expected_fks = isset($data[$table]['foreign_keys']) ? $data[$table]['foreign_keys'] : [];
+                        $expected_fks = $data[$table]['foreign_keys'] ?? [];
                         if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
                             ++$info_count;
                         }
@@ -377,10 +380,10 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     }
                     // Verifica se il campo proviene da un modulo premium
                     if (!isset($premium_fields[$table][$name])) {
-                        $non_premium_errors++;
+                        ++$non_premium_errors;
                     }
                 }
-                
+
                 if ($non_premium_errors > 0 || !empty($foreign_keys)) {
                     echo '
         <div class="table-responsive">
@@ -485,7 +488,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         $fk_name = $name;
                         $badge_text = '';
                         $badge_color = '';
- 
+
                         // Gestione delle chiavi esterne
                         if (is_array($diff) && isset($diff['expected'])) {
                             // Chiave esterna mancante (presente in expected ma non in current)
@@ -498,7 +501,7 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         } elseif (is_array($diff) && isset($diff['current'])) {
                             // Chiave esterna in più (presente in current ma non in expected)
                             // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                            $expected_fks = isset($data[$table]['foreign_keys']) ? $data[$table]['foreign_keys'] : [];
+                            $expected_fks = $data[$table]['foreign_keys'] ?? [];
                             if (IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
                                 // La chiave esterna esiste per contenuto, non segnalarla come non prevista
                                 continue;
@@ -556,12 +559,12 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                 }
 
                 $foreign_keys = $errors['foreign_keys'] ?: [];
-                
+
                 // Calcola il conteggio corretto includendo tutti i tipi di errori
                 $keys_count = ($has_keys ? count(array_filter($errors, fn ($e) => isset($e['key']))) : 0);
-                
+
                 // Filtra le chiavi esterne che esistono per contenuto
-                $expected_fks = isset($data[$table]['foreign_keys']) ? $data[$table]['foreign_keys'] : [];
+                $expected_fks = $data[$table]['foreign_keys'] ?? [];
                 $foreign_keys_count = 0;
                 foreach ($foreign_keys as $name => $diff) {
                     if (is_array($diff) && isset($diff['current'])) {
@@ -573,18 +576,18 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         ++$foreign_keys_count;
                     }
                 }
-                
+
                 // Conta i campi non previsti (escludendo le chiavi, le chiavi esterne e i campi premium)
                 $fields_count = 0;
                 foreach ($errors as $name => $diff) {
                     if ($name != 'foreign_keys' && !isset($diff['key']) && !isset($results[$table][$name])) {
                         // Non contare i campi premium (verranno mostrati in una sezione separata)
                         if (!isset($premium_fields[$table][$name])) {
-                            $fields_count++;
+                            ++$fields_count;
                         }
                     }
                 }
-                
+
                 $error_count = $keys_count + $foreign_keys_count + $fields_count;
 
                 // Mostra la sezione solo se ci sono errori reali (escludendo i campi premium)
@@ -613,11 +616,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                             if ($name != 'foreign_keys' && !isset($results[$table][$name]) && isset($diff['key'])) {
                                 // Verifica se il campo proviene da un modulo premium
                                 if (!isset($premium_fields[$table][$name])) {
-                                    $non_premium_keys++;
+                                    ++$non_premium_keys;
                                 }
                             }
                         }
-                        
+
                         if ($non_premium_keys > 0 || !empty($foreign_keys) || $fields_count > 0) {
                             echo '
         <div class="table-responsive">
@@ -661,11 +664,11 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                                         if (isset($premium_fields[$table][$name])) {
                                             // Salta i campi premium - verranno mostrati nella sezione "Campi modulo premium"
                                             continue;
-                                        } else {
-                                            $badge_text = 'Campo non previsto';
-                                            $badge_color = 'info';
-                                            $query_text = 'Campo non previsto';
-                                            echo '
+                                        }
+                                        $badge_text = 'Campo non previsto';
+                                        $badge_color = 'info';
+                                        $query_text = 'Campo non previsto';
+                                        echo '
                 <tr>
                     <td class="column-name">
                         '.$name.'
@@ -677,7 +680,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                         '.$query_text.'
                     </td>
                 </tr>';
-                                        }
                                     }
                                 }
                             }
@@ -687,12 +689,12 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                                 $fk_name = $name;
                                 $badge_text = '';
                                 $badge_color = '';
- 
+
                                 // Gestione delle chiavi esterne in più
                                 if (is_array($diff) && isset($diff['current'])) {
                                     // Chiave esterna in più (presente in current ma non in expected)
                                     // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                                    $expected_fks = isset($data[$table]['foreign_keys']) ? $data[$table]['foreign_keys'] : [];
+                                    $expected_fks = $data[$table]['foreign_keys'] ?? [];
                                     if (IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
                                         // La chiave esterna esiste per contenuto, non segnalarla come non prevista
                                         continue;

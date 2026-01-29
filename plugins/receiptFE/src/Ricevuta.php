@@ -65,23 +65,22 @@ class Ricevuta
 
         if (!file_exists($file)) {
             throw new \UnexpectedValueException();
+        }
+        $this->file = $file;
+        $this->xml = XML::readFile($this->file);
+
+        $filename = explode('.', (string) $name)[0];
+        $pieces = explode('_', $filename);
+
+        $progressivo_invio = $pieces[1];
+
+        // Se è stata forzata un'associazione, usa quella fattura
+        if ($id_fattura_forzata) {
+            $this->fattura = Fattura::find($id_fattura_forzata);
         } else {
-            $this->file = $file;
-            $this->xml = XML::readFile($this->file);
-
-            $filename = explode('.', (string) $name)[0];
-            $pieces = explode('_', $filename);
-
-            $progressivo_invio = $pieces[1];
-
-            // Se è stata forzata un'associazione, usa quella fattura
-            if ($id_fattura_forzata) {
-                $this->fattura = Fattura::find($id_fattura_forzata);
-            } else {
-                $this->fattura = Fattura::where([
-                    'progressivo_invio' => $progressivo_invio,
-                ])->first();
-            }
+            $this->fattura = Fattura::where([
+                'progressivo_invio' => $progressivo_invio,
+            ])->first();
         }
 
         if (empty($this->fattura)) {
@@ -259,16 +258,15 @@ class Ricevuta
         $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];
         if ($this->xml['ListaErrori']['Errore']['Codice'] == 00404 && !empty($fattura->id_ricevuta_principale) && !in_array($fattura->codice_stato_fe, $codici_scarto)) {
             return;
-        } else {
-            $data = $this->xml['DataOraRicezione'];
-
-            $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime((string) $data)) : '';
-            $fattura->codice_stato_fe = $codice;
-            $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento : '');
-            $fattura->id_ricevuta_principale = $id_allegato;
-
-            $fattura->save();
         }
+        $data = $this->xml['DataOraRicezione'];
+
+        $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime((string) $data)) : '';
+        $fattura->codice_stato_fe = $codice;
+        $fattura->descrizione_ricevuta_fe = $descrizione.(!empty($suggerimento) ? '<br>'.$suggerimento : '');
+        $fattura->id_ricevuta_principale = $id_allegato;
+
+        $fattura->save();
     }
 
     /**

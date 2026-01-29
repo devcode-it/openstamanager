@@ -400,8 +400,8 @@ if (function_exists('customComponents')) {
     if ($has_view_data_issues) {
         foreach ($custom_views_not_standard as $view) {
             // Verifica se la reason inizia con "Vista modulo"
-            if (str_starts_with($view['reason'], 'Vista modulo ')) {
-                $view_premium_count++;
+            if (str_starts_with((string) $view['reason'], 'Vista modulo ')) {
+                ++$view_premium_count;
             } else {
                 match ($view['reason']) {
                     'Vista aggiuntiva' => $view_info_count++,
@@ -456,7 +456,7 @@ if (function_exists('customComponents')) {
 
         foreach ($custom_views_not_standard as $index => $view) {
             // Verifica se la reason inizia con "Vista modulo" per assegnare il badge blu
-            if (str_starts_with($view['reason'], 'Vista modulo ')) {
+            if (str_starts_with((string) $view['reason'], 'Vista modulo ')) {
                 $badge_class = 'badge-primary';
             } else {
                 $badge_class = match ($view['reason']) {
@@ -545,7 +545,7 @@ if (function_exists('customComponents')) {
         foreach ($custom_modules_not_standard as $modulo) {
             // Verifica se la reason è "Modulo Premium"
             if ($modulo['reason'] === 'Modulo Premium') {
-                $module_premium_count++;
+                ++$module_premium_count;
             } else {
                 match ($modulo['reason']) {
                     'Options modificato' => $module_warning_count++,
@@ -702,30 +702,31 @@ if (function_exists('customComponents')) {
 
             // Funzione per ottenere il nome del modulo dal file di riferimento appropriato
             if (!function_exists('getModuleNameFromReference')) {
-                function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data) {
+                function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data)
+                {
                     $module_name = $folder_name; // Default: usa il nome della cartella
-                    
+
                     // Verifica se esiste il file di riferimento
                     if (file_exists($reference_file)) {
                         $reference_contents = file_get_contents($reference_file);
                         $reference_data = json_decode($reference_contents, true);
-                        
+
                         if (!empty($reference_data) && is_array($reference_data)) {
                             foreach ($reference_data as $name => $module_info) {
                                 // Cerca una corrispondenza parziale o esatta
-                                if (stripos(strtolower($folder_name), strtolower($name)) !== false) {
+                                if (stripos(strtolower((string) $folder_name), strtolower((string) $name)) !== false) {
                                     $module_name = $name;
                                     break;
                                 }
                                 // Seconda prova: cerca se il nome del modulo (senza spazi) è contenuto nel nome della cartella
-                                if (stripos(strtolower($folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
+                                if (stripos(strtolower((string) $folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
                                     $module_name = $name;
                                     break;
                                 }
                             }
                         }
                     }
-                    
+
                     return $module_name;
                 }
             }
@@ -748,7 +749,7 @@ if (function_exists('customComponents')) {
                         // Estrai il nome della cartella dal percorso del file
                         $path_parts = explode('/', $database_json_file);
                         $folder_name = $path_parts[count($path_parts) - 2];
-                        
+
                         // Ottieni il nome del modulo dal file modules.json
                         $module_name = getModuleNameFromReference($modules_json_file, $folder_name, $modules_json_data);
 
@@ -912,7 +913,7 @@ if (function_exists('customComponents')) {
     $database_icon = $database_colors['icon'];
 
     $database_badge_html = Utils::generateBadgeHtml($database_danger_count, $database_warning_count, $database_info_count);
-    
+
     // Aggiungi badge per i campi premium
     if ($database_premium_count > 0) {
         $database_badge_html .= '<span class="badge badge-primary ml-2">'.$database_premium_count.'</span>';

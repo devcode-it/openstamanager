@@ -193,11 +193,11 @@ echo '
     </div>
     <div class="card-body">';
 
-		// Alert per configurazione impostazioni XML LIPE (solo per Liquidazione IVA)
-		if ($nome_stampa === 'Liquidazione IVA') {
-			$impostazioni_lipe = setting('Codice fiscale dichiarante') || setting('Codice fiscale intermediario') || setting('Identificativo software');
-			if (empty($impostazioni_lipe)) {
-				echo '
+// Alert per configurazione impostazioni XML LIPE (solo per Liquidazione IVA)
+if ($nome_stampa === 'Liquidazione IVA') {
+    $impostazioni_lipe = setting('Codice fiscale dichiarante') || setting('Codice fiscale intermediario') || setting('Identificativo software');
+    if (empty($impostazioni_lipe)) {
+        echo '
 		<div class="alert alert-warning">
 			<div class="row">
 				<div class="col-md-1 text-center d-flex align-items-center justify-content-center">
@@ -209,10 +209,10 @@ echo '
 				</div>
 			</div>
 		</div>';
-			}
-		}
+    }
+}
 
-		echo '
+echo '
         <div class="table-responsive">
             <table class="table table-hover table-striped">';
 

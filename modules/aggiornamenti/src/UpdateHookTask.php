@@ -58,20 +58,19 @@ class UpdateHookTask extends Manager
 
             if (empty($update) || empty(setting('Attiva aggiornamenti'))) {
                 return $result;
-            } else {
-                $module = Module::where('name', 'Aggiornamenti')->first();
-                $link = !empty($module) ? base_path_osm().'/controller.php?id_module='.$module->id : '#';
-
-                $result = [
-                    'response' => 2,
-                    'message' => tr("E' disponibile la versione _VERSION_ del gestionale", [
-                        '_VERSION_' => $update,
-                    ]),
-                    'link' => $link,
-                    'icon' => 'fa fa-download text-info',
-                    'show' => true,
-                ];
             }
+            $module = Module::where('name', 'Aggiornamenti')->first();
+            $link = !empty($module) ? base_path_osm().'/controller.php?id_module='.$module->id : '#';
+
+            $result = [
+                'response' => 2,
+                'message' => tr("E' disponibile la versione _VERSION_ del gestionale", [
+                    '_VERSION_' => $update,
+                ]),
+                'link' => $link,
+                'icon' => 'fa fa-download text-info',
+                'show' => true,
+            ];
         } catch (\Exception $e) {
             $result = [
                 'response' => 0,

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.10.0 (2026-02-03)](#210-2026-02-03)
 - [2.9.8 (2025-12-23)](#298-2025-12-23)
 - [2.9.7 (2025-12-09)](#297-2025-12-09)
 - [2.9.6 (2025-11-26)](#296-2025-11-26)
@@ -66,6 +67,122 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.10.0 (2026-02-03)
+### Aggiunto (Added)
+- Aggiunta variabile interventi {email_user} per gestione reply_to in email
+- Aggiunta gestione registrazione danni automezzi
+- Aggiunta esportazione xml per la liquidazione IVA
+- Aggiunta gestione tariffe tipi interventi in base alla sede cliente
+- Aggiunta registrazione contabile automatica in base al pagamento
+- Aggiunta bulk esportazione stampe viaggi automezzi
+- Aggiunta azione di gruppo per l'aggiornamento massivo degli agenti principali nelle anagrafiche
+- Aggiunta costi, margine e rincaro anche su contratti
+- Aggiunta impostazione unità di misura predefinita per aggiunta articoli
+- Aggiunta gestione controlli file e database per moduli aggiuntivi
+- Aggiunta gestione attivazione/disattivazione correttore ortografico editor
+- Aggiunta impostazione per nascondere il numero totale dei record delle tabelle
+- Aggiunta gestione importazione delle fatture elettroniche di acquisto in automatico e in modalità semplificata
+- Aggiunta duplicazione listino selezione anagrafiche collegate e azione di gruppo per aggiornare lo sconto
+- Aggiunta gestione sconto combinato nello sconto delle righe dei documenti e in stampa
+- Aggiunta selezione su campi da aggiornare da scheda articolo nelle righe dei documenti
+- Aggiunta scelta del tipo garanzia articolo con opzione giorni, mesi, anni
+- Aggiunta campo input per data inventario
+- Aggiunta gestione soft delete delle sedi
+- Aggiunta prevista opzione per nascondere i codici articolo in stampa contratti
+- Aggiunta gestione viaggi
+- Aggiunta gestione deleted_at sugli utenti per nascondere utenti eliminati dalla lista
+- Aggiunta pre-selezione barcode automatico alla creazione di un nuovo articolo
+- Aggiunta lingue vista sede destinazione in preventivi
+- Aggiunta colonna sede destinazione in vista preventivi
+- Aggiunto in controlli gestionale il controllo per i file .htaccess di sistema
+- Aggiunta la gestione del tecnico in modifica sessione
+- Aggiunta la gestione dell'inventario
+- Aggiunti e migliorati testi in inglese
+- Aggiunta api per la sincronizzazione dei movimenti fatti dal tecnico
+- Aggiunta aggiornamento api app per introduzione filtri gruppi e tipi anagrafiche nei tipi attività
+- Aggiunte API per Laravel
+- Aggiunto token di sessione per prevenire accessi multipli da parte dello stesso utente
+- Aggiunta sessioni tecnici multiple
+- Aggiunti header per moduli con accesso tramite token (anagrafiche e impianti)
+- Aggiunta gestione key in filelist upload
+- Aggiunta descrizione aggiuntiva personalizzata in fatturazione
+- Aggiunta btn-default su pulsanti copia-incolla
+- Aggiunto docker a dependabot
+- Aggiunta verifica automatica aggiornamenti npm e composer
+- Aggiunta attivazione del tasto copia su documenti bloccati
+- Aggiunta funzione copia/incolla delle righe tra i documenti
+- Aggiunta gestione stampa definitiva libro giornale e liquidazione IVA
+- Aggiunta calcolo provvigioni agenti su utile o ricavo
+- Aggiunta salvataggio sessioni via ajax
+- Aggiunta abilitazione dinamica pulsante "Azioni di gruppo"
+- Aggiunta conversione importazione dati aggiuntivi nelle fatture elettroniche
+- Aggiunto riferimento al numero secondario nei documenti
+- Aggiunta gestione data competenza nei documenti
+- Aggiunta introdotti limiti API distinti per autenticati e non autenticati con chiavi dedicate
+- Aggiunta valorizzazione dati_aggiuntivi_fe in importazione fatture acquisto
+- Aggiunta ottimizzazione indici articoli
+- Aggiunta API per la gestione delle notifiche
+- Aggiunta logging in zz_operations per cambio stato intervento e aggiunta sessione
+- Aggiunta gestione utenti in tipi attività
+- Aggiunta aggiunto rate limiting API con Illuminate RateLimiter e store su file
+- Aggiunta risorsa api per la gestione dei token fcm per l'invio di notifiche all'app
+- Aggiunta aggiunta protezione contro directory listing nella cartella files
+- Aggiunta api per la verifica di modifiche sui record per app
+- Aggiunta impostazione per consentire l'inserimento di allegati in attività completate
+- Aggiunta pulsante generazione etichetta impianto con creazione automatica di un accesso tramite token diretto o otp
+- Aggiunta azione di gruppo crea lista in anagrafiche
+- Aggiunta aggiunta tipo attività nelle variabili per attività
+- Aggiunta pulsante eliminazione per conti di livello 2
+- Aggiunta sistema di redirect post-login
+- Aggiunta tipo anagrafica in tipologie interventi
+- Aggiunta registrazione richieste API nei log delle operazioni
+- Aggiunta ripristino checklist impianti nelle attività
+- Aggiunta gestione ddt di rientro
+- Aggiunta inversione flag opt-out e azione di gruppo export
+- Aggiunta stampa barcode da righe ddt
+- Aggiunta lettura cron spazio sul disco in aggiunta ed eliminazione allegati
+- Aggiunta aggiunta controllo su cron
+- Aggiunta aggiunta iban e totale nei template email di fatture
+
+### Modificato (Changed)
+- Migliorata la gestione dei cespiti
+- Migliorati i permessi sul modulo Token OTP
+- Spostata la verifica dei permessi di upload/eliminazione allegati su classe
+- Spostati i flag dei moduli in zz_modules_flags
+- Allineamento requisiti workflow GitHub Actions
+- Miglioria grafica logs
+- Aggiornamento libreria ua-parser-js per gestione icone
+- Aggiornamento librerie (chart.js, hotkeys-js, jquery, protobufjs, smartwizard)
+
+### Fixed
+- Corretta iva calcolata su ritenuta in tabella riepilogo iva della stampa fattura
+- Corretta stampa fattura con dicitura iva che veniva impostata a centro pagina
+- Corretta navigabilità nella configurazione del database
+- Corretti gli avvisi in fase di login utente
+- Corretta visualizzazione cancel button default per swal
+- Corretta stampa sede in riepilogo interventi
+- Corretta data per calcolo progressivo contratto in duplicazione contratto anno precedente
+- Corretto utilizzo di insert ignore per evitare errore js in fase di modifica permessi utenti
+- Corretta correzione salvataggio firma
+- Corretta impostazione banca di accredito predefinita in fattura in base a impostazione specificata in anagrafica cliente
+- Corretto link alla documentazione
+- Corretta stampa registro iva acquisti per fatture a cavallo dell'anno
+- Corretto aggiornamento quantità da importazione articoli dove non è specificata la data
+- Corretta l'impostazione del giorno scadenza per regole pagamenti
+- Corretto percorso base_path
+- Corretta query installazione plugin
+- Corretta miglioria controllo su quantità in creazione documento, che viene ora abilitata in base all'impostazione Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita
+- Corretta esclusione controllo sulle quantità per i documenti con direzione uscita
+- Corretto raggruppamento righe per ordine in fase di selezione ordine da importare nei documenti
+- Corretta selezione banca addebito nel caso di pagamento tramite Ri.Ba.
+- Corretto calcolo quantità disponibile articoli in fase di generazione ddt da ordine
+- Corretto avviso per uscita da fattura di acquisto
+- Corretto calcolo arrotondamento in importazione fattura di acquisto se indicato in maniera errata nell'xml
+- Corretta importazione fatture con tipo documento e data registrazione mancanti in xml
+- Corretto refuso nome documento in creazione ddt da preventivo
+- Corretto script creazione immagine docker
+- Corretta prevenzione sql injection
 
 ## 2.9.8 (2025-12-23)
 ### Modificato (Changed)

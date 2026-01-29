@@ -102,8 +102,10 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $riga->iva);
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
+    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile + $riga->rivalsainps);
+    $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
+    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], ($v_totale[$r['desc_iva']] * $aliquota / 100));
+
 
     echo '
     <tr>

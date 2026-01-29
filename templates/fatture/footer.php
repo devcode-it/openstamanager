@@ -32,19 +32,17 @@ foreach ($righe as $riga) {
     $sconto += floatval($riga->sconto);
 }
 
-$imponibile = $totale_scontato + $sconto;
-
 $rivalsa = 0;
 foreach ($righe as $riga) {
     $rivalsa += floatval($riga->rivalsainps);
 }
-
-$totale_imponibile = $totale_scontato + $rivalsa;
+$imponibile = $totale_scontato + $sconto - $rivalsa;
+$totale_imponibile = $totale_scontato;
 
 $totale_iva = 0;
-foreach ($righe as $riga) {
-    $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
-    $totale_iva += $riga['iva'] + $riga['rivalsainps'] * $aliquota / 100;
+
+foreach ($v_iva as $key => $v) {
+    $totale_iva += $v;
 }
 
 $totale = $totale_iva + $totale_imponibile;

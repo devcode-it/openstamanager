@@ -59,7 +59,7 @@ foreach ($fields as $name => $value) {
 $query .= ' FROM an_anagrafiche WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 $query .= Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id);
@@ -101,10 +101,10 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 $rs = $dbo->fetchArray($query);
@@ -156,10 +156,10 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 $rs = $dbo->fetchArray($query);

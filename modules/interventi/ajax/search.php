@@ -59,12 +59,12 @@ $query .= ' FROM in_interventi
 
 $where = [];
 foreach ($fields as $name => $value) {
-    $where[] = $value.' LIKE "%'.$term.'%"';
+    $where[] = $value.' LIKE '.prepare('%'.$term.'%');
 }
 
 // Aggiunta ricerca negli articoli (con controllo NULL)
-$where[] = '(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli`.`codice` LIKE "%'.$term.'%")';
-$where[] = '(`mg_articoli_lang`.`title` IS NOT NULL AND `mg_articoli_lang`.`title` LIKE "%'.$term.'%")';
+$where[] = '(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').')';
+$where[] = '(`mg_articoli_lang`.`title` IS NOT NULL AND `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
 
 $query .= ' WHERE ('.implode(' OR ', $where).') ';
 

@@ -61,7 +61,7 @@ class Clienti extends AppResource
             $query .= '
                 AND an_anagrafiche.idanagrafica IN (
                     SELECT idanagrafica FROM in_interventi
-                    WHERE in_interventi.id IN ('.implode(',', $id_interventi).')
+                    WHERE in_interventi.id IN ('.implode(',', array_map('prepare', $id_interventi)).')
                 )';
         }
 

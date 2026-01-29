@@ -42,11 +42,11 @@ foreach ($fields as $name => $value) {
 $query .= ' FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `iddocumento`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM co_righe_documenti GROUP BY `iddocumento`) righe ON `righe`.`iddocumento`=`co_documenti`.`id` WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 // Aggiunta ricerca diretta negli articoli
-$query .= ' OR `co_documenti`.`id` IN (SELECT DISTINCT `co_righe_documenti`.`iddocumento` FROM `co_righe_documenti` LEFT JOIN `mg_articoli` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE "%'.$term.'%" OR `mg_articoli_lang`.`title` LIKE "%'.$term.'%")';
+$query .= ' OR `co_documenti`.`id` IN (SELECT DISTINCT `co_righe_documenti`.`iddocumento` FROM `co_righe_documenti` LEFT JOIN `mg_articoli` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
 
 $rs = $dbo->fetchArray($query);
 
@@ -82,7 +82,7 @@ foreach ($rs as $r) {
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori
-    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `co_righe_documenti`.`qta`, `co_righe_documenti`.`prezzo_unitario`, `co_righe_documenti`.`costo_unitario`, `co_righe_documenti`.`sconto`, `co_righe_documenti`.`subtotale` FROM co_righe_documenti LEFT JOIN `mg_articoli` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`iddocumento` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE "%'.$term.'%" OR `mg_articoli`.`codice` LIKE "%'.$term.'%" OR `mg_articoli_lang`.`title` LIKE "%'.$term.'%")';
+    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `co_righe_documenti`.`qta`, `co_righe_documenti`.`prezzo_unitario`, `co_righe_documenti`.`costo_unitario`, `co_righe_documenti`.`sconto`, `co_righe_documenti`.`subtotale` FROM co_righe_documenti LEFT JOIN `mg_articoli` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`iddocumento` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE '.prepare('%'.$term.'%').' OR `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
     $articoli_rs = $dbo->fetchArray($articoli_query);
 
     $articoli = [];

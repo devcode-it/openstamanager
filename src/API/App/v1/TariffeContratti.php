@@ -60,7 +60,7 @@ class TariffeContratti extends AppResource
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
-        WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', $id_contratti).')';
+        WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map('prepare', $id_contratti)).')';
 
         // Filtro per data
         if ($last_sync_at) {

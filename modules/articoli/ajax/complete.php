@@ -65,9 +65,9 @@ switch ($resource) {
                 FROM 
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
-                    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` 
-                WHERE 
-                    `idarticolo`='.$idarticolo.' AND 
+                    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+                WHERE
+                    `idarticolo`='.prepare($idarticolo).' AND
                     `dt_tipiddt`.`dir`="entrata" AND 
                     `idanagrafica`='.prepare($idanagrafica).'
             ORDER BY 

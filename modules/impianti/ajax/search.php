@@ -40,10 +40,10 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM my_impianti WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM my_impianti WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 $query .= Modules::getAdditionalsQuery(Module::where('name', 'Impianti')->first()->id);

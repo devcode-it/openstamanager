@@ -554,7 +554,7 @@ if ($structure->permission == 'rw') {
 
             // Eliminazione
             elseif (!empty($customs)) {
-                $dbo->query('DELETE FROM `zz_field_record` WHERE `id_record` = '.prepare($id_record).' AND `id_field` IN ('.implode(',', array_column($customs, 'id')).')');
+                $dbo->query('DELETE FROM `zz_field_record` WHERE `id_record` = '.prepare($id_record).' AND `id_field` IN ('.implode(',', array_map('prepare', array_column($customs, 'id'))).')');
             }
         }
     }

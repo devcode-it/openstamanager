@@ -58,7 +58,7 @@ class Checklists extends AppResource
                     INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
                 WHERE
                     `zz_modules`.`name` = "Interventi"
-                    AND `in_interventi`.`id` IN ('.implode(',', $interventi).')
+                    AND `in_interventi`.`id` IN ('.implode(',', array_map('prepare', $interventi)).')
                     OR (`orario_fine` NOT BETWEEN :period_start AND :period_end)';
 
                 $records = database()->fetchArray($query, [
@@ -79,7 +79,7 @@ class Checklists extends AppResource
                 WHERE
                     `zz_modules`.`name` = "Interventi"
                     AND `zz_check_user`.`id_utente` = :id_tecnico
-                    AND `in_interventi`.`id` IN ('.implode(',', $interventi).')
+                    AND `in_interventi`.`id` IN ('.implode(',', array_map('prepare', $interventi)).')
                     OR (`orario_fine` NOT BETWEEN :period_start AND :period_end)';
 
                 $records = database()->fetchArray($query, [
@@ -138,7 +138,7 @@ class Checklists extends AppResource
                 INNER JOIN `zz_check_user` ON `zz_checks`.`id` = `zz_check_user`.`id_check`
             WHERE
                 `zz_modules`.`name` = "Interventi"
-                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')';
+                AND `in_interventi`.`id` IN ('.implode(',', array_map('prepare', $id_interventi)).')';
 
             // Filtro per data
             if ($last_sync_at) {
@@ -159,7 +159,7 @@ class Checklists extends AppResource
             WHERE
                 `zz_modules`.`name` = "Interventi"
                 AND (`zz_check_user`.`id_utente` = :id_tecnico OR `zz_check_user`.`id_utente` IS NULL)
-                AND `in_interventi`.`id` IN ('.implode(',', $id_interventi).')';
+                AND `in_interventi`.`id` IN ('.implode(',', array_map('prepare', $id_interventi)).')';
 
             // Filtro per data
             if ($last_sync_at) {

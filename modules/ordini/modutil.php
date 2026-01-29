@@ -167,7 +167,7 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
             $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
             // Aggiorno la rivalsa inps
-            $dbo->query("UPDATE or_ordini SET rivalsainps='$rivalsainps' WHERE id=".prepare($idordine));
+            $dbo->query('UPDATE or_ordini SET rivalsainps='.prepare($rivalsainps).' WHERE id='.prepare($idordine));
 
             // Leggo la ritenuta d'acconto se c'è
             $totale_ordine = get_totale_ordine($idordine);
@@ -218,7 +218,7 @@ if (!function_exists('get_stato_ordine')) {
     {
         $dbo = database();
 
-        $rs_ordine = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='".$idordine."'");
+        $rs_ordine = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='.prepare($idordine));
         $qta_ordine = $rs_ordine[0]['qta'];
 
         // Righe dell'ordine in ddt
@@ -230,7 +230,7 @@ if (!function_exists('get_stato_ordine')) {
         $qta_fattura = $rs_fattura[0]['qta'];
 
         // Righe dell'ordine in fattura passando da ddt
-        $rs_ddt_fattura = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='".$idordine."')");
+        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='.prepare($idordine).')');
         $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
 
         if ($qta_ddt == 0) {

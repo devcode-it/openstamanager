@@ -489,7 +489,7 @@ switch ($resource) {
 
         // filtro in base alle sedi abilitate dell'utente
         if ($user->gruppo != 'Amministratori') {
-            $filter[] = '`id` IN('.implode(',', $user->sedi).')';
+            $filter[] = '`id` IN('.implode(',', array_map('prepare', $user->sedi)).')';
         }
 
         if (!empty($search)) {

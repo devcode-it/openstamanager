@@ -48,7 +48,7 @@ foreach ($fields as $name => $value) {
 $query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT CASE WHEN COUNT(`mg_articoli_barcode`.`barcode`) <= 2 THEN GROUP_CONCAT(`mg_articoli_barcode`.`barcode` SEPARATOR \',\') ELSE CONCAT((SELECT GROUP_CONCAT(`b1`.`barcode` SEPARATOR \',\') FROM (SELECT `barcode` FROM `mg_articoli_barcode` `b2` WHERE `b2`.`idarticolo` = `mg_articoli_barcode`.`idarticolo` ORDER BY `b2`.`barcode` ASC) `b1`)) END AS `lista`, `mg_articoli_barcode`.`idarticolo` FROM `mg_articoli` LEFT JOIN `mg_articoli_barcode` ON `mg_articoli_barcode`.`idarticolo` = `mg_articoli`.`id` GROUP BY `mg_articoli`.`id`) AS `barcode` ON `barcode`.`idarticolo` = `mg_articoli`.`id` WHERE deleted_at IS NULL AND (1=0 ';
 
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 $query .= ') GROUP BY `mg_articoli`.`id`';
 

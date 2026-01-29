@@ -138,7 +138,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
         $dbo = database();
 
         // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-        $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
+        $query = 'SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='.prepare($idddt);
         $rs = $dbo->fetchArray($query);
         if ($rs[0]['righe'] > 0) {
             $totale_imponibile = get_imponibile_ddt($idddt);
@@ -146,7 +146,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             // Leggo gli id dei costi aggiuntivi
             if ($dir == 'uscita') {
-                $query2 = "SELECT idrivalsainps, idritenutaacconto, bollo FROM dt_ddt WHERE id='$idddt'";
+                $query2 = 'SELECT idrivalsainps, idritenutaacconto, bollo FROM dt_ddt WHERE id='.prepare($idddt);
                 $rs2 = $dbo->fetchArray($query2);
                 $idrivalsainps = $rs2[0]['idrivalsainps'];
                 $idritenutaacconto = $rs2[0]['idritenutaacconto'];
@@ -160,7 +160,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 }
             }
 
-            $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
+            $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
@@ -169,7 +169,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
             $iva_rivalsainps = $rivalsainps / 100 * $qi;
 
             // Aggiorno la rivalsa inps
-            $dbo->query("UPDATE dt_ddt SET rivalsainps='$rivalsainps', iva_rivalsainps='$iva_rivalsainps' WHERE id='$idddt'");
+            $dbo->query('UPDATE dt_ddt SET rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).' WHERE id='.prepare($idddt));
 
             $totale_ddt = get_totale_ddt($idddt);
 
@@ -180,7 +180,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 }
             }
 
-            $query = "SELECT percentuale FROM co_ritenutaacconto WHERE id='".$idritenutaacconto."'";
+            $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
             $rs = $dbo->fetchArray($query);
             $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
             $netto_a_pagare = $totale_ddt - $ritenutaacconto;
@@ -201,9 +201,9 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 $marca_da_bollo = 0.00;
             }
 
-            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='$ritenutaacconto', bollo='$marca_da_bollo' WHERE id='$idddt'");
+            $dbo->query('UPDATE dt_ddt SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($idddt));
         } else {
-            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id='$idddt'");
+            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id=".prepare($idddt));
         }
     }
 }

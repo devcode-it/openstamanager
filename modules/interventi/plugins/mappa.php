@@ -86,7 +86,7 @@ if (get('op') == 'getmappa') {
 
             $stringa_content .= str_replace("'", '', '<big><b>'.$rs[0]['ragione_sociale'].'</b></big><br>'.$rs[0]['indirizzo'].', '.$rs[0]['cap'].', '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')'.($rs[0]['telefono'] != '' ? '<br><i class="fa fa-phone"></i> &nbsp;'.$rs[0]['telefono'] : '').($rs[0]['email'] != '' ? '<br><i class="fa fa-envelope"></i> &nbsp;'.$rs[0]['email'] : '').'<br>');
 
-            $altri_interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE idsede_destinazione='.prepare($id_sede).' AND idanagrafica='.prepare($val).' AND id IN ('.implode(',', array_column($rs1, 'id')).')');
+            $altri_interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE idsede_destinazione='.prepare($id_sede).' AND idanagrafica='.prepare($val).' AND id IN ('.implode(',', array_map('prepare', array_column($rs1, 'id'))).')');
             for ($j = 0; $j < sizeof($altri_interventi); ++$j) {
                 $stringa_content .= str_replace("'", '', '<br> <a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$altri_interventi[$j]['id'].'">Intervento numero: '.$altri_interventi[$j]['codice'].' del '.date('d/m/Y', strtotime((string) $altri_interventi[$j]['data_richiesta'])).'</a>');
             }

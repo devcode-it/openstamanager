@@ -91,11 +91,11 @@ $query = "
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
         LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
-    WHERE 
+    WHERE
         ".$where.'
-        `idtecnico` IN('.implode(',', $tecnici).') AND
-        `in_interventi`.`idstatointervento` IN('.implode(',', $stati).') AND
-        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
+        `idtecnico` IN('.implode(',', array_map('prepare', $tecnici)).') AND
+        `in_interventi`.`idstatointervento` IN('.implode(',', array_map('prepare', $stati)).') AND
+        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', array_map('prepare', $tipi)).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
     GROUP BY 
         `in_interventi`.`id`, data';
 

@@ -588,8 +588,8 @@ class Fattura extends Document
 
         parent::save($options);
 
-        $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
         $this->id_riga_spese_incasso = $this->manageRigaSpeseIncasso();
+        $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
@@ -737,6 +737,10 @@ class Fattura extends Document
 
     public function manageRigaSpeseIncasso()
     {
+        if ($this->tipo->dir == 'uscita') {
+            return null;
+        }
+
         $riga = $this->rigaSpeseIncasso;
         $first_riga_fattura = $this->getRighe()->where('id', '!=', $riga->id)->where('is_descrizione', '0')->first();
 

@@ -498,6 +498,22 @@ class Update
         return $modules;
     }
 
+    public static function getWidgets()
+    {
+        $widgets_all = database()->fetchArray('SELECT zw.`name`, zw.`id_module`, zw.`query`, zm.`name` as module_name FROM `zz_widgets` zw LEFT JOIN `zz_modules` zm ON zw.`id_module` = zm.`id`');
+
+        foreach ($widgets_all as $widget) {
+            $module_key = $widget['module_name'] ?: 'module_'.$widget['id_module'];
+
+            // Normalizza la query rimuovendo i tag HTML di rumore per il confronto standard
+            $normalized_query = !empty($widget['query']) ? self::normalizeViewQuery($widget['query']) : null;
+
+            $widgets[$module_key][$widget['name']] = $normalized_query;
+        }
+
+        return $widgets;
+    }
+
     /**
      * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
      */

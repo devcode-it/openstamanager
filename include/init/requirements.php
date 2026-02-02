@@ -345,6 +345,7 @@ $files_to_check = [
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),
     'views.json' => tr('Necessario per il controllo delle viste del database'),
+    'widgets.json' => tr('Necessario per il controllo dei widgets del database'),
     'modules.json' => tr('Necessario per il controllo dei moduli del database'),
 ];
 

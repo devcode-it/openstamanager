@@ -97,6 +97,67 @@ class IntegrityChecker
     }
 
     /**
+     * Calcola le differenze per i widgets.
+     *
+     * @param array $expected Widgets attesi
+     * @param array $current  Widgets attuali
+     *
+     * @return array Array delle differenze
+     */
+    public static function widgetsDiff($expected, $current)
+    {
+        $difference = [];
+
+        foreach ($expected as $module_key => $module_widgets) {
+            if (is_array($module_widgets)) {
+                foreach ($module_widgets as $widget_name => $expected_query) {
+                    $current_query = $current[$module_key][$widget_name] ?? null;
+                    if ($current_query !== $expected_query) {
+                        $difference[$module_key][$widget_name] = [
+                            'current' => $current_query,
+                            'expected' => $expected_query,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $difference;
+    }
+
+    /**
+     * Calcola i widgets aggiunti (presenti in current ma non in expected).
+     *
+     * @param array $current  Widgets attuali
+     * @param array $expected Widgets attesi
+     *
+     * @return array Array dei widgets aggiunti
+     */
+    public static function widgetsAdded($current, $expected)
+    {
+        $added = [];
+
+        foreach ($current as $module_key => $module_widgets) {
+            if (is_array($module_widgets)) {
+                foreach ($module_widgets as $widget_name => $current_query) {
+                    // Verifica se il widget esiste negli expected (incluso con query null)
+                    $widget_exists_in_expected = isset($expected[$module_key]) && array_key_exists($widget_name, $expected[$module_key]);
+                    
+                    if (!$widget_exists_in_expected) {
+                        // Il widget esiste nel current ma non nell'expected → è un widget non previsto
+                        $added[$module_key][$widget_name] = [
+                            'current' => $current_query,
+                            'expected' => null,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $added;
+    }
+
+    /**
      * Normalizza le opzioni del modulo per il confronto.
      *
      * @param mixed $options Opzioni da normalizzare

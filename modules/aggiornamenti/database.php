@@ -24,9 +24,6 @@ use Models\OperationLog;
 use Modules\Aggiornamenti\IntegrityChecker;
 use Modules\Aggiornamenti\Utils;
 
-// Aggiunta della classe per il modulo
-echo '<div class="module-aggiornamenti">';
-
 $query_conflitti = [];
 
 function saveQueriesToSession($queries)
@@ -259,32 +256,395 @@ try {
     return;
 }
 
-$contents = file_get_contents(base_dir().'/settings.json');
-$data_settings = json_decode($contents, true);
+// Funzione helper per raggruppare gli errori per tabella
+function groupErrorsByTable($results, $results_added, $premium_fields, $data)
+{
+    $grouped = [];
 
-// Carica e accoda le impostazioni dai file settings.json presenti nelle sottocartelle di modules/
-$modules_dir = base_dir().'/modules/';
-$settings_json_files = glob($modules_dir.'*/settings.json');
+    // Processa i risultati principali (campi mancanti/modificati)
+    if ($results) {
+        foreach ($results as $table => $errors) {
+            if (!isset($grouped[$table])) {
+                $grouped[$table] = [
+                    'campi_mancanti' => [],
+                    'campi_modificati' => [],
+                    'campi_non_previsti' => [],
+                    'chiavi_mancanti' => [],
+                    'chiavi_non_previste' => [],
+                    'chiavi_esterne_mancanti' => [],
+                    'chiavi_esterne_non_previste' => [],
+                    'chiavi_esterne_modificate' => [],
+                    'tabella_assente' => false,
+                ];
+            }
 
-if (!empty($settings_json_files)) {
-    foreach ($settings_json_files as $settings_json_file) {
-        $settings_contents = file_get_contents($settings_json_file);
-        $settings_data = json_decode($settings_contents, true);
+            // Verifica se la tabella è assente
+            if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                $grouped[$table]['tabella_assente'] = true;
+                continue;
+            }
 
-        if (!empty($settings_data) && is_array($settings_data)) {
-            // Accoda le impostazioni del modulo a quelle principali
-            $data_settings = array_merge($data_settings, $settings_data);
+            $foreign_keys = $errors['foreign_keys'] ?? [];
+            unset($errors['foreign_keys']);
+
+            // Processa i campi
+            foreach ($errors as $name => $diff) {
+                // Salta i campi premium
+                if (isset($premium_fields[$table][$name])) {
+                    continue;
+                }
+
+                if (array_key_exists('key', $diff)) {
+                    if ($diff['key']['expected'] == '') {
+                        $grouped[$table]['chiavi_non_previste'][$name] = $diff;
+                    } else {
+                        $grouped[$table]['chiavi_mancanti'][$name] = $diff;
+                    }
+                } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
+                    $grouped[$table]['campi_mancanti'][$name] = $diff;
+                } else {
+                    $grouped[$table]['campi_modificati'][$name] = $diff;
+                }
+            }
+
+            // Processa le chiavi esterne
+            $expected_fks = $data[$table]['foreign_keys'] ?? [];
+            foreach ($foreign_keys as $name => $diff) {
+                if (is_array($diff) && isset($diff['expected'])) {
+                    $grouped[$table]['chiavi_esterne_mancanti'][$name] = $diff;
+                } elseif (is_array($diff) && isset($diff['current'])) {
+                    if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
+                        $grouped[$table]['chiavi_esterne_non_previste'][$name] = $diff;
+                    }
+                } else {
+                    $grouped[$table]['chiavi_esterne_modificate'][$name] = $diff;
+                }
+            }
         }
     }
+
+    // Processa i risultati aggiunti (campi non previsti)
+    if ($results_added) {
+        foreach ($results_added as $table => $errors) {
+            if (!isset($grouped[$table])) {
+                $grouped[$table] = [
+                    'campi_mancanti' => [],
+                    'campi_modificati' => [],
+                    'campi_non_previsti' => [],
+                    'chiavi_mancanti' => [],
+                    'chiavi_non_previste' => [],
+                    'chiavi_esterne_mancanti' => [],
+                    'chiavi_esterne_non_previste' => [],
+                    'chiavi_esterne_modificate' => [],
+                    'tabella_assente' => false,
+                ];
+            }
+
+            $foreign_keys = $errors['foreign_keys'] ?? [];
+            unset($errors['foreign_keys']);
+
+            // Processa i campi non previsti
+            foreach ($errors as $name => $diff) {
+                if (!isset($results[$table][$name])) {
+                    if (isset($diff['key'])) {
+                        // Chiave non prevista
+                        if (!isset($premium_fields[$table][$name])) {
+                            $grouped[$table]['chiavi_non_previste'][$name] = $diff;
+                        }
+                    } elseif ($name != 'foreign_keys') {
+                        // Campo non previsto
+                        if (!isset($premium_fields[$table][$name])) {
+                            $grouped[$table]['campi_non_previsti'][$name] = $diff;
+                        }
+                    }
+                }
+            }
+
+            // Processa le chiavi esterne non previste
+            $expected_fks = $data[$table]['foreign_keys'] ?? [];
+            foreach ($foreign_keys as $name => $diff) {
+                if (is_array($diff) && isset($diff['current'])) {
+                    if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
+                        $grouped[$table]['chiavi_esterne_non_previste'][$name] = $diff;
+                    }
+                }
+            }
+        }
+    }
+
+    return $grouped;
 }
 
-$settings = Update::getSettings();
-$results_settings = settings_diff($data_settings, $settings);
-$results_settings_added = settings_diff($settings, $data_settings);
+// Funzione helper per generare la query SQL per un campo mancante
+function generateAddFieldQuery($table, $name, $data)
+{
+    $query = 'ALTER TABLE `'.$table.'` ADD `'.$name.'` '.$data[$table][$name]['type'];
 
-if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
-    if ($results) {
-        echo '
+    if ($data[$table][$name]['null'] == 'NO') {
+        $query .= ' NOT NULL';
+    } else {
+        $query .= ' NULL';
+    }
+
+    if ($data[$table][$name]['default']) {
+        $query .= ' DEFAULT '.$data[$table][$name]['default'];
+    }
+
+    if ($data[$table][$name]['extra']) {
+        $query .= ' '.str_replace('DEFAULT_GENERATED', '', $data[$table][$name]['extra']);
+    }
+
+    return $query.';';
+}
+
+// Funzione helper per generare la query SQL per un campo modificato
+function generateModifyFieldQuery($table, $name, $data)
+{
+    $query = 'ALTER TABLE `'.$table.'` CHANGE `'.$name.'` `'.$name.'` '.$data[$table][$name]['type'];
+
+    if ($data[$table][$name]['null'] == 'NO') {
+        $null = ' NOT NULL';
+    } else {
+        $null = ' NULL';
+    }
+    $query .= str_replace('DEFAULT_GENERATED', ' ', ' '.$data[$table][$name]['extra']).' '.$null;
+    if ($data[$table][$name]['default']) {
+        $query .= ' DEFAULT '.$data[$table][$name]['default'];
+    }
+
+    return $query.';';
+}
+
+// Funzione helper per generare la query SQL per una chiave esterna mancante
+function generateAddForeignKeyQuery($table, $name, $diff)
+{
+    return 'ALTER TABLE '.$table.' ADD CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';';
+}
+
+// Funzione helper per generare la query SQL per una chiave esterna non prevista
+function generateDropForeignKeyQuery($table, $name)
+{
+    return 'ALTER TABLE '.$table.' DROP FOREIGN KEY '.$name.';';
+}
+
+// Funzione helper per renderizzare una riga della tabella
+function renderTableRow($name, $badge_text, $badge_color, $query, $is_premium = false, $module_name = '')
+{
+    if ($is_premium) {
+        $badge_html = '<span class="badge badge-primary">Campo modulo '.$module_name.'</span>';
+    } else {
+        $badge_html = '<span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>';
+    }
+
+    return '
+        <tr>
+            <td class="column-name">'.$name.'</td>
+            <td class="text-center">'.$badge_html.'</td>
+            <td class="column-conflict">'.$query.'</td>
+        </tr>';
+}
+
+// Funzione helper per renderizzare una sezione di errori
+function renderErrorSection($title, $items, $table, $data, &$query_conflitti, $error_type, $premium_fields = [])
+{
+    if (empty($items)) {
+        return '';
+    }
+
+    $html = '
+        <div class="error-subsection mt-3">
+            <h6 class="text-'.$error_type['color'].'"><i class="fa fa-'.$error_type['icon'].'"></i> '.$title.' ('.count($items).')</h6>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>'.tr('Campo').'</th>
+                            <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
+                            <th>'.tr('Soluzione').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($items as $name => $diff) {
+        $query = '';
+        $badge_text = '';
+        $badge_color = $error_type['color'];
+
+        switch ($error_type['type']) {
+            case 'campo_mancante':
+                $query = generateAddFieldQuery($table, $name, $data);
+                $query_conflitti[] = $query;
+                $badge_text = 'Campo mancante';
+                break;
+            case 'campo_modificato':
+                $query = generateModifyFieldQuery($table, $name, $data);
+                $query_conflitti[] = $query;
+                $badge_text = 'Campo modificato';
+                break;
+            case 'campo_non_previsto':
+                $query = '';
+                $badge_text = 'Campo non previsto';
+                break;
+            case 'chiave_mancante':
+                $query = 'Chiave mancante';
+                $badge_text = 'Chiave mancante';
+                break;
+            case 'chiave_non_prevista':
+                $query = 'Chiave non prevista';
+                $badge_text = 'Chiave non prevista';
+                break;
+            case 'chiave_esterna_mancante':
+                $query = generateAddForeignKeyQuery($table, $name, $diff);
+                $query_conflitti[] = $query;
+                $badge_text = 'Chiave esterna mancante';
+                break;
+            case 'chiave_esterna_non_prevista':
+                if (is_array($diff['current'])) {
+                    $query = generateDropForeignKeyQuery($table, $name);
+                    $query_conflitti[] = $query;
+                } else {
+                    $query = 'Chiave esterna non prevista';
+                }
+                $badge_text = 'Chiave esterna non prevista';
+                break;
+            case 'chiave_esterna_modificata':
+                $query = 'Chiave esterna modificata';
+                $badge_text = 'Chiave esterna modificata';
+                break;
+        }
+
+        $html .= renderTableRow($name, $badge_text, $badge_color, $query);
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </div>';
+
+    return $html;
+}
+
+// Funzione helper per renderizzare una tabella unificata per tutti gli errori di una tabella
+function renderUnifiedTable($errors, $table, $data, &$query_conflitti)
+{
+    $html = '
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th>'.tr('Campo').'</th>
+                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
+                        <th>'.tr('Soluzione').'</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+    // Combina tutti gli errori in un unico array con il tipo
+    $all_errors = [];
+
+    // Campi mancanti
+    foreach ($errors['campi_mancanti'] ?? [] as $name => $diff) {
+        $query = generateAddFieldQuery($table, $name, $data);
+        $query_conflitti[] = $query;
+        $all_errors[$name] = [
+            'type' => 'danger',
+            'text' => 'Campo mancante',
+            'query' => $query,
+        ];
+    }
+
+    // Campi modificati
+    foreach ($errors['campi_modificati'] ?? [] as $name => $diff) {
+        $query = generateModifyFieldQuery($table, $name, $data);
+        $query_conflitti[] = $query;
+        $all_errors[$name] = [
+            'type' => 'warning',
+            'text' => 'Campo modificato',
+            'query' => $query,
+        ];
+    }
+
+    // Campi non previsti
+    foreach ($errors['campi_non_previsti'] ?? [] as $name => $diff) {
+        $all_errors[$name] = [
+            'type' => 'info',
+            'text' => 'Campo non previsto',
+            'query' => '',
+        ];
+    }
+
+    // Chiavi mancanti
+    foreach ($errors['chiavi_mancanti'] ?? [] as $name => $diff) {
+        $all_errors[$name] = [
+            'type' => 'danger',
+            'text' => 'Chiave mancante',
+            'query' => 'Chiave mancante',
+        ];
+    }
+
+    // Chiavi non previste
+    foreach ($errors['chiavi_non_previste'] ?? [] as $name => $diff) {
+        $all_errors[$name] = [
+            'type' => 'info',
+            'text' => 'Chiave non prevista',
+            'query' => 'Chiave non prevista',
+        ];
+    }
+
+    // Chiavi esterne mancanti
+    foreach ($errors['chiavi_esterne_mancanti'] ?? [] as $name => $diff) {
+        $query = generateAddForeignKeyQuery($table, $name, $diff);
+        $query_conflitti[] = $query;
+        $all_errors[$name] = [
+            'type' => 'danger',
+            'text' => 'Chiave esterna mancante',
+            'query' => $query,
+        ];
+    }
+
+    // Chiavi esterne non previste
+    foreach ($errors['chiavi_esterne_non_previste'] ?? [] as $name => $diff) {
+        if (is_array($diff['current'])) {
+            $query = generateDropForeignKeyQuery($table, $name);
+            $query_conflitti[] = $query;
+        } else {
+            $query = 'Chiave esterna non prevista';
+        }
+        $all_errors[$name] = [
+            'type' => 'info',
+            'text' => 'Chiave esterna non prevista',
+            'query' => $query,
+        ];
+    }
+
+    // Chiavi esterne modificate
+    foreach ($errors['chiavi_esterne_modificate'] ?? [] as $name => $diff) {
+        $all_errors[$name] = [
+            'type' => 'warning',
+            'text' => 'Chiave esterna modificata',
+            'query' => 'Chiave esterna modificata',
+        ];
+    }
+
+    // Renderizza tutte le righe
+    foreach ($all_errors as $name => $error) {
+        $html .= renderTableRow($name, $error['text'], $error['type'], $error['query']);
+    }
+
+    $html .= '
+                </tbody>
+            </table>
+        </div>';
+
+    return $html;
+}
+
+// Raggruppa gli errori per tabella
+$grouped_errors = groupErrorsByTable($results, $results_added, $premium_fields, $data);
+
+if (!empty($grouped_errors)) {
+    echo '
 <div>
     <div class="alert alert-warning">
         <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
@@ -295,68 +655,22 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     </div>
 </div>';
 
-        foreach ($results as $table => $errors) {
-            $error_count = 0;
-            $danger_count = 0;
-            $warning_count = 0;
-            $info_count = 0;
-            $foreign_keys = $errors['foreign_keys'] ?: [];
-            unset($errors['foreign_keys']);
+    foreach ($grouped_errors as $table => $errors) {
+        // Calcola i conteggi
+        $danger_count = count($errors['campi_mancanti'] ?? []) + count($errors['chiavi_mancanti'] ?? []) + count($errors['chiavi_esterne_mancanti'] ?? []);
+        $warning_count = count($errors['campi_modificati'] ?? []) + count($errors['chiavi_esterne_modificate'] ?? []);
+        $info_count = count($errors['campi_non_previsti'] ?? []) + count($errors['chiavi_non_previste'] ?? []) + count($errors['chiavi_esterne_non_previste'] ?? []);
+        $error_count = $danger_count + $warning_count + $info_count;
 
-            if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                $error_count = 1;
-                $danger_count = 1;
-            } else {
-                // Conta i tipi di errori (escludendo i campi premium)
-                foreach ($errors as $name => $diff) {
-                    if ($name === 'foreign_keys') {
-                        continue;
-                    }
-                    // Verifica se il campo proviene da un modulo premium
-                    if (isset($premium_fields[$table][$name])) {
-                        // Salta i campi premium - verranno mostrati nella sezione "Campi modulo premium"
-                        continue;
-                    }
-                    if (array_key_exists('key', $diff)) {
-                        if ($diff['key']['expected'] == '') {
-                            ++$info_count;
-                        } else {
-                            ++$danger_count;
-                        }
-                    } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                        ++$danger_count;
-                    } else {
-                        ++$warning_count;
-                    }
-                }
+        // Salta se non ci sono errori
+        if ($error_count == 0) {
+            continue;
+        }
 
-                // Conta le chiavi esterne
-                foreach ($foreign_keys as $name => $diff) {
-                    if (is_array($diff) && isset($diff['expected'])) {
-                        ++$danger_count;
-                    } elseif (is_array($diff) && isset($diff['current'])) {
-                        // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                        $expected_fks = $data[$table]['foreign_keys'] ?? [];
-                        if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
-                            ++$info_count;
-                        }
-                    } else {
-                        ++$warning_count;
-                    }
-                }
+        $badge_html = Utils::generateBadgeHtml($danger_count, $warning_count, $info_count);
+        $border_color = Utils::determineBorderColor($danger_count, $warning_count);
 
-                $error_count = $danger_count + $warning_count + $info_count;
-            }
-
-            // Non mostrare la sezione se non ci sono errori da visualizzare
-            if ($error_count == 0) {
-                continue;
-            }
-
-            $badge_html = Utils::generateBadgeHtml($danger_count, $warning_count, $info_count);
-            $border_color = Utils::determineBorderColor($danger_count, $warning_count);
-
-            echo '
+        echo '
 <div class="mb-3">
     <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header" style="border-left-color: '.$border_color.';" onclick="$(this).next().slideToggle();">
         <div>
@@ -367,544 +681,47 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
     </div>
     <div class="module-aggiornamenti db-section-content" style="display: none;">';
 
-            if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                echo '
+        // Se la tabella è assente
+        if ($errors['tabella_assente']) {
+            echo '
         <div class="alert alert-danger alert-database mb-2"><i class="fa fa-times"></i> '.tr('Tabella assente').'
         </div>';
-            } else {
-                // Calcola il numero di errori non premium prima di mostrare la tabella
-                $non_premium_errors = 0;
-                foreach ($errors as $name => $diff) {
-                    if ($name === 'foreign_keys') {
-                        continue;
-                    }
-                    // Verifica se il campo proviene da un modulo premium
-                    if (!isset($premium_fields[$table][$name])) {
-                        ++$non_premium_errors;
-                    }
-                }
-
-                if ($non_premium_errors > 0 || !empty($foreign_keys)) {
-                    echo '
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-sm">
-                <thead class="thead-light">
-                    <tr>
-                        <th>'.tr('Campo').'</th>
-                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
-                        <th>'.tr('Soluzione').'</th>
-                    </tr>
-                </thead>
-
-                <tbody>';
-                    foreach ($errors as $name => $diff) {
-                        if ($name === 'foreign_keys') {
-                            continue;
-                        }
-                        // Verifica se il campo proviene da un modulo premium
-                        if (isset($premium_fields[$table][$name])) {
-                            // Salta i campi premium - verranno mostrati nella sezione "Campi modulo premium"
-                            continue;
-                        }
-                        $query = '';
-                        $null = '';
-                        $badge_text = '';
-                        $badge_color = '';
-
-                        if (array_key_exists('key', $diff)) {
-                            if ($diff['key']['expected'] == '') {
-                                $query = 'Chiave non prevista';
-                                $badge_text = 'Chiave non prevista';
-                                $badge_color = 'info';
-                            } else {
-                                $query = 'Chiave mancante';
-                                $badge_text = 'Chiave mancante';
-                                $badge_color = 'danger';
-                            }
-                        } elseif ($diff['current'] && array_key_exists('current', $diff['default']) && is_null($diff['default']['current'])) {
-                            $query = 'ALTER TABLE `'.$table.'` ADD `'.$name.'` '.$data[$table][$name]['type'];
-
-                            if ($data[$table][$name]['null'] == 'NO') {
-                                $query .= ' NOT NULL';
-                            } else {
-                                $query .= ' NULL';
-                            }
-
-                            if ($data[$table][$name]['default']) {
-                                $query .= ' DEFAULT '.$data[$table][$name]['default'];
-                            }
-
-                            if ($data[$table][$name]['extra']) {
-                                $query .= ' '.str_replace('DEFAULT_GENERATED', '', $data[$table][$name]['extra']);
-                            }
-
-                            $query_conflitti[] = $query.';';
-                            $badge_text = 'Campo mancante';
-                            $badge_color = 'danger';
-                        } else {
-                            $query .= 'ALTER TABLE `'.$table;
-
-                            if (array_key_exists('current', $diff) && is_null($diff['current'])) {
-                                $query .= '` ADD `'.$name.'`';
-                                $badge_text = 'Campo mancante';
-                                $badge_color = 'danger';
-                            } else {
-                                $query .= '` CHANGE `'.$name.'` `'.$name.'` ';
-                                $badge_text = 'Campo modificato';
-                                $badge_color = 'warning';
-                            }
-
-                            $query .= $data[$table][$name]['type'];
-
-                            if ($data[$table][$name]['null'] == 'NO') {
-                                $null = ' NOT NULL';
-                            } else {
-                                $null = ' NULL';
-                            }
-                            $query .= str_replace('DEFAULT_GENERATED', ' ', ' '.$data[$table][$name]['extra']).' '.$null;
-                            if ($data[$table][$name]['default']) {
-                                $query .= ' DEFAULT '.$data[$table][$name]['default'];
-                            }
-
-                            $query_conflitti[] = $query.';';
-                        }
-
-                        echo '
-        <tr>
-            <td class="column-name">
-                '.$name.'
-            </td>
-            <td class="text-center">
-                <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-            </td>
-            <td class="column-conflict">
-                '.$query.'
-            </td>
-        </tr>';
-                    }
-
-                    foreach ($foreign_keys as $name => $diff) {
-                        $query = '';
-                        $fk_name = $name;
-                        $badge_text = '';
-                        $badge_color = '';
-
-                        // Gestione delle chiavi esterne
-                        if (is_array($diff) && isset($diff['expected'])) {
-                            // Chiave esterna mancante (presente in expected ma non in current)
-                            if (is_array($diff['expected'])) {
-                                $query = 'ALTER TABLE '.$table.' ADD CONSTRAINT '.$name.' FOREIGN KEY ('.$diff['expected']['column'].') REFERENCES '.$diff['expected']['referenced_table'].'(`'.$diff['expected']['referenced_column'].'`) ON DELETE '.$diff['expected']['delete_rule'].' ON UPDATE '.$diff['expected']['update_rule'].';';
-                                $query_conflitti[] = $query;
-                                $badge_text = 'Chiave esterna mancante';
-                                $badge_color = 'danger';
-                            }
-                        } elseif (is_array($diff) && isset($diff['current'])) {
-                            // Chiave esterna in più (presente in current ma non in expected)
-                            // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                            $expected_fks = $data[$table]['foreign_keys'] ?? [];
-                            if (IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
-                                // La chiave esterna esiste per contenuto, non segnalarla come non prevista
-                                continue;
-                            }
-                            $query = 'Chiave esterna non prevista';
-                            $badge_text = 'Chiave esterna non prevista';
-                            $badge_color = 'info';
-                        } else {
-                            // Chiave esterna modificata
-                            $query = 'Chiave esterna modificata';
-                            $badge_text = 'Chiave esterna modificata';
-                            $badge_color = 'warning';
-                        }
-
-                        echo '
-        <tr>
-            <td class="column-name">
-                '.$fk_name.'
-            </td>
-            <td class="text-center">
-                <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-            </td>
-            <td class="column-conflict">
-                '.$query.'
-            </td>
-        </tr>';
-                    }
-
-                    echo '
-                </tbody>
-            </table>
-        </div>';
-                }
-            }
-
-            echo '
-    </div>
-</div>';
-        }
-    }
-
-    if ($results_added) {
-        foreach ($results_added as $table => $errors) {
-            if (($results[$table] && array_keys($results[$table]) != array_keys($errors)) || (empty($results[$table]) && !empty($errors))) {
-                $has_content = false;
-
-                $table_not_expected = array_key_exists('current', $errors) && $errors['current'] == null;
-
-                $has_keys = false;
-                foreach ($errors as $name => $diff) {
-                    if ($name != 'foreign_keys' && !isset($results[$table][$name]) && isset($diff['key'])) {
-                        $has_keys = true;
-                        break;
-                    }
-                }
-
-                $foreign_keys = $errors['foreign_keys'] ?: [];
-
-                // Calcola il conteggio corretto includendo tutti i tipi di errori
-                $keys_count = ($has_keys ? count(array_filter($errors, fn ($e) => isset($e['key']))) : 0);
-
-                // Filtra le chiavi esterne che esistono per contenuto
-                $expected_fks = $data[$table]['foreign_keys'] ?? [];
-                $foreign_keys_count = 0;
-                foreach ($foreign_keys as $name => $diff) {
-                    if (is_array($diff) && isset($diff['current'])) {
-                        // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                        if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
-                            ++$foreign_keys_count;
-                        }
-                    } else {
-                        ++$foreign_keys_count;
-                    }
-                }
-
-                // Conta i campi non previsti (escludendo le chiavi, le chiavi esterne e i campi premium)
-                $fields_count = 0;
-                foreach ($errors as $name => $diff) {
-                    if ($name != 'foreign_keys' && !isset($diff['key']) && !isset($results[$table][$name])) {
-                        // Non contare i campi premium (verranno mostrati in una sezione separata)
-                        if (!isset($premium_fields[$table][$name])) {
-                            ++$fields_count;
-                        }
-                    }
-                }
-
-                $error_count = $keys_count + $foreign_keys_count + $fields_count;
-
-                // Mostra la sezione solo se ci sono errori reali (escludendo i campi premium)
-                if ($error_count > 0) {
-                    echo '
-<div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" onclick="$(this).next().slideToggle();">
-        <div>
-            <strong>'.$table.'</strong>
-            <span class="badge badge-info ml-2">'.$error_count.'</span>
-        </div>
-        <i class="fa fa-chevron-down"></i>
-    </div>
-    <div class="module-aggiornamenti db-section-content">';
-
-                    if ($table_not_expected) {
-                        echo '
-        <div class="alert alert-danger alert-database mb-2"><i class="fa fa-times"></i> '.tr('Tabella non prevista').'
-        </div>';
-                    } else {
-                        unset($errors['foreign_keys']);
-
-                        // Calcola il numero di chiavi non premium prima di mostrare la tabella
-                        $non_premium_keys = 0;
-                        foreach ($errors as $name => $diff) {
-                            if ($name != 'foreign_keys' && !isset($results[$table][$name]) && isset($diff['key'])) {
-                                // Verifica se il campo proviene da un modulo premium
-                                if (!isset($premium_fields[$table][$name])) {
-                                    ++$non_premium_keys;
-                                }
-                            }
-                        }
-
-                        if ($non_premium_keys > 0 || !empty($foreign_keys) || $fields_count > 0) {
-                            echo '
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-sm">
-                <thead class="thead-light">
-                    <tr>
-                        <th>'.tr('Campo').'</th>
-                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
-                        <th>'.tr('Soluzione').'</th>
-                    </tr>
-                </thead>
-
-                <tbody>';
-
-                            foreach ($errors as $name => $diff) {
-                                $query = '';
-                                $badge_text = '';
-                                $badge_color = '';
-                                if (!isset($results[$table][$name])) {
-                                    if (isset($diff['key'])) {
-                                        $query = 'Chiave non prevista';
-                                        $badge_text = 'Chiave non prevista';
-                                        $badge_color = 'info';
-
-                                        echo '
-                <tr>
-                    <td class="column-name">
-                        '.$name.'
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                    </td>
-                    <td class="column-conflict">
-                        '.$query.'
-                    </td>
-                </tr>';
-                                    } else {
-                                        // Campi non previsti
-                                        // Verifica se il campo proviene da un modulo premium
-                                        // Se proviene da un modulo premium, non mostrarlo qui (verrà mostrato nella sezione dedicata)
-                                        if (isset($premium_fields[$table][$name])) {
-                                            // Salta i campi premium - verranno mostrati nella sezione "Campi modulo premium"
-                                            continue;
-                                        }
-                                        $badge_text = 'Campo non previsto';
-                                        $badge_color = 'info';
-                                        $query_text = 'Campo non previsto';
-                                        echo '
-                <tr>
-                    <td class="column-name">
-                        '.$name.'
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                    </td>
-                    <td class="column-conflict">
-                        '.$query_text.'
-                    </td>
-                </tr>';
-                                    }
-                                }
-                            }
-
-                            foreach ($foreign_keys as $name => $diff) {
-                                $query = '';
-                                $fk_name = $name;
-                                $badge_text = '';
-                                $badge_color = '';
-
-                                // Gestione delle chiavi esterne in più
-                                if (is_array($diff) && isset($diff['current'])) {
-                                    // Chiave esterna in più (presente in current ma non in expected)
-                                    // Verifica se la chiave esterna esiste per contenuto nelle chiavi attese
-                                    $expected_fks = $data[$table]['foreign_keys'] ?? [];
-                                    if (IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
-                                        // La chiave esterna esiste per contenuto, non segnalarla come non prevista
-                                        continue;
-                                    }
-                                    if (is_array($diff['current'])) {
-                                        $query = 'ALTER TABLE '.$table.' DROP FOREIGN KEY '.$name.';';
-                                        $query_conflitti[] = $query;
-                                        $badge_text = 'Chiave esterna non prevista';
-                                        $badge_color = 'info';
-                                    } else {
-                                        $query = 'Chiave esterna non prevista';
-                                        $badge_text = 'Chiave esterna non prevista';
-                                        $badge_color = 'info';
-                                    }
-                                } else {
-                                    $query = 'Chiave esterna non prevista';
-                                    $badge_text = 'Chiave esterna non prevista';
-                                    $badge_color = 'info';
-                                }
-
-                                echo '
-                <tr>
-                    <td class="column-name">
-                        '.$fk_name.'
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                    </td>
-                    <td class="column-conflict">
-                        '.$query.'
-                    </td>
-                </tr>';
-                            }
-
-                            echo '
-                </tbody>
-            </table>
-        </div>';
-                        }
-                    }
-
-                    echo '
-    </div>
-</div>';
-                }
-            }
-        }
-    }
-
-    $campi_non_previsti = [];
-    $campi_modulo_premium = [];
-
-    if ($results_added) {
-        foreach ($results_added as $table => $errors) {
-            // Verifica che ci siano errori per questa tabella
-            if (!empty($errors)) {
-                // Se la tabella non è prevista nel file mysql.json principale, salta
-                if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                    continue;
-                }
-
-                // Verifica che ci siano campi non previsti (non presenti in results)
-                // Se la tabella non è in results, significa che tutti i campi sono in più
-                if (!isset($results[$table])) {
-                    foreach ($errors as $name => $diff) {
-                        if (!isset($diff['key']) && $name != 'foreign_keys') {
-                            // Verifica se il campo proviene da un modulo premium
-                            if (isset($premium_fields[$table][$name])) {
-                                $module_name = $premium_fields[$table][$name];
-                                $campi_modulo_premium[] = [
-                                    'tabella' => $table,
-                                    'campo' => $name,
-                                    'modulo' => $module_name,
-                                    'valore' => $diff['expected'] ?? '',
-                                ];
-                            } else {
-                                $campi_non_previsti[] = [
-                                    'tabella' => $table,
-                                    'campo' => $name,
-                                    'valore' => $diff['expected'] ?? '',
-                                ];
-                            }
-                        }
-                    }
-                } else {
-                    // Se la tabella è in results, verifica solo i campi non presenti in results
-                    foreach ($errors as $name => $diff) {
-                        if (!isset($results[$table][$name]) && !isset($diff['key']) && $name != 'foreign_keys') {
-                            // Verifica se il campo proviene da un modulo premium
-                            if (isset($premium_fields[$table][$name])) {
-                                $module_name = $premium_fields[$table][$name];
-                                $campi_modulo_premium[] = [
-                                    'tabella' => $table,
-                                    'campo' => $name,
-                                    'modulo' => $module_name,
-                                    'valore' => $diff['expected'] ?? '',
-                                ];
-                            } else {
-                                $campi_non_previsti[] = [
-                                    'tabella' => $table,
-                                    'campo' => $name,
-                                    'valore' => $diff['expected'] ?? '',
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if ($results_settings || $results_settings_added) {
-        $settings_danger_count = 0;
-        $settings_warning_count = 0;
-        $settings_info_count = 0;
-
-        foreach ($results_settings as $key => $setting) {
-            if (!$setting['current']) {
-                ++$settings_danger_count;
-            } else {
-                ++$settings_warning_count;
-            }
-        }
-
-        foreach ($results_settings_added as $key => $setting) {
-            if ($setting['current'] == null) {
-                ++$settings_info_count;
-            }
-        }
-
-        $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
-        $settings_border_color = Utils::determineBorderColor($settings_danger_count, $settings_warning_count);
-
-        echo '
-<div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: '.$settings_border_color.';" onclick="$(this).next().slideToggle();">
-        <div>
-            <strong>zz_settings</strong>
-            '.$settings_badge_html.'
-        </div>
-        <i class="fa fa-chevron-down"></i>
-    </div>
-    <div class="module-aggiornamenti db-section-content">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-sm">
-                <thead class="thead-light">
-                    <tr>
-                        <th>'.tr('Nome').'</th>
-                        <th class="module-aggiornamenti table-col-type">'.tr('Tipo').'</th>
-                        <th>'.tr('Soluzione').'</th>
-                    </tr>
-                </thead>
-                <tbody>';
-        foreach ($results_settings as $key => $setting) {
-            $badge_text = '';
-            $badge_color = '';
-            if (!$setting['current']) {
-                $query = "INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('".$key."', '".$setting['expected']."', 'string', 1, 'Generali')";
-                $query_conflitti[] = $query.';';
-                $badge_text = 'Impostazione mancante';
-                $badge_color = 'danger';
-            } else {
-                $query = 'UPDATE `zz_settings` SET `tipo` = '.prepare($setting['expected']).' WHERE `nome` = '.prepare($key);
-                $query_conflitti[] = $query.';';
-                $badge_text = 'Impostazione modificata';
-                $badge_color = 'warning';
-            }
-
-            echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.$query.';
-                        </td>
-                    </tr>';
-        }
-
-        foreach ($results_settings_added as $key => $setting) {
-            if ($setting['current'] == null) {
-                $badge_text = 'Impostazione non prevista';
-                $badge_color = 'info';
-                echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.$setting['expected'].'
-                        </td>
-                    </tr>';
-            }
+        } else {
+            // Renderizza una tabella unificata per tutti gli errori
+            echo renderUnifiedTable($errors, $table, $data, $query_conflitti);
         }
 
         echo '
-                </tbody>
-            </table>
-        </div>
     </div>
 </div>';
     }
 
     // Visualizza i campi dei moduli premium raggruppati per tabella
+    $campi_modulo_premium = [];
+    if ($results_added) {
+        foreach ($results_added as $table => $errors) {
+            if (!empty($errors)) {
+                if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                    continue;
+                }
+
+                foreach ($errors as $name => $diff) {
+                    if (!isset($diff['key']) && $name != 'foreign_keys') {
+                        if (isset($premium_fields[$table][$name])) {
+                            $module_name = $premium_fields[$table][$name];
+                            $campi_modulo_premium[] = [
+                                'tabella' => $table,
+                                'campo' => $name,
+                                'modulo' => $module_name,
+                                'valore' => $diff['expected'] ?? '',
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (!empty($campi_modulo_premium)) {
         // Raggruppa per tabella
         $campi_premium_per_tabella = [];
@@ -940,61 +757,6 @@ if (!empty($results) || !empty($results_added) || !empty($results_settings) || !
                     <tr>
                         <td class="column-name">'.$campo['campo'].'</td>
                         <td><span class="badge badge-primary">Campo modulo '.$campo['modulo'].'</span></td>
-                    </tr>';
-            }
-            echo '
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>';
-        }
-    }
-
-    // Visualizza i campi non previsti raggruppati per tabella
-    if (!empty($campi_non_previsti)) {
-        // Raggruppa per tabella
-        $campi_per_tabella = [];
-        foreach ($campi_non_previsti as $campo) {
-            $campi_per_tabella[$campo['tabella']][] = $campo;
-        }
-
-        foreach ($campi_per_tabella as $tabella => $campi) {
-            echo '
-<div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" onclick="$(this).next().slideToggle();">
-        <div>
-            <strong>'.$tabella.'</strong>
-            <span class="badge badge-info ml-2">'.count($campi).'</span>
-        </div>
-        <i class="fa fa-chevron-down"></i>
-    </div>
-    <div class="module-aggiornamenti db-section-content">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-sm mb-2">
-                <thead class="thead-light">
-                    <tr>
-                        <th>'.tr('Campo').'</th>
-                        <th>'.tr('Tipo').'</th>
-                    </tr>
-                </thead>
-                <tbody>';
-            foreach ($campi as $campo) {
-                // Verifica se il campo proviene da un modulo premium
-                if (isset($premium_fields[$tabella][$campo['campo']])) {
-                    $module_name = $premium_fields[$tabella][$campo['campo']];
-                    $badge_text = 'Campo modulo '.$module_name;
-                    $badge_color = 'primary';
-                } else {
-                    $badge_text = 'Campo non previsto';
-                    $badge_color = 'info';
-                }
-                echo '
-                    <tr>
-                        <td class="column-name">'.$campo['campo'].'</td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
                     </tr>';
             }
             echo '
@@ -1048,6 +810,3 @@ function buttonRestore(button, loadingResult) {
 OperationLog::setInfo('id_module', $id_module);
 OperationLog::setInfo('options', json_encode(['controllo_name' => 'Controllo database'], JSON_UNESCAPED_UNICODE));
 OperationLog::build('effettua_controllo');
-
-// Chiusura del div module-aggiornamenti
-echo '</div>';

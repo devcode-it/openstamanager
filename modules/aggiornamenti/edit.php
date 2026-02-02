@@ -52,6 +52,11 @@ function settings_diff($expected, $current)
     return IntegrityChecker::settingsDiff($expected, $current);
 }
 
+function widgets_diff($expected, $current)
+{
+    return IntegrityChecker::widgetsDiff($expected, $current);
+}
+
 // Inizializzazione del modulo corrente
 $module = Module::find($id_module);
 
@@ -230,6 +235,7 @@ if (function_exists('customComponents')) {
     // Verifica se mancano i file di riferimento per viste e moduli
     $views_file_missing = !file_exists(base_dir().'/views.json');
     $modules_file_missing = !file_exists(base_dir().'/modules.json');
+    $widgets_file_missing = !file_exists(base_dir().'/widgets.json');
 
     // Verifica se manca il file di riferimento per il database
     $file_to_check_database = 'mysql.json';
@@ -832,7 +838,30 @@ if (function_exists('customComponents')) {
                 $results_settings = settings_diff($data_settings, $settings);
                 $results_settings_added = settings_diff($settings, $data_settings);
 
-                if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added)) {
+                $contents_widgets = file_get_contents(base_dir().'/widgets.json');
+                $data_widgets = json_decode($contents_widgets, true);
+
+                // Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di modules/
+                $modules_dir = base_dir().'/modules/';
+                $widgets_json_files = glob($modules_dir.'*/widgets.json');
+
+                if (!empty($widgets_json_files)) {
+                    foreach ($widgets_json_files as $widgets_json_file) {
+                        $widgets_contents = file_get_contents($widgets_json_file);
+                        $widgets_data = json_decode($widgets_contents, true);
+
+                        if (!empty($widgets_data) && is_array($widgets_data)) {
+                            // Accoda i widgets del modulo a quelli principali
+                            $data_widgets = array_merge($data_widgets, $widgets_data);
+                        }
+                    }
+                }
+
+                $widgets = Update::getWidgets();
+                $results_widgets = widgets_diff($data_widgets, $widgets);
+                $results_widgets_added = widgets_diff($widgets, $data_widgets);
+
+                if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added) || !empty($results_widgets) || !empty($results_widgets_added)) {
                     $database_has_errors = true;
 
                     // Conta i tipi di errori nei risultati (campi mancanti/modificati)
@@ -899,6 +928,30 @@ if (function_exists('customComponents')) {
                         }
                     }
 
+                    // Conta i tipi di errori nei widgets
+                    foreach ($results_widgets as $module_key => $module_widgets) {
+                        if (is_array($module_widgets)) {
+                            foreach ($module_widgets as $widget_name => $widget) {
+                                if (!$widget['current']) {
+                                    ++$database_danger_count; // Widget mancante
+                                } else {
+                                    ++$database_warning_count; // Widget modificato
+                                }
+                            }
+                        }
+                    }
+
+                    // Conta i widgets non previsti
+                    foreach ($results_widgets_added as $module_key => $module_widgets) {
+                        if (is_array($module_widgets)) {
+                            foreach ($module_widgets as $widget_name => $widget) {
+                                if ($widget['current'] == null) {
+                                    ++$database_info_count; // Widget non previsto
+                                }
+                            }
+                        }
+                    }
+
                     $database_error_count = $database_danger_count + $database_warning_count + $database_info_count + $database_premium_count;
                 }
             }
@@ -942,10 +995,111 @@ if (function_exists('customComponents')) {
 
     echo '
                 </div>
+            </div>';
+
+    // Card Impostazioni personalizzate
+    $settings_danger_count = 0;
+    $settings_warning_count = 0;
+    $settings_info_count = 0;
+
+    foreach ($results_settings as $key => $setting) {
+        if (!$setting['current']) {
+            ++$settings_danger_count;
+        } else {
+            ++$settings_warning_count;
+        }
+    }
+
+    foreach ($results_settings_added as $key => $setting) {
+        if ($setting['current'] == null) {
+            ++$settings_info_count;
+        }
+    }
+
+    $settings_colors = Utils::determineCardColor($settings_danger_count, $settings_warning_count, $settings_info_count > 0 ? 1 : 0);
+    $settings_card_color = $settings_colors['color'];
+    $settings_icon = $settings_colors['icon'];
+
+    $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
+
+    echo '
+            <div class="card card-outline card-'.$settings_card_color.' requirements-card mb-2 collapsable collapsed-card">
+                <div class="card-header with-border requirements-card-header requirements-card-header-'.$settings_card_color.'">
+                    <h3 class="card-title requirements-card-title requirements-card-title-'.$settings_card_color.'">
+                        <i class="fa '.$settings_icon.' mr-2 requirements-icon"></i>
+                        '.tr('Impostazioni personalizzate').'
+                        '.$settings_badge_html.'
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">';
+
+    include __DIR__.'/settings.php';
+
+    echo '
+                </div>
+            </div>';
+
+    // Card Widgets personalizzati
+    $widgets_danger_count = 0;
+    $widgets_warning_count = 0;
+    $widgets_info_count = 0;
+
+    foreach ($results_widgets as $module_key => $module_widgets) {
+        if (is_array($module_widgets)) {
+            foreach ($module_widgets as $widget_name => $widget) {
+                if (!$widget['current']) {
+                    ++$widgets_danger_count;
+                } else {
+                    ++$widgets_warning_count;
+                }
+            }
+        }
+    }
+
+    foreach ($results_widgets_added as $module_key => $module_widgets) {
+        if (is_array($module_widgets)) {
+            foreach ($module_widgets as $widget_name => $widget) {
+                if ($widget['current'] == null) {
+                    ++$widgets_info_count;
+                }
+            }
+        }
+    }
+
+    $widgets_colors = Utils::determineCardColor($widgets_danger_count, $widgets_warning_count, $widgets_info_count > 0 ? 1 : 0);
+    $widgets_card_color = $widgets_colors['color'];
+    $widgets_icon = $widgets_colors['icon'];
+
+    $widgets_badge_html = Utils::generateBadgeHtml($widgets_danger_count, $widgets_warning_count, $widgets_info_count);
+
+    echo '
+            <div class="card card-outline card-'.$widgets_card_color.' requirements-card mb-2 collapsable collapsed-card">
+                <div class="card-header with-border requirements-card-header requirements-card-header-'.$widgets_card_color.'">
+                    <h3 class="card-title requirements-card-title requirements-card-title-'.$widgets_card_color.'">
+                        <i class="fa '.$widgets_icon.' mr-2 requirements-icon"></i>
+                        '.tr('Widgets personalizzati').'
+                        '.$widgets_badge_html.'
+                    </h3>
+                    <div class="card-tools pull-right">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">';
+
+    include __DIR__.'/widgets.php';
+
+    echo '
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 $(document).ready(function() {

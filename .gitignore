@@ -97,6 +97,7 @@ mariadb_10_x.json
 settings.json
 views.json
 modules.json
+widgets.json
 
 /tests/_log/*
 /tests/_temp/*

@@ -37,16 +37,16 @@ $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
 
 switch (post('op')) {
     case 'change_purchase_price':
+        $percentuale = post('percentuale');
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $percentuale = post('percentuale');
-
-            $new_prezzo_acquisto = $articolo->prezzo_acquisto + ($articolo->prezzo_acquisto * $percentuale / 100);
+            $new_prezzo_acquisto = $articolo->prezzo_acquisto - ($articolo->prezzo_acquisto * $percentuale / 100);
             $articolo->prezzo_acquisto = $new_prezzo_acquisto;
             $articolo->save();
 
             if (!empty($articolo->id_fornitore)) {
                 $prezzo_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $articolo->id_fornitore, 'uscita')->first();
+                $new_prezzo_acquisto = $new_prezzo_acquisto * 100 / (100 - $prezzo_predefinito->sconto_percentuale);
                 $prezzo_predefinito->setPrezzoUnitario($new_prezzo_acquisto);
                 $prezzo_predefinito->save();
             }
@@ -572,7 +572,7 @@ $operations['change_purchase_price'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),
-        'msg' => tr('Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.').'<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'msg' => tr('Per indicare un rincaro inserire la percentuale con il segno meno, al contrario per uno sconto inserire la percentuale senza segno.').'<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

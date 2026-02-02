@@ -92,13 +92,35 @@ switch (post('op')) {
         break;
 
     case 'change_prezzo':
+        $applica_sconto_prezzo = post('applica_sconto_prezzo', false);
+        $percentuale = post('percentuale');
+
         foreach ($id_records as $id) {
-            $listino = DettaglioPrezzo::find($id);
+            $dettaglio = DettaglioPrezzo::find($id);
+            
+            if ($applica_sconto_prezzo) {
+                // Applica lo sconto direttamente al prezzo e azzera lo sconto percentuale
+                $prezzo_unitario_new = $dettaglio->prezzo_unitario - ($dettaglio->prezzo_unitario * $percentuale / 100);
+                $dettaglio->setPrezzoUnitario($prezzo_unitario_new);
+                $dettaglio->sconto_percentuale = 0;
+            } else {
+                // Imposta lo sconto percentuale
+                $dettaglio->sconto_percentuale = $percentuale;
+            }
+            
+            $dettaglio->save();
 
-            $prezzo_unitario_new = $listino->prezzo_unitario + ($listino->prezzo_unitario * post('percentuale') / 100);
-
-            $listino->setPrezzoUnitario($prezzo_unitario_new);
-            $listino->save();
+            // Se il listino è il fornitore predefinito dell'articolo, aggiorna il prezzo di acquisto
+            $articolo = Articolo::find($dettaglio->id_articolo);
+            if ($articolo->id_fornitore == $dettaglio->id_anagrafica && $dettaglio->dir == 'uscita') {
+                if ($applica_sconto_prezzo) {
+                    $prezzo_acquisto_calcolato = $prezzo_unitario_new;
+                } else {
+                    $prezzo_acquisto_calcolato = $dettaglio->prezzo_unitario - ($dettaglio->prezzo_unitario * $percentuale / 100);
+                }
+                $articolo->prezzo_acquisto = $prezzo_acquisto_calcolato;
+                $articolo->save();
+            }
         }
 
         flash()->info(tr('Listini aggiornati!'));
@@ -134,8 +156,9 @@ if ($segment != 'Tutti') {
 $operations['change_prezzo'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo unitario').'</span>',
     'data' => [
-        'title' => tr('Aggiornare il prezzo unitario per i listini selezionati?'),
-        'msg' => tr('Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.').'<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'title' => tr('Aggiornare lo sconto percentuale per i listini selezionati?'),
+        'msg' => tr('Per indicare un rincaro inserire la percentuale con il segno meno, al contrario per uno sconto inserire la percentuale senza segno.').'<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/magg.').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}
+        {[ "type": "checkbox", "label": "'.tr('Applica sconto direttamente al prezzo').'", "name": "applica_sconto_prezzo", "help": "'.tr('Se selezionato, lo sconto viene applicato direttamente al prezzo e lo sconto percentuale viene azzerato.').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

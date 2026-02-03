@@ -80,9 +80,9 @@ $query = "SELECT
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
     WHERE
         ".$where.'
-        `idtecnico` IN('.implode(',', array_map('prepare', $tecnici)).') AND
-        `in_interventi`.`idstatointervento` IN('.implode(',', array_map('prepare', $stati)).') AND
-        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', array_map('prepare', $tipi)).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
+        `idtecnico` IN('.implode(',', array_map(prepare(...), $tecnici)).') AND
+        `in_interventi`.`idstatointervento` IN('.implode(',', array_map(prepare(...), $stati)).') AND
+        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', array_map(prepare(...), $tipi)).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
     GROUP BY 
         `in_interventi`.`id`, `data`
     ORDER BY 

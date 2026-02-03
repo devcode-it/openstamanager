@@ -34,7 +34,7 @@ switch (post('op')) {
         }
 
         // Selezione dei viaggi da stampare
-        $viaggi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id IN('.implode(',', array_map('prepare', $id_records)).')');
+        $viaggi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id IN('.implode(',', array_map(prepare(...), $id_records)).')');
         $_SESSION[$id_module]['data_inizio'] = post('data_inizio');
         $_SESSION[$id_module]['data_fine'] = post('data_fine');
 

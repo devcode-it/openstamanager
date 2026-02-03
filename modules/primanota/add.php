@@ -142,7 +142,7 @@ foreach ($id_documenti as $id_documento) {
     if ($is_insoluto) {
         $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map('prepare', $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -303,10 +303,10 @@ if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = get('id_anagrafica');
 }
 if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',', array_map('prepare', $id_documenti)) : 0).')')['idanagrafica'];
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',', array_map(prepare(...), $id_documenti)) : 0).')')['idanagrafica'];
 }
 if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',', array_map('prepare', $id_scadenze)) : 0).')')['idanagrafica'];
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenziario WHERE id IN('.($id_scadenze ? implode(',', array_map(prepare(...), $id_scadenze)) : 0).')')['idanagrafica'];
 }
 echo '
 <form action="'.base_path_osm().'/controller.php?id_module='.$id_module.'" method="post" id="add-form">

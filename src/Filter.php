@@ -86,11 +86,7 @@ class Filter
 
         $category = empty($raw) ? 'data' : 'raw';
 
-        if (isset(self::$post[$category][$property])) {
-            return self::$post[$category][$property];
-        }
-
-        return '';
+        return self::$post[$category][$property] ?? '';
     }
 
     /**
@@ -121,11 +117,7 @@ class Filter
 
         $category = empty($raw) ? 'data' : 'raw';
 
-        if (isset(self::$get[$category][$property])) {
-            return self::$get[$category][$property];
-        }
-
-        return '';
+        return self::$get[$category][$property] ?? '';
     }
 
     /**

@@ -85,7 +85,7 @@ switch (post('op')) {
         // Salvo le scadenze selezionate in sessione
         $_SESSION['scadenzario_selected_ids'] = $id_records;
 
-        $scadenze = $database->FetchArray('SELECT * FROM co_scadenziario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenziario.iddocumento = nota.ref_documento WHERE co_scadenziario.id IN ('.implode(',', array_map('prepare', $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
+        $scadenze = $database->FetchArray('SELECT * FROM co_scadenziario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenziario.iddocumento = nota.ref_documento WHERE co_scadenziario.id IN ('.implode(',', array_map(prepare(...), $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
         foreach ($scadenze as $key => $scadenza) {
             $scadenza = Scadenza::find($scadenza['id']);
             $documento = Fattura::find($scadenza['iddocumento']);

@@ -63,7 +63,7 @@ class SessioniInterventi extends AppResource
         FROM in_interventi_tecnici
             INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
         WHERE
-            in_interventi.id IN ('.implode(',', array_map('prepare', $id_interventi)).')
+            in_interventi.id IN ('.implode(',', array_map(prepare(...), $id_interventi)).')
             AND (orario_fine BETWEEN :period_start AND :period_end)';
 
         // Filtro per data

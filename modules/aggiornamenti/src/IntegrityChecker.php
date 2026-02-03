@@ -142,7 +142,7 @@ class IntegrityChecker
                 foreach ($module_widgets as $widget_name => $current_query) {
                     // Verifica se il widget esiste negli expected (incluso con query null)
                     $widget_exists_in_expected = isset($expected[$module_key]) && array_key_exists($widget_name, $expected[$module_key]);
-                    
+
                     if (!$widget_exists_in_expected) {
                         // Il widget esiste nel current ma non nell'expected → è un widget non previsto
                         $added[$module_key][$widget_name] = [

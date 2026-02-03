@@ -101,7 +101,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
+$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -156,7 +156,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
+$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');

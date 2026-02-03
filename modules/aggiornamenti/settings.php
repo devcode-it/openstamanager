@@ -135,7 +135,7 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
         if (!$setting['current']) {
             // Gestisci il caso di valore null
             $valore_value = ($setting['expected'] === null) ? 'NULL' : prepare($setting['expected']);
-            $query = "INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (".prepare($key).", ".$valore_value.", 'string', 1, 'Generali')";
+            $query = 'INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('.prepare($key).', '.$valore_value.", 'string', 1, 'Generali')";
             $query_conflitti[] = $query.';';
             $badge_text = 'Impostazione mancante';
             $badge_color = 'danger';
@@ -228,4 +228,3 @@ function buttonRestore(button, loadingResult) {
 OperationLog::setInfo('id_module', $id_module);
 OperationLog::setInfo('options', json_encode(['controllo_name' => 'Controllo impostazioni'], JSON_UNESCAPED_UNICODE));
 OperationLog::build('effettua_controllo');
-

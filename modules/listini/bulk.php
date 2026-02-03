@@ -97,7 +97,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $dettaglio = DettaglioPrezzo::find($id);
-            
+
             if ($applica_sconto_prezzo) {
                 // Applica lo sconto direttamente al prezzo e azzera lo sconto percentuale
                 $prezzo_unitario_new = $dettaglio->prezzo_unitario - ($dettaglio->prezzo_unitario * $percentuale / 100);
@@ -107,7 +107,7 @@ switch (post('op')) {
                 // Imposta lo sconto percentuale
                 $dettaglio->sconto_percentuale = $percentuale;
             }
-            
+
             $dettaglio->save();
 
             // Se il listino è il fornitore predefinito dell'articolo, aggiorna il prezzo di acquisto

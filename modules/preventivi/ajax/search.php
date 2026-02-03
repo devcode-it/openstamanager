@@ -39,7 +39,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idpreventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `idpreventivo`) righe ON `righe`.`idpreventivo`=`co_preventivi`.`id` WHERE idanagrafica IN('.implode(',', array_map('prepare', $idanagrafiche)).') ';
+$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idpreventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `idpreventivo`) righe ON `righe`.`idpreventivo`=`co_preventivi`.`id` WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');

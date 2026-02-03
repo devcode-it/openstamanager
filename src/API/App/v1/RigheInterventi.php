@@ -54,7 +54,7 @@ class RigheInterventi extends AppResource
         FROM in_righe_interventi
             INNER JOIN in_interventi ON in_righe_interventi.idintervento = in_interventi.id
         WHERE
-            in_interventi.id IN ('.implode(',', array_map('prepare', $interventi)).')';
+            in_interventi.id IN ('.implode(',', array_map(prepare(...), $interventi)).')';
             $records = database()->fetchArray($query);
 
             $da_interventi = array_column($records, 'id');
@@ -85,7 +85,7 @@ class RigheInterventi extends AppResource
         }
 
         $id_interventi = array_keys($interventi);
-        $query = 'SELECT in_righe_interventi.id, in_righe_interventi.updated_at FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN ('.implode(',', array_map('prepare', $id_interventi)).')';
+        $query = 'SELECT in_righe_interventi.id, in_righe_interventi.updated_at FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN ('.implode(',', array_map(prepare(...), $id_interventi)).')';
 
         // Filtro per data
         if ($last_sync_at) {

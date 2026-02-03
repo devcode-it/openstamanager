@@ -648,10 +648,10 @@ if (!empty($grouped_errors)) {
 <div>
     <div class="alert alert-warning">
         <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
-            '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-            '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-            '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
-        ]).'.
+        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
+        '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
+        '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
+    ]).'.
     </div>
 </div>';
 

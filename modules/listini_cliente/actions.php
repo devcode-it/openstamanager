@@ -65,15 +65,49 @@ switch (filter('op')) {
 
             $articolo_listino = Articolo::build($articolo_originale, $id_record);
             $articolo_listino->data_scadenza = post('data_scadenza') ?: null;
-            $articolo_listino->setPrezzoUnitario(post('prezzo_unitario'));
+            $articolo_listino->setPrezzoUnitario(post('prezzo_unitario_fisso'));
             $articolo_listino->sconto_percentuale = post('sconto_percentuale');
             $articolo_listino->save();
         } else {
             $articolo_listino = Articolo::find(post('id'));
             $articolo_listino->data_scadenza = post('data_scadenza') ?: null;
-            $articolo_listino->setPrezzoUnitario(post('prezzo_unitario'));
+            $articolo_listino->setPrezzoUnitario(post('prezzo_unitario_fisso'));
             $articolo_listino->sconto_percentuale = post('sconto_percentuale');
             $articolo_listino->save();
+        }
+
+        // Salvataggio dei dettagli dei prezzi per range
+        $prezzi_unitari = (array) post('prezzo_unitario');
+        $minimi = post('minimo');
+        $massimi = post('massimo');
+        $sconti = (array) post('sconto');
+        $dettagli_registrati = post('dettaglio');
+
+        // Rimozione dei dettagli cancellati
+        $dettagli = Articolo::dettagli($articolo_listino->id);
+        if (!empty($dettagli_registrati)) {
+            $dettagli->whereNotIn('id', $dettagli_registrati)->delete();
+        } else {
+            $dettagli->delete();
+        }
+
+        // Aggiornamento e creazione dei dettagli registrati
+        foreach ($prezzi_unitari as $key => $prezzo_unitario) {
+            if (isset($dettagli_registrati[$key])) {
+                $dettaglio = Articolo::find($dettagli_registrati[$key]);
+            } else {
+                $dettaglio = Articolo::build($articolo_listino->articolo, $articolo_listino->id_listino);
+                $dettaglio->data_scadenza = $articolo_listino->data_scadenza;
+                $dettaglio->sconto_percentuale = $articolo_listino->sconto_percentuale;
+            }
+
+            if ($dettaglio->minimo != $minimi[$key] || $dettaglio->massimo != $massimi[$key] || $dettaglio->sconto_percentuale != $sconti[$key] || $dettaglio->prezzo_unitario != $prezzo_unitario) {
+                $dettaglio->minimo = $minimi[$key];
+                $dettaglio->massimo = $massimi[$key];
+                $dettaglio->sconto_percentuale = $sconti[$key];
+                $dettaglio->setPrezzoUnitario($prezzo_unitario);
+                $dettaglio->save();
+            }
         }
 
         flash()->info(tr('Nuovo articolo al listino aggiunto!'));

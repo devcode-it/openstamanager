@@ -236,19 +236,30 @@ function getPrezzoPerQuantita(qta) {
 /**
 * Restituisce il prezzo del listino registrato per l\'articolo-anagrafica.
 */
-function getPrezzoListino() {
+function getPrezzoListino(qta = null) {
     const data = globals.aggiunta_articolo.dettagli;
     if (!data) return null;
 
-    let dettaglio_listino = null;
+    let dettaglio_predefinito = null;
+    let dettaglio_selezionato = null;
     for (const dettaglio of data) {
         if (dettaglio.prezzo_unitario_listino != null) {
-            dettaglio_listino = dettaglio;
-            continue;
+            if (dettaglio.minimo == null && dettaglio.massimo == null) {
+                dettaglio_predefinito = dettaglio;
+                continue;
+            }
+
+            if (qta != null && qta >= dettaglio.minimo && qta <= dettaglio.massimo) {
+                dettaglio_selezionato = dettaglio;
+            }
         }
     }
 
-    return dettaglio_listino ? parseFloat(dettaglio_listino.prezzo_unitario_listino) : 0;
+    if (dettaglio_selezionato == null) {
+        dettaglio_selezionato = dettaglio_predefinito;
+    }
+
+    return dettaglio_selezionato ? parseFloat(dettaglio_selezionato.prezzo_unitario_listino) : 0;
 }
 
 /**
@@ -290,7 +301,7 @@ function getPrezzoUltimo() {
 /**
 * Restituisce i prezzi dei listini sempre visibili registrati per l\'articolo.
 */
-function getPrezziListinoVisibili(nome = "") {
+function getPrezziListinoVisibili(nome = "", qta = null) {
     const data = globals.aggiunta_articolo.dettagli;
     if (!data) return null;
 
@@ -299,7 +310,25 @@ function getPrezziListinoVisibili(nome = "") {
         if (dettaglio.prezzo_unitario_listino_visibile != null) {
             if (nome != "") {
                 if (dettaglio.nome == nome) {
-                    dettaglio_prezzi_visibili = parseFloat(dettaglio.prezzo_unitario_listino_visibile);
+                    if (qta != null) {
+                        // Cerca il dettaglio appropriato per la quantità specificata
+                        let dettaglio_predefinito = null;
+                        let dettaglio_selezionato = null;
+                        for (const d of data) {
+                            if (d.prezzo_unitario_listino_visibile != null && d.nome == nome) {
+                                if (d.minimo == null && d.massimo == null) {
+                                    dettaglio_predefinito = d;
+                                    continue;
+                                }
+                                if (qta >= d.minimo && qta <= d.massimo) {
+                                    dettaglio_selezionato = d;
+                                }
+                            }
+                        }
+                        dettaglio_prezzi_visibili = parseFloat((dettaglio_selezionato || dettaglio_predefinito).prezzo_unitario_listino_visibile);
+                    } else {
+                        dettaglio_prezzi_visibili = parseFloat(dettaglio.prezzo_unitario_listino_visibile);
+                    }
                     continue;
                 }
             } else {
@@ -314,37 +343,59 @@ function getPrezziListinoVisibili(nome = "") {
 /**
 * Restituisce lo sconto registrato del listino registrato per l\'articolo-anagrafica.
 */
-function getScontoListino() {
+function getScontoListino(qta = null) {
     const data = globals.aggiunta_articolo.dettagli;
     if (!data) return null;
 
-    let dettaglio_listino = null;
+    let dettaglio_predefinito = null;
+    let dettaglio_selezionato = null;
     for (const dettaglio of data) {
         if (dettaglio.sconto_percentuale_listino != null) {
-            dettaglio_listino = dettaglio;
-            continue;
+            if (dettaglio.minimo == null && dettaglio.massimo == null) {
+                dettaglio_predefinito = dettaglio;
+                continue;
+            }
+
+            if (qta != null && qta >= dettaglio.minimo && qta <= dettaglio.massimo) {
+                dettaglio_selezionato = dettaglio;
+            }
         }
     }
 
-    return dettaglio_listino ? parseFloat(dettaglio_listino.sconto_percentuale_listino) : 0;
+    if (dettaglio_selezionato == null) {
+        dettaglio_selezionato = dettaglio_predefinito;
+    }
+
+    return dettaglio_selezionato ? parseFloat(dettaglio_selezionato.sconto_percentuale_listino) : 0;
 }
 
 /**
 * Restituisce lo sconto registrato del listino sempre visibile dell\'articolo.
 */
-function getScontoListinoVisibile(nome) {
+function getScontoListinoVisibile(nome, qta = null) {
     const data = globals.aggiunta_articolo.dettagli;
     if (!data) return null;
 
-    let dettaglio_listino_visibile = null;
+    let dettaglio_predefinito = null;
+    let dettaglio_selezionato = null;
     for (const dettaglio of data) {
         if (dettaglio.nome == nome) {
-            dettaglio_listino_visibile = dettaglio;
-            continue;
+            if (dettaglio.minimo == null && dettaglio.massimo == null) {
+                dettaglio_predefinito = dettaglio;
+                continue;
+            }
+
+            if (qta != null && qta >= dettaglio.minimo && qta <= dettaglio.massimo) {
+                dettaglio_selezionato = dettaglio;
+            }
         }
     }
 
-    return dettaglio_listino_visibile ? parseFloat(dettaglio_listino_visibile.sconto_percentuale_listino_visibile) : 0;
+    if (dettaglio_selezionato == null) {
+        dettaglio_selezionato = dettaglio_predefinito;
+    }
+
+    return dettaglio_selezionato ? parseFloat(dettaglio_selezionato.sconto_percentuale_listino_visibile) : 0;
 }
 
 /**
@@ -381,11 +432,11 @@ function verificaPrezzoArticolo() {
 
     let qta = $("#qta").val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
-    let prezzo_listino = getPrezzoListino();
+    let prezzo_listino = getPrezzoListino(qta);
     let prezzo_std = getPrezzoScheda();
     let prezzo_last = getPrezzoUltimo();
     let prezzo_minimo = parseFloat($("#idarticolo").selectData().minimo_vendita);
-    let prezzi_visibili = getPrezziListinoVisibili();
+    let prezzi_visibili = getPrezziListinoVisibili("", qta);
 
     if (prezzo_anagrafica || prezzo_listino || prezzo_std || prezzo_last || prezzo_minimo || prezzi_visibili) {
         div.html(`<table class="table table-extra-condensed table-prezzi" style="background:#eee; margin-top:-13px;"><tbody>`);
@@ -479,20 +530,20 @@ function verificaScontoArticolo() {
     let prezzo_unitario_input = $("#prezzo_unitario");
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
-    let prezzo_listino = getPrezzoListino();
-    let prezzi_visibili = getPrezziListinoVisibili();
+    let prezzo_listino = getPrezzoListino(qta);
+    let prezzi_visibili = getPrezziListinoVisibili("", qta);
     let sconto_previsto = 0;
 
 
     if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
-        sconto_previsto = getScontoListino();
+        sconto_previsto = getScontoListino(qta);
     } else {
         for (const prezzo_visibile of prezzi_visibili) {
             let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
             if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
-                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome);
+                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome, qta);
             }
         }
     }
@@ -517,10 +568,10 @@ function verificaScontoArticolo() {
 */
 function aggiornaPrezzoArticolo(aggiorna = "") {
     let prezzo_previsto = 0;
+    let qta = $("#qta").val().toEnglish();
     if (aggiorna == "listino") {
-        prezzo_previsto = getPrezzoListino();
+        prezzo_previsto = getPrezzoListino(qta);
     } else if (aggiorna == "anagrafica") {
-        let qta = $("#qta").val().toEnglish();
         prezzo_previsto = getPrezzoPerQuantita(qta);
     } else if (aggiorna == "std") {
         prezzo_previsto = getPrezzoScheda();
@@ -529,12 +580,11 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
     } else if (aggiorna == "minimo") {
         prezzo_previsto = parseFloat($("#idarticolo").selectData().minimo_vendita);
     } else if (aggiorna != "") {
-        prezzo_previsto = getPrezziListinoVisibili(aggiorna);
+        prezzo_previsto = getPrezziListinoVisibili(aggiorna, qta);
     } else {
         // Inserisco il prezzo più basso tra listino e netto cliente, se mancanti imposto il prezzo della scheda articolo
-        let qta = $("#qta").val().toEnglish();
         prezzo1 = getPrezzoPerQuantita(qta);
-        prezzo2 = getPrezzoListino();
+        prezzo2 = getPrezzoListino(qta);
         prezzo3 = getPrezzoScheda();
         prezzo_previsto = (!prezzo1 ? prezzo2 : (!prezzo2 ? prezzo1 : (prezzo1 > prezzo2 ? prezzo2 : prezzo1)));
         prezzo_previsto = (prezzo_previsto ? prezzo_previsto : prezzo3);
@@ -557,20 +607,20 @@ function aggiornaScontoArticolo() {
     let prezzo_unitario_input = $("#prezzo_unitario");
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
-    let prezzo_listino = getPrezzoListino();
-    let prezzi_visibili = getPrezziListinoVisibili();
+    let prezzo_listino = getPrezzoListino(qta);
+    let prezzi_visibili = getPrezziListinoVisibili("", qta);
     let sconto_previsto = 0;
 
 
     if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {
         sconto_previsto = getScontoPerQuantita(qta);
     } else if (prezzo_unitario == prezzo_listino.toFixed(2)) {
-        sconto_previsto = getScontoListino();
+        sconto_previsto = getScontoListino(qta);
     } else {
         for (const prezzo_visibile of prezzi_visibili) {
             let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
             if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
-                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome);
+                sconto_previsto = getScontoListinoVisibile(prezzo_visibile.nome, qta);
             }
         }
     }

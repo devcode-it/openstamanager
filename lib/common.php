@@ -301,21 +301,22 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
     $prezzi = database()->fetchArray($query);
 
     // Prezzi listini clienti
-    $query = 'SELECT sconto_percentuale AS sconto_percentuale_listino,
+    $query = 'SELECT minimo, massimo,
+        sconto_percentuale AS sconto_percentuale_listino,
         '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
     FROM mg_listini
     LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
     LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-    WHERE mg_listini.data_attivazione<=NOW() 
+    WHERE mg_listini.data_attivazione<=NOW()
     AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
     AND mg_listini.attivo=1
     AND id_articolo = '.prepare($id_articolo).'
     AND dir = '.prepare($direzione).'
     AND idanagrafica = '.prepare($id_anagrafica);
-    $listino = database()->fetchOne($query);
+    $listini = database()->fetchArray($query);
 
     // Prezzi listini clienti sempre visibili
-    $query = 'SELECT mg_listini.nome, sconto_percentuale AS sconto_percentuale_listino_visibile,
+    $query = 'SELECT mg_listini.nome, minimo, massimo, sconto_percentuale AS sconto_percentuale_listino_visibile,
         '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino_visibile
     FROM mg_listini
     LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
@@ -343,16 +344,64 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
             }
         }
     }
-    if ($listino) {
-        $show_notifica_prezzo = $listino['prezzo_unitario_listino'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
-        $show_notifica_sconto = $listino['sconto_percentuale_listino'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
-        $prezzo_unitario = $listino['prezzo_unitario_listino'];
-        $sconto = $listino['sconto_percentuale_listino'];
+    // Gestione listini con logica minimo/massimo
+    $listino_predefinito = null;
+    $listino_selezionato = null;
+    if ($listini) {
+        foreach ($listini as $listino_item) {
+            if ($listino_item['minimo'] == null && $listino_item['massimo'] == null && $listino_item['prezzo_unitario_listino'] != null) {
+                $listino_predefinito = $listino_item;
+                continue;
+            }
+
+            if ($qta >= $listino_item['minimo'] && $qta <= $listino_item['massimo']) {
+                $listino_selezionato = $listino_item;
+            }
+        }
+
+        $listino = $listino_selezionato ?: $listino_predefinito;
+
+        if ($listino) {
+            $show_notifica_prezzo = $listino['prezzo_unitario_listino'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+            $show_notifica_sconto = $listino['sconto_percentuale_listino'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+            $prezzo_unitario = $listino['prezzo_unitario_listino'];
+            $sconto = $listino['sconto_percentuale_listino'];
+        }
     }
+
+    // Gestione listini sempre visibili con logica minimo/massimo
     if ($listini_sempre_visibili) {
-        foreach ($listini_sempre_visibili as $listino_sempre_visibile) {
-            $show_notifica_prezzo = $listino_sempre_visibile['prezzo_unitario_listino_visibile'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
-            $show_notifica_sconto = $listino_sempre_visibile['sconto_percentuale_listino_visibile'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+        // Raggruppa i listini sempre visibili per nome
+        $listini_visibili_per_nome = [];
+        foreach ($listini_sempre_visibili as $listino_visibile) {
+            $nome = $listino_visibile['nome'];
+            if (!isset($listini_visibili_per_nome[$nome])) {
+                $listini_visibili_per_nome[$nome] = [];
+            }
+            $listini_visibili_per_nome[$nome][] = $listino_visibile;
+        }
+
+        // Per ogni nome, seleziona il listino appropriato per la quantità
+        foreach ($listini_visibili_per_nome as $nome => $listini_con_stesso_nome) {
+            $listino_predefinito_visibile = null;
+            $listino_selezionato_visibile = null;
+            foreach ($listini_con_stesso_nome as $listino_visibile) {
+                if ($listino_visibile['minimo'] == null && $listino_visibile['massimo'] == null && $listino_visibile['prezzo_unitario_listino_visibile'] != null) {
+                    $listino_predefinito_visibile = $listino_visibile;
+                    continue;
+                }
+
+                if ($qta >= $listino_visibile['minimo'] && $qta <= $listino_visibile['massimo']) {
+                    $listino_selezionato_visibile = $listino_visibile;
+                }
+            }
+
+            $listino_visibile_selezionato = $listino_selezionato_visibile ?: $listino_predefinito_visibile;
+
+            if ($listino_visibile_selezionato) {
+                $show_notifica_prezzo = $listino_visibile_selezionato['prezzo_unitario_listino_visibile'] != $prezzo_unitario_corrente ? true : $show_notifica_prezzo;
+                $show_notifica_sconto = $listino_visibile_selezionato['sconto_percentuale_listino_visibile'] != $sconto_percentuale_corrente ? true : $show_notifica_sconto;
+            }
         }
     }
 

@@ -29,6 +29,8 @@ foreach ($articoli as $articolo) {
         '<div class="text-right align-middle">'.moneyFormat($articolo['prezzo_unitario']).'</div>',
         '<div class="text-right align-middle">'.moneyFormat($articolo['prezzo_unitario_ivato']).'</div>',
         '<div class="text-right align-middle">'.($articolo['sconto_percentuale'] != 0 ? numberFormat($articolo['sconto_percentuale']).' %' : '-').'</div>',
+        '<div class="text-right align-middle">'.($articolo['minimo'] != 0 ? numberFormat($articolo['minimo']) : '-').'</div>',
+        '<div class="text-right align-middle">'.($articolo['massimo'] != 0 ? numberFormat($articolo['massimo']) : '-').'</div>',
         '<div class="text-center align-middle">
             <a class="btn btn-xs btn-warning" title="'.tr('Modifica articolo').'" onclick="modificaArticolo($(this), '.$articolo['id'].')">
                 <i class="fa fa-edit"></i>

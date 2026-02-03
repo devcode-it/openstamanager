@@ -82,4 +82,11 @@ class Articolo extends Model
     {
         return $this->belongsTo(Listino::class, 'id_listino');
     }
+
+    public static function dettagli($id_listino_articolo)
+    {
+        return self::whereNotNull('minimo')
+            ->whereNotNull('massimo')
+            ->where('id', $id_listino_articolo);
+    }
 }

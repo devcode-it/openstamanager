@@ -109,7 +109,7 @@ echo '
 								<i class="fa fa-calendar text-muted"></i> '.tr('Data scadenza').'
 							</th>
 							<th class="text-center">
-								<i class="fa fa-sort-numeric-asc text-muted"></i> '.tr('Minimo').'
+								<i class="fa fa-sort-numeric-asc text-muted"></i> '.tr('Minimo vendita').'
 							</th>
 							<th class="text-center">
 								<i class="fa fa-euro text-muted"></i> '.tr('Prezzo di listino').'
@@ -119,6 +119,12 @@ echo '
 							</th>
 							<th class="text-center">
 								<i class="fa fa-percent text-muted"></i> '.tr('Sconto').'
+							</th>
+							<th class="text-center">
+								'.tr('Minimo').'
+							</th>
+							<th class="text-center">
+								'.tr('Massimo').'
 							</th>
 							<th class="text-center" width="100">
 								<i class="fa fa-cogs text-muted"></i> '.tr('Azioni').'

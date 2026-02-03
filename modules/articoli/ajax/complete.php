@@ -255,7 +255,8 @@ switch ($resource) {
         $prezzi = $database->fetchArray($query_anagrafica);
 
         // Prezzi listini clienti
-        $query = 'SELECT sconto_percentuale AS sconto_percentuale_listino,
+        $query = 'SELECT minimo, massimo,
+            sconto_percentuale AS sconto_percentuale_listino,
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
         FROM mg_listini
         LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
@@ -265,11 +266,13 @@ switch ($resource) {
         AND mg_listini.attivo=1
         AND id_articolo = '.prepare($id_articolo).'
         AND dir = '.prepare($direzione).'
-        AND idanagrafica = '.prepare($id_anagrafica);
+        AND idanagrafica = '.prepare($id_anagrafica).'
+        ORDER BY minimo ASC, massimo DESC';
         $listino = $database->fetchArray($query);
 
         // Prezzi listini clienti sempre visibili
-        $query = 'SELECT mg_listini.nome, sconto_percentuale AS sconto_percentuale_listino_visibile,
+        $query = 'SELECT minimo, massimo,
+            mg_listini.nome, sconto_percentuale AS sconto_percentuale_listino_visibile,
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino_visibile
         FROM mg_listini
         LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
@@ -278,7 +281,8 @@ switch ($resource) {
         AND mg_listini.attivo=1
         AND mg_listini.is_sempre_visibile=1
         AND id_articolo = '.prepare($id_articolo).'
-        AND dir = '.prepare($direzione);
+        AND dir = '.prepare($direzione).'
+        ORDER BY minimo ASC, massimo DESC';
         $listini_sempre_visibili = $database->fetchArray($query);
 
         // Prezzi scheda articolo

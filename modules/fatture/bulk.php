@@ -717,6 +717,9 @@ switch (post('op')) {
 
             if ($email_success) {
                 OperationLog::setInfo('id_email', $mail->id);
+                OperationLog::setInfo('id_module', $id_module);
+                OperationLog::setInfo('id_record', $fattura->id);
+                OperationLog::build('send-email');
                 $list[] = $fattura->numero_esterno;
                 ++$success_count;
             } else {

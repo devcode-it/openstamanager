@@ -21,7 +21,6 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__.'/src',
         __DIR__.'/storage',
         __DIR__.'/templates',
-        __DIR__.'/tests',
         __DIR__.'/update',
     ]);
 

@@ -11,6 +11,438 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
+#### 2.10 - 03/02/2026
+
+##### Problemi noti
+- Corretta l'impostazione del log di invio per singola fattura in fase di invio email da azioni di gruppo
+https://github.com/devcode-it/openstamanager/commit/eefbc6f7c
+
+- Corretta iva calcolata su ritenuta in tabella riepilogo iva della stampa fattura
+https://github.com/devcode-it/openstamanager/commit/d0559c2fd
+
+- Corretta stampa fattura con dicitura iva che veniva impostata a centro pagina
+https://github.com/devcode-it/openstamanager/commit/a7cce938d
+
+- Corretta navigabilità nella configurazione del database
+https://github.com/devcode-it/openstamanager/commit/b46847702
+
+- Corretti gli avvisi in fase di login utente
+https://github.com/devcode-it/openstamanager/commit/e36a1bc1a
+
+- Corretta visualizzazione cancel button default per swal
+https://github.com/devcode-it/openstamanager/commit/748ebdb26
+
+- Corretta stampa sede in riepilogo interventi
+https://github.com/devcode-it/openstamanager/commit/5937b77f3
+
+- Corretta data per calcolo progressivo contratto in duplicazione contratto anno precedente
+https://github.com/devcode-it/openstamanager/commit/11e3ff897
+
+- Corretto utilizzo di insert ignore per evitare errore js in fase di modifica permessi utenti
+https://github.com/devcode-it/openstamanager/commit/f575c0176
+
+- Corretta correzione salvataggio firma
+https://github.com/devcode-it/openstamanager/commit/13ee85506
+
+- Corretta impostazione banca di accredito predefinita in fattura in base a impostazione specificata in anagrafica cliente
+https://github.com/devcode-it/openstamanager/commit/5b8241eab
+
+- Corretto link alla documentazione
+https://github.com/devcode-it/openstamanager/commit/53745ba7c
+
+- Corretta stampa registro iva acquisti per fatture a cavallo dell'anno
+https://github.com/devcode-it/openstamanager/commit/b4eaab860
+
+- Corretto aggiornamento quantità da importazione articoli dove non è specificata la data
+https://github.com/devcode-it/openstamanager/commit/e683e563d
+
+- Corretta l'impostazione del giorno scadenza per regole pagamenti
+https://github.com/devcode-it/openstamanager/commit/29413472a
+
+- Corretto percorso base_path
+https://github.com/devcode-it/openstamanager/commit/b69e64cd3
+
+- Corretta miglioria controllo su quantità in creazione documento, che viene ora abilitata in base all'impostazione Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita
+https://github.com/devcode-it/openstamanager/commit/d32bd1ba7
+
+- Corretta esclusione controllo sulle quantità per i documenti con direzione uscita
+https://github.com/devcode-it/openstamanager/commit/b2f29ee34
+
+- Corretto raggruppamento righe per ordine in fase di selezione ordine da importare nei documenti
+https://github.com/devcode-it/openstamanager/commit/b46847702
+
+- Corretta selezione banca addebito nel caso di pagamento tramite Ri.Ba.
+https://github.com/devcode-it/openstamanager/commit/f04d59585
+
+- Corretto calcolo quantità disponibile articoli in fase di generazione ddt da ordine
+https://github.com/devcode-it/openstamanager/commit/86a92716f
+
+- Corretto avviso per uscita da fattura di acquisto
+https://github.com/devcode-it/openstamanager/commit/b2b39f85f
+
+- Corretto calcolo arrotondamento in importazione fattura di acquisto se indicato in maniera errata nell'xml
+https://github.com/devcode-it/openstamanager/commit/a4aa0a3d0
+
+- Corretta importazione fatture con tipo documento e data registrazione mancanti in xml
+https://github.com/devcode-it/openstamanager/commit/7402d4371
+
+- Corretto refuso nome documento in creazione ddt da preventivo
+https://github.com/devcode-it/openstamanager/commit/b6628b551
+
+- Corretto script creazione immagine docker
+https://github.com/devcode-it/openstamanager/commit/2642c186f
+
+- Corretta prevenzione sql injection
+https://github.com/devcode-it/openstamanager/commit/bae00c059
+
+#### 2.9.8 - 23/12/2025
+
+##### Problemi noti
+- Corretta la gestione dei barcode collegati ad articoli eliminati
+https://github.com/devcode-it/openstamanager/commit/555400afb
+
+- Corretto l'avviso sulle risorse in scadenza
+https://github.com/devcode-it/openstamanager/commit/837b2f4d1
+
+- Corretta la generazione di scadenze relative a fatture con marca da bollo
+https://github.com/devcode-it/openstamanager/commit/ee1471442
+
+- Corretta la visualizzazione della ragione sociale del fornitore nella sezione Ultimi 20 prezzi di acquisto in Articoli
+https://github.com/devcode-it/openstamanager/commit/5a460ee90
+
+- Corretta la stampa inventario
+https://github.com/devcode-it/openstamanager/commit/c228d5ea2
+
+- Corretta la stampa dei contratti
+https://github.com/devcode-it/openstamanager/commit/9cbd3040d
+
+- Corretta l'impostazione del pagamento predefinito dell'anagrafica in aggiunta di una nuova attività
+https://github.com/devcode-it/openstamanager/commit/79ae16856
+
+- Corretta l'aggiunta di marca e modello in fase di creazione di un impianto
+https://github.com/devcode-it/openstamanager/commit/5c9f67fed
+
+- Corretta l'aggiunta di una prima nota dall'edit prima nota
+https://github.com/devcode-it/openstamanager/commit/12a42dd99
+
+- Corretta la stampa della provvigione agente
+https://github.com/devcode-it/openstamanager/commit/d69585908
+
+- Corretto il salvataggio della configurazione Oauth2
+https://github.com/devcode-it/openstamanager/commit/ea1ee603e
+
+- Corretto l'avviso
+https://github.com/devcode-it/openstamanager/commit/2d09c62f3
+
+- Corretta l'associazione di permessi ai gruppi di utenti
+https://github.com/devcode-it/openstamanager/commit/d91b69aba
+
+- Corretto l'invio mail da terminale durante l'esecuzione del cron
+https://github.com/devcode-it/openstamanager/commit/3f71d36c9
+
+- Corretta la vista di Accesso con OAuth
+https://github.com/devcode-it/openstamanager/commit/dbc25baf6
+
+- Corretta l'aggiunta di una categoria
+https://github.com/devcode-it/openstamanager/commit/33650bafb
+
+- Corretta la visualizzazione di articoli collegati a una marca
+https://github.com/devcode-it/openstamanager/commit/073dbac9b
+
+- Corretta l'aggiunta di una categoria file
+https://github.com/devcode-it/openstamanager/commit/80358e70e
+
+- Corretto il calcolo della quantità evasa delle righe preventivo per problema in fase di eliminazione fattura creata da preventivo con quantità eccedenti la disponibilità a magazzino
+https://github.com/devcode-it/openstamanager/commit/3ae4ff34d
+
+- Corretta l'ordinamento dei movimenti degli articoli da plugin per data movimento
+https://github.com/devcode-it/openstamanager/commit/4bfb84f68
+
+- Corretta la gestione dei seriali in note di credito collegate a fatture
+https://github.com/devcode-it/openstamanager/commit/b1636ce0f
+
+- Corretto il redirect al modulo fatture da plugin serial, nel caso di note di credito
+https://github.com/devcode-it/openstamanager/commit/2aba9bfc0
+
+- Corretta la gestione dei seriali rientrati a magazzino tramite nota di credito
+https://github.com/devcode-it/openstamanager/commit/5deab378f
+
+- Corretta la selezione del tipo documento in fase di generazione nota di credito
+https://github.com/devcode-it/openstamanager/commit/0a32be473
+
+#### 2.9.7 - 09/12/2025
+
+##### Problemi noti
+- Corretti riferimenti in registrazione contabile da bulk
+https://github.com/devcode-it/openstamanager/commit/d0383136b
+
+- Corretta visualizzazione riferimenti import FE
+https://github.com/devcode-it/openstamanager/commit/af2b27187
+
+- Corretta aggiunta ordini in attività
+https://github.com/devcode-it/openstamanager/commit/5b851cc4a
+
+- Corretto cambio stato contratti
+https://github.com/devcode-it/openstamanager/commit/e4724ccc1
+
+- Corretto controllo su iban
+https://github.com/devcode-it/openstamanager/commit/b0da8adda
+
+- Corretto caricamento allegati
+https://github.com/devcode-it/openstamanager/commit/2b98d3e0c
+
+- Corretta sottocategoria in vista contratti
+https://github.com/devcode-it/openstamanager/commit/937ef080a
+
+- Corretto salvataggio allegati
+https://github.com/devcode-it/openstamanager/commit/76187dcd4
+
+- Corretta rivalsa in FE
+https://github.com/devcode-it/openstamanager/commit/589901c52
+
+- Corretta associazione sottocategoria a impianto
+https://github.com/devcode-it/openstamanager/commit/439332f93
+
+- Corretto Importazione fatture da zip
+https://github.com/devcode-it/openstamanager/commit/6d69f9fa8
+
+- Corretto avviso tasto importa in sequenza
+https://github.com/devcode-it/openstamanager/commit/c4bcaedd2
+
+- Corretto salvataggio firma da app
+https://github.com/devcode-it/openstamanager/commit/90cc7a145
+
+- Corretti allegati fatture elettroniche
+https://github.com/devcode-it/openstamanager/commit/0ef3a71f5
+
+#### 2.9.6 - 26/11/2025
+
+##### Problemi noti
+- Corretto log invio fatture da bulk
+https://github.com/devcode-it/openstamanager/commit/9f13a965c
+
+- Corretto calcolo spazio occupato
+https://github.com/devcode-it/openstamanager/commit/ca47fb7f1
+
+- Corretta lettura informazioni su services
+https://github.com/devcode-it/openstamanager/commit/59e1596b1
+
+- Corretta stampa inventario con filtri
+https://github.com/devcode-it/openstamanager/commit/9276bb607
+
+- Corretta visualizzazione highlight righe documenti alla modifica
+https://github.com/devcode-it/openstamanager/commit/197ce85b2
+
+- Corretta selezione seriali
+https://github.com/devcode-it/openstamanager/commit/02574b057
+
+- Corretta gestione assenza file modules.json e views.json
+https://github.com/devcode-it/openstamanager/commit/19483b4b5
+
+- Corretta aggiunta record multilingua mancanti a database
+https://github.com/devcode-it/openstamanager/commit/499e8e065
+
+- Corretta lettura cache Informazioni su services
+https://github.com/devcode-it/openstamanager/commit/ccf3c4d80
+
+- Corretta visualizzazione servizi
+https://github.com/devcode-it/openstamanager/commit/261cc2e5a
+
+- Corretta segnalazione compatibilità
+https://github.com/devcode-it/openstamanager/commit/a4adfcab6
+
+- Corretto background red widget contratti in scadenza
+https://github.com/devcode-it/openstamanager/commit/f6bfdcf14
+
+- Corretta aggiunta stato ddt
+https://github.com/devcode-it/openstamanager/commit/de575f976
+
+- Corretto salvataggio categorie contratti
+https://github.com/devcode-it/openstamanager/commit/2913246ed
+
+- Corretto title stampa bilancio
+https://github.com/devcode-it/openstamanager/commit/9730a0a38
+
+#### 2.9.5 - 12/11/2025
+
+##### Problemi noti
+- Corretta visualizzazione importo stampa preventivo
+https://github.com/devcode-it/openstamanager/commit/a038f2839
+
+- Corretta duplicazione fattura con marca da bollo
+https://github.com/devcode-it/openstamanager/commit/e5aa8f796
+
+- Corretto export FE dati aggiuntivi
+https://github.com/devcode-it/openstamanager/commit/61218005e
+
+- Corretta visualizzazione pagamento in stampa preventivo
+https://github.com/devcode-it/openstamanager/commit/c17ee6968
+
+- Corretta query vista modulo Log eventi
+https://github.com/devcode-it/openstamanager/commit/3d658d575
+
+- Corretta sincronizzazione su app degli articoli eliminati
+https://github.com/devcode-it/openstamanager/commit/834f9378f
+
+- Corretta importazione barcode articoli
+https://github.com/devcode-it/openstamanager/commit/352c9c7af
+
+- Corretta generazione autofattura per reverse charge
+https://github.com/devcode-it/openstamanager/commit/ab87cf4bc
+
+- Corretta maggiorazione nei template
+https://github.com/devcode-it/openstamanager/commit/c062b47f7
+
+- Corrette API allegati
+https://github.com/devcode-it/openstamanager/commit/d17a3951f
+
+- Corretto elenco tipi di spedizione in ordini
+https://github.com/devcode-it/openstamanager/commit/22fa8a8ed
+
+- Corrette anomalie ammortamenti/cespiti
+https://github.com/devcode-it/openstamanager/commit/d58b8cce2
+
+- Corretto carattere non supportato XML
+https://github.com/devcode-it/openstamanager/commit/51cfe9606
+
+- Corretto avviso per valore richiesto al login
+https://github.com/devcode-it/openstamanager/commit/a03625757
+
+- Corretta impostazione idconto righe
+https://github.com/devcode-it/openstamanager/commit/3080be327
+
+#### 2.9.4 - 28/10/2025
+
+##### Problemi noti
+- Corretto salvataggio inline nuova scadenza non funzionante
+https://github.com/devcode-it/openstamanager/commit/a038f2839
+
+- Corretto allineamento larghezza input field e icon button nella pagina reset password e login
+https://github.com/devcode-it/openstamanager/commit/9346cc4ee
+
+- Corretta generazione stampe contabili definitive
+https://github.com/devcode-it/openstamanager/commit/96b9eac0b
+
+- Corretto ordinamento viste non rispettato
+https://github.com/devcode-it/openstamanager/commit/7df806723
+
+- Corretta gestione valori a null database per evitare errori
+https://github.com/devcode-it/openstamanager/commit/accd2dfb4
+
+- Rimosso BountySource dal README (servizio non più esistente)
+https://github.com/devcode-it/openstamanager/commit/39d2fadc2
+
+- Corretta visualizzazione barra dei plugin non corretta
+https://github.com/devcode-it/openstamanager/commit/6b3584d3c
+
+- Corretto capitale sociale opzionale permettendo salvataggio a null
+https://github.com/devcode-it/openstamanager/commit/148aacd60
+
+- Corretta formattazione colonne formato data
+https://github.com/devcode-it/openstamanager/commit/c9ed47b79
+
+- Corretto svuota cache hooks non funzionante
+https://github.com/devcode-it/openstamanager/commit/5dab6c4d6
+
+- Corretta generazione query risoluzione problemi database
+https://github.com/devcode-it/openstamanager/commit/e98d4b398
+
+- Corretto inserimento ordine in attività con errori
+https://github.com/devcode-it/openstamanager/commit/3c0af7b27
+
+- Corretta applicazione filtri segmenti non funzionante
+https://github.com/devcode-it/openstamanager/commit/07ef6a766
+
+#### 2.9.3 - 14/10/2025
+
+##### Problemi noti
+- Corretta la gestione dell'invio via mail per i token OTP
+https://github.com/devcode-it/openstamanager/commit/6f59b7c42
+
+- Corrette le dimensioni del QR Code nelle stampe
+https://github.com/devcode-it/openstamanager/commit/4aa42299b
+
+- Corretti i riferimenti alle email inviate nei vari moduli per una visualizzazione accurata
+https://github.com/devcode-it/openstamanager/commit/49d68ea6b
+
+- Corretta verifica esigibilità IVA non funzionante correttamente
+https://github.com/devcode-it/openstamanager/commit/c72c4386d
+
+- Corretta gestione barcode non corretta in alcuni moduli
+https://github.com/devcode-it/openstamanager/commit/cb6269721
+
+- Corretti filtri fantasma che apparivano nelle tabelle senza essere configurati
+https://github.com/devcode-it/openstamanager/commit/8d30cec74
+
+- Corretto avviso fatture con ricevuta di scarto non visualizzato correttamente
+https://github.com/devcode-it/openstamanager/commit/09f261b6c
+
+- Corretta ricerca articoli nei documenti che non restituiva risultati corretti
+https://github.com/devcode-it/openstamanager/commit/fbeea9fd9
+
+- Corrette query installazione che causavano errori durante l'aggiornamento
+https://github.com/devcode-it/openstamanager/commit/230d95e30
+
+- Corretto pannello servizi che non caricava correttamente le informazioni
+https://github.com/devcode-it/openstamanager/commit/0dc84866c
+
+- Corretto bug che impediva il cambio password tramite l'interfaccia di modifica utente
+https://github.com/devcode-it/openstamanager/commit/aa05fe798
+
+- Corretto ridimensionamento viste non corretto su schermi diversi
+https://github.com/devcode-it/openstamanager/commit/2adb15e56
+
+- Corretta ricerca piano dei conti non funzionante
+https://github.com/devcode-it/openstamanager/commit/898cf38e1
+
+- Corretta notifica aggiornamento non visualizzata correttamente
+https://github.com/devcode-it/openstamanager/commit/1ab6734fc
+
+- Corretta impostazione tipo anagrafica in import FE non corretta
+https://github.com/devcode-it/openstamanager/commit/9add9c76e
+
+- Corretta selezione modulo iniziale che non rispettava le impostazioni utente
+https://github.com/devcode-it/openstamanager/commit/5ff39df9b
+
+- Corretta ricerca articoli che restituiva risultati non pertinenti
+https://github.com/devcode-it/openstamanager/commit/637b82345
+
+- Corretto invio sollecito scadenze selezionate non funzionante
+https://github.com/devcode-it/openstamanager/commit/5a77a513a
+
+- Corretto ordinamento tabelle che non rispettava i criteri impostati
+https://github.com/devcode-it/openstamanager/commit/06efa924a
+
+- Corretta ricerca e visualizzazione fatture da importare non funzionante
+https://github.com/devcode-it/openstamanager/commit/d37cb5ef9
+
+- Corretta esportazione RIBA con errori nei dati esportati
+https://github.com/devcode-it/openstamanager/commit/6d82c05ff
+
+- Corretto calcolo arrotondamento per fatture elettroniche non corretto
+https://github.com/devcode-it/openstamanager/commit/ecdd0fd9d
+
+- Corretto link stampa su menu a tendina in invio email non funzionante
+https://github.com/devcode-it/openstamanager/commit/8f9572565
+
+- Corretta esecuzione cron da riga di comando con redirectHTTPS attivo che causava errori
+https://github.com/devcode-it/openstamanager/commit/5ffe7fe68
+
+- Corretto import righe fatture elettroniche con quantità non definita ma prezzo unitario definito
+https://github.com/devcode-it/openstamanager/commit/4e003a850
+
+- Corretto salvataggio seriali vendita al banco non funzionante
+https://github.com/devcode-it/openstamanager/commit/1ff92853b
+
+- Corretti permessi per modulo Accesso con Token/OTP mancanti
+https://github.com/devcode-it/openstamanager/commit/f73b53a75
+
+- Corretta gestione XML righe senza quantità che causava errori di importazione
+https://github.com/devcode-it/openstamanager/commit/21f91c1c9
+
+- Corretta aggiunta pagamenti che non funzionava correttamente
+https://github.com/devcode-it/openstamanager/commit/02bd3db69
+
 #### 2.9.2 - 25/09/2025
 
 ##### Problemi noti

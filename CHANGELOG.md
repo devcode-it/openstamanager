@@ -70,6 +70,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ## 2.10.0 (2026-02-03)
 ### Aggiunto (Added)
+- Aggiunto controllo sui widget personalizzati in aggiornamenti
 - Aggiunta variabile interventi {email_user} per gestione reply_to in email
 - Aggiunta gestione registrazione danni automezzi
 - Aggiunta esportazione xml per la liquidazione IVA
@@ -146,6 +147,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta aggiunta iban e totale nei template email di fatture
 
 ### Modificato (Changed)
+- Migliorata l'azione di gruppo di aggiornamento prezzi listini articoli
 - Migliorata la gestione dei cespiti
 - Migliorati i permessi sul modulo Token OTP
 - Spostata la verifica dei permessi di upload/eliminazione allegati su classe
@@ -156,6 +158,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiornamento librerie (chart.js, hotkeys-js, jquery, protobufjs, smartwizard)
 
 ### Fixed
+- Corretta l'impostazione del log di invio per singola fattura in fase di invio email da azioni di gruppo
 - Corretta iva calcolata su ritenuta in tabella riepilogo iva della stampa fattura
 - Corretta stampa fattura con dicitura iva che veniva impostata a centro pagina
 - Corretta navigabilità nella configurazione del database

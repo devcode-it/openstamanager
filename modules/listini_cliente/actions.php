@@ -93,6 +93,11 @@ switch (filter('op')) {
 
         // Aggiornamento e creazione dei dettagli registrati
         foreach ($prezzi_unitari as $key => $prezzo_unitario) {
+            // Salta se minimo o massimo non sono definiti (articolo principale senza range)
+            if (!isset($minimi[$key]) || !isset($massimi[$key]) || $minimi[$key] === '' || $massimi[$key] === '') {
+                continue;
+            }
+
             if (isset($dettagli_registrati[$key])) {
                 $dettaglio = Articolo::find($dettagli_registrati[$key]);
             } else {

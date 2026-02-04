@@ -64,6 +64,7 @@ class Articolo extends Model
         // Calcolo prezzo di vendita ivato e non ivato
         $prezzi_ivati = ($this->dir == 'entrata' ? setting('Utilizza prezzi di vendita comprensivi di IVA') : 0);
         $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
+        $prezzo_unitario = floatval($prezzo_unitario);
         if ($prezzi_ivati) {
             $this->prezzo_unitario_ivato = $prezzo_unitario;
             $this->prezzo_unitario = $prezzo_unitario / (1 + $percentuale_aliquota / 100);

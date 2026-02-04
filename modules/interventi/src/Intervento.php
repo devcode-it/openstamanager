@@ -75,16 +75,16 @@ class Intervento extends Document
         $model->idclientefinale = $anagrafica->idanagrafica;
 
         $user = auth_osm()->getUser();
-        $id_sede = null;
-        foreach ($user->sedi as $sede) {
-            if ($sede != 0 || count($user->sedi) == 1) {
-                $id_sede = $sede;
-                break;
+        // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
+        $id_sede = 0;
+        if (!empty($user->sedi)) {
+            // Verifico se la sede legale (0) è tra le sedi dell'utente
+            if (in_array(0, $user->sedi)) {
+                $id_sede = 0;
+            } else {
+                // Se la sede legale non è disponibile, prendo la prima sede dell'utente
+                $id_sede = $user->sedi[0];
             }
-        }
-
-        if ($id_sede === null && !empty($user->sedi)) {
-            $id_sede = $user->sedi[0];
         }
 
         $model->idsede_partenza = $id_sede ?: 0;

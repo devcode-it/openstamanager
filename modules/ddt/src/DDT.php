@@ -96,11 +96,22 @@ class DDT extends Document
         $model->numero = static::getNextNumero($data, $direzione, $id_segment);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
 
-        // Imposto, come sede aziendale, la prima sede disponibile come utente
+        // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
+        $id_sede = 0;
+        if (!empty($user->sedi)) {
+            // Verifico se la sede legale (0) è tra le sedi dell'utente
+            if (in_array(0, $user->sedi)) {
+                $id_sede = 0;
+            } else {
+                // Se la sede legale non è disponibile, prendo la prima sede dell'utente
+                $id_sede = $user->sedi[0];
+            }
+        }
+
         if ($direzione == 'entrata') {
-            $model->idsede_partenza = $user->sedi[0];
+            $model->idsede_partenza = $id_sede;
         } else {
-            $model->idsede_destinazione = $user->sedi[0];
+            $model->idsede_destinazione = $id_sede;
         }
 
         $model->save();

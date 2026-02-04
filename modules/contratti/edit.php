@@ -73,7 +73,6 @@ echo '
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-4">
-                '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
@@ -88,7 +87,6 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">
-                    '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 

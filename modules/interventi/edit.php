@@ -73,19 +73,12 @@ echo '
                     <!-- RIGA 1 -->
                     <div class="row">
                         <div class="col-md-3">
-                            '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                             {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
                         </div>
                         <div class="col-md-3">
                             {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
                         </div>
-
-                        <div class="col-md-3">';
-if (!empty($record['idclientefinale'])) {
-    echo '
-                            '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
-}
-echo '
+                        <div class="col-md-3">
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                         <div class="col-md-3">

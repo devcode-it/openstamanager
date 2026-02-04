@@ -64,7 +64,6 @@ if (count($preventivo->revisioni) > 1) {
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-4">
-                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
@@ -136,11 +135,6 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    <?php
-            if (!empty($record['idpagamento'])) {
-                echo Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"');
-            }
-?>
                     {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
                 </div>
 

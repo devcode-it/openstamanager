@@ -87,6 +87,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">
+                    '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
                     {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 

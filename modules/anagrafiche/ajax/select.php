@@ -381,6 +381,7 @@ switch ($resource) {
                 'id' => $r['id'],
                 'text' => $r['descrizione'],
                 'descrizione' => $r['descrizione'],
+                'link' => 'module:Anagrafiche',
             ];
         }
 

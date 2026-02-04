@@ -136,7 +136,7 @@ echo '
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                 </div>';
 if ($dir == 'entrata') {
     echo '

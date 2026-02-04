@@ -232,9 +232,10 @@ if (function_exists('customComponents')) {
     $custom_views_not_standard = function_exists('customViewsNotStandard') ? customViewsNotStandard() : [];
     $custom_modules_not_standard = function_exists('customModulesNotStandard') ? customModulesNotStandard() : [];
 
-    // Verifica se mancano i file di riferimento per viste e moduli
+    // Verifica se mancano i file di riferimento per viste, moduli, impostazioni e widgets
     $views_file_missing = !file_exists(base_dir().'/views.json');
     $modules_file_missing = !file_exists(base_dir().'/modules.json');
+    $settings_file_missing = !file_exists(base_dir().'/settings.json');
     $widgets_file_missing = !file_exists(base_dir().'/widgets.json');
 
     // Verifica se manca il file di riferimento per il database
@@ -998,25 +999,33 @@ if (function_exists('customComponents')) {
             </div>';
 
     // Card Impostazioni personalizzate
+    $has_settings_data_issues = !empty($results_settings) || !empty($results_settings_added);
+
+    // Conta gli avvisi per tipo
     $settings_danger_count = 0;
     $settings_warning_count = 0;
     $settings_info_count = 0;
 
-    foreach ($results_settings as $key => $setting) {
-        if (!$setting['current']) {
-            ++$settings_danger_count;
-        } else {
-            ++$settings_warning_count;
+    if ($has_settings_data_issues) {
+        foreach ($results_settings as $key => $setting) {
+            if (!$setting['current']) {
+                ++$settings_danger_count;
+            } else {
+                ++$settings_warning_count;
+            }
+        }
+
+        foreach ($results_settings_added as $key => $setting) {
+            if ($setting['current'] == null) {
+                ++$settings_info_count;
+            }
         }
     }
 
-    foreach ($results_settings_added as $key => $setting) {
-        if ($setting['current'] == null) {
-            ++$settings_info_count;
-        }
-    }
-
-    $settings_colors = Utils::determineCardColor($settings_danger_count, $settings_warning_count, $settings_info_count > 0 ? 1 : 0);
+    // Determina il colore della card in base all'avviso più grave
+    $settings_danger = ($settings_file_missing && $settings_warning_count > 0) ? 1 : 0;
+    $settings_warning = ($settings_warning_count > 0 || $settings_file_missing) ? 1 : 0;
+    $settings_colors = Utils::determineCardColor($settings_danger, $settings_warning, $settings_info_count > 0 ? 1 : 0);
     $settings_card_color = $settings_colors['color'];
     $settings_icon = $settings_colors['icon'];
 
@@ -1038,40 +1047,62 @@ if (function_exists('customComponents')) {
                 </div>
                 <div class="card-body">';
 
-    include __DIR__.'/settings.php';
+    if ($has_settings_data_issues) {
+        include __DIR__.'/settings.php';
+    } elseif ($settings_file_missing) {
+        echo '
+                    <div class="alert alert-warning alert-database">
+                        <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo delle impostazioni in assenza del file _FILE_', [
+            '_FILE_' => '<b>settings.json</b>',
+        ]).'.
+                    </div>';
+    } else {
+        echo '
+                    <p class="text-success mb-0">
+                        <i class="fa fa-check-circle"></i> '.tr('Nessuna impostazione personalizzata rilevata').'
+                    </p>';
+    }
 
     echo '
                 </div>
             </div>';
 
     // Card Widgets personalizzati
+    $has_widgets_data_issues = !empty($results_widgets) || !empty($results_widgets_added);
+
+    // Conta gli avvisi per tipo
     $widgets_danger_count = 0;
     $widgets_warning_count = 0;
     $widgets_info_count = 0;
 
-    foreach ($results_widgets as $module_key => $module_widgets) {
-        if (is_array($module_widgets)) {
-            foreach ($module_widgets as $widget_name => $widget) {
-                if (!$widget['current']) {
-                    ++$widgets_danger_count;
-                } else {
-                    ++$widgets_warning_count;
+    if ($has_widgets_data_issues) {
+        foreach ($results_widgets as $module_key => $module_widgets) {
+            if (is_array($module_widgets)) {
+                foreach ($module_widgets as $widget_name => $widget) {
+                    if (!$widget['current']) {
+                        ++$widgets_danger_count;
+                    } else {
+                        ++$widgets_warning_count;
+                    }
+                }
+            }
+        }
+
+        foreach ($results_widgets_added as $module_key => $module_widgets) {
+            if (is_array($module_widgets)) {
+                foreach ($module_widgets as $widget_name => $widget) {
+                    if ($widget['current'] == null) {
+                        ++$widgets_info_count;
+                    }
                 }
             }
         }
     }
 
-    foreach ($results_widgets_added as $module_key => $module_widgets) {
-        if (is_array($module_widgets)) {
-            foreach ($module_widgets as $widget_name => $widget) {
-                if ($widget['current'] == null) {
-                    ++$widgets_info_count;
-                }
-            }
-        }
-    }
-
-    $widgets_colors = Utils::determineCardColor($widgets_danger_count, $widgets_warning_count, $widgets_info_count > 0 ? 1 : 0);
+    // Determina il colore della card in base all'avviso più grave
+    $widgets_danger = ($widgets_file_missing && $widgets_warning_count > 0) ? 1 : 0;
+    $widgets_warning = ($widgets_warning_count > 0 || $widgets_file_missing) ? 1 : 0;
+    $widgets_colors = Utils::determineCardColor($widgets_danger, $widgets_warning, $widgets_info_count > 0 ? 1 : 0);
     $widgets_card_color = $widgets_colors['color'];
     $widgets_icon = $widgets_colors['icon'];
 
@@ -1093,7 +1124,21 @@ if (function_exists('customComponents')) {
                 </div>
                 <div class="card-body">';
 
-    include __DIR__.'/widgets.php';
+    if ($has_widgets_data_issues) {
+        include __DIR__.'/widgets.php';
+    } elseif ($widgets_file_missing) {
+        echo '
+                    <div class="alert alert-warning alert-database">
+                        <i class="fa fa-exclamation-triangle"></i> '.tr('Impossibile effettuare il controllo dei widgets in assenza del file _FILE_', [
+            '_FILE_' => '<b>widgets.json</b>',
+        ]).'.
+                    </div>';
+    } else {
+        echo '
+                    <p class="text-success mb-0">
+                        <i class="fa fa-check-circle"></i> '.tr('Nessun widget personalizzato rilevato').'
+                    </p>';
+    }
 
     echo '
                 </div>

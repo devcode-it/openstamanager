@@ -4425,6 +4425,7 @@ class Validator
             ' ́' => '\'',
             ' ̧' => ',',
             'ś' => 's',
+            '→' => '->',
         ]);
 
         return $string;

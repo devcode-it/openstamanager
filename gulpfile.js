@@ -544,6 +544,7 @@ export function release(done) {
                     '!settings.json',
                     '!views.json',
                     '!modules.json',
+                    '!widgets.json',
                     '!manifest.json',
                     '!.idea/**',
                     '!.git/**',
@@ -559,6 +560,9 @@ export function release(done) {
                     '!psalm.xml',
                     '!update/structure.php',
                     '!update/settings.php',
+                    '!update/modules.php',
+                    '!update/views.php',
+                    '!update/widgets.php',
                     '!**/*.(lock|phar|log|zip|bak|jar|txt)',
                     '!**/~*',
                     '!vendor/tecnickcom/tcpdf/examples/**',
@@ -635,6 +639,13 @@ export function release(done) {
                     bufferStream.push(null);
                     archive.append(bufferStream, { name: 'modules.json' });
 
+                    // Aggiunta del file per il controllo dei widget
+                    bufferStream = new Readable();
+                    bufferStream.push(shell.exec('php update/widgets.php', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'widgets.json' });
 
                     // Aggiunta del commit corrente nel file REVISION
                     bufferStream = new Readable();

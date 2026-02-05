@@ -488,168 +488,180 @@ function i18n() {
 
 // Operazioni per la release
 export function release(done) {
-    // Impostazione dello zip
-    let output = fs.createWriteStream('./release.zip', { flags: 'w' });
-    let archive = archiver('zip');
+    // Opzioni sulla release
+    inquirer.prompt([{
+        type: 'input',
+        name: 'version',
+        message: 'Numero di versione:',
+        validate: (input) => input ? true : 'Il numero di versione non può essere vuoto.'
+    }, {
+        type: 'confirm',
+        name: 'beta',
+        message: 'Versione beta?',
+        default: false,
+    }]).then(function (result) {
 
-    output.on('close', function () {
-        console.log('ZIP completato!');
-    });
+        let version = result.version;
 
-    archive.on('error', function (err) {
-        throw err;
-    });
-
-    archive.pipe(output);
-
-    // Individuazione dei file da aggiungere e escludere
-    glob([
-        '**/*',
-        '!checksum.json',
-        '!mysql.json',
-        '!mysql_8_3.json',
-        '!mariadb_10_x.json',
-        '!settings.json',
-        '!views.json',
-        '!modules.json',
-        '!manifest.json',
-        '!.idea/**',
-        '!.git/**',
-        '!.github/**',
-        '!.vscode/**',
-        '!node_modules/**',
-        '!include/custom/**',
-        '!backup/**',
-        '!files/**',
-        'files/temp/.gitkeep',
-        '!logs/**',
-        '!config.inc.php',
-        '!psalm.xml',
-        '!update/structure.php',
-        '!update/settings.php',
-        '!**/*.(lock|phar|log|zip|bak|jar|txt)',
-        '!**/~*',
-        '!vendor/tecnickcom/tcpdf/examples/**',
-        '!vendor/tecnickcom/tcpdf/fonts/*',
-        'vendor/tecnickcom/tcpdf/fonts/*helvetica*',
-        '!vendor/mpdf/mpdf/tmp/*',
-        '!vendor/mpdf/mpdf/ttfonts/*',
-        'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
-        'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
-        'vendor/mpdf/mpdf/ttfonts/ocrbinfo.txt',
-        'vendor/mpdf/mpdf/ttfonts/ocrb10.ttf',
-        '!vendor/respect/validation/tests/**',
-        '!vendor/willdurand/geocoder/tests/**',
-        '!docker/**',
-    ], {
-        dot: true,
-    }).then(function (files) {
-        // Aggiunta dei file con i relativi checksum
-        let checksum = {};
-        for (const file of files) {
-            if (fs.lstatSync(file).isDirectory()) {
-                archive.directory(file, file);
-            } else {
-                archive.file(file);
-
-                if (!file.startsWith('vendor')) {
-                    checksum[file] = md5File.sync(file);
-                }
-            }
+        // Aggiungi '-beta' solo se l'opzione beta è selezionata
+        if (result.beta) {
+            version += '-beta';
         }
 
-        // Eccezioni
-        archive.file('backup/.htaccess', {});
-        archive.file('files/.htaccess', {});
-        archive.file('files/my_impianti/componente.ini', {});
-        archive.file('logs/.htaccess', {});
+        // Aggiorna il file publiccode.yml con la nuova versione e data di rilascio
+        const releaseDate = new Date().toISOString().split('T')[0];
+        
+        gulp.src('publiccode.yml')
+            .pipe(replace(/softwareVersion: .*/, `softwareVersion: ${version}`))
+            .pipe(replace(/releaseDate: .*/, `releaseDate: ${releaseDate}`))
+            .pipe(gulp.dest('.'))
+            .on('end', function() {
+                console.log(`Aggiornato publiccode.yml: versione ${version}, data ${releaseDate}`);
+                
+                // Impostazione dello zip con il nome che include la versione
+                let zipFileName = `openstamanager-${version}.zip`;
+                let output = fs.createWriteStream(`./${zipFileName}`, { flags: 'w' });
+                let archive = archiver('zip');
 
-        // Aggiunta del file dei checksum
-        let checksumFile = fs.createWriteStream('./checksum.json', { flags: 'w' });
-        checksumFile.write(JSON.stringify(checksum));
-        checksumFile.close();
-        archive.file('checksum.json', {});
+                output.on('close', function () {
+                    console.log(`ZIP completato: ${zipFileName}`);
+                    done();
+                });
 
-        // Aggiunta del file per il controllo di integrità del database
-        var bufferStream = new Readable();
+                archive.on('error', function (err) {
+                    throw err;
+                });
 
-        bufferStream.push(shell.exec('php update/structure.php', {
-            silent: true
-        }).stdout);
-        bufferStream.push(null);
-        archive.append(bufferStream, { name: 'mysql.json' });
+                archive.pipe(output);
 
-        // Aggiunta del file per il controllo delle impostazioni
-        bufferStream = new Readable();
-        bufferStream.push(shell.exec('php update/settings.php', {
-            silent: true
-        }).stdout);
-        bufferStream.push(null);
-        archive.append(bufferStream, { name: 'settings.json' });
+                // Individuazione dei file da aggiungere e escludere
+                glob([
+                    '**/*',
+                    '!checksum.json',
+                    '!mysql.json',
+                    '!mysql_8_3.json',
+                    '!mariadb_10_x.json',
+                    '!settings.json',
+                    '!views.json',
+                    '!modules.json',
+                    '!manifest.json',
+                    '!.idea/**',
+                    '!.git/**',
+                    '!.github/**',
+                    '!.vscode/**',
+                    '!node_modules/**',
+                    '!include/custom/**',
+                    '!backup/**',
+                    '!files/**',
+                    'files/temp/.gitkeep',
+                    '!logs/**',
+                    '!config.inc.php',
+                    '!psalm.xml',
+                    '!update/structure.php',
+                    '!update/settings.php',
+                    '!**/*.(lock|phar|log|zip|bak|jar|txt)',
+                    '!**/~*',
+                    '!vendor/tecnickcom/tcpdf/examples/**',
+                    '!vendor/tecnickcom/tcpdf/fonts/*',
+                    'vendor/tecnickcom/tcpdf/fonts/*helvetica*',
+                    '!vendor/mpdf/mpdf/tmp/*',
+                    '!vendor/mpdf/mpdf/ttfonts/*',
+                    'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
+                    'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
+                    'vendor/mpdf/mpdf/ttfonts/ocrbinfo.txt',
+                    'vendor/mpdf/mpdf/ttfonts/ocrb10.ttf',
+                    '!vendor/respect/validation/tests/**',
+                    '!vendor/willdurand/geocoder/tests/**',
+                    '!docker/**',
+                ], {
+                    dot: true,
+                }).then(function (files) {
+                    // Aggiunta dei file con i relativi checksum
+                    let checksum = {};
+                    for (const file of files) {
+                        if (fs.lstatSync(file).isDirectory()) {
+                            archive.directory(file, file);
+                        } else {
+                            archive.file(file);
 
-        // Aggiunta del file per il controllo delle viste
-        bufferStream = new Readable();
-        bufferStream.push(shell.exec('php update/views.php', {
-            silent: true
-        }).stdout);
-        bufferStream.push(null);
-        archive.append(bufferStream, { name: 'views.json' });
+                            if (!file.startsWith('vendor')) {
+                                checksum[file] = md5File.sync(file);
+                            }
+                        }
+                    }
 
-        // Aggiunta del file per il controllo dei moduli
-        bufferStream = new Readable();
-        bufferStream.push(shell.exec('php update/modules.php', {
-            silent: true
-        }).stdout);
-        bufferStream.push(null);
-        archive.append(bufferStream, { name: 'modules.json' });
+                    // Eccezioni
+                    archive.file('backup/.htaccess', {});
+                    archive.file('files/.htaccess', {});
+                    archive.file('files/my_impianti/componente.ini', {});
+                    archive.file('logs/.htaccess', {});
+
+                    // Aggiunta del file dei checksum
+                    let checksumFile = fs.createWriteStream('./checksum.json', { flags: 'w' });
+                    checksumFile.write(JSON.stringify(checksum));
+                    checksumFile.close();
+                    archive.file('checksum.json', {});
+
+                    // Aggiunta del file per il controllo di integrità del database
+                    var bufferStream = new Readable();
+
+                    bufferStream.push(shell.exec('php update/structure.php', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'mysql.json' });
+
+                    // Aggiunta del file per il controllo delle impostazioni
+                    bufferStream = new Readable();
+                    bufferStream.push(shell.exec('php update/settings.php', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'settings.json' });
+
+                    // Aggiunta del file per il controllo delle viste
+                    bufferStream = new Readable();
+                    bufferStream.push(shell.exec('php update/views.php', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'views.json' });
+
+                    // Aggiunta del file per il controllo dei moduli
+                    bufferStream = new Readable();
+                    bufferStream.push(shell.exec('php update/modules.php', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'modules.json' });
 
 
-        // Aggiunta del commit corrente nel file REVISION
-        bufferStream = new Readable();
-        bufferStream.push(shell.exec('git rev-parse --short HEAD', {
-            silent: true
-        }).stdout);
-        bufferStream.push(null);
-        archive.append(bufferStream, { name: 'REVISION' });
+                    // Aggiunta del commit corrente nel file REVISION
+                    bufferStream = new Readable();
+                    bufferStream.push(shell.exec('git rev-parse --short HEAD', {
+                        silent: true
+                    }).stdout);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'REVISION' });
 
-        // Opzioni sulla release
-        inquirer.prompt([{
-            type: 'input',
-            name: 'version',
-            message: 'Numero di versione:',
-            validate: (input) => input ? true : 'Il numero di versione non può essere vuoto.'
-        }, {
-            type: 'confirm',
-            name: 'beta',
-            message: 'Versione beta?',
-            default: false,
-        }]).then(function (result) {
+                    // Creazione di un stream leggibile con la versione
+                    const versionStream = new Readable({
+                        read() {
+                            this.push(version);
+                            this.push(null);
+                        }
+                    });
 
-            let version = result.version;
+                    // Aggiunta della versione corrente nel file VERSION
+                    archive.append(versionStream, { name: 'VERSION' });
 
-            // Aggiungi 'beta' solo se l'opzione beta è selezionata
-            if (result.beta) {
-                version += 'beta';
-            }
-
-            // Creazione di un stream leggibile con la versione
-            const bufferStream = new Readable({
-                read() {
-                    this.push(version);
-                    this.push(null);
-                }
+                    // Completamento dello ZIP
+                    archive.finalize();
+                });
             });
-
-            // Aggiunta della versione corrente nel file VERSION
-            archive.append(bufferStream, { name: 'VERSION' });
-
-            // Completamento dello ZIP
-            archive.finalize();
-
-            done();
-        }).catch(err => {
-            console.error('Si è verificato un errore:', err);
-        });
+    }).catch(err => {
+        console.error('Si è verificato un errore:', err);
+        done(err);
     });
 }
 

@@ -3,7 +3,7 @@ read version
 
 docker image rm devcodesrl/openstamanager:latest
 
-docker build .
+docker build --no-cache .
 
 images=$(docker image ls)
 image_id=$(echo "$images" | sed -z -E 's/.*<none>[[:space:]]+<none>[[:space:]]+([0-9a-f]+)[[:space:]].*/\1/')

@@ -38,7 +38,7 @@ $query = 'SELECT
         (`in_interventi_tecnici`.`prezzo_ore_unitario` * `in_interventi_tecnici`.`ore` - `in_interventi_tecnici`.`sconto`) AS prezzo_ore_consuntivo,
         (`in_interventi_tecnici`.`prezzo_km_unitario` * `in_interventi_tecnici`.`km` - `in_interventi_tecnici`.`scontokm`) AS prezzo_km_consuntivo,
         (`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico` * `in_interventi_tecnici`.`ore`) AS prezzo_ore_consuntivo,
-        (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo_tecnico,
         `an_anagrafiche`.`ragione_sociale`,
         `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
         `in_tipiintervento`.`deleted_at` AS tipo_deleted_at,

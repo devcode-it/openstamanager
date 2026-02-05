@@ -93,9 +93,7 @@ function calcola_sconto($data)
         $result = floatval($data['sconto']);
     }
 
-    if (!empty($data['qta'])) {
-        $result = $result * $data['qta'];
-    }
+    $result = $result * $data['qta'];
 
     return $result;
 }

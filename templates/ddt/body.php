@@ -50,7 +50,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Cod.', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:20%'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 

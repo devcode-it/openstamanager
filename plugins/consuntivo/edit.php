@@ -249,7 +249,7 @@ if (!empty($interventi)) {
 
 // Bilancio del documento
 $budget = $documento->totale_imponibile;
-$righe = $documento->righe;
+$righe = $documento->getRighe();
 foreach ($righe as $riga) {
     if ($riga->um == 'ore') {
         $totale_ore_contratto = $riga->qta;

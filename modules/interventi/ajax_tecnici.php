@@ -37,7 +37,7 @@ $query = 'SELECT
         `in_interventi_tecnici`.*,
         (`in_interventi_tecnici`.`prezzo_ore_unitario` * `in_interventi_tecnici`.`ore` - `in_interventi_tecnici`.`sconto`) AS prezzo_ore_consuntivo,
         (`in_interventi_tecnici`.`prezzo_km_unitario` * `in_interventi_tecnici`.`km` - `in_interventi_tecnici`.`scontokm`) AS prezzo_km_consuntivo,
-        (`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico` * `in_interventi_tecnici`.`ore`) AS prezzo_ore_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico` * `in_interventi_tecnici`.`ore`) AS prezzo_ore_consuntivo_tecnico,
         (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo_tecnico,
         `an_anagrafiche`.`ragione_sociale`,
         `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
@@ -235,6 +235,10 @@ if (!empty($sessioni)) {
             <td class="text-center">
                 <button type="button" class="btn btn-xs btn-primary tip"  title="'.tr('Salva e duplica sessione').'" onclick="copySessione(this)">
                     <i class="fa fa-files-o"></i>
+                </button>
+
+                <button type="button" class="btn btn-xs btn-info tip" title="'.tr('Pausa sessione').'" onclick="splitSessione(this)">
+                    <i class="fa fa-pause"></i>
                 </button>
 
                 <button type="button" class="btn btn-xs btn-warning tip" title="'.tr('Salva e modifica sessione').'" onclick="modificaSessione(this)">
@@ -440,6 +444,21 @@ async function copySessione(button) {
 
     // Apertura modal
     openModal("'.tr('Copia sessione').'", "'.$module->fileurl('modals/copy_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+}
+
+async function splitSessione(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form", {}, button);
+
+    // Chiusura tooltip
+    if ($(button).hasClass("tooltipstered"))
+        $(button).tooltipster("close");
+
+    // Apertura modal
+    openModal("'.tr('Pausa sessione').'", "'.$module->fileurl('modals/split_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
 }
 
 $("#tecnici .tipo_icon_after").on("change", function() {

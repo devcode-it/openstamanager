@@ -105,8 +105,6 @@ class Translator extends Util\Singleton
 
             if (empty($result)) {
                 $result = setlocale(LC_TIME, $locale.'.UTF-8');
-            } else {
-                Carbon::setUtf8(true);
             }
 
             $reduced = explode('_', $locale)[0];

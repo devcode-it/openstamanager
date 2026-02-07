@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
             $translator->setLocale($lang, $formatter);
         }
 
+        /*
+        Disable: we should use controllers for better performance
         // Register all Providers and Processors from Modules and Plugins
         foreach (get_declared_classes() as $className) {
             if (str_contains($className, 'Modules\\') || str_contains($className, 'API\\') || str_contains($className, 'Plugins\\')) {
@@ -50,5 +52,6 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+        */
     }
 }

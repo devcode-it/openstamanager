@@ -1125,24 +1125,29 @@ class FatturaElettronica implements \Stringable
         if (!empty($documento['idsede_destinazione'])) {
             $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($documento['idsede_destinazione']));
 
+            $is_nazione_it = false;
+            if (!empty($sede['id_nazione'])) {
+                $rs_nazione = Nazione::find($sede['id_nazione']);
+                $is_nazione_it = ($rs_nazione['iso2'] == "IT") ? true : false;
+            }
+
             if (!empty($sede['indirizzo'])) {
                 $result['IndirizzoResa']['Indirizzo'] = $sede['indirizzo'];
             }
 
             if (!empty($sede['cap'])) {
-                $result['IndirizzoResa']['CAP'] = $sede['cap'];
+                $result['IndirizzoResa']['CAP'] = ($is_nazione_it == true) ? $sede['cap'] : "00000";
             }
 
             if (!empty($sede['citta'])) {
                 $result['IndirizzoResa']['Comune'] = $sede['citta'];
             }
 
-            if (!empty($sede['provincia'])) {
+            if (!empty($sede['provincia']) && $is_nazione_it == true) {
                 $result['IndirizzoResa']['Provincia'] = $sede['provincia'];
             }
 
             if (!empty($sede['id_nazione'])) {
-                $rs_nazione = Nazione::find($sede['id_nazione']);
                 $result['IndirizzoResa']['Nazione'] = $rs_nazione['iso2'];
             }
         }

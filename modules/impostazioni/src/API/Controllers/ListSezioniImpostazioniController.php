@@ -2,16 +2,17 @@
 
 namespace Modules\Impostazioni\API\Controllers;
 
-use ApiPlatform\Metadata\Operation;
-use ApiPlatform\State\ProviderInterface;
+use API\Controllers\BaseController;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Models\Setting;
 use Modules\Impostazioni\API\Models\ListSezioniImpostazioniResponse;
 
-final class ListSezioniImpostazioniProvider implements ProviderInterface
+final class ListSezioniImpostazioniController extends BaseController
 {
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?ListSezioniImpostazioniResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $user = Auth::user();
         if (!$user || !$user->is_admin) {
@@ -30,6 +31,6 @@ final class ListSezioniImpostazioniProvider implements ProviderInterface
             $response->sezioni[$gruppo->nome] = $gruppo->numero;
         }
 
-        return $response;
+        return new JsonResponse($response);
     }
 }

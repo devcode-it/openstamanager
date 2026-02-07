@@ -2,32 +2,32 @@
 
 namespace Modules\Impostazioni\API\Controllers;
 
-use ApiPlatform\Metadata\Operation;
-use ApiPlatform\State\ParameterNotFound;
-use ApiPlatform\State\ProviderInterface;
+use API\Controllers\BaseController;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Models\Setting;
 use Modules\Impostazioni\API\ImpostazioneResource;
 
-final class ListImpostazioniProvider implements ProviderInterface
+final class ListImpostazioniController extends BaseController
 {
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?array
+    public function __invoke(Request $request): JsonResponse
     {
-        $user = Auth::user();
+         $user = Auth::user();
         if (!$user || !$user->is_admin) {
             throw new AuthorizationException();
         }
-
-        $sezione = $operation->getParameters()->get('sezione')->getValue();
-        $search = $operation->getParameters()->get('ricerca')->getValue();
+        
+        $sezione = $request->query('sezione');
+        $search = $request->query('ricerca');
 
         // Trova le impostazioni che corrispondono alla ricerca
-        if (!$search instanceof ParameterNotFound) {
+        if (!empty($search)) {
             $impostazioni = Setting::where('nome', 'like', '%'.$search.'%')
                 ->orWhere('sezione', 'like', '%'.$search.'%')
                 ->get();
-        } elseif (!$sezione instanceof ParameterNotFound) {
+        } elseif (!empty($sezione)) {
             $impostazioni = Setting::where('sezione', $sezione)->get();
         } else {
             $impostazioni = Setting::all();
@@ -38,6 +38,6 @@ final class ListImpostazioniProvider implements ProviderInterface
             $results[] = ImpostazioneResource::fromModel($impostazione);
         }
 
-        return $results;
+        return new JsonResponse($results);
     }
 }

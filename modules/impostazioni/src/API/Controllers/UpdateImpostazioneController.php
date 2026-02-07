@@ -2,39 +2,38 @@
 
 namespace Modules\Impostazioni\API\Controllers;
 
-use ApiPlatform\Metadata\Operation;
-use ApiPlatform\State\ProcessorInterface;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
+use API\Controllers\BaseController;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Models\Setting;
 use Modules\Impostazioni\API\Models\UpdateImpostazioneRequest;
 use Modules\Impostazioni\API\Models\UpdateImpostazioneResponse;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 
-final class UpdateImpostazioneProcessor implements ProcessorInterface
+final class UpdateImpostazioneController extends BaseController
 {
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): UpdateImpostazioneResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $user = Auth::user();
         if (!$user || !$user->is_admin) {
             throw new AuthorizationException();
         }
 
-        if (!$data instanceof UpdateImpostazioneRequest) {
-            throw new \InvalidArgumentException();
-        }
+        $data = $this->_cast($request, UpdateImpostazioneRequest::class);
 
-        $id = $uriVariables['id'];
+        $id = $request->route('id');
         $response = new UpdateImpostazioneResponse();
 
         $impostazione = Setting::find($id);
         if (!$impostazione->editable) {
             $response->edited = true;
 
-            return $response;
+            return new JsonResponse($response);
         }
 
         $response->edited = \Settings::setValue($impostazione->id, $data->valore);
 
-        return $response;
+        return new JsonResponse($response);
     }
 }

@@ -20,6 +20,7 @@
 
 namespace Modules\StatoServizi;
 
+use App;
 use Carbon\Carbon;
 use Hooks\Manager;
 use Models\Cache;
@@ -70,6 +71,21 @@ class CronStatusHook extends Manager
                 $message = tr('Il formato della data dell\'ultima esecuzione del cron non è valido.', []);
                 $show = true;
             }
+        }
+
+        // Badge informativo per ambiente localhost
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (in_array($host, ['localhost', '127.0.0.1', '::1']) || str_starts_with($host, 'localhost:')) {
+            $config = App::getConfig();
+            $forza_cron = !empty($config['forza_cron_localhost']);
+
+            if ($forza_cron) {
+                $badge = ' <span class="badge badge-success">'.tr('Cron forzato: ATTIVO').'</span>';
+            } else {
+                $badge = ' <span class="badge badge-warning">'.tr('Cron forzato: DISATTIVO').'</span>';
+            }
+
+            $message .= $badge;
         }
 
         // Ottiene il link al modulo aggiornamenti

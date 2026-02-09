@@ -135,11 +135,11 @@ class AuthOSM extends Util\Singleton
 
         $status = 'failed';
 
-        $users = $database->fetchArray('SELECT id, password, enabled, session_token FROM zz_users WHERE username = :username LIMIT 1', [
-            ':username' => $username,
-        ]);
-        if (!empty($users)) {
-            $user = $users[0];
+        $user = User::select(['id', 'password', 'enabled', 'session_token'])
+            ->where('username', $username)
+            ->first();
+
+        if (!empty($user)) {
 
             // Verifica se l'utente è già connesso (ha un token di sessione attivo)
             if (!empty($user['session_token'])) {

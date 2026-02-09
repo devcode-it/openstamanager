@@ -72,6 +72,9 @@ $assets = [
 // Configura il limite di tempo di esecuzione del file cron.php
 $php_time_limit = '';
 
+// Forza l'esecuzione del cron in ambiente localhost
+$forza_cron_localhost = false;
+
 // Integrazione con Laravel per Rate limiting
 $rate_limiting = [
     'enabled' => false,

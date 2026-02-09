@@ -423,8 +423,8 @@ if ($database->isInstalled()) {
 
         if (!$ultima_esecuzione) {
             $cron_status = 0;
-            $cron_description = tr('Il cron non è stato configurato correttamente. Sembra che il cron di OpenSTAManager non sia in esecuzione.<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
-                '_DOCUMENT_ROOT_' => $_SERVER['DOCUMENT_ROOT'] ?? base_dir(),
+            $cron_description = tr('Il cron non è stato configurato correttamente. Sembra che il cron di OpenSTAManager non sia in esecuzione.<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_\cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
+                '_DOCUMENT_ROOT_' => $docroot ?? base_dir(),
             ]);
         } else {
             $data_ultima_esecuzione = new DateTime($ultima_esecuzione);
@@ -434,9 +434,9 @@ if ($database->isInstalled()) {
             if ($ore_trascorse > 1) {
                 $cron_status = 0;
                 $data_formattata = $data_ultima_esecuzione->format('d/m/Y H:i:s');
-                $cron_description = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_/cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
+                $cron_description = tr('Sembra che il cron di OpenSTAManager non sia in esecuzione (ultima esecuzione il _DATA_).<br><br>È necessario configurare il cron di sistema in modo che esegua periodicamente il file cron.php di OpenSTAManager con il seguente comando:<br><br><code>php _DOCUMENT_ROOT_\cron.php</code><br><br>La frequenza suggerita è di 10 minuti, ma può essere adattata alle tue esigenze. Se invii molte newsletter, per esempio, è consigliato inserire 1 minuto come frequenza.', [
                     '_DATA_' => $data_formattata,
-                    '_DOCUMENT_ROOT_' => $_SERVER['DOCUMENT_ROOT'] ?? base_dir(),
+                    '_DOCUMENT_ROOT_' => $docroot ?? base_dir(),
                 ]);
             } else {
                 $cron_status = 1;

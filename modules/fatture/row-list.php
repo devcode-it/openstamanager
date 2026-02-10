@@ -116,12 +116,8 @@ foreach ($righe as $riga) {
 
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.$riga::class.'" '.$extra.'>
-            <td class="text-center">';
-    if (!$row_disable) {
-        echo '
-                <input class="check" type="checkbox"/>';
-    }
-    echo '
+            <td class="text-center">
+                <input class="check" type="checkbox"/>
             </td>
 
             <td class="text-center">
@@ -561,7 +557,20 @@ echo '
     </table>';
 if (sizeof($righe) > 0) {
     echo '
-    <div class="btn-group">';
+    <div class="btn-group">
+        <button type="button" class="btn btn-xs btn-default disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
+            <i class="fa fa-clipboard"></i> '.tr('Copia').'
+        </button>';
+
+    // Il tasto incolla è disponibile solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
+        <button type="button" class="btn btn-xs btn-default" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
+            <i class="fa fa-paste"></i> '.tr('Incolla').'
+        </button>';
+    }
+    
+    // I pulsanti di modifica sono disponibili solo se il documento non è bloccato
     if (!$block_edit) {
         echo '
         <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
@@ -584,18 +593,6 @@ if (sizeof($righe) > 0) {
 
         <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
             <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
-        </button>';
-    }
-    echo '
-        <button type="button" class="btn btn-xs btn-default disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
-            <i class="fa fa-clipboard"></i> '.tr('Copia').'
-        </button>';
-
-    // Il tasto incolla è disponibile solo se il documento non è bloccato
-    if (!$block_edit) {
-        echo '
-        <button type="button" class="btn btn-xs btn-default" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
-            <i class="fa fa-paste"></i> '.tr('Incolla').'
         </button>';
     }
     echo '
@@ -910,31 +907,33 @@ $(".check").on("change", function() {
         $("#copia_righe").removeClass("disabled");
 
         // Pulsanti attivi solo se documento non bloccato';
-if (!$block_edit) {
-    echo '
+    if (!$block_edit) {
+        echo '
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
         $("#modifica_iva_righe").removeClass("disabled");
+        $("#incolla_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");';
-}
-echo '
+    }
+    echo '
     } else {
         // Pulsanti sempre disabilitati quando nessuna riga è selezionata
         $("#copia_righe").addClass("disabled");
 
         // Pulsanti disabilitati solo se documento non bloccato';
-if (!$block_edit) {
-    echo '
+    if (!$block_edit) {
+        echo '
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
         $("#modifica_iva_righe").addClass("disabled");
+        $("#incolla_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");';
-}
-echo '
+    }
+    echo '
     }
 });
 

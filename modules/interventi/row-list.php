@@ -319,30 +319,7 @@ echo '
     </table>';
 if (sizeof($righe) > 0) {
     echo '
-    <div class="btn-group">';
-    if (!$block_edit) {
-        echo '
-        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
-            <i class="fa fa-copy"></i>
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
-            <i class="fa fa-trash"></i>
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
-            '.tr('Confronta prezzi').'
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
-            '.tr('Aggiorna prezzi').'
-        </button>
-
-        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
-            <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
-        </button>';
-    }
-    echo '
+    <div class="btn-group">
         <button type="button" class="btn btn-xs btn-default disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
             <i class="fa fa-clipboard"></i> '.tr('Copia').'
         </button>';
@@ -352,6 +329,30 @@ if (sizeof($righe) > 0) {
         echo '
         <button type="button" class="btn btn-xs btn-default" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
             <i class="fa fa-paste"></i> '.tr('Incolla').'
+        </button>';
+    }
+
+    // I pulsanti di modifica sono disponibili solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
+        <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
+            <i class="fa fa-copy"></i>
+        </button>
+ 
+        <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
+            <i class="fa fa-trash"></i>
+        </button>
+ 
+        <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
+            '.tr('Confronta prezzi').'
+        </button>
+ 
+        <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
+            '.tr('Aggiorna prezzi').'
+        </button>
+ 
+        <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
+            <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
         </button>';
     }
     echo '

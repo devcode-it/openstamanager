@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/modutil.php';
 
 // Definizioni di fallback per le funzioni base
-if (!function_exists('base_path')) {
+if (!function_exists('base_path_osm')) {
     function base_path_osm()
     {
         return ROOTDIR;

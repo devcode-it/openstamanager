@@ -89,7 +89,6 @@
     "autoload": {
         "psr-4": {
             "": "src/",
-            "Update\\": "update/",
             "Modules\\Aggiornamenti\\": ["modules/aggiornamenti/custom/src/", "modules/aggiornamenti/src/"],
             "Modules\\Anagrafiche\\": ["modules/anagrafiche/custom/src/", "modules/anagrafiche/src/"],
             "Modules\\AttributiCombinazioni\\": ["modules/attributi_combinazioni/custom/src/", "modules/attributi_combinazioni/src/"],

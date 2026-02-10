@@ -150,6 +150,19 @@ foreach ($righe as $riga) {
     </td>
     <td>'.nl2br((string) $r['descrizione']);
 
+    // Aggiungi riferimento alla fattura di acquisto originale per le autofatture
+    if (!empty($documento['ref_documento']) && $documento['is_fattura_conto_terzi']) {
+        $fattura_origine = Modules\Fatture\Fattura::find($documento['ref_documento']);
+        if ($fattura_origine) {
+            $riferimento_autofattura = $fattura_origine->getReference();
+            if (!empty($riferimento_autofattura)) {
+                echo '
+        <br><small>Rif. '.$riferimento_autofattura.'</small>';
+                $autofill->count($riferimento_autofattura, true);
+            }
+        }
+    }
+
     if ($riga->isArticolo()) {
         echo '<small><br>'.$riga->codice.'</small>';
         $autofill->count($riga->codice, true);

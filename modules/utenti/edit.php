@@ -75,12 +75,12 @@ echo '
                 <div class="col-md-4">
                     <div class="form-group">
                         <label><i class="fa fa-home mr-1"></i> '.tr('Modulo iniziale').'</label>
-                        {["type":"select", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
+                        {["type":"select", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0). '" ]}
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label><i class="fa fa-palette mr-1"></i> '.tr('Tema').'</label>
+                        <label><i class="fa fa-adjust mr-1"></i> '.tr('Tema').'</label>
                         {["type":"select", "name":"theme", "values":"list=\"\": \"'.tr('Predefinito').'\",\"black-light\": \"'.tr('Bianco').'\",\"red-light\": \"'.tr('Rosso chiaro').'\",\"red\": \"'.tr('Rosso').'\",\"blue-light\": \"'.tr('Blu chiaro').'\",\"blue\": \"'.tr('Blu').'\",\"info-light\": \"'.tr('Azzurro chiaro').'\",\"info\": \"'.tr('Azzurro').'\",\"green-light\": \"'.tr('Verde chiaro').'\",\"green\": \"'.tr('Verde').'\",\"yellow-light\": \"'.tr('Giallo chiaro').'\",\"yellow\": \"'.tr('Giallo').'\",\"purple-light\": \"'.tr('Viola chiaro').'\",\"purple\": \"'.tr('Viola').'\" ", "value":"'.$group->theme.'" ]}
                     </div>
                 </div>

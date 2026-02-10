@@ -34,6 +34,8 @@ if (post('op') == 'self_update') {
 
 $user = auth_osm()->getUser();
 $token = auth_osm()->getToken();
+$session_token = auth_osm()->getSessionToken();
+$last_login = auth_osm()->getLastLogin();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
 $anagrafica = [];
@@ -45,8 +47,10 @@ $api = base_url().'/api/?token='.$token;
 $module = Module::where('name', 'Utenti e permessi')->first();
 
 echo '
+<div class="row">
+    <div class="col-md-6">
 <div class="card card-widget widget-user">
-    <div class="widget-user-header bg-orange">
+    <div class="widget-user-header bg-info">
       <h3 class="widget-user-username">'.$user['username'].'</h3>
       <h5 class="widget-user-desc">'.$user['gruppo'].'</h5>
     </div>
@@ -59,14 +63,14 @@ echo '
     </div>
     <div class="card-footer">
         <div class="row">
-            <div class="col-sm-4 border-right">
+            <div class="col-sm-4">
                 <div class="description-block">
                     <h5 class="description-header">'.tr('Anagrafica associata').'</h5>
                     <span class="description-text">'.(!empty($anagrafica) ? $anagrafica['ragione_sociale'] : tr('Nessuna')).'</span>
                 </div>
             </div>
 
-            <div class="col-sm-4 border-right">
+            <div class="col-sm-4">
                 <div class="description-block">
                     <a class="btn btn-primary btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? ($module->fileurl('self.php').'?id_module='.$module->id) : '#').'&resource=photo" data-widget="modal" data-title="'.tr('Cambia foto utente').'">
                         <i class="fa fa-picture-o"></i> '.tr('Cambia foto utente').'
@@ -74,63 +78,38 @@ echo '
                 </div>
             </div>
 
-            <div class="col-sm-4 border-right">
+            <div class="col-sm-4">
                 <div class="description-block">
                     <a class="btn btn-warning btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? $module->fileurl('self.php').'?id_module='.$module->id : '#').'&resource=password" data-widget="modal" data-title="'.tr('Cambia password').'">
-                        <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
+                        <i class="fa fa-unlock-alt"></i> '.tr('Cambia password'). '
                     </a>
                 </div>
             </div>
         </div>
     </div>
-</div>';
-
-echo '
-<div class="row">
+</div>
+    </div>
     <div class="col-md-6">
 
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">'.tr('API').'</h3>
+                <h3 class="card-title">' . tr('API e informazioni') . '</h3>
             </div>
 
             <div class="card-body">
-                <p>'.tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne").'.</p>
+                <p>' . tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne") . '.</p>
 
-                <p>'.tr('Token personale').': <b>'.$token.'</b></p>
-                <p>'.tr("URL dell'API").': <a href="'.$api.'" target="_blank">'.$api.'</a></p>
-
-            </div>
-        </div>
-    </div>';
-
-$link = $api.'&resource=sync';
-echo '
-
-    <div class="col-md-6">
-        <div class="card card-info">
-            <div class="card-header">
-                <h3 class="card-title">'.tr('Configurazione').'</h3>
-            </div>
-            <div class="card-body">
-                <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
-    '_ANDROID_' => '<b>'.tr('Android').'</b>',
-    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
-]).'.</p>
-
-                <p>'.tr("Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario", [
-    '_APPLE_' => '<b>'.tr('Apple').'</b>',
-]).'.</p>
-
-                <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin', [
-    '_PC_' => '<b>'.tr('PC').'</b>',
-]).'.</p>
+                <p>' . tr('Token personale') . ': <b>' . $token . '</b></p>
+                <p>' . tr("URL dell'API") . ': <a href="' . $api . '" target="_blank">' . $api . '</a></p>
+                <hr>
+                <p>' . tr("Token di sessione") . ': <b>' . $session_token . '</b></p>
+                <p>' . tr("Ultimo login riuscito") . ': <b>' . Translator::timestampToLocale($last_login) . '</b></p>
             </div>
         </div>
     </div>
-</div>
+</div>';
 
-<div class="row">
+echo '<div class="row">
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
@@ -163,22 +142,41 @@ foreach ($gruppi as $key => $gruppo) {
 echo '
             </div>
         </div>
-    </div>
+    </div>';
 
+$link = $api . '&resource=sync';
+
+echo '
     <div class="col-md-6">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">'.tr('Calendario interventi').'</h3>
+                <h3 class="card-title">'.tr('Configurazione').'</h3>
             </div>
-
             <div class="card-body">
-                <p>'.tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link").':</p>
-                <a href="'.$link.'" target="_blank">'.$link.'</a>
+                <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
+    '_ANDROID_' => '<b>'.tr('Android').'</b>',
+    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
+]).'.</p>
+
+                <p>'.tr("Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario", [
+    '_APPLE_' => '<b>'.tr('Apple').'</b>',
+]).'.</p>
+
+                <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin', [
+    '_PC_' => '<b>'.tr('PC').'</b>',
+]). '.</p>
+
+
+  <p>' . tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link") . ':</p>
+                <a href="' . $link . '" target="_blank">' . $link . '</a>
+                
             </div>
         </div>
     </div>
-</div>
+</div>';
 
+
+echo '
 <script>
 $("[id^=impostazioni]").click(function() {
     caricaSezione(this);

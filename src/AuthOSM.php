@@ -311,6 +311,38 @@ class AuthOSM extends Util\Singleton
     }
 
     /**
+     * Restituisce il token di sessione dell'utente autenticato.
+     *
+     * @return string|null
+     */
+    public function getSessionToken()
+    {
+        if (!empty($this->user)) {
+            return $this->user->session_token;
+        }
+
+        return null;
+    }
+
+    /**
+     * Restituisce la data e ora dell'ultimo login riuscito dell'utente autenticato.
+     *
+     * @return string|null Data e ora in formato datetime, null se non disponibile
+     */
+    public function getLastLogin()
+    {
+        if (empty($this->user)) {
+            return null;
+        }
+
+        $database = database();
+
+        $result = $database->fetchOne('SELECT `created_at` FROM `zz_logs` WHERE `id_utente` = ' . prepare($this->user->id) . ' AND `stato` = ' . prepare(self::getStatus()['success']['code']) . ' ORDER BY `created_at` DESC LIMIT 1');
+
+        return $result['created_at'] ?? null;
+    }
+
+    /**
      * Distrugge le informazioni riguardanti l'utente autenticato, forzando il logout.
      */
     public function destory()

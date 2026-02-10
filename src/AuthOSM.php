@@ -29,28 +29,13 @@ use Models\User;
  */
 class AuthOSM extends Util\Singleton
 {
-    /** @var array Stati previsti dal sistema di autenticazione */
-    protected static $status = [
-        'success' => [
-            'code' => 1,
-            'message' => 'Login riuscito!',
-        ],
-        'failed' => [
-            'code' => 0,
-            'message' => 'Autenticazione fallita!',
-        ],
-        'disabled' => [
-            'code' => 2,
-            'message' => 'Utente non abilitato!',
-        ],
-        'unauthorized' => [
-            'code' => 5,
-            'message' => "L'utente non ha nessun permesso impostato!",
-        ],
-        'already_logged_in' => [
-            'code' => 6,
-            'message' => 'Utente già connesso al gestionale.',
-        ],
+    /** @var array Codici degli stati previsti dal sistema di autenticazione */
+    protected static $status_codes = [
+        'success' => 1,
+        'failed' => 0,
+        'disabled' => 2,
+        'unauthorized' => 5,
+        'already_logged_in' => 6,
     ];
 
     /** @var array Opzioni di sicurezza relative all'hashing delle password */
@@ -431,12 +416,34 @@ class AuthOSM extends Util\Singleton
 
     /**
      * Restituisce l'elenco degli stati del sistema di autenticazione.
+     * I messaggi sono wrappati con tr() per permettere a Poedit di estrarli per la traduzione.
      *
      * @return array
      */
     public static function getStatus()
     {
-        return self::$status;
+        return [
+            'success' => [
+                'code' => self::$status_codes['success'],
+                'message' => tr('Login riuscito.'),
+            ],
+            'failed' => [
+                'code' => self::$status_codes['failed'],
+                'message' => tr('Autenticazione fallita.'),
+            ],
+            'disabled' => [
+                'code' => self::$status_codes['disabled'],
+                'message' => tr('Utente non abilitato.'),
+            ],
+            'unauthorized' => [
+                'code' => self::$status_codes['unauthorized'],
+                'message' => tr('L\'utente non ha nessun permesso impostato.'),
+            ],
+            'already_logged_in' => [
+                'code' => self::$status_codes['already_logged_in'],
+                'message' => tr('Utente già connesso al gestionale.'),
+            ],
+        ];
     }
 
     /**

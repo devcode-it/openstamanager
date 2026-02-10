@@ -24,6 +24,10 @@ use Models\Setting;
 $skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
+if (!AuthOSM::check()) {
+    redirect_url(base_path_osm().'/index.php');
+}
+
 $pageTitle = tr('Utente');
 
 include_once App::filepath('include|custom|', 'top.php');

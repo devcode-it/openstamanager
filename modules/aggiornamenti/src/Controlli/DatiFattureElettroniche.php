@@ -314,7 +314,7 @@ class DatiFattureElettroniche extends Controllo
             if (isset($dati_anagrafici['Anagrafica']['Denominazione'])) {
                 $denominazione_xml = $dati_anagrafici['Anagrafica']['Denominazione'];
             } elseif (isset($dati_anagrafici['Anagrafica']['Nome']) && isset($dati_anagrafici['Anagrafica']['Cognome'])) {
-                $denominazione_xml = trim($dati_anagrafici['Anagrafica']['Nome'].' '.$dati_anagrafici['Anagrafica']['Cognome']);
+                $denominazione_xml = trim($dati_anagrafici['Anagrafica']['Cognome'].' '.$dati_anagrafici['Anagrafica']['Nome']);
             }
 
             $denominazione_gestionale = $anagrafica->ragione_sociale ?? '';

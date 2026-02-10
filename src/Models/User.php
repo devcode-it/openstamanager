@@ -43,7 +43,9 @@ class User extends Model implements Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     protected $is_admin;
@@ -56,7 +58,8 @@ class User extends Model implements Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -127,11 +130,11 @@ class User extends Model implements Authenticatable
         $database = database();
 
         // Estraggo le sedi dell'utente loggato
-        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($this->id));
+        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user=' . prepare($this->id));
 
         // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
         if (empty($sedi)) {
-            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($this->idanagrafica));
+            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica=' . prepare($this->idanagrafica));
         }
 
         return array_column($sedi, 'idsede');
@@ -150,7 +153,7 @@ class User extends Model implements Authenticatable
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path_osm().'/files/'.$image->module->directory.'/'.$image->filename;
+        return base_path_osm() . '/files/' . $image->module->directory . '/' . $image->filename;
     }
 
     public function setPhotoAttribute($value)
@@ -168,7 +171,7 @@ class User extends Model implements Authenticatable
         // Informazioni sull'immagine
         $filepath = is_array($value) ? $value['tmp_name'] : $value;
         $info = Upload::getInfo(is_array($value) ? $value['name'] : $value);
-        $file = base_dir().'/files/temp_photo.'.$info['extension'];
+        $file = base_dir() . '/files/temp_photo.' . $info['extension'];
 
         // Ridimensionamento
         $img = getImageManager()->read($filepath)->scaleDown(100, 100);
@@ -195,16 +198,16 @@ class User extends Model implements Authenticatable
             return $this->username;
         }
 
-        return $anagrafica->ragione_sociale.' ('.$this->username.')';
+        return $anagrafica->ragione_sociale . ' (' . $this->username . ')';
     }
 
     public function getApiTokens()
     {
-        $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($this->id);
+        $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = ' . prepare($this->id);
         $database = database();
 
         // Generazione del token per l'utente
-        $query_utenti = 'SELECT * FROM `zz_tokens` WHERE `id_utente` = '.prepare($this->id);
+        $query_utenti = 'SELECT * FROM `zz_tokens` WHERE `id_utente` = ' . prepare($this->id);
         $tokens = $database->fetchArray($query_utenti);
         if (empty($tokens)) {
             $token = secure_random_string();
@@ -230,7 +233,18 @@ class User extends Model implements Authenticatable
             ':timeout' => $session_timeout,
         ]);
 
-        return !empty($recent_operations) && $recent_operations[0]['count'] != 0 ? 1 : 0;
+        if (!empty($recent_operations) && $recent_operations[0]['count'] != 0) {
+            return 1;
+        }
+
+        $recent_logs = $database->fetchArray('SELECT COUNT(*) as count FROM zz_logs
+            WHERE id_utente = :user_id
+            AND DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()', [
+            ':user_id' => $this->id,
+            ':timeout' => $session_timeout,
+        ]);
+
+        return !empty($recent_logs) && $recent_logs[0]['count'] != 0 ? 1 : 0;
     }
 
     /* Relazioni Eloquent */
@@ -290,9 +304,7 @@ class User extends Model implements Authenticatable
         return '';
     }
 
-    public function setRememberToken($value)
-    {
-    }
+    public function setRememberToken($value) {}
 
     public function getRememberTokenName(): string
     {

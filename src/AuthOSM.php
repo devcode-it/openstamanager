@@ -141,26 +141,32 @@ class AuthOSM extends Util\Singleton
 
         if (!empty($user)) {
 
-            // Verifica se l'utente è già connesso (ha un token di sessione attivo)
+            // Controllo sessione singola: se l'impostazione "Abilita controllo sessione singola" è attiva,
+            // verifica se l'utente è già connesso (ha un token di sessione attivo) e blocca il login multiplo.
+            // Il reset del token avviene sempre per evitare conflitti con checkSessionToken().
             if (!empty($user['session_token'])) {
-                // Verifica se ci sono operazioni recenti per l'utente (sessione attiva)
-                $user_model = User::find($user['id']);
-                $is_online = $user_model ? $user_model->isOnline() : 0;
+                $single_session_enabled = setting('Abilita controllo sessione singola');
 
-                // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
-                if ($is_online == 1) {
-                    $status = 'already_logged_in';
-                    $this->current_status = $status;
+                if ($single_session_enabled) {
+                    // Verifica se ci sono operazioni recenti per l'utente (sessione attiva)
+                    $user_model = User::find($user['id']);
+                    $is_online = $user_model ? $user_model->isOnline() : 0;
 
-                    // Log del tentativo
-                    $log['stato'] = self::getStatus()[$status]['code'];
-                    $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
-                    $database->insert('zz_logs', $log);
+                    // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
+                    if ($is_online == 1) {
+                        $status = 'already_logged_in';
+                        $this->current_status = $status;
 
-                    return false;
+                        // Log del tentativo
+                        $log['stato'] = self::getStatus()[$status]['code'];
+                        $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
+                        $database->insert('zz_logs', $log);
+
+                        return false;
+                    }
                 }
 
-                // Se non ci sono operazioni recenti, la sessione è scaduta -> resetta il token e permetti il login
+                // Resetta il token precedente per permettere il nuovo login
                 $database->update('zz_users', [
                     'session_token' => null,
                 ], [
@@ -354,11 +360,11 @@ class AuthOSM extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = ' . Group::where('nome', $group)->first()->id . " AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();
-            $results = $database->fetchArray($query." AND `options` != '' AND `options` != 'menu' AND `options` IS NOT NULL ORDER BY `order` ASC", $parameters);
+            $results = $database->fetchArray($query . " AND `options` != '' AND `options` != 'menu' AND `options` IS NOT NULL ORDER BY `order` ASC", $parameters);
 
             if (!empty($results)) {
                 $module = null;
@@ -488,7 +494,7 @@ class AuthOSM extends Util\Singleton
 
         $database = database();
 
-        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
+        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL ' . self::$brute_options['timeout'] . ' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
             ':ip' => get_client_ip(),
             ':state' => self::getStatus()['failed']['code'],
             ':timeout' => self::$brute_options['timeout'],
@@ -603,7 +609,7 @@ class AuthOSM extends Util\Singleton
         }
 
         // Verifica token e OTP nel database
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = ' . prepare($token) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             return [
@@ -705,13 +711,13 @@ class AuthOSM extends Util\Singleton
         }
 
         // Pulisci l'OTP utilizzato
-        $database->query('UPDATE `zz_otp_tokens` SET `last_otp` = "" WHERE `id` = '.prepare($token_record['id']));
+        $database->query('UPDATE `zz_otp_tokens` SET `last_otp` = "" WHERE `id` = ' . prepare($token_record['id']));
 
         // Pulisci le sessioni OTP
-        unset($_SESSION['otp_last_sent_'.$token_record['id']]);
+        unset($_SESSION['otp_last_sent_' . $token_record['id']]);
 
         // Log del login
-        $username = $utente ? $utente->username : 'token_'.$token_record['id'];
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
         $user_id = $utente ? $utente->id : null;
 
         $database->insert('zz_logs', [
@@ -746,7 +752,7 @@ class AuthOSM extends Util\Singleton
         $database = database();
 
         // Verifica token nel database
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = '.prepare($token).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `token` = ' . prepare($token) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             return [
@@ -841,7 +847,7 @@ class AuthOSM extends Util\Singleton
         }
 
         // Log del login
-        $username = $utente ? $utente->username : 'token_'.$token_record['id'];
+        $username = $utente ? $utente->username : 'token_' . $token_record['id'];
         $user_id = $utente ? $utente->id : null;
 
         $database->insert('zz_logs', [
@@ -965,7 +971,7 @@ class AuthOSM extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`=' . prepare(Models\Locale::getDefault()->id) . ' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 
@@ -1034,7 +1040,7 @@ class AuthOSM extends Util\Singleton
                 $_SESSION['auth_token'] = $this->user->session_token;
             }
 
-            $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
+            $identifier = md5($_SESSION['id_utente'] . $_SERVER['HTTP_USER_AGENT']);
             if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
                 $_SESSION['last_active'] = time();
                 $_SESSION['identifier'] = $identifier;
@@ -1053,7 +1059,7 @@ class AuthOSM extends Util\Singleton
         // Crea un utente virtuale per la sessione
         $this->user = (object) [
             'id' => 0,
-            'username' => 'token_'.$token_record['id'],
+            'username' => 'token_' . $token_record['id'],
             'nome' => 'Token Access',
             'cognome' => '',
             'email' => '',
@@ -1092,7 +1098,7 @@ class AuthOSM extends Util\Singleton
         $database = database();
 
         // Recupera il token dal database per verificare lo stato attuale
-        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `id` = '.prepare($this->token_user['token_id']).' AND `enabled` = 1');
+        $token_record = $database->fetchOne('SELECT * FROM `zz_otp_tokens` WHERE `id` = ' . prepare($this->token_user['token_id']) . ' AND `enabled` = 1');
 
         if (empty($token_record)) {
             // Token non trovato o disabilitato
@@ -1196,7 +1202,7 @@ class AuthOSM extends Util\Singleton
             return false;
         } catch (Exception $e) {
             // In caso di errore, logga il problema e restituisci false
-            error_log('Errore durante il refresh dell\'utente: '.$e->getMessage());
+            error_log('Errore durante il refresh dell\'utente: ' . $e->getMessage());
 
             return false;
         }

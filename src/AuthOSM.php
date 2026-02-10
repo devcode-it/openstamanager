@@ -141,17 +141,18 @@ class AuthOSM extends Util\Singleton
 
         if (!empty($user)) {
 
-            $check_concurrent_session = setting('Abilita controllo sessione singola per utente') == '1';
-
-            // Se abilitato il controllo sessione singola per utente, verifica se l'utente è già connesso (ha un token di sessione attivo)
-            if ($check_concurrent_session && !empty($user['session_token'])) {
+            // Verifica se l'utente è già connesso (ha un token di sessione attivo)
+            if (!empty($user['session_token'])) {
+                // Verifica se ci sono operazioni recenti per l'utente (sessione attiva)
                 $user_model = User::find($user['id']);
                 $is_online = $user_model ? $user_model->isOnline() : 0;
 
+                // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
                 if ($is_online == 1) {
                     $status = 'already_logged_in';
                     $this->current_status = $status;
 
+                    // Log del tentativo
                     $log['stato'] = self::getStatus()[$status]['code'];
                     $log['user_agent'] = Filter::getPurifier()->purify($_SERVER['HTTP_USER_AGENT']);
                     $database->insert('zz_logs', $log);
@@ -159,6 +160,7 @@ class AuthOSM extends Util\Singleton
                     return false;
                 }
 
+                // Se non ci sono operazioni recenti, la sessione è scaduta -> resetta il token e permetti il login
                 $database->update('zz_users', [
                     'session_token' => null,
                 ], [

@@ -550,6 +550,7 @@ export function release(done) {
                     '!.git/**',
                     '!.github/**',
                     '!.vscode/**',
+                    '!.env',
                     '!node_modules/**',
                     '!include/custom/**',
                     '!backup/**',

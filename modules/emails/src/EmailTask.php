@@ -56,13 +56,20 @@ class EmailTask extends Manager
             try {
                 $email = EmailNotification::build($mail);
                 $email->send();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 echo $e;
 
                 $result['response'] = 2;
                 $result['message'] = tr('Errore durante l\'invio delle email: _ERR_', [
                     '_ERR_' => $e->getMessage(),
                 ]).'<br>';
+                
+                // Aggiorna l'email come fallita
+                if (!empty($mail)) {
+                    $mail->failed_at = date('Y-m-d H:i:s');
+                    $mail->attempt = $mail->attempt + 1;
+                    $mail->save();
+                }
             }
         }
 

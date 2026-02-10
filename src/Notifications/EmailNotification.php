@@ -149,7 +149,15 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
         // Reply To
         if (!empty($mail->options['reply_to'])) {
-            $this->AddReplyTo($mail->options['reply_to']);
+            try {
+                $this->AddReplyTo($mail->options['reply_to']);
+            } catch (\Exception $e) {
+                // Ignora gli errori per indirizzi email non validi e continua
+                $logger = logger_osm();
+                $logger->addRecord(\Monolog\Logger::WARNING, 'Errore durante l\'impostazione del Reply-To: '.$e->getMessage(), [
+                    'reply_to' => $mail->options['reply_to'],
+                ]);
+            }
         }
 
         // Oggetto
@@ -244,7 +252,16 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
 
-        $this->addAttachment(base_dir().'/'.\Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
+        try {
+            $this->addAttachment(base_dir().'/'.\Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
+        } catch (\Exception $e) {
+            // Ignora gli errori per allegati non validi e continua
+            $logger = logger_osm();
+            $logger->addRecord(\Monolog\Logger::WARNING, 'Errore durante l\'aggiunta dell\'allegato: '.$e->getMessage(), [
+                'file_id' => $file_id,
+                'filename' => $attachment['original'] ?? 'unknown',
+            ]);
+        }
     }
 
     /**
@@ -267,12 +284,22 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         }
 
         if (!empty($email)) {
-            if ($type == 'cc') {
-                $this->AddCC($email, $name);
-            } elseif ($type == 'bcc') {
-                $this->AddBCC($email, $name);
-            } else {
-                $this->AddAddress($email, $name);
+            try {
+                if ($type == 'cc') {
+                    $this->AddCC($email, $name);
+                } elseif ($type == 'bcc') {
+                    $this->AddBCC($email, $name);
+                } else {
+                    $this->AddAddress($email, $name);
+                }
+            } catch (\Exception $e) {
+                // Ignora gli errori per indirizzi email non validi e continua con gli altri
+                // L'eccezione viene registrata ma non interrompe l'elaborazione
+                $logger = logger_osm();
+                $logger->addRecord(\Monolog\Logger::WARNING, 'Errore durante l\'aggiunta del destinatario: '.$e->getMessage(), [
+                    'email' => $email,
+                    'type' => $type,
+                ]);
             }
         }
     }

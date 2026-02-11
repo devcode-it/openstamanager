@@ -467,19 +467,19 @@ if (!$block_edit) {
 if (!$block_edit) {
     echo '
     <button type="button" class="btn btn-xs btn-default disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
-        <i class="fa fa-copy"></i>
+        <i class="fa fa-copy"></i> '.tr('Duplica').'
     </button>
 
     <button type="button" class="btn btn-xs btn-default disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
-        <i class="fa fa-trash"></i>
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
     </button>
 
     <button type="button" class="btn btn-xs btn-default disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
-        '.tr('Confronta prezzi').'
+        <i class="fa fa-exchange"></i> '.tr('Confronta prezzi').'
     </button>
 
     <button type="button" class="btn btn-xs btn-default disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
-        '.tr('Aggiorna prezzi').'
+        <i class="fa fa-refresh"></i> '.tr('Aggiorna prezzi').'
     </button>
 
     <button type="button" class="btn btn-xs btn-default disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">

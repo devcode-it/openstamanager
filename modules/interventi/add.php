@@ -717,8 +717,8 @@ echo '
 	});
 
     // Automatismo del tempo standard
-    input("idtipointervento").change(function() {
-        let data = $("#idtipointervento").selectData();
+    input("idtiposessione").change(function() {
+        let data = $("#idtiposessione").selectData();
         if (data && data.tempo_standard > 0) {
             let orario_inizio = input("orario_inizio").get();
             if (orario_inizio) {
@@ -731,7 +731,7 @@ echo '
 
     // Automatismo per calcolare orario di fine quando cambia l\'orario di inizio
     input("orario_inizio").change(function() {
-        let data = $("#idtipointervento").selectData();
+        let data = $("#idtiposessione").selectData();
         if (data && data.tempo_standard > 0) {
             let orario_inizio = input("orario_inizio").get();
             if (orario_inizio) {

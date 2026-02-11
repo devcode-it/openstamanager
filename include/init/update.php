@@ -78,7 +78,7 @@ if (filter('action') == 'do_update') {
 
             echo '
                 <script>
-                    $("#result").load("index.php?action=do_update&firstuse='.$_GET['firstuse'].'");
+                    $("#result").load("index.php?action=do_update&firstuse='.htmlspecialchars($_GET['firstuse'], ENT_QUOTES).'");
                 </script>';
         } else {
             // Failure

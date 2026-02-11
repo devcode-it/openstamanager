@@ -25,13 +25,15 @@ $resource = ($resource ?: $_GET['op']);
 switch ($resource) {
     // Elenco e-mail
     case 'get_email':
-        $indirizzi_proposti = $_GET['indirizzi_proposti'];
+        $indirizzi_proposti = filter('indirizzi_proposti');
         $where = '';
 
         if ($indirizzi_proposti == 1) {
             $where .= 'AND an_tipianagrafiche_lang.title = "Cliente"';
         } elseif ($indirizzi_proposti == 2) {
             $where .= 'AND an_tipianagrafiche_lang.title = "Fornitore"';
+        } else {
+            $indirizzi_proposti = null;
         }
 
         $results = [];

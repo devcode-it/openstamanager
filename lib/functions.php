@@ -66,6 +66,37 @@ function sanitizeFilename($filename)
 }
 
 /**
+ * Sanitizza un parametro contenente numeri interi separati da virgola.
+ * Rimuove eventuali caratteri non validi, accettando solo numeri interi positivi.
+ *
+ * @param string $righe Stringa con numeri interi separati da virgola
+ *
+ * @since 2.5
+ *
+ * @return string Stringa sanitizzata con solo numeri interi separati da virgola
+ */
+function sanitizeRighe($righe)
+{
+    if (empty($righe)) {
+        return '';
+    }
+
+    // Dividi la stringa per virgole e filtra solo i numeri interi validi
+    $righe_array = explode(',', (string) $righe);
+    $righe_sanitizzate = [];
+
+    foreach ($righe_array as $riga) {
+        $riga = trim($riga);
+        // Verifica che sia un numero intero positivo
+        if (ctype_digit($riga) && $riga !== '') {
+            $righe_sanitizzate[] = $riga;
+        }
+    }
+
+    return implode(',', $righe_sanitizzate);
+}
+
+/**
  * Elimina i file indicati.
  *
  * @param array|string $files

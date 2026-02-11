@@ -178,7 +178,12 @@ if (filter('op') == 'download-allegato') {
 
 // Zip allegati
 elseif (filter('op') == 'download-zip-allegati') {
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',', json_decode(filter('id'))).')');
+    $ids = json_decode(filter('id'), true);
+    if (!is_array($ids)) {
+        $ids = [];
+    }
+    $ids = array_map('intval', $ids);
+    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',', array_map('prepare', $ids)).')');
 
     $dir = base_dir().'/'.$module->upload_directory;
     directory($dir.'tmp/');

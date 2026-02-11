@@ -131,6 +131,12 @@ class Sede extends Model
                 $apiKey = setting('Google Maps API key per Tecnici');
                 $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$indirizzo.'&key='.$apiKey;
 
+                // Validazione URL per prevenire SSRF
+                $parsed_url = parse_url($url);
+                if (!isset($parsed_url['host']) || $parsed_url['host'] !== 'maps.googleapis.com') {
+                    return false;
+                }
+
                 $response = file_get_contents($url);
                 $data = json_decode($response, true);
 

@@ -652,7 +652,7 @@ function apriDocumenti(div) {
 
 function modificaIvaRighe(righe) {
     if (righe.length > 0) {
-        openModal("'.tr('Modifica IVA').'", "'.$module->fileurl('modals/modifica_iva.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&righe=" + righe.join(','));
+        openModal("'.tr('Modifica IVA').'", globals.rootdir + "/include/modifica_iva.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&tipo_documento=interventi&righe=" + righe.join(','));
     }
 }
 

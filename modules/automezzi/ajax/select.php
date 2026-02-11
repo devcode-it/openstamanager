@@ -46,6 +46,9 @@ switch ($resource) {
             if (!empty($superselect['idautomezzo'])) {
                 $where[] = '`zz_users`.`id` IN (SELECT `id_user` FROM `zz_user_sedi` WHERE `idsede`='.prepare($superselect['idautomezzo']).')';
             }
+
+            // Filtro per tipo anagrafica "Tecnico"
+            $where[] = '`an_tipianagrafiche`.`id`='.prepare($tipologia);
         }
 
         if (!empty($search)) {

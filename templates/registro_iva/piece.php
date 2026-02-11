@@ -33,17 +33,20 @@ echo '
     <td>'.($different ? $record['numero_esterno'] : '').'</td>
     <td>'.($different ? Translator::datetoLocale($record['data']) : '').'</td>
     <td>'.($different ? $record['codice_tipo_documento_fe'] : '').'</td>
-    <td>'.($different ? $record['codice_anagrafica'].' '.safe_truncate(mb_strtoupper(html_entity_decode((string) $record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
+    <td>'.($different ? safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50) : '').'</td>
     <td class="text-right">'.moneyFormat($record['totale'], 2).'</td>';
 
 echo '
     <td class="text-right">'.moneyFormat($record['subtotale'], 2).'</td>
     <td class="text-left">'.Translator::numberToLocale($record['percentuale'], 0).'</td>
-    <td class="text-left">'.$record['descrizione'].'</td>
-    <td class="text-right">'.moneyFormat($record['iva'], 2).'</td>
+    <td class="text-left">'.$record['descrizione'].' '.($record['split_payment'] ? tr('(Split payment)') : '').'</td>
+    <td class="text-right">'.moneyFormat($record['iva_detraibile'], 2).'</td>
+    <td class="text-right">'.moneyFormat($record['iva_indetraibile'], 2).'</td>
+
     </tr>';
 
-$iva[$record['descrizione']][] = $record['iva'];
+$iva[$record['descrizione']]['detraibile'][] = $record['iva_detraibile'];
+$iva[$record['descrizione']]['indetraibile'][] = $record['iva_indetraibile'];
 $totale[$record['descrizione']][] = $record['subtotale'];
 
 $numero = $record['numero'];
@@ -51,6 +54,5 @@ $data_registrazione = $record['data_registrazione'];
 $numero_esterno = $record['numero'];
 $data = $record['data'];
 $codice_fe = $record['numero'];
-$codice_anagrafica = $record['numero'];
 
 $different = 0;

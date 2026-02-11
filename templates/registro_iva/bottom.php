@@ -20,7 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$totale_iva = sum(array_column($records, 'iva'), null, 2);
+$totale_iva_detraibile = sum(array_column($records, 'iva_detraibile'), null, 2);
+$totale_iva_indetraibile = sum(array_column($records, 'iva_indetraibile'), null, 2);
 $totale_subtotale = sum(array_column($records, 'subtotale'), null, 2);
 
 echo '
@@ -35,7 +36,8 @@ echo '
         <tr bgcolor="#dddddd">
             <th>'.tr('Iva').'</th>
             <th class="text-center">'.tr('Imponibile').'</th>
-            <th class="text-center">'.tr('Imposta').'</th>
+            <th class="text-center">'.tr('Iva det.').'</th>
+            <th class="text-center">'.tr('Iva indet.').'</th>
         </tr>
     </thead>
 
@@ -43,7 +45,8 @@ echo '
 
 foreach ($iva as $descrizione => $tot_iva) {
     if (!empty($descrizione)) {
-        $somma_iva = sum($iva[$descrizione], null, 2);
+        $somma_iva_detraibile = sum($iva[$descrizione]['detraibile'], null, 2);
+        $somma_iva_indetraibile = sum($iva[$descrizione]['indetraibile'], null, 2);
         $somma_totale = sum($totale[$descrizione], null, 2);
 
         echo '
@@ -57,7 +60,11 @@ foreach ($iva as $descrizione => $tot_iva) {
             </td>
 
             <td class="text-right">
-                '.moneyFormat($somma_iva, 2).'
+                '.moneyFormat($somma_iva_detraibile, 2).'
+            </td>
+
+            <td class="text-right">
+                '.moneyFormat($somma_iva_indetraibile, 2).'
             </td>
         </tr>';
     }
@@ -70,7 +77,8 @@ echo '
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">'.moneyFormat($totale_subtotale, 2).'</td>
-            <td class="text-right">'.moneyFormat($totale_iva, 2).'</td>
+            <td class="text-right">'.moneyFormat($totale_iva_detraibile, 2).'</td>
+            <td class="text-right">'.moneyFormat($totale_iva_indetraibile, 2).'</td>
         </tr>
     </tbody>
 </table>';

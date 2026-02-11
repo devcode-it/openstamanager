@@ -26,6 +26,18 @@
  *
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
+
+echo '
+<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.($settings['header-font-size']).'px;' : '').'"  >
+    <div class="col-xs-6" >
+        <p><b>'.$f_ragionesociale.'</b></p>
+        <p>'.$f_indirizzo.'</p>
+        <p>'.$f_citta_full.'</p>
+        <p>'.(!empty($f_piva) ? tr('P.Iva').': '.$f_piva : '').'</p>
+        <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': '.$f_codicefiscale : '').'</p>
+    </div>
+</div>';
+
 $year_start = date('Y', strtotime((string) $date_start));
 $year_end = date('Y', strtotime((string) $date_end));
 

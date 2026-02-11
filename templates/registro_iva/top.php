@@ -58,8 +58,9 @@ echo '<h4><b>'.$titolo.'</b></h4>
             <th>'.tr('Tot. doc.').'</th>
             <th>'.tr('Imponibile').'</th>
             <th>%</th>
-            <th>'.tr('Iva').'</th>
-            <th>'.tr('Imposta').'</th>
+            <th>'.tr('Aliquota').'</th>
+            <th>'.tr('Iva det.').'</th>
+            <th>'.tr('Iva indet.').'</th>
         </tr>
     </thead>
 

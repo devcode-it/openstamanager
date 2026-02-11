@@ -338,7 +338,8 @@ elseif (filter('op') == 'toggle-check') {
 
 // Gestione ordine per le checklist
 elseif (filter('op') == 'ordina-checks') {
-    $ids = explode(',', $_POST['order']);
+    $order_data = post('order', true);
+    $ids = $order_data ? explode(',', $order_data) : [];
     $order = 0;
 
     foreach ($ids as $id) {
@@ -365,8 +366,8 @@ elseif (post('op') == 'send-email') {
     }
 
     // Contenuti
-    $mail->subject = $_POST['subject'];
-    $mail->content = $_POST['body']; // post('body', true);
+    $mail->subject = post('subject');
+    $mail->content = post('body', true);
 
     // Conferma di lettura
     $mail->read_notify = post('read_notify');

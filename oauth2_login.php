@@ -24,8 +24,8 @@ $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
 // Authorization information
-$state = $_GET['state'];
-$code = $_GET['code'];
+$state = get('state');
+$code = get('code');
 
 // Account individuato via state
 if (!empty($state)) {
@@ -70,6 +70,6 @@ if (empty($_GET['error'])) {
 
     exit;
 }
-echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'
+echo strip_tags(get('error')).'<br>'.strip_tags(get('error_description')).'
 <br><br>
 <a href="'.$redirect.'">'.tr('Riprova').'</a>';

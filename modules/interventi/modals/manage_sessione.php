@@ -124,6 +124,16 @@ $(document).ready(function () {
         if($("#orario_fine").data("DateTimePicker").date() < e.date){
             $("#orario_fine").data("DateTimePicker").date(e.date);
         }
+
+        let data = $("#idtipointerventot").selectData();
+        if (data && data.tempo_standard > 0) {
+            let orario_inizio = e.date;
+            if (orario_inizio) {
+                let tempo_standard = data.tempo_standard * 60;
+                let nuovo_orario_fine = moment(orario_inizio).add(tempo_standard, "m");
+                $("#orario_fine").data("DateTimePicker").date(nuovo_orario_fine);
+            }
+        }
     });
 
     $("#orario_fine").on("dp.change", function (e) {
@@ -156,6 +166,15 @@ $(document).ready(function () {
             $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
             $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
             $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
+
+            if (data.tempo_standard > 0) {
+                let orario_inizio = $("#orario_inizio").data("DateTimePicker").date();
+                if (orario_inizio) {
+                    let tempo_standard = data.tempo_standard * 60;
+                    let nuovo_orario_fine = moment(orario_inizio).add(tempo_standard, "m");
+                    $("#orario_fine").data("DateTimePicker").date(nuovo_orario_fine);
+                }
+            }
         }
     });
 });

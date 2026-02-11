@@ -114,7 +114,7 @@ switch ($resource) {
         // Priorità: tariffe contratto > tariffe sede > tariffe tecnico
         if (!empty($intervento->idsede_destinazione)) {
             // Se c'è una sede configurata: prova prima tariffe contratto, poi sede, poi tecnico
-            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+            $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
                 COALESCE(`co_contratti_tipiintervento`.`costo_ore`, `in_tariffe_sedi`.`costo_ore`, `in_tariffe`.`costo_ore`) AS prezzo_ore_unitario,
                 COALESCE(`co_contratti_tipiintervento`.`costo_km`, `in_tariffe_sedi`.`costo_km`, `in_tariffe`.`costo_km`) AS prezzo_km_unitario,
                 COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe_sedi`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
@@ -134,7 +134,7 @@ switch ($resource) {
             )';
         } elseif (!empty($intervento->id_contratto)) {
             // Se c'è un contratto: prova tariffe contratto, poi tecnico
-            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+            $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
                 COALESCE(`co_contratti_tipiintervento`.`costo_ore`, `in_tariffe`.`costo_ore`) AS prezzo_ore_unitario,
                 COALESCE(`co_contratti_tipiintervento`.`costo_km`, `in_tariffe`.`costo_km`) AS prezzo_km_unitario,
                 COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
@@ -152,7 +152,7 @@ switch ($resource) {
             )';
         } else {
             // Altrimenti usa solo tariffe tecnico
-            $query = 'SELECT `in_tipiintervento`.`id`, CONCAT(`codice`, \' - \', `title`) AS descrizione,
+            $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
                 `in_tariffe`.`costo_ore` AS prezzo_ore_unitario,
                 `in_tariffe`.`costo_km` AS prezzo_km_unitario,
                 `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata

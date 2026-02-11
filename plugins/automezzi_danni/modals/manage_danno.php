@@ -45,7 +45,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "'.($record['data'] ?? '').'" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-", "data-edit-value": "'.($record['data'] ?? '').'" ]}
         </div>
         <div class="col-md-8">
             {[ "type": "text", "label": "'.tr('Luogo').'", "name": "luogo", "required": 1, "value": "'.($record['dove'] ?? '').'" ]}
@@ -64,9 +64,21 @@ echo '
         </div>
     </div>
 </form>';
-
 if ($record['id']) {
     echo '
     <hr>
     {( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$iddanno.'", "id_plugin": "'.$id_plugin.'" )}';
 }
+
+echo '
+<script>
+$(document).ready(function() {
+    // Se siamo in modalità edit, aggiorna il valore del campo data
+    var editValue = $("input[name=\'data\']").data("edit-value");
+    if (editValue) {
+        $("input[name=\'data\']").val(editValue);
+    }
+
+    init();
+});
+</script>';

@@ -1280,6 +1280,35 @@ switch (post('op')) {
 
         break;
 
+    case 'split_sessione':
+        $id_sessione = post('id_sessione');
+        $sessione = Sessione::find($id_sessione);
+        
+        $pausa_inizio = post('pausa_inizio');
+        $pausa_fine = post('pausa_fine');
+        $orario_fine = $sessione->orario_fine;
+
+        // Modifica la sessione originale: fine sessione = inizio pausa
+        $sessione->orario_fine = $pausa_inizio;
+        $sessione->save();
+        
+        // Crea una nuova sessione: inizio = fine pausa, fine = fine sessione originale
+        $new_sessione = $sessione->replicate();
+        $new_sessione->orario_inizio = $pausa_fine;
+        $new_sessione->orario_fine = $orario_fine;
+        $new_sessione->km = 0;
+        $new_sessione->prezzo_dirittochiamata = 0;
+        $new_sessione->save();
+        
+        // Trigger aggiornamento intervento
+        $intervento = $sessione->intervento;
+        $intervento->updated_at = date('Y-m-d H:i:s');
+        $intervento->save();
+        
+        flash()->info(tr('Pausa inserita correttamente!'));
+        
+        break;
+
         // Duplica intervento
     case 'copy':
         $id_stato = post('id_stato');

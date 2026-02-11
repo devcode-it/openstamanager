@@ -155,7 +155,10 @@ if (!empty(post('db_host'))) {
         // Laravel non è inizializzato in questo contesto
         // use Illuminate\Support\Facades\Artisan;
         // Artisan::call('key:generate');
-        shell_exec('php artisan key:generate');
+        $artisan_path = escapeshellcmd('php');
+        $artisan_cmd = escapeshellarg('artisan');
+        $key_generate_cmd = escapeshellarg('key:generate');
+        shell_exec($artisan_path.' '.$artisan_cmd.' '.$key_generate_cmd);
 
         if (!$creation) {
             echo '

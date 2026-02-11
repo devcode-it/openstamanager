@@ -96,13 +96,15 @@ class XML
         $output_file = $directory.'/'.basename($file, '.p7m');
 
         // Validate that file path doesn't contain shell metacharacters
-        if (preg_match('/[;&|`$(){}\\[\\]<>]/', $file)) {
+        if (preg_match('/[;&|`$(){}\\[\\]<>]/', $file) || preg_match('/[;&|`$(){}\\[\\]<>]/', $output_file)) {
             throw new \Exception('Invalid file path');
         }
 
         try {
             if (function_exists('exec')) {
-                exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$output_file.'"', $output, $cmd);
+                $escaped_file = escapeshellarg($file);
+                $escaped_output = escapeshellarg($output_file);
+                exec('openssl smime -verify -noverify -in '.$escaped_file.' -inform DER -out '.$escaped_output, $output, $cmd);
 
                 if (!file_exists($output_file)) {
                     $signer = $directory.'/signer';

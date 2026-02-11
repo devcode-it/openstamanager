@@ -1129,7 +1129,11 @@ class FatturaElettronica implements \Stringable
                 $result['IndirizzoResa']['Indirizzo'] = $sede['indirizzo'];
             }
 
-            if (!empty($sede['cap'])) {
+            // CAP: per nazioni estere usare '00000', altrimenti il CAP reale
+            if (!empty($sede['id_nazione'])) {
+                $rs_nazione = Nazione::find($sede['id_nazione']);
+                $result['IndirizzoResa']['CAP'] = ($rs_nazione['iso2'] == 'IT') ? $sede['cap'] : '00000';
+            } elseif (!empty($sede['cap'])) {
                 $result['IndirizzoResa']['CAP'] = $sede['cap'];
             }
 
@@ -1137,8 +1141,12 @@ class FatturaElettronica implements \Stringable
                 $result['IndirizzoResa']['Comune'] = $sede['citta'];
             }
 
-            if (!empty($sede['provincia'])) {
-                $result['IndirizzoResa']['Provincia'] = $sede['provincia'];
+            // Provincia impostata SOLO SE nazione ITALIA
+            if (!empty($sede['provincia']) && !empty($sede['id_nazione'])) {
+                $rs_nazione = Nazione::find($sede['id_nazione']);
+                if ($rs_nazione['iso2'] == 'IT') {
+                    $result['IndirizzoResa']['Provincia'] = strtoupper((string) $sede['provincia']);
+                }
             }
 
             if (!empty($sede['id_nazione'])) {
